@@ -1,0 +1,30 @@
+{
+  "name": "os",
+  "description": "Openstack NodeJS portable server.",
+  "version": "0.0.1",
+  "author": "gogocrow <gogocrow@163.com>",
+  "contributors": [
+  ],
+  "license": "MIT",
+  "repository": "LiShiSangZi/os",
+  "keywords": [
+    "OpenStack",
+    "api"
+  ],
+  "dependencies": {
+    "express": "~4.13.3"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">= 4.1.0"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "lib/"
+  ],
+  "scripts": {
+  }
+}
