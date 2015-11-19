@@ -12,9 +12,29 @@
     "api"
   ],
   "dependencies": {
-    "express": "~4.13.3"
+    "morgan": "~1.6.1",
+    "express": "~4.13.3",
+    "js-yaml": "~3.4.3",
+    "async": "~1.5.0",
+    "request": "~2.65.0",
+    "body-parser": "~1.14.1",
+    "multer": "~1.1.0",
+    "express-react-views": "~0.9.0",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "jquery": "^2.1.0",
+    "eventemitter2": "^0.4.14"
   },
   "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.7",
+    "webpack": "^1.12.6",
+    "webpack-dev-server": "^1.12.1",
+    "babel": "^6.0.12",
+    "babel-core": "^6.0.12",
+    "babel-loader": "^6.0.0",
+    "babel-preset-react": "^6.0.12",
+    "babel-preset-es2015": "^6.0.12"
   },
   "engines": {
     "node": ">= 4.1.0"
