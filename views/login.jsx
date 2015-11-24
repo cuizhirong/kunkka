@@ -1,16 +1,11 @@
 var React = require('react');
+var Header = require('./header.jsx');
 
 var Login = React.createClass({
     render: function() {
         return (
             <html>
-                <head>
-                    <meta charSet={'utf-8'} />
-                    <meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
-                    <title>{this.props.title}</title>
-                    <link rel="shortcut icon" href="https://dn-ustack.qbox.me/favicon.ico" type="image/x-icon"/>
-                    <link rel="stylesheet" href="https://dn-ustack.qbox.me/login.css"/>
-                </head>
+                <Header title={this.props.title} style={['https://dn-ustack.qbox.me/login.css']} />
                 <body>
                     <div className="wrapper">
                         <div className="before"></div>
@@ -28,7 +23,7 @@ var Login = React.createClass({
                         </div>
                         <div className="after"></div>
                     </div>
-                    <script src="/static/main-main.min.js"></script>
+                    <script src="/static/main-login.min.js"></script>
                 </body>
             </html>
         )

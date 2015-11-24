@@ -1,14 +1,11 @@
 module.exports = {
     context: __dirname,
-    entry: ['./static/login/app.js'],
+    entry: {
+        login: './static/login/app.js', 
+        main: './static/dashboard/app.js'
+    },
     module: {
         loaders: [{
-            test: /\.less$/,
-            loader: "style!css!less"
-        }, {
-            test: /\.png$/,
-            loader: "file?prefix=img/"
-        }, {
             test: /\.js(.*)$/,
             exclude: /node_modules/,
             loader: 'babel',
@@ -28,10 +25,7 @@ module.exports = {
         extensions: ['', '.jsx', '.js'],
         root: __dirname,
         alias: {
-            "jquery": "node_modules/jquery/dist/jquery",
-            "react": "node_modules/react/react",
-            "react-dom": "node_modules/react/lib/ReactDOM",
-            "eventemitter": "node_modules/eventemitter2"
+            "jquery": "node_modules/jquery/dist/jquery"
         }
     }
 }

@@ -1,2 +1,8 @@
 ---
-keyston: http://121.201.53.215
+remote:
+    keyston:    http://121.201.53.215:5000
+    nova:       http://121.201.53.215:8774
+sessionEngine: 
+    type:       MemcachedCache
+    address:    
+        - 121.201.53.215:11211

@@ -14,7 +14,7 @@ var Login = React.createClass({
             this.model = new Model();
         }
         this.model.on('loginDone', (function(res) {
-            console.log('done');
+            window.location.reload();
         }).bind(this));
 
         this.model.on('loginFailed', (function(code, msg) {

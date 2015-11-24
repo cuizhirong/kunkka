@@ -1,23 +1,20 @@
+'use strict';
 var EventEmitter = require('eventemitter2');
 var $ = require('jquery');
 class Model extends EventEmitter {
     constructor() {
         super();
     }
-    login(username, password) {
+    getServers() {
         var xhr = $.ajax({
-            url: '/auth/login',
-            method: 'POST',
-            data: {
-                username: username,
-                password: password
-            }
+            url: '/servers',
+            method: 'GET'
         });
         xhr.done((function(res) {
-            this.emit('loginDone');
+            console.log(res);
         }).bind(this));
         xhr.fail((function(xhr, error, msg) {
-            this.emit('loginFailed', xhr.status, xhr.responseJSON);
+            this.emit('serversFailed', xhr.status, xhr.responseJSON);
         }).bind(this));
     }
 }
