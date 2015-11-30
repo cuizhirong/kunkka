@@ -2,12 +2,10 @@
 
 var request = require('superagent');
 
-var config = require('config');
-
 var Keyston = {
     login: function(username, password, callback) {
         request
-            .post(config('remote').keyston + '/v3/auth/tokens')
+            .post(global.config.remote.keyston + '/v3/auth/tokens')
             .send({
                 "auth": {
                     "identity": {
@@ -40,13 +38,13 @@ var Keyston = {
         });
     },
     getProjects: function(token, callback) {
+        var request = new Requst('GET', global.config.remote.keyston + '/v3/projects');
+        request.setHeader('X-Subject-Token', token);
 
-        request
-            .get(config('remote').keyston + '/v3/projects')
-            .set('X-Auth-Token', token)
-            .end(function(err, res) {
-                callback(err, res);
-            });
+        request.exec(null, function(error, body, response) {
+            console.log(error, body);
+            callback(error, body, response);
+        });
     }
 }
 

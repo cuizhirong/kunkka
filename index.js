@@ -1,5 +1,21 @@
 'use strict';
 
+var pkg = require('package.json');
+var boot = require('boot');
+var http = require('http');
+
+
+var start = Date.now();
+var port = process.env.PORT || 5000;
+var app = boot();
+
+console.log('%s booted in %dms - port: %s', pkg.name, (Date.now()) - start, port);
+
+var server = http.createServer(app);
+server.listen(port);
+
+/*
+
 var express = require('express');
 var path = require('path');
 var yaml = require('js-yaml');
@@ -25,25 +41,7 @@ app.set('port', process.env.PORT || 5000);
 app.set('view engine', 'jsx');
 app.engine('jsx', views);
 
-var config;
-try {
-    config = yaml.safeLoad(fs.readFileSync(path.resolve('./config.yml'), 'utf8'));
-    global.config = config;
-    if (global.config.sessionEngine && global.config.sessionEngine.type == 'Session') {
-        var session = require('express-session');
-        // Init the session.
-        app.use(session({
-            secret: 'keyboard cat',
-            cookie: {
-                maxAge: 6000000
-            },
-            resave: false,
-            saveUninitialized: true
-        }));
-    }
-} catch (e) {
-    global.config = {};
-}
+
 
 
 
@@ -67,3 +65,4 @@ app.use('/', function(req, res) {
 http.createServer(app).listen(app.get('port'), function() {
     console.info('Server listening on port ' + app.get('port'));
 });
+*/
