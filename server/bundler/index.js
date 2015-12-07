@@ -3,9 +3,6 @@ var webpack = require('webpack');
 var path = require('path');
 var webpackConfig = require(path.resolve(__dirname, '..', '..', 'webpack.config.js'));
 
-
-console.log(webpackConfig);
-
 module.exports = webpackConfig;
 
 var config = Object.create(webpackConfig);
