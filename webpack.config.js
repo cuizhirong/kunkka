@@ -1,8 +1,9 @@
+var path = require('path');
 module.exports = {
     context: __dirname,
     entry: {
-        login: './static/login/app.js', 
-        main: './static/dashboard/app.js'
+        login: path.resolve(__dirname, 'static', 'login', 'app.js'),
+        main: path.resolve(__dirname, 'static', 'dashboard', 'app.js')
     },
     module: {
         loaders: [{
@@ -16,9 +17,9 @@ module.exports = {
         }]
     },
     output: {
-        path: __dirname + '/static',
+        path: path.resolve(__dirname, 'static'),
         filename: 'main-[name].min.js',
-        publicPath: '/static/',
+        publicPath: path.resolve(__dirname, 'static'),
         chunkFilename: '[id].bundle.js'
     },
     resolve: {

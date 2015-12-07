@@ -4,7 +4,7 @@
 
 var multer = require('multer');
 var upload = multer(); // for parsing multipart/form-data
-var Keyston = require('keyston');
+var Keystone = require('keystone');
 var async = require('async');
 
 module.exports = function(app) {
@@ -13,7 +13,7 @@ module.exports = function(app) {
 
         async.waterfall([
             function(cb) {
-                Keyston.login(req.body.username, req.body.password, function(error, response) {
+                Keystone.login(req.body.username, req.body.password, function(error, response) {
                     if (error) {
                         res.status(error.responseInfo.status).send(error.responseInfo.body);
                     } else {
@@ -33,7 +33,12 @@ module.exports = function(app) {
                 });
             },
             function(token, cb) {
-                Keyston.getProjects(token, function(error, response) {
+                Keystone.getAuthURL(token, function(error, response) {
+
+                });
+            },
+            function(token, cb) {
+                Keystone.getProjects(token, function(error, response) {
                     if (error) {
                         res.status(error.status).send(error.response.body);
                         return;

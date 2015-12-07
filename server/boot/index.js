@@ -46,6 +46,10 @@ function setup() {
     if ('development' === config('env')) {
         // setup logger
         app.use(morgan('dev'));
+
+        // Start up the webpasck dev server.
+        var test = require('bundler');
+        
     } else {
         // setup logger
         app.use(morgan('combined'));
