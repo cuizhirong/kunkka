@@ -1,6 +1,7 @@
 'use strict';
 
 var EventEmitter = require('eventemitter2');
+
 class RouterModel extends EventEmitter {
     constructor() {
         super();

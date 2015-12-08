@@ -28,3 +28,6 @@ node_modules
 
 # yaml config file.
 config.yml
+
+# Mac file
+.DS_Store
