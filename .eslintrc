@@ -33,6 +33,7 @@
     "vars-on-top": 0,
     "eol-last": 2,
     "no-var": 0,
-    "no-unused-expressions": 0
+    "no-unused-expressions": 0,
+    "no-shadow": [2, {"allow": ["xhr"]}]
   }
 }
