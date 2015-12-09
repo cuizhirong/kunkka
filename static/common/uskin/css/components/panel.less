@@ -1,0 +1,32 @@
+@pannel_border_color: @color_default_gray;
+@pannel_hd_color: @color_default_light_gray;
+@pannel_font_color: @color_font;
+
+// Variables
+@panel_padding: 18px;
+
+.panel {
+  width: 400px;
+  border: 1px solid @pannel_border_color;
+  border-radius: @border_radius;
+  overflow: hidden;
+
+  .panel-hd {
+    background-color: @pannel_hd_color;
+    font-size: 16px;
+    color: @pannel_font_color;
+    height: 44px;
+    line-height: 44px;
+    padding-left: @panel_padding;
+    padding-right: @panel_padding;
+    .overflow();
+    > div {
+      .overflow();
+    }
+  }
+
+  .panel-bd {
+    padding: @panel_padding;
+    line-height: 18px;
+  }
+}

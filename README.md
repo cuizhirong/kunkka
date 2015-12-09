@@ -17,7 +17,7 @@ and then customize your own yml file
 
 3. We provide `pre-commit` hook to check code style before committing, run the command below (optional):
 ```
-./csc.sh
+./scripts/csc.sh
 ```
 
 4. Done

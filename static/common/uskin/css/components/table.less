@@ -1,0 +1,163 @@
+// Mixins
+
+
+// Variables
+@table_hd_bg_color: @color_default_gray;
+@table_hd_color: @color_table_hd_bg_color;
+@table_hd_height: 36px;
+@table_bg_color: @color_white;
+@table_hover_bg_hover: @color_talbe_hover;
+@table_striped_bg_color: @color_table_stripped;
+@table_selected_bg_color: @color_table_selected;
+@table_bd_height: 40px;
+@table_bd_border: 1px solid @color_disabled_input_border;
+@table_padding_left: 16px;
+@table_ft_color: @color_btn_disabled_gray_font;
+
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  background-color: @table_bg_color;
+
+  > thead {
+    height: @table_hd_height;
+    background-color: @table_hd_bg_color;
+    color: @table_hd_color;
+    font-size: 13px;
+
+    >tr {
+      height: @table_hd_height;
+
+      th {
+        padding-left: @table_padding_left;
+        text-align: left;
+        font-weight: normal;
+
+        &:not(:first-child) {
+          border-left: 1px solid @color_white;
+        }
+      }
+    }
+  }
+
+  > tbody {
+    >tr {
+      height: @table_bd_height;
+      border-bottom: @table_bd_border;
+
+      &.selected {
+        background-color: @table_selected_bg_color !important;
+      }
+
+      >td {
+        padding-left: @table_padding_left;
+      }
+    }
+
+  }
+
+  > tfoot {
+    >tr {
+      height: @table_bd_height;
+      color: @table_ft_color;
+
+      >td {
+        padding-left: @table_padding_left;
+      }
+    }
+
+  }
+
+  .table-header {
+    display: flex;
+    > div {
+      flex: 1;
+      height: 36px;
+      line-height: 36px;
+      padding-left: 16px;
+      background-color: @table_hd_bg_color;
+      color: #626f7e;
+      border-right: 1px solid @color_white;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+
+  .table-body {
+    .row {
+      display: flex;
+      border-bottom: @table_bd_border;
+      > div {
+        flex: 1;
+        height: 40px;
+        line-height: 40px;
+        padding-left: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      &.selected {
+        background-color: @table_selected_bg_color !important;
+      }
+
+    }
+  }
+
+  .table-footer {
+  }
+
+}
+
+
+
+.table-striped {
+  > tbody > tr:nth-child(even) {
+    background-color: @table_striped_bg_color;
+  }
+
+  .table-body .row:nth-child(even) {
+    background-color: @table_striped_bg_color;
+  }
+}
+
+.table-hover {
+  > tbody > tr:hover {
+    background-color: @table_hover_bg_hover;
+  }
+
+  .table-body .row:hover {
+    background-color: @table_hover_bg_hover;
+  }
+}
+
+.table-mini {
+  .table-header {
+    border-bottom: @table_bd_border;
+    > div {
+      height: 28px;
+      line-height: 28px;
+      background-color: @color_white;
+    }
+  }
+  .table-body {
+    .row {
+      > div {
+        height: 36px;
+        line-height: 36px;
+      }
+    }
+  }
+}
+
+

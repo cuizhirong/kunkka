@@ -1,0 +1,65 @@
+// Mixins
+
+// Variables
+@tip_v_padding: 7px;
+@tip_h_padding: 12px;
+@tip_line_height: 20px;
+@tip_border_radius: @border_radius;
+
+@tip_info_bg_color: @color_blue_lighter;
+@tip_info_border_color: @color_blue;
+@tip_info_strong_color: @color_blue;
+
+@tip_success_bg_color: @color_green_lighter;
+@tip_success_border_color: @color_green;
+@tip_success_strong_color: @color_green;
+
+@tip_warning_bg_color: @color_yellow_lighter;
+@tip_warning_border_color: @color_yellow;
+@tip_warning_strong_color: @color_yellow;
+
+@tip_danger_bg_color: @color_red_lighter;
+@tip_danger_border_color: @color_red;
+@tip_danger_strong_color: @color_red;
+
+.tip {
+  padding: @tip_v_padding @tip_h_padding;
+  line-height: @tip_line_height;
+  border-radius: @tip_border_radius;
+  border: 1px solid @color_font;
+  strong {
+    margin-right: 5px;
+  }
+}
+
+.tip-info {
+  background-color: @tip_info_bg_color;
+  border: 1px solid @tip_info_border_color;
+  strong {
+    color: @tip_info_strong_color;
+  }
+}
+
+.tip-success {
+  background-color: @tip_success_bg_color;
+  border: 1px solid @tip_success_border_color;
+  strong {
+    color: @tip_success_strong_color;
+  }
+}
+
+.tip-warning {
+  background-color: @tip_warning_bg_color;
+  border: 1px solid @tip_warning_border_color;
+  strong {
+    color: @tip_warning_strong_color;
+  }
+}
+
+.tip-danger {
+  background-color: @tip_danger_bg_color;
+  border: 1px solid @tip_danger_border_color;
+  strong {
+    color: @tip_danger_strong_color;
+  }
+}
