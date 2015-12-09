@@ -1,5 +1,3 @@
-'use strict';
-
 var pkg = require('package.json');
 var boot = require('boot');
 var http = require('http');
