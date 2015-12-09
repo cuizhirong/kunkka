@@ -78,4 +78,3 @@ gulp.task('webpack-dev-server', function(callback) {
 
 // Production build
 gulp.task('build', ['webpack:build']);
-

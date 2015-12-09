@@ -9,25 +9,23 @@ var path = require('path');
  */
 
 module.exports = function(app) {
+  app.set('views', __dirname);
 
-    app.set('views', __dirname);
+  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'static')));
 
-    app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'static')));
-
-    function renderStaticTemplate(req, res, next) {
-        if (req.session && req.session.token) {
-
-            res.render('login.jade', {
-                title: 'Login',
-                style: ['/static/uskin/uskin.min.css', '/static/style.css']
-            });
-        } else {
-            res.render('login.jade', {
-                title: 'Login',
-                style: ['https://dn-ustack.qbox.me/login.css']
-            });
-        }
+  function renderStaticTemplate(req, res, next) {
+    if (req.session && req.session.token) {
+      res.render('index.jade', {
+        title: 'Login',
+        style: ['/static/uskin/uskin.min.css', '/static/style.css']
+      });
+    } else {
+      res.render('login.jade', {
+        title: 'Login',
+        style: ['https://dn-ustack.qbox.me/login.css']
+      });
     }
+  }
 
-    app.use('/', renderStaticTemplate);
+  app.use('/', renderStaticTemplate);
 };

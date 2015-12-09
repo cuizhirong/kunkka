@@ -9,19 +9,17 @@ var env = process.env.NODE_ENV || 'development';
 
 var configObj;
 try {
-
-    configObj = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', '..', 'config.yml'), 'utf8'));
-
+  configObj = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', '..', 'config.yml'), 'utf8'));
 } catch (e) {
-    configObj = {};
+  configObj = {};
 }
 
 if (typeof configObj.env === 'undefined') {
-    configObj.env = env;
+  configObj.env = env;
 }
 
 function config(field) {
-    return configObj[field];
+  return configObj[field];
 }
 
 module.exports = config;

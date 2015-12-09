@@ -8,20 +8,18 @@ var version = require('package.json').version;
    */
 
 module.exports = function(app) {
-
-
-    app.get('/version', function(request, response) {
-        response.json({
-            version: version
-        });
+  app.get('/version', function(request, response) {
+    response.json({
+      version: version
     });
+  });
 
-    var auth = require('api/auth');
-    auth(app);
+  var auth = require('api/auth');
+  auth(app);
 
-    // if (config.isEnabled('oauth')) {
-    //     oauth(app);
-    // }
+  // if (config.isEnabled('oauth')) {
+  //     oauth(app);
+  // }
 
-    return app;
+  return app;
 };

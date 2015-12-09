@@ -5,16 +5,17 @@ class Model extends EventEmitter {
     super();
   }
   getServers() {
+    var that = this;
     var xhr = $.ajax({
       url: '/servers',
       method: 'GET'
     });
-    xhr.done((function(res) {
+    xhr.done(function(res) {
       console.log(res);
-    }).bind(this));
-    xhr.fail((function(xhr, error, msg) {
-      this.emit('serversFailed', xhr.status, xhr.responseJSON);
-    }).bind(this));
+    });
+    xhr.fail(function(xhr, error, msg) {
+      that.emit('serversFailed', xhr.status, xhr.responseJSON);
+    });
   }
 }
 
