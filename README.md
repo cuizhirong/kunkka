@@ -1,5 +1,5 @@
-# os
-Openstack client
+# Halo
+Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do interaction between OpenStack services including Nova, Keystone, Swift and so on.
 
 
 ## Uage
