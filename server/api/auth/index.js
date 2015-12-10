@@ -67,7 +67,7 @@ module.exports = function(app) {
           'project_id': ProjectId,
           'user_id': UserId
         };
-        res.cookie('ustack_halo', value, opt);
+        res.cookie('ustack', value, opt);
         res.redirect('/app');
       }
     });

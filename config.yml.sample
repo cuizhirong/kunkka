@@ -6,3 +6,6 @@ sessionEngine:
     type:       MemcachedCache | Redis | Session
     address:    
         - 121.201.53.215:11211
+session: 
+  secret:    'keyboard cat'
+  cookie_name:  'ustack'
