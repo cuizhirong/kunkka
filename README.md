@@ -23,3 +23,34 @@ and then customize your own yml file
 4. Done
 
 
+## Code Standard
+
+### Commit message formatter
+
+The commit message should contains at least three parts.
+
+1. The summary of the commit. It should be followed by an empty row.
+2. The detail information of the commit. (It is optional.)
+3. The commit type: (BF|NF|RF|OT|BugFix|NewFeature|ReFactor|Other)
+4. The commit's JIRA issue ID.
+
+The maximum characters for each row should be less than 72.
+
+This is an example:
+```
+Ensure setuptools is somewhat recent
+ 
+Due to bugs in older setuptools version parsing
+we need to set a relatively new version of setuptools
+so that parsing works better (and/or correctly).
+
+This seems especially important on 2.6 which due to
+a busted setuptools (and associated pkg_resources) seems
+to be matching against incorrect versions.
+
+Type: BF
+Jira: DEVOPS-453
+Change-Id: Ib859c7df955edef0f38c5673bd21a4767c781e4a
+```
+
+For more information, please visit: http://confluence.ustack.com/pages/viewpage.action?pageId=8753522
