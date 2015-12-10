@@ -1,4 +1,4 @@
 #!/bin/bash
 
 export NODE_PATH=$NODE_PATH':server:drivers:.'
-nodemon index
+pm2 restart index.js
