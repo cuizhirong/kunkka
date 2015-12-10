@@ -22,7 +22,6 @@ and then customize your own yml file
 
 4. Done
 
-
 ## Code Standard
 
 ### Commit message formatter
