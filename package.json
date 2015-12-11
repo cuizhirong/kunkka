@@ -15,10 +15,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "grunt build",
+    "build": "cd static && grunt build",
     "test": "jest",
     "eslint": "eslint *.js server/ static/**/ tests/__tests__/ --ext .js,.jsx",
-    "devjs": "webpack --config dev.webpack.config.js"
+    "devjs": "cd static && webpack --config dev.webpack.config.js"
   },
   "dependencies": {
     "async": "^1.5.0",

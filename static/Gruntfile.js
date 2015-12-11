@@ -7,7 +7,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
 
     // Metadata.
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: grunt.file.readJSON('../package.json'),
     banner: '/*!\n' +
       ' * Halo v<%= pkg.version %>\n' +
       ' * Powered by UNITEDSTACK Inc.\n' +
@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 
     // Task configuration.
     clean: {
-      dist: ['dist']
+      dist: ['static/dist']
     },
 
     less: {
@@ -25,10 +25,10 @@ module.exports = function(grunt) {
           sourceMap: true,
           outputSourceFiles: true,
           sourceMapURL: '<%= pkg.name %>.css.map',
-          sourceMapFilename: 'dist/css/<%= pkg.name %>.css.map'
+          sourceMapFilename: 'static/dist/css/<%= pkg.name %>.css.map'
         },
         files: {
-          'dist/css/<%= pkg.name %>.css': 'static/style/index.less'
+          'static/dist/css/<%= pkg.name %>.css': 'static/style/index.less'
         }
       }
     },
@@ -36,7 +36,7 @@ module.exports = function(grunt) {
     postcss: {
       options: {
         map: {
-          prev: 'dist/css',
+          prev: 'static/dist/css',
           inline: false
         },
         processors: [
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/css/halo.min.css': 'dist/css/halo.css'
+          'static/dist/css/halo.min.css': 'static/dist/css/halo.css'
         }
       }
     },
@@ -85,11 +85,13 @@ module.exports = function(grunt) {
 
   });
 
+  grunt.file.setBase('../');
 
   // These plugins provide necessary tasks.
   require('load-grunt-tasks')(grunt, {
     scope: 'devDependencies'
   });
+
   require('time-grunt')(grunt);
 
   // Load task-related files from the specified directory
