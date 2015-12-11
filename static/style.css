@@ -1,9 +1,0 @@
-/**
- * TODO: Remove me when the final style is ready.
- */
-body section {
-  display: flex;
-}
-body section #content {
-  flex: 1;
-}
