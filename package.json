@@ -16,6 +16,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cd static && grunt build",
+    "start": "./start.sh",
     "test": "jest",
     "eslint": "eslint *.js server/ static/**/ tests/__tests__/ --ext .js,.jsx",
     "devjs": "cd static && webpack --config dev.webpack.config.js"
@@ -43,7 +44,6 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.1.2",
-    "babel": "^6.0.12",
     "babel-core": "^6.0.12",
     "babel-eslint": "^4.1.6",
     "babel-jest": "^6.0.1",
@@ -51,6 +51,7 @@
     "babel-plugin-transform-runtime": "^6.3.13",
     "babel-preset-es2015": "^6.0.12",
     "babel-preset-react": "^6.0.12",
+    "babel-runtime": "^6.3.13",
     "cssnano": "^3.4.0",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^1.0.2",
@@ -69,8 +70,7 @@
     "postcss-class-prefix": "^0.3.0",
     "react-addons-test-utils": "^0.14.3",
     "time-grunt": "^1.2.2",
-    "webpack": "^1.12.6",
-    "webpack-dev-server": "^1.12.1"
+    "webpack": "^1.12.6"
   },
   "engines": {
     "node": ">= 4.1.0"

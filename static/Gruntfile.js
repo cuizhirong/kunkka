@@ -57,9 +57,6 @@ module.exports = function(grunt) {
     webpack: {
       options: webpackConfig,
       build: {
-        output: {
-          filename: '[hash].[name].min.js'
-        },
         plugins: [new webpack.optimize.UglifyJsPlugin()]
       }
     },
