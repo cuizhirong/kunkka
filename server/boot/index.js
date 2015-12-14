@@ -43,6 +43,7 @@ function setup() {
     app.use(morgan('combined'));
   }
 
+
   // var api = require('api');
   // app.use(api());
 
@@ -51,6 +52,9 @@ function setup() {
 
   var views = require('views');
   views(app);
+
+  var mq = require('mq');
+  mq(app);
 
   return app;
 }
