@@ -14,3 +14,6 @@ log:
     debug:    true | false
     format:    combined | common | dev | short | tiny
     printAccessLog: true | false
+mq:
+    enabled:    true | false
+    remote:     amqp://stackrabbit:ustack@121.201.53.215:5672

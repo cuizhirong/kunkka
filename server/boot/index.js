@@ -38,7 +38,9 @@ function setup() {
   // setup access logger
   var logConfig = config('log');
   if (logConfig.printAccessLog) {
-    app.use(morgan(logConfig.format, {'stream': Logger.accessLogger}));
+    app.use(morgan(logConfig.format, {
+      'stream': Logger.accessLogger
+    }));
   }
 
 
@@ -51,8 +53,11 @@ function setup() {
   var views = require('views');
   views(app);
 
-  var mq = require('mq');
-  mq(app);
+  var mqConfig = config('mq');
+  if (mqConfig && mqConfig.enabled) {
+    var mq = require('mq');
+    mq(app);
+  }
 
   //error handler
   if (logConfig.debug) {
