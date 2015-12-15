@@ -3,11 +3,10 @@
  */
 var config = require('../config'),
   express = require('express'),
-  morgan = require('morgan');
-
-
-var bodyParser = require('body-parser');
-
+  morgan = require('morgan'),
+  bodyParser = require('body-parser'),
+  Logger = require('../middlewares/logger'),
+  cookieParser = require('cookie-parser');
 
 /**
  * Returns the server HTTP request handler "app".
@@ -16,7 +15,7 @@ var bodyParser = require('body-parser');
  */
 function setup() {
   var app = express();
-  app.use(require('cookie-parser')('keyboard cat'));
+  app.use(cookieParser(config('sessionEngine').secret));
   app.use(bodyParser.urlencoded({
     extended: true
   }));
@@ -33,14 +32,10 @@ function setup() {
   var sessionHandler = require('../middlewares/sessionHandler');
   sessionHandler(app);
 
-  if (config('env') === 'development') {
-    // setup logger
-    app.use(morgan('dev'));
-    // Start up the webpasck dev server.
-    //var test = require('bundler');
-  } else {
-    // setup logger
-    app.use(morgan('combined'));
+  // setup access logger
+  var logConfig = config('log');
+  if (logConfig.printAccessLog) {
+    app.use(morgan(logConfig.format, {'stream': Logger.accessLogger}));
   }
 
 
@@ -56,6 +51,15 @@ function setup() {
   var mq = require('mq');
   mq(app);
 
+  //error handler
+  if (logConfig.debug) {
+    var devErrorHandler = require('errorhandler');
+    app.use(devErrorHandler());
+  } else {
+    app.use(Logger.errorLogger);
+    var errorHandler = require('../middlewares/errorHandler');
+    app.use(errorHandler);
+  }
   return app;
 }
 

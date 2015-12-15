@@ -7,6 +7,7 @@ Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do int
 1. Install all the dependencies
 ```
 npm install
+sudo npm install pm2 -g
 ```
 
 2. Generate `config.yml` file

@@ -1,11 +1,16 @@
 ---
 remote:
     keyston:    http://121.201.53.215:5000
-    nova:       http://121.201.53.215:8774
-sessionEngine: 
-    type:       MemcachedCache | Redis | Session
-    address:    
-        - 121.201.53.215:11211
-session: 
-  secret:    'keyboard cat'
-  cookie_name:  'ustack'
+    nova:    http://121.201.53.215:8774
+sessionEngine:
+    type:    MemcachedCache | Redis | Session
+    address:    121.201.53.215
+    port:    6379
+    secret:    'keyboard cat'
+    cookie_name:    'ustack'
+log:
+    accessLogPath:    /var/log/halo/access.log
+    errorLogPath:    /var/log/halo/error.log
+    debug:    true | false
+    format:    combined | common | dev | short | tiny
+    printAccessLog: true | false

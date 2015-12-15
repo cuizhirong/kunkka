@@ -1,14 +1,9 @@
-/**
- * Internal dependencies
- */
-var version = require('package.json').version;
-/*,
-   config = require('config'),
-   oauth = require('./oauth');
-   */
 
 module.exports = function(app) {
   var amqp = require('amqplib');
+  function logMessage(msg) {
+    console.log(" [x] '%s'", msg.content.toString());
+  }
   amqp.connect('amqp://stackrabbit:ustack@121.201.53.215:5672').then(function(conn) {
     process.once('SIGINT', function() {
       conn.close();
@@ -35,10 +30,6 @@ module.exports = function(app) {
       return ok.then(function() {
         console.log(' [*] Waiting for logs. To exit press CTRL+C');
       });
-
-      function logMessage(msg) {
-        console.log(" [x] '%s'", msg.content.toString());
-      }
     });
   }).then(null, console.warn);
 

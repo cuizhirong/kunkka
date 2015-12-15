@@ -5,7 +5,7 @@ module.exports = function(app) {
   var sessionEngine = config('sessionEngine');
   if (sessionEngine.type === 'Session') {
     app.use(session({
-      secret: config('session').secret,
+      secret: sessionEngine.secret,
       resave: false,
       saveUninitialized: true
     }));
@@ -16,9 +16,12 @@ module.exports = function(app) {
       host: sessionEngine.host,
       port: sessionEngine.port
     });
+    RedisClient.on('error', function (err) {
+      console.log('Error ' + err);
+    });
     app.set('CacheClient', RedisClient);
     app.use(session({
-      secret: 'keyboard cat',
+      secret: sessionEngine.secret,
       resave: false,
       saveUninitialized: true,
       store: new RedisStore({
