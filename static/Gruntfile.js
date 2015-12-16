@@ -68,7 +68,7 @@ module.exports = function(grunt) {
         banner: '<%= banner %>'
       },
       files: {
-        src: ['dist/css/*.css', 'dist/js/*.js']
+        src: ['dist/*']
       }
     },
 
@@ -96,12 +96,12 @@ module.exports = function(grunt) {
   // grunt.task.loadTasks('./grunt');
 
   // Build CSS
-  grunt.registerTask('css', ['less', 'postcss']);
+  // grunt.registerTask('css', ['less', 'postcss']);
 
   // Build JS
   grunt.registerTask('js', ['webpack:build']);
 
   // Default task.
-  grunt.registerTask('build', ['clean', 'css', 'js', 'usebanner', 'copy']);
+  grunt.registerTask('build', ['clean', 'js', 'usebanner', 'copy']);
 
 };

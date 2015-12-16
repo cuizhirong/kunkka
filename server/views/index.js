@@ -35,7 +35,10 @@ module.exports = function(app) {
         cssFile: app.get('frontEndFiles').cssFile
       });
     } else {
-      res.render('login');
+      res.render('login', {
+        jsFile: app.get('frontEndFiles').jsFile,
+        cssFile: app.get('frontEndFiles').cssFile
+      });
     }
   }
 

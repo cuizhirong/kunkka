@@ -10,7 +10,7 @@ module.exports = {
   },
 
   output: {
-    path: 'static/dist/js',
+    path: 'static/dist',
     filename: '[hash:6].[name].min.js',
     publicPath: path.resolve(__dirname, 'static'),
     chunkFilename: '[hash:6].[id].bundle.js'

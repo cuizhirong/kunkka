@@ -6,6 +6,6 @@ config.devtool = 'source-map';
 config.debug = true;
 
 //
-config.output.path = 'dist/js';
+config.output.path = 'dist';
 
 module.exports = config;

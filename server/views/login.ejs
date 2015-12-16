@@ -1,29 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charSet="utf-8">
-  <meta httpEquiv="X-UA-Compatible" content="IE=Edge">
-  <title>Login</title>
-  <link rel="shortcut icon" href="https://dn-ustack.qbox.me/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://dn-ustack.qbox.me/login.css">
-</head>
-<body>
-  <div class="wrapper">
-   <div class="before"></div>
-   <div class="con">
-    <a href="https://www.ustack.com">
-     <div style="background-image: url(https://dn-ustack.qbox.me/login-logo.png); background-size: contain;" class="logo"></div>
- </a>
- <div id="loginForm">
-     <form method="POST", action="/auth/login">
-         <input name="username" type="text"/>
-         <input name="password" type="password"/>
-         <input class="btn submit" type="submit" value="管理员登录" />
-     </form>
- </div>
- <div class="signup">没有账号？<a href="https://www.ustack.com/accounts/register/" target="_blank">注册</a></div>
-</div>
-<div class="after"></div>
-</div>
-</body>
-</html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>有云 - 登录</title>
+    <link href="/static/dist/uskin/uskin.min.css" rel="stylesheet">
+    <link href="/static/dist/aa6f72.login.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="img-wrapper">
+      <img src="/static/assets/logo.png" />
+      <div class="title">有云账号登录</div>
+    </div>
+    <div class="input-wrapper">
+      <input type="text" placeholder="请输入账号" />
+      <input type="password" placeholder="请输入密码" />
+      <input type="submit" value="立即登录" />
+    </div>
+
+    <script src="/static/dist/<%= jsFile %>"></script>
+  </body>
+</html> 
