@@ -62,8 +62,7 @@
     "react-addons-test-utils": "^0.14.2",
     "stylelint": "^1.0.1",
     "time-grunt": "^1.2.1",
-    "webpack": "^1.12.4",
-    "webpack-dev-server": "^1.12.1"
+    "webpack": "^1.12.4"
   },
   "dependencies": {
     "babel": "^6.1.18",

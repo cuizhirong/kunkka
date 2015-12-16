@@ -1,13 +1,12 @@
 var path = require('path');
-
-console.log(__dirname)
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   context: __dirname,
 
   entry: {
-    login: './login/app.js',
-    main: './dashboard/app.js'
+    login: './dashboard/login/index.js',
+    main: './dashboard/index.js'
   },
 
   output: {
@@ -25,10 +24,23 @@ module.exports = {
       query: {
         cacheDirectory: true
       }
+    }, {
+      test: /\.json$/,
+      loader: 'json-loader'
+    }, {
+      test: /\.less$/,
+      loader: ExtractTextPlugin.extract(
+        'css?sourceMap&-minimize!' + 'autoprefixer-loader!' + 'less?sourceMap'
+      )
+    }, {
+      test: /\.css$/,
+      loader: ExtractTextPlugin.extract(
+        'css?sourceMap&-minimize!' + 'autoprefixer-loader'
+      )
     }]
   },
 
-  plugins: [],
+  plugins: [new ExtractTextPlugin('[hash:6].[name].css')],
 
   resolve: {
     extensions: ['', '.jsx', '.js'],

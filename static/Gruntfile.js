@@ -1,5 +1,6 @@
 var webpackConfig = require('./webpack.config.js');
 var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = function(grunt) {
 
@@ -28,7 +29,7 @@ module.exports = function(grunt) {
           sourceMapFilename: 'static/dist/css/<%= pkg.name %>.css.map'
         },
         files: {
-          'static/dist/css/<%= pkg.name %>.css': 'static/style/index.less'
+          'static/dist/css/<%= pkg.name %>.css': 'static/style/login/index.less'
         }
       }
     },
@@ -57,7 +58,7 @@ module.exports = function(grunt) {
     webpack: {
       options: webpackConfig,
       build: {
-        plugins: [new webpack.optimize.UglifyJsPlugin()]
+        plugins: webpackConfig.plugins.concat([new webpack.optimize.UglifyJsPlugin()])
       }
     },
 
@@ -72,11 +73,11 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      fonts: {
+      uskin: {
         expand: true,
-        cwd: './css',
-        src: 'fonts/*',
-        dest: 'dist/css'
+        cwd: 'static/common/uskin/dist/css',
+        src: '**',
+        dest: 'static/dist/uskin'
       }
     }
 
@@ -101,6 +102,6 @@ module.exports = function(grunt) {
   grunt.registerTask('js', ['webpack:build']);
 
   // Default task.
-  grunt.registerTask('build', ['clean', 'css', 'js', 'usebanner']);
+  grunt.registerTask('build', ['clean', 'css', 'js', 'usebanner', 'copy']);
 
 };

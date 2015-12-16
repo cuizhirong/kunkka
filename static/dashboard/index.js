@@ -1,4 +1,6 @@
+var ReactDOM = require('react-dom');
 var React = require('react');
+
 
 var Dashboard = React.createClass({
   getInitialState: function() {
@@ -23,4 +25,7 @@ var Dashboard = React.createClass({
   }
 });
 
-module.exports = Dashboard;
+ReactDOM.render(
+  React.createElement(Dashboard),
+  document.getElementById('content')
+);
