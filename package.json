@@ -19,7 +19,7 @@
     "start": "./scripts/start.sh",
     "test": "./scripts/test.sh",
     "eslint": "eslint *.js server/ static/**/ tests/__tests__/ --ext .js,.jsx",
-    "devjs": "cd static && webpack --config dev.webpack.config.js"
+    "dev": "cd static && rm dist/*.js dist/*.css && webpack --config dev.webpack.config.js"
   },
   "dependencies": {
     "amqplib": "^0.4.0",
