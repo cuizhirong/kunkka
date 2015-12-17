@@ -1,43 +1,45 @@
 /**
  * External dependencies
  */
-var express = require('express');
-var path = require('path');
 var glob = require('glob');
-/**
- * Internal dependencies
- */
 
 
 module.exports = function(app) {
-  app.set('views', __dirname);
-
-  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'static')));
+  app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
   if (!app.get('frontEndFiles')) {
     var files = glob.sync('*', {
       cwd: 'static/dist/'
     });
     var frontEndFiles = {};
     files.forEach(function (file) {
-      if (file.indexOf('.js') > -1) {
-        frontEndFiles.jsFile = file;
-      } else {
-        frontEndFiles.cssFile = file;
+      if (file.match(/main.min.js$/)) {
+        frontEndFiles.mainJsFile = file;
+      } else if (file.match(/login.min.js$/)) {
+        frontEndFiles.loginJsFile = file;
+      } else if (file.match(/login.min.css$/)) {
+        frontEndFiles.loginCssFile = file;
+      } else if (file.match(/uskin.min.css$/)) {
+        frontEndFiles.uskinFile = file;
+      } else if (file.match(/main.min.css$/)) {
+        frontEndFiles.mainCssFile = file;
       }
     });
     app.set('frontEndFiles', frontEndFiles);
   }
 
   function renderStaticTemplate(req, res, next) {
+    var staticFiles = app.get('frontEndFiles');
     if (req.session && req.session.userId) {
       res.render('index', {
-        jsFile: app.get('frontEndFiles').jsFile,
-        cssFile: app.get('frontEndFiles').cssFile
+        mainJsFile: staticFiles.mainJsFile,
+        mainCssFile: staticFiles.mainCssFile,
+        uskinFile: staticFiles.uskinFile
       });
     } else {
       res.render('login', {
-        jsFile: app.get('frontEndFiles').jsFile,
-        cssFile: app.get('frontEndFiles').cssFile
+        loginJsFile: staticFiles.loginJsFile,
+        loginCssFile: staticFiles.loginCssFile,
+        uskinFile: staticFiles.uskinFile
       });
     }
   }

@@ -16,8 +16,8 @@
   "main": "index.js",
   "scripts": {
     "build": "cd static && grunt build",
-    "start": "./start.sh",
-    "test": "jest",
+    "start": "./scripts/start.sh",
+    "test": "./scripts/test.sh",
     "eslint": "eslint *.js server/ static/**/ tests/__tests__/ --ext .js,.jsx",
     "devjs": "cd static && webpack --config dev.webpack.config.js"
   },
@@ -71,6 +71,7 @@
     "grunt-contrib-less": "^1.1.0",
     "grunt-postcss": "^0.7.1",
     "grunt-webpack": "^1.0.11",
+    "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
     "jest-cli": "^0.8.1",
     "less": "^2.5.3",
@@ -79,6 +80,7 @@
     "postcss": "^5.0.12",
     "postcss-class-prefix": "^0.3.0",
     "react-addons-test-utils": "^0.14.3",
+    "supertest": "^1.1.0",
     "time-grunt": "^1.2.2",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.14.0"
@@ -92,7 +94,7 @@
       "js",
       "jsx"
     ],
-    "testDirectoryName": "tests/__tests__",
+    "testDirectoryName": "tests/static_tests",
     "unmockedModulePathPatterns": [
       "<rootDir>/node_modules/"
     ],

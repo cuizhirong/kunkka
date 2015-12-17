@@ -6,7 +6,9 @@ var config = require('../config'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
   Logger = require('../middlewares/logger'),
-  cookieParser = require('cookie-parser');
+  cookieParser = require('cookie-parser'),
+  path = require('path');
+
 
 /**
  * Returns the server HTTP request handler "app".
@@ -15,6 +17,7 @@ var config = require('../config'),
  */
 function setup() {
   var app = express();
+  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'static')));
   app.use(cookieParser(config('sessionEngine').secret));
   app.use(bodyParser.urlencoded({
     extended: true

@@ -11,3 +11,5 @@ console.log('%s booted in %dms - port: %s', pkg.name, (Date.now()) - start, port
 
 var server = http.createServer(app);
 server.listen(port);
+
+module.exports = server;

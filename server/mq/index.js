@@ -32,6 +32,5 @@ module.exports = function(app) {
   //     });
   //   });
   // }).then(null, console.warn);
-
   return app;
 };
