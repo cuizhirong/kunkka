@@ -43,3 +43,5 @@ dev-start.sh
 # Redis's dataset snapshot on disk
 dump.rdb
 
+#benchmark
+benchmark/*
