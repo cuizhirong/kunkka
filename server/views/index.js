@@ -1,7 +1,15 @@
 /**
  * External dependencies
  */
+
+require('babel-core/register');
+
 var glob = require('glob');
+var React = require('react');
+var ReactDOMServer = require('react-dom/server');
+var loginModel = require('../../static/dashboard/login/model.jsx');
+
+var model = React.createFactory(loginModel);
 
 
 module.exports = function(app) {
@@ -11,19 +19,21 @@ module.exports = function(app) {
       cwd: 'static/dist/'
     });
     var frontEndFiles = {};
-    files.forEach(function (file) {
+    files.forEach(function(file) {
       if (file.match(/main.min.js$/)) {
         frontEndFiles.mainJsFile = file;
       } else if (file.match(/login.min.js$/)) {
         frontEndFiles.loginJsFile = file;
       } else if (file.match(/login.min.css$/)) {
         frontEndFiles.loginCssFile = file;
-      } else if (file.match(/uskin.min.css$/)) {
-        frontEndFiles.uskinFile = file;
       } else if (file.match(/main.min.css$/)) {
         frontEndFiles.mainCssFile = file;
       }
     });
+    var uskinFile = glob.sync('*.uskin.min.css', {
+      cwd: 'static/dist/uskin'
+    });
+    frontEndFiles.uskinFile = uskinFile[0];
     app.set('frontEndFiles', frontEndFiles);
   }
 
@@ -39,7 +49,8 @@ module.exports = function(app) {
       res.render('login', {
         loginJsFile: staticFiles.loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
-        uskinFile: staticFiles.uskinFile
+        uskinFile: staticFiles.uskinFile,
+        ModelTmpl: ReactDOMServer.renderToString(model())
       });
     }
   }

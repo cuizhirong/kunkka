@@ -40,7 +40,7 @@ module.exports = {
     }]
   },
 
-  plugins: [new ExtractTextPlugin('[hash:6].[name].css')],
+  plugins: [new ExtractTextPlugin('[hash:6].[name].min.css')],
 
   resolve: {
     extensions: ['', '.jsx', '.js'],
