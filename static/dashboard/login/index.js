@@ -1,24 +1,17 @@
 require('../../style/login/index.less');
 
-// var ReactDOM = require('react-dom');
-// var React = require('react');
+var ReactDOM = require('react-dom');
+var React = require('react');
+var Login = require('./model.jsx');
 
-// ReactDOM.render(
-//   React.createElement(require('./login')),
-//   document.getElementById('loginForm')
-// );
+var loginModel = React.createFactory(Login);
 
-
-var Request = require('../../mixins/request');
-
-Request.post({
-  url: '/auth/login',
-  data: {
-    username: 'yaoli',
-    password: 'haoren'
-  }
-}).then(function(data) {
-  console.debug(data);
-}, function(err) {
-  document.querySelector('.input-error').classList.remove('hide');
-});
+ReactDOM.render(
+  loginModel({
+    accountPlaceholder: '请输入账号',
+    pwdPlaceholder: '请输入密码',
+    errorTip: '用户名不正确',
+    submit: '立即登录'
+  }),
+  document.getElementsByClassName('input-wrapper')[0]
+);

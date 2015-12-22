@@ -1,20 +1,45 @@
 var React = require('react');
 
-var Modal = React.createClass({
+var request = require('../../mixins/request');
+
+var Model = React.createClass({
+
+  doSubmit: function(e) {
+    e.preventDefault();
+
+    var refs = this.refs;
+
+    request.post({
+      url: '/auth/login',
+      data: {
+        username: refs.username.value,
+        password: refs.pwd.value
+      }
+    }).then(function(data) {
+      document.querySelector('.input-error').classList.toggle('hide');
+      window.location = '/index';
+    }, function(err) {
+      document.querySelector('.input-error').classList.toggle('hide');
+    });
+
+  },
+
   render: function() {
+    var props = this.props;
+
     return (
-      <div>
-      <input type="text" placeholder="请输入账号" autoFocus="autofocus" autoComplete="off" />
-      <input type="password" placeholder="请输入密码" autoComplete="off" />
-      <div className="tip-wrapper">
-        <div className="input-error hide">
-          <i className="glyphicon icon-status-warning"></i><span>用户名不正确</span>
+      <form method="POST" onSubmit={this.doSubmit}>
+        <input type="text" ref="username" placeholder={props.accountPlaceholder} autoFocus="autofocus" autoComplete="off" />
+        <input type="password" ref="pwd" placeholder={props.pwdPlaceholder} autoComplete="off" />
+        <div className="tip-wrapper">
+          <div className="input-error hide">
+            <i className="glyphicon icon-status-warning"></i><span>{props.errorTip}</span>
+          </div>
         </div>
-      </div>
-      <input type="submit" value="立即登录" />
-      </div>
+        <input type="submit" value={props.submit} />
+      </form>
     );
   }
 });
 
-module.exports = Modal;
+module.exports = Model;

@@ -50,7 +50,12 @@ module.exports = function(app) {
         loginJsFile: staticFiles.loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: staticFiles.uskinFile,
-        ModelTmpl: ReactDOMServer.renderToString(model())
+        ModelTmpl: ReactDOMServer.renderToString(model({
+          accountPlaceholder: '请输入账号',
+          pwdPlaceholder: '请输入密码',
+          errorTip: '用户名不正确',
+          submit: '立即登录'
+        }))
       });
     }
   }

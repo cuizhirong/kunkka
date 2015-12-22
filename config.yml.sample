@@ -1,19 +1,19 @@
 ---
 remote:
-    keyston:    http://121.201.53.215:5000
-    nova:    http://121.201.53.215:8774
+    keystone:        http://121.201.53.215:5000
+    nova:            http://121.201.53.215:8774
 sessionEngine:
-    type:    MemcachedCache | Redis | Session
-    address:    121.201.53.215
-    port:    6379
-    secret:    'keyboard cat'
-    cookie_name:    'ustack'
+    type:            MemcachedCache | Redis | Session
+    address:         121.201.53.215
+    port:            6379
+    secret:          'keyboard cat'
+    cookie_name:     'ustack'
 log:
-    accessLogPath:    /var/log/halo/access.log
+    accessLogPath:   /var/log/halo/access.log
     errorLogPath:    /var/log/halo/error.log
-    debug:    true | false
-    format:    combined | common | dev | short | tiny
-    printAccessLog: true | false
+    debug:           true | false
+    format:          combined | common | dev | short | tiny
+    printAccessLog:  true | false
 mq:
-    enabled:    true | false
-    remote:     amqp://stackrabbit:ustack@121.201.53.215:5672
+    enabled:         true | false
+    remote:          amqp://stackrabbit:ustack@121.201.53.215:5672

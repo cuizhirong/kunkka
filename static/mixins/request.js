@@ -1,6 +1,6 @@
 var Promise = require('rsvp').Promise;
 
-var Request = {
+var request = {
 
   get(obj) {
     return this.ajax({
@@ -60,7 +60,7 @@ var Request = {
       xhr.open(opt.method, opt.url);
       xhr.onreadystatechange = handler;
       xhr.responseType = opt.responseType || 'JSON';
-      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify(opt.data));
     });
 
@@ -75,4 +75,4 @@ var Request = {
 
 };
 
-module.exports = Request;
+module.exports = request;
