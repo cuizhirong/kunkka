@@ -4,10 +4,17 @@ var request = require('../../mixins/request');
 
 var Model = React.createClass({
 
+  getInitialState: function() {
+    return {
+      loginError: false
+    };
+  },
+
   doSubmit: function(e) {
     e.preventDefault();
 
-    var refs = this.refs;
+    var refs = this.refs,
+      that = this;
 
     request.post({
       url: '/auth/login',
@@ -16,23 +23,25 @@ var Model = React.createClass({
         password: refs.pwd.value
       }
     }).then(function(data) {
-      document.querySelector('.input-error').classList.toggle('hide');
       window.location = '/index';
     }, function(err) {
-      document.querySelector('.input-error').classList.toggle('hide');
+      that.setState({
+        loginError: true
+      });
     });
 
   },
 
   render: function() {
-    var props = this.props;
+    var props = this.props,
+      state = this.state;
 
     return (
       <form method="POST" onSubmit={this.doSubmit}>
         <input type="text" ref="username" placeholder={props.accountPlaceholder} autoFocus="autofocus" autoComplete="off" />
         <input type="password" ref="pwd" placeholder={props.pwdPlaceholder} autoComplete="off" />
         <div className="tip-wrapper">
-          <div className="input-error hide">
+          <div className={'input-error' + (state.loginError ? '' : ' hide')}>
             <i className="glyphicon icon-status-warning"></i><span>{props.errorTip}</span>
           </div>
         </div>

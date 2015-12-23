@@ -8,10 +8,10 @@ var loginModel = React.createFactory(Login);
 
 ReactDOM.render(
   loginModel({
-    accountPlaceholder: '请输入账号',
-    pwdPlaceholder: '请输入密码',
-    errorTip: '用户名不正确',
-    submit: '立即登录'
+    accountPlaceholder: __('accountPlaceholder'),
+    pwdPlaceholder: __('pwdPlaceholder'),
+    errorTip: __('errorTip'),
+    submit: __('submit')
   }),
   document.getElementsByClassName('input-wrapper')[0]
 );

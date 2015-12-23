@@ -1,0 +1,14 @@
+{
+  "en": {
+    "accountPlaceholder": "Please enter username or email",
+    "errorTip": "The information you entered is not correct",
+    "pwdPlaceholder": "Please enter password",
+    "submit": "Log In"
+  },
+  "zh-CN": {
+    "accountPlaceholder": "请输入账号",
+    "errorTip": "用户名不正确",
+    "pwdPlaceholder": "请输入密码",
+    "submit": "立即登录"
+  }
+}

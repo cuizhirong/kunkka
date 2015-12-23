@@ -7,6 +7,9 @@
     "jest": true,
     "jasmine": true
   },
+  "globals": {
+    "__": false
+  },
   "plugins": [
     "react",
     "babel"
