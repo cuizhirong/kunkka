@@ -34,6 +34,7 @@
     "express": "~4.13.3",
     "express-session": "^1.12.1",
     "glob": "^6.0.1",
+    "i18n-2": "^0.6.0",
     "jquery": "^2.1.0",
     "js-yaml": "~3.4.3",
     "memcached": "^2.2.0",

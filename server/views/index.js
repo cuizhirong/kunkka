@@ -11,7 +11,6 @@ var loginModel = require('../../static/dashboard/login/model.jsx');
 
 var model = React.createFactory(loginModel);
 
-
 module.exports = function(app) {
   app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
   if (!app.get('frontEndFiles')) {
@@ -38,6 +37,7 @@ module.exports = function(app) {
   }
 
   function renderStaticTemplate(req, res, next) {
+    var locale = req.i18n.getLocale();
     var staticFiles = app.get('frontEndFiles');
     if (req.session && req.session.userId) {
       res.render('index', {
@@ -47,18 +47,23 @@ module.exports = function(app) {
       });
     } else {
       res.render('login', {
+        locale: locale,
+        unitedstack: req.i18n.__('views.login.unitedstack'),
+        login: req.i18n.__('views.login.login'),
+        signup: req.i18n.__('views.login.signup'),
+        forgotPass: req.i18n.__('views.login.forgotPass'),
         loginJsFile: staticFiles.loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: staticFiles.uskinFile,
         ModelTmpl: ReactDOMServer.renderToString(model({
-          accountPlaceholder: '请输入账号',
-          pwdPlaceholder: '请输入密码',
-          errorTip: '用户名不正确',
-          submit: '立即登录'
+          accountPlaceholder: req.i18n.__('shared.accountPlaceholder'),
+          pwdPlaceholder: req.i18n.__('shared.pwdPlaceholder'),
+          errorTip: req.i18n.__('shared.errorTip'),
+          submit: req.i18n.__('shared.submit')
         }))
       });
     }
   }
 
-  app.use('/', renderStaticTemplate);
+  app.get('/', renderStaticTemplate);
 };

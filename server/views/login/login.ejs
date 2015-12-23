@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>有云 - 登录</title>
+    <title><%= unitedstack %> - <%= login %></title>
     <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
     <link href="/static/dist/<%= loginCssFile %>" rel="stylesheet">
+    <script>
+      window.HALO={config:"<%= locale %>"};
+    </script>
   </head>
   <body>
     <div class="wrapper">
@@ -16,17 +19,23 @@
         </div>
         <div class="input-wrapper"><%- ModelTmpl %></div>
         <div class="link">
-          <a href="#">注册账号</a>
+          <a href="#"><%= signup %></a>
           <span>|</span>
-          <a href="#">忘记密码</a>
+          <a href="#"><%= forgotPass %></a>
         </div>
       </div>
       <div class="after">
         <div class="lang">
+        <% if (locale == 'zh-cn') { %>
           <span>中文</span>
           <span>|</span>
-          <a href="#">English</a>
+          <a href="/?lang=en">English</a>
+        <% } else {%>
+          <a href="/?lang=zh-CN">中文</a>
+          <span>|</span>
+          <span>English</span>
         </div>
+        <% } %>
         <p>©2015 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号</p>
       </div>
     </div>

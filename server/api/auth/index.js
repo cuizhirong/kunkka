@@ -62,9 +62,11 @@ function authentication (req, res, next) {
         signed: true,
         httpOnly: true
       };
+      var locale = req.i18n.getLocale();
       var value = {
         'projectId': projectId,
-        'userId': userId
+        'userId': userId,
+        'locale': locale
       };
       res.cookie(config('sessionEngine').cookie_name, value, opt);
       req.session.cookie.expires = expireDate;
