@@ -1,4 +1,4 @@
-require('../../style/login/index.less');
+require('./style/index.less');
 
 var ReactDOM = require('react-dom');
 var React = require('react');

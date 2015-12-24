@@ -11,7 +11,7 @@ module.exports = Object.keys(languages).map(function(language) {
     context: __dirname,
 
     entry: {
-      login: './dashboard/login/index.jsx',
+      login: './login/index.jsx',
       main: './dashboard/index.js'
     },
 

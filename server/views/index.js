@@ -7,7 +7,7 @@ require('babel-core/register');
 var glob = require('glob');
 var React = require('react');
 var ReactDOMServer = require('react-dom/server');
-var loginModel = require('../../static/dashboard/login/model.jsx');
+var loginModel = require('../../static/login/model.jsx');
 
 var model = React.createFactory(loginModel);
 

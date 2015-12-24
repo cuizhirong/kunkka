@@ -8,7 +8,8 @@
     "jasmine": true
   },
   "globals": {
-    "__": false
+    "__": false,
+    "ActiveXObject": false
   },
   "plugins": [
     "react",

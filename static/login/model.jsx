@@ -1,6 +1,6 @@
 var React = require('react');
 
-var request = require('../../mixins/request');
+var request = require('../mixins/request');
 
 var Model = React.createClass({
 
@@ -18,6 +18,8 @@ var Model = React.createClass({
 
     request.post({
       url: '/auth/login',
+      dataType: 'json',
+      contentType: 'application/json',
       data: {
         username: refs.username.value,
         password: refs.pwd.value
