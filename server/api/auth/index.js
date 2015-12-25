@@ -75,7 +75,7 @@ function authentication (req, res, next) {
         userId : userId,
         token : token
       };
-      res.send(payload);
+      res.json({sucess: 'login sucess'});
     }
   });
 }

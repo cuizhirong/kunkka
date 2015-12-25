@@ -16,10 +16,8 @@ module.exports = function(app) {
 
   var auth = require('api/auth');
   auth(app);
-
-  // if (config.isEnabled('oauth')) {
-  //     oauth(app);
-  // }
+  var instance = require('api/instance');
+  instance(app);
 
   return app;
 };

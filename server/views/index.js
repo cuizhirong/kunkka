@@ -51,7 +51,7 @@ module.exports = function(app) {
 
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
-    if (req.session && req.session.userId) {
+    if (req.session && req.session.user) {
       res.render('index', {
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
