@@ -5,7 +5,7 @@ module.exports = function (app) {
     locales: ['zh-cn', 'en'],
     cookieName: 'locale',
     directory: path.resolve(__dirname, '../../i18n/server'),
-    devMode:false
+    devMode: false
   });
 
   //FIXME: find out a better way to do this

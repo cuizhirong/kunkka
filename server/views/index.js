@@ -13,37 +13,49 @@ var model = React.createFactory(loginModel);
 
 module.exports = function(app) {
   app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
-  if (!app.get('frontEndFiles')) {
-    var files = glob.sync('*', {
-      cwd: 'static/dist/'
-    });
-    var frontEndFiles = {};
-    files.forEach(function(file) {
-      if (file.match(/main.min.js$/)) {
-        frontEndFiles.mainJsFile = file;
-      } else if (file.match(/login.min.js$/)) {
-        frontEndFiles.loginJsFile = file;
-      } else if (file.match(/login.min.css$/)) {
-        frontEndFiles.loginCssFile = file;
-      } else if (file.match(/main.min.css$/)) {
-        frontEndFiles.mainCssFile = file;
-      }
-    });
-    var uskinFile = glob.sync('*.uskin.min.css', {
-      cwd: 'static/dist/uskin'
-    });
-    frontEndFiles.uskinFile = uskinFile[0];
-    app.set('frontEndFiles', frontEndFiles);
+
+  function upperCaseLocale(locale) {
+    if (locale.indexOf('-') > -1) {
+      var parts = locale.split('-');
+      return parts[0] + '-' + parts[1].toUpperCase();
+    } else {
+      return locale;
+    }
   }
 
+  var files = glob.sync('*', {
+    cwd: 'static/dist/'
+  });
+  var uskinFile = glob.sync('*.uskin.min.css', {
+    cwd: 'static/dist/uskin'
+  });
+  var locales = JSON.parse(JSON.stringify(global.locales.availableLocales));
+  var staticFiles = {};
+  locales = locales.map(upperCaseLocale);
+  locales.forEach(function(locale) {
+    staticFiles[locale] = {};
+    files.forEach(function(file) {
+      if (file.indexOf(locale) > -1 && file.match(/main.min.js$/)) {
+        staticFiles[locale].mainJsFile = file;
+      } else if (file.indexOf(locale) > -1 && file.match(/login.min.js$/)) {
+        staticFiles[locale].loginJsFile = file;
+      }
+    });
+  });
+  staticFiles.loginCssFile = files.find(function(el) {
+    return el.match(/login.min.css$/) !== null;
+  });
+  staticFiles.mainCssFile = files.find(function(el) {
+    return el.match(/main.min.css$/) !== null;
+  });
+
   function renderStaticTemplate(req, res, next) {
-    var locale = req.i18n.getLocale();
-    var staticFiles = app.get('frontEndFiles');
+    var locale = upperCaseLocale(req.i18n.getLocale());
     if (req.session && req.session.userId) {
       res.render('index', {
-        mainJsFile: staticFiles.mainJsFile,
+        mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
-        uskinFile: staticFiles.uskinFile
+        uskinFile: uskinFile[0]
       });
     } else {
       res.render('login', {
@@ -52,9 +64,9 @@ module.exports = function(app) {
         login: req.i18n.__('views.login.login'),
         signup: req.i18n.__('views.login.signup'),
         forgotPass: req.i18n.__('views.login.forgotPass'),
-        loginJsFile: staticFiles.loginJsFile,
+        loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
-        uskinFile: staticFiles.uskinFile,
+        uskinFile: uskinFile[0],
         ModelTmpl: ReactDOMServer.renderToString(model({
           accountPlaceholder: req.i18n.__('shared.accountPlaceholder'),
           pwdPlaceholder: req.i18n.__('shared.pwdPlaceholder'),

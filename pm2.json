@@ -1,0 +1,5 @@
+{
+  "watch": ["drivers", "server"],
+  "ignore_watch": ["i18n/server", "i18n/client"],
+  "script": "index.js"
+}

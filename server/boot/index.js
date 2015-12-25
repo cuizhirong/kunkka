@@ -45,8 +45,6 @@ function setup() {
 
   var i18n = require('../middlewares/i18n');
   i18n(app);
-  // var api = require('api');
-  // app.use(api());
 
   var api = require('api');
   api(app);
