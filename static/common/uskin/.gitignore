@@ -1,7 +1,0 @@
-.DS_Store
-node_modules
-css/**/*.css
-*.log
-coverage
-dist
-!docs/react_demos/dist

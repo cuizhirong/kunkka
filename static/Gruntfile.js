@@ -74,7 +74,7 @@ module.exports = function(grunt) {
     copy: {
       uskin: {
         expand: true,
-        cwd: 'static/common/uskin/dist/css',
+        cwd: 'static/uskin/dist/css',
         src: '**',
         dest: 'static/dist/uskin'
       }

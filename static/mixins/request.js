@@ -98,6 +98,7 @@ module.exports = (function(m) {
       var ret = null;
       if (dataType === 'script') {
         //eval(data);
+        ret = data;
       } else if (dataType === 'json') {
         ret = JSON.parse(data);
       } else if (dataType === 'xml') {
@@ -114,10 +115,11 @@ module.exports = (function(m) {
             xml = new ActiveXObject('Microsoft.XMLDOM');
             xml.async = 'false';
             xml.loadXML(data);
-            ret = xml;
           }
+          ret = xml;
         } catch (e) {
-          xml = undefined;
+          xml = null;
+          ret = data;
         }
       }
       return ret;

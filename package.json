@@ -15,7 +15,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "cd static && grunt build",
+    "build": "cd static/uskin && npm run release && cd .. && grunt build",
     "start": "./scripts/start.sh",
     "test": "./scripts/test.sh",
     "eslint": "eslint *.js server/ static/**/ tests/__tests__/ --ext .js,.jsx",
