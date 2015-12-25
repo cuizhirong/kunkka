@@ -78,6 +78,7 @@ module.exports = (function(m) {
       return promise;
     },
     decodeQuery: function(q) {
+      if (!q) return '';
       var ret = Object.keys(q).map((el) => {
         return el + '=' + q[el];
       }).join('&');

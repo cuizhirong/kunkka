@@ -9,7 +9,8 @@
   },
   "globals": {
     "__": false,
-    "ActiveXObject": false
+    "ActiveXObject": false,
+    "HALO": false
   },
   "plugins": [
     "react",

@@ -25,7 +25,7 @@ var Model = React.createClass({
         password: refs.pwd.value
       }
     }).then(function(data) {
-      window.location = '/index';
+      window.location = '/';
     }, function(err) {
       that.setState({
         loginError: true

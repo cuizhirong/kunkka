@@ -53,6 +53,8 @@ module.exports = function(app) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     if (req.session && req.session.user) {
       res.render('index', {
+        locale: locale,
+        user: JSON.stringify(req.session.user),
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
         uskinFile: uskinFile[0]
@@ -68,9 +70,9 @@ module.exports = function(app) {
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
         ModelTmpl: ReactDOMServer.renderToString(model({
-          accountPlaceholder: req.i18n.__('shared.accountPlaceholder'),
-          pwdPlaceholder: req.i18n.__('shared.pwdPlaceholder'),
-          errorTip: req.i18n.__('shared.errorTip'),
+          accountPlaceholder: req.i18n.__('shared.account_placeholder'),
+          pwdPlaceholder: req.i18n.__('shared.pwd_placeholder'),
+          errorTip: req.i18n.__('shared.error_tip'),
           submit: req.i18n.__('shared.submit')
         }))
       });

@@ -12,7 +12,7 @@ module.exports = Object.keys(languages).map(function(language) {
 
     entry: {
       login: './login/index.jsx',
-      main: './dashboard/index.js'
+      main: './dashboard/index.jsx'
     },
 
     output: {
@@ -56,7 +56,8 @@ module.exports = Object.keys(languages).map(function(language) {
       extensions: ['', '.jsx', '.js'],
       root: path.resolve('../'),
       alias: {
-        jquery: 'node_modules/jquery/dist/jquery'
+        jquery: 'node_modules/jquery/dist/jquery',
+        uskin: 'static/uskin'
       }
     }
   };

@@ -2,15 +2,15 @@ require('./style/index.less');
 
 var ReactDOM = require('react-dom');
 var React = require('react');
-var Login = require('./model.jsx');
+var Model = require('./model.jsx');
 
-var loginModel = React.createFactory(Login);
+var loginModel = React.createFactory(Model);
 
 ReactDOM.render(
   loginModel({
-    accountPlaceholder: __('accountPlaceholder'),
-    pwdPlaceholder: __('pwdPlaceholder'),
-    errorTip: __('errorTip'),
+    accountPlaceholder: __('account_placeholder'),
+    pwdPlaceholder: __('pwd_placeholder'),
+    errorTip: __('error_tip'),
     submit: __('submit')
   }),
   document.getElementsByClassName('input-wrapper')[0]

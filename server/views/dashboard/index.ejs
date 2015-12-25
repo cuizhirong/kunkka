@@ -1,24 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charSet="utf-8">
-  <meta httpEquiv="X-UA-Compatible" content="IE=Edge">
-  <title>Login</title>
-  <link rel="shortcut icon" href="https://dn-ustack.qbox.me/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://dn-ustack.qbox.me/login.css">
-</head>
-<body>
-  <div class="wrapper">
-   <div class="before"></div>
-   <div class="con">
-    <a href="https://www.ustack.com">
-     <div style="background-image: url(https://dn-ustack.qbox.me/login-logo.png); background-size: contain;" class="logo"></div>
- </a>
- <div id="loginForm"></div>
- <div class="signup">没有账号？<a href="https://www.ustack.com/accounts/register/" target="_blank">注册</a></div>
-</div>
-<div class="after"></div>
-</div>
-<script src="/static/main-login.min.js"></script>
-</body>
-</html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>UnitedStack 有云</title>
+    <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
+    <link href="/static/dist/<%= mainCssFile %>" rel="stylesheet">
+    <script>
+      window.HALO={configs:{lang:"<%= locale %>"}, user:<%- user %>};
+    </script>
+  </head>
+  <body>
+    <div class="content"></div>
+    <script src="/static/dist/<%= mainJsFile %>"></script>
+  </body>
+</html> 
