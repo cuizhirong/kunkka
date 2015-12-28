@@ -1,0 +1,3 @@
+[submodule "static/uskin"]
+	path = static/uskin
+	url = git@git.ustack.com:ustack/uskin.git
