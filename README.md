@@ -4,24 +4,37 @@ Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do int
 
 ## Uage
 
-1. Install all the dependencies
+1. Get your code ready:
+```
+git clone git@git.ustack.com:ustack/halo.git --recursive
+```
+
+2. Install all the dependencies, and uskin's dependencies
 ```
 npm install
 sudo npm install pm2 -g
+cd static/uskin
+npm install
 ```
 
-2. Generate `config.yml` file
+3. Back to the project root directory, generate `config.yml` file
 ```
 cp ./config.yml.sample ./config.yml
 ```
 and then customize your own yml file
 
-3. We provide `pre-commit` hook to check code style before committing, run the command below (optional):
+4. We provide `pre-commit` hook to check code style before committing, run the command below (optional):
 ```
 ./scripts/csc.sh
 ```
 
-4. Done
+5. Build project and run the node server
+```
+npm run build
+npm start
+```
+6. Done
+
 
 ## Code Standard
 
