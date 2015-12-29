@@ -20,7 +20,8 @@
     "test": "./scripts/test.sh",
     "eslint": "eslint *.js server/ drivers/ static/**/ tests/__tests__/ --ext .js,.jsx",
     "dev": "cd static && rm -rf dist/*.js dist/*.css dist/*.map && webpack --config dev.webpack.config.js",
-    "benchmark": "./scripts/benchmark.sh"
+    "benchmark": "./scripts/benchmark.sh",
+    "prepublish": "cd static/uskin && npm install"
   },
   "dependencies": {
     "amqplib": "^0.4.0",

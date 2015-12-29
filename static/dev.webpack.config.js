@@ -7,6 +7,11 @@ var languages = require('../i18n/shared/lang.json');
 
 var language = process.env.npm_config_lang;
 
+// Default language
+if (!language) {
+  language = 'zh-CN';
+}
+
 var config = configs[0];
 
 config.watch = true;
