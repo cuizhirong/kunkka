@@ -46,11 +46,15 @@ function setup() {
   var i18n = require('../middlewares/i18n');
   i18n(app);
 
-  var api = require('api');
-  api(app);
-
   var views = require('views');
   views(app);
+
+  //verify the token exist or not
+  var tokenVerifyHandler = require('../middlewares/tokenVerifyHandler');
+  tokenVerifyHandler(app);
+
+  var api = require('api');
+  api(app);
 
   var mqConfig = config('mq');
   if (mqConfig && mqConfig.enabled) {

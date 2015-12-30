@@ -80,6 +80,13 @@ function authentication (req, res, next) {
   });
 }
 
+function logout (req, res) {
+  req.session.destroy();
+  res.clearCookie(config('sessionEngine').cookie_name);
+  res.redirect('/');
+}
+
 module.exports = function(app) {
   app.post('/auth/login', authentication);
+  app.get('/auth/logout', logout);
 };
