@@ -16,9 +16,9 @@ module.exports = Object.keys(languages).map(function(language) {
     },
 
     output: {
-      path: 'static/dist',
+      path: 'client/dist',
       filename: '[hash:6].' + language + '.[name].min.js',
-      publicPath: '/static/dist',
+      publicPath: '/client/dist',
       chunkFilename: '[hash:6].' + language + '.[id].bundle.js'
     },
 
@@ -56,8 +56,7 @@ module.exports = Object.keys(languages).map(function(language) {
       extensions: ['', '.jsx', '.js'],
       root: path.resolve('../'),
       alias: {
-        jquery: 'node_modules/jquery/dist/jquery',
-        uskin: 'static/uskin'
+        uskin: 'client/uskin'
       }
     }
   };

@@ -7,7 +7,7 @@ require('babel-core/register');
 var glob = require('glob');
 var React = require('react');
 var ReactDOMServer = require('react-dom/server');
-var loginModel = require('../../static/login/model.jsx');
+var loginModel = require('../../client/login/model.jsx');
 
 var model = React.createFactory(loginModel);
 
@@ -24,10 +24,10 @@ module.exports = function(app) {
   }
 
   var files = glob.sync('*', {
-    cwd: 'static/dist/'
+    cwd: 'client/dist/'
   });
   var uskinFile = glob.sync('*.uskin.min.css', {
-    cwd: 'static/dist/uskin'
+    cwd: 'client/dist/uskin'
   });
   var locales = JSON.parse(JSON.stringify(global.locales.availableLocales));
   var staticFiles = {};

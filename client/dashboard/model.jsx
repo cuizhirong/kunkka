@@ -1,6 +1,6 @@
 var React = require('react');
 
-var request = require('../mixins/request');
+var request = require('../libs/request');
 
 var Table = require('uskin/index').Table;
 

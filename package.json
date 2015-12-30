@@ -15,13 +15,13 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "cd static/uskin && npm run release && cd .. && grunt build",
+    "build": "cd client/uskin && npm run release && cd .. && grunt build",
     "start": "./scripts/start.sh",
     "test": "./scripts/test.sh",
-    "eslint": "eslint *.js server/ drivers/ static/**/ tests/__tests__/ --ext .js,.jsx",
-    "dev": "cd static && rm -rf dist/*.js dist/*.css dist/*.map && webpack --config dev.webpack.config.js",
+    "eslint": "eslint *.js server/ drivers/ client/**/ tests/__tests__/ --ext .js,.jsx",
+    "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && webpack --config dev.webpack.config.js",
     "benchmark": "./scripts/benchmark.sh",
-    "prepublish": "cd static/uskin && npm install"
+    "prepublish": "cd client/uskin && npm install"
   },
   "dependencies": {
     "amqplib": "^0.4.0",
@@ -36,7 +36,6 @@
     "express-session": "^1.12.1",
     "glob": "^6.0.1",
     "i18n-2": "^0.6.0",
-    "jquery": "^2.1.0",
     "js-yaml": "~3.4.3",
     "memcached": "^2.2.0",
     "morgan": "~1.6.1",

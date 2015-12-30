@@ -6,36 +6,34 @@ Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do int
 
 ### Get Started
 
-1. Get your code ready:
+Get your code ready:
 ```
 git clone git@git.ustack.com:ustack/halo.git --recursive
 ```
 
-2. Install all the dependencies, and uskin's dependencies
+Install all the dependencies
 ```
 npm install
 sudo npm install pm2 -g
-cd static/uskin
-npm install
 ```
 
-3. Back to the project root directory, generate `config.yml` file
+Under the project root directory, generate `config.yml` file
 ```
 cp ./config.yml.sample ./config.yml
 ```
 and then customize your own yml file
 
-4. We provide `pre-commit` hook to check code style before committing, run the command below (optional):
+We provide `pre-commit` hook to check code style before committing, run the command below (optional):
 ```
 ./scripts/csc.sh
 ```
 
-5. Build project and run the node server
+Build project and run the node server
 ```
 npm run build
 npm start
 ```
-6. Done
+
 
 ### Production Mode
 Under the production mode, you need to run the build script to generate the static files:
@@ -53,6 +51,7 @@ If you want to develop under the development mode, you can run the dev script:
 npm run dev
 ```
 After running, as you save the changes of your code, it will build the code automatically.
+
 By default, the above script will generate the `zh-CN` minified files, which means the web page only serve the Chinese version. However, if you want to specify the specific language, add the parameter like:
 ```
 npm run dev --lang=zh-CN
@@ -60,20 +59,23 @@ npm run dev --lang=zh-CN
 Currently, we only support two languages: `en` and `zh-CN`.
 
 ### PM2
-The node server is hosted by PM2, which means if you want to checkout the logs or do some other stuffs, you need to play with `PM2`:
+The node process is hosted by PM2, which means if you want to checkout the logs or do some other stuffs, you need to play with `PM2`:
 
 1. Delete the PM2 process by specifying the id:
 ```
 pm2 delete id
 ```
+
 2. Checkout the PM2 log:
 ```
 pm2 logs
 ```
+
 More information:
 ```
 pm2 -h
 ```
+
 
 ## Code Standard
 

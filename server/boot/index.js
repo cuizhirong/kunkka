@@ -17,7 +17,7 @@ var config = require('../config'),
  */
 function setup() {
   var app = express();
-  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'static')));
+  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'client')));
   app.use(cookieParser(config('sessionEngine').secret));
   app.use(bodyParser.urlencoded({
     extended: true

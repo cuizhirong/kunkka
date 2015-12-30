@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 
     // Task configuration.
     clean: {
-      dist: ['static/dist']
+      dist: ['client/dist']
     },
 
     less: {
@@ -27,10 +27,10 @@ module.exports = function(grunt) {
           sourceMap: true,
           outputSourceFiles: true,
           sourceMapURL: '<%= pkg.name %>.css.map',
-          sourceMapFilename: 'static/dist/css/<%= pkg.name %>.css.map'
+          sourceMapFilename: 'client/dist/css/<%= pkg.name %>.css.map'
         },
         files: {
-          'static/dist/css/<%= pkg.name %>.css': 'static/style/login/index.less'
+          'client/dist/css/<%= pkg.name %>.css': 'client/style/login/index.less'
         }
       }
     },
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     postcss: {
       options: {
         map: {
-          prev: 'static/dist/css',
+          prev: 'client/dist/css',
           inline: false
         },
         processors: [
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'static/dist/css/halo.min.css': 'static/dist/css/halo.css'
+          'client/dist/css/halo.min.css': 'client/dist/css/halo.css'
         }
       }
     },
@@ -74,9 +74,9 @@ module.exports = function(grunt) {
     copy: {
       uskin: {
         expand: true,
-        cwd: 'static/uskin/dist/css',
+        cwd: 'client/uskin/dist/css',
         src: '**',
-        dest: 'static/dist/uskin'
+        dest: 'client/dist/uskin'
       }
     }
 
