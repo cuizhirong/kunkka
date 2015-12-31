@@ -1,6 +1,6 @@
 var React = require('react');
 
-var request = require('../libs/request');
+var request = require('./cores/request');
 
 var Table = require('uskin/index').Table;
 
@@ -20,8 +20,7 @@ var Model = React.createClass({
     var that = this;
 
     request.get({
-      url: '/v1/' + HALO.user.projectId + '/servers/detail',
-      dataType: 'json'
+      url: '/v1/' + HALO.user.projectId + '/servers/detail'
     }).then(function(data) {
       that.setState({
         data: data.servers
