@@ -1,22 +1,24 @@
 var React = require('react');
-
 var request = require('./cores/request');
-
 var Table = require('uskin/index').Table;
 
-var Model = React.createClass({
+class Model extends React.Component {
 
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       data: []
     };
-  },
 
-  componentWillMount: function() {
+    this.listInstance = this.listInstance.bind(this);
+  }
+
+  componentWillMount() {
     this.listInstance();
-  },
+  }
 
-  listInstance: function() {
+  listInstance() {
     var that = this;
 
     request.get({
@@ -29,34 +31,30 @@ var Model = React.createClass({
       console.debug(err);
     });
 
-  },
+  }
 
-  render: function() {
-
+  render() {
     var columns = [{
       title: 'Name',
-      key: 'name',
       dataIndex: 'name'
     }, {
       title: 'ID',
-      key: 'id',
       dataIndex: 'id'
     }, {
       title: 'STATUS',
-      key: 'status',
       dataIndex: 'status'
     }, {
       title: 'USER ID',
-      key: 'user_id',
       dataIndex: 'user_id'
     }];
 
     return (
       <div>instance list:
-        <Table column={columns} data={this.state.data} />
+        <Table column={columns} data={this.state.data} dataKey="id"/>
       </div>
     );
   }
-});
+
+}
 
 module.exports = Model;

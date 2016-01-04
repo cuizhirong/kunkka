@@ -37,5 +37,5 @@ var dashboardModel = React.createFactory(Model);
 
 ReactDOM.render(
   dashboardModel(),
-  document.getElementsByClassName('content')[0]
+  document.getElementsByClassName('container')[0]
 );

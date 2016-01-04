@@ -1,16 +1,19 @@
 var React = require('react');
-
 var request = require('../libs/request');
 
-var Model = React.createClass({
+class Model extends React.Component {
 
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loginError: false
     };
-  },
 
-  doSubmit: function(e) {
+    this.doSubmit = this.doSubmit.bind(this);
+  }
+
+  doSubmit(e) {
     e.preventDefault();
 
     var refs = this.refs,
@@ -32,9 +35,9 @@ var Model = React.createClass({
       });
     });
 
-  },
+  }
 
-  render: function() {
+  render() {
     var props = this.props,
       state = this.state;
 
@@ -51,6 +54,6 @@ var Model = React.createClass({
       </form>
     );
   }
-});
+}
 
 module.exports = Model;

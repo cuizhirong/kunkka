@@ -56,7 +56,9 @@ module.exports = Object.keys(languages).map(function(language) {
       extensions: ['', '.jsx', '.js'],
       root: path.resolve('../'),
       alias: {
-        uskin: 'client/uskin'
+        'uskin': 'client/uskin',
+        'react': 'node_modules/react',
+        'react-dom': 'node_modules/react-dom'
       }
     }
   };
