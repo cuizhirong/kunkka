@@ -11,7 +11,7 @@ body {
   width: 100%;
   height: 100%;
 
-  .before {
+  .header {
     flex: 1;
   }
   .content {
@@ -22,8 +22,9 @@ body {
     background-color: #fff;
     border-radius: 10px;
   }
-  .after {
+  .footer {
     flex: 3;
+    min-height: 80px;
   }
 }
 
@@ -97,9 +98,12 @@ body {
   }
 }
 
-.after {
+.footer {
+  display: flex;
+  align-items: flex-end;
   text-align: center;
-  .lang {
-    margin-top: 30px;
+  justify-content: center;
+  .footer-wrapper {
+    margin-bottom: 20px;
   }
 }

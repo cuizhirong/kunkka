@@ -12,31 +12,33 @@
   </head>
   <body>
     <div class="wrapper">
-      <div class="before"></div>
+      <div class="header"></div>
       <div class="content">
         <div class="img-wrapper">
           <img src="/static/assets/logo@2x.png" />
         </div>
-        <div class="input-wrapper"><%- ModelTmpl %></div>
+        <div class="input-wrapper"><%- modelTmpl %></div>
         <div class="link">
           <a href="#"><%= signup %></a>
           <span>|</span>
           <a href="#"><%= forgotPass %></a>
         </div>
       </div>
-      <div class="after">
-        <div class="lang">
-        <% if (locale == 'zh-CN') { %>
-          <span>中文</span>
-          <span>|</span>
-          <a href="/?lang=en">English</a>
-        <% } else {%>
-          <a href="/?lang=zh-CN">中文</a>
-          <span>|</span>
-          <span>English</span>
+      <div class="footer">
+        <div class="footer-wrapper">
+          <div class="lang">
+          <% if (locale == 'zh-CN') { %>
+            <span>中文</span>
+            <span>|</span>
+            <a href="/?lang=en">English</a>
+          <% } else {%>
+            <a href="/?lang=zh-CN">中文</a>
+            <span>|</span>
+            <span>English</span>
+          <% } %>
+          </div>
+          <p>©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号</p>
         </div>
-        <% } %>
-        <p>©2015 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号</p>
       </div>
     </div>
     <script src="/static/dist/<%= loginJsFile %>"></script>

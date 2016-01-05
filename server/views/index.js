@@ -7,9 +7,12 @@ require('babel-core/register');
 var glob = require('glob');
 var React = require('react');
 var ReactDOMServer = require('react-dom/server');
-var loginModel = require('../../client/login/model.jsx');
 
-var model = React.createFactory(loginModel);
+var loginModel = require('../../client/login/model.jsx');
+var dashboardModel = require('../../client/dashboard/model.jsx');
+
+var loginModelFactory = React.createFactory(loginModel);
+var dashboardModelFactory = React.createFactory(dashboardModel);
 
 module.exports = function(app) {
   app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
@@ -52,12 +55,19 @@ module.exports = function(app) {
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     if (req.session && req.session.user) {
+      var HALO = {
+        configs: {
+          lang: locale
+        },
+        user: req.session.user
+      };
+
       res.render('index', {
-        locale: locale,
-        user: JSON.stringify(req.session.user),
+        HALO: JSON.stringify(HALO),
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
-        uskinFile: uskinFile[0]
+        uskinFile: uskinFile[0],
+        modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory())
       });
     } else {
       res.render('login', {
@@ -69,7 +79,7 @@ module.exports = function(app) {
         loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
-        ModelTmpl: ReactDOMServer.renderToString(model({
+        modelTmpl: ReactDOMServer.renderToString(loginModelFactory({
           accountPlaceholder: req.i18n.__('shared.account_placeholder'),
           pwdPlaceholder: req.i18n.__('shared.pwd_placeholder'),
           errorTip: req.i18n.__('shared.error_tip'),

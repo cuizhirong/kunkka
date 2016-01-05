@@ -1,6 +1,6 @@
 var React = require('react');
 var request = require('./cores/request');
-var Table = require('uskin/index').Table;
+var Table = require('client/uskin/index').Table;
 
 class Model extends React.Component {
 
@@ -14,7 +14,7 @@ class Model extends React.Component {
     this.listInstance = this.listInstance.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.listInstance();
   }
 
@@ -49,8 +49,14 @@ class Model extends React.Component {
     }];
 
     return (
-      <div>instance list:
-        <Table column={columns} data={this.state.data} dataKey="id"/>
+      <div id="wrapper">
+        <div id="navbar"></div>
+        <div id="main-wrapper">
+          <div id="menu"></div>
+          <div id="main">
+            <Table column={columns} data={this.state.data} dataKey="id"/>
+          </div>
+        </div>
       </div>
     );
   }

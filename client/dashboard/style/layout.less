@@ -1,0 +1,30 @@
+body,
+#container,
+#wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  #navbar {
+    flex: 1;
+    .fixed-height(68px);
+  }
+
+  #main-wrapper {
+    flex: 1;
+    display: flex;
+
+    #menu {
+      flex: 1;
+      .fixed-width(332px);
+    }
+    #main {
+      flex: 1;
+    }
+  }
+}
