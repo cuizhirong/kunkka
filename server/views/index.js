@@ -3,6 +3,7 @@
  */
 
 require('babel-core/register');
+require('../helpers/less_register');
 
 var glob = require('glob');
 var React = require('react');
