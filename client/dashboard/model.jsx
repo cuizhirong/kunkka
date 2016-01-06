@@ -1,6 +1,6 @@
 var React = require('react');
 var request = require('./cores/request');
-var Table = require('client/uskin/index').Table;
+var MainTable = require('client/components/main_table/index');
 
 class Model extends React.Component {
 
@@ -54,7 +54,7 @@ class Model extends React.Component {
         <div id="main-wrapper">
           <div id="menu"></div>
           <div id="main">
-            <Table column={columns} data={this.state.data} dataKey="id"/>
+            <MainTable column={columns} data={this.state.data} dataKey="id" />
           </div>
         </div>
       </div>
