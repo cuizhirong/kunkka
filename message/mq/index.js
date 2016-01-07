@@ -1,10 +1,9 @@
-module.exports = function(app) {
-  var amqp = require('amqplib');
+var config = require('../../server/config')('mq');
+var uuid = require('node-uuid');
 
-  function logMessage(msg) {
-    console.log(" [x] '%s'", msg.content.toString());
-  }
-  amqp.connect('amqp://stackrabbit:ustack@121.201.53.215:5672').then(function(conn) {
+module.exports = function(callback) {
+  var amqp = require('amqplib');
+  amqp.connect(config.remote).then(function(conn) {
     process.once('SIGINT', function() {
       conn.close();
     });
@@ -13,10 +12,14 @@ module.exports = function(app) {
         alternateExchange: 'notifications.*'
       });
       ok.then(function() {
-        return ch.bindExchange('nova', 'halo', 'notifications.*');
+        var _promiseArray = [];
+        config.sourceExchanges.forEach(function (s) {
+          _promiseArray.push(ch.bindExchange('halo', s, 'notifications.*'));
+        });
+        return Promise.all(_promiseArray);
       });
       ok = ok.then(function() {
-        return ch.assertQueue('halo_' + require('node-uuid')(), {
+        return ch.assertQueue('halo_' + uuid(), {
           durable: false
         });
       });
@@ -26,14 +29,13 @@ module.exports = function(app) {
         });
       });
       ok = ok.then(function(queue) {
-        return ch.consume(queue, logMessage, {
+        return ch.consume(queue, callback, {
           noAck: true
         });
       });
       return ok.then(function() {
-        console.log(' [*] Waiting for logs. To exit press CTRL+C');
+        console.log('connection to rabbitmq is established successfully');
       });
     });
   }).then(null, console.warn);
-  return app;
 };

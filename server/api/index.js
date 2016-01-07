@@ -16,8 +16,12 @@ module.exports = function(app) {
 
   var auth = require('api/auth');
   auth(app);
+
   var instance = require('api/instance');
   instance(app);
+
+  var volume = require('api/volume');
+  volume(app);
 
   return app;
 };

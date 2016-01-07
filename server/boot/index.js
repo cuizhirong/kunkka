@@ -56,12 +56,6 @@ function setup() {
   var api = require('api');
   api(app);
 
-  var mqConfig = config('mq');
-  if (mqConfig && mqConfig.enabled) {
-    var mq = require('mq');
-    mq(app);
-  }
-
   //error handler
   if (logConfig.debug) {
     var devErrorHandler = require('errorhandler');

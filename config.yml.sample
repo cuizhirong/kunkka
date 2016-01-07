@@ -1,7 +1,8 @@
 ---
 remote:
     keystone:        http://121.201.53.215:5000
-    nova:            http://121.201.53.215:8774
+    nova:              http://121.201.53.215:8774
+    cinder:            http://121.201.53.215:8776
 sessionEngine:
     type:            MemcachedCache | Redis | Session
     address:         121.201.53.215
@@ -17,3 +18,7 @@ log:
 mq:
     enabled:         true | false
     remote:          amqp://stackrabbit:ustack@121.201.53.215:5672
+    sourceExchanges:
+        - nova
+websocket:
+    port:               8080

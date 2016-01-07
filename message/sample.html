@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Tahoma, Geneva, sans-serif;
+      }
+      div {
+        display: inline;
+      }
+    </style>
+    <script>
+      function updateStats(memuse) {
+        document.getElementById('rss').innerHTML = memuse.message;
+        document.getElementById('heapTotal').innerHTML = memuse.message;
+        document.getElementById('heapUsed').innerHTML = memuse.message;
+      }
+      var opt = {
+        userId: '01e8762bf64d449c8caa0217c3391551'
+      };
+      function connectWS () {
+        var ws = new WebSocket('ws://localhost:8080');
+        var interval;
+        ws.onopen = function () {
+          ws.send(JSON.stringify(opt));
+          interval = setInterval(function () {
+            ws.send('h');
+          }, 25000);
+        };
+        ws.onmessage = function (event) {
+          updateStats(JSON.parse(event.data));
+        };
+        ws.onclose = function () {
+          clearInterval(interval);
+          connectWS();
+        };
+        ws.onerror = function (err) {
+          console.log(err);
+        }
+      }
+      connectWS();
+    </script>
+  </head>
+  <body>
+    <strong>Server Stats</strong><br>
+    RSS: <div id='rss'></div><br>
+    Heap total: <div id='heapTotal'></div><br>
+    Heap used: <div id='heapUsed'></div><br>
+  </body>
+</html>
