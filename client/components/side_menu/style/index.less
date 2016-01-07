@@ -1,0 +1,44 @@
+@menu_font_color: #fff;
+@menu_font_hover_color: #42b9e5;
+
+.halo-menu {
+  display: flex;
+  > ul.topmenu {
+    width: 96px;
+    background: url(/static/assets/left_bg.jpg) center center no-repeat;
+    background-size: cover;
+    > li {
+      width: 96px;
+      height: 56px;
+      text-align: center;
+      color: @menu_font_color;
+      cursor: pointer;
+      padding: 12px 0;
+      > i {
+        display: block;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        margin: 0 auto;
+        border-radius: 2px;
+        border: 1px solid @menu_font_color;
+        font-size: 24px;
+      }
+      > span {
+        line-height: 24px;
+        text-align: center;
+      }
+      &:hover {
+        background-color: rgba(41,159,203,0.3);
+        > i {
+          color: @menu_font_hover_color;
+          border: 1px solid @menu_font_hover_color;
+        }
+        span {
+          color: @menu_font_hover_color;
+        }
+      }
+    }
+  }
+}

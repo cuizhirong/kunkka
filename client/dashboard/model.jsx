@@ -1,6 +1,8 @@
 var React = require('react');
 var request = require('./cores/request');
 var MainTable = require('client/components/main_table/index');
+var NavBar = require('client/components/navbar/index');
+var SideMenu = require('client/components/side_menu/index');
 
 class Model extends React.Component {
 
@@ -50,9 +52,11 @@ class Model extends React.Component {
 
     return (
       <div id="wrapper">
-        <div id="navbar"></div>
+        <div id="navbar">
+          <NavBar />
+        </div>
         <div id="main-wrapper">
-          <div id="menu"></div>
+          <SideMenu />
           <div id="main">
             <MainTable column={columns} data={this.state.data} dataKey="id" />
           </div>
