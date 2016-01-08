@@ -17,7 +17,7 @@
   "scripts": {
     "build": "cd client/uskin && npm run release && cd .. && grunt build",
     "start": "./scripts/start.sh",
-    "restart": "pm2 restart 0",
+    "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
     "eslint": "eslint *.js server/ drivers/ client/**/ tests/__tests__/ --ext .js,.jsx",
     "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && webpack --config dev.webpack.config.js",

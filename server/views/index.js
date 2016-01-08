@@ -91,4 +91,8 @@ module.exports = function(app) {
   }
 
   app.get('/', renderStaticTemplate);
+  app.get(/^\/project\/(.*)/, renderStaticTemplate);
+  app.get(/^\/admin\/(.*)/, renderStaticTemplate);
+  app.get(/^\/identity\/(.*)/, renderStaticTemplate);
+  app.get(/^\/bill\/(.*)/, renderStaticTemplate);
 };

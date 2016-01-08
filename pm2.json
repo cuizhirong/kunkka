@@ -1,5 +1,12 @@
 {
+  "name": "halo",
   "watch": ["drivers", "server"],
   "ignore_watch": ["i18n/server", "i18n/client"],
-  "script": "index.js"
+  "script": "index.js",
+  "env": {
+    "NODE_PATH": "server:drivers:."
+  },
+  "env_production": {
+    "NODE_ENV": "production"
+  }
 }

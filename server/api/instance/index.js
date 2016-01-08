@@ -12,5 +12,5 @@ function getInstanceList(req, res, next) {
 }
 
 module.exports = function(app) {
-  app.get('/v1/:id/servers/detail', getInstanceList);
+  app.get('/api/v1/:id/servers/detail', getInstanceList);
 };
