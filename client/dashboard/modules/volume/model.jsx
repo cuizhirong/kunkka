@@ -37,22 +37,22 @@ class Model extends React.Component {
 
   render() {
     var columns = [{
-      title: 'Name',
+      title: 'Name2',
       dataIndex: 'name'
     }, {
-      title: 'ID',
+      title: 'I2D',
       dataIndex: 'id'
     }, {
-      title: 'STATUS',
+      title: 'ST2ATUS',
       dataIndex: 'status'
     }, {
-      title: 'USER ID',
+      title: 'USE2R ID',
       dataIndex: 'user_id'
     }];
 
     return (
-      <div className="halo-modules-instance" style={this.props.style}>
-        <MainTable title="Instances" column={columns} data={this.state.data} dataKey="id" />
+      <div className="halo-modules-volume" style={this.props.style}>
+        <MainTable title="Volumes" column={columns} data={this.state.data} dataKey="id" />
       </div>
     );
   }

@@ -82,6 +82,7 @@
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
     "jest-cli": "^0.8.1",
+    "json-loader": "^0.5.4",
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
     "load-grunt-tasks": "^3.3.0",

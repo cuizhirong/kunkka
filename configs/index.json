@@ -1,0 +1,7 @@
+{
+  "modules": [
+    "instance",
+    "volume"
+  ],
+  "default_module": "instance"
+}

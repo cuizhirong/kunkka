@@ -1,8 +1,8 @@
 var React = require('react');
-var request = require('./cores/request');
-var MainTable = require('client/components/main_table/index');
 var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
+
+var loader = require('./cores/loader');
 
 class Model extends React.Component {
 
@@ -12,43 +12,30 @@ class Model extends React.Component {
     this.state = {
       data: []
     };
+  }
 
-    this.listInstance = this.listInstance.bind(this);
+  initialize() {
+
+    this.router.on('popState', this.onPopState);
+    this.router.pushState('');
+  }
+
+  onPopState(pathList) {
+    console.log(pathList);
   }
 
   componentDidMount() {
-    this.listInstance();
-  }
-
-  listInstance() {
-    var that = this;
-
-    request.get({
-      url: '/v1/' + HALO.user.projectId + '/servers/detail'
-    }).then(function(data) {
-      that.setState({
-        data: data.servers
-      });
-    }, function(err) {
-      console.debug(err);
-    });
-
+    this.router = require('./routers/index');
+    this.initialize();
   }
 
   render() {
-    var columns = [{
-      title: 'Name',
-      dataIndex: 'name'
-    }, {
-      title: 'ID',
-      dataIndex: 'id'
-    }, {
-      title: 'STATUS',
-      dataIndex: 'status'
-    }, {
-      title: 'USER ID',
-      dataIndex: 'user_id'
-    }];
+
+    var moduleTmpl = Object.keys(loader.modules).map((m, index) => {
+
+      var M = loader.modules[m];
+      return <M key={index} style={loader.configs.default_module === m ? undefined : {display: 'none'}} />;
+    });
 
     return (
       <div id="wrapper">
@@ -58,7 +45,7 @@ class Model extends React.Component {
         <div id="main-wrapper">
           <SideMenu />
           <div id="main">
-            <MainTable column={columns} data={this.state.data} dataKey="id" />
+            {moduleTmpl}
           </div>
         </div>
       </div>

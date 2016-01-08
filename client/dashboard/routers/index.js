@@ -1,32 +1,35 @@
+/*
+ * Author: Jiangqi
+ * Updated by: yaoli
+ */
+
 var EventEmitter = require('eventemitter2');
 
 class RouterModel extends EventEmitter {
   constructor() {
     super();
+
     window.onpopstate = this.onPopState.bind(this);
 
-    this.onPopState({});
   }
+
   onPopState(event) {
-    this.emit('popState');
+    this.emit('popState', this.getPathList());
   }
-  pushState(obj, title, url) {
+
+  // Title is ignored by browser
+  pushState(url, obj, title) {
     window.history.pushState(obj, title, url);
     this.onPopState({});
   }
-  getCurrentView() {
+
+  getPathList() {
     var path = window.location.pathname;
-    var exec = /^\/app\/(\w+)/.exec(path);
-    if (exec && exec.length > 1) {
-      return exec[1];
-    }
-    return '';
+
+    return path.split('/').filter((m) => {
+      return m ? true : false;
+    });
   }
 }
 
-// This is a singleton class to handle the url issue.
-if (!window.gRouterModel) {
-  window.gRouterModel = new RouterModel();
-}
-
-module.exports = window.gRouterModel;
+module.exports = new RouterModel();

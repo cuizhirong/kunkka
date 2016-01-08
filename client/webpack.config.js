@@ -47,7 +47,9 @@ module.exports = Object.keys(languages).map(function(language) {
     },
 
     plugins: [
-      new ExtractTextPlugin('[hash:6].[name].min.css'),
+      new ExtractTextPlugin('[hash:6].[name].min.css', {
+        allChunks: true
+      }),
       new I18nPlugin(languages[language]),
       new webpack.optimize.UglifyJsPlugin()
     ],

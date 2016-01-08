@@ -19,7 +19,7 @@ class MainTable extends React.Component {
     return (
       <div className="halo-main-table">
         <div className="header">
-          <h3>Instances</h3>
+          <h3>{props.title}</h3>
         </div>
         <div className="operation-list">
           <Button value="Initial" initial={true} onClick={listener} iconClass="glyphicon icon-region"/>
