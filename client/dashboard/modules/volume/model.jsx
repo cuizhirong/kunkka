@@ -24,7 +24,7 @@ class Model extends React.Component {
     var that = this;
 
     request.get({
-      url: '/v1/' + HALO.user.projectId + '/servers/detail'
+      url: '/api/v1/' + HALO.user.projectId + '/servers/detail'
     }).then(function(data) {
       that.setState({
         data: data.servers

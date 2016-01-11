@@ -10,32 +10,68 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      data: []
+      modules: []
     };
+
+    this.onClickSubmenu = this.onClickSubmenu.bind(this);
+    this.onChangeState = this.onChangeState.bind(this);
   }
 
-  initialize() {
+  loadRouter() {
+    this.router = require('./routers/index');
+    this.router.on('changeState', this.onChangeState);
 
-    this.router.on('popState', this.onPopState);
-    this.router.pushState('');
+    var pathList = this.router.getPathList();
+    if (pathList.length > 1) {
+      loader.configs.default_module = pathList[1];
+    } else {
+      this.router.replaceState('/project/' + loader.configs.default_module);
+    }
   }
 
-  onPopState(pathList) {
-    console.log(pathList);
+  onChangeState(pathList) {
+    this.setState({
+      default_module: pathList[1]
+    });
+  }
+
+  updateModules() {
+    this.setState({
+      modules: Object.keys(loader.modules),
+      default_module: loader.configs.default_module
+    });
   }
 
   componentDidMount() {
-    this.router = require('./routers/index');
-    this.initialize();
+    this.loadRouter();
+    this.updateModules();
+  }
+
+  onClickSubmenu(e, m) {
+    this.router.pushState('/project/' + m.key);
   }
 
   render() {
+    var state = this.state;
+    var modules = loader.modules;
 
-    var moduleTmpl = Object.keys(loader.modules).map((m, index) => {
+    var submenu = [];
 
-      var M = loader.modules[m];
-      return <M key={index} style={loader.configs.default_module === m ? undefined : {display: 'none'}} />;
+    state.modules.forEach((m) => {
+      submenu.push({
+        subtitle: m.toUpperCase(),
+        key: m,
+        onClick: this.onClickSubmenu,
+        iconClass: 'glyphicon icon-' + m,
+        selected: m === state.default_module ? true : false
+      });
     });
+
+    var items = [{
+      title: 'Project',
+      key: 'project',
+      submenu: submenu
+    }];
 
     return (
       <div id="wrapper">
@@ -43,9 +79,14 @@ class Model extends React.Component {
           <NavBar />
         </div>
         <div id="main-wrapper">
-          <SideMenu />
+          <SideMenu items={items} />
           <div id="main">
-            {moduleTmpl}
+            {
+              state.modules.map((m, index) => {
+                var M = modules[m];
+                return <M key={index} style={state.default_module === m ? undefined : {display: 'none'}} />;
+              })
+            }
           </div>
         </div>
       </div>

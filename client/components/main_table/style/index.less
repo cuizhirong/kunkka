@@ -1,10 +1,18 @@
+@import "../../../uskin/css/themes/default/index.less";
+@import "../../../uskin/css/mixins/index.less";
+
 .halo-main-table {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   padding: 20px;
 
   > .header {
+    flex: 1;
+    .fixed-height(31px);
     padding-bottom: 12px;
     border-bottom: 1px solid #f2f2f2;
+    box-sizing: border-box;
 
     h3 {
       font-size: 16px;
@@ -14,15 +22,22 @@
   }
 
   > .operation-list {
+    flex: 1;
+    .fixed-height(62px);
     padding: 10px 0 20px;
+    box-sizing: border-box;
 
     > .btn {
       margin-right: 8px;
     }
+    .input-search {
+      float: right;
+    }
   }
 
   > .table {
-    //.fixed-width(10px);
+    flex: 1;
+    overflow: hidden;
   }
 
   > .page {

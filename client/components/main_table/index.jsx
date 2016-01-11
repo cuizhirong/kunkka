@@ -4,6 +4,7 @@ var React = require('react');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
 var Button = uskin.Button;
+var InputSearch = uskin.InputSearch;
 
 class MainTable extends React.Component {
 
@@ -14,7 +15,9 @@ class MainTable extends React.Component {
   render() {
     var props = this.props;
 
-    function listener() {}
+    function listener(e, a, b) {
+      console.log(e, a, b);
+    }
 
     return (
       <div className="halo-main-table">
@@ -27,6 +30,7 @@ class MainTable extends React.Component {
           <Button value="Initial" type="delete" initial={true} onClick={listener} iconClass="glyphicon icon-more"/>
           <Button value="Initial" type="cancel" initial={true} onClick={listener} iconClass="glyphicon icon-edit"/>
           <Button value="Initial" type="cancel" initial={true} disabled={true} onClick={listener} iconClass="glyphicon icon-disable"/>
+          <InputSearch />
         </div>
         <Table column={props.column} data={props.data} dataKey={props.dataKey} />
       </div>

@@ -9,18 +9,28 @@ class RouterModel extends EventEmitter {
   constructor() {
     super();
 
-    window.onpopstate = this.onPopState.bind(this);
-
+    window.onpopstate = this.onChangeState.bind(this);
   }
 
-  onPopState(event) {
-    this.emit('popState', this.getPathList());
+  onChangeState(event) {
+    this.emit('changeState', this.getPathList());
   }
 
   // Title is ignored by browser
   pushState(url, obj, title) {
+    if (url === window.location.pathname) {
+      return;
+    }
     window.history.pushState(obj, title, url);
-    this.onPopState({});
+    this.onChangeState();
+  }
+
+  replaceState(url, obj, title) {
+    if (url === window.location.pathname) {
+      return;
+    }
+    window.history.replaceState(obj, title, url);
+    this.onChangeState();
   }
 
   getPathList() {

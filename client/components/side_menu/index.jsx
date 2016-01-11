@@ -8,36 +8,18 @@ class SideMenu extends React.Component {
     super(props);
   }
 
-  submenuOnClick(e) {
-    //submenu clicked
-  }
-
   render() {
-    var items = [{
-      title: 'Project',
-      key: 'project',
-      submenu: [{
-        subtitle: 'Instance',
-        key: '1',
-        onClick: this.submenuOnClick,
-        iconClass: 'glyphicon icon-instance'
-      }, {
-        subtitle: 'Volumes',
-        key: '2',
-        onClick: this.submenuOnClick,
-        iconClass: 'glyphicon icon-volume'
-      }]
-    }];
+    var props = this.props;
 
     return (
       <div className="halo-menu">
-        <ul className="topmenu">
+        <ul className="top-menu">
           <li>
             <i className="glyphicon icon-monitor"></i>
             <span>Project</span>
           </li>
         </ul>
-        <Menu items={items}/>
+        <Menu items={props.items} />
       </div>
     );
   }

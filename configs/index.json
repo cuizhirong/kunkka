@@ -3,5 +3,5 @@
     "instance",
     "volume"
   ],
-  "default_module": "instance"
+  "default_module": "volume"
 }
