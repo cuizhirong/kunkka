@@ -30,7 +30,7 @@ class MainTable extends React.Component {
           <Button value="Initial" type="delete" initial={true} onClick={listener} iconClass="glyphicon icon-more"/>
           <Button value="Initial" type="cancel" initial={true} onClick={listener} iconClass="glyphicon icon-edit"/>
           <Button value="Initial" type="cancel" initial={true} disabled={true} onClick={listener} iconClass="glyphicon icon-disable"/>
-          <InputSearch />
+          <InputSearch type="light" />
         </div>
         <Table column={props.column} data={props.data} dataKey={props.dataKey} />
       </div>

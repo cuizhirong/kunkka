@@ -10,7 +10,7 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      modules: []
+      modules: Object.keys(loader.modules)
     };
 
     this.onClickSubmenu = this.onClickSubmenu.bind(this);
