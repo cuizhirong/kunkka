@@ -1,7 +1,6 @@
 var webpackConfig = require('./webpack.config.js');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var I18nPlugin = require("i18n-webpack-plugin");
 
 module.exports = function(grunt) {
 

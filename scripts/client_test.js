@@ -2,6 +2,12 @@ var fs = require('fs');
 var path = require('path');
 
 function clearDir(dir) {
+  try {
+    fs.mkdirSync(dir);
+  } catch (e) {
+
+  }
+
   fs.readdirSync(dir).map(function(file) {
     fs.unlink(path.resolve(dir, file));
   });
@@ -15,11 +21,11 @@ function copyFile(source, dest) {
   }
 }
 
-var copyTo = 'tests/static_tests/';
-clearDir(path.resolve(copyTo));
+var dest = 'tests/static_tests/';
+clearDir(path.resolve(dest));
 
 var loginPath = 'client/login/test/';
-copyFile(path.resolve(loginPath, 'login-test.js'), path.resolve(copyTo, 'login-test.js'));
+copyFile(path.resolve(loginPath, 'login-test.js'), path.resolve(dest, 'login-test.js'));
 
 var componentsPath = 'client/components';
 fs.readdirSync(path.resolve(componentsPath)).map(function(dirName) {
@@ -29,7 +35,7 @@ fs.readdirSync(path.resolve(componentsPath)).map(function(dirName) {
     fs.readdirSync(path.resolve(testDir)).filter(function(fileName) {
       return (/-test.js$/).exec(fileName);
     }).forEach(function(file) {
-      copyFile(path.resolve(testDir, file), path.resolve(copyTo, file));
+      copyFile(path.resolve(testDir, file), path.resolve(dest, file));
     });
   }
 });

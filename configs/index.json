@@ -3,5 +3,9 @@
     "instance",
     "volume"
   ],
-  "default_module": "instance"
+  "default_module": "instance",
+  "languages": [
+    "en",
+    "zh-CN"
+  ]
 }
