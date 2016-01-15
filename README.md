@@ -58,7 +58,22 @@ By default, the above script will generate the `zh-CN` minified files, which mea
 ```
 npm run dev --lang=zh-CN
 ```
+or specify env variable `language`:
+```
+export language=en
+npm run dev
+```
 Currently, we only support two languages: `en` and `zh-CN`.
+
+###i18n
+In the client side, in order to optimise the size of output files, we need to collect all the languages files, and transpile all of them to a specific language file `lang.json` under the `i18n/client` directory.
+
+While developing, you may need to update the language config file all the time.
+Thus, once updated the file, you have to re-transpile the file:
+```
+npm run transpile --lang=zh-CN
+```
+Sorry to tell you that we don't provide any watcher tools to execute above script automatically.
 
 ### PM2
 The node process is hosted by PM2, which means if you want to checkout the logs or do some other stuffs, you need to play with `PM2`:

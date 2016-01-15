@@ -23,7 +23,8 @@
     "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && node ../scripts/client_i18n_build.js && webpack --config dev.webpack.config.js",
     "benchmark": "./scripts/benchmark.sh",
     "prepublish": "cd client/uskin && npm install",
-    "ws": "cd message && node index.js"
+    "ws": "cd message && node index.js",
+    "transpile": "node ./scripts/client_i18n_build.js"
   },
   "dependencies": {
     "amqplib": "^0.4.0",
