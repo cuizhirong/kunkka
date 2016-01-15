@@ -4,6 +4,7 @@ var React = require('react');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
 var Button = uskin.Button;
+var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
 
 class MainTable extends React.Component {
@@ -13,26 +14,43 @@ class MainTable extends React.Component {
   }
 
   render() {
-    var props = this.props;
-
-    function listener(e, a, b) {
-      console.log(e, a, b);
-    }
+    var config = this.props.config,
+      search = config.search,
+      table = config.table;
 
     return (
       <div className="halo-main-table">
         <div className="header">
-          <h3>{props.title}</h3>
+          <h3>{config.title}</h3>
         </div>
         <div className="operation-list">
-          <Button value="Initial" initial={true} onClick={listener} iconClass="glyphicon icon-region"/>
-          <Button value="Initial" type="create" initial={true} onClick={listener} iconClass="glyphicon icon-create"/>
-          <Button value="Initial" type="delete" initial={true} onClick={listener} iconClass="glyphicon icon-more"/>
-          <Button value="Initial" type="cancel" initial={true} onClick={listener} iconClass="glyphicon icon-edit"/>
-          <Button value="Initial" type="cancel" initial={true} disabled={true} onClick={listener} iconClass="glyphicon icon-disable"/>
-          <InputSearch type="light" />
+          {config.btns.map((btn, index) =>
+            !btn.dropdown ?
+            <Button key={index}
+              value={btn.value}
+              btnKey={btn.btnKey}
+              onClick={config.btnsOnClick}
+              type={btn.type}
+              disabled={btn.disabled}
+              iconClass={btn.iconClass}
+              initial={true} />
+           : <DropdownButton key={index}
+              disabled={btn.dropdown.disabled}
+              buttonData={btn}
+              dropdownItems={btn.dropdown.items}
+              dropdownOnClick={config.dropdownBtnOnClick} />
+          )}
+          {config.search ? <InputSearch type={search.type} width={search.width} onClick={config.searchOnClick}/>
+            : null
+          }
         </div>
-        <Table column={props.column} data={props.data} dataKey={props.dataKey} />
+        <Table column={table.column}
+          data={table.data}
+          dataKey={table.dataKey}
+          checkbox={table.checkbox}
+          checkboxOnChange={config.tableCheckboxOnClick}
+          hover={table.hover}
+          striped={this.striped} />
       </div>
     );
   }

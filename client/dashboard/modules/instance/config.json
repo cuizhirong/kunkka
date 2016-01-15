@@ -1,0 +1,109 @@
+{
+  "btns": [{
+    "value_key": "btn_create_instance",
+    "btnKey": "create_instance",
+    "type": "create",
+    "iconClass": "create",
+    "disabled": true
+  }, {
+    "value_key": "btn_vnc_console",
+    "btnKey": "vnc_console",
+    "iconClass": "volume",
+    "disabled": true
+  }, {
+    "value_key": "btn_power_on",
+    "btnKey": "power_on",
+    "iconClass": "power-on",
+    "disabled": true
+  }, {
+    "value_key": "btn_power_off",
+    "btnKey": "power_off",
+    "iconClass": "power-off",
+    "disabled": true
+  }, {
+    "value_key": "btn_more",
+    "btnKey": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": "Reboot",
+          "key": "0"
+        }, {
+          "title": "Take Image Snapshot",
+          "key": "1"
+        }]
+      }, {
+        "items": [{
+          "title": "Associate Public IP",
+          "key": "2"
+        }, {
+          "title": "Dissociate Public IP",
+          "key": "3"
+        }, {
+          "title": "Join Networks",
+          "key": "4"
+        }]
+      }, {
+        "items": [{
+          "title": "Change Security Group",
+          "key": "5"
+        }, {
+          "title": "Change Passoword",
+          "key": "6"
+        }, {
+          "title": "Change Keypair",
+          "key": "7"
+        }]
+      }, {
+        "items": [{
+          "title": "Add Volume",
+          "key": "8"
+        }, {
+          "title": "Remove Volume",
+          "key": "9",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": "Termitate",
+          "key": "10",
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "value_key": "",
+    "btnKey": "refresh",
+    "iconClass": "refresh"
+  }],
+  "search": {
+
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "column": [{
+      "title": "Name",
+      "dataIndex": "name"
+    }, {
+      "title": "ID",
+      "dataIndex": "id"
+    }, {
+      "title": "STATUS",
+      "dataIndex": "status"
+    }, {
+      "title": "Name",
+      "dataIndex": "name"
+    }, {
+      "title": "ID",
+      "dataIndex": "id"
+    }, {
+      "title": "STATUS",
+      "dataIndex": "status"
+    }, {
+      "title": "USER ID",
+      "dataIndex": "user_id"
+    }]
+  }
+}

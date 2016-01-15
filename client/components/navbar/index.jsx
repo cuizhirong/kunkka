@@ -8,38 +8,46 @@ class NavBar extends React.Component {
     super(props);
   }
 
-  dropdownOnClick(e, status) {
-    //dropdown clicked
+  clickSettings(e, status) {
+    switch (status.key) {
+    case 'setting':
+      break;
+    case 'help':
+      break;
+    case 'en': {
+      window.location = '/?lang=en';
+      break;
+    }
+    case 'cn': {
+      window.location = '/?lang=zh-CN';
+      break;
+    }
+    case 'logout': {
+      window.location = '/auth/logout';
+      break;
+    }
+    default:
+      break;
+    }
   }
 
   render() {
     var dropdownItems = [{
       items: [{
         title: 'Settings',
-        key: 'setting',
-        onClick: this.dropdownOnClick
+        key: 'setting'
       }, {
         title: 'Help',
-        key: 'help',
-        onClick: this.dropdownOnClick
+        key: 'help'
       }, {
         title: 'English',
-        key: 'en',
-        onClick: () => {
-          window.location = '/?lang=en';
-        }
+        key: 'en'
       }, {
         title: '中文',
-        key: 'cn',
-        onClick: () => {
-          window.location = '/?lang=zh-CN';
-        }
+        key: 'cn'
       }, {
         title: 'Logout',
-        key: 'logout',
-        onClick: () => {
-          window.location = '/auth/logout';
-        }
+        key: 'logout'
       }]
     }];
 
@@ -51,7 +59,7 @@ class NavBar extends React.Component {
           <span className="user-name">user name</span>
           <div ref="settingBtn" className="settings-btn"></div>
           <div className="settings">
-            <Dropdown items={dropdownItems}/>
+            <Dropdown items={dropdownItems} onClick={this.clickSettings}/>
           </div>
         </div>
       </div>

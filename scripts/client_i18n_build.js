@@ -4,6 +4,9 @@ var baseLang = require('../i18n/shared/lang.json');
 var glob = require('glob');
 
 var language = process.env.npm_config_lang || process.env.language;
+if (!language) {
+  language = 'zh-CN';
+}
 
 if (!language) {
   language = 'zh-CN';
