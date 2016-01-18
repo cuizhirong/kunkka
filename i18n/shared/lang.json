@@ -3,22 +3,12 @@
     "account_placeholder": "Please enter username or email",
     "error_tip": "The information you entered is not correct",
     "pwd_placeholder": "Please enter password",
-    "submit": "Log In",
-    "btn_create_instance": "Create Instance",
-    "btn_vnc_console": "VNC Console",
-    "btn_power_on": "Power On",
-    "btn_power_off": "Power Off",
-    "btn_more": "More"
+    "submit": "Log In"
   },
   "zh-CN": {
     "account_placeholder": "请输入账号",
     "error_tip": "用户名或密码不正确",
     "pwd_placeholder": "请输入密码",
-    "submit": "立即登录",
-    "btn_create_instance": "创建云主机",
-    "btn_vnc_console": "VNC登陆",
-    "btn_power_on": "开机",
-    "btn_power_off": "关机",
-    "btn_more": "更多"
+    "submit": "立即登录"
   }
 }

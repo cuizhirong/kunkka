@@ -1,31 +1,24 @@
 {
   "btns": [{
-    "value_key": ["create", "instance"],
-    "btnKey": "create_instance",
+    "value_key": ["create", "volume"],
+    "btnKey": "create_volume",
     "type": "create",
-    "iconClass": "create",
-    "disabled": true
+    "iconClass": "create"
   }, {
-    "value_key": ["vnc_console"],
-    "btnKey": "vnc_console",
-    "iconClass": "volume",
-    "disabled": true
+    "value_key": ["create", "snapshot"],
+    "btnKey": "create_snapshot",
+    "type": "create",
+    "iconClass": "create"
   }, {
-    "value_key": ["power_on"],
-    "btnKey": "power_on",
-    "iconClass": "power-on",
-    "disabled": true
-  }, {
-    "value_key": ["power_off"],
-    "btnKey": "power_off",
-    "iconClass": "power-off",
+    "value_key": ["attach_to", "instance"],
+    "btnKey": "attach_to_instance",
+    "iconClass": "associate",
     "disabled": true
   }, {
     "value_key": ["more"],
     "btnKey": "more",
     "iconClass": "more",
     "dropdown": {
-      "width": 160,
       "items": [{
         "items": [{
           "title": "Reboot",
@@ -88,28 +81,32 @@
       "dataIndex": "name",
       "key": "name"
     }, {
-      "title_key": ["image"],
-      "dataIndex": "",
-      "key": "image"
+      "title_key": ["size"],
+      "dataIndex": "size",
+      "key": "size"
     }, {
-      "title_key": ["ip_address"],
+      "title_key": ["attach_to", "instance"],
       "dataIndex": "",
-      "key": "ip_address"
+      "key": "attch_instance"
     }, {
-      "title_key": ["floating_ip"],
+      "title_key": ["shared"],
       "dataIndex": "",
-      "key": "floating_ip"
+      "key": "shared"
     }, {
-      "title_key": ["instance_type"],
+      "title_key": ["type"],
+      "dataIndex": "volume_type",
+      "key": "type"
+    }, {
+      "title_key": ["attributes"],
       "dataIndex": "",
-      "key": "instance_type"
+      "key": "attributes"
     }, {
       "title_key": ["status"],
       "dataIndex": "status",
       "key": "status"
     }, {
       "title_key": ["create", "time"],
-      "dataIndex": "created",
+      "dataIndex": "created_at",
       "key": "created"
     }]
   }

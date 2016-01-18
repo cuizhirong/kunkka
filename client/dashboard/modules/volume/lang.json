@@ -1,0 +1,20 @@
+{
+  "en": {
+    "attach_to": "Attach to ",
+    "attributes": "Attributes",
+    "shared": "Shared",
+    "size": "Size",
+    "snapshot": "Snapshot",
+    "type": "Type",
+    "volume": "Volume"
+  },
+  "zh-CN": {
+    "attach_to": "挂载到",
+    "attributes": "属性",
+    "shared": "共享盘",
+    "size": "容量",
+    "snapshot": "快照",
+    "type": "类型",
+    "volume": "云硬盘"
+  }
+}

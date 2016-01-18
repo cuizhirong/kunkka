@@ -43,5 +43,23 @@
   }
   > .menu {
     border-right: none;
+    overflow-x: visible;
+    overflow-y: visible;
+    > li {
+      li.selected {
+        position: relative;
+        z-index: 9;
+        overflow: visible;
+        &:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: -1px;
+          width: 1px;
+          height: 38px;
+          background-color: #fff;
+        }
+      }
+    }
   }
 }

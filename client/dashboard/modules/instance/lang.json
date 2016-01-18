@@ -1,8 +1,32 @@
 {
   "en": {
-    "name": "Lee Yao"
+    "create": "Create ",
+    "floating_ip": "Floating IP",
+    "instance": "Instance",
+    "instance_type": "Instance Type",
+    "image": "Image",
+    "ip_address": "IP Address",
+    "more": "More",
+    "name": "Name",
+    "power_on": "Power On",
+    "power_off": "Power Off",
+    "status": "Status",
+    "time": "Time",
+    "vnc_console": "VNC Console"
   },
   "zh-CN": {
-    "name": "姚立"
+    "create": "创建",
+    "floating_ip": "公网IP",
+    "image": "镜像",
+    "instance": "云主机",
+    "instance_type": "配置",
+    "ip_address": "内网IP",
+    "more": "更多",
+    "name": "名称",
+    "power_off": "关机",
+    "power_on": "开机",
+    "status": "状态",
+    "time": "时间",
+    "vnc_console": "VNC登录"
   }
 }

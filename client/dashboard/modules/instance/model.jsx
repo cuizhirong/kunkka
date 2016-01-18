@@ -49,12 +49,49 @@ class Model extends React.Component {
 
   getBtnLang(btns) {
     btns.map((btn) => {
-      btn.value = lang[btn.value_key];
+      if (btn.value_key) {
+        btn.value = '';
+        btn.value_key.map((val) => {
+          btn.value += lang[val];
+        });
+      }
     });
   }
 
-  getTableLang(table) {
+  setTableColRender(col) {
+    switch(col.key) {
+    case 'name': {
+      col.render = (rcol, ritem, rindex) => {
+        var listener = (_item, _col, _index, e) => {
+          e.preventDefault();
+          console.log('print ' + _item.name, _item);
+        };
+        return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
+      };
+      break;
+    }
+    case 'ip_address': {
+      col.render = (rcol, ritem, rindex) => {
+        return ritem.addresses.private ? ritem.addresses.private[0].addr : '';
+      };
+      break;
+    }
+    default:
+      break;
+    }
+  }
 
+  getTableLang(table) {
+    table.column.map((col) => {
+      if (col.title_key) {
+        col.title = '';
+        col.title_key.map((val) => {
+          col.title += lang[val];
+        });
+      }
+
+      this.setTableColRender(col);
+    });
   }
 
   btnsOnClick(e, key) {
@@ -105,7 +142,7 @@ class Model extends React.Component {
     this.getLangValue(btns, table);
 
     var MainTableConfig = {
-      title: 'Instances',
+      title: 'Instance',
       btns: btns,
       btnsOnClick: this.btnsOnClick,
       dropdownBtnOnClick: this.dropdownBtnOnClick,
