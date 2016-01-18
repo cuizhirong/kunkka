@@ -55,6 +55,7 @@ module.exports = function(app) {
 
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
+    var i18n = req.i18n.__.bind(req.i18n);
     if (req.session && req.session.user) {
       var HALO = {
         configs: {
@@ -73,18 +74,18 @@ module.exports = function(app) {
     } else {
       res.render('login', {
         locale: locale,
-        unitedstack: req.i18n.__('views.login.unitedstack'),
-        login: req.i18n.__('views.login.login'),
-        signup: req.i18n.__('views.login.signup'),
-        forgotPass: req.i18n.__('views.login.forgotPass'),
+        unitedstack: i18n('views.login.unitedstack'),
+        login: i18n('views.login.login'),
+        signup: i18n('views.login.signup'),
+        forgotPass: i18n('views.login.forgotPass'),
         loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(loginModelFactory({
-          accountPlaceholder: req.i18n.__('shared.account_placeholder'),
-          pwdPlaceholder: req.i18n.__('shared.pwd_placeholder'),
-          errorTip: req.i18n.__('shared.error_tip'),
-          submit: req.i18n.__('shared.submit')
+          accountPlaceholder: i18n('shared.account_placeholder'),
+          pwdPlaceholder: i18n('shared.pwd_placeholder'),
+          errorTip: i18n('shared.error_tip'),
+          submit: i18n('shared.submit')
         }))
       });
     }

@@ -1,61 +1,72 @@
 var fs = require('fs');
+var path = require('path');
+var extend = require('extend');
 
 var i18n = {
   api: {},
   views: {}
 };
+var extensions = {};
 
-// fs.readdirSync(__dirname + '/../drivers').forEach(function (dir) {
-//   i18n.drivers[dir] = require(__dirname + '/../drivers/' + dir + '/lang.json')
-// });
+function generateLangObject (dirPath, obj, moduleName, extraIgnore) {
+  fs.readdirSync(dirPath)
+    .filter(function(fileName) {
+      return fileName !== 'index.js' && fileName !== extraIgnore;
+    })
+    .forEach(function (dir) {
+      try {
+        fs.accessSync(path.join(dirPath, dir, 'lang.json'), fs.F_OK);
+        obj[dir] = require(path.join(dirPath, dir, 'lang.json'));
+      } catch (e) {
+        console.log(dir + ' ' + moduleName + ' has no lang.json');
+      }
+    });
+}
 
-fs.readdirSync(__dirname + '/../server/api').filter(function(fileName) {
-  return fileName !== 'index.js';
-}).forEach(function(dir) {
-  i18n.api[dir] = require(__dirname + '/../server/api/' + dir + '/lang.json');
+var apiDirPath = path.join(__dirname, '../server/api');
+generateLangObject(apiDirPath, i18n.api, 'api', 'extensions');
+
+var viewsDirPath = path.join(__dirname, '../server/views');
+generateLangObject(viewsDirPath, i18n.views, 'views');
+
+var extensionsDirPath = path.join(__dirname, '../server/api/extensions');
+generateLangObject(extensionsDirPath, extensions, 'extension');
+
+Object.keys(extensions).forEach(function (ex) {
+  Object.keys(extensions[ex]).forEach(function (lang) {
+    extend(i18n.api[ex][lang], extensions[ex][lang]);
+  });
 });
 
-fs.readdirSync(__dirname + '/../server/views').filter(function(fileName) {
-  return fileName !== 'index.js';
-}).forEach(function(dir) {
-  i18n.views[dir] = require(__dirname + '/../server/views/' + dir + '/lang.json');
-});
-
-
-var shared = require(__dirname + '/../i18n/shared/lang.json');
+var shared = require(path.join(__dirname, '../i18n/shared/lang.json'));
 
 var locales = {};
 var _module = Object.keys(i18n);
 var _component = Object.keys(i18n[_module[0]]);
 var _locales = Object.keys(i18n.api[_component[0]]);
 _locales.forEach(function(locale) {
-  locales[locale.toLowerCase()] = {};
+  var localeLowerCase = locale.toLowerCase();
+  locales[localeLowerCase] = {};
   _module.forEach(function(m) {
-    locales[locale.toLowerCase()][m] = {};
+    locales[localeLowerCase][m] = {};
   });
 });
 
-// Object.keys(i18n).forEach(function (module) {
-//   Object.keys(i18n[module]).forEach(function (component) {
-//     Object.keys(i18n[module][component]).forEach(function (lang) {
-//       locales[lang][module][component] = i18n[module][component][lang];
-//     });
-//   });
-// });
-
 _locales.forEach(function(lang) {
+  var langLowerCase = lang.toLowerCase();
   Object.keys(i18n).forEach(function(module) {
     Object.keys(i18n[module]).forEach(function(component) {
-      locales[lang.toLowerCase()][module][component] = i18n[module][component][lang];
+      locales[langLowerCase][module][component] = i18n[module][component][lang];
     })
   });
-  locales[lang.toLowerCase()]['shared'] = shared[lang];
+  locales[langLowerCase]['shared'] = shared[lang];
 });
 
 function generateLocales() {
   _locales.forEach(function(locale) {
+    var localeLowerCase = locale.toLowerCase();
     (function(loc) {
-      fs.writeFile(__dirname + '/../i18n/server/' + locale.toLowerCase() + '.js', JSON.stringify(locales[locale.toLowerCase()]), function(err) {
+      fs.writeFile(path.join(__dirname, '../i18n/server', localeLowerCase + '.js'), JSON.stringify(locales[localeLowerCase]), function(err) {
         if (err) {
           console.log('fail to build %s locale file', loc);
         } else {
@@ -66,9 +77,9 @@ function generateLocales() {
   });
 }
 
-fs.access(__dirname + '/../i18n/server', fs.F_OK, function(err) {
+fs.access(path.join(__dirname, '../i18n/server'), fs.F_OK, function(err) {
   if (err) {
-    fs.mkdirSync(__dirname + '/../i18n/server');
+    fs.mkdirSync(path.join(__dirname, '../i18n/server'));
     generateLocales();
   } else {
     generateLocales();

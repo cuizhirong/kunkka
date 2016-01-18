@@ -1,8 +1,14 @@
 ---
 remote:
-    keystone:        http://121.201.53.215:5000
-    nova:              http://121.201.53.215:8774
-    cinder:            http://121.201.53.215:8776
+    keystone:              http://121.201.52.12:5000
+    nova:
+        RegionOne:       http://121.201.52.12:8774
+    cinder:
+        RegionOne:       http://121.201.52.12:8776
+    neutron:
+        RegionOne:       http://121.201.52.12:9696
+    glance:
+        RegionOne:       http://121.201.52.12:9292
 sessionEngine:
     type:            MemcachedCache | Redis | Session
     address:         121.201.53.215

@@ -1,13 +1,4 @@
-var request = require('superagent');
-var cinderRemote = require('config')('remote').cinder;
-
-var Cinder = {
-  listVolumes: function(projectId, token, callback) {
-    request
-      .get(cinderRemote + '/v2/' + projectId + '/volumes/detail')
-      .set('X-Auth-Token', token)
-      .end(callback);
-  }
-};
-
-module.exports = Cinder;
+/*
+* merge all cinder api methods to one object and export it
+*/
+module.exports = require('helpers/merge_methods')({}, __dirname);
