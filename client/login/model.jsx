@@ -13,10 +13,10 @@ class Model extends React.Component {
       isSubmitting: false
     };
 
-    this.doSubmit = this.doSubmit.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  doSubmit(e) {
+  onSubmit(e) {
     e.preventDefault();
 
     if (this.state.isSubmitting) {
@@ -76,7 +76,7 @@ class Model extends React.Component {
       state = this.state;
 
     return (
-      <form method="POST" onSubmit={this.doSubmit}>
+      <form method="POST" onSubmit={this.onSubmit}>
         <input type="text" ref="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={props.accountPlaceholder} autoFocus="autofocus" autoComplete="off" />
         <input type="password" ref="pwd" className={state.pwdEmptyError ? 'error' : ''} placeholder={props.pwdPlaceholder} autoComplete="off" />
         <div className="tip-wrapper">
