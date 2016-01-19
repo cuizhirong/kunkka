@@ -3,7 +3,6 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
-var lang = require('i18n/client/lang.json');
 
 var request = require('./request');
 
@@ -96,11 +95,6 @@ class Model extends React.Component {
         case 'instance_type':
           col.render = (rcol, ritem, rindex) => {
             return ritem.flavor ? ritem.flavor.name : '';
-          };
-          break;
-        case 'status':
-          col.render = (rcol, ritem, rindex) => {
-            return lang[ritem.status.toLowerCase()];
           };
           break;
         default:

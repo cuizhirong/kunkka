@@ -87,11 +87,6 @@ class Model extends React.Component {
             return lang[ritem.metadata.attached_mode];
           };
           break;
-        case 'status':
-          col.render = (rcol, ritem, rindex) => {
-            return lang[ritem.status];
-          };
-          break;
         default:
           break;
       }

@@ -26,43 +26,44 @@ class MainTable extends React.Component {
 
   componentWillMount() {
     var config = this.props.config;
-    this.convertLang(config);
+    converter.convertLang(lang, config);
     this.tableColRender(config.table.column);
   }
 
-  convertLang(config) {
-    var langItems = [['title'],
-      ['btns', 'value'],
-      ['table', 'column', 'title']];
-
-    config.btns.map((btn, i) => {
-      btn.dropdown && btn.dropdown.items.map((item, index) => {
-        langItems.push(['btns', i, 'dropdown', 'items', index, 'items', 'title']);
-      });
-    });
-    config.table.column.map((col, i) => {
-      col.filter && langItems.push(['table', 'column', i, 'filter', 'name']);
-    });
-
-    converter.convertLang(lang, config, langItems);
+  getStatusIcon(data) {
+    switch (data) {
+      case 'active':
+        return <i className="glyphicon icon-status-active active" />;
+      case 'in-use':
+        return <i className="glyphicon icon-status-light active" />;
+      default:
+        return undefined;
+    }
   }
 
   tableColRender(column, item, index) {
     column.map((col) => {
       switch (col.type) {
         case 'captain':
-          col.render = (rcol, ritem, rindex) => {
+          !col.render && (col.render = (rcol, ritem, rindex) => {
             var listener = (_item, _col, _index, e) => {
               e.preventDefault();
               console.log('print ' + _item.name, _item);
             };
-            return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
-          };
+            return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem[rcol.dataIndex]}</a>;
+          });
+          break;
+        case 'status':
+          !col.render && (col.render = (rcol, ritem, rindex) => {
+            var data = ritem[rcol.dataIndex].toLowerCase();
+            var icon = this.getStatusIcon(data);
+            return icon ? <div>{icon}{lang[data]}</div> : lang[data];
+          });
           break;
         case 'time':
-          col.render = (rcol, ritem, rindex) => {
+          !col.render && (col.render = (rcol, ritem, rindex) => {
             return ritem[rcol.dataIndex];
-          };
+          });
           break;
         default:
           break;

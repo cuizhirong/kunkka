@@ -2,18 +2,6 @@
  * @func: convert obj value into specific language
  */
 module.exports = {
-  getPenultimate(config, keys) {
-    return (function fn(obj, entry, i = 0) {
-      if (i === 0) {
-        return (entry.length <= 1) ? obj : fn(obj[entry[i]], entry, i + 1);
-      } else if (i < entry.length - 1) {
-        return fn(obj[entry[i]], entry, i + 1);
-      } else if (i === entry.length - 1) {
-        return obj;
-      }
-    })(config, keys);
-  },
-
   getLangValue(lang, obj) {
     var strs = '';
     obj.map((str) => {
@@ -23,20 +11,21 @@ module.exports = {
     return strs;
   },
 
-  convertLang(lang, config, items) {
-    items.forEach((entry) => {
-      var obj = this.getPenultimate(config, entry),
-        key = entry[entry.length - 1];
-
-      if (obj.length >= 0) {
-        obj.forEach((data) => {
-          data[key] && (data[key] = this.getLangValue(lang, data[key]));
+  convertLang(lang, config) {
+    config.title && (config.title = this.getLangValue(lang, config.title));
+    config.btns && (config.btns.forEach((btn) => {
+      btn.value && (btn.value = this.getLangValue(lang, btn.value));
+      btn.dropdown && (btn.dropdown.items.forEach((item) => {
+        item.items.forEach((subitem) => {
+          subitem.title = this.getLangValue(lang, subitem.title);
         });
-      } else {
-        obj[key] && (obj[key] = this.getLangValue(lang, obj[key]));
-      }
-    });
-
-    return config;
+      }));
+    }));
+    config.table && (config.table.column.forEach((col) => {
+      col.title = this.getLangValue(lang, col.title);
+      col.filter && col.filter.forEach((filter) => {
+        filter.name = this.getLangValue(lang, filter.name);
+      });
+    }));
   }
 };

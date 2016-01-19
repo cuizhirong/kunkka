@@ -85,6 +85,7 @@
     }, {
       "title": ["status"],
       "dataIndex": "status",
+      "type": "status",
       "key": "status",
       "filter": [{
         "name": ["in-use"],
