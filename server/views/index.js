@@ -69,7 +69,9 @@ module.exports = function(app) {
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
         uskinFile: uskinFile[0],
-        modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory())
+        modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
+          language: req.i18n.__('shared')
+        }))
       });
     } else {
       res.render('login', {

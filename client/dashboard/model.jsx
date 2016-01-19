@@ -10,7 +10,7 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      modules: Object.keys(loader.modules)
+      modules: []
     };
 
     this.onClickSubmenu = this.onClickSubmenu.bind(this);
@@ -52,14 +52,16 @@ class Model extends React.Component {
   }
 
   render() {
-    var state = this.state;
+    var state = this.state,
+      props = this.props,
+      __ = props.language;
     var modules = loader.modules;
 
     var submenu = [];
 
-    state.modules.forEach((m) => {
+    props.menus.forEach((m) => {
       submenu.push({
-        subtitle: m.toUpperCase(),
+        subtitle: __[m],
         key: m,
         onClick: this.onClickSubmenu,
         iconClass: 'glyphicon icon-' + m,
@@ -68,7 +70,7 @@ class Model extends React.Component {
     });
 
     var items = [{
-      title: 'Project',
+      title: __.project,
       key: 'project',
       submenu: submenu
     }];
@@ -94,5 +96,9 @@ class Model extends React.Component {
   }
 
 }
+
+Model.defaultProps = {
+  menus: Object.keys(loader.modules)
+};
 
 module.exports = Model;
