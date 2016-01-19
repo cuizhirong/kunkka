@@ -84,7 +84,7 @@ class Model extends React.Component {
             <i className="glyphicon icon-status-warning"></i><span>{props.errorTip}</span>
           </div>
         </div>
-        <input type="submit" value={props.submit} />
+        <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={props.submit} />
       </form>
     );
   }
