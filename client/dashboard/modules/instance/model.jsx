@@ -12,95 +12,119 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
+    config.table.data = [];
     this.state = {
-      data: [],
-      btns: config.btns,
-      search: config.search,
-      table: config.table
+      config: config
     };
 
-    this.listInstance = this.listInstance.bind(this);
-    this.btnsOnClick = this.btnsOnClick.bind(this);
-    this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
+    this.bindEventList = this.bindEventList.bind(this);
+    this.clearTableState = this.clearTableState.bind(this);
+    this._eventList = {};
+    this._stores = {
+      checkedRow: []
+    };
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    this.bindEventList();
+    this.setTableColRender(config.table.column);
     this.listInstance();
+  }
+
+  bindEventList() {
+    this._eventList = {
+      btnsOnClick: this.btnsOnClick,
+      dropdownBtnOnClick: this.dropdownBtnOnClick,
+      searchOnChange: this.searchOnChange,
+      tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
+    };
+  }
+
+  updateTableData(data) {
+    var conf = this.state.config;
+    conf.table.data = data;
+
+    this.setState({
+      config: conf
+    });
   }
 
   listInstance() {
     var that = this;
 
     request.listInstances().then(function(data) {
-      that.setState({
-        data: data.servers ? data.servers : []
-      });
+      that.updateTableData(data.servers);
     }, function(err) {
+      that.updateTableData([]);
       console.debug(err);
     });
 
   }
 
-  getLangValue(btns, table) {
-    this.getBtnLang(btns);
-    this.getTableLang(table);
-  }
-
-  getBtnLang(btns) {
-    btns.map((btn) => {
-      if (btn.value_key) {
-        btn.value = '';
-        btn.value_key.map((val) => {
-          btn.value += lang[val];
-        });
-      }
-    });
-  }
-
-  setTableColRender(col) {
-    switch (col.key) {
-      case 'name':
-        {
+  setTableColRender(column) {
+    column.map((col) => {
+      switch (col.key) {
+        case 'image':
           col.render = (rcol, ritem, rindex) => {
             var listener = (_item, _col, _index, e) => {
               e.preventDefault();
-              console.log('print ' + _item.name, _item);
+              console.log('print ' + _item.image.name, _item);
             };
-            return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
+            return ritem.image ?
+              <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
           };
           break;
-        }
-      case 'ip_address':
-        {
+        case 'ip_address':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.addresses.private ? ritem.addresses.private[0].addr : '';
+            var str = '';
+            if (ritem.addresses.private) {
+              for (let item of ritem.addresses.private) {
+                if (item.version === 4 && item['OS-EXT-IPS:type'] === 'fixed') {
+                  str = item.addr;
+                  break;
+                }
+              }
+            }
+            return str;
           };
           break;
-        }
-      default:
-        break;
-    }
-  }
-
-  getTableLang(table) {
-    table.column.map((col) => {
-      if (col.title_key) {
-        col.title = '';
-        col.title_key.map((val) => {
-          col.title += lang[val];
-        });
+        case 'floating_ip':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.floatingip ? ritem.floatingip.floating_ip_address : '';
+          };
+          break;
+        case 'instance_type':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.flavor ? ritem.flavor.name : '';
+          };
+          break;
+        case 'status':
+          col.render = (rcol, ritem, rindex) => {
+            return lang[ritem.status.toLowerCase()];
+          };
+          break;
+        default:
+          break;
       }
-
-      this.setTableColRender(col);
     });
   }
 
+  tableCheckboxOnClick(e, status, clickedRow, arr) {
+    // console.log('tableOnClick: ', e, status, clickedRow, arr);
+    this.controlBtns(status, clickedRow, arr);
+  }
+
+  clearTableState() {
+    this.refs.dashboard.clearTableState();
+  }
+
   btnsOnClick(e, key) {
-    console.log('btnsOnClick: key is', key);
+    console.log('Button clicked:', key);
     switch (key) {
       case 'create_instance':
         break;
       case 'refresh':
+        // this.clearTableState();
         break;
       default:
         break;
@@ -108,54 +132,41 @@ class Model extends React.Component {
   }
 
   dropdownBtnOnClick(e, status) {
-    console.log('dropdownBtnOnClick: status is', status);
+    // console.log('dropdownBtnOnClick: status is', status);
   }
 
-  searchOnClick(str) {
-    console.log('searchOnClick: text is', str);
+  searchOnChange(str) {
+    // console.log('search:', str);
   }
 
-  tableCheckboxOnClick(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.controlCreateInstance(status, clickedRow, arr);
-  }
+  controlBtns(status, clickedRow, arr) {
+    var conf = this.state.config,
+      btns = conf.btns;
 
-  controlCreateInstance(status, clickedRow, arr) {
-    if (clickedRow) {
-      this.state.btns.filter((btn) => {
-        return btn.btnKey === 'create_instance';
-      }).forEach((btn) => {
-        btn.disabled = (arr.length === 1) ? false : true;
-      });
+    btns.map((btn) => {
+      switch (btn.key) {
+        case 'vnc_console':
+          btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'power_off':
+          btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    });
 
-      this.setState({
-        btns: this.state.btns
-      });
-    }
+    this._stores.checkedRow = arr;
+    this.setState({
+      config: conf
+    });
   }
 
   render() {
-    var btns = this.state.btns,
-      search = this.state.search,
-      table = this.state.table;
-
-    table.data = this.state.data;
-    this.getLangValue(btns, table);
-
-    var MainTableConfig = {
-      title: 'Instance',
-      btns: btns,
-      btnsOnClick: this.btnsOnClick,
-      dropdownBtnOnClick: this.dropdownBtnOnClick,
-      search: search,
-      searchOnClick: this.searchOnClick,
-      table: table,
-      tableCheckboxOnClick: this.tableCheckboxOnClick
-    };
 
     return (
       <div className="halo-modules-instance" style={this.props.style}>
-        <MainTable config={MainTableConfig}/>
+        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
       </div>
     );
   }

@@ -1,81 +1,95 @@
 {
+  "title": ["instance"],
   "btns": [{
-    "value_key": ["create", "instance"],
-    "btnKey": "create_instance",
+    "value": ["create", "instance"],
+    "key": "create_instance",
     "type": "create",
-    "iconClass": "create",
+    "icon": "create"
+  }, {
+    "value": ["vnc_console"],
+    "key": "vnc_console",
+    "icon": "volume",
     "disabled": true
   }, {
-    "value_key": ["vnc_console"],
-    "btnKey": "vnc_console",
-    "iconClass": "volume",
+    "value": ["power_on"],
+    "key": "power_on",
+    "icon": "power-on",
     "disabled": true
   }, {
-    "value_key": ["power_on"],
-    "btnKey": "power_on",
-    "iconClass": "power-on",
+    "value": ["power_off"],
+    "key": "power_off",
+    "icon": "power-off",
     "disabled": true
   }, {
-    "value_key": ["power_off"],
-    "btnKey": "power_off",
-    "iconClass": "power-off",
-    "disabled": true
-  }, {
-    "value_key": ["more"],
-    "btnKey": "more",
+    "value": ["more"],
+    "key": "more",
     "iconClass": "more",
     "dropdown": {
       "width": 160,
       "items": [{
         "items": [{
-          "title": "Reboot",
-          "key": "0"
+          "title": ["reboot"],
+          "key": "reboot",
+          "disabled": false
         }, {
-          "title": "Take Image Snapshot",
-          "key": "1"
-        }]
-      }, {
-        "items": [{
-          "title": "Associate Public IP",
-          "key": "2"
+          "title": ["take_instance", "snapshot"],
+          "key": "inst_snps",
+          "disabled": true
         }, {
-          "title": "Dissociate Public IP",
-          "key": "3"
-        }, {
-          "title": "Join Networks",
-          "key": "4"
-        }]
-      }, {
-        "items": [{
-          "title": "Change Security Group",
-          "key": "5"
-        }, {
-          "title": "Change Passoword",
-          "key": "6"
-        }, {
-          "title": "Change Keypair",
-          "key": "7"
-        }]
-      }, {
-        "items": [{
-          "title": "Add Volume",
-          "key": "8"
-        }, {
-          "title": "Remove Volume",
-          "key": "9",
+          "title": ["resize"],
+          "key": "resize",
           "disabled": true
         }]
       }, {
         "items": [{
-          "title": "Termitate",
-          "key": "10",
+          "title": ["associate", "floating_ip"],
+          "key": "assc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["dissociate", "floating_ip"],
+          "key": "dssc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["join", "networks"],
+          "key": "join_ntw",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["change","security", "group"],
+          "key": "chg_security_grp",
+          "disabled": true
+        }, {
+          "title": ["change", "password"],
+          "key": "chg_psw",
+          "disabled": true
+        }, {
+          "title": ["change", "keypair"],
+          "key": "chg_keypr",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["add", "volume"],
+          "key": "add_volume",
+          "disabled": true
+        }, {
+          "title": ["detach", "volume"],
+          "key": "rmv_volume",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["terminate"],
+          "key": "terminate",
+          "disabled": true,
           "danger": true
         }]
       }]
     }
   }, {
-    "btnKey": "refresh",
-    "iconClass": "refresh"
+    "key": "refresh",
+    "icon": "refresh"
   }],
   "search": {
 
@@ -84,33 +98,41 @@
     "checkbox": true,
     "dataKey": "id",
     "column": [{
-      "title_key": ["name"],
+      "title": ["name"],
       "dataIndex": "name",
-      "key": "name"
+      "key": "name",
+      "type": "captain"
     }, {
-      "title_key": ["image"],
+      "title": ["image"],
       "dataIndex": "",
+      "width": 160,
       "key": "image"
     }, {
-      "title_key": ["ip_address"],
+      "title": ["ip_address"],
       "dataIndex": "",
       "key": "ip_address"
     }, {
-      "title_key": ["floating_ip"],
+      "title": ["floating_ip"],
       "dataIndex": "",
       "key": "floating_ip"
     }, {
-      "title_key": ["instance_type"],
+      "title": ["instance_type"],
       "dataIndex": "",
       "key": "instance_type"
     }, {
-      "title_key": ["status"],
+      "title": ["status"],
       "dataIndex": "status",
-      "key": "status"
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
     }, {
-      "title_key": ["create", "time"],
+      "title": ["create", "time"],
       "dataIndex": "created",
-      "key": "created"
+      "key": "created",
+      "type": "time"
     }]
   }
 }

@@ -12,65 +12,90 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
+    config.table.data = [];
     this.state = {
-      data: [],
-      btns: config.btns,
-      search: config.search,
-      table: config.table
+      config: config
     };
 
-    this.listInstance = this.listInstance.bind(this);
-    this.btnsOnClick = this.btnsOnClick.bind(this);
-    this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
+    this.bindEventList = this.bindEventList.bind(this);
+    this._eventList = {};
+    this._stores = {
+      checkedRow: []
+    };
   }
 
   componentDidMount() {
+    this.bindEventList();
+    this.setTableColRender(config.table.column);
     this.listInstance();
+  }
+
+  bindEventList() {
+    this._eventList = {
+      btnsOnClick: this.btnsOnClick,
+      dropdownBtnOnClick: this.dropdownBtnOnClick,
+      searchOnChange: this.searchOnChange,
+      tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
+    };
+  }
+
+  updateTableData(data) {
+    var conf = this.state.config;
+    conf.table.data = data;
+
+    this.setState({
+      config: conf
+    });
   }
 
   listInstance() {
     var that = this;
 
     request.listVolumes().then(function(data) {
-      that.setState({
-        data: data.volumes ? data.volumes : []
-      });
+      that.updateTableData(data.volumes ? data.volumes : []);
     }, function(err) {
+      that.updateTableData([]);
       console.debug(err);
     });
 
   }
 
-  getLangValue(btns, table) {
-    this.getBtnLang(btns);
-    this.getTableLang(table);
-  }
-
-  getBtnLang(btns) {
-    btns.map((btn) => {
-      if (btn.value_key) {
-        btn.value = '';
-        btn.value_key.map((val) => {
-          btn.value += lang[val];
-        });
+  setTableColRender(column) {
+    column.map((col) => {
+      switch (col.key) {
+        case 'size':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.size + ' GB';
+          };
+          break;
+        case 'attch_instance':
+          col.render = (rcol, ritem, rindex) => {
+            var servers = '';
+            ritem.attachments && ritem.attachments.map((attch, index) => {
+              servers += (index <= 0) ? attch.server.name : ' ,' + attch.server.name;
+            });
+            return servers;
+          };
+          break;
+        case 'shared':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.multiattach ? lang.shared : '-';
+          };
+          break;
+        case 'attributes':
+          col.render = (rcol, ritem, rindex) => {
+            return lang[ritem.metadata.attached_mode];
+          };
+          break;
+        case 'status':
+          col.render = (rcol, ritem, rindex) => {
+            return lang[ritem.status];
+          };
+          break;
+        default:
+          break;
       }
     });
-  }
-
-  setTableColRender(col) {
-    switch (col.key) {
-      case 'name':
-        col.render = (rcol, ritem, rindex) => {
-          var listener = (_item, _col, _index, e) => {
-            e.preventDefault();
-            console.log('print ' + _item.name, _item);
-          };
-          return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
-        };
-        break;
-      default:
-        break;
-    }
   }
 
   getTableLang(table) {
@@ -86,8 +111,13 @@ class Model extends React.Component {
     });
   }
 
+  tableCheckboxOnClick(e, status, clickedRow, arr) {
+    //   console.log('tableOnClick: ', e, status, clickedRow, arr);
+    this.controlBtns(status, clickedRow, arr);
+  }
+
   btnsOnClick(e, key) {
-    console.log('btnsOnClick: key is', key);
+    // console.log('btnsOnClick: key is', key);
     switch (key) {
       case 'create_instance':
         break;
@@ -99,54 +129,41 @@ class Model extends React.Component {
   }
 
   dropdownBtnOnClick(e, status) {
-    console.log('dropdownBtnOnClick: status is', status);
+    // console.log('dropdownBtnOnClick: status is', status);
   }
 
-  searchOnClick(str) {
-    console.log('searchOnClick: text is', str);
+  searchOnChange(str) {
+    // console.log('search: text is', str);
   }
 
-  tableCheckboxOnClick(e, status, clickedRow, arr) {
-    //   console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.controlCreateInstance(status, clickedRow, arr);
-  }
+  controlBtns(status, clickedRow, arr) {
+    var conf = this.state.config,
+      btns = conf.btns;
 
-  controlCreateInstance(status, clickedRow, arr) {
-    if (clickedRow) {
-      this.state.btns.filter((btn) => {
-        return btn.btnKey === 'create_instance';
-      }).forEach((btn) => {
-        btn.disabled = (arr.length === 1) ? false : true;
-      });
+    btns.map((btn) => {
+      switch(btn.key) {
+        case 'create_snapshot':
+          btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'attach_to_instance':
+          btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    });
 
-      this.setState({
-        btns: this.state.btns
-      });
-    }
+    this._stores.checkedRow = arr;
+    this.setState({
+      config: conf
+    });
   }
 
   render() {
-    var btns = this.state.btns,
-      search = this.state.search,
-      table = this.state.table;
-
-    table.data = this.state.data;
-    this.getLangValue(btns, table);
-
-    var MainTableConfig = {
-      title: 'Volume',
-      btns: btns,
-      btnsOnClick: this.btnsOnClick,
-      dropdownBtnOnClick: this.dropdownBtnOnClick,
-      search: search,
-      searchOnClick: this.searchOnClick,
-      table: table,
-      tableCheckboxOnClick: this.tableCheckboxOnClick
-    };
 
     return (
       <div className="halo-modules-volume" style={this.props.style}>
-        <MainTable config={MainTableConfig}/>
+        <MainTable config={this.state.config} eventList={this._eventList}/>
       </div>
     );
   }

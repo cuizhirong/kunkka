@@ -2,19 +2,19 @@
   "en": {
     "attach_to": "Attach to ",
     "attributes": "Attributes",
-    "shared": "Shared",
-    "size": "Size",
-    "snapshot": "Snapshot",
-    "type": "Type",
-    "volume": "Volume"
+    "dtch_volume": "Detach",
+    "extd_capacity": "Extend Capacity",
+    "rd_only": "Read Only",
+    "rd_wrt": "Read Write",
+    "shared": "Shared"
   },
   "zh-CN": {
     "attach_to": "挂载到",
     "attributes": "属性",
-    "shared": "共享盘",
-    "size": "容量",
-    "snapshot": "快照",
-    "type": "类型",
-    "volume": "云硬盘"
+    "dtch_volume": "从云主机卸载",
+    "extd_capacity": "扩容",
+    "rd_only": "只读",
+    "rd_wrt": "读写",
+    "shared": "共享盘"
   }
 }

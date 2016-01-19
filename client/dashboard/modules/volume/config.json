@@ -1,74 +1,55 @@
 {
+  "title": ["volume"],
   "btns": [{
-    "value_key": ["create", "volume"],
-    "btnKey": "create_volume",
+    "value": ["create", "volume"],
+    "key": "create_volume",
     "type": "create",
-    "iconClass": "create"
+    "icon": "create"
   }, {
-    "value_key": ["create", "snapshot"],
-    "btnKey": "create_snapshot",
+    "value": ["create", "snapshot"],
+    "key": "create_snapshot",
     "type": "create",
-    "iconClass": "create"
-  }, {
-    "value_key": ["attach_to", "instance"],
-    "btnKey": "attach_to_instance",
-    "iconClass": "associate",
+    "icon": "create",
     "disabled": true
   }, {
-    "value_key": ["more"],
-    "btnKey": "more",
+    "value": ["attach_to", "instance"],
+    "key": "attach_to_instance",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
     "iconClass": "more",
     "dropdown": {
       "items": [{
         "items": [{
-          "title": "Reboot",
-          "key": "0"
+          "title": ["dtch_volume"],
+          "key": "dtch_volume",
+          "disabled": true
         }, {
-          "title": "Take Image Snapshot",
-          "key": "1"
-        }]
-      }, {
-        "items": [{
-          "title": "Associate Public IP",
-          "key": "2"
+          "title": ["extd_capacity"],
+          "key": "extd_capacity",
+          "disabled": true
         }, {
-          "title": "Dissociate Public IP",
-          "key": "3"
+          "title": ["set", "rd_only"],
+          "key": "set_rd_only",
+          "disabled": true
         }, {
-          "title": "Join Networks",
-          "key": "4"
-        }]
-      }, {
-        "items": [{
-          "title": "Change Security Group",
-          "key": "5"
-        }, {
-          "title": "Change Passoword",
-          "key": "6"
-        }, {
-          "title": "Change Keypair",
-          "key": "7"
-        }]
-      }, {
-        "items": [{
-          "title": "Add Volume",
-          "key": "8"
-        }, {
-          "title": "Remove Volume",
-          "key": "9",
+          "title": ["set", "rd_wrt"],
+          "key": "set_rd_wrt",
           "disabled": true
         }]
       }, {
         "items": [{
-          "title": "Termitate",
-          "key": "10",
-          "danger": true
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
         }]
       }]
     }
   }, {
-    "btnKey": "refresh",
-    "iconClass": "refresh"
+    "key": "refresh",
+    "icon": "refresh"
   }],
   "search": {
 
@@ -77,37 +58,44 @@
     "checkbox": true,
     "dataKey": "id",
     "column": [{
-      "title_key": ["name"],
+      "title": ["name"],
       "dataIndex": "name",
-      "key": "name"
+      "key": "name",
+      "type": "captain"
     }, {
-      "title_key": ["size"],
+      "title": ["size"],
       "dataIndex": "size",
       "key": "size"
     }, {
-      "title_key": ["attach_to", "instance"],
+      "title": ["attach_to", "instance"],
       "dataIndex": "",
       "key": "attch_instance"
     }, {
-      "title_key": ["shared"],
+      "title": ["shared"],
       "dataIndex": "",
       "key": "shared"
     }, {
-      "title_key": ["type"],
+      "title": ["type"],
       "dataIndex": "volume_type",
       "key": "type"
     }, {
-      "title_key": ["attributes"],
+      "title": ["attributes"],
       "dataIndex": "",
       "key": "attributes"
     }, {
-      "title_key": ["status"],
+      "title": ["status"],
       "dataIndex": "status",
-      "key": "status"
+      "key": "status",
+      "filter": [{
+        "name": ["in-use"],
+        "key": "in_use",
+        "filterBy": "in-use"
+      }]
     }, {
-      "title_key": ["create", "time"],
+      "title": ["create", "time"],
       "dataIndex": "created_at",
-      "key": "created"
+      "key": "created",
+      "type": "time"
     }]
   }
 }
