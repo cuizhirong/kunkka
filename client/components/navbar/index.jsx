@@ -10,24 +10,21 @@ class NavBar extends React.Component {
 
   clickSettings(e, status) {
     switch (status.key) {
-    case 'setting':
-      break;
-    case 'help':
-      break;
-    case 'en': {
-      window.location = '/?lang=en';
-      break;
-    }
-    case 'cn': {
-      window.location = '/?lang=zh-CN';
-      break;
-    }
-    case 'logout': {
-      window.location = '/auth/logout';
-      break;
-    }
-    default:
-      break;
+      case 'setting':
+        break;
+      case 'help':
+        break;
+      case 'en':
+        window.location = '/?lang=en';
+        break;
+      case 'cn':
+        window.location = '/?lang=zh-CN';
+        break;
+      case 'logout':
+        window.location = '/auth/logout';
+        break;
+      default:
+        break;
     }
   }
 

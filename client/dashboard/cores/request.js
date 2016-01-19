@@ -1,4 +1,4 @@
-var request = require('client/libs/request');
+var request = require('client/libs/ajax');
 
 module.exports = {
   get: function(options) {

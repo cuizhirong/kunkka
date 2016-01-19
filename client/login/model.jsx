@@ -1,5 +1,5 @@
 var React = require('react');
-var request = require('../libs/request');
+var request = require('../libs/ajax');
 
 class Model extends React.Component {
 

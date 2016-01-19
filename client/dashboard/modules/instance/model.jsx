@@ -1,10 +1,11 @@
 require('./style/index.less');
 
 var React = require('react');
-var request = require('client/dashboard/cores/request');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var lang = require('i18n/client/lang.json');
+
+var request = require('./request');
 
 class Model extends React.Component {
 
@@ -30,9 +31,7 @@ class Model extends React.Component {
   listInstance() {
     var that = this;
 
-    request.get({
-      url: '/api/v1/' + HALO.user.projectId + '/servers/detail'
-    }).then(function(data) {
+    request.listInstances().then(function(data) {
       that.setState({
         data: data.servers ? data.servers : []
       });
@@ -59,25 +58,27 @@ class Model extends React.Component {
   }
 
   setTableColRender(col) {
-    switch(col.key) {
-    case 'name': {
-      col.render = (rcol, ritem, rindex) => {
-        var listener = (_item, _col, _index, e) => {
-          e.preventDefault();
-          console.log('print ' + _item.name, _item);
-        };
-        return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
-      };
-      break;
-    }
-    case 'ip_address': {
-      col.render = (rcol, ritem, rindex) => {
-        return ritem.addresses.private ? ritem.addresses.private[0].addr : '';
-      };
-      break;
-    }
-    default:
-      break;
+    switch (col.key) {
+      case 'name':
+        {
+          col.render = (rcol, ritem, rindex) => {
+            var listener = (_item, _col, _index, e) => {
+              e.preventDefault();
+              console.log('print ' + _item.name, _item);
+            };
+            return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.name}</a>;
+          };
+          break;
+        }
+      case 'ip_address':
+        {
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.addresses.private ? ritem.addresses.private[0].addr : '';
+          };
+          break;
+        }
+      default:
+        break;
     }
   }
 
@@ -96,13 +97,13 @@ class Model extends React.Component {
 
   btnsOnClick(e, key) {
     console.log('btnsOnClick: key is', key);
-    switch(key) {
-    case 'create_instance':
-      break;
-    case 'refresh':
-      break;
-    default:
-      break;
+    switch (key) {
+      case 'create_instance':
+        break;
+      case 'refresh':
+        break;
+      default:
+        break;
     }
   }
 
@@ -115,7 +116,7 @@ class Model extends React.Component {
   }
 
   tableCheckboxOnClick(e, status, clickedRow, arr) {
-  //   console.log('tableOnClick: ', e, status, clickedRow, arr);
+    // console.log('tableOnClick: ', e, status, clickedRow, arr);
     this.controlCreateInstance(status, clickedRow, arr);
   }
 

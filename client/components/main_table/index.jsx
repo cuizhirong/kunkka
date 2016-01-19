@@ -1,6 +1,9 @@
 require('./style/index.less');
 
 var React = require('react');
+var moment = require('client/libs/moment');
+console.log(moment);
+
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
 var Button = uskin.Button;
