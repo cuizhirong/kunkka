@@ -20,11 +20,11 @@ var prototype = {
       }
     });
   },
-  getImageDetail: function (req, res, next) {
+  getImageDetails: function (req, res, next) {
     var imageId = req.params.id;
     var token = req.session.user.token;
     var region = req.headers.region;
-    this.glance.showImageDetail(imageId, token, region, function (err, payload) {
+    this.glance.showImageDetails(imageId, token, region, function (err, payload) {
       if (err) {
         res.status(err.status).json(err);
       } else {
@@ -34,7 +34,7 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/images', this.getImageList.bind(this));
-    this.app.get('/api/v1/images/:id', this.getImageDetail.bind(this));
+    this.app.get('/api/v1/images/:id', this.getImageDetails.bind(this));
   }
 };
 

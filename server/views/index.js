@@ -11,6 +11,7 @@ var ReactDOMServer = require('react-dom/server');
 
 var loginModel = require('client/login/model.jsx');
 var dashboardModel = require('client/dashboard/model.jsx');
+var config = require('config');
 
 var loginModelFactory = React.createFactory(loginModel);
 var dashboardModelFactory = React.createFactory(dashboardModel);
@@ -53,15 +54,30 @@ module.exports = function(app) {
     return el.match(/main.min.css$/) !== null;
   });
 
+  var regions = {};
+  var languages = Object.keys(config('region')[0].name);
+  languages.forEach(function (lang) {
+    regions[lang] = [];
+    config('region').forEach(function (reg) {
+      regions[lang].push({
+        name: reg.name[lang],
+        id: reg.id
+      });
+    });
+  });
+
+
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
-    var i18n = req.i18n.__.bind(req.i18n);
+    var __ = req.i18n.__.bind(req.i18n);
     if (req.session && req.session.user) {
       var HALO = {
         configs: {
           lang: locale
         },
-        user: req.session.user
+        user: req.session.user,
+        region_list: regions[locale],
+        current_region: req.session.region ? req.session.region : regions[locale][0].id
       };
 
       res.render('index', {
@@ -70,24 +86,24 @@ module.exports = function(app) {
         mainCssFile: staticFiles.mainCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
-          language: req.i18n.__('shared')
+          language: __('shared')
         }))
       });
     } else {
       res.render('login', {
         locale: locale,
-        unitedstack: i18n('views.login.unitedstack'),
-        login: i18n('views.login.login'),
-        signup: i18n('views.login.signup'),
-        forgotPass: i18n('views.login.forgotPass'),
+        unitedstack: __('views.login.unitedstack'),
+        login: __('views.login.login'),
+        signup: __('views.login.signup'),
+        forgotPass: __('views.login.forgotPass'),
         loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(loginModelFactory({
-          accountPlaceholder: i18n('shared.account_placeholder'),
-          pwdPlaceholder: i18n('shared.pwd_placeholder'),
-          errorTip: i18n('shared.error_tip'),
-          submit: i18n('shared.submit')
+          accountPlaceholder: __('shared.account_placeholder'),
+          pwdPlaceholder: __('shared.pwd_placeholder'),
+          errorTip: __('shared.error_tip'),
+          submit: __('shared.submit')
         }))
       });
     }

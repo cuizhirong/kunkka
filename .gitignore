@@ -32,6 +32,7 @@ node_modules
 
 # yaml config file.
 config.yml
+configuration.js
 
 # Mac file
 .DS_Store

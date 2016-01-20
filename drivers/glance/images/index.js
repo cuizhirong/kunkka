@@ -8,7 +8,7 @@ module.exports = {
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showImageDetail: function (imageId, token, region, callback) {
+  showImageDetails: function (imageId, token, region, callback) {
     request
       .get(glanceRemote[region] + '/v2/images/' + imageId)
       .set('X-Auth-Token', token)

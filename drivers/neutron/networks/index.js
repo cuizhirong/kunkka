@@ -8,15 +8,9 @@ module.exports = {
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showNetworkDetail: function (networkId, token, region, callback) {
+  showNetworkDetails: function (networkId, token, region, callback) {
     request
       .get(neutronRemote[region] + '/v2.0/networks/' + networkId)
-      .set('X-Auth-Token', token)
-      .end(callback);
-  },
-  listFloatingips: function (token, region, callback) {
-    request
-      .get(neutronRemote[region] + '/v2.0/floatingips')
       .set('X-Auth-Token', token)
       .end(callback);
   }

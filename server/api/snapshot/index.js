@@ -1,23 +1,21 @@
 var async = require('async');
 var extend = require('extend');
 var Cinder = require('cinder');
-var Nova = require('nova');
 
-function Volume (app, cinder, nova) {
+function Snapshot (app, cinder) {
   this.app = app;
   this.cinder = cinder;
-  this.nova = nova;
 }
 
 var prototype = {
-  getVolumeList: function (req, res, next) {
+  getSnapshotList: function (req, res, next) {
     var projectId = req.params.id;
     var region = req.headers.region;
     var token = req.session.user.token;
     var that = this;
     async.parallel([
       function (callback) {
-        that.cinder.listVolumes(projectId, token, region, function (err, payload) {
+        that.cinder.listSnapshots(projectId, token, region, function (err, payload) {
           if (err) {
             callback(err);
           } else {
@@ -26,7 +24,7 @@ var prototype = {
         });
       },
       function (callback) {
-        that.nova.listServers(projectId, token, region, function (err, payload) {
+        that.cinder.listVolumes(projectId, token, region, function (err, payload) {
           if (err) {
             callback(err);
           } else {
@@ -39,25 +37,23 @@ var prototype = {
       if (err) {
         res.status(err.status).json(err);
       } else {
-        var volumes = results[0].volumes;
-        var instances = results[1].servers;
-        volumes.forEach(function (volume) {
-          volume.attachments.forEach(function (attachment) {
-            instances.some(function (instance) {
-              return instance.id === attachment.server_id && (attachment.server = instance);
-            });
+        var snapshots = results[0].snapshots;
+        var volumes = results[1].volumes;
+        snapshots.forEach(function (s) {
+          volumes.some(function (v) {
+            return v.id === s.volume_id && (s.volume = v);
           });
         });
-        res.json({volumes: volumes});
+        res.json({snapshots: snapshots});
       }
     });
   },
-  getVolumeDetails: function (req, res, next) {
+  getSnapshotDetails: function (req, res, next) {
     var projectId = req.params.project;
-    var volumeId = req.params.volume;
+    var snapshotId = req.params.snapshot;
     var token = req.session.user.token;
     var region = req.headers.region;
-    this.cinder.showVolumeDetails(projectId, volumeId, token, region, function (err, payload) {
+    this.cinder.showSnapshotDetails(projectId, snapshotId, token, region, function (err, payload) {
       if (err) {
         res.status(err.status).json(err);
       } else {
@@ -66,16 +62,16 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:id/volumes/detail', this.getVolumeList.bind(this));
-    this.app.get('/api/v1/:project/volumes/:volume', this.getVolumeDetails.bind(this));
+    this.app.get('/api/v1/:id/snapshots/detail', this.getSnapshotList.bind(this));
+    this.app.get('/api/v1/:project/snapshots/:snapshot', this.getSnapshotDetails.bind(this));
   }
 };
 
 module.exports = function (app, extension) {
-  extend(Volume.prototype, prototype);
+  extend(Snapshot.prototype, prototype);
   if (extension) {
-    extend(Volume.prototype, extension);
+    extend(Snapshot.prototype, extension);
   }
-  var volume = new Volume(app, Cinder, Nova);
+  var volume = new Snapshot(app, Cinder);
   volume.initRoutes();
 };

@@ -8,7 +8,7 @@ module.exports = {
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showFlavorDetail: function (projectId, flavorId, token, region, callback) {
+  showFlavorDetails: function (projectId, flavorId, token, region, callback) {
     request
       .get(novaRemote[region] + '/v2.1/' + projectId + '/flavors/' + flavorId)
       .set('X-Auth-Token', token)

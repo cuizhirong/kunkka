@@ -2,15 +2,15 @@ var request = require('superagent');
 var neutronRemote = require('config')('remote').neutron;
 
 module.exports = {
-  listSubnets: function (token, region, callback) {
+  listFloatingips: function (token, region, callback) {
     request
-      .get(neutronRemote[region] + '/v2.0/subnets')
+      .get(neutronRemote[region] + '/v2.0/floatingips')
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showSubnetDetails: function (subnetId, token, region, callback) {
+  showFloatingipDetails: function (id, token, region, callback) {
     request
-      .get(neutronRemote[region] + '/v2.0/subnets/' + subnetId)
+      .get(neutronRemote[region] + '/v2.0/floatingips/' + id)
       .set('X-Auth-Token', token)
       .end(callback);
   }

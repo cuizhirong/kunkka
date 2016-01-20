@@ -70,24 +70,33 @@ var prototype = {
           images.some(function (image) {
             return image.id === instance.image.id && (instance.image = image);
           });
-          var _floatingip;
-          instance.addresses.private.some(function (addr) {
-            return (addr['OS-EXT-IPS:type'] === 'floating') && (_floatingip = addr.addr);
+          var _floatingips = [];
+          var _fixedIps = [];
+          Object.keys(instance.addresses).forEach(function (el) {
+            instance.addresses[el].forEach(function (e) {
+              if (e.version === 4 && e['OS-EXT-IPS:type'] === 'fixed') {
+                _fixedIps.push(e.addr);
+              } else if (e.version === 4 && e['OS-EXT-IPS:type'] === 'floating') {
+                _floatingips.push(e.addr);
+              }
+            });
           });
+          instance.fixed_ips = _fixedIps;
+          instance.floatingips = [];
           floatingips.some(function (floatingip) {
-            return floatingip.floating_ip_address === _floatingip && (instance.floatingip = floatingip);
+            return _floatingips.indexOf(floatingip.floating_ip_address) > -1 && (instance.floatingips.push(floatingip));
           });
         });
         res.json({servers: instances});
       }
     });
   },
-  getInstanceDetail: function (req, res, next) {
+  getInstanceDetails: function (req, res, next) {
     var projectId = req.params.project;
     var serverId = req.params.server;
     var region = req.headers.region;
     var token = req.session.user.token;
-    this.nova.showServerDetail(projectId, serverId, token, region, function (err, payload) {
+    this.nova.showServerDetails(projectId, serverId, token, region, function (err, payload) {
       if (err) {
         return res.status(err.status).json(err);
       } else {
@@ -97,7 +106,7 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/:id/servers/detail', this.getInstanceList.bind(this));
-    this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetail.bind(this));
+    this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetails.bind(this));
   }
 };
 

@@ -2,19 +2,19 @@ var extend = require('extend');
 var Neutron = require('neutron');
 var async = require('async');
 
-function Network (app, neutron) {
+function Router (app, neutron) {
   this.app = app;
   this.neutron = neutron;
 }
 
 var prototype = {
-  getNetworkList: function (req, res, next) {
+  getRouterList: function (req, res, next) {
     var token = req.session.user.token;
     var region = req.headers.region;
     var that = this;
     async.parallel([
       function (callback) {
-        that.neutron.listNetworks(token, region, function (err, payload) {
+        that.neutron.listRouters(token, region, function (err, payload) {
           if (err) {
             callback(err);
           } else {
@@ -23,7 +23,7 @@ var prototype = {
         });
       },
       function (callback) {
-        that.neutron.listSubnets(token, region, function (err, payload) {
+        that.neutron.listFloatingips(token, region, function (err, payload) {
           if (err) {
             callback(err);
           } else {
@@ -36,27 +36,24 @@ var prototype = {
       if (err) {
         res.status(err.status).json(err);
       } else {
-        var networks = results[0].networks;
-        var subnets = results[1].subnets;
-        networks = networks.filter(function (n) {
-          return n.shared === false && n['router:external'] === false;
-        });
-        networks.forEach(function (network) {
-          network.subnets.forEach(function (subnet, index) {
-            subnets.some(function (sub) {
-              return sub.id === subnet && (network.subnets[index] = sub);
+        var routers = results[0].routers;
+        var floatingips = results[1].floatingips;
+        floatingips.forEach(function (f) {
+          if (f.router_id) {
+            routers.some(function (r) {
+              return r.id === f.router_id && (r.floatingip = f.floating_ip_address);
             });
-          });
+          }
         });
-        res.json({networks: networks});
+        res.json({routers: routers});
       }
     });
   },
-  getNetworkDetails: function (req, res, next) {
+  getRouterDetails: function (req, res, next) {
     var networkId = req.params.id;
     var region = req.headers.region;
     var token = req.session.user.token;
-    this.neutron.showNetworkDetails(networkId, token, region, function (err, payload) {
+    this.neutron.showRouterDetails(networkId, token, region, function (err, payload) {
       if (err) {
         return res.status(err.status).json(err);
       } else {
@@ -65,15 +62,15 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/networks', this.getNetworkList.bind(this));
-    this.app.get('/api/v1/networks/:id', this.getNetworkDetails.bind(this));
+    this.app.get('/api/v1/routers', this.getRouterList.bind(this));
+    this.app.get('/api/v1/routers/:id', this.getRouterDetails.bind(this));
   }
 };
 module.exports = function (app, extension) {
-  extend(Network.prototype, prototype);
+  extend(Router.prototype, prototype);
   if (extension) {
-    extend(Network.prototype, extension);
+    extend(Router.prototype, extension);
   }
-  var instance = new Network(app, Neutron);
+  var instance = new Router(app, Neutron);
   instance.initRoutes();
 };

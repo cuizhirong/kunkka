@@ -1,16 +1,15 @@
 /**
  * Module dependencies
  */
-var fs = require('fs');
-var path = require('path');
-var yaml = require('js-yaml');
 
 var env = process.env.NODE_ENV || 'development';
 
 var configObj;
 try {
-  configObj = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '..', '..', 'config.yml'), 'utf8'));
+  configObj = require('configuration');
 } catch (e) {
+  console.log(e);
+  console.error('The format of configuration.js is not correct!!!');
   configObj = {};
 }
 
