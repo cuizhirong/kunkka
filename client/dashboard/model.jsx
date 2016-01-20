@@ -2,7 +2,8 @@ var React = require('react');
 var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
 
-var loader = require('./cores/loader');
+var loader = require('./cores/loader'),
+  configs = loader.configs;
 
 class Model extends React.Component {
 
@@ -23,22 +24,36 @@ class Model extends React.Component {
 
     var pathList = this.router.getPathList();
     if (pathList.length > 1) {
-      loader.configs.default_module = pathList[1];
+      configs.default_module = pathList[1];
     } else {
-      this.router.replaceState('/project/' + loader.configs.default_module);
+      this.router.replaceState('/project/' + configs.default_module);
     }
   }
 
   onChangeState(pathList) {
     this.setState({
-      default_module: pathList[1]
+      selectedModule: pathList[1],
+      selectedMenu: this._filterMenu(pathList[1])
     });
+  }
+
+  _filterMenu(item) {
+    var ret = item;
+    configs.routers.some((m) => {
+      if (item === m.key) {
+        ret = m.link;
+        return true;
+      }
+      return false;
+    });
+    return ret;
   }
 
   updateModules() {
     this.setState({
       modules: Object.keys(loader.modules),
-      default_module: loader.configs.default_module
+      selectedModule: configs.default_module,
+      selectedMenu: this._filterMenu(configs.default_module)
     });
   }
 
@@ -65,7 +80,7 @@ class Model extends React.Component {
         key: m,
         onClick: this.onClickSubmenu,
         iconClass: 'glyphicon icon-' + m,
-        selected: m === state.default_module ? true : false
+        selected: m === state.selectedMenu ? true : false
       });
     });
 
@@ -86,7 +101,7 @@ class Model extends React.Component {
             {
               state.modules.map((m, index) => {
                 var M = modules[m];
-                return <M key={index} style={state.default_module === m ? undefined : {display: 'none'}} />;
+                return <M key={index} style={state.selectedModule === m ? undefined : {display: 'none'}} />;
               })
             }
           </div>
@@ -97,8 +112,20 @@ class Model extends React.Component {
 
 }
 
+function filterMenu(list) {
+  return list.filter((m) => {
+    var b = configs.routers.some((n) => {
+      if (n.key === m) {
+        return true;
+      }
+      return false;
+    });
+    return !b;
+  });
+}
+
 Model.defaultProps = {
-  menus: Object.keys(loader.modules)
+  menus: filterMenu(Object.keys(loader.modules))
 };
 
 module.exports = Model;

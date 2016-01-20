@@ -8,5 +8,9 @@
   "languages": [
     "en",
     "zh-CN"
-  ]
+  ],
+  "routers": [{
+    "key": "image",
+    "link": "volume"
+  }]
 }
