@@ -1,5 +1,9 @@
 {
-  "title": ["instance"],
+  "tabs": [{
+    "name": ["instance"],
+    "key": "instance",
+    "default": true
+  }],
   "btns": [{
     "value": ["create", "instance"],
     "key": "create_instance",

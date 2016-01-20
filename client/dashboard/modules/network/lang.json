@@ -1,0 +1,24 @@
+{
+  "en": {
+    "cidr": "CIDR",
+    "connect": "Connect ",
+    "disconnect": "Disconnect ",
+    "dhcp": "DHCP",
+    "no": "No",
+    "prv_network": "Network",
+    "subnet": "Subnet",
+    "unmanaged": "Unmanaged ",
+    "yes": "Yes"
+  },
+  "zh-CN": {
+    "cidr": "CIDR网段",
+    "connect": "关联",
+    "disconnect": "断开",
+    "dhcp": "DHCP",
+    "no": "否",
+    "prv_network": "私有网络",
+    "subnet": "子网",
+    "unmanaged": "受管",
+    "yes": "是"
+  }
+}

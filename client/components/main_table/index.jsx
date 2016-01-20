@@ -7,6 +7,7 @@ var converter = require('./converter');
 
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
+var Tab = uskin.Tab;
 var Button = uskin.Button;
 var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
@@ -87,9 +88,20 @@ class MainTable extends React.Component {
 
     return (
       <div className="halo-main-table">
-        <div className="header">
-          <h3>{config.title}</h3>
-        </div>
+        {config.title ?
+          <div className="header">
+            <h3>{config.title}</h3>
+          </div>
+          : null
+        }
+        {config.tabs ?
+          <div className="submenu-tabs">
+            <Tab
+            items={config.tabs}
+            onClick={eventList.tabOnclick} />
+          </div>
+          : null
+        }
         <div className="operation-list">
           {btns.map((btn, index) =>
             !btn.dropdown ?

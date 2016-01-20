@@ -2,7 +2,8 @@
   "modules": [
     "instance",
     "volume",
-    "image"
+    "image",
+    "network"
   ],
   "default_module": "instance",
   "languages": [

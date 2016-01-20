@@ -1,9 +1,11 @@
 require('./style/index.less');
 
 var React = require('react');
-var request = require('client/dashboard/cores/request');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
+
+var request = require('./request');
 
 class Model extends React.Component {
 
@@ -31,8 +33,8 @@ class Model extends React.Component {
 
   bindEventList() {
     this._eventList = {
+      tabOnclick: this.tabOnclick,
       btnsOnClick: this.btnsOnClick,
-      dropdownBtnOnClick: this.dropdownBtnOnClick,
       searchOnChange: this.searchOnChange,
       tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
     };
@@ -50,23 +52,45 @@ class Model extends React.Component {
   listInstance() {
     var that = this;
 
-    request.get({
-      url: '/api/v1/images'
-    }).then(function(data) {
-      that.updateTableData(data.images);
+    request.listInstances().then(function(data) {
+      that.updateTableData(data);
     }, function(err) {
       that.updateTableData([]);
       console.debug(err);
     });
+  }
 
+  tabOnclick(e, item) {
+    console.log(item);
   }
 
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
-        case 'size':
+        case 'subnet':
           col.render = (rcol, ritem, rindex) => {
-            return Math.round(ritem.size / 1024) + ' MB';
+            var listener = (_subnet, _item, _col, _index, e) => {
+              e.preventDefault();
+              console.log('print ' + _subnet.name, _subnet, _item);
+            };
+
+            var subnetRender = [];
+            ritem.subnets.map((item, i) => {
+              i && subnetRender.push(', ');
+              subnetRender.push(<a key={i} onClick={listener.bind(null, item, ritem)} style={{cursor: 'pointer'}}>{item.name}</a>);
+            });
+
+            return ritem.subnets.length ? <div>{subnetRender.map((item) => item)}</div> : '';
+          };
+          break;
+        case 'umngd_ntw':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.admin_state_up ? __.yes : __.no;
+          };
+          break;
+        case 'status':
+          col.render = (rcol, ritem, rindex) => {
+            return __[ritem.status.toLowerCase()];
           };
           break;
         default:
@@ -87,7 +111,7 @@ class Model extends React.Component {
   btnsOnClick(e, key) {
     console.log('Button clicked:', key);
     switch (key) {
-      case 'del_img':
+      case 'create_instance':
         break;
       case 'refresh':
         // this.clearTableState();
@@ -97,25 +121,17 @@ class Model extends React.Component {
     }
   }
 
-  dropdownBtnOnClick(e, status) {
-    // console.log('dropdownBtnOnClick: status is', status);
-  }
-
-  searchOnChange(str) {
-    // console.log('search:', str);
-  }
-
   controlBtns(status, clickedRow, arr) {
     var conf = this.state.config,
       btns = conf.btns;
 
     btns.map((btn) => {
       switch(btn.key) {
-        case 'crt_inst':
-          btn.disabled = (arr.length !== 1) ? true : false;
+        case 'crt_subnet':
+          btn.disabled = (arr.length === 1) ? false : true;
           break;
-        case 'del_img':
-          btn.disabled = (arr.length === 0) ? true : false;
+        case 'delete':
+          btn.disabled = (arr.length === 1) ? false : true;
           break;
         default:
           break;
@@ -128,10 +144,14 @@ class Model extends React.Component {
     });
   }
 
+  searchOnChange(str) {
+    // console.log('search:', str);
+  }
+
   render() {
 
     return (
-      <div className="halo-modules-image" style={this.props.style}>
+      <div className="halo-modules-instance" style={this.props.style}>
         <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
       </div>
     );

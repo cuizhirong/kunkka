@@ -17,7 +17,7 @@ class NavBar extends React.Component {
       <div className="halo-navbar">
         <div className="logo"></div>
         <div className="user-info">
-          <i className="glyphicon icon-role"></i>
+          <i className="glyphicon icon-avatar"></i>
           <span className="user-name">user name</span>
           <div ref="settingBtn" className="settings-btn"></div>
           <div className="settings">

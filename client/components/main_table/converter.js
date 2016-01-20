@@ -12,20 +12,34 @@ module.exports = {
   },
 
   convertLang(lang, config) {
-    config.title && (config.title = this.getLangValue(lang, config.title));
-    config.btns && (config.btns.forEach((btn) => {
-      btn.value && (btn.value = this.getLangValue(lang, btn.value));
-      btn.dropdown && (btn.dropdown.items.forEach((item) => {
-        item.items.forEach((subitem) => {
-          subitem.title = this.getLangValue(lang, subitem.title);
-        });
-      }));
-    }));
-    config.table && (config.table.column.forEach((col) => {
-      col.title = this.getLangValue(lang, col.title);
-      col.filter && col.filter.forEach((filter) => {
-        filter.name = this.getLangValue(lang, filter.name);
+    if (config.tabs) {
+      config.tabs.forEach((item) => {
+        item.name = this.getLangValue(lang, item.name);
       });
-    }));
+    }
+    if (config.btns) {
+      config.btns.forEach((btn) => {
+        if (btn.value) {
+          btn.value = this.getLangValue(lang, btn.value);
+          if (btn.dropdown) {
+            btn.dropdown.items.forEach((item) => {
+              item.items.forEach((subitem) => {
+                subitem.title = this.getLangValue(lang, subitem.title);
+              });
+            });
+          }
+        }
+      });
+    }
+    if (config.table) {
+      config.table.column.forEach((col) => {
+        col.title = this.getLangValue(lang, col.title);
+        if (col.filter) {
+          col.filter.forEach((filter) => {
+            filter.name = this.getLangValue(lang, filter.name);
+          });
+        }
+      });
+    }
   }
 };

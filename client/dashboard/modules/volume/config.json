@@ -1,5 +1,9 @@
 {
-  "title": ["volume"],
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume",
+    "default": true
+  }],
   "btns": [{
     "value": ["create", "volume"],
     "key": "create_volume",

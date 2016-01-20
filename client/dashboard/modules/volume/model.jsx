@@ -3,7 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
-var lang = require('i18n/client/lang.json');
+var __ = require('i18n/client/lang.json');
 
 var request = require('./request');
 
@@ -79,12 +79,12 @@ class Model extends React.Component {
           break;
         case 'shared':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.multiattach ? lang.shared : '-';
+            return ritem.multiattach ? __.shared : '-';
           };
           break;
         case 'attributes':
           col.render = (rcol, ritem, rindex) => {
-            return lang[ritem.metadata.attached_mode];
+            return __[ritem.metadata.attached_mode];
           };
           break;
         default:
@@ -98,7 +98,7 @@ class Model extends React.Component {
       if (col.title_key) {
         col.title = '';
         col.title_key.map((val) => {
-          col.title += lang[val];
+          col.title += __[val];
         });
       }
 

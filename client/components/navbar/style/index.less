@@ -1,7 +1,7 @@
 @import "../../../style/index.less";
 
 @navbar_font_color: #fff;
-@user_info_hover_bg_color: @color-dark-blue-dark;
+@user_info_hover_bg_color: rgba(4,7,20,0.5);
 @settings_bg_color: @color-dark-blue;
 @settings_hover_color: @color-dark-blue-light;
 
@@ -80,11 +80,11 @@
           &.lang {
             cursor: default;
             background-color: transparent;
+            i {
+              margin-right: 4px;
+            }
             a {
               padding: 4px;
-              i {
-                margin-right: 4px;
-              }
               &.active:hover {
                 cursor: pointer;
                 background-color: @settings_hover_color;

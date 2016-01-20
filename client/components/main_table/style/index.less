@@ -22,6 +22,10 @@
     }
   }
 
+  > .submenu-tabs {
+    margin-bottom: 10px;
+  }
+
   > .operation-list {
     flex: 1;
     .fixed-height(62px);
@@ -39,6 +43,9 @@
   > .table {
     flex: 1;
     overflow: hidden;
+    .glyphicon {
+      margin-right: 4px;
+    }
   }
 
   > .page {
@@ -46,7 +53,6 @@
   }
 
   .glyphicon {
-    margin-right: 4px;
     &.active {
       color: @status-icon-color-active;
     }
