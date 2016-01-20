@@ -1,5 +1,7 @@
 @import "../../../style/index.less";
 
+@status-icon-color-active: @color-green;
+
 .halo-main-table {
   display: flex;
   flex-direction: column;
@@ -46,7 +48,7 @@
   .glyphicon {
     margin-right: 4px;
     &.active {
-      color: @color-green;
+      color: @status-icon-color-active;
     }
   }
 }

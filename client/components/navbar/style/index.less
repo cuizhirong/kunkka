@@ -1,4 +1,9 @@
+@import "../../../style/index.less";
+
 @navbar_font_color: #fff;
+@user_info_hover_bg_color: @color-dark-blue-dark;
+@settings_bg_color: @color-dark-blue;
+@settings_hover_color: @color-dark-blue-light;
 
 .halo-navbar {
   width: 100%;
@@ -23,7 +28,10 @@
     font-size: 16px;
     line-height: 68px;
     margin-right: 20px;
+    width: 120px;
+    padding: 0 5px;
     &:hover {
+      background-color: @user_info_hover_bg_color;
       .settings {
         display: block;
       }
@@ -43,8 +51,52 @@
       position: absolute;
       display: none;
       top: 68px;
-      right: 147px;
+      right: 20px;
       font-size: 12px;
+      .settings-dropdown {
+        &:before, &:after {
+          content: "";
+          height: 10px;
+          display: block;
+        }
+        width: 130px;
+        background-color: @settings_bg_color;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        > li {
+          height: 30px;
+          line-height: 30px;
+          padding-left: 16px;
+          &:hover {
+            background-color: @settings_hover_color;
+          }
+          a {
+            color: @navbar_font_color;
+          }
+          i {
+            width: 13px;
+            margin-right: 8px;
+          }
+          &.lang {
+            cursor: default;
+            background-color: transparent;
+            a {
+              padding: 4px;
+              i {
+                margin-right: 4px;
+              }
+              &.active:hover {
+                cursor: pointer;
+                background-color: @settings_hover_color;
+                border-radius: 2px;
+              }
+              &.disabled {
+                cursor: default;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
