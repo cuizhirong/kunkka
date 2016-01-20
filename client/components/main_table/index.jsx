@@ -1,8 +1,6 @@
 require('./style/index.less');
 
 var React = require('react');
-var moment = require('client/libs/moment');
-console.log(moment);
 
 var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
@@ -13,6 +11,8 @@ var Button = uskin.Button;
 var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
 
+var moment = require('client/libs/moment');
+
 class MainTable extends React.Component {
 
   constructor(props) {
@@ -22,6 +22,8 @@ class MainTable extends React.Component {
       btns: [],
       tableData: []
     };
+
+    moment.locale(HALO.configs.lang);
   }
 
   componentWillMount() {
@@ -62,7 +64,7 @@ class MainTable extends React.Component {
           break;
         case 'time':
           !col.render && (col.render = (rcol, ritem, rindex) => {
-            return ritem[rcol.dataIndex];
+            return moment(ritem[rcol.dataIndex]).fromNow();
           });
           break;
         default:

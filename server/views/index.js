@@ -9,8 +9,8 @@ var glob = require('glob');
 var React = require('react');
 var ReactDOMServer = require('react-dom/server');
 
-var loginModel = require('../../client/login/model.jsx');
-var dashboardModel = require('../../client/dashboard/model.jsx');
+var loginModel = require('client/login/model.jsx');
+var dashboardModel = require('client/dashboard/model.jsx');
 
 var loginModelFactory = React.createFactory(loginModel);
 var dashboardModelFactory = React.createFactory(dashboardModel);
