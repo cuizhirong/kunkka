@@ -1,0 +1,56 @@
+{
+  "title": ["image"],
+  "btns": [{
+    "value": ["create", "instance"],
+    "key": "crt_inst",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["create", "image"],
+    "key": "crt_img",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["delete", "image"],
+    "key": "del_img",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain"
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "size"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "active"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }]
+  }
+}

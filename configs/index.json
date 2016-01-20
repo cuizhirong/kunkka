@@ -1,7 +1,8 @@
 {
   "modules": [
     "instance",
-    "volume"
+    "volume",
+    "image"
   ],
   "default_module": "instance",
   "languages": [
