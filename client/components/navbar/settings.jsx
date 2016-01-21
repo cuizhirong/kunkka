@@ -1,12 +1,18 @@
 var React = require('react');
 
+var __ = require('i18n/client/lang.json');
+
 class Settings extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      initialized: false
+    };
   }
 
-  settingsOnClick(type, e) {
-    switch (type.key) {
+  onClick(key, e) {
+    switch (key) {
       case 'setting':
         break;
       case 'help':
@@ -25,50 +31,64 @@ class Settings extends React.Component {
     }
   }
 
-  render() {
-    var currtLang = 'zh-CN'; //simulate get currentLang
+  updateSetting() {
+    this.setState({
+      initialized: true
+    });
+  }
+
+  componentDidMount() {
+    this.updateSetting();
+  }
+
+  setTmpl() {
+    var currtLang = HALO.configs.lang;
 
     var config = [{
-      title: 'Settings',
+      title: __.setting,
       key: 'settings',
       icon: 'setting'
     }, {
-      title: 'Help',
+      title: __.help,
       key: 'help',
       icon: 'help'
     }, {
-      title: '',
       key: 'lang',
-      icon: 'gobal',
-      render: function(that, item) {
-        return (
-          <li className="lang">
-            <i className={'glyphicon icon-' + item.icon} />
-            <a className={currtLang === 'en' ? 'disabled' : 'active'}
-              onClick={currtLang === 'en' ? null : that.settingsOnClick.bind(null, 'en')}>English</a>
-            <span>&nbsp;|&nbsp;</span>
-            <a className={currtLang === 'zh-CN' ? 'disabled' : 'active'}
-              onClick={currtLang === 'zh-CN' ? null : that.settingsOnClick.bind(null, 'cn')}>中文</a>
-          </li>
-        );
-      }
+      icon: 'global'
     }, {
-      title: 'Logout',
+      title: __.logout,
       key: 'logout',
       icon: 'logout'
     }];
 
+    return config.map((item, index) => {
+      if (item.key === 'lang') {
+        return (
+          <li className="lang" key={index}>
+            <i className={'glyphicon icon-' + item.icon} />
+            <a className={currtLang === 'en' ? 'disabled' : 'active'}
+              onClick={currtLang === 'en' ? null : this.onClick.bind(null, 'en')}>English</a>
+            <span>|</span>
+            <a className={currtLang === 'zh-CN' ? 'disabled' : 'active'}
+              onClick={currtLang === 'zh-CN' ? null : this.onClick.bind(null, 'cn')}>中文</a>
+          </li>
+        );
+      } else {
+        return (
+          <li key={index} onClick={this.onClick.bind(null, item.key)}>
+            <i className={'glyphicon icon-' + item.icon} />
+            <a>{item.title}</a>
+          </li>
+        );
+      }
+
+    });
+  }
+
+  render() {
     return (
       <ul className="settings-dropdown">
-        {config.map((item, index) => {
-          return (
-            item.render ? item.render(this, item)
-              : <li key={index} onClick={this.settingsOnClick.bind(null, item)}>
-                  <i className={'glyphicon icon-' + item.icon} />
-                  <a>{item.title}</a>
-                </li>
-          );
-        })}
+        {this.state.initialized ? this.setTmpl() : null}
       </ul>
     );
   }

@@ -8,6 +8,10 @@ class NavBar extends React.Component {
     super(props);
   }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   render() {
     return (
       <div className="halo-navbar">
