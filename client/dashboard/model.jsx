@@ -31,9 +31,16 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
+    var _moduleName = pathList[1],
+      modules = this.state.modules;
+    if (modules.indexOf(_moduleName) === -1) {
+      modules = modules.concat(_moduleName);
+    }
+
     this.setState({
+      modules: modules,
       selectedModule: pathList[1],
-      selectedMenu: this._filterMenu(pathList[1])
+      selectedMenu: this._filterMenu(_moduleName)
     });
   }
 
@@ -50,16 +57,26 @@ class Model extends React.Component {
   }
 
   updateModules() {
+    //Object.keys(loader.modules)
+    var _defaultModule = configs.default_module;
     this.setState({
-      modules: Object.keys(loader.modules),
-      selectedModule: configs.default_module,
-      selectedMenu: this._filterMenu(configs.default_module)
+      modules: [_defaultModule],
+      selectedModule: _defaultModule,
+      selectedMenu: this._filterMenu(_defaultModule)
     });
   }
 
   componentDidMount() {
     this.loadRouter();
     this.updateModules();
+  }
+
+  componentWillUpdate() {
+    console.time('dashboard');
+  }
+
+  componentDidUpdate() {
+    console.timeEnd('dashboard');
   }
 
   onClickSubmenu(e, m) {
