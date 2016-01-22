@@ -74,6 +74,15 @@ class MainTable extends React.Component {
     });
   }
 
+  loadingTable() {
+    var table = this.props.config.table;
+    if (table.data.length > 0) {
+      table.loading = false;
+    } else {
+      table.loading = true;
+    }
+  }
+
   clearTableState() {
     this.refs.table.clearState();
   }
@@ -98,7 +107,7 @@ class MainTable extends React.Component {
           <div className="submenu-tabs">
             <Tab
             items={config.tabs}
-            onClick={eventList.tabOnclick} />
+            onClick={eventList.tabOnClick} />
           </div>
           : null
         }
@@ -134,6 +143,7 @@ class MainTable extends React.Component {
           column={table.column}
           data={table.data}
           dataKey={table.dataKey}
+          loading={table.loading}
           checkbox={table.checkbox}
           checkboxOnChange={eventList.tableCheckboxOnClick}
           hover={table.hover}

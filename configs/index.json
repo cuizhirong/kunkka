@@ -3,7 +3,8 @@
     "instance",
     "volume",
     "image",
-    "network"
+    "network",
+    "subnet"
   ],
   "default_module": "instance",
   "languages": [

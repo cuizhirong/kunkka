@@ -34,7 +34,7 @@ class Model extends React.Component {
   bindEventList() {
     this._eventList = {
       tabOnClick: this.tabOnClick,
-      btnsOnClick: this.btnsOnClick,
+      btnsOnClick: this.btnsOnClick.bind(this),
       searchOnChange: this.searchOnChange,
       tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
     };
@@ -52,16 +52,17 @@ class Model extends React.Component {
   listInstance() {
     var that = this;
 
+    this.updateTableData([]);
     request.listInstances().then(function(data) {
-      that.updateTableData(data.networks);
+      that.updateTableData(data.subnets);
     }, function(err) {
       that.updateTableData([]);
       console.debug(err);
     });
   }
 
-  tabOnClick(e, item) {
-    if (item.key === 'subnet') {
+  tabOnclick(e, item) {
+    if (item.key === 'network') {
       window.location = 'project/subnet';
     }
   }
@@ -69,30 +70,24 @@ class Model extends React.Component {
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
-        case 'subnet':
+        case 'prv_network':
           col.render = (rcol, ritem, rindex) => {
-            var listener = (_subnet, _item, _col, _index, e) => {
-              e.preventDefault();
-              console.log('print ' + _subnet.name, _subnet, _item);
-            };
-
-            var subnetRender = [];
-            ritem.subnets.map((item, i) => {
-              i && subnetRender.push(', ');
-              subnetRender.push(<a key={i} onClick={listener.bind(null, item, ritem)} style={{cursor: 'pointer'}}>{item.name}</a>);
-            });
-
-            return ritem.subnets.length ? <div>{subnetRender.map((item) => item)}</div> : '';
+            return ritem.network ? ritem.network.name : '';
           };
           break;
-        case 'umngd_ntw':
+        case 'assc_router':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.admin_state_up ? __.yes : __.no;
+            return ritem.router ? ritem.router.name : '';
           };
           break;
-        case 'status':
+        case 'ip_ver':
           col.render = (rcol, ritem, rindex) => {
-            return __[ritem.status.toLowerCase()];
+            return ritem.ip_version === 4 ? 'IP v4' : ritem.ip_version;
+          };
+          break;
+        case 'enable_dhcp':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.enable_dhcp ? __.yes : __.no;
           };
           break;
         default:
@@ -111,12 +106,13 @@ class Model extends React.Component {
   }
 
   btnsOnClick(e, key) {
-    console.log('Button clicked:', key);
+    // console.log('Button clicked:', key);
     switch (key) {
-      case 'create_instance':
+      case 'prv_network':
         break;
       case 'refresh':
-        // this.clearTableState();
+        this.clearTableState();
+        this.listInstance();
         break;
       default:
         break;
@@ -151,14 +147,12 @@ class Model extends React.Component {
   }
 
   render() {
-
     return (
-      <div className="halo-modules-network" style={this.props.style}>
+      <div className="halo-modules-subnet" style={this.props.style}>
         <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
       </div>
     );
   }
-
 }
 
 module.exports = Model;

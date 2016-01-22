@@ -1,0 +1,20 @@
+{
+  "en": {
+    "cidr": "CIDR",
+    "dhcp": "DHCP",
+    "enable": "Enable ",
+    "ip": "IP",
+    "modify": "Modify ",
+    "router": "Router",
+    "version": "version"
+  },
+  "zh-CN": {
+    "cidr": "CIDR网段",
+    "dhcp": "DHCP",
+    "enable": "启用",
+    "ip": "IP",
+    "modify": "修改",
+    "router": "路由器",
+    "version": "版本"
+  }
+}

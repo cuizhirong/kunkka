@@ -1,0 +1,82 @@
+{
+  "tabs": [{
+    "name": ["prv_network"],
+    "key": "prv_network"
+  }, {
+    "name": ["subnet"],
+    "key": "subnet",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "subnet"],
+    "key": "crt_subnet",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["connect", "router"],
+    "key": "cnt_rter",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["disconnect", "router"],
+    "key": "discnt_rter",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["add_", "instance"],
+          "key": "add_inst",
+          "disabled": false
+        }, {
+          "title": ["modify", "subnet"],
+          "key": "mdfy_subnet",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "type": "light"
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": false,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain"
+    }, {
+      "title": ["prv_network"],
+      "key": "prv_network"
+    }, {
+      "title": ["associate", "router"],
+      "key": "assc_router"
+    }, {
+      "title": ["ip", "version"],
+      "key": "ip_ver"
+    }, {
+      "title": ["cidr"],
+      "dataIndex": "cidr",
+      "key": "cidr"
+    }, {
+      "title": ["enable", "dhcp"],
+      "key": "enable_dhcp"
+    }]
+  }
+}
