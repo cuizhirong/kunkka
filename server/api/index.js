@@ -4,6 +4,8 @@
 var version = require('package.json').version;
 var extensions = require('./extensions');
 var extenstionList = Object.keys(extensions);
+var config = require('config');
+var path = require('path');
 
 var fs = require('fs');
 
@@ -14,12 +16,10 @@ module.exports = function(app) {
     });
   });
 
-  fs.readdirSync(__dirname)
-    .filter(function (dir) {
-      return dir !== 'index.js' && dir !== 'extensions';
-    })
+  var apiPath = path.join(__dirname, '../../', config('backend').dirname, 'api');
+  fs.readdirSync(apiPath)
     .forEach(function (m) {
-      var apiModule = require('./' + m);
+      var apiModule = require(path.join(apiPath, m));
       var extension = extenstionList.indexOf('auth') > -1 ? extensions[m] : undefined;
       apiModule(app, extension);
     });

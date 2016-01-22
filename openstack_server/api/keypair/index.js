@@ -1,5 +1,4 @@
-var extend = require('extend');
-var Nova = require('nova');
+var Nova = require('openstack_server/drivers/nova');
 
 function Keypair (app, nova, glance, neutron) {
   this.app = app;
@@ -25,9 +24,9 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
-  extend(Keypair.prototype, prototype);
+  Object.assign(Keypair.prototype, prototype);
   if (extension) {
-    extend(Keypair.prototype, extension);
+    Object.assign(Keypair.prototype, extension);
   }
   var instance = new Keypair(app, Nova);
   instance.initRoutes();

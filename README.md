@@ -21,7 +21,7 @@ sudo npm install pm2 -g
 
 Under the project root directory, generate `config.yml` file
 ```
-cp ./config.yml.sample ./config.yml
+cp ./configs/server.js.sample ./config/server.js
 ```
 and then customize your own yml file
 

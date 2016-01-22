@@ -1,8 +1,7 @@
-var extend = require('extend');
 var async = require('async');
-var Glance = require('glance');
-var Nova = require('nova');
-var Neutron = require('neutron');
+var Glance = require('openstack_server/drivers/glance');
+var Nova = require('openstack_server/drivers/nova');
+var Neutron = require('openstack_server/drivers/neutron');
 
 function Instance (app, nova, glance, neutron) {
   this.app = app;
@@ -111,9 +110,9 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
-  extend(Instance.prototype, prototype);
+  Object.assign(Instance.prototype, prototype);
   if (extension) {
-    extend(Instance.prototype, extension);
+    Object.assign(Instance.prototype, extension);
   }
   var instance = new Instance(app, Nova, Glance, Neutron);
   instance.initRoutes();

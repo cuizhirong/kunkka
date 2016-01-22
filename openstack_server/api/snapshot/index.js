@@ -1,6 +1,5 @@
 var async = require('async');
-var extend = require('extend');
-var Cinder = require('cinder');
+var Cinder = require('openstack_server/drivers/cinder');
 
 function Snapshot (app, cinder) {
   this.app = app;
@@ -68,9 +67,9 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
-  extend(Snapshot.prototype, prototype);
+  Object.assign(Snapshot.prototype, prototype);
   if (extension) {
-    extend(Snapshot.prototype, extension);
+    Object.assign(Snapshot.prototype, extension);
   }
   var volume = new Snapshot(app, Cinder);
   volume.initRoutes();

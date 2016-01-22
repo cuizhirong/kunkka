@@ -31,8 +31,7 @@ build/Release
 node_modules
 
 # yaml config file.
-config.yml
-configuration.js
+configs/server.js
 
 # Mac file
 .DS_Store

@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var config = require('../configs/server.js');
 
 var i18n = {
   api: {},
@@ -23,7 +24,7 @@ function generateLangObject (dirPath, obj, moduleName, extraIgnore) {
     });
 }
 
-var apiDirPath = path.join(__dirname, '../server/api');
+var apiDirPath = path.join(__dirname, '..', config.backend.dirname, 'api');
 generateLangObject(apiDirPath, i18n.api, 'api', 'extensions');
 
 var viewsDirPath = path.join(__dirname, '../server/views');

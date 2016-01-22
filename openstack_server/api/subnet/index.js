@@ -1,6 +1,5 @@
-var extend = require('extend');
-var Neutron = require('neutron');
 var async = require('async');
+var Neutron = require('openstack_server/drivers/neutron');
 
 function Subnet (app, neutron) {
   this.app = app;
@@ -103,9 +102,9 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
-  extend(Subnet.prototype, prototype);
+  Object.assign(Subnet.prototype, prototype);
   if (extension) {
-    extend(Subnet.prototype, extension);
+    Object.assign(Subnet.prototype, extension);
   }
   var instance = new Subnet(app, Neutron);
   instance.initRoutes();

@@ -1,4 +1,3 @@
-var extend = require('extend');
 var fs = require('fs');
 var path = require('path');
 
@@ -8,7 +7,7 @@ module.exports = function (obj, dirname) {
       return file !== 'index.js';
     })
     .forEach(function (file) {
-      extend(obj, require(path.join(dirname, file)));
+      Object.assign(obj, require(path.join(dirname, file)));
     });
   return obj;
 };

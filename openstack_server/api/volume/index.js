@@ -1,7 +1,6 @@
 var async = require('async');
-var extend = require('extend');
-var Cinder = require('cinder');
-var Nova = require('nova');
+var Cinder = require('openstack_server/drivers/cinder');
+var Nova = require('openstack_server/drivers/nova');
 
 function Volume (app, cinder, nova) {
   this.app = app;
@@ -72,9 +71,9 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
-  extend(Volume.prototype, prototype);
+  Object.assign(Volume.prototype, prototype);
   if (extension) {
-    extend(Volume.prototype, extension);
+    Object.assign(Volume.prototype, extension);
   }
   var volume = new Volume(app, Cinder, Nova);
   volume.initRoutes();

@@ -31,7 +31,7 @@ function setup() {
   // template engine
   app.set('view engine', 'ejs');
 
-  // use Redis | Memcache to store session
+  // use Redis | Memcached to store session
   var sessionHandler = require('../middlewares/sessionHandler');
   sessionHandler(app);
 

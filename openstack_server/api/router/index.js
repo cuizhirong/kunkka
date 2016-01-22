@@ -1,6 +1,5 @@
-var extend = require('extend');
-var Neutron = require('neutron');
 var async = require('async');
+var Neutron = require('openstack_server/drivers/neutron');
 
 function Router (app, neutron) {
   this.app = app;
@@ -67,9 +66,9 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
-  extend(Router.prototype, prototype);
+  Object.assign(Router.prototype, prototype);
   if (extension) {
-    extend(Router.prototype, extension);
+    Object.assign(Router.prototype, extension);
   }
   var instance = new Router(app, Neutron);
   instance.initRoutes();

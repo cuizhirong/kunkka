@@ -1,6 +1,5 @@
 var async = require('async');
-var extend = require('extend');
-var Keystone = require('keystone');
+var Keystone = require('openstack_server/drivers/keystone');
 var config = require('config');
 
 function Auth (app, keystone) {
@@ -95,9 +94,9 @@ var prototype = {
 };
 
 module.exports = function(app, extension) {
-  extend(Auth.prototype, prototype);
+  Object.assign(Auth.prototype, prototype);
   if (extension) {
-    extend(Auth.prototype, extension);
+    Object.assign(Auth.prototype, extension);
   }
   var auth = new Auth(app, Keystone);
   auth.initRoutes();

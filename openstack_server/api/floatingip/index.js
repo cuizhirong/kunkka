@@ -1,7 +1,6 @@
-var extend = require('extend');
 var async = require('async');
-var Neutron = require('neutron');
-var Nova = require('nova');
+var Neutron = require('openstack_server/drivers/neutron');
+var Nova = require('openstack_server/drivers/nova');
 
 function Floatingip (app, neutron, nova) {
   this.app = app;
@@ -100,9 +99,9 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
-  extend(Floatingip.prototype, prototype);
+  Object.assign(Floatingip.prototype, prototype);
   if (extension) {
-    extend(Floatingip.prototype, extension);
+    Object.assign(Floatingip.prototype, extension);
   }
   var instance = new Floatingip(app, Neutron, Nova);
   instance.initRoutes();

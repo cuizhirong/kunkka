@@ -1,6 +1,5 @@
 //var async = require('async');
-var extend = require('extend');
-var Glance = require('glance');
+var Glance = require('openstack_server/drivers/glance');
 
 // due to Image is reserved word
 function IMAGE (app, glance) {
@@ -39,9 +38,9 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
-  extend(IMAGE.prototype, prototype);
+  Object.assign(IMAGE.prototype, prototype);
   if (extension) {
-    extend(IMAGE.prototype, extension);
+    Object.assign(IMAGE.prototype, extension);
   }
   var image = new IMAGE(app, Glance);
   image.initRoutes();

@@ -1,7 +1,7 @@
 var fs = require('fs');
 var Path = require('path');
 var ChildProcess = require('child_process');
-var Config = require('../configuration.js');
+var Config = require('../configs/server.js');
 
 function color(str, c) {
   return '\033[' + c + 'm ' + str + ' \033[0m';
