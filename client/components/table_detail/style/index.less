@@ -1,0 +1,16 @@
+@import "../../../style/index.less";
+
+.halo-com-table-detail {
+  position: absolute;
+  top: 110px;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.3);
+  transform: translate(100%, 0);
+  transition: transform 0.5s;
+  &.visible {
+    transform: translate(0, 0);
+  }
+}
+

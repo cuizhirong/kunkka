@@ -19,11 +19,11 @@ npm install
 sudo npm install pm2 -g
 ```
 
-Under the project root directory, generate `config.yml` file
+Under the *configs* directory, generate the config file
 ```
 cp ./configs/server.js.sample ./config/server.js
 ```
-and then customize your own yml file
+and then customize your own js file
 
 We provide `pre-commit` hook to check code style before committing, run the command below (optional):
 ```

@@ -2,6 +2,8 @@ require('./style/index.less');
 
 var React = require('react');
 
+var TableDetail = require('../table_detail/index');
+
 var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
 
@@ -21,7 +23,8 @@ class MainTable extends React.Component {
 
     this.state = {
       btns: [],
-      tableData: []
+      tableData: [],
+      detailVisible: false
     };
 
     moment.locale(HALO.configs.lang);
@@ -51,7 +54,18 @@ class MainTable extends React.Component {
           !col.render && (col.render = (rcol, ritem, rindex) => {
             var listener = (_item, _col, _index, e) => {
               e.preventDefault();
-              console.log('print ' + _item.name, _item);
+              //console.log('print ' + _item.name, _item);
+              var detail = this.refs.detail;
+              detail.setState({
+                detailVisible: !detail.state.detailVisible
+              });
+
+              this.refs.table.setState({
+                checkedKey: {
+                  [_item.id]: true
+                }
+              });
+
             };
             return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem[rcol.dataIndex]}</a>;
           });
@@ -148,6 +162,7 @@ class MainTable extends React.Component {
           checkboxOnChange={eventList.tableCheckboxOnClick}
           hover={table.hover}
           striped={this.striped} />
+        <TableDetail ref="detail" detailVisible={this.state.detailVisible} />
       </div>
     );
   }

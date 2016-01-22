@@ -11,5 +11,8 @@
     "en",
     "zh-CN"
   ],
-  "routers": []
+  "routers": [{
+    "key": "subnet",
+    "link": "network"
+  }]
 }

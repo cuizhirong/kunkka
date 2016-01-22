@@ -48,6 +48,10 @@ var config = {
   },
   'websocket': {
     'port': 8080
+  },
+  'backend': {
+    'type': 'openstack',
+    'dirname': 'openstack_server'
   }
 };
 
