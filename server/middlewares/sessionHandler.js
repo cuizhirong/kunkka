@@ -28,5 +28,21 @@ module.exports = function(app) {
         client: RedisClient
       })
     }));
+  } else if (sessionEngine.type === 'Memcached') {
+    var Memcached = require('memcached');
+    var MemcachedStore = require('connect-memcached')(session);
+    var MemcachedClient = new Memcached(sessionEngine.address + ':' + sessionEngine.port);
+    MemcachedClient.on('error', function (err) {
+      console.log('Error ' + err);
+    });
+    app.set('CacheClient', MemcachedClient);
+    app.use(session({
+      secret: sessionEngine.secret,
+      resave: false,
+      saveUninitialized: true,
+      store: new MemcachedStore({
+        client: MemcachedClient
+      })
+    }));
   }
 };

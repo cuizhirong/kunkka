@@ -31,6 +31,7 @@
     "async": "^1.5.0",
     "body-parser": "~1.14.1",
     "bufferutil": "^1.2.1",
+    "connect-memcached": "^0.1.0",
     "connect-redis": "^3.0.1",
     "cookie-parser": "^1.4.0",
     "ejs": "^2.3.4",
