@@ -5,6 +5,10 @@
 
 var EventEmitter = require('eventemitter2');
 
+if (EventEmitter.EventEmitter2) {
+  EventEmitter = EventEmitter.EventEmitter2;
+}
+
 class RouterModel extends EventEmitter {
   constructor() {
     super();
@@ -42,4 +46,13 @@ class RouterModel extends EventEmitter {
   }
 }
 
-module.exports = new RouterModel();
+var ret = {};
+try {
+  if (window) {
+    ret = new RouterModel();
+  }
+} catch (e) {
+  console.log(e);
+}
+
+module.exports = ret;

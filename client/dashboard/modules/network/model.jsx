@@ -5,6 +5,8 @@ var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 
+var router = require('client/dashboard/routers/index');
+
 var request = require('./request');
 
 class Model extends React.Component {
@@ -62,7 +64,7 @@ class Model extends React.Component {
 
   tabOnClick(e, item) {
     if (item.key === 'subnet') {
-      window.location = 'project/subnet';
+      router.pushState('/project/subnet');
     }
   }
 

@@ -5,6 +5,8 @@ var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 
+var router = require('client/dashboard/routers/index');
+
 var request = require('./request');
 
 class Model extends React.Component {
@@ -34,7 +36,7 @@ class Model extends React.Component {
   bindEventList() {
     this._eventList = {
       tabOnClick: this.tabOnClick,
-      btnsOnClick: this.btnsOnClick.bind(this),
+      btnsOnClick: this.btnsOnClick,
       searchOnChange: this.searchOnChange,
       tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
     };
@@ -61,9 +63,9 @@ class Model extends React.Component {
     });
   }
 
-  tabOnclick(e, item) {
-    if (item.key === 'network') {
-      window.location = 'project/subnet';
+  tabOnClick(e, item) {
+    if (item.key === 'prv_network') {
+      router.pushState('/project/network');
     }
   }
 
