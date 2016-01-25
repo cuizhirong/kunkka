@@ -68,6 +68,7 @@
     "chalk": "^1.1.1",
     "css-loader": "^0.23.0",
     "cssnano": "^3.4.0",
+    "deep-equal": "^1.0.1",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^1.0.2",
     "eslint-plugin-babel": "^3.0.0",

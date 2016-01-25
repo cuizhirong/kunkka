@@ -4,13 +4,13 @@ var React = require('react');
 var request = require('client/dashboard/cores/request');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
+var equal = require('deep-equal');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
-    config.table.data = [];
     this.state = {
       config: config
     };
@@ -29,6 +29,13 @@ class Model extends React.Component {
     this.listInstance();
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display !== this.props.style.display || !equal(this.state.config, nextState.config)) {
+      return true;
+    }
+    return false;
+  }
+
   bindEventList() {
     this._eventList = {
       btnsOnClick: this.btnsOnClick,
@@ -39,11 +46,13 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
-    var conf = this.state.config;
-    conf.table.data = data;
+    var _conf = this.state.config;
+    _conf = JSON.parse(JSON.stringify(_conf));
+    _conf.table.column = config.table.column;
+    _conf.table.data = data;
 
     this.setState({
-      config: conf
+      config: _conf
     });
   }
 
@@ -110,7 +119,7 @@ class Model extends React.Component {
       btns = conf.btns;
 
     btns.map((btn) => {
-      switch(btn.key) {
+      switch (btn.key) {
         case 'crt_inst':
           btn.disabled = (arr.length !== 1) ? true : false;
           break;
@@ -129,7 +138,6 @@ class Model extends React.Component {
   }
 
   render() {
-
     return (
       <div className="halo-modules-image" style={this.props.style}>
         <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>

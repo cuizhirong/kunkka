@@ -4,17 +4,15 @@ var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
-
 var router = require('client/dashboard/routers/index');
-
 var request = require('./request');
+var equal = require('deep-equal');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
-    config.table.data = [];
     this.state = {
       config: config
     };
@@ -33,6 +31,13 @@ class Model extends React.Component {
     this.listInstance();
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display !== this.props.style.display || !equal(this.state.config, nextState.config)) {
+      return true;
+    }
+    return false;
+  }
+
   bindEventList() {
     this._eventList = {
       tabOnClick: this.tabOnClick,
@@ -43,11 +48,13 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
-    var conf = this.state.config;
-    conf.table.data = data;
+    var _conf = this.state.config;
+    _conf = JSON.parse(JSON.stringify(_conf));
+    _conf.table.column = config.table.column;
+    _conf.table.data = data;
 
     this.setState({
-      config: conf
+      config: _conf
     });
   }
 

@@ -55,6 +55,7 @@
       "dataIndex": "created_at",
       "key": "created",
       "type": "time"
-    }]
+    }],
+    "data": []
   }
 }
