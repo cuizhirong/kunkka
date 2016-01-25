@@ -1,6 +1,7 @@
 @import "../../../style/index.less";
 
-@status-icon-color-active: @color-green;
+@status-icon-color-active: @color_green;
+@status-icon-color-available: @color_orange;
 
 .halo-main-table {
   position: relative;
@@ -52,6 +53,9 @@
   .glyphicon {
     &.active {
       color: @status-icon-color-active;
+    }
+    &.available {
+      color: @status-icon-color-available;
     }
   }
 }

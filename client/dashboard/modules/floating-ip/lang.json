@@ -1,0 +1,24 @@
+{
+  "en": {
+    "address": "Address",
+    "allocate": "Allocate ",
+    "associate_gl": "Associate ",
+    "bandwidth": "Bandwidth",
+    "carrier": "Carrier",
+    "down": "Down",
+    "floating-ip": "Floating IP",
+    "resource": "resource",
+    "to": " to "
+  },
+  "zh-CN": {
+    "address": "地址",
+    "allocate": "申请",
+    "associate_gl": "关联",
+    "bandwidth": "带宽",
+    "carrier": "IP路线",
+    "down": "可用",
+    "floating-ip": "公网IP",
+    "resource": "资源",
+    "to": "到"
+  }
+}

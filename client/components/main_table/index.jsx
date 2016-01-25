@@ -22,18 +22,47 @@ class MainTable extends React.Component {
     super(props);
 
     this.state = {
-      btns: [],
-      tableData: [],
       detailVisible: false
     };
 
     moment.locale(HALO.configs.lang);
+    this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
+    this.controlCaptain = this.controlCaptain.bind(this);
+    this.searchInTable = this.searchInTable.bind(this);
   }
 
   componentWillMount() {
     var config = this.props.config;
+    this.setTableFilterAllName(config.table);
     converter.convertLang(lang, config);
     this.tableColRender(config.table.column);
+  }
+
+  setTableFilterAllName(table) {
+    table.column.forEach((col) => {
+      if (col.filter) {
+        col.filterAll = ['all'];
+      }
+    });
+  }
+
+  searchInTable(text) {
+    var search = this.props.config.search;
+
+    if (search && search.table_column) {
+      var filterCol = search.table_column;
+      this.refs.table.setState({
+        filterCol: filterCol,
+        filterBy: function(item, _column) {
+          return _column.some((col) => {
+            if (filterCol[col.key] && item[col.dataIndex]) {
+              var td = item[col.dataIndex].toLowerCase();
+              return td.indexOf(text.toLowerCase()) > -1 ? true : false;
+            }
+          });
+        }
+      });
+    }
   }
 
   getStatusIcon(data) {
@@ -42,9 +71,41 @@ class MainTable extends React.Component {
         return <i className="glyphicon icon-status-active active" />;
       case 'in-use':
         return <i className="glyphicon icon-status-light active" />;
+      case 'down':
+        return <i className="glyphicon icon-status-light available" />;
       default:
         return undefined;
     }
+  }
+
+  controlCaptain(_item, _col, _index, e) {
+    e.preventDefault();
+
+    var detail = this.refs.detail,
+      table = this.refs.table;
+
+    var prevKey = Object.keys(table.state.checkedKey);
+    var shouldClose = detail.state.detailVisible && (prevKey.length === 1) && (prevKey[0] === _item.id);
+
+    if (shouldClose) {
+      this.setState({
+        detailVisible: false
+      });
+      table.setState({
+        checkedKey: {}
+      });
+    } else {
+      this.setState({
+        detailVisible: true
+      });
+      table.setState({
+        checkedKey: {
+          [_item.id]: true
+        }
+      });
+    }
+
+    this.props.eventList.controlBtns(!shouldClose, _item, shouldClose ? [] : [_item]);
   }
 
   tableColRender(column, item, index) {
@@ -52,22 +113,8 @@ class MainTable extends React.Component {
       switch (col.type) {
         case 'captain':
           !col.render && (col.render = (rcol, ritem, rindex) => {
-            var listener = (_item, _col, _index, e) => {
-              e.preventDefault();
-              //console.log('print ' + _item.name, _item);
-              var detail = this.refs.detail;
-              detail.setState({
-                detailVisible: !detail.state.detailVisible
-              });
-
-              this.refs.table.setState({
-                checkedKey: {
-                  [_item.id]: true
-                }
-              });
-
-            };
-            return <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem[rcol.dataIndex]}</a>;
+            return <a style={{cursor: 'pointer'}} onClick={this.controlCaptain.bind(null, ritem, rcol, rindex)}>
+              {ritem[rcol.dataIndex]}</a>;
           });
           break;
         case 'status':
@@ -88,13 +135,23 @@ class MainTable extends React.Component {
     });
   }
 
-  loadingTable() {
-    var table = this.props.config.table;
-    if (table.data.length > 0) {
-      table.loading = false;
-    } else {
-      table.loading = true;
+  tableCheckboxOnClick(e, status, clickedRow, arr) {
+    if (this.props.eventList.tableCheckboxOnClick) {
+      this.props.eventList.tableCheckboxOnClick(e, status, clickedRow, arr);
     }
+
+    if(this.state.detailVisible) {
+      this.setState({
+        detailVisible: false
+      });
+    }
+  }
+
+  clearState() {
+    this.clearTableState();
+    this.setState({
+      detailVisible: false
+    });
   }
 
   clearTableState() {
@@ -108,6 +165,13 @@ class MainTable extends React.Component {
       btns = config.btns,
       search = config.search,
       table = config.table;
+
+    if (table.data === null) {
+      table.loading = true;
+      table.data = [];
+    } else {
+      table.loading = false;
+    }
 
     return (
       <div className="halo-main-table">
@@ -146,9 +210,9 @@ class MainTable extends React.Component {
           )}
           {config.search ?
             <InputSearch
-              type={search.type}
+              type="light"
               width={search.width}
-              onChange={eventList.searchOnChange} />
+              onChange={this.searchInTable} />
             : null
           }
         </div>
@@ -159,7 +223,7 @@ class MainTable extends React.Component {
           dataKey={table.dataKey}
           loading={table.loading}
           checkbox={table.checkbox}
-          checkboxOnChange={eventList.tableCheckboxOnClick}
+          checkboxOnChange={this.tableCheckboxOnClick}
           hover={table.hover}
           striped={this.striped} />
         <TableDetail ref="detail" detailVisible={this.state.detailVisible} />

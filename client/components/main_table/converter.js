@@ -34,6 +34,9 @@ module.exports = {
     if (config.table) {
       config.table.column.forEach((col) => {
         col.title = this.getLangValue(lang, col.title);
+        if (col.filterAll) {
+          col.filterAll = this.getLangValue(lang, col.filterAll);
+        }
         if (col.filter) {
           col.filter.forEach((filter) => {
             filter.name = this.getLangValue(lang, filter.name);

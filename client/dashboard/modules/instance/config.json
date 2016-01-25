@@ -50,7 +50,7 @@
           "key": "assc_floating_ip",
           "disabled": true
         }, {
-          "title": ["dissociate", "floating_ip"],
+          "title": ["dissociate_sth", "floating_ip"],
           "key": "dssc_floating_ip",
           "disabled": true
         }, {

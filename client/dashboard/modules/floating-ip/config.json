@@ -1,0 +1,96 @@
+{
+  "tabs": [{
+    "name": ["floating_ip"],
+    "key": "floating_ip",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["allocate", "floating_ip"],
+    "key": "allc_fl_ip",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["associate", "to", "instance"],
+    "key": "assc_to_instance",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["associate", "to", "router"],
+    "key": "assc_to_router",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["dissociate"],
+          "key": "dssc",
+          "disabled": true
+        }, {
+          "title": ["change", "bandwidth"],
+          "key": "chg_bandwidth",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "table_column": {
+      "ip_adrs": true,
+      "assc_resource": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "column": [{
+      "title": ["ip", "address"],
+      "dataIndex": "floating_ip_address",
+      "key": "ip_adrs",
+      "type": "captain"
+    }, {
+      "title": ["associate_gl", "resource"],
+      "dataIndex": "",
+      "key": "assc_resource"
+    }, {
+      "title": ["bandwidth"],
+      "dataIndex": "",
+      "key": "bandwidth"
+    }, {
+      "title": ["carrier"],
+      "dataIndex": "",
+      "key": "carrier"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }, {
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }]
+  }
+}
