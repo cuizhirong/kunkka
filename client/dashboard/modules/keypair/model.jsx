@@ -3,7 +3,6 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var equal = require('deep-equal');
 var clone = require('clone');
@@ -13,7 +12,6 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    this.setTableColRender(config.table.column);
     this.state = {
       config: config
     };
@@ -25,8 +23,9 @@ class Model extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.bindEventList();
+    this.setTableColRender(config.table.column);
     this.listInstance();
   }
 
@@ -65,8 +64,8 @@ class Model extends React.Component {
     var that = this;
 
     this.loadingTable();
-    request.listVolumes().then(function(data) {
-      that.updateTableData(data.volumes ? data.volumes : []);
+    request.listInstances().then(function(data) {
+      that.updateTableData(data.keypairs);
     }, function(err) {
       that.updateTableData([]);
       console.debug(err);
@@ -77,28 +76,14 @@ class Model extends React.Component {
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
-        case 'size':
+        case 'name':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.size + ' GB';
+            return ritem.keypair ? ritem.keypair.name : '';
           };
           break;
-        case 'attch_instance':
+        case 'finger_prt':
           col.render = (rcol, ritem, rindex) => {
-            var servers = '';
-            ritem.attachments && ritem.attachments.map((attch, index) => {
-              servers += (index <= 0) ? attch.server.name : ' ,' + attch.server.name;
-            });
-            return servers;
-          };
-          break;
-        case 'shared':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.multiattach ? __.shared : '-';
-          };
-          break;
-        case 'attributes':
-          col.render = (rcol, ritem, rindex) => {
-            return __[ritem.metadata.attached_mode];
+            return ritem.keypair ? ritem.keypair.fingerprint : '';
           };
           break;
         default:
@@ -107,40 +92,21 @@ class Model extends React.Component {
     });
   }
 
-  getTableLang(table) {
-    table.column.map((col) => {
-      if (col.title_key) {
-        col.title = '';
-        col.title_key.map((val) => {
-          col.title += __[val];
-        });
-      }
-
-      this.setTableColRender(col);
-    });
-  }
-
   clickTableCheckbox(e, status, clickedRow, arr) {
-    //   console.log('tableOnClick: ', e, status, clickedRow, arr);
+    // console.log('tableOnClick: ', e, status, clickedRow, arr);
     this.updateBtns(status, clickedRow, arr);
   }
 
   clickBtns(e, key) {
-    // console.log('clickBtns: key is', key);
     switch (key) {
-      case 'create_instance':
+      case '':
         break;
       case 'refresh':
-        this.refresh();
+        this.listInstance();
         break;
       default:
         break;
     }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
   }
 
   clickDropdownBtn(e, status) {
@@ -148,7 +114,7 @@ class Model extends React.Component {
   }
 
   changeSearchInput(str) {
-    // console.log('search: text is', str);
+    // console.log('search:', str);
   }
 
   updateBtns(status, clickedRow, arr) {
@@ -157,11 +123,8 @@ class Model extends React.Component {
 
     btns.map((btn) => {
       switch(btn.key) {
-        case 'create_snapshot':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'attach_to_instance':
-          btn.disabled = (arr.length === 1) ? false : true;
+        case 'delete':
+          btn.disabled = arr.length > 0 ? false : true;
           break;
         default:
           break;
@@ -175,10 +138,9 @@ class Model extends React.Component {
   }
 
   render() {
-
     return (
-      <div className="halo-module-volume" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+      <div className="halo-module-keypair" style={this.props.style}>
+        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
       </div>
     );
   }

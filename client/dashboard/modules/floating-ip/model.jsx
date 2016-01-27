@@ -118,7 +118,7 @@ class Model extends React.Component {
   }
 
   updateBtns(status, clickedRow, arr) {
-    var _conf = this.deepCopyConfig(this.state.config),
+    var _conf = clone(this.state.config),
       btns = _conf.btns;
 
     var shouldAssociate = (arr.length === 1) && !(arr[0].router || arr[0].server);

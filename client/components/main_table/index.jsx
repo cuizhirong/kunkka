@@ -142,6 +142,12 @@ class MainTable extends React.Component {
 
   tableCheckboxOnClick(e, status, clickedRow, arr) {
     this.props.eventList.clickTableCheckbox && this.props.eventList.clickTableCheckbox(e, status, clickedRow, arr);
+
+    if(!arr.length) {
+      this.setState({
+        detailVisible: false
+      });
+    }
   }
 
   clearState() {

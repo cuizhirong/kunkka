@@ -138,7 +138,7 @@ class Model extends React.Component {
   }
 
   updateBtns(status, clickedRow, arr) {
-    var _conf = this.deepCopyConfig(this.state.config),
+    var _conf = clone(this.state.config),
       btns = _conf.btns;
 
     btns.map((btn) => {

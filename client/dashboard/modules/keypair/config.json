@@ -1,0 +1,34 @@
+{
+  "tabs": [{
+    "name": ["keypair"],
+    "key": "instance",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "keypair_"],
+    "key": "crt_keypair",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "",
+      "key": "name"
+    }, {
+      "title": ["finger_print"],
+      "dataIndex": "",
+      "key": "finger_prt"
+    }]
+  }
+}

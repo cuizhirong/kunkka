@@ -1,0 +1,12 @@
+{
+  "en": {
+    "finger_print": "Finger Print",
+    "keypair": "Key Pairs",
+    "keypair_": "Key Pair"
+  },
+  "zh-CN": {
+    "finger_print": "指纹",
+    "keypair": "密钥对",
+    "keypair_": "密钥"
+  }
+}
