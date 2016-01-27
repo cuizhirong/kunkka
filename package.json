@@ -66,6 +66,7 @@
     "babel-preset-react": "^6.0.12",
     "babel-runtime": "^6.3.19",
     "chalk": "^1.1.1",
+    "clone": "^1.0.2",
     "css-loader": "^0.23.0",
     "cssnano": "^3.4.0",
     "deep-equal": "^1.0.1",

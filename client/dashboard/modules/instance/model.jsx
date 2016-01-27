@@ -5,6 +5,7 @@ var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var request = require('./request');
 var equal = require('deep-equal');
+var clone = require('clone');
 
 class Model extends React.Component {
 
@@ -46,8 +47,7 @@ class Model extends React.Component {
 
   updateTableData(data) {
     var _conf = this.state.config;
-    _conf = JSON.parse(JSON.stringify(_conf));
-    _conf.table.column = config.table.column;
+    _conf = clone(_conf, false);
     _conf.table.data = data;
 
     this.setState({
