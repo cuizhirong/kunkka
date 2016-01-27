@@ -1,0 +1,12 @@
+{
+  "en": {
+    "router": "Router",
+    "ext_gatway": "External Gateway",
+    "subnet": "Subnet"
+  },
+  "zh-CN": {
+    "router": "路由器",
+    "ext_gatway": "公网网关",
+    "subnet": "子网"
+  }
+}

@@ -5,7 +5,8 @@
     "image",
     "network",
     "subnet",
-    "floating-ip"
+    "floating-ip",
+    "router"
   ],
   "default_module": "instance",
   "languages": [
