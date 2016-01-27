@@ -28,7 +28,7 @@ class MainTable extends React.Component {
     moment.locale(HALO.configs.lang);
     this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
     this.controlCaptain = this.controlCaptain.bind(this);
-    this.searchInTable = this.searchInTable.bind(this);
+    this.changeSearchInput = this.changeSearchInput.bind(this);
   }
 
   componentWillMount() {
@@ -46,11 +46,16 @@ class MainTable extends React.Component {
     });
   }
 
+  changeSearchInput(text) {
+    this.searchInTable(text);
+    this.props.eventList.changeSearchInput && this.props.eventList.changeSearchInput(text);
+  }
+
   searchInTable(text) {
     var search = this.props.config.search;
 
-    if (search && search.table_column) {
-      var filterCol = search.table_column;
+    if (search && search.column) {
+      var filterCol = search.column;
       this.refs.table.setState({
         filterCol: filterCol,
         filterBy: function(item, _column) {
@@ -105,7 +110,7 @@ class MainTable extends React.Component {
       });
     }
 
-    this.props.eventList.controlBtns(!shouldClose, _item, shouldClose ? [] : [_item]);
+    this.props.eventList.updateBtns(!shouldClose, _item, shouldClose ? [] : [_item]);
   }
 
   tableColRender(column, item, index) {
@@ -136,15 +141,7 @@ class MainTable extends React.Component {
   }
 
   tableCheckboxOnClick(e, status, clickedRow, arr) {
-    if (this.props.eventList.tableCheckboxOnClick) {
-      this.props.eventList.tableCheckboxOnClick(e, status, clickedRow, arr);
-    }
-
-    if(this.state.detailVisible) {
-      this.setState({
-        detailVisible: false
-      });
-    }
+    this.props.eventList.clickTableCheckbox && this.props.eventList.clickTableCheckbox(e, status, clickedRow, arr);
   }
 
   clearState() {
@@ -156,6 +153,10 @@ class MainTable extends React.Component {
 
   clearTableState() {
     this.refs.table.clearState();
+  }
+
+  onClickTabs(item) {
+    // console.log(item);
   }
 
   render() {
@@ -174,7 +175,7 @@ class MainTable extends React.Component {
     }
 
     return (
-      <div className="halo-main-table">
+      <div className="halo-com-main-table">
         {config.title ?
           <div className="header">
             <h3>{config.title}</h3>
@@ -185,7 +186,7 @@ class MainTable extends React.Component {
           <div className="submenu-tabs">
             <Tab
             items={config.tabs}
-            onClick={eventList.tabOnClick} />
+            onClick={eventList.clickTabs} />
           </div>
           : null
         }
@@ -196,7 +197,7 @@ class MainTable extends React.Component {
               key={index}
               value={btn.value}
               btnKey={btn.key}
-              onClick={eventList.btnsOnClick}
+              onClick={eventList.clickBtns}
               type={btn.type}
               disabled={btn.disabled}
               iconClass={btn.icon}
@@ -206,27 +207,35 @@ class MainTable extends React.Component {
               disabled={btn.dropdown.disabled}
               buttonData={btn}
               dropdownItems={btn.dropdown.items}
-              dropdownOnClick={eventList.dropdownBtnOnClick} />
+              dropdownOnClick={eventList.clickDropdownBtn} />
           )}
           {config.search ?
             <InputSearch
               type="light"
               width={search.width}
-              onChange={this.searchInTable} />
+              onChange={this.changeSearchInput} />
             : null
           }
         </div>
-        <Table
-          ref="table"
-          column={table.column}
-          data={table.data}
-          dataKey={table.dataKey}
-          loading={table.loading}
-          checkbox={table.checkbox}
-          checkboxOnChange={this.tableCheckboxOnClick}
-          hover={table.hover}
-          striped={this.striped} />
-        <TableDetail ref="detail" detailVisible={this.state.detailVisible} />
+        <div className="table-box">
+          <Table
+            ref="table"
+            column={table.column}
+            data={table.data}
+            dataKey={table.dataKey}
+            loading={table.loading}
+            checkbox={table.checkbox}
+            checkboxOnChange={this.tableCheckboxOnClick}
+            hover={table.hover}
+            striped={this.striped} />
+          {table.detail ?
+            <TableDetail
+              ref="detail"
+              detailVisible={this.state.detailVisible}
+              tabs={table.detail.tabs}
+              tabsOnClick={this.onClickTabs} />
+            : null}
+        </div>
       </div>
     );
   }

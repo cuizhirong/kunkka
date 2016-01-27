@@ -47,7 +47,7 @@
     "icon": "refresh"
   }],
   "search": {
-    "table_column": {
+    "column": {
       "ip_adrs": true,
       "assc_resource": true
     }
@@ -92,6 +92,9 @@
       "key": "created",
       "type": "time"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": []
+    }
   }
 }

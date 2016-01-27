@@ -44,5 +44,10 @@ module.exports = {
         }
       });
     }
+    if (config.table.detail) {
+      config.table.detail.tabs.forEach((tab) => {
+        tab.name = this.getLangValue(lang, tab.name);
+      });
+    }
   }
 };

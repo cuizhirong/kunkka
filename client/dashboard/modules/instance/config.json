@@ -50,7 +50,7 @@
           "key": "assc_floating_ip",
           "disabled": true
         }, {
-          "title": ["dissociate_sth", "floating_ip"],
+          "title": ["dissociate", "floating_ip"],
           "key": "dssc_floating_ip",
           "disabled": true
         }, {
@@ -96,7 +96,9 @@
     "icon": "refresh"
   }],
   "search": {
-
+    "column": {
+      "name": true
+    }
   },
   "table": {
     "checkbox": true,
@@ -139,6 +141,25 @@
       "key": "created",
       "type": "time"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "dscr",
+        "default": true
+      }, {
+        "name": ["console", "output"],
+        "key": "monitor"
+      }, {
+        "name": ["vnc_console"],
+        "key": "vnc_console"
+      }, {
+        "name": ["topology"],
+        "key": "topology"
+      }, {
+        "name": ["monitor"],
+        "key": "monitor"
+      }]
+    }
   }
 }

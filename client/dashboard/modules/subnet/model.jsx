@@ -7,6 +7,7 @@ var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/routers/index');
 var request = require('./request');
 var equal = require('deep-equal');
+var clone = require('clone');
 
 class Model extends React.Component {
 
@@ -40,17 +41,17 @@ class Model extends React.Component {
 
   bindEventList() {
     this._eventList = {
-      tabOnClick: this.tabOnClick,
-      btnsOnClick: this.btnsOnClick,
-      searchOnChange: this.searchOnChange,
-      tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
+      clickTabs: this.clickTabs,
+      clickBtns: this.clickBtns.bind(this),
+      updateBtns: this.updateBtns.bind(this),
+      changeSearchInput: this.changeSearchInput,
+      clickTableCheckbox: this.clickTableCheckbox.bind(this)
     };
   }
 
   updateTableData(data) {
     var _conf = this.state.config;
-    _conf = JSON.parse(JSON.stringify(_conf));
-    _conf.table.column = config.table.column;
+    _conf = clone(_conf, false);
     _conf.table.data = data;
 
     this.setState({
@@ -58,10 +59,14 @@ class Model extends React.Component {
     });
   }
 
+  loadingTable() {
+    this.updateTableData(null);
+  }
+
   listInstance() {
     var that = this;
 
-    this.updateTableData([]);
+    this.loadingTable();
     request.listInstances().then(function(data) {
       that.updateTableData(data.subnets);
     }, function(err) {
@@ -70,7 +75,7 @@ class Model extends React.Component {
     });
   }
 
-  tabOnClick(e, item) {
+  clickTabs(e, item) {
     if (item.key === 'prv_network') {
       router.pushState('/project/network');
     }
@@ -105,32 +110,36 @@ class Model extends React.Component {
     });
   }
 
-  tableCheckboxOnClick(e, status, clickedRow, arr) {
+  clickTableCheckbox(e, status, clickedRow, arr) {
     // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.controlBtns(status, clickedRow, arr);
+    this.updateBtns(status, clickedRow, arr);
   }
 
   clearTableState() {
     this.refs.dashboard.clearTableState();
   }
 
-  btnsOnClick(e, key) {
+  clickBtns(e, key) {
     // console.log('Button clicked:', key);
     switch (key) {
       case 'prv_network':
         break;
       case 'refresh':
-        this.clearTableState();
-        this.listInstance();
+        this.refresh();
         break;
       default:
         break;
     }
   }
 
-  controlBtns(status, clickedRow, arr) {
-    var conf = this.state.config,
-      btns = conf.btns;
+  refresh() {
+    this.listInstance();
+    this.refs.dashboard.clearState();
+  }
+
+  updateBtns(status, clickedRow, arr) {
+    var _conf = this.deepCopyConfig(this.state.config),
+      btns = _conf.btns;
 
     btns.map((btn) => {
       switch(btn.key) {
@@ -147,18 +156,18 @@ class Model extends React.Component {
 
     this._stores.checkedRow = arr;
     this.setState({
-      config: conf
+      config: _conf
     });
   }
 
-  searchOnChange(str) {
+  changeSearchInput(str) {
     // console.log('search:', str);
   }
 
   render() {
     return (
-      <div className="halo-modules-subnet" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
+      <div className="halo-module-subnet" style={this.props.style}>
+        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

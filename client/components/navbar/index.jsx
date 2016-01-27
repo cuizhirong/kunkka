@@ -14,7 +14,7 @@ class NavBar extends React.Component {
 
   render() {
     return (
-      <div className="halo-navbar">
+      <div className="halo-com-navbar">
         <div className="logo"></div>
         <div className="user-info">
           <i className="glyphicon icon-avatar"></i>

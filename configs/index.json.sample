@@ -4,7 +4,8 @@
     "volume",
     "image",
     "network",
-    "subnet"
+    "subnet",
+    "floating-ip"
   ],
   "default_module": "instance",
   "languages": [

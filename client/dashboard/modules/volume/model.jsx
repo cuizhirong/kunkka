@@ -6,6 +6,7 @@ var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var equal = require('deep-equal');
+var clone = require('clone');
 
 class Model extends React.Component {
 
@@ -38,17 +39,17 @@ class Model extends React.Component {
 
   bindEventList() {
     this._eventList = {
-      btnsOnClick: this.btnsOnClick,
-      dropdownBtnOnClick: this.dropdownBtnOnClick,
-      searchOnChange: this.searchOnChange,
-      tableCheckboxOnClick: this.tableCheckboxOnClick.bind(this)
+      clickBtns: this.clickBtns.bind(this),
+      updateBtns: this.updateBtns.bind(this),
+      clickDropdownBtn: this.clickDropdownBtn,
+      changeSearchInput: this.changeSearchInput,
+      clickTableCheckbox: this.clickTableCheckbox.bind(this)
     };
   }
 
   updateTableData(data) {
     var _conf = this.state.config;
-    _conf = JSON.parse(JSON.stringify(_conf));
-    _conf.table.column = config.table.column;
+    _conf = clone(_conf, false);
     _conf.table.data = data;
 
     this.setState({
@@ -56,9 +57,14 @@ class Model extends React.Component {
     });
   }
 
+  loadingTable() {
+    this.updateTableData(null);
+  }
+
   listInstance() {
     var that = this;
 
+    this.loadingTable();
     request.listVolumes().then(function(data) {
       that.updateTableData(data.volumes ? data.volumes : []);
     }, function(err) {
@@ -114,34 +120,40 @@ class Model extends React.Component {
     });
   }
 
-  tableCheckboxOnClick(e, status, clickedRow, arr) {
+  clickTableCheckbox(e, status, clickedRow, arr) {
     //   console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.controlBtns(status, clickedRow, arr);
+    this.updateBtns(status, clickedRow, arr);
   }
 
-  btnsOnClick(e, key) {
-    // console.log('btnsOnClick: key is', key);
+  clickBtns(e, key) {
+    // console.log('clickBtns: key is', key);
     switch (key) {
       case 'create_instance':
         break;
       case 'refresh':
+        this.refresh();
         break;
       default:
         break;
     }
   }
 
-  dropdownBtnOnClick(e, status) {
-    // console.log('dropdownBtnOnClick: status is', status);
+  refresh() {
+    this.listInstance();
+    this.refs.dashboard.clearState();
   }
 
-  searchOnChange(str) {
+  clickDropdownBtn(e, status) {
+    // console.log('clickDropdownBtn: status is', status);
+  }
+
+  changeSearchInput(str) {
     // console.log('search: text is', str);
   }
 
-  controlBtns(status, clickedRow, arr) {
-    var conf = this.state.config,
-      btns = conf.btns;
+  updateBtns(status, clickedRow, arr) {
+    var _conf = this.deepCopyConfig(this.state.config),
+      btns = _conf.btns;
 
     btns.map((btn) => {
       switch(btn.key) {
@@ -158,15 +170,15 @@ class Model extends React.Component {
 
     this._stores.checkedRow = arr;
     this.setState({
-      config: conf
+      config: _conf
     });
   }
 
   render() {
 
     return (
-      <div className="halo-modules-volume" style={this.props.style}>
-        <MainTable config={this.state.config} eventList={this._eventList}/>
+      <div className="halo-module-volume" style={this.props.style}>
+        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

@@ -56,7 +56,9 @@
     "icon": "refresh"
   }],
   "search": {
-
+    "column": {
+      "name": true
+    }
   },
   "table": {
     "checkbox": true,
@@ -102,6 +104,13 @@
       "key": "created",
       "type": "time"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "dscr",
+        "default": true
+      }]
+    }
   }
 }

@@ -12,7 +12,7 @@ class SideMenu extends React.Component {
     var props = this.props;
 
     return (
-      <div className="halo-menu">
+      <div className="halo-com-menu">
         <ul className="top-menu">
           <li>
             <i className="glyphicon icon-monitor"></i>

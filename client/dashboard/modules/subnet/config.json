@@ -50,7 +50,9 @@
     "icon": "refresh"
   }],
   "search": {
-    "type": "light"
+    "column": {
+      "name": true
+    }
   },
   "table": {
     "checkbox": true,
@@ -78,6 +80,9 @@
       "title": ["enable", "dhcp"],
       "key": "enable_dhcp"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": []
+    }
   }
 }
