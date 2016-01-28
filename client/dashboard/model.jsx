@@ -19,7 +19,7 @@ class Model extends React.Component {
   }
 
   loadRouter() {
-    this.router = require('./routers/index');
+    this.router = require('./cores/router');
     this.router.on('changeState', this.onChangeState);
 
     var pathList = this.router.getPathList();

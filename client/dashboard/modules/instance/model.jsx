@@ -5,6 +5,8 @@ var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var request = require('./request');
 
+var events = require('client/dashboard/cores/events');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -27,6 +29,13 @@ class Model extends React.Component {
   componentWillMount() {
     this.bindEventList();
     this.listInstance();
+
+    events.on('instance.**', function(value1, value2) {
+      console.log(this.event, value1.name, value2);
+    });
+    events.emit('instance.create', {
+      name: 'yaoli'
+    }, 3);
   }
 
   shouldComponentUpdate(nextProps, nextState) {

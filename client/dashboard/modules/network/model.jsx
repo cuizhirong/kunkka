@@ -4,7 +4,7 @@ var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
-var router = require('client/dashboard/routers/index');
+var router = require('client/dashboard/cores/router');
 var request = require('./request');
 
 class Model extends React.Component {

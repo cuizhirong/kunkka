@@ -1,11 +1,10 @@
 require('./style/index.less');
 
 var React = require('react');
-
 var TableDetail = require('../table_detail/index');
-
 var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
+var moment = require('client/libs/moment');
 
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
@@ -13,8 +12,6 @@ var Tab = uskin.Tab;
 var Button = uskin.Button;
 var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
-
-var moment = require('client/libs/moment');
 
 class MainTable extends React.Component {
 
