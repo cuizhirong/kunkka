@@ -14,7 +14,13 @@ var prototype = {
       if (err) {
         res.status(err.status).json(err);
       } else {
-        res.json(payload.body);
+        var keypairs = {
+          keypairs: []
+        };
+        payload.body.keypairs.forEach(function (k) {
+          keypairs.keypairs.push(k.keypair);
+        });
+        res.json(keypairs);
       }
     });
   },

@@ -16,11 +16,11 @@ module.exports = function(app) {
     });
   });
 
-  var apiPath = path.join(__dirname, '../../', config('backend').dirname, 'api');
-  fs.readdirSync(apiPath)
+  var apiModulePath = path.join(__dirname, '../../', config('backend').dirname, 'api');
+  fs.readdirSync(apiModulePath)
     .forEach(function (m) {
-      var apiModule = require(path.join(apiPath, m));
-      var extension = extenstionList.indexOf('auth') > -1 ? extensions[m] : undefined;
+      var apiModule = require(path.join(apiModulePath, m));
+      var extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;
       apiModule(app, extension);
     });
 

@@ -103,9 +103,23 @@ var prototype = {
       }
     });
   },
+  getVNCConsole: function (req, res, next) {
+    var projectId = req.params.project;
+    var serverId = req.params.server;
+    var region = req.headers.region;
+    var token = req.session.user.token;
+    this.nova.getVNCConsole(projectId, serverId, token, region, function (err, payload) {
+      if (err) {
+        return res.status(err.status).json(err);
+      } else {
+        res.json(payload.body);
+      }
+    });
+  },
   initRoutes: function () {
     this.app.get('/api/v1/:id/servers/detail', this.getInstanceList.bind(this));
     this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetails.bind(this));
+    this.app.post('api/v1/:project/servers/:server/action/vnc', this.getVNCConsole.bind(this));
   }
 };
 
