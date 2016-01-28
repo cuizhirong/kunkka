@@ -4,8 +4,6 @@ var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var request = require('./request');
-var equal = require('deep-equal');
-var clone = require('clone');
 
 class Model extends React.Component {
 
@@ -31,10 +29,10 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display !== this.props.style.display || !equal(this.state.config, nextState.config)) {
-      return true;
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
     }
-    return false;
+    return true;
   }
 
   bindEventList() {
@@ -49,7 +47,6 @@ class Model extends React.Component {
 
   updateTableData(data) {
     var _conf = this.state.config;
-    _conf = clone(_conf, false);
     _conf.table.data = data;
 
     this.setState({
@@ -123,7 +120,7 @@ class Model extends React.Component {
   }
 
   updateBtns(status, clickedRow, arr) {
-    var _conf = clone(this.state.config),
+    var _conf = this.state.config,
       btns = _conf.btns;
 
     btns.map((btn) => {

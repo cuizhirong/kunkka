@@ -6,7 +6,9 @@
     "network",
     "subnet",
     "floating-ip",
-    "router"
+    "router",
+    "snapshot",
+    "keypair"
   ],
   "default_module": "instance",
   "languages": [

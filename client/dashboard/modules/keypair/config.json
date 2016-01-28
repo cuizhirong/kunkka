@@ -21,13 +21,14 @@
   }],
   "table": {
     "checkbox": true,
+    "dataKey": "fingerprint",
     "column": [{
       "title": ["name"],
-      "dataIndex": "",
+      "dataIndex": "name",
       "key": "name"
     }, {
       "title": ["finger_print"],
-      "dataIndex": "",
+      "dataIndex": "fingerprint",
       "key": "finger_prt"
     }]
   }

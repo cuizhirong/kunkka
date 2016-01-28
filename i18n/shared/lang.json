@@ -73,7 +73,7 @@
     "image": "镜像",
     "ip_address": "内网IP",
     "join": "加入",
-    "keypair": "SSH密钥",
+    "keypair": "密钥对",
     "logout": "注销",
     "more": "更多",
     "name": "名称",

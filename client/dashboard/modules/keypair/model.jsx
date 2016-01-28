@@ -4,8 +4,6 @@ var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var request = require('./request');
-var equal = require('deep-equal');
-var clone = require('clone');
 
 class Model extends React.Component {
 
@@ -25,15 +23,15 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.bindEventList();
-    this.setTableColRender(config.table.column);
+    // this.setTableColRender(config.table.column);
     this.listInstance();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display !== this.props.style.display || !equal(this.state.config, nextState.config)) {
-      return true;
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
     }
-    return false;
+    return true;
   }
 
   bindEventList() {
@@ -48,7 +46,6 @@ class Model extends React.Component {
 
   updateTableData(data) {
     var _conf = this.state.config;
-    _conf = clone(_conf, false);
     _conf.table.data = data;
 
     this.setState({
@@ -73,25 +70,6 @@ class Model extends React.Component {
 
   }
 
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'name':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.keypair ? ritem.keypair.name : '';
-          };
-          break;
-        case 'finger_prt':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.keypair ? ritem.keypair.fingerprint : '';
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
   clickTableCheckbox(e, status, clickedRow, arr) {
     // console.log('tableOnClick: ', e, status, clickedRow, arr);
     this.updateBtns(status, clickedRow, arr);
@@ -99,8 +77,6 @@ class Model extends React.Component {
 
   clickBtns(e, key) {
     switch (key) {
-      case '':
-        break;
       case 'refresh':
         this.listInstance();
         break;
@@ -118,7 +94,7 @@ class Model extends React.Component {
   }
 
   updateBtns(status, clickedRow, arr) {
-    var _conf = clone(this.state.config),
+    var _conf = this.state.config,
       btns = _conf.btns;
 
     btns.map((btn) => {
