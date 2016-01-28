@@ -5,6 +5,9 @@ var React = require('react');
 var uskin = require('client/uskin/index');
 var Tab = uskin.Tab;
 
+var Toggle = require('./toggle');
+var BasicProps = require('./basic_props');
+
 class TableDetail extends React.Component {
 
   constructor(props) {
@@ -39,10 +42,17 @@ class TableDetail extends React.Component {
   render() {
     return (
       <div className={'halo-com-table-detail' + (this.state.detailVisible ? ' visible' : '')}>
-        <div className="close" onClick={this.closeDetail}>
-          <i className="glyphicon icon-close" />
+        <div className="tabs-head">
+          <div className="close" onClick={this.closeDetail}>
+            <i className="glyphicon icon-close" />
+          </div>
+          <Tab items={this.props.tabs} type="sm" onClick={this.onClick} />
         </div>
-        <Tab items={this.props.tabs} type="sm" onClick={this.onClick} />
+        <div className="tabs-content">
+          <Toggle title="Basic Properties" defaultUnfold={true}>
+            <BasicProps />
+          </Toggle>
+        </div>
       </div>
     );
   }
