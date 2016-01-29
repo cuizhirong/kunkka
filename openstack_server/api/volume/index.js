@@ -41,8 +41,10 @@ var prototype = {
         var volumes = results[0].volumes;
         var instances = results[1].servers;
         volumes.forEach(function (volume) {
+          delete volume.links;
           volume.attachments.forEach(function (attachment) {
             instances.some(function (instance) {
+              instance.links && (delete instance.links) && (delete instance.flavor.links) && (delete instance.image.links);
               return instance.id === attachment.server_id && (attachment.server = instance);
             });
           });

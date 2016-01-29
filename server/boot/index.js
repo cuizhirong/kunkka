@@ -19,11 +19,6 @@ function setup() {
   var app = express();
   app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'client')));
   app.use(cookieParser(config('sessionEngine').secret));
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-
-  app.use(bodyParser.json());
 
   // for nginx
   app.enable('trust proxy');
@@ -42,6 +37,14 @@ function setup() {
       'stream': Logger.accessLogger
     }));
   }
+
+  var proxy = require('../middlewares/proxy');
+  app.use('/proxy', proxy);
+
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+  app.use(bodyParser.json());
 
   var i18n = require('../middlewares/i18n');
   i18n(app);

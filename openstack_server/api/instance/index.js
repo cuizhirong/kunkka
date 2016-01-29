@@ -63,7 +63,9 @@ var prototype = {
         var images = results[2].images;
         var floatingips = results[3].floatingips;
         instances.forEach(function (instance) {
+          delete instance.links;
           flavors.some(function (flavor) {
+            flavor.links && (delete flavor.links);
             return flavor.id === instance.flavor.id && (instance.flavor = flavor);
           });
           images.some(function (image) {
@@ -119,7 +121,7 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:id/servers/detail', this.getInstanceList.bind(this));
     this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetails.bind(this));
-    this.app.post('api/v1/:project/servers/:server/action/vnc', this.getVNCConsole.bind(this));
+    this.app.post('/api/v1/:project/servers/:server/action/vnc', this.getVNCConsole.bind(this));
   }
 };
 

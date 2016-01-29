@@ -40,6 +40,7 @@ var prototype = {
         var volumes = results[1].volumes;
         snapshots.forEach(function (s) {
           volumes.some(function (v) {
+            v.links && (delete v.links);
             return v.id === s.volume_id && (s.volume = v);
           });
         });
