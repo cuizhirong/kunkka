@@ -5,6 +5,7 @@
 require('babel-core/register');
 require('../helpers/less_register');
 
+var fs = require('fs');
 var glob = require('glob');
 var React = require('react');
 var ReactDOMServer = require('react-dom/server');
@@ -15,6 +16,21 @@ var config = require('config');
 
 var loginModelFactory = React.createFactory(loginModel);
 var dashboardModelFactory = React.createFactory(dashboardModel);
+
+var tmplString = {};
+global.locales.availableLocales.forEach(function(lang) {
+  var langDetail = JSON.parse(fs.readFileSync('i18n/server/' + lang + '.js', 'utf-8'));
+  tmplString[lang] = {};
+  tmplString[lang].index = ReactDOMServer.renderToString(dashboardModelFactory({
+    language: langDetail.shared
+  }));
+  tmplString[lang].login = ReactDOMServer.renderToString(loginModelFactory({
+    accountPlaceholder: langDetail.shared.account_placeholder,
+    pwdPlaceholder: langDetail.shared.pwd_placeholder,
+    errorTip: langDetail.shared.error_tip,
+    submit: langDetail.shared.submit
+  }));
+});
 
 module.exports = function(app) {
   app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
@@ -56,9 +72,9 @@ module.exports = function(app) {
 
   var regions = {};
   var languages = Object.keys(config('region')[0].name);
-  languages.forEach(function (lang) {
+  languages.forEach(function(lang) {
     regions[lang] = [];
-    config('region').forEach(function (reg) {
+    config('region').forEach(function(reg) {
       regions[lang].push({
         name: reg.name[lang],
         id: reg.id
@@ -75,7 +91,10 @@ module.exports = function(app) {
         configs: {
           lang: locale
         },
-        user: req.session.user,
+        user: {
+          projectId: req.session.user.projectId,
+          userId: req.session.user.userId
+        },
         region_list: regions[locale],
         current_region: req.session.region ? req.session.region : regions[locale][0].id
       };
@@ -85,9 +104,7 @@ module.exports = function(app) {
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
         uskinFile: uskinFile[0],
-        modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
-          language: __('shared')
-        }))
+        modelTmpl: tmplString[req.i18n.locale].index
       });
     } else {
       res.render('login', {
@@ -99,12 +116,7 @@ module.exports = function(app) {
         loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
-        modelTmpl: ReactDOMServer.renderToString(loginModelFactory({
-          accountPlaceholder: __('shared.account_placeholder'),
-          pwdPlaceholder: __('shared.pwd_placeholder'),
-          errorTip: __('shared.error_tip'),
-          submit: __('shared.submit')
-        }))
+        modelTmpl: tmplString[req.i18n.locale].login
       });
     }
   }

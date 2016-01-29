@@ -1,6 +1,6 @@
 {
   "name": "halo",
-  "watch": ["drivers", "server"],
+  "watch": ["drivers", "server", "openstack_server"],
   "ignore_watch": ["i18n/server", "i18n/client"],
   "script": "index.js",
   "env": {

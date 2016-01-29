@@ -4,6 +4,7 @@ var ChildProcess = require('child_process');
 var Config = require('../configs/server.js');
 
 function color(str, c) {
+  // 0: black; 1: red; 2: green; 3: yellow; 4: blue; 5: purple; 6: cyan; 7: white;
   return '\033[' + c + 'm ' + str + ' \033[0m';
 }
 
@@ -12,7 +13,11 @@ function cyan(str) {
 }
 
 function red(str) {
-  return color(str, '31');
+  return color(str, '41;37;1');
+}
+
+function yellow(str) {
+  return color(str, '43;37;1');
 }
 
 var oldLog = console.log;
@@ -80,7 +85,7 @@ function checkService(service) {
   service = service.toLowerCase();
   console.log('You have chosen "' + cyan(service) + '" as a session storage!');
   if (service == 'session') {
-    return console.log(red('Warning') + ': You do not use any memory cache ( like "memcached" or "redis" )');
+    return console.log(yellow('WARNING') + ': You do not use any memory cache ( like "memcached" or "redis" )');
   }
   console.log(service + ' address is ' + cyan(Config.sessionEngine.address + ':' + Config.sessionEngine.port));
   var stc = 'nc -w 10 -z ' + Config.sessionEngine.address + ' ' + Config.sessionEngine.port;
