@@ -5,9 +5,10 @@ var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
-var request = require('./request');
-
-var events = require('client/dashboard/cores/events');
+var view = require('client/dashboard/cores/view');
+var storage = require('client/dashboard/cores/storage');
+var events = require('./events');
+console.log('storage', storage.data('instance'));
 
 class Model extends React.Component {
 
@@ -32,12 +33,17 @@ class Model extends React.Component {
     this.bindEventList();
     this.listInstance();
 
-    events.on('instance.**', function(value1, value2) {
-      // console.log(this.event, value1.name, value2);
+    view.on('instance', (actionType, data) => {
+      console.log('storage changed:', storage.data('instance'));
+      console.log('storage mix:', storage.mix(['instance', 'subnet']));
+      switch (actionType) {
+        case 'getItems':
+          this.updateTableData(data);
+          break;
+        default:
+          break;
+      }
     });
-    events.emit('instance.create', {
-      name: 'yaoli'
-    }, 3);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -131,16 +137,8 @@ class Model extends React.Component {
   }
 
   listInstance() {
-    var that = this;
-
     this.loadingTable();
-    request.listInstances().then(function(data) {
-      that.updateTableData(data.servers);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
-    });
-
+    events.emit('instance', 'getItems');
   }
 
   setTableColRender(column) {
