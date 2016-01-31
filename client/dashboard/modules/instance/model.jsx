@@ -2,7 +2,9 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
 var request = require('./request');
 
 var events = require('client/dashboard/cores/events');
@@ -31,7 +33,7 @@ class Model extends React.Component {
     this.listInstance();
 
     events.on('instance.**', function(value1, value2) {
-      console.log(this.event, value1.name, value2);
+      // console.log(this.event, value1.name, value2);
     });
     events.emit('instance.create', {
       name: 'yaoli'
@@ -51,8 +53,68 @@ class Model extends React.Component {
       updateBtns: this.updateBtns.bind(this),
       clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this),
+      getBasicProps: this.getBasicProps.bind(this)
     };
+  }
+
+  clickDetailTabs(tab, item) {
+    // console.log('module', item);
+    switch(tab.key) {
+      case 'description':
+        if (item.length > 1) {
+          return (
+            <div className="no-data-desc">
+              <p>没有数据可以显示。</p>
+            </div>
+          );
+        }
+        var items = this.getBasicProps(item[0]);
+        return (
+          <BasicProps
+            title={__.basic + __.properties}
+            defaultUnfold={true}
+            items={items ? items : []} />
+        );
+      case 'console_output':
+        return (<div>This is 2. Console Output</div>);
+      case 'vnc_console':
+        return (<div>This is 3. VNC Console</div>);
+      case 'topology':
+        return (<div>This is 4. topology</div>);
+      case 'monitor':
+        return (<div>This is 5. Monitor</div>);
+      default:
+        return null;
+    }
+  }
+
+  getBasicProps(item) {
+    var basicProps = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.floating_ip,
+      content: item.floatingip ? item.floatingip.floating_ip_address : ''
+    }, {
+      title: __.image,
+      content: <a href="/project/image">{item.image.name}</a>
+    }, {
+      title: __.instance_type,
+      content: item.flavor ? item.flavor.name : ''
+    }, {
+      title: __.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.create + __.time,
+      content: item.created
+    }];
+
+    return basicProps;
   }
 
   updateTableData(data) {

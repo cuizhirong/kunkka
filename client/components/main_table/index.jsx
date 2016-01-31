@@ -1,7 +1,6 @@
 require('./style/index.less');
 
 var React = require('react');
-var TableDetail = require('../table_detail/index');
 var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
 var moment = require('client/libs/moment');
@@ -19,23 +18,30 @@ class MainTable extends React.Component {
     super(props);
 
     this.state = {
-      detailVisible: false
+      detailVisible: false,
+      detailChildren: {},
+      detailSelectedTab: undefined
     };
 
+    this.stores = {
+      checkedRow: []
+    };
     moment.locale(HALO.configs.lang);
+    this.changeSearchInput = this.changeSearchInput.bind(this);
     this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
     this.controlCaptain = this.controlCaptain.bind(this);
-    this.changeSearchInput = this.changeSearchInput.bind(this);
+    this.closeCaptain = this.closeCaptain.bind(this);
+    this.clickDetailTabs = this.clickDetailTabs.bind(this);
   }
 
   componentWillMount() {
     var config = this.props.config;
-    this.setTableFilterAllName(config.table);
+    this.setTableFilterAllLang(config.table);
     converter.convertLang(lang, config);
     this.tableColRender(config.table.column);
   }
 
-  setTableFilterAllName(table) {
+  setTableFilterAllLang(table) {
     table.column.forEach((col) => {
       if (col.filter) {
         col.filterAll = ['all'];
@@ -83,11 +89,10 @@ class MainTable extends React.Component {
   controlCaptain(_item, _col, _index, e) {
     e.preventDefault();
 
-    var detail = this.refs.detail,
-      table = this.refs.table;
+    var table = this.refs.table;
 
     var prevKey = Object.keys(table.state.checkedKey);
-    var shouldClose = detail.state.detailVisible && (prevKey.length === 1) && (prevKey[0] === _item.id);
+    var shouldClose = this.state.detailVisible && (prevKey.length === 1) && (prevKey[0] === _item.id);
 
     if (shouldClose) {
       this.setState({
@@ -105,9 +110,32 @@ class MainTable extends React.Component {
           [_item.id]: true
         }
       });
+
+      //open detail content
+      this.stores = {
+        checkedRow: [_item]
+      };
+      this.clickDetailTabs(e, this.findSelectedTab());
     }
 
     this.props.eventList.updateBtns(!shouldClose, _item, shouldClose ? [] : [_item]);
+  }
+
+  findSelectedTab() {
+    var selectedTab;
+    if (!this.state.detailSelectedTab) {
+      selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
+    } else {
+      selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.key === this.state.detailSelectedTab)[0];
+    }
+
+    return selectedTab;
+  }
+
+  closeCaptain() {
+    this.setState({
+      detailVisible: false
+    });
   }
 
   tableColRender(column, item, index) {
@@ -138,13 +166,35 @@ class MainTable extends React.Component {
   }
 
   tableCheckboxOnClick(e, status, clickedRow, arr) {
-    this.props.eventList.clickTableCheckbox && this.props.eventList.clickTableCheckbox(e, status, clickedRow, arr);
+    var clickTableCheckbox = this.props.eventList.clickTableCheckbox;
+    if (clickTableCheckbox) {
+      clickTableCheckbox(e, status, clickedRow, arr);
+    }
 
     if(!arr.length) {
       this.setState({
         detailVisible: false
       });
     }
+
+    this.stores = {
+      checkedRow: arr
+    };
+
+    if (arr.length > 0) {
+      this.clickDetailTabs(null, this.findSelectedTab());
+    }
+  }
+
+  clickDetailTabs(e, tab) {
+    var details = this.state.detailChildren;
+    var clickDetailTabs = this.props.eventList.clickDetailTabs;
+    details[tab.key] = clickDetailTabs ? clickDetailTabs(tab, this.stores.checkedRow) : null;
+
+    this.setState({
+      detailChildren: details,
+      detailSelectedTab: tab.key
+    });
   }
 
   clearState() {
@@ -232,11 +282,27 @@ class MainTable extends React.Component {
             hover={table.hover}
             striped={this.striped} />
           {table.detail ?
-            <TableDetail
-              ref="detail"
-              detailVisible={this.state.detailVisible}
-              tabs={table.detail.tabs}
-              tabsOnClick={this.onClickTabs} />
+            <div className={'halo-com-table-detail' + (this.state.detailVisible ? ' visible' : '')}>
+              <div className="detail-head">
+                <div className="close" onClick={this.closeCaptain}>
+                  <i className="glyphicon icon-close" />
+                </div>
+                <Tab items={table.detail.tabs} type="sm" onClick={this.clickDetailTabs} />
+              </div>
+              {this.state.detailVisible ?
+                table.detail.tabs.map((tab) =>
+                  this.state.detailChildren[tab.key] ?
+                    <div className="detail-content"
+                      key={tab.key}
+                      data-filed={tab.key}
+                      style={{display: this.state.detailSelectedTab === tab.key ? 'block' : 'none'}}>
+                      {this.state.detailChildren[tab.key] ? this.state.detailChildren[tab.key] : null}
+                    </div>
+                  : null
+                )
+                : null
+              }
+            </div>
             : null}
         </div>
       </div>

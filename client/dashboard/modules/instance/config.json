@@ -145,11 +145,11 @@
     "detail": {
       "tabs": [{
         "name": ["description"],
-        "key": "dscr",
+        "key": "description",
         "default": true
       }, {
         "name": ["console", "output"],
-        "key": "monitor"
+        "key": "console_output"
       }, {
         "name": ["vnc_console"],
         "key": "vnc_console"

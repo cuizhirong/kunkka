@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 
-class Toggle extends React.Component {
+class BasicProps extends React.Component {
 
   constructor(props) {
     super(props);
@@ -34,7 +34,16 @@ class Toggle extends React.Component {
           <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'down' : 'up')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
-          {this.props.children}
+          <table className="basic-props">
+            <tbody>
+              {this.props.items.map((item, index) =>
+                <tr key={index}>
+                  <th>{item.title}</th>
+                  <td>{item.content}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -42,4 +51,4 @@ class Toggle extends React.Component {
 
 }
 
-module.exports = Toggle;
+module.exports = BasicProps;
