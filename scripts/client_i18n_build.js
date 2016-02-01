@@ -15,30 +15,39 @@ glob(rootDir + '/client/dashboard/modules/**/lang.json', {}, function(er, files)
   var file = '';
   try {
     var output = {};
-    for (var i = 0, len = files.length; i < len; i++) {
-      file = files[i];
-      assign(output, require(files[i])[language], files[i]);
-    }
+    buildInvertedIndex(files, output);
     writeFile(JSON.stringify(output));
   } catch (e) {
     console.log(chalk.white.bgRed.bold(' ERROR ') + ' i18n file ' + file + ' got something wrong!');
   }
 });
 
-function assign(source, obj, path) {
-  var k = null;
-  Object.keys(obj).forEach(function(m) {
-    var b = Object.keys(source).some(function(n) {
-      if (m === n) {
-        k = n;
-        return true;
+function buildInvertedIndex(files, output) {
+  var invertedIndex = {
+    words: [],
+    docIndex: {}
+  };
+
+  for (var i = 0; i < files.length; i++) {
+    var obj = require(files[i])[language];
+    Object.keys(obj).forEach(function(key) {
+      if (invertedIndex.words.indexOf(key) === -1) {
+        invertedIndex.words.push(key);
+        invertedIndex.docIndex[key] = [files[i]];
+        output[key] = obj[key];
+      } else {
+        invertedIndex.docIndex[key].push(files[i]);
       }
-      return false;
     });
-    if (b) {
-      console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(k) + ' is duplicate in the file ' + path);
-    } else {
-      source[m] = obj[m];
+  }
+
+  invertedIndex.words.forEach(function(word) {
+    var dupCount = invertedIndex.docIndex[word].length;
+    if (dupCount > 1) {
+      console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(word) + ' is duplicate in ' + chalk.bold(dupCount) + ' files: ');
+      invertedIndex.docIndex[word].forEach(function(path) {
+        console.log(path);
+      });
     }
   });
 }
