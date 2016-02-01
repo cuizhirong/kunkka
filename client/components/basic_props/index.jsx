@@ -1,3 +1,4 @@
+require('../../style/index.less');
 require('./style/index.less');
 
 var React = require('react');

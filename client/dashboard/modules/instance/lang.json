@@ -10,9 +10,15 @@
     "power_on": "Power On",
     "power_off": "Power Off",
     "properties": "Properties",
+    "no_associate": "No Associate ",
+    "related": "Related ",
     "resize": "Resize",
+    "shared": "Shared",
+    "sources": "Sources",
     "take_instance": "Take Instance ",
     "topology": "Topology",
+    "view_is_unavailable": "The view is unavailable.",
+    "virtual_interface": "Virtual Interface",
     "vnc_console": "VNC Console"
   },
   "zh-CN": {
@@ -26,9 +32,15 @@
     "power_off": "关机",
     "power_on": "开机",
     "properties": "属性",
+    "no_associate": "没有",
+    "related": "关联",
     "resize": "更改配置",
+    "shared": "共享",
+    "sources": "资源",
     "take_instance": "创建主机",
     "topology": "拓扑",
+    "view_is_unavailable": "没有数据可以显示",
+    "virtual_interface": "虚拟网卡",
     "vnc_console": "VNC登录"
   }
 }

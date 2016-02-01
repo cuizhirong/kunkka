@@ -59,13 +59,13 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
               if (p.device_id === server.id && p.fixed_ips[0].ip_address === e.addr) {
                 e.port = p;
                 obj.subnets.some(function(sub){
-                  if (sub.id ===  p.fixed_ips[0].subnet_id) {
+                  if (sub.id === p.fixed_ips[0].subnet_id) {
                     e.subnet = sub;
                   }
                 });
                 p.security_groups.forEach(function(security){
                   obj.security_groups.some(function(scu){
-                    if (scu.id ===  security) {
+                    if (scu.id === security) {
                       e.security_groups.push(scu);
                     }
                   });
@@ -87,7 +87,7 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
   });
   server.fixed_ips = _fixedIps;
   server.floating_ips = _floatingips;
-}
+};
 
 var makeServer = function (server, obj) {
   server.volume = [];
@@ -115,7 +115,7 @@ var makeServer = function (server, obj) {
     return e.keypair.name === server.key_name && (server.keypair = e.keypair);
   });
   makeNetwork(server, obj);
-}
+};
 
 var prototype = {
   asyncHandler: function (callback, err, payload) {
@@ -132,7 +132,7 @@ var prototype = {
     this.token = req.session.user.token;
     async.parallel([
       function (callback) {
-          that.nova.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+        that.nova.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
@@ -159,7 +159,7 @@ var prototype = {
     this.token = req.session.user.token;
     async.parallel([
       function (callback) {
-          that.nova.showServerDetails(that.projectId, that.serverId, that.token, that.region, that.asyncHandler.bind(this, callback));
+        that.nova.showServerDetails(that.projectId, that.serverId, that.token, that.region, that.asyncHandler.bind(this, callback));
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {

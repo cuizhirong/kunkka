@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
+var RelatedSources = require('client/components/related_src/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var view = require('client/dashboard/cores/view');
@@ -60,8 +61,7 @@ class Model extends React.Component {
       clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
       clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this),
-      getBasicProps: this.getBasicProps.bind(this)
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
   }
 
@@ -72,16 +72,24 @@ class Model extends React.Component {
         if (item.length > 1) {
           return (
             <div className="no-data-desc">
-              <p>没有数据可以显示。</p>
+              <p>{__.view_is_unavailable}</p>
             </div>
           );
         }
-        var items = this.getBasicProps(item[0]);
+        var basicPropsItem = this.getBasicPropsItems(item[0]),
+          relatedSourcesItem = this.getRelatedSourcesItems(item[0]);
         return (
-          <BasicProps
-            title={__.basic + __.properties}
-            defaultUnfold={true}
-            items={items ? items : []} />
+          <div>
+            <BasicProps
+              title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={basicPropsItem ? basicPropsItem : []} />
+            <RelatedSources
+              title={__.related + __.sources}
+              defaultUnfold={true}
+              items={relatedSourcesItem}
+            />
+          </div>
         );
       case 'console_output':
         return (<div>This is 2. Console Output</div>);
@@ -96,8 +104,8 @@ class Model extends React.Component {
     }
   }
 
-  getBasicProps(item) {
-    var basicProps = [{
+  getBasicPropsItems(item) {
+    var items = [{
       title: __.name,
       content: item.name
     }, {
@@ -120,7 +128,65 @@ class Model extends React.Component {
       content: item.created
     }];
 
-    return basicProps;
+    return items;
+  }
+
+  getRelatedSourcesItems(item) {
+    var items = {
+      keypair: {
+        title: __.keypair,
+        content: item.keypair ?
+          <div className="content-item">
+            <i className="glyphicon icon-keypair"/>
+            <a>{item.keypair.name}</a>
+            <i className="glyphicon icon-delete delete" />
+          </div>
+        : <div className="content-no-data">
+            {__.no_associate + __.keypair}
+          </div>
+      },
+      attch_volume: {
+        title: __.volume,
+        content: item.volume.length ?
+          <div className="content-item">
+            <i className="glyphicon icon-volume"/>
+            <div style={{display: 'inline-block'}}>
+              {item.volume.map((vol, i) =>
+                <a key={i}>
+                  {vol.name + ' ( ' + vol.volume_type + ' | ' + vol.size + 'GB )'
+                    + (i < item.volume.length - 1 ? ', ' : '')
+                  }
+                </a>
+              )}
+            </div>
+            <i className="glyphicon icon-delete delete" />
+          </div>
+        : <div className="content-no-data">
+            {__.no_associate + __.volume}
+          </div>
+      },
+      networks: {
+        title: __.networks,
+        content:
+          <div className="content-network">
+            <div className="network-header">
+              <span>{__.virtual_interface}</span>
+              <span>{__.subnet}</span>
+              <span>{__.security + __.group}</span>
+              <span>{__.floating_ip}</span>
+            </div>
+            <div className="network-content">
+              <span>{}</span>
+              <span>{}</span>
+              <span>{}</span>
+              <span>{}</span>
+              <i className="glyphicon icon-delete"></i>
+            </div>
+          </div>
+      }
+    };
+
+    return items;
   }
 
   updateTableData(data) {

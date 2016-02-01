@@ -23,7 +23,7 @@ var getInstance = function (volume, instances) {
       }
     });
   });
-}
+};
 
 var getSnapshot = function (volume, snapshots) {
   volume.snapshots = [];
@@ -32,7 +32,7 @@ var getSnapshot = function (volume, snapshots) {
       volume.snapshots.push(s);
     }
   });
-}
+};
 
 var prototype = {
   getVolumeList: function (req, res, next) {

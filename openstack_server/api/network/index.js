@@ -44,7 +44,7 @@ var makeNetwork = function (network, obj) {
       }
     });
   });
-}
+};
 
 var prototype = {
   asyncHandler: function (callback, err, payload) {

@@ -1,0 +1,102 @@
+@import "../../../style/index.less";
+
+.related-sources {
+  position: relative;
+  width: 526px;
+  padding-left: 16px;
+  .related-sources-title {
+    position: relative;
+    height: 14px;
+    margin: 12px 0;
+    &:before {
+      content: "";
+      left: 0;
+      right: 24px;
+      top: 50%;
+      margin-top: -1px;
+      height: 1px;
+      background-color: @color_gray_light;
+      display: block;
+      position: absolute;
+    }
+    div {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: inline-block;
+      padding-right: 12px;
+      background-color: #fff;
+      z-index: 2;
+      height: 14px;
+      line-height: 14px;
+      }
+    i {
+      color: @color_gray_darker;
+      float: right;
+      cursor: pointer;
+    }
+  }
+  .related-sources-content {
+    margin-right: 24px;
+    .content-item {
+      padding: 8px;
+      &:hover {
+        background-color: @color_blue_x_light;
+        i.delete {
+          color: @color_gray_darker;
+          &:hover {
+            color: @color_red;
+          }
+        }
+      }
+      > div {
+        display: inline-block;
+      }
+      i {
+        margin-right: 4px;
+        &.delete {
+          float: right;
+          color: transparent;
+          cursor: pointer;
+        }
+      }
+    }
+    .content-no-data {
+      padding: 8px;
+      color: @color_gray_darker;
+    }
+    .content-network {
+      .network-header, .network-content {
+        width: 445px;
+        span {
+          display: inline-block;
+          width: 25%;
+        }
+      }
+      .network-header {
+        padding: 12px 27px 12px 8px;
+        border-bottom: 1px solid @color_gray_light;
+      }
+      .network-content {
+        position: relative;
+        padding: 8px 27px 8px 8px;
+        &:hover {
+          background-color: @color_blue_x_light;
+          i {
+            color: @color_gray_darker;
+          }
+        }
+        i {
+          position: absolute;
+          top: 9px;
+          right: 8px;
+          color: transparent;
+          cursor: pointer;
+          &:hover {
+            color: @color_red;
+          }
+        }
+      }
+    }
+  }
+}
