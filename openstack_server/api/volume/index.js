@@ -8,6 +8,32 @@ function Volume (app, cinder, nova) {
   this.nova = nova;
 }
 
+var getInstance = function (volume, instances) {
+  delete volume.links;
+  volume.attachments.forEach(function (attachment) {
+    instances.some(function (instance) {
+      if (instance.id === attachment.server_id) {
+        delete instance.links;
+        delete instance.flavor.links;
+        delete instance.image.links;
+        attachment.server = instance;
+        return true;
+      } else {
+        return false;
+      }
+    });
+  });
+}
+
+var getSnapshot = function (volume, snapshots) {
+  volume.snapshots = [];
+  snapshots.forEach(function(s){
+    if (s.volume_id === volume.id) {
+      volume.snapshots.push(s);
+    }
+  });
+}
+
 var prototype = {
   getVolumeList: function (req, res, next) {
     var projectId = req.params.id;
@@ -17,6 +43,15 @@ var prototype = {
     async.parallel([
       function (callback) {
         that.cinder.listVolumes(projectId, token, region, function (err, payload) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, payload.body);
+          }
+        });
+      },
+      function (callback) {
+        that.cinder.listSnapshots(projectId, token, region, function (err, payload) {
           if (err) {
             callback(err);
           } else {
@@ -39,15 +74,11 @@ var prototype = {
         res.status(err.status).json(err);
       } else {
         var volumes = results[0].volumes;
-        var instances = results[1].servers;
+        var snapshots = results[1].snapshots;
+        var instances = results[2].servers;
         volumes.forEach(function (volume) {
-          delete volume.links;
-          volume.attachments.forEach(function (attachment) {
-            instances.some(function (instance) {
-              instance.links && (delete instance.links) && (delete instance.flavor.links) && (delete instance.image.links);
-              return instance.id === attachment.server_id && (attachment.server = instance);
-            });
-          });
+          getInstance(volume, instances);
+          getSnapshot(volume, snapshots);
         });
         res.json({volumes: volumes});
       }
@@ -58,11 +89,46 @@ var prototype = {
     var volumeId = req.params.volume;
     var token = req.session.user.token;
     var region = req.headers.region;
-    this.cinder.showVolumeDetails(projectId, volumeId, token, region, function (err, payload) {
+    var that = this;
+    async.parallel([
+      function (callback) {
+        that.cinder.showVolumeDetails(projectId, volumeId, token, region, function (err, payload) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, payload.body);
+          }
+        });
+      },
+      function (callback) {
+        that.cinder.listSnapshots(projectId, token, region, function (err, payload) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, payload.body);
+          }
+        });
+      },
+      function (callback) {
+        that.nova.listServers(projectId, token, region, function (err, payload) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, payload.body);
+          }
+        });
+      }
+    ],
+    function (err, results) {
       if (err) {
         res.status(err.status).json(err);
       } else {
-        res.send(payload.body);
+        var volume = results[0].volume;
+        var snapshots = results[1].snapshots;
+        var instances = results[2].servers;
+        getInstance(volume, instances);
+        getSnapshot(volume, snapshots);
+        res.json({volume: volume});
       }
     });
   },
