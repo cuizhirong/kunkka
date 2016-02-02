@@ -8,7 +8,8 @@
     "prv_network": "Network",
     "subnet": "Subnet",
     "unmanaged": "Unmanaged ",
-    "yes": "Yes"
+    "yes": "Yes",
+    "view_is_unavailable": "The view is unavailable."
   },
   "zh-CN": {
     "cidr": "CIDR网段",
@@ -19,6 +20,7 @@
     "prv_network": "私有网络",
     "subnet": "子网",
     "unmanaged": "受管",
-    "yes": "是"
+    "yes": "是",
+    "view_is_unavailable": "没有数据可以显示"
   }
 }

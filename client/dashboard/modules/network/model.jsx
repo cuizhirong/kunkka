@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -43,8 +44,52 @@ class Model extends React.Component {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
       changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
+  }
+
+  clickDetailTabs(tab, item) {
+    switch(tab.key) {
+      case 'dscr':
+        if (item.length > 1) {
+          return (
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+        }
+        var basicPropsItem = this.getBasicPropsItems(item[0]);
+        return (
+          <BasicProps
+          title={__.basic + __.properties}
+          defaultUnfold={true}
+          items={basicPropsItem ? basicPropsItem : []} />
+        );
+      default:
+        return null;
+    }
+  }
+
+  getBasicPropsItems(item) {
+    var items = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.network,
+      content: ''
+    }, {
+      title: __.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.created,
+      content: item.created
+    }];
+
+    return items;
   }
 
   updateTableData(data) {
