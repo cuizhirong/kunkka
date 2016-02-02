@@ -102,9 +102,11 @@ class MainTable extends React.Component {
         checkedKey: {}
       });
     } else {
-      this.setState({
-        detailVisible: true
-      });
+      if (!this.state.detailVisible) {
+        this.setState({
+          detailVisible: true
+        });
+      }
       table.setState({
         checkedKey: {
           [_item.id]: true
@@ -191,9 +193,23 @@ class MainTable extends React.Component {
     var clickDetailTabs = this.props.eventList.clickDetailTabs;
     details[tab.key] = clickDetailTabs ? clickDetailTabs(tab, this.stores.checkedRow) : null;
 
+    //it should change config tabs data so that main_table could update default selected tab
+    this.changeDefaultDetailTabs(this.props.config.table.detail.tabs, tab.key);
+
     this.setState({
       detailChildren: details,
       detailSelectedTab: tab.key
+    });
+  }
+
+  changeDefaultDetailTabs(tabs, selectedKey) {
+    tabs.forEach((tab) => {
+      if (tab.default) {
+        tab.default = false;
+      }
+      if (tab.key === selectedKey) {
+        tab.default = true;
+      }
     });
   }
 

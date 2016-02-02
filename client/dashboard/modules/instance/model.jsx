@@ -1,9 +1,13 @@
 require('./style/index.less');
 
 var React = require('react');
+var uskin = require('client/uskin/index');
+var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_src/index');
+var RelatedSnapshot = require('client/components/related_snapshot/index');
+var moment = require('client/libs/moment');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var view = require('client/dashboard/cores/view');
@@ -22,6 +26,7 @@ class Model extends React.Component {
       config: config
     };
 
+    moment.locale(HALO.configs.lang);
     this.bindEventList = this.bindEventList.bind(this);
     this.clearTableState = this.clearTableState.bind(this);
     this._eventList = {};
@@ -76,8 +81,10 @@ class Model extends React.Component {
             </div>
           );
         }
+
         var basicPropsItem = this.getBasicPropsItems(item[0]),
-          relatedSourcesItem = this.getRelatedSourcesItems(item[0]);
+          relatedSourcesItem = this.getRelatedSourcesItems(item[0]),
+          relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
         return (
           <div>
             <BasicProps
@@ -87,8 +94,13 @@ class Model extends React.Component {
             <RelatedSources
               title={__.related + __.sources}
               defaultUnfold={true}
-              items={relatedSourcesItem}
-            />
+              items={relatedSourcesItem} />
+            <RelatedSnapshot
+              title={__.related_image}
+              defaultUnfold={true}
+              items={relatedSnapshotItems ? relatedSnapshotItems : []}>
+              <Button value={__.create + __.snapshot}/>
+            </RelatedSnapshot>
           </div>
         );
       case 'console_output':
@@ -187,6 +199,34 @@ class Model extends React.Component {
     };
 
     return items;
+  }
+
+  getRelatedSnapshotItems(item) {
+    //this is fake data, please fix it later
+    var relatedSnapshot = [{
+      title: 'a month ago',
+      name: 'name',
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-instance create" />
+    }, {
+      title: 'a month ago',
+      name: 'name',
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-instance create" />
+    }, {
+      title: 'a month ago',
+      name: 'name',
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-instance create" />
+    }];
+
+    return relatedSnapshot;
   }
 
   updateTableData(data) {
