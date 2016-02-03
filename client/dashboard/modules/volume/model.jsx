@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
@@ -41,8 +42,63 @@ class Model extends React.Component {
       updateBtns: this.updateBtns.bind(this),
       clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
+  }
+
+  clickDetailTabs(tab, item) {
+    switch(tab.key) {
+      case 'dscr':
+        if (item.length > 1) {
+          return (
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+        }
+        var items = this.getBasicProps(item[0]);
+        return (
+          <BasicProps title={__.basic + __.properties}
+            defaultUnfold={true}
+            items={items ? items : []}/>
+        );
+      default:
+        return null;
+    }
+  }
+
+  getBasicProps(item) {
+    var basicProps = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title:__.id,
+      content: item.id
+    }, {
+      title:__.size,
+      content: item.size + ' GB'
+    }, {
+      title:__.type,
+      content: item.volume_type
+    }, {
+      title:__.attach_to + __.instance,
+      content: ''
+    }, {
+      title:__.shared,
+      content: ''
+    }, {
+      title:__.attributes,
+      content: ''
+    }, {
+      title:__.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.create + __.time,
+      content: item.created_at
+    }];
+
+    return basicProps;
   }
 
   updateTableData(data) {
