@@ -1,8 +1,11 @@
 require('./style/index.less');
 
 var React = require('react');
+var uskin = require('client/uskin/index');
+var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
+var RelatedSnapshot = require('client/components/related_snapshot/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
@@ -57,11 +60,20 @@ class Model extends React.Component {
             </div>
           );
         }
-        var items = this.getBasicProps(item[0]);
+        var items = this.getBasicProps(item[0]),
+          relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
         return (
-          <BasicProps title={__.basic + __.properties}
-            defaultUnfold={true}
-            items={items ? items : []}/>
+          <div>
+            <BasicProps title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={items ? items : []}/>
+            <RelatedSnapshot
+              title={__.snapshot}
+              defaultUnfold={true}
+              items={relatedSnapshotItems ? relatedSnapshotItems : []}>
+              <Button value={__.create + __.snapshot}/>
+            </RelatedSnapshot>
+          </div>
         );
       default:
         return null;
@@ -102,6 +114,43 @@ class Model extends React.Component {
     }];
 
     return basicProps;
+  }
+
+  getRelatedSnapshotItems(item) {
+    //this is fake data, please fix it later
+    var relatedSnapshot = [{
+      title: 'a month ago',
+      name: <a className="icon" href="/project/snapshot/#">
+              <i className="glyphicon icon-snapshot"></i>
+              {'name'}
+            </a>,
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-volume create" />
+    }, {
+      title: 'a month ago',
+      name: <a className="icon" href="/project/snapshot/#">
+              <i className="glyphicon icon-snapshot"></i>
+              {'name'}
+            </a>,
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-volume create" />
+    }, {
+      title: 'a month ago',
+      name: <a className="icon" href="/project/snapshot/#">
+              <i className="glyphicon icon-snapshot"></i>
+              {'name'}
+            </a>,
+      size: 'size',
+      time: 'created at',
+      status: 'status',
+      create: <i className="glyphicon icon-volume create" />
+    }];
+
+    return relatedSnapshot;
   }
 
   updateTableData(data) {
