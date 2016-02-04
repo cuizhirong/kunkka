@@ -1,8 +1,11 @@
 require('./style/index.less');
 
 var React = require('react');
+var uskin = require('client/uskin/index');
+var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
+var Subnet = require('client/components/subnet/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -59,12 +62,21 @@ class Model extends React.Component {
             </div>
           );
         }
-        var basicPropsItem = this.getBasicPropsItems(item[0]);
+        var basicPropsItem = this.getBasicPropsItems(item[0]),
+          subnetItems = this.getSubnetItems(item[0]);
         return (
-          <BasicProps
-          title={__.basic + __.properties}
-          defaultUnfold={true}
-          items={basicPropsItem ? basicPropsItem : []} />
+          <div>
+            <BasicProps
+              title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={basicPropsItem ? basicPropsItem : []} />
+            <Subnet
+              title={__.subnet}
+              defaultUnfold={true}
+              items={subnetItems ? subnetItems : []}>
+              <Button value={__.create + __.subnet}/>
+            </Subnet>
+          </div>
         );
       default:
         return null;
@@ -93,6 +105,23 @@ class Model extends React.Component {
     }];
 
     return items;
+  }
+
+  getSubnetItems(item) {
+    //this is fake data, please fix it.
+    var subnet = [{
+      title: 'testing01',
+      cidr: '192.168.0.0',
+      router: '',
+      create: <i className="glyphicon icon-delete" />
+    }, {
+      title: 'testing02',
+      cidr: '192.168.0.0',
+      router: '',
+      create: <i className="glyphicon icon-delete" />
+    }];
+
+    return subnet;
   }
 
   updateTableData(data) {

@@ -1,0 +1,43 @@
+@import "../../../style/index.less";
+
+@toggle-bg-color: @color_gray_beige;
+@subnet-item-hover-color: @color_blue_x_light;
+
+.subnet-infor {
+  .infor-head, .subnet-item {
+    display: flex;
+    box-sizing: border-box;
+  }
+  .infor-head {
+    margin-top: 10px;
+  }
+  .subnet-item:hover {
+    background-color: @subnet-item-hover-color;
+  }
+  .infor-head >div, .subnet-item >div {
+    display: inline-block;
+    border-bottom: 1px solid @color_gray_light;
+  }
+  .title, .cidr, .router, .create {
+    line-height: 40px;
+    padding-left: 20px;
+  }
+  .title, .cidr {
+    flex: 1;
+  }
+  .router {
+    flex: 2;
+  }
+  .create {
+    flex: 1;
+    i {
+      font-size: 14px;
+      margin-right: 16px;
+      color: @color_gray_dark;
+      cursor: pointer;
+      &:hover::before {
+        color: @color_red;
+      }
+    }
+  }
+}
