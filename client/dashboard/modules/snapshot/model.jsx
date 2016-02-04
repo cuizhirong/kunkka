@@ -120,6 +120,8 @@ class Model extends React.Component {
 
     btns.map((btn) => {
       switch(btn.key) {
+        case 'create':
+          break;
         case 'del_snapshot':
           btn.disabled = arr.length > 0 ? false : true;
           break;

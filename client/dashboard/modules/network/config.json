@@ -9,7 +9,7 @@
   }],
   "btns": [{
     "value": ["create", "prv_network"],
-    "key": "crt_prv_ntw",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

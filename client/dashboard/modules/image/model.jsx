@@ -163,6 +163,8 @@ class Model extends React.Component {
 
   clickBtns(e, key) {
     switch (key) {
+      case 'create':
+        break;
       case 'del_img':
         break;
       case 'refresh':

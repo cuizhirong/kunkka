@@ -9,7 +9,7 @@
   }],
   "btns": [{
     "value": ["create", "subnet"],
-    "key": "crt_subnet",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

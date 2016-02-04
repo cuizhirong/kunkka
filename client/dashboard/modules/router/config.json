@@ -6,7 +6,7 @@
   }],
   "btns": [{
     "value": ["create", "router"],
-    "key": "crt_router",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

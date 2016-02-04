@@ -4,13 +4,14 @@ var React = require('react');
 var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
 var moment = require('client/libs/moment');
+var __ = require('i18n/client/lang.json');
 
 var uskin = require('client/uskin/index');
-var Table = uskin.Table;
-var Tab = uskin.Tab;
 var Button = uskin.Button;
 var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
+var Tab = uskin.Tab;
+var Table = uskin.Table;
 
 class MainTable extends React.Component {
 
@@ -55,21 +56,23 @@ class MainTable extends React.Component {
   }
 
   searchInTable(text) {
-    var search = this.props.config.search;
+    if (this.refs.table) {
+      var search = this.props.config.search;
 
-    if (search && search.column) {
-      var filterCol = search.column;
-      this.refs.table.setState({
-        filterCol: filterCol,
-        filterBy: function(item, _column) {
-          return _column.some((col) => {
-            if (filterCol[col.key] && item[col.dataIndex]) {
-              var td = item[col.dataIndex].toLowerCase();
-              return td.indexOf(text.toLowerCase()) > -1 ? true : false;
-            }
-          });
-        }
-      });
+      if (search && search.column) {
+        var filterCol = search.column;
+        this.refs.table.setState({
+          filterCol: filterCol,
+          filterBy: function(item, _column) {
+            return _column.some((col) => {
+              if (filterCol[col.key] && item[col.dataIndex]) {
+                var td = item[col.dataIndex].toLowerCase();
+                return td.indexOf(text.toLowerCase()) > -1 ? true : false;
+              }
+            });
+          }
+        });
+      }
     }
   }
 
@@ -221,7 +224,9 @@ class MainTable extends React.Component {
   }
 
   clearTableState() {
-    this.refs.table.clearState();
+    if (this.refs.table) {
+      this.refs.table.clearState();
+    }
   }
 
   onClickTabs(item) {
@@ -234,7 +239,8 @@ class MainTable extends React.Component {
       eventList = props.eventList,
       btns = config.btns,
       search = config.search,
-      table = config.table;
+      table = config.table,
+      title = config.tabs.filter((tab) => tab.default)[0].name;
 
     if (table.data === null) {
       table.loading = true;
@@ -245,12 +251,6 @@ class MainTable extends React.Component {
 
     return (
       <div className="halo-com-main-table">
-        {config.title ?
-          <div className="header">
-            <h3>{config.title}</h3>
-          </div>
-          : null
-        }
         {config.tabs ?
           <div className="submenu-tabs">
             <Tab
@@ -287,7 +287,21 @@ class MainTable extends React.Component {
           }
         </div>
         <div className="table-box">
-          <Table
+          {!table.loading && table.data.length === 0 ?
+            <div className="table-with-no-data">
+              <Table
+                column={table.column}
+                data={[]}
+                checkbox={table.checkbox} />
+              <div>
+              </div>
+                <p>
+                  {__.there_is_no + title + __.comma + __.click}
+                  <a onClick={eventList.clickBtns.bind(null, this, 'create')}>{__.here}</a>
+                  {__.to_create + __.full_stop}
+                </p>
+              </div>
+          : <Table
             ref="table"
             column={table.column}
             data={table.data}
@@ -297,6 +311,7 @@ class MainTable extends React.Component {
             checkboxOnChange={this.tableCheckboxOnClick}
             hover={table.hover}
             striped={this.striped} />
+          }
           {table.detail ?
             <div className={'halo-com-table-detail' + (this.state.detailVisible ? ' visible' : '')}>
               <div className="detail-head">

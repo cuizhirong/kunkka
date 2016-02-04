@@ -6,7 +6,7 @@
   }],
   "btns": [{
     "value": ["create", "volume"],
-    "key": "crt_volume",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

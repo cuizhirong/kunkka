@@ -117,7 +117,7 @@ class Model extends React.Component {
 
     btns.map((btn) => {
       switch (btn.key) {
-        case 'crt_subnet':
+        case 'create':
           btn.disabled = (arr.length === 1) ? false : true;
           break;
         case 'delete':

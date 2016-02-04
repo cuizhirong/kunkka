@@ -77,6 +77,8 @@ class Model extends React.Component {
 
   clickBtns(e, key) {
     switch (key) {
+      case 'create':
+        break;
       case 'refresh':
         this.listInstance();
         break;

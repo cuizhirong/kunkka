@@ -6,7 +6,7 @@
   }],
   "btns": [{
     "value": ["allocate", "floating_ip"],
-    "key": "allc_fl_ip",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

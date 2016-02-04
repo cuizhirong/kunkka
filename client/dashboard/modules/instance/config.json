@@ -6,7 +6,7 @@
   }],
   "btns": [{
     "value": ["create", "instance"],
-    "key": "create_instance",
+    "key": "create",
     "type": "create",
     "icon": "create"
   }, {

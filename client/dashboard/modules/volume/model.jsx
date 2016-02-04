@@ -24,7 +24,7 @@ class Model extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.bindEventList();
     this.listInstance();
   }
@@ -213,7 +213,7 @@ class Model extends React.Component {
 
     btns.map((btn) => {
       switch(btn.key) {
-        case 'create_snapshot':
+        case 'create':
           btn.disabled = (arr.length === 1) ? false : true;
           break;
         case 'attach_to_instance':

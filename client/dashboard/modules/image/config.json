@@ -6,7 +6,7 @@
   }],
   "btns": [{
     "value": ["create", "instance"],
-    "key": "crt_inst",
+    "key": "create",
     "type": "create",
     "icon": "create",
     "disabled": true
