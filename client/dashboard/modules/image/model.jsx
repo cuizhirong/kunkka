@@ -2,7 +2,9 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
 var request = require('./request');
 
 class Model extends React.Component {
@@ -41,8 +43,67 @@ class Model extends React.Component {
       updateBtns: this.updateBtns.bind(this),
       clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
+  }
+
+  clickDetailTabs(tab, item) {
+    switch (tab.key) {
+      case 'description':
+        if (item.length > 1) {
+          return (
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+        }
+        var basicPropsItem = this.getBasicPropsItems(item[0]);
+        return (
+          <div>
+            <BasicProps
+              title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={basicPropsItem ? basicPropsItem : []} />
+          </div>
+        );
+      default:
+        return null;
+    }
+  }
+
+  getBasicPropsItems(item) {
+    var items = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.size,
+      content: Math.round(item.size / 1024) + ' MB'
+    }, {
+      title: __.type,
+      content: item.image_type === 'snapshot' ? __.snapshot : __.image
+    }, {
+      title: __.checksum,
+      content: item.checksum
+    }, {
+      title: __.status,
+      type: 'status',
+      status: item.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.create + __.time,
+      type: 'time',
+      content: item.created_at
+    }, {
+      title: __.update + __.time,
+      type: 'time',
+      content: item.updated_at
+    }];
+
+    return items;
   }
 
   updateTableData(data) {
@@ -71,12 +132,18 @@ class Model extends React.Component {
 
   }
 
+
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
         case 'size':
           col.render = (rcol, ritem, rindex) => {
             return Math.round(ritem.size / 1024) + ' MB';
+          };
+          break;
+        case 'type':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.image_type === 'snapshot' ? __.snapshot : __.image;
           };
           break;
         default:

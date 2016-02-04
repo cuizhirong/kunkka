@@ -44,6 +44,7 @@
     "terminate": "Terminate ",
     "time": "Time",
     "type": "Type",
+    "update": "Update ",
     "volume": "Volume"
   },
   "zh-CN": {
@@ -91,6 +92,7 @@
     "terminate": "删除",
     "time": "时间",
     "type": "类型",
+    "update": "更新",
     "volume": "云硬盘"
   }
 }

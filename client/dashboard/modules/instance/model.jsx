@@ -19,8 +19,6 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    this.setTableColRender(config.table.column);
-
     this.state = {
       config: config
     };
@@ -35,6 +33,7 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.bindEventList();
+    this.setTableColRender(config.table.column);
     this.listInstance();
 
     view.on('instance', (actionType, data) => {

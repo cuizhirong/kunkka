@@ -43,6 +43,9 @@
       "dataIndex": "size",
       "key": "size"
     }, {
+      "title": ["type"],
+      "key": "type"
+      }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
@@ -60,7 +63,11 @@
     }],
     "data": [],
     "detail": {
-      "tabs": []
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
     }
   }
 }
