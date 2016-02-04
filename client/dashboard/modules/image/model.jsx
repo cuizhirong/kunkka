@@ -6,6 +6,7 @@ var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -25,9 +26,17 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    router.on('changeState', this.onChangeState);
     this.bindEventList();
     this.setTableColRender(config.table.column);
     this.listInstance();
+  }
+
+  onChangeState(pathList) {
+    if (pathList.length >= 3 && pathList[1] === 'image') {
+      let row = pathList[2];
+      console.log('image切换选中行时 ' + row);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -107,6 +116,11 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
+    if (path.length > 2 && data && data.length > 0) {
+      console.log('初始化image时选择row' + path[2]);
+    }
+
     var _conf = this.state.config;
     _conf.table.data = data;
 

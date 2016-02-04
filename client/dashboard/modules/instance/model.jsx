@@ -10,9 +10,9 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var view = require('client/dashboard/cores/view');
-var storage = require('client/dashboard/cores/storage');
+// var storage = require('client/dashboard/cores/storage');
 var events = require('./events');
-console.log('storage', storage.data('instance'));
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -26,19 +26,17 @@ class Model extends React.Component {
     this.bindEventList = this.bindEventList.bind(this);
     this.clearTableState = this.clearTableState.bind(this);
     this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
   }
 
   componentWillMount() {
+    router.on('changeState', this.onChangeState);
     this.bindEventList();
     this.setTableColRender(config.table.column);
     this.listInstance();
 
     view.on('instance', (actionType, data) => {
-      console.log('storage changed:', storage.data('instance'));
-      console.log('storage mix:', storage.mix(['instance', 'subnet']));
+      // console.log('storage changed:', storage.data('instance'));
+      // console.log('storage mix:', storage.mix(['instance', 'subnet']));
       switch (actionType) {
         case 'getItems':
           this.updateTableData(data);
@@ -47,6 +45,13 @@ class Model extends React.Component {
           break;
       }
     });
+  }
+
+  onChangeState(pathList) {
+    if (pathList.length >= 3 && pathList[1] === 'instance') {
+      let row = pathList[2];
+      console.log('instance切换选中行时 ' + row);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -69,7 +74,7 @@ class Model extends React.Component {
 
   clickDetailTabs(tab, item) {
     // console.log('module', item[0]);
-    switch(tab.key) {
+    switch (tab.key) {
       case 'description':
         if (item.length > 1) {
           return (
@@ -152,8 +157,7 @@ class Model extends React.Component {
             <i className="glyphicon icon-keypair"/>
             <a>{item.keypair.name}</a>
             <i className="glyphicon icon-delete delete" />
-          </div>
-        : <div className="content-no-data">
+          </div> : <div className="content-no-data">
             {__.no_associate + __.keypair}
           </div>
       },
@@ -172,15 +176,13 @@ class Model extends React.Component {
               )}
             </div>
             <i className="glyphicon icon-delete delete" />
-          </div>
-        : <div className="content-no-data">
+          </div> : <div className="content-no-data">
             {__.no_associate + __.volume}
           </div>
       },
       networks: {
         title: __.networks,
-        content:
-          <div className="content-network">
+        content: <div className="content-network">
             <div className="network-header">
               <span>{__.virtual_interface}</span>
               <span>{__.subnet}</span>
@@ -230,6 +232,11 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
+    if (path.length > 2 && data && data.length > 0) {
+      console.log('初始化instance时选择row' + path[2]);
+    }
+
     var _conf = this.state.config;
     _conf.table.data = data;
 
@@ -254,7 +261,7 @@ class Model extends React.Component {
           col.render = (rcol, ritem, rindex) => {
             var listener = (_item, _col, _index, e) => {
               e.preventDefault();
-              console.log('print ' + _item.image.name, _item);
+              router.pushState('/project/image/' + _item.id);
             };
             return ritem.image ?
               <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
@@ -342,7 +349,6 @@ class Model extends React.Component {
       }
     });
 
-    this._stores.checkedRow = arr;
     this.setState({
       config: _conf
     });

@@ -18,5 +18,6 @@
   "routers": [{
     "key": "subnet",
     "link": "network"
-  }]
+  }],
+  "theme": "default"
 }

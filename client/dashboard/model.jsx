@@ -1,6 +1,7 @@
 var React = require('react');
 var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
+var router = require('./cores/router');
 
 var loader = require('./cores/loader'),
   configs = loader.configs;
@@ -19,15 +20,13 @@ class Model extends React.Component {
   }
 
   loadRouter() {
-    this.router = require('./cores/router');
-    this.router.on('changeState', this.onChangeState);
+    router.on('changeState', this.onChangeState);
 
-    var pathList = this.router.getPathList();
-    if (pathList.length > 1) {
-      configs.default_module = pathList[1];
-    } else {
-      this.router.replaceState('/project/' + configs.default_module);
+    var pathList = router.getPathList();
+    if (pathList.length <= 1) {
+      pathList[1] = configs.default_module;
     }
+    router.replaceState('/project/' + pathList.slice(1).join('/'), null, null, true);
   }
 
   onChangeState(pathList) {
@@ -56,19 +55,8 @@ class Model extends React.Component {
     return ret;
   }
 
-  updateModules() {
-    //Object.keys(loader.modules)
-    var _defaultModule = configs.default_module;
-    this.setState({
-      modules: [_defaultModule],
-      selectedModule: _defaultModule,
-      selectedMenu: this._filterMenu(_defaultModule)
-    });
-  }
-
   componentDidMount() {
     this.loadRouter();
-    this.updateModules();
   }
 
   componentWillUpdate() {
@@ -80,7 +68,7 @@ class Model extends React.Component {
   }
 
   onClickSubmenu(e, m) {
-    this.router.pushState('/project/' + m.key);
+    router.pushState('/project/' + m.key);
   }
 
   render() {

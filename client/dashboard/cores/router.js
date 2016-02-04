@@ -21,16 +21,16 @@ class RouterModel extends EventEmitter {
   }
 
   // Title is ignored by browser
-  pushState(url, obj, title) {
-    if (url === window.location.pathname) {
+  pushState(url, obj, title, forced) {
+    if (url === window.location.pathname && !forced) {
       return;
     }
     window.history.pushState(obj, title, url);
     this.onChangeState();
   }
 
-  replaceState(url, obj, title) {
-    if (url === window.location.pathname) {
+  replaceState(url, obj, title, forced) {
+    if (url === window.location.pathname && !forced) {
       return;
     }
     window.history.replaceState(obj, title, url);
