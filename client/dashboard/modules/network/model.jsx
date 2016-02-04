@@ -79,13 +79,16 @@ class Model extends React.Component {
       title: __.id,
       content: item.id
     }, {
-      title: __.network,
+      title: __.unmanaged + __.network,
       content: ''
     }, {
       title: __.status,
+      type: 'status',
+      status: item.status,
       content: __[item.status.toLowerCase()]
     }, {
-      title: __.created,
+      title: __.create + __.time,
+      type: 'time',
       content: item.created
     }];
 

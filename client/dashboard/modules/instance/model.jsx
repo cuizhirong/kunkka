@@ -7,7 +7,6 @@ var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_src/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
-var moment = require('client/libs/moment');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var view = require('client/dashboard/cores/view');
@@ -26,7 +25,6 @@ class Model extends React.Component {
       config: config
     };
 
-    moment.locale(HALO.configs.lang);
     this.bindEventList = this.bindEventList.bind(this);
     this.clearTableState = this.clearTableState.bind(this);
     this._eventList = {};
@@ -71,7 +69,7 @@ class Model extends React.Component {
   }
 
   clickDetailTabs(tab, item) {
-    // console.log('module', item);
+    // console.log('module', item[0]);
     switch(tab.key) {
       case 'description':
         if (item.length > 1) {
@@ -134,9 +132,12 @@ class Model extends React.Component {
       content: item.flavor ? item.flavor.name : ''
     }, {
       title: __.status,
+      type: 'status',
+      status: item.status,
       content: __[item.status.toLowerCase()]
     }, {
       title: __.create + __.time,
+      type: 'time',
       content: item.created
     }];
 
@@ -188,10 +189,10 @@ class Model extends React.Component {
               <span>{__.floating_ip}</span>
             </div>
             <div className="network-content">
-              <span>{}</span>
-              <span>{}</span>
-              <span>{}</span>
-              <span>{}</span>
+              <span>{'-'}</span>
+              <span>{'-'}</span>
+              <span>{'-'}</span>
+              <span>{'-'}</span>
               <i className="glyphicon icon-delete"></i>
             </div>
           </div>

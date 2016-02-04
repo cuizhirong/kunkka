@@ -2,6 +2,7 @@ require('../../style/index.less');
 require('./style/index.less');
 
 var React = require('react');
+var moment = require('client/libs/moment');
 
 class BasicProps extends React.Component {
 
@@ -12,6 +13,7 @@ class BasicProps extends React.Component {
       toggle: false
     };
 
+    moment.locale(HALO.configs.lang);
     this.toggle = this.toggle.bind(this);
   }
 
@@ -27,6 +29,33 @@ class BasicProps extends React.Component {
     });
   }
 
+  getStatusIcon(status) {
+    switch(status.toLowerCase()) {
+      case 'active':
+        return <i className="glyphicon icon-status-active active" />;
+      case 'in-use':
+        return <i className="glyphicon icon-status-light active" />;
+      default:
+        return '';
+    }
+  }
+
+  getItemContent(item) {
+    switch(item.type) {
+      case 'status':
+        return (
+          <span>
+            {this.getStatusIcon(item.status)}
+            {item.content}
+          </span>
+        );
+      case 'time':
+        return moment(item.content).format('YYYY-MM-DD hh:mm:ss');
+      default:
+        return item.content;
+    }
+  }
+
   render() {
     return (
       <div className="toggle">
@@ -40,7 +69,7 @@ class BasicProps extends React.Component {
               {this.props.items.map((item, index) =>
                 <tr key={index}>
                   <th>{item.title}</th>
-                  <td>{item.content}</td>
+                  <td>{this.getItemContent(item)}</td>
                 </tr>
               )}
             </tbody>

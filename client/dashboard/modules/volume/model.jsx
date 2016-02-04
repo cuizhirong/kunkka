@@ -92,9 +92,12 @@ class Model extends React.Component {
       content: ''
     }, {
       title:__.status,
+      type: 'status',
+      status: item.status,
       content: __[item.status.toLowerCase()]
     }, {
       title: __.create + __.time,
+      type: 'time',
       content: item.created_at
     }];
 

@@ -7,14 +7,15 @@ table.basic-props {
     height: 24px;
     th {
       width: 94px;
+      padding: 5px 0;
       color: @basic-props-title-color;
       font-weight: normal;
-      vertical-align: top;
+      vertical-align: middle;
       text-align: right;
     }
     td {
-      vertical-align: top;
-      padding-left: 24px;
+      vertical-align: middle;
+      padding: 5px 0 5px 24px;
       p {
         height: 16px;
         line-height: 16px;
@@ -23,6 +24,12 @@ table.basic-props {
       }
       a {
 
+      }
+      i.glyphicon {
+        margin-right: 4px;
+        &.active {
+          color: @color_green;
+        }
       }
     }
   }
