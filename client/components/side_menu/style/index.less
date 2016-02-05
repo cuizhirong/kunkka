@@ -1,3 +1,5 @@
+@import "../../../style/index.less";
+
 @menu_font_color: #fff;
 @menu_font_hover_color: #42b9e5;
 
@@ -43,8 +45,6 @@
   }
   > .menu {
     border-right: none;
-    overflow-x: visible;
-    overflow-y: visible;
     > li {
       li.selected {
         position: relative;
@@ -62,4 +62,46 @@
       }
     }
   }
+}
+
+.halo-com-menu {
+  position: relative;
+  flex: 1;
+  .fixed-width(296px);
+  overflow: hidden;
+  > .menu {
+    width: 215px;
+    position: absolute;
+    overflow: scroll;
+    overflow-x: hidden;
+    top: 0;
+    right: -15px;
+    bottom: 0;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  > .scroll-pane {
+    position:absolute;
+    width:8px;
+    right:0;
+    top:0;
+    bottom:0;
+    opacity: 0;
+    transition: .2s;
+    border-radius: 5px;
+    z-index: 100;
+    > .scroll-slider {
+      background: rgba(0,0,0,.3);
+      position: relative;
+      margin : 0 1px;
+      border-radius: 3px;
+      cursor: default;
+    }
+  }
+}
+
+.halo-com-menu:hover > .scroll-pane,
+.scroll-pane.active {
+  opacity: 1;
 }
