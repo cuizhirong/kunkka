@@ -5,7 +5,7 @@ var uskin = require('client/uskin/index');
 var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
-var Subnet = require('client/components/subnet/index');
+var DetailSubnet = require('client/components/detail_subnet/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -52,34 +52,37 @@ class Model extends React.Component {
     };
   }
 
-  clickDetailTabs(tab, item) {
+  clickDetailTabs(tab, item, callback) {
     switch(tab.key) {
       case 'dscr':
         if (item.length > 1) {
-          return (
+          callback(
             <div className="no-data-desc">
               <p>{__.view_is_unavailable}</p>
             </div>
           );
+          break;
         }
+
         var basicPropsItem = this.getBasicPropsItems(item[0]),
-          subnetItems = this.getSubnetItems(item[0]);
-        return (
+          subnetItems = this.getDetailSubnetItems(item[0]);
+        callback(
           <div>
             <BasicProps
               title={__.basic + __.properties}
               defaultUnfold={true}
               items={basicPropsItem ? basicPropsItem : []} />
-            <Subnet
+            <DetailSubnet
               title={__.subnet}
               defaultUnfold={true}
               items={subnetItems ? subnetItems : []}>
               <Button value={__.create + __.subnet}/>
-            </Subnet>
+            </DetailSubnet>
           </div>
         );
+        break;
       default:
-        return null;
+        callback(null);
     }
   }
 
@@ -107,7 +110,7 @@ class Model extends React.Component {
     return items;
   }
 
-  getSubnetItems(item) {
+  getDetailSubnetItems(item) {
     //this is fake data, please fix it.
     var subnet = [{
       title: 'testing01',

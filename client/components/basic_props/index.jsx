@@ -64,7 +64,7 @@ class BasicProps extends React.Component {
           <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'down' : 'up')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
-          <table className="basic-props">
+          <table className="halo-com-basic-props">
             <tbody>
               {this.props.items.map((item, index) =>
                 <tr key={index}>

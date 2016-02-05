@@ -9,5 +9,15 @@ module.exports = {
         REGION: 'RegionOne'
       }
     });
+  },
+  post: function(options) {
+    return request.post({
+      url: options.url,
+      dataType: options.dataType || 'json',
+      data: options.data,
+      headers: {
+        REGION: 'RegionOne'
+      }
+    });
   }
 };

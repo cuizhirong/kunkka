@@ -35,7 +35,7 @@ class RelatedSnapshot extends React.Component {
           <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'down' : 'up')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
-          <div className="related-snapshot">
+          <div className="halo-com-related-snapshot">
             {this.props.children}
             <div className="timeline">
               {this.props.items.map((item, i) =>

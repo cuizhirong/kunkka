@@ -13,9 +13,9 @@ events.on(dataType, function(actionType, data) {
     case 'getItems':
       request.get({
         url: '/api/v1/' + HALO.user.projectId + '/servers/detail'
-      }).then(function(res) {
+      }).then((res) => {
         store.emit(dataType, actionType, res.servers);
-      }, function() {
+      }, () => {
         store.emit(dataType, actionType, []);
       });
       break;

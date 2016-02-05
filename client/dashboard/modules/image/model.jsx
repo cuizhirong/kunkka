@@ -57,18 +57,20 @@ class Model extends React.Component {
     };
   }
 
-  clickDetailTabs(tab, item) {
+  clickDetailTabs(tab, item, callback) {
     switch (tab.key) {
       case 'description':
         if (item.length > 1) {
-          return (
+          callback(
             <div className="no-data-desc">
               <p>{__.view_is_unavailable}</p>
             </div>
           );
+          break;
         }
+
         var basicPropsItem = this.getBasicPropsItems(item[0]);
-        return (
+        callback(
           <div>
             <BasicProps
               title={__.basic + __.properties}
@@ -76,8 +78,10 @@ class Model extends React.Component {
               items={basicPropsItem ? basicPropsItem : []} />
           </div>
         );
+        break;
       default:
-        return null;
+        callback(null);
+        break;
     }
   }
 

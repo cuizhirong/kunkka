@@ -219,17 +219,20 @@ class MainTable extends React.Component {
   }
 
   clickDetailTabs(e, tab) {
-    var details = this.state.detailChildren;
     var clickDetailTabs = this.props.eventList.clickDetailTabs;
-    details[tab.key] = clickDetailTabs ? clickDetailTabs(tab, this.stores.checkedRow) : null;
+    if (clickDetailTabs) {
+      clickDetailTabs(tab, this.stores.checkedRow, (detailContent) => {
+        //it should change config tabs data so that main_table could update default selected tab
+        this.changeDefaultDetailTabs(this.props.config.table.detail.tabs, tab.key);
 
-    //it should change config tabs data so that main_table could update default selected tab
-    this.changeDefaultDetailTabs(this.props.config.table.detail.tabs, tab.key);
-
-    this.setState({
-      detailChildren: details,
-      detailSelectedTab: tab.key
-    });
+        var details = this.state.detailChildren;
+        details[tab.key] = detailContent;
+        this.setState({
+          detailChildren: details,
+          detailSelectedTab: tab.key
+        });
+      });
+    }
   }
 
   changeDefaultDetailTabs(tabs, selectedKey) {
@@ -350,8 +353,8 @@ class MainTable extends React.Component {
               {this.state.detailVisible ?
                 table.detail.tabs.map((tab) =>
                   this.state.detailChildren[tab.key] ?
-                    <div className="detail-content"
-                      key={tab.key}
+                    <div key={tab.key}
+                      className="detail-content"
                       data-filed={tab.key}
                       style={{display: this.state.detailSelectedTab === tab.key ? 'block' : 'none'}}>
                       {this.state.detailChildren[tab.key] ? this.state.detailChildren[tab.key] : null}

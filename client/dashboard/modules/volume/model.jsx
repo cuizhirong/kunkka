@@ -51,19 +51,21 @@ class Model extends React.Component {
     };
   }
 
-  clickDetailTabs(tab, item) {
+  clickDetailTabs(tab, item, callback) {
     switch(tab.key) {
       case 'dscr':
         if (item.length > 1) {
-          return (
+          callback(
             <div className="no-data-desc">
               <p>{__.view_is_unavailable}</p>
             </div>
           );
+          break;
         }
+
         var items = this.getBasicProps(item[0]),
           relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
-        return (
+        callback(
           <div>
             <BasicProps title={__.basic + __.properties}
               defaultUnfold={true}
@@ -76,8 +78,10 @@ class Model extends React.Component {
             </RelatedSnapshot>
           </div>
         );
+        break;
       default:
-        return null;
+        callback(null);
+        break;
     }
   }
 

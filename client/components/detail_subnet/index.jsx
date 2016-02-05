@@ -3,7 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var __ = require('i18n/client/lang.json');
 
-class Subnet extends React.Component {
+class DetailSubnet extends React.Component {
 
   constructor(props) {
     super(props);
@@ -62,4 +62,4 @@ class Subnet extends React.Component {
 
 }
 
-module.exports = Subnet;
+module.exports = DetailSubnet;

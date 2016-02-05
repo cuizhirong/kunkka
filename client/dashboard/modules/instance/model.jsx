@@ -5,13 +5,15 @@ var uskin = require('client/uskin/index');
 var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
-var RelatedSources = require('client/components/related_src/index');
+var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
+var VncConsole = require('client/components/vnc_console/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var view = require('client/dashboard/cores/view');
 // var storage = require('client/dashboard/cores/storage');
 var events = require('./events');
+var request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
@@ -64,22 +66,24 @@ class Model extends React.Component {
     };
   }
 
-  clickDetailTabs(tab, item) {
+  clickDetailTabs(tab, item, callback) {
     // console.log('module', item[0]);
+
     switch (tab.key) {
       case 'description':
         if (item.length > 1) {
-          return (
+          callback(
             <div className="no-data-desc">
               <p>{__.view_is_unavailable}</p>
             </div>
           );
+          break;
         }
 
         var basicPropsItem = this.getBasicPropsItems(item[0]),
           relatedSourcesItem = this.getRelatedSourcesItems(item[0]),
           relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
-        return (
+        callback(
           <div>
             <BasicProps
               title={__.basic + __.properties}
@@ -97,16 +101,39 @@ class Model extends React.Component {
             </RelatedSnapshot>
           </div>
         );
+        break;
       case 'console_output':
-        return (<div>This is 2. Console Output</div>);
+        callback(<div>This is 2. Console Output</div>);
+        break;
       case 'vnc_console':
-        return (<div>This is 3. VNC Console</div>);
+        if (item.length > 1) {
+          callback(
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+        }
+        request.post({
+          url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/vnc'
+        }).then((res) => {
+          callback(
+            <VncConsole
+              src={res.console.url}
+              data-id={item[0].id} />
+          );
+        }, () => {
+          callback(<div />);
+        });
+        break;
       case 'topology':
-        return (<div>This is 4. topology</div>);
+        callback(<div>This is 4. topology</div>);
+        break;
       case 'monitor':
-        return (<div>This is 5. Monitor</div>);
+        callback(<div>This is 5. Monitor</div>);
+        break;
       default:
-        return null;
+        callback(null);
+        break;
     }
   }
 

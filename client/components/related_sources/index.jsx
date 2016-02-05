@@ -37,7 +37,7 @@ class RelatedSources extends React.Component {
           <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'down' : 'up')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
-          <div className="related-sources">
+          <div className="halo-com-related-sources">
             {items.keypair ?
               <div>
                 <div className="related-sources-title">
