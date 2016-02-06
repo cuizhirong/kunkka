@@ -54,8 +54,7 @@ class MainTable extends React.Component {
 
     //if the detail id is invalid, replace url to current module pathlist
     if (pathList[2] && !checkedRow) {
-      pathList.length = 2;
-      router.replaceState(router.getPathName(), null, null, false);
+      router.replaceState('/' + pathList.slice(0, 2).join('/'), null, null, false);
       return;
     }
 

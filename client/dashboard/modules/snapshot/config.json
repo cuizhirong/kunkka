@@ -62,6 +62,9 @@
       "key": "created",
       "type": "time"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": []
+    }
   }
 }
