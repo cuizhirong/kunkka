@@ -52,7 +52,7 @@ class Model extends React.Component {
   }
 
   clickDetailTabs(tab, item, callback) {
-    switch(tab.key) {
+    switch (tab.key) {
       case 'dscr':
         if (item.length > 1) {
           callback(
@@ -90,25 +90,25 @@ class Model extends React.Component {
       title: __.name,
       content: item.name
     }, {
-      title:__.id,
+      title: __.id,
       content: item.id
     }, {
-      title:__.size,
+      title: __.size,
       content: item.size + ' GB'
     }, {
-      title:__.type,
+      title: __.type,
       content: item.volume_type
     }, {
-      title:__.attach_to + __.instance,
+      title: __.attach_to + __.instance,
       content: ''
     }, {
-      title:__.shared,
+      title: __.shared,
       content: ''
     }, {
-      title:__.attributes,
+      title: __.attributes,
       content: ''
     }, {
-      title:__.status,
+      title: __.status,
       type: 'status',
       status: item.status,
       content: __[item.status.toLowerCase()]
@@ -159,16 +159,15 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
     var _conf = this.state.config;
     _conf.table.data = data;
 
     this.setState({
       config: _conf
     }, () => {
-      var path = router.getPathList();
       if (path.length > 2 && data && data.length > 0) {
-        // console.log('初始化instance时选择row' + path[2]);
-        router.replaceState('/' + path.join('/'), null, null, true);
+        router.replaceState(router.getPathName(), null, null, true);
       }
     });
   }
@@ -272,7 +271,7 @@ class Model extends React.Component {
       btns = _conf.btns;
 
     btns.map((btn) => {
-      switch(btn.key) {
+      switch (btn.key) {
         case 'create':
           btn.disabled = (arr.length === 1) ? false : true;
           break;

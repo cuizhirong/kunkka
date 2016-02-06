@@ -26,17 +26,9 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    router.on('changeState', this.onChangeState);
     this.bindEventList();
     this.setTableColRender(config.table.column);
     this.listInstance();
-  }
-
-  onChangeState(pathList) {
-    if (pathList.length >= 3 && pathList[1] === 'image') {
-      let row = pathList[2];
-      console.log('image切换选中行时 ' + row);
-    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -121,10 +113,6 @@ class Model extends React.Component {
 
   updateTableData(data) {
     var path = router.getPathList();
-    if (path.length > 2 && data && data.length > 0) {
-      console.log('初始化image时选择row' + path[2]);
-    }
-
     var _conf = this.state.config;
     _conf.table.data = data;
 
@@ -132,8 +120,7 @@ class Model extends React.Component {
       config: _conf
     }, () => {
       if (path.length > 2 && data && data.length > 0) {
-        // console.log('初始化instance时选择row' + path[2]);
-        router.replaceState('/' + path.join('/'), null, null, true);
+        router.replaceState(router.getPathName(), null, null, true);
       }
     });
   }

@@ -46,46 +46,48 @@ class MainTable extends React.Component {
   }
 
   onChangeState(pathList) {
-    if (pathList[1] === this.props.moduleID) {
-      var table = this.refs.table;
-      var checkedRow = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
-
-      //if the detail id is invalid, replace url to current module pathlist
-      if (pathList[2] && !checkedRow) {
-        pathList.length = 2;
-        router.replaceState('/' + pathList.join('/'), null, null, false);
-        return;
-      }
-
-      //when detail ID is valid, open the detail module
-      if (pathList[2]) {
-        if (!this.state.detailVisible) {
-          this.setState({
-            detailVisible: true
-          });
-        }
-        table.setState({
-          checkedKey: {
-            [pathList[2]]: true
-          }
-        });
-
-        this.stores = {
-          checkedRow: [checkedRow]
-        };
-
-        this.clickDetailTabs(null, this.findSelectedTab());
-      } else {
-        this.setState({
-          detailVisible: false
-        });
-        table.setState({
-          checkedKey: {}
-        });
-      }
-
-      this.props.eventList.updateBtns(!!pathList[2], checkedRow, !pathList[2] ? [] : [checkedRow]);
+    if (pathList[1] !== this.props.moduleID) {
+      return;
     }
+    var table = this.refs.table;
+    var checkedRow = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
+
+    //if the detail id is invalid, replace url to current module pathlist
+    if (pathList[2] && !checkedRow) {
+      pathList.length = 2;
+      router.replaceState(router.getPathName(), null, null, false);
+      return;
+    }
+
+    //when detail ID is valid, open the detail module
+    if (pathList[2]) {
+      if (!this.state.detailVisible) {
+        this.setState({
+          detailVisible: true
+        });
+      }
+      table.setState({
+        checkedKey: {
+          [pathList[2]]: true
+        }
+      });
+
+      this.stores = {
+        checkedRow: [checkedRow]
+      };
+
+      this.clickDetailTabs(null, this.findSelectedTab());
+    } else {
+      this.setState({
+        detailVisible: false
+      });
+      table.setState({
+        checkedKey: {}
+      });
+    }
+
+    this.props.eventList.updateBtns(!!pathList[2], checkedRow, !pathList[2] ? [] : [checkedRow]);
+
   }
 
   setTableFilterAllLang(table) {

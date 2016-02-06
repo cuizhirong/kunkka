@@ -128,11 +128,16 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
     var _conf = this.state.config;
     _conf.table.data = data;
 
     this.setState({
       config: _conf
+    }, () => {
+      if (path.length > 2 && data && data.length > 0) {
+        router.replaceState(router.getPathName(), null, null, true);
+      }
     });
   }
 

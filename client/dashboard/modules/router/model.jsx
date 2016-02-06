@@ -5,6 +5,7 @@ var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -46,11 +47,16 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
     var _conf = this.state.config;
     _conf.table.data = data;
 
     this.setState({
       config: _conf
+    }, () => {
+      if (path.length > 2 && data && data.length > 0) {
+        router.replaceState(router.getPathName(), null, null, true);
+      }
     });
   }
 

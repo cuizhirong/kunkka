@@ -251,16 +251,15 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
+    var path = router.getPathList();
     var _conf = this.state.config;
     _conf.table.data = data;
 
     this.setState({
       config: _conf
     }, () => {
-      var path = router.getPathList();
       if (path.length > 2 && data && data.length > 0) {
-        // console.log('初始化instance时选择row' + path[2]);
-        router.replaceState('/' + path.join('/'), null, null, true);
+        router.replaceState(router.getPathName(), null, null, true);
       }
     });
   }

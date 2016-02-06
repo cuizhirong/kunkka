@@ -44,6 +44,10 @@ class RouterModel extends EventEmitter {
       return m ? true : false;
     });
   }
+
+  getPathName() {
+    return window.location.pathname;
+  }
 }
 
 var ret = {};

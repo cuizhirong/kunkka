@@ -4,6 +4,7 @@ var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
 var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -44,11 +45,16 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
-    var conf = this.state.config;
-    conf.table.data = data;
+    var path = router.getPathList();
+    var _conf = this.state.config;
+    _conf.table.data = data;
 
     this.setState({
-      config: conf
+      config: _conf
+    }, () => {
+      if (path.length > 2 && data && data.length > 0) {
+        router.replaceState(router.getPathName(), null, null, true);
+      }
     });
   }
 
@@ -121,7 +127,7 @@ class Model extends React.Component {
     var shouldAssociate = (arr.length === 1) && !(arr[0].router || arr[0].server);
 
     btns.map((btn) => {
-      switch(btn.key) {
+      switch (btn.key) {
         case 'assc_to_instance':
           btn.disabled = shouldAssociate ? false : true;
           break;
