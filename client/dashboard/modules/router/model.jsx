@@ -141,7 +141,7 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-router" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="router" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

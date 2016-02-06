@@ -29,7 +29,6 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    router.on('changeState', this.onChangeState);
     this.bindEventList();
     this.setTableColRender(config.table.column);
     this.listInstance();
@@ -45,13 +44,6 @@ class Model extends React.Component {
           break;
       }
     });
-  }
-
-  onChangeState(pathList) {
-    if (pathList.length >= 3 && pathList[1] === 'instance') {
-      let row = pathList[2];
-      console.log('instance切换选中行时 ' + row);
-    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -232,16 +224,17 @@ class Model extends React.Component {
   }
 
   updateTableData(data) {
-    var path = router.getPathList();
-    if (path.length > 2 && data && data.length > 0) {
-      console.log('初始化instance时选择row' + path[2]);
-    }
-
     var _conf = this.state.config;
     _conf.table.data = data;
 
     this.setState({
       config: _conf
+    }, () => {
+      var path = router.getPathList();
+      if (path.length > 2 && data && data.length > 0) {
+        // console.log('初始化instance时选择row' + path[2]);
+        router.replaceState('/' + path.join('/'), null, null, true);
+      }
     });
   }
 
@@ -261,7 +254,7 @@ class Model extends React.Component {
           col.render = (rcol, ritem, rindex) => {
             var listener = (_item, _col, _index, e) => {
               e.preventDefault();
-              router.pushState('/project/image/' + _item.id);
+              router.pushState('/project/image/' + _item.image.id);
             };
             return ritem.image ?
               <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
@@ -357,7 +350,7 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-instance" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="instance" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

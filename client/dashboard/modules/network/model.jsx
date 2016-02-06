@@ -247,7 +247,7 @@ class Model extends React.Component {
 
     return (
       <div className="halo-module-network" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="network" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

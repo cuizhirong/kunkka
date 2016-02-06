@@ -5,6 +5,7 @@ var lang = require('i18n/client/lang.json');
 var converter = require('./converter');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
+var router = require('client/dashboard/cores/router');
 
 var uskin = require('client/uskin/index');
 var Button = uskin.Button;
@@ -33,6 +34,7 @@ class MainTable extends React.Component {
     this.controlCaptain = this.controlCaptain.bind(this);
     this.closeCaptain = this.closeCaptain.bind(this);
     this.clickDetailTabs = this.clickDetailTabs.bind(this);
+    this.onChangeState = this.onChangeState.bind(this);
   }
 
   componentWillMount() {
@@ -40,6 +42,50 @@ class MainTable extends React.Component {
     this.setTableFilterAllLang(config.table);
     converter.convertLang(lang, config);
     this.tableColRender(config.table.column);
+    router.on('changeState', this.onChangeState);
+  }
+
+  onChangeState(pathList) {
+    if (pathList[1] === this.props.moduleID) {
+      var table = this.refs.table;
+      var checkedRow = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
+
+      //if the detail id is invalid, replace url to current module pathlist
+      if (pathList[2] && !checkedRow) {
+        pathList.length = 2;
+        router.replaceState('/' + pathList.join('/'), null, null, false);
+        return;
+      }
+
+      //when detail ID is valid, open the detail module
+      if (pathList[2]) {
+        if (!this.state.detailVisible) {
+          this.setState({
+            detailVisible: true
+          });
+        }
+        table.setState({
+          checkedKey: {
+            [pathList[2]]: true
+          }
+        });
+
+        this.stores = {
+          checkedRow: [checkedRow]
+        };
+
+        this.clickDetailTabs(null, this.findSelectedTab());
+      } else {
+        this.setState({
+          detailVisible: false
+        });
+        table.setState({
+          checkedKey: {}
+        });
+      }
+
+      this.props.eventList.updateBtns(!!pathList[2], checkedRow, !pathList[2] ? [] : [checkedRow]);
+    }
   }
 
   setTableFilterAllLang(table) {
@@ -92,38 +138,19 @@ class MainTable extends React.Component {
   controlCaptain(_item, _col, _index, e) {
     e.preventDefault();
 
-    var table = this.refs.table;
+    // var table = this.refs.table;
+    // var prevKey = Object.keys(table.state.checkedKey);
+    var shouldClose = this.state.detailVisible
+      && (this.stores.checkedRow.length === 1)
+      && (this.stores.checkedRow[0].id === _item.id);
 
-    var prevKey = Object.keys(table.state.checkedKey);
-    var shouldClose = this.state.detailVisible && (prevKey.length === 1) && (prevKey[0] === _item.id);
+    var path = router.getPathList();
 
     if (shouldClose) {
-      this.setState({
-        detailVisible: false
-      });
-      table.setState({
-        checkedKey: {}
-      });
+      router.pushState('/project/' + path[1]);
     } else {
-      if (!this.state.detailVisible) {
-        this.setState({
-          detailVisible: true
-        });
-      }
-      table.setState({
-        checkedKey: {
-          [_item.id]: true
-        }
-      });
-
-      //open detail content
-      this.stores = {
-        checkedRow: [_item]
-      };
-      this.clickDetailTabs(e, this.findSelectedTab());
+      router.pushState('/project/' + path[1] + '/' + _item.id);
     }
-
-    this.props.eventList.updateBtns(!shouldClose, _item, shouldClose ? [] : [_item]);
   }
 
   findSelectedTab() {
@@ -138,9 +165,8 @@ class MainTable extends React.Component {
   }
 
   closeCaptain() {
-    this.setState({
-      detailVisible: false
-    });
+    var path = router.getPathList();
+    router.pushState('/project/' + path[1]);
   }
 
   tableColRender(column, item, index) {
@@ -176,18 +202,19 @@ class MainTable extends React.Component {
       clickTableCheckbox(e, status, clickedRow, arr);
     }
 
-    if(!arr.length) {
-      this.setState({
-        detailVisible: false
-      });
-    }
-
     this.stores = {
       checkedRow: arr
     };
 
-    if (arr.length > 0) {
+    var path = router.getPathList();
+    if (arr.length > 1) {
       this.clickDetailTabs(null, this.findSelectedTab());
+    } else if (arr.length > 0) {
+      if (this.state.detailVisible) {
+        router.pushState('/project/' + path[1] + '/' + arr[0].id);
+      }
+    } else {
+      router.pushState('/project/' + path[1]);
     }
   }
 

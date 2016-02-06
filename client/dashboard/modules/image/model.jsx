@@ -126,6 +126,11 @@ class Model extends React.Component {
 
     this.setState({
       config: _conf
+    }, () => {
+      if (path.length > 2 && data && data.length > 0) {
+        // console.log('初始化instance时选择row' + path[2]);
+        router.replaceState('/' + path.join('/'), null, null, true);
+      }
     });
   }
 
@@ -228,7 +233,7 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-image" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="image" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

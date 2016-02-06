@@ -9,6 +9,7 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -159,6 +160,12 @@ class Model extends React.Component {
 
     this.setState({
       config: _conf
+    }, () => {
+      var path = router.getPathList();
+      if (path.length > 2 && data && data.length > 0) {
+        // console.log('初始化instance时选择row' + path[2]);
+        router.replaceState('/' + path.join('/'), null, null, true);
+      }
     });
   }
 
@@ -283,7 +290,7 @@ class Model extends React.Component {
 
     return (
       <div className="halo-module-volume" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="volume" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

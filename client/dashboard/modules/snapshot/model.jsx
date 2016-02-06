@@ -139,7 +139,7 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-snapshot" style={this.props.style}>
-        <MainTable ref="dashboard" config={this.state.config} eventList={this._eventList}/>
+        <MainTable ref="dashboard" moduleID="snapshot" config={this.state.config} eventList={this._eventList}/>
       </div>
     );
   }
