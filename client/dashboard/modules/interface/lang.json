@@ -1,0 +1,14 @@
+{
+  "en": {
+    "disable": "Disable ",
+    "enable": "Enable ",
+    "interface": "Virtual Interfaces",
+    "restrict": "Restrict"
+  },
+  "zh-CN": {
+    "disable": "关闭",
+    "enable": "开启",
+    "interface": "虚拟网卡",
+    "restrict": "限制"
+  }
+}
