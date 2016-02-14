@@ -128,13 +128,16 @@ class MainTable extends React.Component {
   }
 
   getStatusIcon(data) {
+    console.log(data);
     switch (data) {
       case 'active':
         return <i className="glyphicon icon-status-active active" />;
-      case 'in-use':
-        return <i className="glyphicon icon-status-light active" />;
+      case 'available':
+        return <i className="glyphicon icon-status-active active" />;
       case 'down':
         return <i className="glyphicon icon-status-light available" />;
+      case 'in-use':
+        return <i className="glyphicon icon-status-light active" />;
       default:
         return undefined;
     }

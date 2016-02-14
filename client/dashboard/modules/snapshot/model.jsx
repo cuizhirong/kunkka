@@ -76,6 +76,11 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     column.map((col) => {
       switch (col.key) {
         case 'size':
@@ -85,7 +90,14 @@ class Model extends React.Component {
           break;
         case 'volume':
           col.render = (rcol, ritem, rindex) => {
-            return <a>{ritem.volume.name}</a>;
+            return (
+              <span>
+                <i className="glyphicon icon-volume" />
+                <a onClick={routerListener.bind(null, 'volume', ritem.volume.id)}>
+                  {ritem.volume.name}
+                </a>
+              </span>
+            );
           };
           break;
         default:

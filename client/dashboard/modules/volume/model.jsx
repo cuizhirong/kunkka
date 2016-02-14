@@ -190,6 +190,11 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     column.map((col) => {
       switch (col.key) {
         case 'size':
@@ -199,11 +204,27 @@ class Model extends React.Component {
           break;
         case 'attch_instance':
           col.render = (rcol, ritem, rindex) => {
-            var servers = '';
+            var servers = [];
+
             ritem.attachments && ritem.attachments.map((attch, index) => {
-              servers += (index <= 0) ? attch.server.name : ' ,' + attch.server.name;
+              if (index > 0) {
+                servers.push(<span key={'comma' + index}> ,</span>);
+              }
+              servers.push(
+                <span key={index}>
+                  <i className="glyphicon icon-instance" />
+                  <a onClick={routerListener.bind(null, 'instance', attch.server.id)}>
+                    {attch.server.name}
+                  </a>
+                </span>
+              );
             });
             return servers;
+          };
+          break;
+        case 'type':
+          col.render = (rcol, ritem, rindex) => {
+            return <span><i className="glyphicon icon-performance" />ritem.volume_type</span>;
           };
           break;
         case 'shared':
