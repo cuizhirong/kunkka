@@ -77,16 +77,33 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     column.map((col) => {
       switch (col.key) {
         case 'prv_network':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.network ? ritem.network.name : '';
+            return ritem.network ?
+              <span>
+                <i className="glyphicon icon-network" />
+                <a onClick={routerListener.bind(null, 'network', ritem.network.id)}>
+                  {ritem.network.name}
+                </a>
+              </span> : '';
           };
           break;
         case 'assc_router':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.router ? ritem.router.name : '';
+            return ritem.router ?
+              <span>
+                <i className="glyphicon icon-router" />
+                <a onClick={routerListener.bind(null, 'router', ritem.router.id)}>
+                  {ritem.router.name}
+                </a>
+              </span> : '';
           };
           break;
         case 'ip_ver':

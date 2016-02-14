@@ -76,14 +76,33 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     column.map((col) => {
       switch (col.key) {
         case 'assc_resource': //router.name or server
           col.render = (rcol, ritem, rindex) => {
             if (ritem.router) {
-              return ritem.router.name;
+              return (
+                <span>
+                  <i className="glyphicon icon-router" />
+                  <a onClick={routerListener.bind(null, 'router', ritem.router.id)}>
+                    {ritem.router.name}
+                  </a>
+                </span>
+              );
             } else if (ritem.server) {
-              return ritem.server.name;
+              return (
+                <span>
+                  <i className="glyphicon icon-instance" />
+                  <a onClick={routerListener.bind(null, 'instance', ritem.server.id)}>
+                    {ritem.server.name}
+                  </a>
+                </span>
+              );
             }
             return '';
           };
