@@ -1,22 +1,22 @@
 {
   "tabs": [{
-    "name": ["network"],
-    "key": "network",
-    "default": true
+    "name": ["keypair"],
+    "key": "keypair"
   }, {
-    "name": ["subnet"],
-    "key": "subnet"
+    "name": ["security", "group"],
+    "key": "security",
+    "default": true
   }],
   "btns": [{
-    "value": ["create", "prv_network"],
+    "value": ["create", "security", "group"],
     "key": "create",
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["create", "subnet"],
-    "key": "crt_subnet",
-    "type": "create",
-    "icon": "create",
+    "value": ["modify", "security", "group"],
+    "key": "modify",
+    "type": "modify",
+    "icon": "edit",
     "disabled": true
   }, {
     "value": ["delete"],
@@ -28,36 +28,19 @@
     "key": "refresh",
     "icon": "refresh"
   }],
-  "search": {
-    "column": {
-      "name": true
-    }
-  },
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "loading": false,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
       "type": "captain"
     }, {
-      "title": ["subnet"],
+      "title": ["description"],
       "dataIndex": "",
-      "key": "subnet"
-    }, {
-      "title": ["unmanaged", "network"],
-      "dataIndex": "",
-      "key": "umngd_ntw"
-    }, {
-      "title": ["status"],
-      "dataIndex": "status",
-      "key": "status",
-      "filter": [{
-        "name": ["active"],
-        "key": "active",
-        "filterBy": "ACTIVE"
-      }]
+      "key": "desc"
     }, {
       "title": ["create", "time"],
       "dataIndex": "created",

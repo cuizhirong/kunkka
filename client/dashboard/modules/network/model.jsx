@@ -43,7 +43,6 @@ class Model extends React.Component {
 
   bindEventList() {
     this._eventList = {
-      clickTabs: this.clickTabs,
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
       changeSearchInput: this.changeSearchInput,
@@ -155,12 +154,6 @@ class Model extends React.Component {
       that.updateTableData([]);
       console.debug(err);
     });
-  }
-
-  clickTabs(e, item) {
-    if (item.key === 'subnet') {
-      router.pushState('/project/subnet');
-    }
   }
 
   setTableColRender(column) {

@@ -89,6 +89,10 @@ class MainTable extends React.Component {
 
   }
 
+  clickTabs(e, item) {
+    router.pushState('/project/' + item.key);
+  }
+
   setTableFilterAllLang(table) {
     table.column.forEach((col) => {
       if (col.filter) {
@@ -286,7 +290,7 @@ class MainTable extends React.Component {
           <div className="submenu-tabs">
             <Tab
             items={config.tabs}
-            onClick={eventList.clickTabs} />
+            onClick={this.clickTabs} />
           </div>
           : null
         }

@@ -3,9 +3,8 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
-var router = require('client/dashboard/cores/router');
 var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -41,7 +40,6 @@ class Model extends React.Component {
     this._eventList = {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
-      changeSearchInput: this.changeSearchInput,
       clickTableCheckbox: this.clickTableCheckbox.bind(this)
     };
   }
@@ -68,8 +66,9 @@ class Model extends React.Component {
     var that = this;
 
     this.loadingTable();
-    request.listInstances().then(function(data) {
-      that.updateTableData(data.subnets);
+    request.listRouters().then(function(data) {
+      //fix me when api is updated
+      that.updateTableData([]);
     }, function(err) {
       that.updateTableData([]);
       console.debug(err);
@@ -79,24 +78,9 @@ class Model extends React.Component {
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
-        case 'prv_network':
+        case 'fix_me':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.network ? ritem.network.name : '';
-          };
-          break;
-        case 'assc_router':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.router ? ritem.router.name : '';
-          };
-          break;
-        case 'ip_ver':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.ip_version === 4 ? 'IP v4' : ritem.ip_version;
-          };
-          break;
-        case 'enable_dhcp':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.enable_dhcp ? __.yes : __.no;
+            return '';
           };
           break;
         default:
@@ -117,7 +101,7 @@ class Model extends React.Component {
   clickBtns(e, key) {
     // console.log('Button clicked:', key);
     switch (key) {
-      case 'prv_network':
+      case 'create':
         break;
       case 'refresh':
         this.refresh();
@@ -137,10 +121,10 @@ class Model extends React.Component {
       btns = _conf.btns;
 
     btns.map((btn) => {
-      switch(btn.key) {
+      switch (btn.key) {
         case 'create':
-          btn.disabled = (arr.length === 1) ? false : true;
           break;
+        case 'modify':
         case 'delete':
           btn.disabled = (arr.length === 1) ? false : true;
           break;
@@ -155,14 +139,10 @@ class Model extends React.Component {
     });
   }
 
-  changeSearchInput(str) {
-    // console.log('search:', str);
-  }
-
   render() {
     return (
-      <div className="halo-module-subnet" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="subnet" config={this.state.config} eventList={this._eventList} />
+      <div className="halo-module-security-group" style={this.props.style}>
+        <MainTable ref="dashboard" moduleID="router" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

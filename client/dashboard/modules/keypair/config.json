@@ -1,8 +1,11 @@
 {
   "tabs": [{
     "name": ["keypair"],
-    "key": "instance",
+    "key": "keypair",
     "default": true
+  }, {
+    "name": ["security", "group"],
+    "key": "security"
   }],
   "btns": [{
     "value": ["create", "keypair_"],

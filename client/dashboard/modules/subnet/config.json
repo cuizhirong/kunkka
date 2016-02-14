@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["prv_network"],
-    "key": "prv_network"
+    "name": ["network"],
+    "key": "network"
   }, {
     "name": ["subnet"],
     "key": "subnet",
