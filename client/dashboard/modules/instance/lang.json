@@ -18,7 +18,6 @@
     "sources": "Sources",
     "take_instance": "Take Instance ",
     "topology": "Topology",
-    "view_is_unavailable": "The view is unavailable.",
     "virtual_interface": "Virtual Interface",
     "vnc_console": "VNC Console"
   },
@@ -41,7 +40,6 @@
     "sources": "资源",
     "take_instance": "创建主机",
     "topology": "拓扑",
-    "view_is_unavailable": "没有数据可以显示",
     "virtual_interface": "虚拟网卡",
     "vnc_console": "VNC登录"
   }

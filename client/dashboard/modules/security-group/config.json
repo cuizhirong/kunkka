@@ -4,7 +4,7 @@
     "key": "keypair"
   }, {
     "name": ["security", "group"],
-    "key": "security",
+    "key": "security-group",
     "default": true
   }],
   "btns": [{

@@ -6,8 +6,7 @@
     "extd_capacity": "Extend Capacity",
     "rd_only": "Read Only",
     "rd_wrt": "Read Write",
-    "shared": "Shared",
-    "view_is_unavailable": "The view is unavailable."
+    "shared": "Shared"
   },
   "zh-CN": {
     "attach_to": "挂载到",
@@ -16,7 +15,6 @@
     "extd_capacity": "扩容",
     "rd_only": "只读",
     "rd_wrt": "读写",
-    "shared": "共享盘",
-    "view_is_unavailable": "没有数据可以显示"
+    "shared": "共享盘"
   }
 }

@@ -5,7 +5,7 @@
     "default": true
   }, {
     "name": ["security", "group"],
-    "key": "security"
+    "key": "security-group"
   }],
   "btns": [{
     "value": ["create", "keypair_"],

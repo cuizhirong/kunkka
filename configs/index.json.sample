@@ -8,7 +8,9 @@
     "floating-ip",
     "router",
     "snapshot",
-    "keypair"
+    "keypair",
+    "security-group",
+    "virtual-interface"
   ],
   "default_module": "instance",
   "languages": [
@@ -18,6 +20,9 @@
   "routers": [{
     "key": "subnet",
     "link": "network"
+  }, {
+    "key": "security-group",
+    "link": "keypair"
   }],
   "theme": "default"
 }

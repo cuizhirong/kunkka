@@ -1,0 +1,10 @@
+{
+  "en": {
+    "virtual-interface": "Virtual Interfaces",
+    "restrict": "Restrict"
+  },
+  "zh-CN": {
+    "virtual-interface": "虚拟网卡",
+    "restrict": "限制"
+  }
+}

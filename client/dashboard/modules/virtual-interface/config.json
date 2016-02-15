@@ -1,11 +1,11 @@
 {
   "tabs": [{
-    "name": ["interface"],
-    "key": "interface",
+    "name": ["virtual-interface"],
+    "key": "virtual-interface",
     "default": true
   }],
   "btns": [{
-    "value": ["create", "interface"],
+    "value": ["create", "virtual-interface"],
     "key": "create",
     "type": "create",
     "icon": "create"

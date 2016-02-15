@@ -1,28 +1,16 @@
 {
   "en": {
-    "cidr": "CIDR",
-    "connect": "Connect ",
     "disconnect": "Disconnect ",
-    "dhcp": "DHCP",
-    "no": "No",
     "prv_network": "Network",
     "subnet": "Subnet",
     "unmanaged": "Unmanaged ",
-    "yes": "Yes",
-    "view_is_unavailable": "The view is unavailable.",
     "operation": "operation"
   },
   "zh-CN": {
-    "cidr": "CIDR网段",
-    "connect": "关联",
     "disconnect": "断开",
-    "dhcp": "DHCP",
-    "no": "否",
     "prv_network": "私有网络",
     "subnet": "子网",
     "unmanaged": "受管",
-    "yes": "是",
-    "view_is_unavailable": "没有数据可以显示",
     "operation": "操作"
   }
 }

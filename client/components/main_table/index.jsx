@@ -65,7 +65,7 @@ class MainTable extends React.Component {
           detailVisible: true
         });
       }
-      table.setState({
+      table && table.setState({
         checkedKey: {
           [pathList[2]]: true
         }
@@ -80,7 +80,7 @@ class MainTable extends React.Component {
       this.setState({
         detailVisible: false
       });
-      table.setState({
+      table && table.setState({
         checkedKey: {}
       });
     }
@@ -128,7 +128,6 @@ class MainTable extends React.Component {
   }
 
   getStatusIcon(data) {
-    console.log(data);
     switch (data) {
       case 'active':
         return <i className="glyphicon icon-status-active active" />;
@@ -255,10 +254,18 @@ class MainTable extends React.Component {
   }
 
   clearState() {
+    this.clearSearchState();
     this.clearTableState();
     this.setState({
       detailVisible: false
     });
+  }
+
+  clearSearchState() {
+    if (this.refs.search) {
+      this.refs.search.clearState();
+      this.searchInTable('');
+    }
   }
 
   clearTableState() {
@@ -266,6 +273,7 @@ class MainTable extends React.Component {
       this.refs.table.clearState();
     }
   }
+
 
   onClickTabs(item) {
     // console.log(item);
@@ -318,6 +326,7 @@ class MainTable extends React.Component {
           )}
           {config.search ?
             <InputSearch
+              ref="search"
               type="light"
               width={search.width}
               onChange={this.changeSearchInput} />
