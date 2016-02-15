@@ -18,6 +18,9 @@ module.exports = function(app) {
 
   var apiModulePath = path.join(__dirname, '../../', config('backend').dirname, 'api');
   fs.readdirSync(apiModulePath)
+    .filter(function (m) {
+      return m !== 'base.js';
+    })
     .forEach(function (m) {
       var apiModule = require(path.join(apiModulePath, m));
       var extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;

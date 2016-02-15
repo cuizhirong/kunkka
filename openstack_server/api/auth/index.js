@@ -1,5 +1,6 @@
 var async = require('async');
 var Keystone = require('openstack_server/drivers/keystone');
+var Base = require('../base');
 var config = require('config');
 
 function Auth (app, keystone) {
@@ -72,7 +73,7 @@ var prototype = {
           'locale': locale
         };
         res.cookie(config('sessionEngine').cookie_name, value, opt);
-        req.session.cookie.expires = expireDate;
+        req.session.cookie.expires = new Date(expireDate);
         req.session.user = {
           projectId : projectId,
           userId : userId,
@@ -94,6 +95,7 @@ var prototype = {
 };
 
 module.exports = function(app, extension) {
+  Object.assign(Auth.prototype, Base.prototype);
   Object.assign(Auth.prototype, prototype);
   if (extension) {
     Object.assign(Auth.prototype, extension);

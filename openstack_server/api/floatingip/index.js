@@ -1,6 +1,7 @@
 var async = require('async');
 var Neutron = require('openstack_server/drivers/neutron');
 var Nova = require('openstack_server/drivers/nova');
+var Base = require('../base');
 
 function Floatingip (app, neutron, nova) {
   this.app = app;
@@ -54,7 +55,7 @@ var prototype = {
     ],
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var floatingips = results[0].floatingips;
         var routers = results[1].routers;
@@ -99,6 +100,7 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
+  Object.assign(Floatingip.prototype, Base.prototype);
   Object.assign(Floatingip.prototype, prototype);
   if (extension) {
     Object.assign(Floatingip.prototype, extension);

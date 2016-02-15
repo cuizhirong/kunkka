@@ -1,4 +1,5 @@
 var Nova = require('openstack_server/drivers/nova');
+var Base = require('../base');
 
 function Keypair (app, nova, glance, neutron) {
   this.app = app;
@@ -10,9 +11,10 @@ var prototype = {
     var projectId = req.params.projectId;
     var region = req.headers.region;
     var token = req.session.user.token;
+    var that = this;
     this.nova.listKeypairs(projectId, token, region, function (err, payload) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var keypairs = {
           keypairs: []
@@ -30,6 +32,7 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
+  Object.assign(Keypair.prototype, Base.prototype);
   Object.assign(Keypair.prototype, prototype);
   if (extension) {
     Object.assign(Keypair.prototype, extension);

@@ -3,6 +3,7 @@ var Glance = require('openstack_server/drivers/glance');
 var Cinder = require('openstack_server/drivers/cinder');
 var Nova = require('openstack_server/drivers/nova');
 var Neutron = require('openstack_server/drivers/neutron');
+var Base = require('../base');
 
 function Instance(app, nova, glance, cinder, neutron) {
   var that = this;
@@ -135,7 +136,7 @@ var prototype = {
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
-          return res.status(err.status).json(err);
+          that.handleError(err, req, res, next);
         } else {
           var obj = {};
           ['servers'].concat(that.arrAsyncTarget).forEach(function(e, index){
@@ -210,6 +211,7 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
+  Object.assign(Instance.prototype, Base.prototype);
   Object.assign(Instance.prototype, prototype);
   if (extension) {
     Object.assign(Instance.prototype, extension);

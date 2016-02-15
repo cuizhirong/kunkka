@@ -3,7 +3,7 @@ module.exports = function (app) {
     if (req.session.user) {
       next();
     } else {
-      res.redirect('/');
+      return res.status(401).json({error: req.i18n.__('api.auth.unauthorized')});
     }
   });
 };

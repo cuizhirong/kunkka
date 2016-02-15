@@ -1,5 +1,6 @@
 var async = require('async');
 var Neutron = require('openstack_server/drivers/neutron');
+var Base = require('../base');
 
 function Subnet (app, neutron) {
   this.app = app;
@@ -51,7 +52,7 @@ var prototype = {
     ],
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var subnets = results[0].subnets;
         var networks = results[1].networks;
@@ -102,6 +103,7 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
+  Object.assign(Subnet.prototype, Base.prototype);
   Object.assign(Subnet.prototype, prototype);
   if (extension) {
     Object.assign(Subnet.prototype, extension);

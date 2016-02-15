@@ -1,5 +1,6 @@
 //var async = require('async');
 var Glance = require('openstack_server/drivers/glance');
+var Base = require('../base');
 
 // due to Image is reserved word
 function IMAGE (app, glance) {
@@ -9,11 +10,12 @@ function IMAGE (app, glance) {
 
 var prototype = {
   getImageList: function (req, res, next) {
+    var that = this;
     var region = req.headers.region;
     var token = req.session.user.token;
     this.glance.listImages(token, region, function (err, payload) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         res.json(payload.body);
       }
@@ -38,6 +40,7 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
+  Object.assign(IMAGE.prototype, Base.prototype);
   Object.assign(IMAGE.prototype, prototype);
   if (extension) {
     Object.assign(IMAGE.prototype, extension);

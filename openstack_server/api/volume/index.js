@@ -1,6 +1,7 @@
 var async = require('async');
 var Cinder = require('openstack_server/drivers/cinder');
 var Nova = require('openstack_server/drivers/nova');
+var Base = require('../base');
 
 function Volume (app, cinder, nova) {
   this.app = app;
@@ -71,7 +72,7 @@ var prototype = {
     ],
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var volumes = results[0].volumes;
         var snapshots = results[1].snapshots;
@@ -139,6 +140,7 @@ var prototype = {
 };
 
 module.exports = function (app, extension) {
+  Object.assign(Volume.prototype, Base.prototype);
   Object.assign(Volume.prototype, prototype);
   if (extension) {
     Object.assign(Volume.prototype, extension);

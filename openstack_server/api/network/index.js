@@ -1,5 +1,6 @@
 var async = require('async');
 var Neutron = require('openstack_server/drivers/neutron');
+var Base = require('../base');
 
 function Network (app, neutron) {
   var that = this;
@@ -65,7 +66,7 @@ var prototype = {
     ].concat(that.arrAsync),
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var obj = {};
         ['networks'].concat(that.arrAsyncTarget).forEach(function (e, index) {
@@ -110,6 +111,7 @@ var prototype = {
   }
 };
 module.exports = function (app, extension) {
+  Object.assign(Network.prototype, Base.prototype);
   Object.assign(Network.prototype, prototype);
   if (extension) {
     Object.assign(Network.prototype, extension);

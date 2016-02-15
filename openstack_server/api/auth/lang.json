@@ -1,8 +1,8 @@
 {
   "en": {
-    "abc": "abc"
+    "unauthorized": "Unauthorized"
     },
   "zh-CN": {
-    "abc": "abc"
+    "unauthorized": "授权失效"
   }
 }
