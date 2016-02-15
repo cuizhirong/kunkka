@@ -50,15 +50,7 @@
         position: relative;
         z-index: 9;
         overflow: visible;
-        &:after {
-          content: "";
-          position: absolute;
-          top: 0;
-          right: -1px;
-          width: 1px;
-          height: 38px;
-          background-color: #fff;
-        }
+        width: 181px;
       }
     }
   }
@@ -68,14 +60,12 @@
   position: relative;
   flex: 1;
   .fixed-width(296px);
-  overflow: hidden;
   > .menu {
     width: 215px;
     position: absolute;
     overflow: scroll;
     overflow-x: hidden;
     top: 0;
-    right: -15px;
     bottom: 0;
     &::-webkit-scrollbar {
       display: none;
@@ -99,9 +89,9 @@
       cursor: default;
     }
   }
-}
 
-.halo-com-menu:hover > .scroll-pane,
-.scroll-pane.active {
-  opacity: 1;
+  &:hover > .scroll-pane,
+  .scroll-pane.active {
+    opacity: 1;
+  }
 }
