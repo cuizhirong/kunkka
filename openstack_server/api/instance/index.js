@@ -42,7 +42,7 @@ function Instance(app, nova, glance, cinder, neutron) {
 
 var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
   var addresses = server.addresses;
-  var _floatingips = [];
+  var _floatingip;
   var _fixedIps = [];
   var ipv6 = [];
   Object.keys(addresses).forEach(function (el) {
@@ -74,9 +74,8 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
             });
           }
         } else { // floating
-          _floatingips.push(e.addr);
           obj.floatingips.some(function (floatingip) {
-            return e.addr === floatingip.floating_ip_address && (e.floatingip = floatingip);
+            return e.addr === floatingip.floating_ip_address && (e.floatingip = floatingip) && (_floatingip = floatingip);
           });
         }
       }
@@ -86,7 +85,7 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
     });
   });
   server.fixed_ips = _fixedIps;
-  server.floating_ips = _floatingips;
+  server.floating_ip = _floatingip;
 };
 
 var makeServer = function (server, obj) {
@@ -189,10 +188,24 @@ var prototype = {
       }
     });
   },
+  getConsoleOutput: function (req, res, next) {
+    var projectId = req.params.project;
+    var serverId = req.params.server;
+    var region = req.headers.region;
+    var token = req.session.user.token;
+    this.nova.getConsoleOutput(projectId, serverId, token, region, function (err, payload) {
+      if (err) {
+        return res.status(err.status).json(err);
+      } else {
+        res.json(payload.body);
+      }
+    });
+  },
   initRoutes: function () {
     this.app.get('/api/v1/:id/servers/detail', this.getInstanceList.bind(this));
     this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetails.bind(this));
     this.app.post('/api/v1/:project/servers/:server/action/vnc', this.getVNCConsole.bind(this));
+    this.app.post('/api/v1/:project/servers/:server/action/output', this.getConsoleOutput.bind(this));
   }
 };
 
