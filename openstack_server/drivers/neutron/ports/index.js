@@ -8,9 +8,9 @@ module.exports = {
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showPortDetails: function (subnetId, token, region, callback) {
+  showPortDetails: function (portId, token, region, callback) {
     request
-      .get(neutronRemote[region] + '/v2.0/ports/' + subnetId)
+      .get(neutronRemote[region] + '/v2.0/ports/' + portId)
       .set('X-Auth-Token', token)
       .end(callback);
   }

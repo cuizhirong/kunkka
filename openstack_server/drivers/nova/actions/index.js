@@ -12,5 +12,16 @@ module.exports = {
       })
       .set('X-Auth-Token', token)
       .end(callback);
+  },
+  getConsoleOutput: function (projectId, serverId, token, region, callback) {
+    request
+      .post(novaRemote[region] + '/v2.1/' + projectId + '/servers/' + serverId + '/action')
+      .send({
+        'os-getConsoleOutput': {
+          'length': -1
+        }
+      })
+      .set('X-Auth-Token', token)
+      .end(callback);
   }
 };
