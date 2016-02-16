@@ -224,7 +224,7 @@ class Model extends React.Component {
           break;
         case 'type':
           col.render = (rcol, ritem, rindex) => {
-            return <span><i className="glyphicon icon-performance" />ritem.volume_type</span>;
+            return <span><i className="glyphicon icon-performance" />{ritem.volume_type}</span>;
           };
           break;
         case 'shared':

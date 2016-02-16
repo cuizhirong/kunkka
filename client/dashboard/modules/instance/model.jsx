@@ -7,6 +7,7 @@ var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
+var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -68,15 +69,22 @@ class Model extends React.Component {
 
   clickDetailTabs(tab, item, callback) {
     // console.log('module', item[0]);
+    var isAvailableView = (_item) => {
+      if (_item.length > 1) {
+        callback(
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
 
     switch (tab.key) {
       case 'description':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
+        if (!isAvailableView(item)) {
           break;
         }
 
@@ -103,15 +111,32 @@ class Model extends React.Component {
         );
         break;
       case 'console_output':
-        callback(<div>This is 2. Console Output</div>);
+        if (!isAvailableView(item)) {
+          break;
+        }
+
+        var updateConsoleInterval;
+        var updateConsole = () => {
+          request.post({
+            url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'
+          }).then((res) => {
+            let outputData = res.output.split('\n');
+            callback(<ConsoleOutput data={outputData} data-id={item[0].id} />, {
+              tabKey: 'console_output',
+              interval: updateConsoleInterval
+            });
+          });
+        };
+
+        updateConsole();
+        updateConsoleInterval = setInterval(updateConsole, 1000);
+
+        //!!fix the following if you can control update interval
+        clearInterval(updateConsoleInterval);
         break;
       case 'vnc_console':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
+        if (!isAvailableView(item)) {
+          break;
         }
         request.post({
           url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/vnc'
@@ -125,16 +150,11 @@ class Model extends React.Component {
           callback(<div />);
         });
         break;
-      case 'topology':
-        callback(<div>This is 4. topology</div>);
-        break;
-      case 'monitor':
-        callback(<div>This is 5. Monitor</div>);
-        break;
       default:
         callback(null);
         break;
     }
+
   }
 
   getBasicPropsItems(item) {

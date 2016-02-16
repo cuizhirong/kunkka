@@ -153,12 +153,6 @@
       }, {
         "name": ["vnc_console"],
         "key": "vnc_console"
-      }, {
-        "name": ["topology"],
-        "key": "topology"
-      }, {
-        "name": ["monitor"],
-        "key": "monitor"
       }]
     }
   }

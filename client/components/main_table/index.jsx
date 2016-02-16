@@ -6,6 +6,7 @@ var converter = require('./converter');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
+var Details = require('./details');
 
 var uskin = require('client/uskin/index');
 var Button = uskin.Button;
@@ -19,12 +20,6 @@ class MainTable extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      detailVisible: false,
-      detailChildren: {},
-      detailSelectedTab: undefined
-    };
-
     this.stores = {
       checkedRow: []
     };
@@ -32,8 +27,6 @@ class MainTable extends React.Component {
     this.changeSearchInput = this.changeSearchInput.bind(this);
     this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
     this.controlCaptain = this.controlCaptain.bind(this);
-    this.closeCaptain = this.closeCaptain.bind(this);
-    this.clickDetailTabs = this.clickDetailTabs.bind(this);
     this.onChangeState = this.onChangeState.bind(this);
   }
 
@@ -60,8 +53,8 @@ class MainTable extends React.Component {
 
     //when detail ID is valid, open the detail module
     if (pathList[2]) {
-      if (!this.state.detailVisible) {
-        this.setState({
+      if (!this.refs.details.state.detailVisible) {
+        this.refs.details.setState({
           detailVisible: true
         });
       }
@@ -75,9 +68,10 @@ class MainTable extends React.Component {
         checkedRow: [checkedRow]
       };
 
-      this.clickDetailTabs(null, this.findSelectedTab());
+      var selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
+      this.refs.details.updateContent(selectedTab, this.stores.checkedRow);
     } else {
-      this.setState({
+      this.refs.details.setState({
         detailVisible: false
       });
       table && table.setState({
@@ -145,9 +139,7 @@ class MainTable extends React.Component {
   controlCaptain(_item, _col, _index, e) {
     e.preventDefault();
 
-    // var table = this.refs.table;
-    // var prevKey = Object.keys(table.state.checkedKey);
-    var shouldClose = this.state.detailVisible
+    var shouldClose = this.refs.details.state.detailVisible
       && (this.stores.checkedRow.length === 1)
       && (this.stores.checkedRow[0].id === _item.id);
 
@@ -158,22 +150,6 @@ class MainTable extends React.Component {
     } else {
       router.pushState('/project/' + path[1] + '/' + _item.id);
     }
-  }
-
-  findSelectedTab() {
-    var selectedTab;
-    if (!this.state.detailSelectedTab) {
-      selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
-    } else {
-      selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.key === this.state.detailSelectedTab)[0];
-    }
-
-    return selectedTab;
-  }
-
-  closeCaptain() {
-    var path = router.getPathList();
-    router.pushState('/project/' + path[1]);
   }
 
   tableColRender(column, item, index) {
@@ -215,42 +191,15 @@ class MainTable extends React.Component {
 
     var path = router.getPathList();
     if (arr.length > 1) {
-      this.clickDetailTabs(null, this.findSelectedTab());
+      var selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
+      this.refs.details.updateContent(selectedTab, this.stores.checkedRow);
     } else if (arr.length > 0) {
-      if (this.state.detailVisible) {
+      if (this.refs.details.state.detailVisible) {
         router.pushState('/project/' + path[1] + '/' + arr[0].id);
       }
     } else {
       router.pushState('/project/' + path[1]);
     }
-  }
-
-  clickDetailTabs(e, tab) {
-    var clickDetailTabs = this.props.eventList.clickDetailTabs;
-    if (clickDetailTabs) {
-      clickDetailTabs(tab, this.stores.checkedRow, (detailContent) => {
-        //it should change config tabs data so that main_table could update default selected tab
-        this.changeDefaultDetailTabs(this.props.config.table.detail.tabs, tab.key);
-
-        var details = this.state.detailChildren;
-        details[tab.key] = detailContent;
-        this.setState({
-          detailChildren: details,
-          detailSelectedTab: tab.key
-        });
-      });
-    }
-  }
-
-  changeDefaultDetailTabs(tabs, selectedKey) {
-    tabs.forEach((tab) => {
-      if (tab.default) {
-        tab.default = false;
-      }
-      if (tab.key === selectedKey) {
-        tab.default = true;
-      }
-    });
   }
 
   clearState() {
@@ -272,11 +221,6 @@ class MainTable extends React.Component {
     if (this.refs.table) {
       this.refs.table.clearState();
     }
-  }
-
-
-  onClickTabs(item) {
-    // console.log(item);
   }
 
   render() {
@@ -360,28 +304,13 @@ class MainTable extends React.Component {
             striped={this.striped} />
           }
           {table.detail ?
-            <div className={'halo-com-table-detail' + (this.state.detailVisible ? ' visible' : '')}>
-              <div className="detail-head">
-                <div className="close" onClick={this.closeCaptain}>
-                  <i className="glyphicon icon-close" />
-                </div>
-                <Tab items={table.detail.tabs} type="sm" onClick={this.clickDetailTabs} />
-              </div>
-              {this.state.detailVisible ?
-                table.detail.tabs.map((tab) =>
-                  this.state.detailChildren[tab.key] ?
-                    <div key={tab.key}
-                      className="detail-content"
-                      data-filed={tab.key}
-                      style={{display: this.state.detailSelectedTab === tab.key ? 'block' : 'none'}}>
-                      {this.state.detailChildren[tab.key] ? this.state.detailChildren[tab.key] : null}
-                    </div>
-                  : null
-                )
-                : null
-              }
-            </div>
-            : null}
+            <Details
+              ref="details"
+              tabs={table.detail.tabs}
+              itemData={this.stores.checkedRow}
+              onClickTabs={eventList.clickDetailTabs} />
+            : null
+          }
         </div>
       </div>
     );
