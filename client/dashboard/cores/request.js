@@ -1,5 +1,11 @@
 var request = require('client/libs/ajax');
 
+function errHandler(err) {
+  if (err.status === 401) {
+    window.location = '/auth/logout';
+  }
+}
+
 module.exports = {
   get: function(options) {
     return request.get({
@@ -8,7 +14,7 @@ module.exports = {
       headers: {
         REGION: 'RegionOne'
       }
-    });
+    }).catch(errHandler);
   },
   post: function(options) {
     return request.post({
@@ -18,6 +24,6 @@ module.exports = {
       headers: {
         REGION: 'RegionOne'
       }
-    });
+    }).catch(errHandler);
   }
 };

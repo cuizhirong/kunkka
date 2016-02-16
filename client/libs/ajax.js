@@ -40,7 +40,6 @@ module.exports = (function(m) {
             return;
           }
           if (this.status >= 200 && this.status < 300) {
-
             resolve(request.converters(o.dataType, this.response));
           } else {
             reject(this);
@@ -101,7 +100,12 @@ module.exports = (function(m) {
         //eval(data);
         ret = data;
       } else if (dataType === 'json') {
-        ret = JSON.parse(data);
+        try {
+          ret = JSON.parse(data);
+        } catch (e) {
+          ret = {};
+        }
+
       } else if (dataType === 'xml') {
         // Inspired by jQquery
         let xml, tmp;
