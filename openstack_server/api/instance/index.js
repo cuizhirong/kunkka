@@ -118,16 +118,9 @@ var makeServer = function (server, obj) {
 };
 
 var prototype = {
-  asyncHandler: function (callback, err, payload) {
-    if (err) {
-      callback(err);
-    } else {
-      callback(null, payload.body);
-    }
-  },
   getInstanceList: function (req, res, next) {
     var that = this;
-    this.projectId = req.params.id;
+    this.projectId = req.params.projectId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
     async.parallel([
@@ -153,8 +146,8 @@ var prototype = {
   },
   getInstanceDetails: function (req, res, next) {
     var that = this;
-    this.projectId = req.params.project;
-    this.serverId = req.params.server;
+    this.projectId = req.params.projectId;
+    this.serverId = req.params.serverId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
     async.parallel([
@@ -163,7 +156,7 @@ var prototype = {
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
-          return res.status(err.status).json(err);
+          that.handleError(err, req, res, next);
         } else {
           var obj = {};
           ['server'].concat(that.arrAsyncTarget).forEach(function(e, index){
@@ -177,36 +170,38 @@ var prototype = {
       });
   },
   getVNCConsole: function (req, res, next) {
-    var projectId = req.params.project;
-    var serverId = req.params.server;
+    var projectId = req.params.projectId;
+    var serverId = req.params.serverId;
     var region = req.headers.region;
     var token = req.session.user.token;
+    var that = this;
     this.nova.getVNCConsole(projectId, serverId, token, region, function (err, payload) {
       if (err) {
-        return res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         res.json(payload.body);
       }
     });
   },
   getConsoleOutput: function (req, res, next) {
-    var projectId = req.params.project;
-    var serverId = req.params.server;
+    var projectId = req.params.projectId;
+    var serverId = req.params.serverId;
     var region = req.headers.region;
     var token = req.session.user.token;
+    var that = this;
     this.nova.getConsoleOutput(projectId, serverId, token, region, function (err, payload) {
       if (err) {
-        return res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         res.json(payload.body);
       }
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:id/servers/detail', this.getInstanceList.bind(this));
-    this.app.get('/api/v1/:project/servers/:server', this.getInstanceDetails.bind(this));
-    this.app.post('/api/v1/:project/servers/:server/action/vnc', this.getVNCConsole.bind(this));
-    this.app.post('/api/v1/:project/servers/:server/action/output', this.getConsoleOutput.bind(this));
+    this.app.get('/api/v1/:projectId/servers/detail', this.getInstanceList.bind(this));
+    this.app.get('/api/v1/:projectId/servers/:serverId', this.getInstanceDetails.bind(this));
+    this.app.post('/api/v1/:projectId/servers/:serverId/action/vnc', this.getVNCConsole.bind(this));
+    this.app.post('/api/v1/:projectId/servers/:serverId/action/output', this.getConsoleOutput.bind(this));
   }
 };
 

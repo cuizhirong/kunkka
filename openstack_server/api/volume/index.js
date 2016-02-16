@@ -4,9 +4,19 @@ var Nova = require('openstack_server/drivers/nova');
 var Base = require('../base');
 
 function Volume (app, cinder, nova) {
+  var that = this;
   this.app = app;
   this.cinder = cinder;
   this.nova = nova;
+  this.arrAsyncTarget = ['snapshots', 'servers'];
+  this.arrAsync = [
+    function (callback) {
+      that.cinder.listSnapshots(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+    },
+    function (callback) {
+      that.nova.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+    }
+  ];
 }
 
 var getInstance = function (volume, instances) {
@@ -37,39 +47,15 @@ var getSnapshot = function (volume, snapshots) {
 
 var prototype = {
   getVolumeList: function (req, res, next) {
-    var projectId = req.params.id;
-    var region = req.headers.region;
-    var token = req.session.user.token;
+    this.projectId = req.params.projectId;
+    this.region = req.headers.region;
+    this.token = req.session.user.token;
     var that = this;
     async.parallel([
       function (callback) {
-        that.cinder.listVolumes(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.cinder.listSnapshots(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.nova.listServers(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
+        that.cinder.listVolumes(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
       }
-    ],
+    ].concat(that.arrAsync),
     function (err, results) {
       if (err) {
         that.handleError(err, req, res, next);
@@ -86,43 +72,19 @@ var prototype = {
     });
   },
   getVolumeDetails: function (req, res, next) {
-    var projectId = req.params.project;
-    var volumeId = req.params.volume;
-    var token = req.session.user.token;
-    var region = req.headers.region;
+    this.projectId = req.params.projectId;
+    this.volumeId = req.params.volumeId;
+    this.token = req.session.user.token;
+    this.region = req.headers.region;
     var that = this;
     async.parallel([
       function (callback) {
-        that.cinder.showVolumeDetails(projectId, volumeId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.cinder.listSnapshots(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.nova.listServers(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
+        that.cinder.showVolumeDetails(that.projectId, that.volumeId, that.token, that.region, that.asyncHandler.bind(this, callback));
       }
-    ],
+    ].concat(that.arrAsync),
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var volume = results[0].volume;
         var snapshots = results[1].snapshots;
@@ -134,8 +96,8 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:id/volumes/detail', this.getVolumeList.bind(this));
-    this.app.get('/api/v1/:project/volumes/:volume', this.getVolumeDetails.bind(this));
+    this.app.get('/api/v1/:projectId/volumes/detail', this.getVolumeList.bind(this));
+    this.app.get('/api/v1/:projectId/volumes/:volumeId', this.getVolumeDetails.bind(this));
   }
 };
 

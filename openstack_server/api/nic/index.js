@@ -1,6 +1,7 @@
 var async = require('async');
 var Neutron = require('openstack_server/drivers/neutron');
 var Nova = require('openstack_server/drivers/nova');
+var Base = require('../base');
 
 // due to Nic is reserved word
 function Nic (app, neutron, nova) {
@@ -34,7 +35,7 @@ var makeNic = function (port, obj) {
       return false;
     }
   });
-  port.floatingip = '';
+  port.floatingip = {};
   obj.floatingips.some(function (floatingip) {
     return port.id === floatingip.port_id && (port.floatingip = floatingip);
   });
@@ -48,7 +49,7 @@ var makeNic = function (port, obj) {
       }
     });
   });
-  port.subnet = '';
+  port.subnet = {};
   port.fixed_ips.forEach(function(e, index) {
     obj.subnets.some(function(subnet, i) {
       if ( subnet.id === e.subnet_id) {
@@ -71,7 +72,7 @@ var prototype = {
   },
   getNicList: function (req, res, next) {
     var that = this;
-    this.projectId = req.params.id;
+    this.projectId = req.params.projectId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
     async.parallel([
@@ -80,7 +81,7 @@ var prototype = {
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
-          return res.status(err.status).json(err);
+          that.handleError(err, req, res, next);
         } else {
           var obj = {};
           ['ports'].concat(that.arrAsyncTarget).forEach(function(e, index){
@@ -101,8 +102,8 @@ var prototype = {
   },
   getNicDetails: function (req, res, next) {
     var that = this;
-    this.projectId = req.params.project;
-    this.nicId = req.params.nic;
+    this.projectId = req.params.projectId;
+    this.nicId = req.params.nicId;
     this.token = req.session.user.token;
     this.region = req.headers.region;
     async.parallel([
@@ -111,7 +112,7 @@ var prototype = {
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
-          return res.status(err.status).json(err);
+          that.handleError(err, req, res, next);
         } else {
           var obj = {};
           ['port'].concat(that.arrAsyncTarget).forEach(function(e, index){
@@ -125,12 +126,13 @@ var prototype = {
       });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:id/nic', this.getNicList.bind(this));
-    this.app.get('/api/v1/:project/nic/:nic', this.getNicDetails.bind(this));
+    this.app.get('/api/v1/:projectId/nic', this.getNicList.bind(this));
+    this.app.get('/api/v1/:projectId/nic/:nicId', this.getNicDetails.bind(this));
   }
 };
 
 module.exports = function (app, extension) {
+  Object.assign(Nic.prototype, Base.prototype);
   Object.assign(Nic.prototype, prototype);
   if (extension) {
     Object.assign(Nic.prototype, extension);

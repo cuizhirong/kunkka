@@ -9,5 +9,11 @@ API.prototype.handleError = function (err, req, res, next) {
     res.status(err.status).send(err);
   }
 };
-
+API.prototype.asyncHandler = function (callback, err, payload) {
+  if (err) {
+    callback(err);
+  } else {
+    callback(null, payload.body);
+  }
+};
 module.exports = API;

@@ -22,7 +22,7 @@ var prototype = {
     });
   },
   getImageDetails: function (req, res, next) {
-    var imageId = req.params.id;
+    var imageId = req.params.imageId;
     var token = req.session.user.token;
     var region = req.headers.region;
     this.glance.showImageDetails(imageId, token, region, function (err, payload) {
@@ -35,7 +35,7 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/images', this.getImageList.bind(this));
-    this.app.get('/api/v1/images/:id', this.getImageDetails.bind(this));
+    this.app.get('/api/v1/images/:imageId', this.getImageDetails.bind(this));
   }
 };
 

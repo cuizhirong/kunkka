@@ -4,99 +4,95 @@ var Nova = require('openstack_server/drivers/nova');
 var Base = require('../base');
 
 function Floatingip (app, neutron, nova) {
+  var that = this;
   this.app = app;
   this.neutron = neutron;
   this.nova = nova;
+  this.arrAsyncTarget = ['routers', 'ports', 'servers'];
+  this.arrAsync = [
+    function (callback) {
+      that.neutron.listRouters(that.token, that.region, that.asyncHandler.bind(this, callback));
+    },
+    function (callback) {
+      that.neutron.listPorts(that.token, that.region, that.asyncHandler.bind(this, callback));
+    },
+    function (callback) {
+      that.nova.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+    }
+  ];
 }
+
+var makeFip = function (fip, obj) {
+  fip.router = {};
+  fip.instance = {};
+  if (fip.router_id) {
+    obj.routers.some(function (r) {
+      return r.id === fip.router_id && (fip.router = r);
+    });
+  }
+  if (fip.port_id) {
+    obj.ports.some(function (p) {
+      return p.id === fip.port_id && p.device_owner === 'compute:None' && (fip.port = p);
+    });
+    if (fip.port) {
+      obj.servers.some(function (s) {
+        return s.id === fip.port.device_id && (fip.instance = s);
+      });
+    }
+  }
+};
 
 var prototype = {
   getFloatingipList: function (req, res, next) {
-    var token = req.session.user.token;
-    var region = req.headers.region;
-    var projectId = req.params.projectId;
+    this.token = req.session.user.token;
+    this.region = req.headers.region;
+    this.projectId = req.params.projectId;
     var that = this;
     async.parallel([
       function (callback) {
-        that.neutron.listFloatingips(token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.neutron.listRouters(token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.neutron.listPorts(token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.nova.listServers(projectId, token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      }
-    ],
+        that.neutron.listFloatingips(that.token, that.region, that.asyncHandler.bind(this, callback));
+      }].concat(that.arrAsync),
     function (err, results) {
       if (err) {
         that.handleError(err, req, res, next);
       } else {
-        var floatingips = results[0].floatingips;
-        var routers = results[1].routers;
-        var ports = results[2].ports;
-        var servers = results[3].servers;
-        floatingips.forEach(function (f) {
-          if (f.router_id) {
-            routers.some(function (r) {
-              return r.id === f.router_id && (f.router = r);
-            });
-          }
-          if (f.port_id) {
-            ports.some(function (p) {
-              return p.id === f.port_id && p.device_owner === 'compute:None' && (f.port = p);
-            });
-            if (f.port) {
-              servers.some(function (s) {
-                return s.id === f.port.device_id && (f.server = s);
-              });
-            }
-          }
+        var obj = {};
+        ['floatingips'].concat(that.arrAsyncTarget).forEach(function (e, index) {
+          obj[e] = results[index][e];
         });
-        res.json({floatingips: floatingips});
+        obj.floatingips.forEach(function (fip) {
+          makeFip(fip, obj);
+        });
+        res.json({floatingips: obj.floatingips});
       }
     });
   },
   getFloatingipDetails: function (req, res, next) {
-    var floatingipId = req.params.id;
-    var region = req.headers.region;
-    var token = req.session.user.token;
-    this.neutron.showFloatingipDetails(floatingipId, token, region, function (err, payload) {
+    this.projectId = req.params.projectId;
+    this.floatingipId = req.params.floatingipId;
+    this.region = req.headers.region;
+    this.token = req.session.user.token;
+    var that = this;
+    async.parallel([
+      function (callback) {
+        that.neutron.showFloatingipDetails(that.floatingipId, that.token, that.region, that.asyncHandler.bind(this, callback));
+      }].concat(that.arrAsync),
+    function (err, results) {
       if (err) {
-        return res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
-        res.json(payload.body);
+        var obj = {};
+        ['floatingip'].concat(that.arrAsyncTarget).forEach(function (e, index) {
+          obj[e] = results[index][e];
+        });
+        makeFip(obj.floatingip, obj);
+        res.json({floatingip: obj.floatingip});
       }
     });
   },
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/floatingips', this.getFloatingipList.bind(this));
-    this.app.get('/api/v1/floatingips/:id', this.getFloatingipDetails.bind(this));
+    this.app.get('/api/v1/:projectId/floatingips/:floatingipId', this.getFloatingipDetails.bind(this));
   }
 };
 module.exports = function (app, extension) {

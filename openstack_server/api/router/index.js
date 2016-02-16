@@ -3,67 +3,92 @@ var Neutron = require('openstack_server/drivers/neutron');
 var Base = require('../base');
 
 function Router (app, neutron) {
+  var that = this;
   this.app = app;
   this.neutron = neutron;
+  this.arrAsync = [];
+  this.arrAsyncTarget = ['floatingips', 'subnets', 'ports'];
+  this.arrAsyncTarget.forEach(function(ele){
+    that.arrAsync.push(function (callback) {
+      that.neutron['list' + ele.charAt(0).toUpperCase() + ele.substr(1)](that.token, that.region, that.asyncHandler.bind(this, callback));
+    });
+  });
 }
 
 var prototype = {
   getRouterList: function (req, res, next) {
-    var token = req.session.user.token;
-    var region = req.headers.region;
+    this.token = req.session.user.token;
+    this.region = req.headers.region;
     var that = this;
     async.parallel([
       function (callback) {
-        that.neutron.listRouters(token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      },
-      function (callback) {
-        that.neutron.listFloatingips(token, region, function (err, payload) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, payload.body);
-          }
-        });
-      }
-    ],
+        that.neutron.listRouters(that.token, that.region, that.asyncHandler.bind(this, callback));
+      }].concat(that.arrAsync),
     function (err, results) {
       if (err) {
         that.handleError(err, req, res, next);
       } else {
-        var routers = results[0].routers;
-        var floatingips = results[1].floatingips;
-        floatingips.forEach(function (f) {
-          if (f.router_id) {
-            routers.some(function (r) {
-              return r.id === f.router_id && (r.floatingip = f.floating_ip_address);
-            });
-          }
+        var obj = {};
+        ['routers'].concat(that.arrAsyncTarget).forEach(function (e, index) {
+          obj[e] = results[index][e];
         });
-        res.json({routers: routers});
+        obj.routers.forEach(function (router) {
+          router.floatingip = {};
+          obj.floatingips.some(function (fip) {
+            return fip.router_id === router.id && (router.floatingip = fip);
+          });
+          router.subnets = [];
+          obj.ports.forEach(function (port) {
+            if (port.device_id === router.id) {
+              obj.subnets.forEach(function (subnet) {
+                if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
+                  router.subnets.push(subnet);
+                }
+              });
+            }
+          });
+        });
+        res.json({routers: obj.routers});
       }
     });
   },
   getRouterDetails: function (req, res, next) {
-    var networkId = req.params.id;
-    var region = req.headers.region;
-    var token = req.session.user.token;
-    this.neutron.showRouterDetails(networkId, token, region, function (err, payload) {
+    this.routerId = req.params.routerId;
+    this.region = req.headers.region;
+    this.token = req.session.user.token;
+    var that = this;
+    async.parallel([
+      function (callback) {
+        that.neutron.showRouterDetails(that.routerId, that.token, that.region, that.asyncHandler.bind(this, callback));
+      }].concat(that.arrAsync),
+    function (err, results) {
       if (err) {
-        return res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
-        res.json(payload.body);
+        var obj = {};
+        ['router'].concat(that.arrAsyncTarget).forEach(function (e, index) {
+          obj[e] = results[index][e];
+        });
+        obj.floatingips.some(function (f) {
+          return obj.router.id === f.router_id && (obj.router.floatingip = f);
+        });
+        obj.router.subnets = [];
+        obj.ports.forEach(function (port) {
+          if (port.device_id === obj.router.id) {
+            obj.subnets.forEach(function (subnet) {
+              if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
+                obj.router.subnets.push(subnet);
+              }
+            });
+          }
+        });
+        res.json({routers: obj.router});
       }
     });
   },
   initRoutes: function () {
     this.app.get('/api/v1/routers', this.getRouterList.bind(this));
-    this.app.get('/api/v1/routers/:id', this.getRouterDetails.bind(this));
+    this.app.get('/api/v1/routers/:routerId', this.getRouterDetails.bind(this));
   }
 };
 module.exports = function (app, extension) {

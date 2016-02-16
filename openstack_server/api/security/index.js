@@ -9,7 +9,7 @@ function Security (app, nova) {
 
 var prototype = {
   getSecurityList: function (req, res, next) {
-    var projectId = req.params.id;
+    var projectId = req.params.projectId;
     var region = req.headers.region;
     var token = req.session.user.token;
     this.nova.listSecurity(projectId, token, region, function (err, payload) {
@@ -21,8 +21,8 @@ var prototype = {
     });
   },
   getSecurityDetails: function (req, res, next) {
-    var projectId = req.params.project;
-    var securityId = req.params.security;
+    var projectId = req.params.projectId;
+    var securityId = req.params.securityId;
     var token = req.session.user.token;
     var region = req.headers.region;
     this.nova.showSecurityDetails(projectId, securityId, token, region, function (err, payload) {
@@ -34,8 +34,8 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:id/security', this.getSecurityList.bind(this));
-    this.app.get('/api/v1/:project/security/:security', this.getSecurityDetails.bind(this));
+    this.app.get('/api/v1/:projectId/security', this.getSecurityList.bind(this));
+    this.app.get('/api/v1/:projectId/security/:securityId', this.getSecurityDetails.bind(this));
   }
 };
 

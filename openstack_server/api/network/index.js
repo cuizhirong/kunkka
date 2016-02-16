@@ -6,11 +6,11 @@ function Network (app, neutron) {
   var that = this;
   this.app = app;
   this.neutron = neutron;
-  this.arrAsyncTarget = ['Subnets', 'Ports', 'Routers'];
+  this.arrAsyncTarget = ['subnets', 'ports', 'routers'];
   this.arrAsync = [];
   this.arrAsyncTarget.forEach(function(ele){
     that.arrAsync.push(function (callback) {
-      that.neutron['list' + ele](that.token, that.region, that.asyncHandler.bind(this, callback));
+      that.neutron['list' + ele.charAt(0).toUpperCase() + ele.substr(1)](that.token, that.region, that.asyncHandler.bind(this, callback));
     });
   });
 }
@@ -48,13 +48,6 @@ var makeNetwork = function (network, obj) {
 };
 
 var prototype = {
-  asyncHandler: function (callback, err, payload) {
-    if (err) {
-      callback(err);
-    } else {
-      callback(null, payload.body);
-    }
-  },
   getNetworkList: function (req, res, next) {
     var that = this;
     this.token = req.session.user.token;
@@ -70,7 +63,7 @@ var prototype = {
       } else {
         var obj = {};
         ['networks'].concat(that.arrAsyncTarget).forEach(function (e, index) {
-          obj[e.toLowerCase()] = results[index][e.toLowerCase()];
+          obj[e] = results[index][e];
         });
         obj.networks = obj.networks.filter(function (n) {
           return n.shared === false && n['router:external'] === false;
@@ -84,7 +77,7 @@ var prototype = {
   },
   getNetworkDetails: function (req, res, next) {
     var that = this;
-    this.networkId = req.params.id;
+    this.networkId = req.params.networkId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
     async.parallel([
@@ -94,11 +87,11 @@ var prototype = {
     ].concat(that.arrAsync),
     function (err, results) {
       if (err) {
-        res.status(err.status).json(err);
+        that.handleError(err, req, res, next);
       } else {
         var obj = {};
         ['network'].concat(that.arrAsyncTarget).forEach(function (e, index) {
-          obj[e.toLowerCase()] = results[index][e.toLowerCase()];
+          obj[e] = results[index][e];
         });
         makeNetwork(obj.network, obj);
         res.json({network: obj.network});
@@ -107,7 +100,7 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/networks', this.getNetworkList.bind(this));
-    this.app.get('/api/v1/networks/:id', this.getNetworkDetails.bind(this));
+    this.app.get('/api/v1/networks/:networkId', this.getNetworkDetails.bind(this));
   }
 };
 module.exports = function (app, extension) {
@@ -116,6 +109,6 @@ module.exports = function (app, extension) {
   if (extension) {
     Object.assign(Network.prototype, extension);
   }
-  var instance = new Network(app, Neutron);
-  instance.initRoutes();
+  var network = new Network(app, Neutron);
+  network.initRoutes();
 };
