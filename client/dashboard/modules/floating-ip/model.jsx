@@ -2,8 +2,11 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
 var request = require('./request');
+var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
@@ -40,8 +43,79 @@ class Model extends React.Component {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
       clickDropdownBtn: this.clickDropdownBtn,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
+  }
+
+  clickDetailTabs(tab, item, callback) {
+    //console.log('module', item[0]);
+
+    switch (tab.key) {
+      case 'description':
+        if (item.length > 1) {
+          callback(
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+        }
+        Request.get({
+          url: '/api/v1/' + HALO.user.projectId + '/floatingips/' + item[0].id
+        }).then((res) => {
+          var basicPropsItem = this.getBasicPropsItems(res.floatingip);
+          callback(
+            <BasicProps
+              title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={basicPropsItem ? basicPropsItem : []} />
+          );
+        });
+        break;
+      default:
+        callback(null);
+        break;
+    }
+  }
+
+  getBasicPropsItems(item) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
+    var items = [{
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.ip + __.address,
+      content: item.floating_ip_address
+    }, {
+      title: __.associate_gl + __.resource,
+      content: item.router ?
+        <span>
+          <i className="glyphicon icon-router" />
+          <a onClick={routerListener.bind(null, 'router', item.router_id)}>
+            {item.router.name}
+          </a>
+        </span> : ''
+    }, {
+      title: __.bandwidth,
+      content: ''
+    }, {
+      title: __.carrier,
+      content: ''
+    }, {
+      title: __.status,
+      type: 'status',
+      status: item.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.create + __.time,
+      content: ''
+    }];
+
+    return items;
   }
 
   updateTableData(data) {
