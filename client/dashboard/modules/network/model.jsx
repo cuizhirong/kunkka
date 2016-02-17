@@ -168,7 +168,7 @@ class Model extends React.Component {
             var subnetRender = [];
             ritem.subnets.map((item, i) => {
               i && subnetRender.push(', ');
-              subnetRender.push(<a key={i} onClick={listener.bind(null, item.id)} style={{cursor: 'pointer'}}>{item.name}</a>);
+              subnetRender.push(<a key={i} onClick={listener.bind(null, item.id)}>{item.name}</a>);
             });
 
             return ritem.subnets.length ? <div>{subnetRender.map((item) => item)}</div> : '';

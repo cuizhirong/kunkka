@@ -10,9 +10,9 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 var VncConsole = require('client/components/vnc_console/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
-var view = require('client/dashboard/cores/view');
+var stores = require('./stores');
 // var storage = require('client/dashboard/cores/storage');
-var events = require('./events');
+var actions = require('./actions');
 var request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
@@ -35,7 +35,7 @@ class Model extends React.Component {
     this.setTableColRender(config.table.column);
     this.listInstance();
 
-    view.on('instance', (actionType, data) => {
+    stores.on('change', (actionType, data) => {
       // console.log('storage changed:', storage.data('instance'));
       // console.log('storage mix:', storage.mix(['instance', 'subnet']));
       switch (actionType) {
@@ -270,7 +270,7 @@ class Model extends React.Component {
 
   listInstance() {
     this.loadingTable();
-    events.emit('instance', 'getItems');
+    actions.emit('instance', 'getItems');
   }
 
   setTableColRender(column) {
@@ -283,7 +283,7 @@ class Model extends React.Component {
               router.pushState('/project/image/' + _item.image.id);
             };
             return ritem.image ?
-              <a style={{cursor: 'pointer'}} onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
+              <a onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
           };
           break;
         case 'ip_address':
