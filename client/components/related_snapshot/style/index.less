@@ -3,6 +3,10 @@
 @toggle-bg-color: @color_gray_beige;
 
 .halo-com-related-snapshot {
+  .no-related-data {
+    margin-top: 20px;
+    color: @color_gray_darker;
+  }
   .timeline {
     margin-top: 20px;
     .per-line {
@@ -57,7 +61,6 @@
         width: 50px;
         min-width: 50px;
         max-width: 50px;
-        margin: 0px 20px 0 10px;
         .time-spot {
           width: 50px;
           display: inline-block;
@@ -118,19 +121,25 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           &.name {
-            flex: 3;
+            flex: 2;
           }
           &.size {
-            flex: 1;
+            flex: 2;
           }
           &.time {
             flex: 4;
           }
           &.status {
-            flex: 2
+            flex: 2;
+            i {
+              margin-right: 4px;
+              &.active {
+                color: @color_green;
+              }
+            }
           }
           &.icon-set {
-            flex: 2;
+            flex: 1;
             i {
               font-size: 14px;
               margin-right: 16px;

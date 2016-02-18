@@ -11,10 +11,11 @@ var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var moment = require('client/libs/moment');
 var stores = require('./stores');
 // var storage = require('client/dashboard/cores/storage');
 var actions = require('./actions');
-var request = require('client/dashboard/cores/request');
+var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
@@ -26,6 +27,7 @@ class Model extends React.Component {
       config: config
     };
 
+    moment.locale(HALO.configs.lang);
     this.bindEventList = this.bindEventList.bind(this);
     this.clearTableState = this.clearTableState.bind(this);
     this._eventList = {};
@@ -68,7 +70,6 @@ class Model extends React.Component {
   }
 
   clickDetailTabs(tab, item, callback) {
-    // console.log('module', item[0]);
     var isAvailableView = (_item) => {
       if (_item.length > 1) {
         callback(
@@ -88,27 +89,33 @@ class Model extends React.Component {
           break;
         }
 
-        var basicPropsItem = this.getBasicPropsItems(item[0]),
-          relatedSourcesItem = this.getRelatedSourcesItems(item[0]),
-          relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
-        callback(
-          <div>
-            <BasicProps
-              title={__.basic + __.properties}
-              defaultUnfold={true}
-              items={basicPropsItem ? basicPropsItem : []} />
-            <RelatedSources
-              title={__.related + __.sources}
-              defaultUnfold={true}
-              items={relatedSourcesItem} />
-            <RelatedSnapshot
-              title={__.related_image}
-              defaultUnfold={true}
-              items={relatedSnapshotItems ? relatedSnapshotItems : []}>
-              <Button value={__.create + __.snapshot}/>
-            </RelatedSnapshot>
-          </div>
-        );
+        Request.get({
+          url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id
+        }).then((data) => {
+          var basicPropsItem = this.getBasicPropsItems(data.server),
+            relatedSourcesItem = this.getRelatedSourcesItems(data.server),
+            relatedSnapshotItems = this.getRelatedSnapshotItems(data.server.instance_snapshot);
+
+          callback(
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []} />
+              <RelatedSources
+                title={__.related + __.sources}
+                defaultUnfold={true}
+                items={relatedSourcesItem} />
+              <RelatedSnapshot
+                title={__.related_image}
+                defaultUnfold={true}
+                items={relatedSnapshotItems ? relatedSnapshotItems : []}
+                noItemAlert={__.no_related + __.instance + __.snapshot}>
+                <Button value={__.create + __.snapshot}/>
+              </RelatedSnapshot>
+            </div>
+          );
+        });
         break;
       case 'console_output':
         if (!isAvailableView(item)) {
@@ -117,7 +124,7 @@ class Model extends React.Component {
 
         var updateConsoleInterval;
         var updateConsole = () => {
-          request.post({
+          Request.post({
             url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'
           }).then((res) => {
             let outputData = res.output.split('\n');
@@ -138,7 +145,7 @@ class Model extends React.Component {
         if (!isAvailableView(item)) {
           break;
         }
-        request.post({
+        Request.post({
           url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/vnc'
         }).then((res) => {
           callback(
@@ -158,6 +165,11 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     var items = [{
       title: __.name,
       content: item.name
@@ -166,10 +178,20 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.floating_ip,
-      content: item.floatingip ? item.floatingip.floating_ip_address : ''
+      content: item.floating_ip ?
+        <span>
+          <i className="glyphicon icon-floating-ip" />
+          <a onClick={routerListener.bind(null, 'floating-ip', item.floating_ip.id)}>
+            {item.floating_ip.floating_ip_address}
+          </a>
+        </span>
+      : null
     }, {
       title: __.image,
-      content: <a data-type="router" href={'/project/image/' + item.image.id}>{item.image.name}</a>
+      content:
+        <a onClick={routerListener.bind(null, 'image', item.image.id)}>
+          {item.image.name}
+        </a>
     }, {
       title: __.instance_type,
       content: item.flavor ? item.flavor.name : ''
@@ -187,87 +209,115 @@ class Model extends React.Component {
     return items;
   }
 
-  getRelatedSourcesItems(item) {
-    var items = {
-      keypair: {
-        title: __.keypair,
-        content: item.keypair ?
-          <div className="content-item">
-            <i className="glyphicon icon-keypair"/>
-            <a>{item.keypair.name}</a>
-            <i className="glyphicon icon-delete delete" />
-          </div> : <div className="content-no-data">
-            {__.no_associate + __.keypair}
-          </div>
-      },
-      attch_volume: {
-        title: __.volume,
-        content: item.volume.length ?
-          <div className="content-item">
-            <i className="glyphicon icon-volume"/>
-            <div style={{display: 'inline-block'}}>
-              {item.volume.map((vol, i) =>
-                <a key={i}>
-                  {vol.name + ' ( ' + vol.volume_type + ' | ' + vol.size + 'GB )'
-                    + (i < item.volume.length - 1 ? ', ' : '')
-                  }
-                </a>
-              )}
-            </div>
-            <i className="glyphicon icon-delete delete" />
-          </div> : <div className="content-no-data">
-            {__.no_associate + __.volume}
-          </div>
-      },
-      networks: {
-        title: __.networks,
-        content: <div className="content-network">
-            <div className="network-header">
-              <span>{__.virtual_interface}</span>
-              <span>{__.subnet}</span>
-              <span>{__.security + __.group}</span>
-              <span>{__.floating_ip}</span>
-            </div>
-            <div className="network-content">
-              <span>{'-'}</span>
-              <span>{'-'}</span>
-              <span>{'-'}</span>
-              <span>{'-'}</span>
-              <i className="glyphicon icon-delete"></i>
-            </div>
-          </div>
-      }
+  getRelatedSourcesItems(items) {
+    var keypairs = [];
+    if(items.keypair) {
+      keypairs.push({
+        key: items.keypair.name,
+        data: items.keypair.name,
+        link: '/project/keypair'
+      });
+    }
+
+    var attchVolumes = [];
+    items.volume.forEach((volume, i) => {
+      attchVolumes.push({
+        key: volume.name,
+        data: volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )',
+        link: '/project/volume/' + volume.id
+      });
+    });
+
+    var networks = [];
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
     };
 
-    return items;
-  }
+    for(let key in items.addresses) {
+      for(let item of items.addresses[key]) {
+        if(item['OS-EXT-IPS:type'] === 'fixed') {
+          let securityGroups = [];
+          for(let i in item.security_groups) {
+            if (i > 0) {
+              securityGroups.push(<span key={'dot' + i}>{', '}</span>);
+            }
+            securityGroups.push(<a key={i} onClick={routerListener.bind(null, 'security-group', item.security_groups[i].id)}>{item.security_groups[i].name}</a>);
+          }
 
-  getRelatedSnapshotItems(item) {
-    //this is fake data, please fix it later
-    var relatedSnapshot = [{
-      title: 'a month ago',
-      name: 'name',
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-instance create" />
+          networks.push({
+            virtual_interface:
+              <a onClick={routerListener.bind(null, 'virtual-interface', item.port.fixed_ips[0].subnet_id)}>
+                {item.addr}
+              </a>,
+            subnet: <a onClick={routerListener.bind(null, 'subnet', item.subnet.id)}>{item.subnet.name}</a>,
+            security_group: securityGroups,
+            floating_ip: '-'
+          });
+        }
+      }
+    }
+
+    var data = [{
+      title: __.keypair,
+      content: keypairs,
+      icon: 'keypair',
+      deleteAction: (delItem) => {
+        // console.log(delItem);
+      }
     }, {
-      title: 'a month ago',
-      name: 'name',
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-instance create" />
+      title: __.volume,
+      content: attchVolumes,
+      icon: 'volume',
+      deleteAction: (delItem) => {
+        // console.log(delItem);
+      }
     }, {
-      title: 'a month ago',
-      name: 'name',
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-instance create" />
+      title: __.networks,
+      type: 'mini-table',
+      content: {
+        column: [{
+          title: __.virtual_interface,
+          key: 'virtual_interface',
+          dataIndex: 'virtual_interface'
+        }, {
+          title: __.subnet,
+          key: 'subnet',
+          dataIndex: 'subnet'
+        }, {
+          title: __.security + __.group,
+          key: 'security_group',
+          dataIndex: 'security_group'
+        }, {
+          title: __.floating_ip,
+          key: 'floating_ip',
+          dataIndex: 'floating_ip'
+        }],
+        data: networks
+      },
+      deleteAction: (delItem) => {
+        // console.log(delItem);
+      }
     }];
 
-    return relatedSnapshot;
+    return data;
+  }
+
+  getRelatedSnapshotItems(items) {
+    var data = [];
+    items.forEach((item) => {
+      data.push({
+        title: moment(item.created_at).fromNow(),
+        titleLink: '/project/image/' + item.id,
+        name: item.name,
+        size: item.size / 1024 + 'MB',
+        time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+        status: item.status,
+        createIcon: 'instance'
+      });
+    });
+
+    return data;
   }
 
   updateTableData(data) {
@@ -294,6 +344,11 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+
     column.map((col) => {
       switch (col.key) {
         case 'image':
@@ -306,19 +361,25 @@ class Model extends React.Component {
           col.render = (rcol, ritem, rindex) => {
             var str = '';
             if (ritem.addresses.private) {
-              for (let item of ritem.addresses.private) {
+              ritem.addresses.private.forEach((item, i) => {
                 if (item.version === 4 && item['OS-EXT-IPS:type'] === 'fixed') {
-                  str = item.addr;
-                  break;
+                  str += (i > 0) ? ', ' + item.addr : item.addr;
                 }
-              }
+              });
             }
             return str;
           };
           break;
         case 'floating_ip':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.floatingip ? ritem.floatingip.floating_ip_address : '';
+            return ritem.floating_ip ?
+              <span>
+                <i className="glyphicon icon-floating-ip" />
+                <a onClick={routerListener.bind(null, 'floating-ip', ritem.floating_ip.id)}>
+                  {ritem.floating_ip.floating_ip_address}
+                </a>
+              </span>
+              : '';
           };
           break;
         case 'instance_type':
