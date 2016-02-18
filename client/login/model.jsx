@@ -61,7 +61,7 @@ class Model extends React.Component {
         password: pwd
       }
     }).then(function(data) {
-      window.location = '/';
+      window.location = window.location.pathname;
     }, function(err) {
       that.setState({
         loginError: true,

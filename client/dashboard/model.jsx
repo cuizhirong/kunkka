@@ -35,7 +35,9 @@ class Model extends React.Component {
     if (modules.indexOf(_moduleName) === -1) {
       modules = modules.concat(_moduleName);
     }
-
+    if (this.state.selectedModule === _moduleName) {
+      return;
+    }
     this.setState({
       modules: modules,
       selectedModule: pathList[1],
