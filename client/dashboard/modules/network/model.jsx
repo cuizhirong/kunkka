@@ -5,11 +5,12 @@ var uskin = require('client/uskin/index');
 var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
-var DetailSubnet = require('client/components/detail_subnet/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var request = require('./request');
+var Request = require('client/dashboard/cores/request');
 
 class Model extends React.Component {
 
@@ -53,7 +54,7 @@ class Model extends React.Component {
 
   clickDetailTabs(tab, item, callback) {
     switch(tab.key) {
-      case 'dscr':
+      case 'description':
         if (item.length > 1) {
           callback(
             <div className="no-data-desc">
@@ -63,22 +64,26 @@ class Model extends React.Component {
           break;
         }
 
-        var basicPropsItem = this.getBasicPropsItems(item[0]),
-          subnetItems = this.getDetailSubnetItems(item[0]);
-        callback(
-          <div>
-            <BasicProps
-              title={__.basic + __.properties}
-              defaultUnfold={true}
-              items={basicPropsItem ? basicPropsItem : []} />
-            <DetailSubnet
-              title={__.subnet}
-              defaultUnfold={true}
-              items={subnetItems ? subnetItems : []}>
-              <Button value={__.create + __.subnet}/>
-            </DetailSubnet>
-          </div>
-        );
+        Request.get({
+          url: '/api/v1/networks/' + item[0].id
+        }).then((res) => {
+          var basicPropsItem = this.getBasicPropsItems(res.network),
+            subnetConfig = this.getDetailTableConfig(res.network.subnets);
+          callback(
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []} />
+              <DetailMinitable
+                title={__.subnet}
+                defaultUnfold={true}
+                tableConfig={subnetConfig ? subnetConfig : []}>
+                <Button value={__.create + __.subnet}/>
+              </DetailMinitable>
+            </div>
+          );
+        });
         break;
       default:
         callback(null);
@@ -102,28 +107,53 @@ class Model extends React.Component {
       content: __[item.status.toLowerCase()]
     }, {
       title: __.create + __.time,
-      type: 'time',
-      content: item.created
+      content: ''
     }];
 
     return items;
   }
 
-  getDetailSubnetItems(item) {
-    //this is fake data, please fix it.
-    var subnet = [{
-      title: 'testing01',
-      cidr: '192.168.0.0',
-      router: '',
-      create: <i className="glyphicon icon-delete" />
-    }, {
-      title: 'testing02',
-      cidr: '192.168.0.0',
-      router: '',
-      create: <i className="glyphicon icon-delete" />
-    }];
+  getDetailTableConfig(item) {
+    var tableConfig = {
+      column: [{
+        title: __.subnet + __.name,
+        key: 'name',
+        width: '25%',
+        dataIndex: 'name'
+      }, {
+        title: __.cidr,
+        key: 'cidr',
+        width: '25%',
+        dataIndex: 'cidr'
+      }, {
+        title: __.related + __.router,
+        key: 'router',
+        width: '25%',
+        dataIndex: 'router'
+      }, {
+        title: __.operation,
+        key: 'create',
+        width: '25%',
+        dataIndex: 'create'
+      }],
+      data: []
+    };
+    tableConfig.data.length = item.length;
+    var routerListener = (module, id, e) => {
+      e.preventDefault();
+      router.pushState('/project/' + module + '/' + id);
+    };
+    for(var i = 0; i < item.length; i ++) {
+      tableConfig.data[i] = {
+        id: i + 1,
+        name: <a onClick={routerListener.bind(null, 'subnet', item[i].id)}>{item[i].name}</a>,
+        cidr: item[i].cidr,
+        router: item[i].router ? item[i].router.name : '',
+        create: <i className="glyphicon icon-delete" />
+      };
+    }
 
-    return subnet;
+    return tableConfig;
   }
 
   updateTableData(data) {
