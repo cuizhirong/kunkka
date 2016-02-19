@@ -30,3 +30,5 @@ exports.errorLogger = function(err, req, res, next) {
   logger.error(req.ip + ' ' + req.method + ' ' + req.url + ' ' + err.stack);
   next(err);
 };
+
+exports.logger = logger;

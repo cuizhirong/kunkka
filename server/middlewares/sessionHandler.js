@@ -1,5 +1,6 @@
 var config = require('../config');
 var session = require('express-session');
+var logger = require('./logger').logger;
 
 module.exports = function(app) {
   var sessionEngine = config('sessionEngine');
@@ -17,7 +18,7 @@ module.exports = function(app) {
       port: sessionEngine.port
     });
     RedisClient.on('error', function (err) {
-      console.log('Error ' + err);
+      logger.error(err);
     });
     app.set('CacheClient', RedisClient);
     app.use(session({
@@ -28,12 +29,22 @@ module.exports = function(app) {
         client: RedisClient
       })
     }));
+    // handle lost connection to Redis
+    app.use(function (req, res, next) {
+      if (!req.session) {
+        next(new Error('Redis ' + req.i18n.__('shared.out_of_service')));
+      } else {
+        next();
+      }
+    });
   } else if (sessionEngine.type === 'Memcached') {
     var Memcached = require('memcached');
     var MemcachedStore = require('connect-memcached')(session);
-    var MemcachedClient = new Memcached(sessionEngine.address + ':' + sessionEngine.port);
-    MemcachedClient.on('error', function (err) {
-      console.log('Error ' + err);
+    var MemcachedClient = new Memcached(sessionEngine.address + ':' + sessionEngine.port, {
+      'factor': 1.2
+    });
+    MemcachedClient.on('issue', function (details) {
+      logger.error('Memcached' + details.messages.join(' '));
     });
     app.set('CacheClient', MemcachedClient);
     app.use(session({
@@ -44,5 +55,13 @@ module.exports = function(app) {
         client: MemcachedClient
       })
     }));
+    // handle lost connection to Memcached
+    app.use(function (req, res, next) {
+      if (!req.session) {
+        next(new Error('Memcached ' + req.i18n.__('shared.out_of_service')));
+      } else {
+        next();
+      }
+    });
   }
 };
