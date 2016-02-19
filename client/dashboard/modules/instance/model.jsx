@@ -169,7 +169,7 @@ class Model extends React.Component {
       content: item.floatingip ? item.floatingip.floating_ip_address : ''
     }, {
       title: __.image,
-      content: <a href="/project/image">{item.image.name}</a>
+      content: <a data-type="router" href={'/project/image/' + item.image.id}>{item.image.name}</a>
     }, {
       title: __.instance_type,
       content: item.flavor ? item.flavor.name : ''
@@ -298,12 +298,8 @@ class Model extends React.Component {
       switch (col.key) {
         case 'image':
           col.render = (rcol, ritem, rindex) => {
-            var listener = (_item, _col, _index, e) => {
-              e.preventDefault();
-              router.pushState('/project/image/' + _item.image.id);
-            };
             return ritem.image ?
-              <a onClick={listener.bind(null, ritem, rcol, rindex)}>{ritem.image.name}</a> : '';
+              <a data-type="router" href={'/project/image/' + ritem.image.id}>{ritem.image.name}</a> : '';
           };
           break;
         case 'ip_address':

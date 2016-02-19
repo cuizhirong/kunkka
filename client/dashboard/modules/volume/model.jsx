@@ -190,10 +190,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
 
     column.map((col) => {
       switch (col.key) {
@@ -213,7 +209,7 @@ class Model extends React.Component {
               servers.push(
                 <span key={index}>
                   <i className="glyphicon icon-instance" />
-                  <a onClick={routerListener.bind(null, 'instance', attch.server.id)}>
+                  <a data-type="router" href={'/project/instance/' + attch.server.id}>
                     {attch.server.name}
                   </a>
                 </span>

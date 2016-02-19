@@ -77,10 +77,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
 
     column.map((col) => {
       switch (col.key) {
@@ -89,7 +85,7 @@ class Model extends React.Component {
             return ritem.network ?
               <span>
                 <i className="glyphicon icon-network" />
-                <a onClick={routerListener.bind(null, 'network', ritem.network.id)}>
+                <a data-type="router" href={'/project/network/' + ritem.network.id}>
                   {ritem.network.name}
                 </a>
               </span> : '';
@@ -100,7 +96,7 @@ class Model extends React.Component {
             return ritem.router ?
               <span>
                 <i className="glyphicon icon-router" />
-                <a onClick={routerListener.bind(null, 'router', ritem.router.id)}>
+                <a data-type="router" href={'/project/router/' + ritem.router.id}>
                   {ritem.router.name}
                 </a>
               </span> : '';

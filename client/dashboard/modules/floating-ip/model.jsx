@@ -79,11 +79,6 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-
     var items = [{
       title: __.id,
       content: item.id
@@ -95,7 +90,7 @@ class Model extends React.Component {
       content: item.router ?
         <span>
           <i className="glyphicon icon-router" />
-          <a onClick={routerListener.bind(null, 'router', item.router_id)}>
+          <a data-type="router" href={'/project/router/' + item.router_id}>
             {item.router.name}
           </a>
         </span> : ''
@@ -150,11 +145,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-
     column.map((col) => {
       switch (col.key) {
         case 'assc_resource': //router.name or server
@@ -163,7 +153,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-router" />
-                  <a onClick={routerListener.bind(null, 'router', ritem.router.id)}>
+                  <a data-type="router" href={'/project/router/' + ritem.router.id}>
                     {ritem.router.name}
                   </a>
                 </span>
@@ -172,7 +162,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a onClick={routerListener.bind(null, 'instance', ritem.server.id)}>
+                  <a data-type="router" href={'/project/instance/' + ritem.server.id}>
                     {ritem.server.name}
                   </a>
                 </span>

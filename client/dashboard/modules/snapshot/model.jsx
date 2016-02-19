@@ -76,10 +76,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
 
     column.map((col) => {
       switch (col.key) {
@@ -93,7 +89,7 @@ class Model extends React.Component {
             return (
               <span>
                 <i className="glyphicon icon-volume" />
-                <a onClick={routerListener.bind(null, 'volume', ritem.volume.id)}>
+                <a data-type="router" href={'/project/volume/' + ritem.volume.id}>
                   {ritem.volume.name}
                 </a>
               </span>
