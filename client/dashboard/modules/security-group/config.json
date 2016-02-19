@@ -39,7 +39,7 @@
       "type": "captain"
     }, {
       "title": ["description"],
-      "dataIndex": "",
+      "dataIndex": "description",
       "key": "desc"
     }, {
       "title": ["create", "time"],

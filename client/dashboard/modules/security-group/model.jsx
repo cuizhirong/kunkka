@@ -67,10 +67,8 @@ class Model extends React.Component {
 
     this.loadingTable();
     request.listRouters().then(function(data) {
-      //fix me when api is updated
-      that.updateTableData([]);
+      that.updateTableData(data.security_groups);
     }, function(err) {
-      that.updateTableData([]);
       console.debug(err);
     });
   }
@@ -78,11 +76,6 @@ class Model extends React.Component {
   setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
-        case 'fix_me':
-          col.render = (rcol, ritem, rindex) => {
-            return '';
-          };
-          break;
         default:
           break;
       }
