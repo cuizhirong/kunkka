@@ -8,9 +8,9 @@ module.exports = {
       .set('X-Auth-Token', token)
       .end(callback);
   },
-  showSnapshotDetails: function (projectId, volumeId, token, region, callback) {
+  showSnapshotDetails: function (projectId, snapshotId, token, region, callback) {
     request
-      .get(cinderRemote[region] + '/v2/' + projectId + '/snapshots/' + volumeId)
+      .get(cinderRemote[region] + '/v2/' + projectId + '/snapshots/' + snapshotId)
       .set('X-Auth-Token', token)
       .end(callback);
   }
