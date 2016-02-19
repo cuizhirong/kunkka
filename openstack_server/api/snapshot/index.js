@@ -113,7 +113,7 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:projectId/snapshots', this.getSnapshotList.bind(this));
+    this.app.get('/api/v1/:projectId/snapshots/detail', this.getSnapshotList.bind(this));
     this.app.get('/api/v1/:projectId/snapshots/:snapshotId', this.getSnapshotDetails.bind(this));
     this.app.get('/api/v1/instanceSnapshots', this.getInstanceSnapshotList.bind(this));
     this.app.get('/api/v1/instanceSnapshots/:snapshotId', this.getInstanceSnapshotDetails.bind(this));
