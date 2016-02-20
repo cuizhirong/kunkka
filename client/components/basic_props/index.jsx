@@ -3,6 +3,7 @@ require('./style/index.less');
 
 var React = require('react');
 var moment = require('client/libs/moment');
+var getStatusIcon = require('client/dashboard/utils/status_icon');
 
 class BasicProps extends React.Component {
 
@@ -29,26 +30,10 @@ class BasicProps extends React.Component {
     });
   }
 
-  getStatusIcon(status) {
-    switch(status.toLowerCase()) {
-      case 'active':
-        return <i className="glyphicon icon-status-active active" />;
-      case 'in-use':
-        return <i className="glyphicon icon-status-light active" />;
-      default:
-        return '';
-    }
-  }
-
   getItemContent(item) {
     switch(item.type) {
       case 'status':
-        return (
-          <span>
-            {this.getStatusIcon(item.status)}
-            {item.content}
-          </span>
-        );
+        return getStatusIcon(item.status);
       case 'time':
         return moment(item.content).format('YYYY-MM-DD hh:mm:ss');
       default:

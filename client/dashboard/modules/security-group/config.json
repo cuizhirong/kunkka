@@ -51,7 +51,7 @@
     "detail": {
       "tabs": [{
         "name": ["description"],
-        "key": "dscr",
+        "key": "description",
         "default": true
       }]
     }

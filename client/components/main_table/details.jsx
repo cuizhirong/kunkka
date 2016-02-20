@@ -34,7 +34,7 @@ class Detail extends React.Component {
   updateContent(tab, data) {
     var onClickTabs = this.props.onClickTabs;
 
-    onClickTabs(tab, data, (content, updatingObj) => {
+    onClickTabs && onClickTabs(tab, data, (content, updatingObj) => {
       var details = this.state.detailChildren;
       details[tab.key] = content;
       this.setState({

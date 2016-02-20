@@ -1,11 +1,6 @@
 require('./style/index.less');
 
 var React = require('react');
-var lang = require('i18n/client/lang.json');
-var converter = require('./converter');
-var moment = require('client/libs/moment');
-var __ = require('i18n/client/lang.json');
-var router = require('client/dashboard/cores/router');
 var Details = require('./details');
 
 var uskin = require('client/uskin/index');
@@ -14,6 +9,12 @@ var DropdownButton = uskin.DropdownButton;
 var InputSearch = uskin.InputSearch;
 var Tab = uskin.Tab;
 var Table = uskin.Table;
+
+var __ = require('i18n/client/lang.json');
+var converter = require('./converter');
+var getStatusIcon = require('client/dashboard/utils/status_icon');
+var moment = require('client/libs/moment');
+var router = require('client/dashboard/cores/router');
 
 class MainTable extends React.Component {
 
@@ -33,7 +34,7 @@ class MainTable extends React.Component {
   componentWillMount() {
     var config = this.props.config;
     this.setTableFilterAllLang(config.table);
-    converter.convertLang(lang, config);
+    converter.convertLang(__, config);
     this.tableColRender(config.table.column);
     router.on('changeState', this.onChangeState);
   }
@@ -122,21 +123,6 @@ class MainTable extends React.Component {
     }
   }
 
-  getStatusIcon(data) {
-    switch (data) {
-      case 'active':
-        return <i className="glyphicon icon-status-active active" />;
-      case 'available':
-        return <i className="glyphicon icon-status-active active" />;
-      case 'down':
-        return <i className="glyphicon icon-status-light available" />;
-      case 'in-use':
-        return <i className="glyphicon icon-status-light active" />;
-      default:
-        return undefined;
-    }
-  }
-
   controlCaptain(_item, _col, _index, e) {
     e.preventDefault();
 
@@ -164,9 +150,7 @@ class MainTable extends React.Component {
           break;
         case 'status':
           !col.render && (col.render = (rcol, ritem, rindex) => {
-            var data = ritem[rcol.dataIndex].toLowerCase();
-            var icon = this.getStatusIcon(data);
-            return icon ? <div>{icon}{lang[data]}</div> : lang[data];
+            return getStatusIcon(ritem[rcol.dataIndex]);
           });
           break;
         case 'time':

@@ -40,7 +40,8 @@ class Model extends React.Component {
     this._eventList = {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
   }
 
@@ -71,6 +72,17 @@ class Model extends React.Component {
     }, function(err) {
       console.debug(err);
     });
+  }
+
+  clickDetailTabs(tab, item, callback) {
+    switch (tab.key) {
+      case 'description':
+        callback();
+        break;
+      default:
+        callback(null);
+        break;
+    }
   }
 
   setTableColRender(column) {
@@ -135,7 +147,7 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-security-group" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="router" config={this.state.config} eventList={this._eventList} />
+        <MainTable ref="dashboard" moduleID="security-group" config={this.state.config} eventList={this._eventList} />
       </div>
     );
   }

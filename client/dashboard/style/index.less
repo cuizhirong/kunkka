@@ -50,3 +50,19 @@ a {
     }
   }
 }
+
+i[class^="glyphicon icon-status-"] {
+  margin-right: 4px;
+  &.active, &.available {
+    color: @color_green;
+  }
+  &.in-use {
+    color: @color_orange;
+  }
+  &.down {
+    color: @color_gray;
+  }
+  &.shutoff {
+    color: @color_red;
+  }
+}
