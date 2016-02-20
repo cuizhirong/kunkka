@@ -86,11 +86,6 @@
         "key": "down",
         "filterBy": "DOWN"
       }]
-    }, {
-      "title": ["create", "time"],
-      "dataIndex": "created_at",
-      "key": "created",
-      "type": "time"
     }],
     "data": [],
     "detail": {

@@ -50,8 +50,6 @@ class Model extends React.Component {
   }
 
   clickDetailTabs(tab, item, callback) {
-    // console.log('module', item[0]);
-
     switch (tab.key) {
       case 'description':
         if (item.length > 1) {

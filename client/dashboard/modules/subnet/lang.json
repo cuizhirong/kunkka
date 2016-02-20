@@ -1,14 +1,20 @@
 {
   "en": {
+    "allocation": "Allocation ",
     "cidr": "CIDR",
     "dhcp": "DHCP",
+    "gateway": "Gateway ",
     "ip": "IP",
+    "pool": "Pool",
     "version": "version"
   },
   "zh-CN": {
+    "allocation": "分配",
     "cidr": "CIDR网段",
     "dhcp": "DHCP",
+    "gateway": "网关",
     "ip": "IP",
+    "pool": "池",
     "version": "版本"
   }
 }

@@ -5,6 +5,7 @@ var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 
@@ -61,15 +62,21 @@ class Model extends React.Component {
           break;
         }
 
-        var basicPropsItem = this.getBasicPropsItems(item[0]);
-        callback(
-          <div>
-            <BasicProps
-              title={__.basic + __.properties}
-              defaultUnfold={true}
-              items={basicPropsItem ? basicPropsItem : []} />
-          </div>
-        );
+        Request.get({
+          url: '/api/v1/images/' + item[0].id
+        }).then((data) => {
+          var basicPropsItem = this.getBasicPropsItems(data);
+          callback(
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []} />
+            </div>
+          );
+        }, (err) => {
+          //console.log(err)
+        });
         break;
       default:
         callback(null);

@@ -8,7 +8,9 @@ var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var moment = require('client/libs/moment');
 var request = require('./request');
+var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
@@ -53,7 +55,7 @@ class Model extends React.Component {
 
   clickDetailTabs(tab, item, callback) {
     switch (tab.key) {
-      case 'dscr':
+      case 'description':
         if (item.length > 1) {
           callback(
             <div className="no-data-desc">
@@ -63,21 +65,28 @@ class Model extends React.Component {
           break;
         }
 
-        var items = this.getBasicProps(item[0]),
-          relatedSnapshotItems = this.getRelatedSnapshotItems(item[0]);
-        callback(
-          <div>
-            <BasicProps title={__.basic + __.properties}
-              defaultUnfold={true}
-              items={items ? items : []}/>
-            <RelatedSnapshot
-              title={__.snapshot}
-              defaultUnfold={true}
-              items={relatedSnapshotItems ? relatedSnapshotItems : []}>
-              <Button value={__.create + __.snapshot}/>
-            </RelatedSnapshot>
-          </div>
-        );
+        Request.get({
+          url: '/api/v1/' + HALO.user.projectId + '/volumes/' + item[0].id
+        }).then((data) => {
+          var basicPropsItem = this.getBasicProps(data.volume),
+            relatedSnapshotItems = this.getRelatedSnapshotItems(data.volume.snapshots);
+
+          callback(
+            <div>
+              <BasicProps title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []}/>
+              <RelatedSnapshot
+                title={__.snapshot}
+                defaultUnfold={true}
+                items={relatedSnapshotItems ? relatedSnapshotItems : []}>
+                <Button value={__.create + __.snapshot}/>
+              </RelatedSnapshot>
+            </div>
+          );
+        }, (err) => {
+          // console.log(err);
+        });
         break;
       default:
         callback(null);
@@ -86,7 +95,26 @@ class Model extends React.Component {
   }
 
   getBasicProps(item) {
-    var basicProps = [{
+    var getAttachments = (_item) => {
+      var servers = [];
+
+      _item.attachments && _item.attachments.map((attch, index) => {
+        if (index > 0) {
+          servers.push(<span key={'comma' + index}> ,</span>);
+        }
+        servers.push(
+          <span key={index}>
+            <i className="glyphicon icon-instance" />
+            <a data-type="router" href={'/project/instance/' + attch.server.id}>
+              {attch.server.name}
+            </a>
+          </span>
+        );
+      });
+      return servers;
+    };
+
+    var data = [{
       title: __.name,
       content: item.name
     }, {
@@ -100,13 +128,13 @@ class Model extends React.Component {
       content: item.volume_type
     }, {
       title: __.attach_to + __.instance,
-      content: ''
+      content: getAttachments(item)
     }, {
       title: __.shared,
-      content: ''
+      content: item.multiattach ? __.yes : __.no
     }, {
       title: __.attributes,
-      content: ''
+      content: __[item.metadata.attached_mode.toLowerCase()]
     }, {
       title: __.status,
       type: 'status',
@@ -118,44 +146,27 @@ class Model extends React.Component {
       content: item.created_at
     }];
 
-    return basicProps;
+    return data;
   }
 
-  getRelatedSnapshotItems(item) {
-    //this is fake data, please fix it later
-    var relatedSnapshot = [{
-      title: 'a month ago',
-      name: <a className="icon" href="/project/snapshot/#">
-              <i className="glyphicon icon-snapshot"></i>
-              {'name'}
-            </a>,
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-volume create" />
-    }, {
-      title: 'a month ago',
-      name: <a className="icon" href="/project/snapshot/#">
-              <i className="glyphicon icon-snapshot"></i>
-              {'name'}
-            </a>,
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-volume create" />
-    }, {
-      title: 'a month ago',
-      name: <a className="icon" href="/project/snapshot/#">
-              <i className="glyphicon icon-snapshot"></i>
-              {'name'}
-            </a>,
-      size: 'size',
-      time: 'created at',
-      status: 'status',
-      create: <i className="glyphicon icon-volume create" />
-    }];
+  getRelatedSnapshotItems(items) {
+    var data = [];
+    items.forEach((item) => {
+      data.push({
+        title: moment(item.created_at).fromNow(),
+        name:
+          <span>
+            <i className="glyphicon icon-snapshot" />
+            <a data-type="router" href={'/project/snapshot/' + item.id}>{item.name}</a>
+          </span>,
+        size: item.size + 'GB',
+        time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+        status: item.status,
+        createIcon: 'volume'
+      });
+    });
 
-    return relatedSnapshot;
+    return data;
   }
 
   updateTableData(data) {
@@ -230,7 +241,7 @@ class Model extends React.Component {
           break;
         case 'attributes':
           col.render = (rcol, ritem, rindex) => {
-            return __[ritem.metadata.attached_mode];
+            return __[ritem.metadata.attached_mode.toLowerCase()];
           };
           break;
         default:

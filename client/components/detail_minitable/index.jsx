@@ -29,6 +29,7 @@ class DetailMinitable extends React.Component {
   }
 
   render() {
+    var tableConfig = this.props.tableConfig;
 
     return (
       <div className="toggle">
@@ -42,9 +43,10 @@ class DetailMinitable extends React.Component {
             <div className="table-info">
               <Table
                 mini={true}
-                column={this.props.tableConfig.column}
-                data={this.props.tableConfig.data}
-                dataKey={'id'}/>
+                column={tableConfig.column}
+                data={tableConfig.data}
+                dataKey={tableConfig.dataKey}
+                hover={tableConfig.hover} />
             </div>
           </div>
         </div>

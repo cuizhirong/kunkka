@@ -42,7 +42,8 @@ class MainTable extends React.Component {
     if (pathList[1] !== this.props.moduleID) {
       return;
     }
-    var table = this.refs.table;
+    var table = this.refs.table,
+      details = this.refs.details;
     var checkedRow = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
 
     //if the detail id is invalid, replace url to current module pathlist
@@ -53,8 +54,8 @@ class MainTable extends React.Component {
 
     //when detail ID is valid, open the detail module
     if (pathList[2]) {
-      if (!this.refs.details.state.detailVisible) {
-        this.refs.details.setState({
+      if (!details.state.detailVisible) {
+        details && details.setState({
           detailVisible: true
         });
       }
@@ -71,7 +72,7 @@ class MainTable extends React.Component {
       var selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
       this.refs.details.updateContent(selectedTab, this.stores.checkedRow);
     } else {
-      this.refs.details.setState({
+      details && details.setState({
         detailVisible: false
       });
       table && table.setState({

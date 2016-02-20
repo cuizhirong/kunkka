@@ -2,7 +2,10 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
 var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
+var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 
@@ -40,7 +43,8 @@ class Model extends React.Component {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
       clickDropdownBtn: this.clickDropdownBtn,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
   }
 
@@ -75,8 +79,77 @@ class Model extends React.Component {
 
   }
 
-  setTableColRender(column) {
+  clickDetailTabs(tab, item, callback) {
+    var isAvailableView = (_item) => {
+      if (_item.length > 1) {
+        callback(
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
 
+    switch(tab.key) {
+      case 'description':
+        if (!isAvailableView(item)) {
+          break;
+        }
+
+        Request.get({
+          url: '/api/v1/' + HALO.user.projectId + '/snapshots/' + item[0].id
+        }).then((data) => {
+          var basicPropsItem = this.getBasicPropsItems(data.snapshot);
+
+          callback(
+            <BasicProps
+              title={__.basic + __.properties}
+              defaultUnfold={true}
+              items={basicPropsItem ? basicPropsItem : []} />
+          );
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  getBasicPropsItems(item) {
+    var data = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.volume,
+      content: item.volume_id ?
+        <span>
+          <i className="glyphicon icon-volume" />
+          <a data-type="router" href={'/project/volume/' + item.volume.id}>{item.volume.name}</a>
+        </span>
+        : null
+    }, {
+      title: __.type,
+      content: ''
+    }, {
+      title: __.status,
+      type: 'status',
+      status: item.status,
+      content: __[item.status.toLowerCase()]
+    }, {
+      title: __.create + __.time,
+      type: 'time',
+      content: item.created
+    }];
+
+    return data;
+  }
+
+  setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
         case 'size':

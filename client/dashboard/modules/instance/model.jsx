@@ -308,8 +308,7 @@ class Model extends React.Component {
     items.forEach((item) => {
       data.push({
         title: moment(item.created_at).fromNow(),
-        titleLink: '/project/image/' + item.id,
-        name: item.name,
+        name: <a data-type="router" href={'/project/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
         status: item.status,

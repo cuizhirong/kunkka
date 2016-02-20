@@ -136,7 +136,9 @@ class Model extends React.Component {
         width: '25%',
         dataIndex: 'create'
       }],
-      data: []
+      data: [],
+      dataKey: 'id',
+      hover: true
     };
     tableConfig.data.length = item.length;
     var routerListener = (module, id, e) => {

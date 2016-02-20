@@ -49,8 +49,6 @@ class Model extends React.Component {
   }
 
   clickDetailTabs(tab, item, callback) {
-    //console.log('module', item[0]);
-
     switch (tab.key) {
       case 'description':
         if (item.length > 1) {
@@ -87,7 +85,7 @@ class Model extends React.Component {
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,
-      content: item.router ?
+      content: item.router_id ?
         <span>
           <i className="glyphicon icon-router" />
           <a data-type="router" href={'/project/router/' + item.router_id}>
@@ -105,9 +103,6 @@ class Model extends React.Component {
       type: 'status',
       status: item.status,
       content: __[item.status.toLowerCase()]
-    }, {
-      title: __.create + __.time,
-      content: ''
     }];
 
     return items;
@@ -149,7 +144,7 @@ class Model extends React.Component {
       switch (col.key) {
         case 'assc_resource': //router.name or server
           col.render = (rcol, ritem, rindex) => {
-            if (ritem.router) {
+            if (ritem.router_id) {
               return (
                 <span>
                   <i className="glyphicon icon-router" />

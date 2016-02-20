@@ -1,10 +1,15 @@
 require('./style/index.less');
 
 var React = require('react');
+var uskin = require('client/uskin/index');
+var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
+var BasicProps = require('client/components/basic_props/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
+var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 
 class Model extends React.Component {
@@ -42,7 +47,8 @@ class Model extends React.Component {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
       changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this)
+      clickTableCheckbox: this.clickTableCheckbox.bind(this),
+      clickDetailTabs: this.clickDetailTabs.bind(this)
     };
   }
 
@@ -76,8 +82,126 @@ class Model extends React.Component {
     });
   }
 
-  setTableColRender(column) {
+  clickDetailTabs(tab, item, callback) {
+    switch(tab.key) {
+      case 'description':
+        if (item.length > 1) {
+          callback(
+            <div className="no-data-desc">
+              <p>{__.view_is_unavailable}</p>
+            </div>
+          );
+          break;
+        }
 
+        Request.get({
+          url: '/api/v1/' + HALO.user.projectId + '/subnets/' + item[0].id
+        }).then((data) => {
+          var basicPropsItem = this.getBasicPropsItems(data.subnet),
+            virtualInterfaceItem = this.getVirtualInterfaceItems(data.subnet);
+
+          callback(
+            <div>
+              <BasicProps title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []}/>
+              <DetailMinitable
+                title={__['virtual-interface']}
+                defaultUnfold={true}
+                tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
+                <Button value={__.add_ + __['virtual-interface']}/>
+              </DetailMinitable>
+            </div>
+          );
+        }, (err) => {
+          //console.log(err);
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  getBasicPropsItems(item) {
+    var data = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.prv_network,
+      content: item.network ?
+        <span>
+          <i className="glyphicon icon-network" />
+          <a data-type="router" href={'/project/network/' + item.network.id}>
+            {item.network.name}
+          </a>
+        </span> : null
+    }, {
+      title: __.associate + __.router,
+      content: item.router.id ?
+        <span>
+          <i className="glyphicon icon-router" />
+          <a data-type="router" href={'/project/router/' + item.router.id}>
+            {item.router.name}
+          </a>
+        </span> : null
+    }, {
+      title: __.gateway + __.address,
+      content: item.gateway_ip
+    }, {
+      title: __.ip + __.version,
+      content: 'IP v' + item.ip_version
+    }, {
+      title: __.cidr,
+      content: item.cidr
+    }, {
+      title: __.address + __.allocation + __.pool,
+      content: item.allocation_pools[0] ?
+        '(Start) ' + item.allocation_pools[0].start + ' - ' + '(End) ' + item.allocation_pools[0].end
+        : null
+    }];
+
+    return data;
+  }
+
+  getVirtualInterfaceItems(item) {
+    var tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.ip + __.address,
+        key: 'ip_address',
+        dataIndex: 'ip_address'
+      }, {
+        title: 'Mac ' + __.address,
+        key: 'mac_address',
+        dataIndex: 'mac_address'
+      }, {
+        title: __.related + __.instance,
+        key: 'instance',
+        dataIndex: 'instance'
+      }, {
+        title: __.status,
+        key: 'status',
+        dataIndex: 'status'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: [],
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
+  }
+
+  setTableColRender(column) {
     column.map((col) => {
       switch (col.key) {
         case 'prv_network':
@@ -93,7 +217,7 @@ class Model extends React.Component {
           break;
         case 'assc_router':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.router ?
+            return ritem.router.id ?
               <span>
                 <i className="glyphicon icon-router" />
                 <a data-type="router" href={'/project/router/' + ritem.router.id}>
