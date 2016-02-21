@@ -4,6 +4,7 @@
 @status-icon-color-available: @color_orange;
 @detail-border-color: @color_gray;
 @close-icon-hover-color: @color_blue;
+@loading-color: @color_font_dark;
 
 .halo-com-main-table {
   position: relative;
@@ -81,6 +82,7 @@
   &.visible {
     transform: translate(0, 0);
   }
+
   .detail-head {
     position: absolute;
     top: -36px;
@@ -99,6 +101,22 @@
     }
   }
 
+  .detail-loading {
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    position: relative;
+    .icon-loading {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      margin-left: -18px;
+      width: 36px;
+      color: @loading-color;
+      .loading-ani();
+      font-size: 36px!important;
+    }
+  }
   .detail-content {
     height: 100%;
     overflow-y: auto;

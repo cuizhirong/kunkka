@@ -4,8 +4,8 @@
     "attributes": "Attributes",
     "dtch_volume": "Detach",
     "extd_capacity": "Extend Capacity",
-    "rd_only": "Read Only",
-    "rd_wrt": "Read Write",
+    "read_only": "Read Only",
+    "read_write": "Read Write",
     "shared": "Shared"
   },
   "zh-CN": {
@@ -13,8 +13,8 @@
     "attributes": "属性",
     "dtch_volume": "从云主机卸载",
     "extd_capacity": "扩容",
-    "rd_only": "只读",
-    "rd_wrt": "读写",
+    "read_only": "只读盘",
+    "read_write": "读写盘",
     "shared": "共享盘"
   }
 }

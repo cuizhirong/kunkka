@@ -101,7 +101,7 @@ class Model extends React.Component {
               <BasicProps
                 title={__.basic + __.properties}
                 defaultUnfold={true}
-                items={basicPropsItem ? basicPropsItem : []} />
+                items={basicPropsItem} />
               <RelatedSources
                 title={__.related + __.sources}
                 defaultUnfold={true}
@@ -122,24 +122,11 @@ class Model extends React.Component {
           break;
         }
 
-        var updateConsoleInterval;
-        var updateConsole = () => {
-          Request.post({
-            url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'
-          }).then((res) => {
-            let outputData = res.output.split('\n');
-            callback(<ConsoleOutput data={outputData} data-id={item[0].id} />, {
-              tabKey: 'console_output',
-              interval: updateConsoleInterval
-            });
-          });
-        };
-
-        updateConsole();
-        updateConsoleInterval = setInterval(updateConsole, 1000);
-
-        //!!fix the following if you can control update interval
-        clearInterval(updateConsoleInterval);
+        callback(
+          <ConsoleOutput
+            url={'/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'}
+            data-id={item[0].id} />, { tabKey: 'console_output' }
+        );
         break;
       case 'vnc_console':
         if (!isAvailableView(item)) {
@@ -165,11 +152,6 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-
     var items = [{
       title: __.name,
       content: item.name
@@ -181,7 +163,7 @@ class Model extends React.Component {
       content: item.floating_ip ?
         <span>
           <i className="glyphicon icon-floating-ip" />
-          <a onClick={routerListener.bind(null, 'floating-ip', item.floating_ip.id)}>
+          <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
             {item.floating_ip.floating_ip_address}
           </a>
         </span>
@@ -189,7 +171,7 @@ class Model extends React.Component {
     }, {
       title: __.image,
       content:
-        <a onClick={routerListener.bind(null, 'image', item.image.id)}>
+        <a data-type="router" href={'/project/image' + item.image.id}>
           {item.image.name}
         </a>
     }, {
@@ -229,11 +211,7 @@ class Model extends React.Component {
     });
 
     var networks = [];
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-
+    var count = 0;
     for(let key in items.addresses) {
       for(let item of items.addresses[key]) {
         if(item['OS-EXT-IPS:type'] === 'fixed') {
@@ -242,18 +220,24 @@ class Model extends React.Component {
             if (i > 0) {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
-            securityGroups.push(<a key={i} onClick={routerListener.bind(null, 'security-group', item.security_groups[i].id)}>{item.security_groups[i].name}</a>);
+            securityGroups.push(
+              <a key={i} data-type="router" href={'/project/security-group/' + item.security_groups[i].id}>
+                {item.security_groups[i].name}
+              </a>
+            );
           }
 
           networks.push({
             virtual_interface:
-              <a onClick={routerListener.bind(null, 'virtual-interface', item.port.fixed_ips[0].subnet_id)}>
+              <a data-type="router" href={'/project/virtual-interface/' + item.port.fixed_ips[0].subnet_id}>
                 {item.addr}
               </a>,
-            subnet: <a onClick={routerListener.bind(null, 'subnet', item.subnet.id)}>{item.subnet.name}</a>,
+            subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a>,
             security_group: securityGroups,
-            floating_ip: '-'
+            floating_ip: '-',
+            __renderKey: count
           });
+          count++;
         }
       }
     }
@@ -293,7 +277,8 @@ class Model extends React.Component {
           key: 'floating_ip',
           dataIndex: 'floating_ip'
         }],
-        data: networks
+        data: networks,
+        dataKey: '__renderKey'
       },
       deleteAction: (delItem) => {
         // console.log(delItem);

@@ -65,6 +65,7 @@ class RelatedSources extends React.Component {
                 <Table
                   column={item.content.column}
                   data={item.content.data}
+                  dataKey={item.content.dataKey}
                   hover={true}
                   mini={true}/>
               </div>

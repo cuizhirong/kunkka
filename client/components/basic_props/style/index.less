@@ -1,29 +1,48 @@
 @import "../../../style/index.less";
 
 @basic-props-title-color: @color_gray_darker;
+@loading-color: @color_font_dark;
 
 .halo-com-basic-props {
-  tr {
-    height: 24px;
-    th {
-      width: 94px;
-      padding: 5px 0;
-      color: @basic-props-title-color;
-      font-weight: normal;
-      vertical-align: middle;
-      text-align: right;
+  .content-loading {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    .icon-loading {
+      font-size: 24px!important;
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      margin-left: -18px;
+      width: 36px;
+      color: @loading-color;
+      .loading-ani();
+      font-size: 36px!important;
     }
-    td {
-      vertical-align: middle;
-      padding: 5px 0 5px 24px;
-      p {
-        height: 16px;
-        line-height: 16px;
-        text-align: top;
-        margin: 0 0 6px 0;
+  }
+  table {
+    tr {
+      height: 24px;
+      th {
+        width: 94px;
+        padding: 5px 0;
+        color: @basic-props-title-color;
+        font-weight: normal;
+        vertical-align: middle;
+        text-align: right;
       }
-      i.glyphicon {
-        margin-right: 4px;
+      td {
+        vertical-align: middle;
+        padding: 5px 0 5px 24px;
+        p {
+          height: 16px;
+          line-height: 16px;
+          text-align: top;
+          margin: 0 0 6px 0;
+        }
+        i.glyphicon {
+          margin-right: 4px;
+        }
       }
     }
   }

@@ -134,7 +134,7 @@ class Model extends React.Component {
       content: item.multiattach ? __.yes : __.no
     }, {
       title: __.attributes,
-      content: __[item.metadata.attached_mode.toLowerCase()]
+      content: item.metadata.readonly ? __.read_only : __.read_write
     }, {
       title: __.status,
       type: 'status',
@@ -201,7 +201,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-
     column.map((col) => {
       switch (col.key) {
         case 'size':
@@ -241,7 +240,7 @@ class Model extends React.Component {
           break;
         case 'attributes':
           col.render = (rcol, ritem, rindex) => {
-            return __[ritem.metadata.attached_mode.toLowerCase()];
+            return ritem.metadata.readonly ? __.read_only : __.read_write;
           };
           break;
         default:
