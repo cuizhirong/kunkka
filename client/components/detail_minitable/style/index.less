@@ -7,11 +7,22 @@
   margin-top: 10px;
   i {
     font-size: 14px;
-    margin-right: 16px;
-    color: @color_gray_dark;
     cursor: pointer;
-    &:hover::before {
-      color: @color_red;
-    }
   }
+  i.action {
+      display: inline-block;
+      margin-right: 16px;
+      color: @color_gray_dark;
+      &:hover {
+        color: @color_blue;
+      }
+  }
+  i.icon-delete {
+      display: inline-block;
+      margin-right: 16px;
+      color: @color_gray_dark;
+      &:hover {
+        color: @color_red;
+      }
+    }
 }

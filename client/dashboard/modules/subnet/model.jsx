@@ -6,6 +6,7 @@ var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
+var getStatusIcon = require('client/dashboard/utils/status_icon');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -98,7 +99,7 @@ class Model extends React.Component {
           url: '/api/v1/' + HALO.user.projectId + '/subnets/' + item[0].id
         }).then((data) => {
           var basicPropsItem = this.getBasicPropsItems(data.subnet),
-            virtualInterfaceItem = this.getVirtualInterfaceItems(data.subnet);
+            virtualInterfaceItem = this.getVirtualInterfaceItems(data.subnet.nics);
 
           callback(
             <div>
@@ -167,6 +168,26 @@ class Model extends React.Component {
   }
 
   getVirtualInterfaceItems(item) {
+    var tableContent = [];
+    item.forEach((element, index) => {
+      var dataObj = {
+        id: index + 1,
+        name: <a data-type="router" href={'/project/nic/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
+        ip_address: element.fixed_ips[0].ip_address,
+        mac_address: element.mac_address,
+        instance: <div>
+            <i className="glyphicon icon-instance"/>
+            <a data-type="router" href={'/project/instance/' + element.instance.id}>{element.instance.name}</a>
+          </div>,
+        status: getStatusIcon(element.status),
+        operation: <div>
+            <i className="glyphicon icon-associate action"/>
+            <i className="glyphicon icon-delete" />
+          </div>
+      };
+      tableContent.push(dataObj);
+    });
+
     var tableConfig = {
       column: [{
         title: __.name,
@@ -193,7 +214,7 @@ class Model extends React.Component {
         key: 'operation',
         dataIndex: 'operation'
       }],
-      data: [],
+      data: tableContent,
       dataKey: 'id',
       hover: true
     };
