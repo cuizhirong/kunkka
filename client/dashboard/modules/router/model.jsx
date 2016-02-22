@@ -1,8 +1,11 @@
 require('./style/index.less');
 
 var React = require('react');
+var uskin = require('client/uskin/index');
+var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
@@ -59,18 +62,27 @@ class Model extends React.Component {
             </div>
           );
         }
+
         Request.get({
           url: '/api/v1/routers/' + item[0].id
         }).then((res) => {
-          var basicPropsItem = this.getBasicPropsItems(res.routers);
+          var basicPropsItem = this.getBasicPropsItems(res.routers),
+            subnetConfig = this.getDetailTableConfig(res.routers.subnets);
           callback(
-            <BasicProps
-            title={__.basic + __.properties}
-            defaultUnfold={true}
-            items={basicPropsItem ? basicPropsItem : []} />
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []} />
+              <DetailMinitable
+                title={__.subnet}
+                defaultUnfold={true}
+                tableConfig={subnetConfig ? subnetConfig : []}>
+                <Button value={__.related + __.subnet}/>
+              </DetailMinitable>
+            </div>
           );
         });
-
         break;
       default:
         callback(null);
@@ -116,6 +128,48 @@ class Model extends React.Component {
     }];
 
     return items;
+  }
+
+  getDetailTableConfig(item) {
+    var dataContent = [];
+    item.forEach((element, index) => {
+      var dataObj = {
+        id: index + 1,
+        name: <div>
+            <i className="glyphicon icon-subnet" />
+            <a data-type="router" href={'/project/subnet/' + element.id}>{element.name}</a>
+          </div>,
+        cidr: element.cidr,
+        gateway_ip: element.gateway_ip,
+        operation: <i className="glyphicon icon-delete" />
+      };
+      dataContent.push(dataObj);
+    });
+
+    var tableConfig = {
+      column: [{
+        title: __.subnet + __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.cidr,
+        key: 'cidr',
+        dataIndex: 'cidr'
+      }, {
+        title: __.gateway + __.ip,
+        key: 'gateway_ip',
+        dataIndex: 'gateway_ip'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   updateTableData(data) {
