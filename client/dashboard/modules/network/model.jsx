@@ -87,6 +87,7 @@ class Model extends React.Component {
         break;
       default:
         callback(null);
+        break;
     }
   }
 
@@ -114,46 +115,40 @@ class Model extends React.Component {
   }
 
   getDetailTableConfig(item) {
+    var dataContent = [];
+    item.forEach((element, index) => {
+      var dataObj = {
+        id: index + 1,
+        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name}</a>,
+        cidr: element.cidr,
+        router: element.router ? element.router.name : '',
+        operation: <i className="glyphicon icon-delete" />
+      };
+      dataContent.push(dataObj);
+    });
+
     var tableConfig = {
       column: [{
         title: __.subnet + __.name,
         key: 'name',
-        width: '25%',
         dataIndex: 'name'
       }, {
         title: __.cidr,
         key: 'cidr',
-        width: '25%',
         dataIndex: 'cidr'
       }, {
         title: __.related + __.router,
         key: 'router',
-        width: '25%',
         dataIndex: 'router'
       }, {
         title: __.operation,
-        key: 'create',
-        width: '25%',
-        dataIndex: 'create'
+        key: 'operation',
+        dataIndex: 'operation'
       }],
-      data: [],
+      data: dataContent,
       dataKey: 'id',
       hover: true
     };
-    tableConfig.data.length = item.length;
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-    for(var i = 0; i < item.length; i ++) {
-      tableConfig.data[i] = {
-        id: i + 1,
-        name: <a onClick={routerListener.bind(null, 'subnet', item[i].id)}>{item[i].name}</a>,
-        cidr: item[i].cidr,
-        router: item[i].router ? item[i].router.name : '',
-        create: <i className="glyphicon icon-delete" />
-      };
-    }
 
     return tableConfig;
   }
