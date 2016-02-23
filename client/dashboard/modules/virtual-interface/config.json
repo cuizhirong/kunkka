@@ -95,7 +95,11 @@
     }],
     "data": [],
     "detail": {
-      "tabs": []
+      "tabs": [{
+          "name": ["description"],
+          "key": "description",
+          "default": true
+        }]
     }
   }
 }

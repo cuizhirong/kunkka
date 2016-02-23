@@ -1,4 +1,17 @@
-.halo-module-interface {
+@import "../../../../style/index.less";
+
+@table-active-color: @color_blue_x_dark;
+@table-down-color: @color_font_dark;
+
+.halo-module-virtual-interface {
   flex: 1;
   display: flex;
+  .table {
+    .label-active {
+      color: @table-active-color;
+    }
+    .label-down {
+      color: @table-down-color;
+    }
+  }
 }
