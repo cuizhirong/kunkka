@@ -2,6 +2,7 @@ require('../../style/index.less');
 require('./style/index.less');
 
 var React = require('react');
+var EditContent = require('./edit_content');
 var Request = require('client/dashboard/cores/request');
 var moment = require('client/libs/moment');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
@@ -55,6 +56,8 @@ class BasicProps extends React.Component {
 
   getItemContent(item) {
     switch(item.type) {
+      case 'editable':
+        return <EditContent item={item} />;
       case 'status':
         return getStatusIcon(item.status);
       case 'time':

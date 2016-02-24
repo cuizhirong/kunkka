@@ -25,5 +25,16 @@ module.exports = {
         REGION: 'RegionOne'
       }
     }).catch(errHandler);
+  },
+  put: function(options) {
+    return request.put({
+      url: options.url,
+      dataType: options.dataType || 'json',
+      contentType: 'application/json',
+      data: options.data,
+      headers: {
+        REGION: 'RegionOne'
+      }
+    }).catch(errHandler);
   }
 };

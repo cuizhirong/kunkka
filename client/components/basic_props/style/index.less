@@ -2,6 +2,7 @@
 
 @basic-props-title-color: @color_gray_darker;
 @loading-color: @color_font_dark;
+@remodify-icon-color: @color_blue;
 
 .halo-com-basic-props {
   .content-loading {
@@ -42,6 +43,21 @@
         }
         i.glyphicon {
           margin-right: 4px;
+          &.remodify {
+            margin-left: 4px;
+            color: @remodify-icon-color;
+            cursor: pointer;
+          }
+          &.edit-confirm, &.edit-cancel {
+            margin-left: 4px;
+            cursor: pointer;
+          }
+          &.edit-confirm {
+
+          }
+          &.edit-cancel {
+
+          }
         }
       }
     }

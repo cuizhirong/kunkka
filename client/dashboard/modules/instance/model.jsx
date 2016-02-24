@@ -154,7 +154,13 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var items = [{
       title: __.name,
-      content: item.name
+      content: item.name,
+      type: 'editable',
+      request: {
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id,
+        body: 'server',
+        modifyData: 'name'
+      }
     }, {
       title: __.id,
       content: item.id
@@ -328,11 +334,6 @@ class Model extends React.Component {
   }
 
   setTableColRender(column) {
-    var routerListener = (module, id, e) => {
-      e.preventDefault();
-      router.pushState('/project/' + module + '/' + id);
-    };
-
     column.map((col) => {
       switch (col.key) {
         case 'image':
@@ -359,7 +360,7 @@ class Model extends React.Component {
             return ritem.floating_ip ?
               <span>
                 <i className="glyphicon icon-floating-ip" />
-                <a onClick={routerListener.bind(null, 'floating-ip', ritem.floating_ip.id)}>
+                <a data-type="router" href={'/project/floating-ip/' + ritem.floating_ip.id}>
                   {ritem.floating_ip.floating_ip_address}
                 </a>
               </span>
