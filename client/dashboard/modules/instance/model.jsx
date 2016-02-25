@@ -171,7 +171,7 @@ class Model extends React.Component {
     }, {
       title: __.image,
       content:
-        <a data-type="router" href={'/project/image' + item.image.id}>
+        <a data-type="router" href={'/project/image/' + item.image.id}>
           {item.image.name}
         </a>
     }, {
