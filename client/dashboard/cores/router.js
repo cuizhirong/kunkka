@@ -5,10 +5,6 @@
 
 var EventEmitter = require('eventemitter2');
 
-if (EventEmitter.EventEmitter2) {
-  EventEmitter = EventEmitter.EventEmitter2;
-}
-
 class RouterModel extends EventEmitter {
   constructor() {
     super();

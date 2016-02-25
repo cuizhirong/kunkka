@@ -2,9 +2,7 @@ var request = require('client/dashboard/cores/request');
 // var storage = require('client/dashboard/cores/storage');
 
 var EventEmitter = require('eventemitter2');
-if (EventEmitter.EventEmitter2) {
-  EventEmitter = EventEmitter.EventEmitter2;
-}
+
 var stores = new EventEmitter({
   wildcard: true
 });
