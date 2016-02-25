@@ -45,6 +45,17 @@ var getSnapshot = function (volume, snapshots) {
   });
 };
 
+// default method is post!!!
+var apiAction = {
+  'createSnapshot' : { type: 'createsnapshot' },
+  'attachInstance' : { type: 'attach' },
+  'detachInstance' : { type: 'detach' },
+  'extendSize'     : { type: 'resize' },
+  'readOnly'       : { type: 'readonly' },
+  'readWrite'      : { type: 'rw' },
+  'delete'         : { type: 'delete', method: 'delete' }
+};
+
 var prototype = {
   getVolumeList: function (req, res, next) {
     this.projectId = req.params.projectId;
@@ -95,9 +106,34 @@ var prototype = {
       }
     });
   },
+  operate: function (action, req, res, next) {
+    var that = this;
+    var region = req.headers.region;
+    var token = req.session.user.token;
+    var paramObj = this.paramChecker(this.cinder, action, req, res);
+    paramObj.project_id = req.params.projectId;
+    if (req.params.volumeId) {
+      paramObj.volume_id = req.params.volumeId;
+    }
+
+    this.cinder.action(token, region, function (err, payload) {
+      if (err) {
+        that.handleError(err, req, res, next);
+      } else {
+        res.json(payload.body);
+      }
+    }, action, paramObj);
+  },
   initRoutes: function () {
+    var that = this;
     this.app.get('/api/v1/:projectId/volumes/detail', this.getVolumeList.bind(this));
     this.app.get('/api/v1/:projectId/volumes/:volumeId', this.getVolumeDetails.bind(this));
+    this.app.post('/api/v1/:projectId/volumes/action/create', this.operate.bind(this, 'create'));
+    Object.keys(apiAction).forEach(function (action) {
+      var api = apiAction[action];
+      var method = api.method ? api.method : 'post';
+      that.app[method]('/api/v1/:projectId/volumes/:volumeId/action/' + api.type, that.operate.bind(that, action));
+    });
   }
 };
 

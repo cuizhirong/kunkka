@@ -47,6 +47,13 @@ var makeNetwork = function (network, obj) {
   });
 };
 
+// default method is post!!!
+var apiAction = {
+  createNetwork : { type: 'create' },
+  createSubnet  : { type: 'createsubnet' },
+  deleteNetwork : { type: 'delete', method: 'delete' }
+};
+
 var prototype = {
   getNetworkList: function (req, res, next) {
     var that = this;
@@ -98,9 +105,30 @@ var prototype = {
       }
     });
   },
+  operate: function (action, req, res, next) {
+    var that = this;
+    var token = req.session.user.token;
+    var region = req.headers.region;
+    // check if params required are given, and remove unnecessary params.
+    var paramObj = this.paramChecker(this.neutron, action, req, res);
+
+    this.neutron.action(token, region, function (err, payload) {
+      if (err) {
+        that.handleError(err, req, res, next);
+      } else {
+        res.json(payload.body);
+      }
+    }, action, paramObj);
+  },
   initRoutes: function () {
+    var that = this;
     this.app.get('/api/v1/networks', this.getNetworkList.bind(this));
     this.app.get('/api/v1/networks/:networkId', this.getNetworkDetails.bind(this));
+    Object.keys(apiAction).forEach(function (action) {
+      var api = apiAction[action];
+      var method = api.method ? api.method : 'post';
+      that.app[method]('/api/v1/networks/action/' + api.type, that.operate.bind(that, action));
+    });
   }
 };
 module.exports = function (app, extension) {

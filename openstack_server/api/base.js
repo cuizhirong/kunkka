@@ -40,4 +40,37 @@ API.prototype.asyncHandler = function (callback, err, payload) {
     callback(null, payload.body);
   }
 };
+API.prototype.paramChecker = function (service, action, req, res) {
+  var meta = service.meta[action];
+  var paramPool = meta.required.concat(meta.optional, meta.oneOf);
+  var arrMiss = [];
+  var objExtra = {};
+  var hasOneof = true;
+  var paramObj = {};
+  if (meta.oneOf.length) {
+    hasOneof = false;
+  }
+  Object.keys(req.body).forEach(function(k) {
+    if (paramPool.indexOf(k) === -1) {
+      objExtra[k] = req.body[k];
+    } else {
+      paramObj[k] = req.body[k];
+    }
+    if (meta.oneOf.indexOf(k) !== -1) {
+      hasOneof = true;
+    }
+  });
+  meta.required.forEach(function(r) {
+    if (paramObj[r] === undefined) {
+      arrMiss.push(r);
+    }
+  });
+  if (arrMiss.length) {
+    return res.status(400).json({'error': req.i18n.__('shared.error_parameters_required') + arrMiss});
+  } else if (!hasOneof) {
+    return res.status(400).json({'error': req.i18n.__('shared.error_parameters_oneof') + meta.oneOf});
+  } else {
+    return paramObj;
+  }
+};
 module.exports = API;

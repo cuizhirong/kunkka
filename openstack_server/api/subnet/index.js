@@ -17,6 +17,16 @@ function Subnet (app, neutron, nova) {
   });
 }
 
+// default method is post!!!
+var apiAction = {
+  createSubnet : { type: 'create' },
+  bindRouter   : { type: 'bindrouter' },
+  unbindRouter : { type: 'unbindrouter' },
+  addInstance  : { type: 'addserver' },
+  updateSubnet : { type: 'update' },
+  deleteSubnet : { type: 'delete', method: 'delete' }
+};
+
 var makeSubnet = function(subnet, obj) {
   obj.networks.some(function (n) {
     return subnet.network_id === n.id && (subnet.network = n);
@@ -105,9 +115,30 @@ var prototype = {
       }
     });
   },
+  operate: function (action, req, res, next) {
+    var that = this;
+    var token = req.session.user.token;
+    var region = req.headers.region;
+    // check if params required are given, and remove unnecessary params.
+    var paramObj = this.paramChecker(this.neutron, action, req, res);
+
+    this.neutron.action(token, region, function (err, payload) {
+      if (err) {
+        that.handleError(err, req, res, next);
+      } else {
+        res.json(payload.body);
+      }
+    }, action, paramObj);
+  },
   initRoutes: function () {
+    var that = this;
     this.app.get('/api/v1/subnets', this.getSubnetList.bind(this));
     this.app.get('/api/v1/:projectId/subnets/:subnetId', this.getSubnetDetails.bind(this));
+    Object.keys(apiAction).forEach(function (action) {
+      var api = apiAction[action];
+      var method = api.method ? api.method : 'post';
+      that.app[method]('/api/v1/subnets/action/' + api.type, that.operate.bind(that, action));
+    });
   }
 };
 module.exports = function (app, extension) {

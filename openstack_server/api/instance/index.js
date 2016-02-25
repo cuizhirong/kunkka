@@ -57,13 +57,15 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
           _fixedIps.push(e.addr);
           if (obj.ports) {
             obj.ports.some(function(p){
-              if (p.device_id === server.id && p.fixed_ips[0].ip_address === e.addr) {
+              if (p.device_id === server.id && p.mac_address === e['OS-EXT-IPS-MAC:mac_addr']) {
                 e.port = p;
-                obj.subnets.some(function(sub){
-                  if (sub.id === p.fixed_ips[0].subnet_id) {
-                    e.subnet = sub;
-                  }
-                });
+                if (p.fixed_ips.length) {
+                  obj.subnets.some(function(sub){
+                    if (sub.id === p.fixed_ips[0].subnet_id) {
+                      e.subnet = sub;
+                    }
+                  });
+                }
                 p.security_groups.forEach(function(security){
                   obj.security_groups.some(function(scu){
                     if (scu.id === security) {
@@ -76,12 +78,12 @@ var makeNetwork = function (server, obj) { /* floatingips, ports, subnets */
           }
         } else { // floating
           obj.floatingips.some(function (floatingip) {
-            return e.addr === floatingip.floating_ip_address && (e.floatingip = floatingip) && (_floatingip = floatingip);
+            return e.addr === floatingip.floating_ip_address && (_floatingip = floatingip);
           });
         }
       }
     });
-    ipv6.forEach(function(i){
+    ipv6.reverse().forEach(function(i){
       addresses[el].splice(i, 1);
     });
   });
@@ -117,6 +119,29 @@ var makeServer = function (server, obj) {
   makeNetwork(server, obj);
 };
 
+// default method is post!!!
+var apiAction = {
+  getVNCConsole    : { type: 'vnc' },
+  getConsoleOutput : { type: 'output' },
+  start            : { type: 'start' },
+  stop             : { type: 'stop' },
+  restart          : { type: 'restart' },
+  restartHard      : { type: 'hrestart' },
+  addFloatingip    : { type: 'addfip' },
+  removeFloatingip : { type: 'rmfip' },
+  createSnapshot   : { type: 'snapshot' },
+  resize           : { type: 'resize' },
+  joinNetwork      : { type: 'joinnet' },
+  addSecurity      : { type: 'addsecurity' },
+  removeSecurity   : { type: 'rmsecurity' },
+  changePass       : { type: 'password' },
+  attachVolume     : { type: 'addvolume' },
+  detachVolume     : { type: 'rmvolume', method: 'delete' },
+  delete           : { type: 'delete', method: 'delete' },
+  altMeta          : { type: 'editmeta', method: 'put' },
+  listAction       : { type: 'list', method: 'get' }
+};
+
 var prototype = {
   getInstanceList: function (req, res, next) {
     var that = this;
@@ -140,6 +165,27 @@ var prototype = {
           });
           res.json({
             servers: obj.servers
+          });
+        }
+      });
+  },
+  getFlavorList: function (req, res, next) {
+    var that = this;
+    this.projectId = req.params.projectId;
+    this.region = req.headers.region;
+    this.token = req.session.user.token;
+    async.parallel([
+      function (callback) {
+        that.nova.listFlavors(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+      }],
+      function (err, results) {
+        if (err) {
+          that.handleError(err, req, res, next);
+        } else {
+          var obj = {};
+          obj.flavors = results[0].flavors;
+          res.json({
+            servers: obj.flavors
           });
         }
       });
@@ -169,39 +215,36 @@ var prototype = {
         }
       });
   },
-  getVNCConsole: function (req, res, next) {
-    var projectId = req.params.projectId;
-    var serverId = req.params.serverId;
-    var region = req.headers.region;
-    var token = req.session.user.token;
+  operate: function (action, req, res, next) {
     var that = this;
-    this.nova.getVNCConsole(projectId, serverId, token, region, function (err, payload) {
+    var token = req.session.user.token;
+    var region = req.headers.region;
+    // check if params required are given, and remove unnecessary params.
+    var paramObj = this.paramChecker(this.nova, action, req, res);
+    paramObj.project_id = req.params.projectId;
+    if (req.params.serverId) {
+      paramObj.server_id = req.params.serverId;
+    }
+
+    this.nova.action(token, region, function (err, payload) {
       if (err) {
         that.handleError(err, req, res, next);
       } else {
         res.json(payload.body);
       }
-    });
-  },
-  getConsoleOutput: function (req, res, next) {
-    var projectId = req.params.projectId;
-    var serverId = req.params.serverId;
-    var region = req.headers.region;
-    var token = req.session.user.token;
-    var that = this;
-    this.nova.getConsoleOutput(projectId, serverId, token, region, function (err, payload) {
-      if (err) {
-        that.handleError(err, req, res, next);
-      } else {
-        res.json(payload.body);
-      }
-    });
+    }, action, paramObj);
   },
   initRoutes: function () {
+    var that = this;
     this.app.get('/api/v1/:projectId/servers/detail', this.getInstanceList.bind(this));
+    this.app.get('/api/v1/:projectId/flavors/detail', this.getFlavorList.bind(this));
     this.app.get('/api/v1/:projectId/servers/:serverId', this.getInstanceDetails.bind(this));
-    this.app.post('/api/v1/:projectId/servers/:serverId/action/vnc', this.getVNCConsole.bind(this));
-    this.app.post('/api/v1/:projectId/servers/:serverId/action/output', this.getConsoleOutput.bind(this));
+    this.app.post('/api/v1/:projectId/servers/action/create', this.operate.bind(this, 'create'));
+    Object.keys(apiAction).forEach(function (action) {
+      var api = apiAction[action];
+      var method = api.method ? api.method : 'post';
+      that.app[method]('/api/v1/:projectId/servers/:serverId/action/' + api.type, that.operate.bind(that, action));
+    });
   }
 };
 
