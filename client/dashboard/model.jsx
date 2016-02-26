@@ -110,7 +110,9 @@ class Model extends React.Component {
             {
               state.modules.map((m, index) => {
                 var M = modules[m];
-                return <M key={index} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
+                if (M) {
+                  return <M key={index} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
+                }
               })
             }
           </div>
