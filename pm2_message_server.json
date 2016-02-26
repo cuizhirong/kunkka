@@ -1,0 +1,12 @@
+{
+  "name": "halo-message",
+  "watch": ["message"],
+  "ignore_watch": [],
+  "script": "./message/index.js",
+  "env": {
+    "NODE_PATH": "server:drivers:."
+  },
+  "env_production": {
+    "NODE_ENV": "production"
+  }
+}

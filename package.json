@@ -19,12 +19,13 @@
     "start": "./scripts/start.sh",
     "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
-    "eslint": "eslint *.js server/ openstack_server/ drivers/ client/**/ tests/__tests__/ --ext .js,.jsx",
+    "eslint": "eslint *.js server/ openstack_server/ message/ client/**/ tests/__tests__/ --ext .js,.jsx",
     "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && node ../scripts/client_i18n_build.js && webpack --config dev.webpack.config.js",
     "benchmark": "./scripts/benchmark.sh",
     "prepublish": "cd client/uskin && npm install",
     "ws": "cd message && node index.js",
-    "transpile": "node ./scripts/client_i18n_build.js"
+    "transpile": "node ./scripts/client_i18n_build.js",
+    "message": "pm2 start pm2_message_server.json"
   },
   "dependencies": {
     "amqplib": "^0.4.0",
