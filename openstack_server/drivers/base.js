@@ -11,7 +11,8 @@ var dicUrl = {
   'snapshot_id' : 'snapshot_id',
   'network_id'  : 'network_id',
   'subnet_id'   : 'subnet_id',
-  'router_id'   : 'router_id'
+  'router_id'   : 'router_id',
+  'image_id'    : 'image_id'
 };
 
 var dirReplace = function (dir, obj) {

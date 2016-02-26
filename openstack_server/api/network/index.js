@@ -49,7 +49,6 @@ var makeNetwork = function (network, obj) {
 
 // default method is post!!!
 var apiAction = {
-  createNetwork : { type: 'create' },
   createSubnet  : { type: 'createsubnet' },
   deleteNetwork : { type: 'delete', method: 'delete' }
 };
@@ -111,7 +110,9 @@ var prototype = {
     var region = req.headers.region;
     // check if params required are given, and remove unnecessary params.
     var paramObj = this.paramChecker(this.neutron, action, req, res);
-
+    if (req.params.networkId) {
+      paramObj.network_id = req.params.networkId;
+    }
     this.neutron.action(token, region, function (err, payload) {
       if (err) {
         that.handleError(err, req, res, next);
@@ -124,10 +125,11 @@ var prototype = {
     var that = this;
     this.app.get('/api/v1/networks', this.getNetworkList.bind(this));
     this.app.get('/api/v1/networks/:networkId', this.getNetworkDetails.bind(this));
+    this.app.post('/api/v1/networks/action/create', this.operate.bind(this, 'createNetwork'));
     Object.keys(apiAction).forEach(function (action) {
       var api = apiAction[action];
       var method = api.method ? api.method : 'post';
-      that.app[method]('/api/v1/networks/action/' + api.type, that.operate.bind(that, action));
+      that.app[method]('/api/v1/networks/:networkId/action/' + api.type, that.operate.bind(that, action));
     });
   }
 };

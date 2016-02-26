@@ -33,9 +33,29 @@ var prototype = {
       }
     });
   },
+  operate: function (action, req, res, next) {
+    var that = this;
+    var token = req.session.user.token;
+    var region = req.headers.region;
+    // check if params required are given, and remove unnecessary params.
+    var paramObj = this.paramChecker(this.glance, action, req, res);
+    if (req.params.imageId) {
+      paramObj.image_id = req.params.imageId;
+    }
+
+    this.glance.action(token, region, function (err, payload) {
+      if (err) {
+        that.handleError(err, req, res, next);
+      } else {
+        res.json(payload.body);
+      }
+    }, action, paramObj);
+  },
   initRoutes: function () {
     this.app.get('/api/v1/images', this.getImageList.bind(this));
     this.app.get('/api/v1/images/:imageId', this.getImageDetails.bind(this));
+    this.app.post('/api/v1/images/action/create', this.operate.bind(this, 'create'));
+    this.app.delete('/api/v1/images/:imageId/action/delete', this.operate.bind(this, 'delete'));
   }
 };
 

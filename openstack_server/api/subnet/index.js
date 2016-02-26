@@ -19,12 +19,11 @@ function Subnet (app, neutron, nova) {
 
 // default method is post!!!
 var apiAction = {
-  createSubnet : { type: 'create' },
-  bindRouter   : { type: 'bindrouter' },
-  unbindRouter : { type: 'unbindrouter' },
-  addInstance  : { type: 'addserver' },
-  updateSubnet : { type: 'update' },
-  deleteSubnet : { type: 'delete', method: 'delete' }
+  subnetBindRouter   : { type: 'bindrouter', method: 'put' },
+  subnetUnbindRouter : { type: 'unbindrouter', method: 'put' },
+  subnetAddInstance  : { type: 'addserver' },
+  subnetUpdateSubnet : { type: 'update', method: 'put' },
+  subnetDelete       : { type: 'delete', method: 'delete' }
 };
 
 var makeSubnet = function(subnet, obj) {
@@ -121,6 +120,9 @@ var prototype = {
     var region = req.headers.region;
     // check if params required are given, and remove unnecessary params.
     var paramObj = this.paramChecker(this.neutron, action, req, res);
+    if (req.params.subnetId) {
+      paramObj.subnet_id = req.params.subnetId;
+    }
 
     this.neutron.action(token, region, function (err, payload) {
       if (err) {
@@ -134,10 +136,11 @@ var prototype = {
     var that = this;
     this.app.get('/api/v1/subnets', this.getSubnetList.bind(this));
     this.app.get('/api/v1/:projectId/subnets/:subnetId', this.getSubnetDetails.bind(this));
+    this.app.post('/api/v1/subnets/action/create', this.operate.bind(this, 'createSubnet'));
     Object.keys(apiAction).forEach(function (action) {
       var api = apiAction[action];
       var method = api.method ? api.method : 'post';
-      that.app[method]('/api/v1/subnets/action/' + api.type, that.operate.bind(that, action));
+      that.app[method]('/api/v1/subnets/:subnetId/action/' + api.type, that.operate.bind(that, action));
     });
   }
 };

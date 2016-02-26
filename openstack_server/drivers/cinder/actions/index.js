@@ -23,7 +23,6 @@ var dicMeta = {
   'createSnapshot': {
     dir       : '/v2/{tenant_id}/snapshots',
     actionKey : 'snapshot',
-    required  : ['volume_id'],
     optional  : ['name', 'description', 'force'],
     urlParam  : ['project_id']
   },

@@ -27,45 +27,67 @@ var dicMeta = {
   'deleteNetwork': {
     method   : 'delete',
     dir      : '/v2.0/networks/{network_id}',
-    required : ['network_id'],
     urlParam : ['network_id']
   },
-  'bindRouter': { // for subnet
+  'subnetBindRouter': { // for subnet
     method   : 'put',
     dir      : '/v2.0/routers/{router_id}/add_router_interface',
     required : ['router_id'],
-    oneOf    : ['port_id', 'subnet_id'],
     urlParam : ['router_id']
   },
-  'unbindRouter': { // for subnet
+  'subnetUnbindRouter': { // for subnet
     method   : 'put',
     dir      : '/v2.0/routers/{router_id}/remove_router_interface',
     required : ['router_id'],
-    oneOf    : ['port_id', 'subnet_id'],
     urlParam : ['router_id']
   },
-  'addInstance': { // for subnet
+  'subnetAddInstance': { // for subnet
     remote    : novaRemote,
     dir       : '/v2.1/{tenant_id}/servers/{server_id}/os-interface',
     actionKey : 'interfaceAttachment',
-    required  : ['project_id', 'server_id'],
-    oneOf     : ['port_id', 'net_id'],
-    optional  : ['fixed_ips'],
+    required  : ['project_id', 'server_id', 'net_id', 'fixed_ips'],
     urlParam  : ['project_id', 'server_id']
   },
-  'updateSubnet': { // for subnet
+  'subnetUpdateSubnet': { // for subnet
     method    : 'put',
     dir       : '/v2.0/subnets/{subnet_id}',
     actionKey : 'subnet',
-    required  : ['subnet_id'],
     urlParam  : ['subnet_id'],
     optional  : ['name', 'allocation_pools', 'start', 'end', 'gateway_ip', 'enable_dhcp', 'dns_nameservers', 'host_routes', 'destination', 'nexthop']
   },
-  'deleteSubnet': { // for subnet
+  'subnetDelete': { // for subnet
     method   : 'delete',
     dir      : '/v2.0/subnets/{subnet_id}',
-    required : ['subnet_id'],
     urlParam : ['subnet_id']
+  },
+  'createRouter': {
+    dir       : '/v2.0/routers',
+    actionKey : 'router',
+    optional  : ['name', 'external_gateway_info', 'enable_snat', 'external_fixed_ips', 'admin_state_up']
+  },
+  'routerOpenExternal': {
+    method    : 'put',
+    dir       : '/v2.0/routers/{router_id}',
+    actionKey : 'router',
+    required  : ['external_gateway_info'],
+    urlParam  : ['router_id']
+  },
+  'routerBindSubnet': {
+    method   : 'put',
+    dir      : '/v2.0/routers/{router_id}/add_router_interface',
+    oneOf    : ['port_id', 'subnet_id'],
+    urlParam : ['router_id']
+  },
+  'routerUnbindSubnet': {
+    method   : 'put',
+    dir      : '/v2.0/routers/{router_id}/remove_router_interface',
+    oneOf    : ['port_id', 'subnet_id'],
+    urlParam : ['router_id']
+  },
+  'routerDelete': {
+    method   : 'delete',
+    dir      : '/v2.0/routers/{router_id}',
+    urlParam : ['router_id']
   }
 };
 Base.generateDicMeta(dicMeta);
