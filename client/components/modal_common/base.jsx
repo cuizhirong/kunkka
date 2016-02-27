@@ -1,5 +1,6 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
+var deleteModal = require('client/components/modal_delete/index');
 
 
 class ModalBase extends React.Component {
@@ -11,15 +12,16 @@ class ModalBase extends React.Component {
       disabled: false
     };
 
-    this.onDelete = this.onDelete.bind(this);
+    this.onConfirm = this.onConfirm.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.onPop = this.onPop.bind(this);
   }
 
-  onDelete() {
+  onConfirm() {
     this.setState({
       disabled: true
     });
-    this.props.onDelete && this.props.onDelete(this.state, (status) => {
+    this.props.onConfirm && this.props.onConfirm(this.state, (status) => {
       if (status) {
         this.setState({
           visible: false
@@ -30,6 +32,22 @@ class ModalBase extends React.Component {
         });
       }
 
+    });
+  }
+
+  onPop() {
+    deleteModal({
+      title: '删除通用弹窗测试',
+      content: '测试，这是内容区域',
+      deleteText: '删除',
+      cancelText: '取消',
+      onDelete: function(data, cb) {
+        console.log('触发删除事件:', data);
+        setTimeout(function() {
+          cb(true);
+        }, 1000);
+      },
+      parent: this.refs.modal
     });
   }
 
@@ -45,12 +63,12 @@ class ModalBase extends React.Component {
       state = this.state;
 
     return (
-      <Modal {...props} visible={state.visible}>
+      <Modal ref="modal" {...props} visible={state.visible}>
         <div className="modal-bd">
-          {props.content}
+          <a onClick={this.onPop}>点击我</a>
         </div>
         <div className="modal-ft">
-          <Button value={props.deleteText} disabled={state.disabled} btnKey="create" type="delete" onClick={this.onDelete}/>
+          <Button value={props.confirmText} disabled={state.disabled} onClick={this.onConfirm}/>
           <Button value={props.cancelText} btnKey="cancel" type="cancel" onClick={this.onCancel}/>
         </div>
       </Modal>
