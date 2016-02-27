@@ -392,18 +392,6 @@ class Model extends React.Component {
   clickBtns(e, key) {
     switch (key) {
       case 'create':
-        deleteModal({
-          title: '删除通用弹窗测试',
-          content: '测试，这是内容区域',
-          deleteText: '删除',
-          cancelText: '取消',
-          onDelete: function(data, cb) {
-            console.log('触发删除事件:', data);
-            setTimeout(function() {
-              cb(true);
-            }, 1000);
-          }
-        });
         break;
       case 'vnc_console':
         commonModal({
@@ -415,6 +403,15 @@ class Model extends React.Component {
             setTimeout(function() {
               cb(true);
             }, 1000);
+          }
+        });
+        break;
+      case 'power_off':
+        deleteModal({
+          action: 'reboot',
+          type: 'instance',
+          onDelete: function(data, cb) {
+            cb(true);
           }
         });
         break;

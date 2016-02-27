@@ -1,5 +1,6 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
+var __ = require('i18n/client/lang.json');
 
 
 class ModalBase extends React.Component {
@@ -42,16 +43,24 @@ class ModalBase extends React.Component {
 
   render() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      action = __[props.action],
+      type = __[props.type],
+      cancel = __.cancel,
+      content = __.msg_delete.replace('{0}', action).replace('{1}', type);
+
+    var _props = Object.assign({}, props, {
+      title: action + type
+    });
 
     return (
-      <Modal {...props} visible={state.visible}>
+      <Modal {..._props} visible={state.visible}>
         <div className="modal-bd">
-          {props.content}
+          {content}
         </div>
         <div className="modal-ft">
-          <Button value={props.deleteText} disabled={state.disabled} btnKey="create" type="delete" onClick={this.onDelete}/>
-          <Button value={props.cancelText} btnKey="cancel" type="cancel" onClick={this.onCancel}/>
+          <Button value={action} disabled={state.disabled} btnKey="create" type="delete" onClick={this.onDelete}/>
+          <Button value={cancel} btnKey="cancel" type="cancel" onClick={this.onCancel}/>
         </div>
       </Modal>
     );
