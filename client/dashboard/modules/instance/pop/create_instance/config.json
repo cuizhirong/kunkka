@@ -1,0 +1,15 @@
+{
+  "title": "create",
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "info": "tip_change_pwd"
+  }, {
+    "type": "text",
+    "field": "volume",
+    "icon": "volume"
+  }, {
+    "type": "pop_link",
+    "field": "yaoli"
+  }]
+}

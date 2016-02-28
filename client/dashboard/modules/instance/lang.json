@@ -18,6 +18,7 @@
     "shutoff": "Shut Off",
     "sources": "Sources",
     "take_instance": "Take Instance ",
+    "tip_change_pwd": "This is a test, the length must between 6 and 8",
     "topology": "Topology",
     "virtual_interface": "Virtual Interface",
     "vnc_console": "VNC Console"
@@ -41,6 +42,7 @@
     "shutoff": "停止",
     "sources": "资源",
     "take_instance": "创建主机",
+    "tip_change_pwd": "这是一个测试，密码长度必须在6和8之间",
     "topology": "拓扑",
     "virtual_interface": "虚拟网卡",
     "vnc_console": "VNC登录"

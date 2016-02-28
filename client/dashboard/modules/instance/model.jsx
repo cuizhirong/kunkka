@@ -10,7 +10,8 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
 var deleteModal = require('client/components/modal_delete/index');
-var commonModal = require('client/components/modal_common/index');
+var changePwd = require('./pop/change_pwd/index');
+var createInstance = require('./pop/create_instance/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -392,18 +393,13 @@ class Model extends React.Component {
   clickBtns(e, key) {
     switch (key) {
       case 'create':
+        createInstance('234245432523', function(data) {
+          console.log(data);
+        });
         break;
       case 'vnc_console':
-        commonModal({
-          title: '通用配置弹窗测试',
-          confirmText: '确认',
-          cancelText: '取消',
-          onConfirm: function(data, cb) {
-            console.log('触发确认事件:', data);
-            setTimeout(function() {
-              cb(true);
-            }, 1000);
-          }
+        changePwd(function(data) {
+          console.log(data);
         });
         break;
       case 'power_off':

@@ -1,3 +1,5 @@
+require('./style/index.less');
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Base = require('./base');
