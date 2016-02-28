@@ -21,6 +21,8 @@ var actions = require('./actions');
 var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
+// var BasicPropsEvent = require('client/components/basic_props/event');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -33,14 +35,18 @@ class Model extends React.Component {
     moment.locale(HALO.configs.lang);
     this.bindEventList = this.bindEventList.bind(this);
     this.clearTableState = this.clearTableState.bind(this);
+    this.loadingTable = this.loadingTable.bind(this);
     this._eventList = {};
   }
 
   componentWillMount() {
     this.bindEventList();
     this.setTableColRender(config.table.column);
+
+    this.loadingTable();
     this.listInstance();
 
+    // BasicPropsEvent.on('refresh', this.refresh.bind(this));
     stores.on('change', (actionType, data) => {
       // console.log('storage changed:', storage.data('instance'));
       // console.log('storage mix:', storage.mix(['instance', 'subnet']));
@@ -68,7 +74,8 @@ class Model extends React.Component {
       clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
       clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
+      clickDetailTabs: this.clickDetailTabs.bind(this),
+      refresh: this.refresh.bind(this)
     };
   }
 
@@ -104,7 +111,8 @@ class Model extends React.Component {
               <BasicProps
                 title={__.basic + __.properties}
                 defaultUnfold={true}
-                items={basicPropsItem} />
+                items={basicPropsItem}
+                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
               <RelatedSources
                 title={__.related + __.sources}
                 defaultUnfold={true}
@@ -127,7 +135,10 @@ class Model extends React.Component {
 
         callback(
           <ConsoleOutput
+            refresh={true}
             url={'/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'}
+            moduleID="instance"
+            tabKey="console_output"
             data-id={item[0].id} />, { tabKey: 'console_output' }
         );
         break;
@@ -332,7 +343,6 @@ class Model extends React.Component {
   }
 
   listInstance() {
-    this.loadingTable();
     actions.emit('instance', 'getItems');
   }
 
@@ -420,8 +430,12 @@ class Model extends React.Component {
   }
 
   refresh() {
+    var path = router.getPathList();
+    if (!path[2]) {
+      this.loadingTable();
+      this.refs.dashboard.clearState();
+    }
     this.listInstance();
-    this.refs.dashboard.clearState();
   }
 
   clickDropdownBtn(e, status) {

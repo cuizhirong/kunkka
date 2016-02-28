@@ -2,7 +2,6 @@ require('../../style/index.less');
 
 var React = require('react');
 var Request = require('client/dashboard/cores/request');
-var router = require('client/dashboard/cores/router');
 
 class EditContent extends React.Component {
 
@@ -10,6 +9,7 @@ class EditContent extends React.Component {
     super(props);
 
     this.state = {
+      content: this.props.item.content,
       value: this.props.item.content,
       edit: false
     };
@@ -22,7 +22,8 @@ class EditContent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      value: nextProps.content,
+      content: nextProps.item.content,
+      value: nextProps.item.content,
       edit: false
     });
   }
@@ -53,8 +54,8 @@ class EditContent extends React.Component {
       url: r.url,
       data: data
     }).then((res) => {
-      this.editable(false);
-      router.pushState(router.getPathName(), null, null, true);
+      this.props.dashboard.refresh();
+      this.props.dashboard.refs.captain.forceUpdate();
     }, (err) => {
       // console.log('err', err);
     });
@@ -67,11 +68,11 @@ class EditContent extends React.Component {
     });
   }
 
-
   render() {
     var item = this.props.item,
       value = this.state.value,
-      edit = this.state.edit;
+      edit = this.state.edit,
+      content = this.state.content;
 
     return (
       edit ?
@@ -81,7 +82,7 @@ class EditContent extends React.Component {
           <i className="glyphicon icon-remove edit-cancel" onClick={this.onCancel} />
         </span>
       : <span>
-          {item.content}
+          {content}
           <i className="glyphicon icon-edit remodify" onClick={this.onEdit} />
         </span>
     );

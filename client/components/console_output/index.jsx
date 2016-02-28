@@ -2,6 +2,8 @@ require('./style/index.less');
 
 var React = require('react');
 var Request = require('client/dashboard/cores/request');
+var router = require('client/dashboard/cores/router');
+var captainEvent = require('../main_table/event');
 
 class VncConsole extends React.Component {
   constructor(props) {
@@ -11,35 +13,84 @@ class VncConsole extends React.Component {
       loading: false,
       data: []
     };
-    this.url = this.props.url;
     this.refresh;
-    this.getConsoleData = this.getConsoleData.bind(this);
+    this.onChangeState = this.onChangeState.bind(this);
+    this.onChangeTab = this.onChangeTab.bind(this);
+    this.getData = this.getData.bind(this);
+    this.loading = this.loading.bind(this);
+    this.run = this.run.bind(this);
   }
 
   componentWillMount() {
-    this.setState({
-      loading: true
-    });
-    this.getConsoleData();
-    this.refresh = setInterval(this.getConsoleData, 1000);
+    if (this.props.refresh) {
+      this.loading();
+      this.run();
+    }
+
+    router.on('changeState', this.onChangeState);
+    captainEvent.on('changeTab', this.onChangeTab);
   }
 
-  getConsoleData() {
+  componentWillReceiveProps(nextProps) {
+    this.stopRefreshing();
+    this.loading();
+    this.run();
+  }
+
+  componentWillUnmount() {
+    this.stopRefreshing();
+
+    router.removeListener('changeState', this.onChangeState);
+    captainEvent.removeListener('changeTab', this.onChangeTab);
+  }
+
+  onChangeState(pathList) {
+    if (!pathList[2] || (pathList[0] === 'project' && pathList[1] !== this.props.moduleID)) {
+      this.stopRefreshing();
+    }
+  }
+
+  onChangeTab(tab) {
+    this.detailTabKey = tab.key;
+    if (tab.key !== this.props.tabKey) {
+      this.stopRefreshing();
+    } else {
+      this.loading();
+      this.run();
+    }
+  }
+
+  getData() {
     Request.post({
-      url: this.url
+      url: this.props.url
     }).then((res) => {
-      this.setState({
-        loading: false,
-        data: res.output.split('\n')
-      });
+      if (this.refresh) {
+        this.setState({
+          loading: false,
+          data: res.output.split('\n')
+        });
+      }
     }, (err) => {
       //console.log(err);
     });
-    this.stopRefreshing();
+  }
+
+  loading() {
+    this.setState({
+      loading: true
+    });
+  }
+
+  run() {
+    this.getData();
+    if (this.props.refresh) {
+      this.refresh = window.setInterval(this.getData, 1500);
+    }
   }
 
   stopRefreshing() {
-    clearInterval(this.refresh);
+    window.clearInterval(this.refresh);
+    this.refresh = undefined;
   }
 
   render() {

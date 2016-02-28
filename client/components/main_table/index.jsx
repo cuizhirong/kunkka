@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var Details = require('./details');
+var Captain = require('./captain');
 
 var uskin = require('client/uskin/index');
 var Button = uskin.Button;
@@ -22,74 +22,35 @@ class MainTable extends React.Component {
     super(props);
 
     this.stores = {
-      checkedRow: []
+      rows: []
     };
-    moment.locale(HALO.configs.lang);
-    this.changeSearchInput = this.changeSearchInput.bind(this);
-    this.tableCheckboxOnClick = this.tableCheckboxOnClick.bind(this);
-    this.controlCaptain = this.controlCaptain.bind(this);
+    this.eventList = this.props.eventList;
     this.onChangeState = this.onChangeState.bind(this);
   }
 
   componentWillMount() {
     var config = this.props.config;
-    this.setTableFilterAllLang(config.table);
+
+    this.setFilterDefaultName(config.table);
     converter.convertLang(__, config);
-    this.tableColRender(config.table.column);
+
+    this.renderTableColumn(config.table.column);
+
     router.on('changeState', this.onChangeState);
   }
 
-  onChangeState(pathList) {
-    if (pathList[1] !== this.props.moduleID) {
-      return;
-    }
-    var table = this.refs.table,
-      details = this.refs.details;
-    var checkedRow = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
-
-    //if the detail id is invalid, replace url to current module pathlist
-    if (pathList[2] && !checkedRow) {
-      router.replaceState('/' + pathList.slice(0, 2).join('/'), null, null, false);
-      return;
+  componentDidMount() {
+    if (this.refs.captain) {
+      this.captainNode = this.refs.captain;
     }
 
-    //when detail ID is valid, open the detail module
-    if (pathList[2]) {
-      if (!details.state.detailVisible) {
-        details && details.setState({
-          detailVisible: true
-        });
-      }
-      table && table.setState({
-        checkedKey: {
-          [pathList[2]]: true
-        }
-      });
-
-      this.stores = {
-        checkedRow: [checkedRow]
-      };
-
-      var selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
-      this.refs.details.updateContent(selectedTab, this.stores.checkedRow);
-    } else {
-      details && details.setState({
-        detailVisible: false
-      });
-      table && table.setState({
-        checkedKey: {}
-      });
+    if (this.refs.table) {
+      this.tableNode = this.refs.table;
     }
-
-    this.props.eventList.updateBtns(!!pathList[2], checkedRow, !pathList[2] ? [] : [checkedRow]);
-
   }
 
-  clickTabs(e, item) {
-    router.pushState('/project/' + item.key);
-  }
-
-  setTableFilterAllLang(table) {
+  /* initialize  */
+  setFilterDefaultName(table) {
     table.column.forEach((col) => {
       if (col.filter) {
         col.filterAll = ['all'];
@@ -97,18 +58,146 @@ class MainTable extends React.Component {
     });
   }
 
-  changeSearchInput(text) {
-    this.searchInTable(text);
-    this.props.eventList.changeSearchInput && this.props.eventList.changeSearchInput(text);
+  renderTableColumn(column, item, index) {
+    column.map((col) => {
+      switch (col.type) {
+        case 'captain':
+          !col.render && (col.render = (_col, _item, i) => {
+            return (
+              <a className="captain" onClick={this.clickCaptain.bind(this, _col, _item, i)}>
+                {_item[_col.dataIndex]}
+              </a>
+            );
+          });
+          break;
+        case 'status':
+          !col.render && (col.render = (_col, _item, i) => {
+            return getStatusIcon(_item[_col.dataIndex]);
+          });
+          break;
+        case 'time':
+          !col.render && (col.render = (_col, _item, i) => {
+            return moment(_item[_col.dataIndex]).fromNow();
+          });
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  /* handle on router */
+  onChangeState(pathList) {
+    if (pathList[1] !== this.props.moduleID) {
+      return;
+    }
+
+    if (pathList[2]) {
+      var row = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
+      /* no row data means invalid path list */
+      if (!row) {
+        router.replaceState('/' + pathList.slice(0, 2).join('/'));
+        return;
+      }
+
+      this.stores = {
+        rows: [row]
+      };
+
+      if (this.captainNode && !this.captainNode.state.visible) {
+        this.changeCaptainState('visible', true);
+      }
+      this.changeTableState('checkedKey', {
+        [pathList[2]]: true
+      });
+
+      if (this.captainNode.shouldLoading()) {
+        this.captainNode.loading();
+      }
+      this.captainNode.updateContent(this.stores.rows);
+    } else {
+      this.stores = {
+        rows: []
+      };
+
+      if (this.captainNode && this.captainNode.state.visible) {
+        this.changeCaptainState('visible', false);
+      }
+      this.changeTableState('checkedKey', {});
+    }
+
+
+    /* should btns change? ask the module */
+    var func = this.eventList.clickTableCheckbox;
+    func && func(
+      null,
+      pathList[2] ? true : false,
+      pathList[2] ? this.stores.rows[0] : null,
+      this.stores.rows
+    );
+  }
+
+  /* change states of element */
+  changeCaptainState(state, value) {
+    if (this.captainNode) {
+      this.captainNode.setState({
+        [state]: value
+      });
+    }
+  }
+
+  changeTableState(state, value) {
+    if (this.tableNode) {
+      this.tableNode.setState({
+        [state]: value
+      });
+    }
+  }
+
+  /* main table func */
+  clickCaptain(col, item, i, e) {
+    e.preventDefault();
+
+    var shouldClose = this.captainNode.state.visible
+      && (this.stores.rows.length === 1)
+      && (this.stores.rows[0].id === item.id);
+
+    var path = router.getPathList();
+    if (shouldClose) {
+      router.pushState('/project/' + path[1]);
+    } else {
+      router.pushState('/project/' + path[1] + '/' + item.id);
+    }
+  }
+
+  checkboxListener(e, status, clickedRow, arr) {
+    this.stores = {
+      rows: arr
+    };
+
+    var path = router.getPathList();
+    if (arr.length <= 0) {
+      router.pushState('/project/' + path[1]);
+    } else if (arr.length <= 1) {
+      if (this.captainNode.state.visible) {
+        if (path[2] === arr[0].id) {
+          router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
+        } else {
+          router.pushState('/project/' + path[1] + '/' + arr[0].id);
+        }
+      }
+    } else {
+      this.captainNode.updateContent(this.stores.rows);
+    }
   }
 
   searchInTable(text) {
-    if (this.refs.table) {
+    if (this.tableNode) {
       var search = this.props.config.search;
 
       if (search && search.column) {
         var filterCol = search.column;
-        this.refs.table.setState({
+        this.tableNode.setState({
           filterCol: filterCol,
           filterBy: function(item, _column) {
             return _column.some((col) => {
@@ -123,76 +212,10 @@ class MainTable extends React.Component {
     }
   }
 
-  controlCaptain(_item, _col, _index, e) {
-    e.preventDefault();
-
-    var shouldClose = this.refs.details.state.detailVisible
-      && (this.stores.checkedRow.length === 1)
-      && (this.stores.checkedRow[0].id === _item.id);
-
-    var path = router.getPathList();
-
-    if (shouldClose) {
-      router.pushState('/project/' + path[1]);
-    } else {
-      router.pushState('/project/' + path[1] + '/' + _item.id);
-    }
-  }
-
-  tableColRender(column, item, index) {
-    column.map((col) => {
-      switch (col.type) {
-        case 'captain':
-          !col.render && (col.render = (rcol, ritem, rindex) => {
-            return <a style={{cursor: 'pointer'}} onClick={this.controlCaptain.bind(null, ritem, rcol, rindex)}>
-              {ritem[rcol.dataIndex]}</a>;
-          });
-          break;
-        case 'status':
-          !col.render && (col.render = (rcol, ritem, rindex) => {
-            return getStatusIcon(ritem[rcol.dataIndex]);
-          });
-          break;
-        case 'time':
-          !col.render && (col.render = (rcol, ritem, rindex) => {
-            return moment(ritem[rcol.dataIndex]).fromNow();
-          });
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  tableCheckboxOnClick(e, status, clickedRow, arr) {
-    var clickTableCheckbox = this.props.eventList.clickTableCheckbox;
-    if (clickTableCheckbox) {
-      clickTableCheckbox(e, status, clickedRow, arr);
-    }
-
-    this.stores = {
-      checkedRow: arr
-    };
-
-    var path = router.getPathList();
-    if (arr.length > 1) {
-      var selectedTab = this.props.config.table.detail.tabs.filter((tab) => tab.default)[0];
-      this.refs.details.updateContent(selectedTab, this.stores.checkedRow);
-    } else if (arr.length > 0) {
-      if (this.refs.details.state.detailVisible) {
-        router.pushState('/project/' + path[1] + '/' + arr[0].id);
-      }
-    } else {
-      router.pushState('/project/' + path[1]);
-    }
-  }
-
-  clearState() {
+  /* public api */
+  /*clearState() {
     this.clearSearchState();
     this.clearTableState();
-    this.setState({
-      detailVisible: false
-    });
   }
 
   clearSearchState() {
@@ -203,97 +226,134 @@ class MainTable extends React.Component {
   }
 
   clearTableState() {
-    if (this.refs.table) {
-      this.refs.table.clearState();
+    if (this.tableNode) {
+      this.tableNode.clearState();
     }
+  }*/
+
+  refresh() {
+    var func = this.eventList.refresh;
+    func && func();
+  }
+
+  /* clicked from elements */
+  clickTabs(e, item) {
+    var func = this.eventList.clickTabs;
+    func && func(e, item);
+  }
+
+  clickDropdownBtn(e, item) {
+    var func = this.eventList.clickDropdownBtn;
+    func && func(e, item);
+  }
+
+  clickBtns(e, key) {
+    var func = this.eventList.clickBtns;
+    func && func(e, key);
+  }
+
+  changeSearchInput(str) {
+    this.searchInTable(str);
+
+    var func = this.eventList.changeSearchInput;
+    func && func(str);
+  }
+
+  changeCheckboxOnTable(e, status, clickedRow, arr) {
+    this.checkboxListener(e, status, clickedRow, arr);
+
+    var func = this.eventList.clickTableCheckbox;
+    func && func(e, status, clickedRow, arr);
+  }
+
+  clickCaptainTabs(tab, item, callback) {
+    var func = this.eventList.clickDetailTabs;
+    func && func(tab, item, callback);
   }
 
   render() {
     var props = this.props,
       config = props.config,
-      eventList = props.eventList,
+      tabs = config.tabs,
       btns = config.btns,
       search = config.search,
       table = config.table,
-      title = config.tabs.filter((tab) => tab.default)[0].name;
+      title = config.tabs.filter((tab) => tab.default)[0].name,
+      detail = table.detail;
 
+    /* loading */
     if (table.data === null) {
-      table.loading = true;
       table.data = [];
+      table.loading = true;
     } else {
       table.loading = false;
     }
 
     return (
       <div className="halo-com-main-table">
-        {config.tabs ?
+        {tabs ?
           <div className="submenu-tabs">
-            <Tab
-            items={config.tabs}
-            onClick={this.clickTabs} />
+            <Tab items={tabs} onClick={this.clickTabs.bind(this)} />
           </div>
           : null
         }
         <div className="operation-list">
           {btns.map((btn, index) =>
-            !btn.dropdown ?
-            <Button
-              key={index}
-              value={btn.value}
-              btnKey={btn.key}
-              onClick={eventList.clickBtns}
-              type={btn.type}
-              disabled={btn.disabled}
-              iconClass={btn.icon}
-              initial={true} />
-           : <DropdownButton
-              key={index}
-              disabled={btn.dropdown.disabled}
-              buttonData={btn}
-              dropdownItems={btn.dropdown.items}
-              dropdownOnClick={eventList.clickDropdownBtn} />
+            btn.dropdown ?
+              <DropdownButton
+                key={index}
+                disabled={btn.dropdown.disabled}
+                buttonData={btn}
+                dropdownItems={btn.dropdown.items}
+                dropdownOnClick={this.clickDropdownBtn.bind(this)} />
+            : <Button
+                key={index}
+                value={btn.value}
+                btnKey={btn.key}
+                onClick={this.clickBtns.bind(this)}
+                type={btn.type}
+                disabled={btn.disabled}
+                iconClass={btn.icon}
+                initial={true} />
           )}
-          {config.search ?
+          {search ?
             <InputSearch
               ref="search"
               type="light"
               width={search.width}
-              onChange={this.changeSearchInput} />
+              onChange={this.changeSearchInput.bind(this)} />
             : null
           }
         </div>
         <div className="table-box">
-          {!table.loading && table.data.length === 0 ?
+          {!table.loading && !table.data.length ?
             <div className="table-with-no-data">
               <Table
                 column={table.column}
                 data={[]}
                 checkbox={table.checkbox} />
-              <div>
-              </div>
-                <p>
-                  {__.there_is_no + title + __.comma + __.click}
-                  <a onClick={eventList.clickBtns.bind(null, this, 'create')}>{__.here}</a>
-                  {__.to_create + __.full_stop}
-                </p>
-              </div>
+              <p>
+                {__.there_is_no + title + __.comma + __.click}
+                <a onClick={this.clickBtns.bind(this, this, 'create')}>{__.here}</a>
+                {__.to_create + __.full_stop}
+              </p>
+            </div>
           : <Table
-            ref="table"
-            column={table.column}
-            data={table.data}
-            dataKey={table.dataKey}
-            loading={table.loading}
-            checkbox={table.checkbox}
-            checkboxOnChange={this.tableCheckboxOnClick}
-            hover={table.hover}
-            striped={this.striped} />
+              ref="table"
+              column={table.column}
+              data={table.data}
+              dataKey={table.dataKey}
+              loading={table.loading}
+              checkbox={table.checkbox}
+              checkboxOnChange={this.changeCheckboxOnTable.bind(this)}
+              hover={table.hover}
+              striped={this.striped} />
           }
-          {table.detail ?
-            <Details
-              ref="details"
-              tabs={table.detail.tabs}
-              itemData={this.stores.checkedRow}
-              onClickTabs={eventList.clickDetailTabs} />
+          {detail ?
+            <Captain
+              ref="captain"
+              tabs={detail.tabs}
+              clickTabs={this.clickCaptainTabs.bind(this)} />
             : null
           }
         </div>

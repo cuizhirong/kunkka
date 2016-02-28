@@ -15,7 +15,7 @@ class BasicProps extends React.Component {
     this.state = {
       loading: false,
       toggle: false,
-      data: this.props.items ? this.props.items : []
+      data: this.props.items ? this.props.items : [] /* fix this part */
     };
 
     moment.locale(HALO.configs.lang);
@@ -57,7 +57,7 @@ class BasicProps extends React.Component {
   getItemContent(item) {
     switch(item.type) {
       case 'editable':
-        return <EditContent item={item} />;
+        return <EditContent item={item} dashboard={this.props.dashboard} />;
       case 'status':
         return getStatusIcon(item.status);
       case 'time':
@@ -68,7 +68,7 @@ class BasicProps extends React.Component {
   }
 
   render() {
-    var items = this.state.data,
+    var items = this.props.items,
       state = this.state;
 
     return (
