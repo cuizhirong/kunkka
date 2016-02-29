@@ -6,14 +6,13 @@ var Input = require('./subs/input/index');
 var Text = require('./subs/text/index');
 var PopLink = require('./subs/pop_link/index');
 
-
 class ModalBase extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      disabled: false
+      disabled: this.props.config.btn.disabled
     };
 
     this.onConfirm = this.onConfirm.bind(this);
@@ -28,7 +27,7 @@ class ModalBase extends React.Component {
 
   initialize() {
     var props = this.props;
-    return props.fields.map((m) => {
+    return props.config.fields.map((m) => {
       m.label = __[m.field];
       switch(m.type) {
         case 'text':
@@ -90,16 +89,21 @@ class ModalBase extends React.Component {
 
   render() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      btn = props.config.btn;
+
+    var title = props.config.title.map(function(m) {
+      return __[m];
+    }).join('');
 
     return (
-      <Modal ref="modal" {...props} visible={state.visible}>
+      <Modal ref="modal" {...props} title={title} visible={state.visible}>
         <div className="modal-bd halo-com-modal-common">
           {this.initialize()}
         </div>
         <div className="modal-ft">
-          <Button value={props.confirmText} disabled={state.disabled} onClick={this.onConfirm}/>
-          <Button value={props.cancelText} btnKey="cancel" type="cancel" onClick={this.onCancel}/>
+          <Button ref="btn" value={__[btn.value]} disabled={state.disabled} type={btn.type} onClick={this.onConfirm}/>
+          <Button value={__.cancel} btnKey="cancel" type="cancel" onClick={this.onCancel}/>
         </div>
       </Modal>
     );

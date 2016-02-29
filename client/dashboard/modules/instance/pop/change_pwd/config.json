@@ -1,5 +1,5 @@
 {
-  "title": "update",
+  "title": ["update", "instance"],
   "fields": [{
     "type": "input",
     "field": "name",
@@ -13,5 +13,10 @@
     "input_type": "password",
     "field": "associate",
     "disabled": true
-  }]
+  }],
+  "btn": {
+    "value": "update",
+    "type": "create",
+    "disabled": true
+  }
 }

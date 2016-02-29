@@ -1,16 +1,13 @@
 var commonModal = require('client/components/modal_common/index');
-var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
 
 var changePwd = require('../change_pwd/index');
 
-function pop(id, callback) {
+function pop(id, callback, parent) {
 
   var props = {
-    title: __[config.title],
-    fields: config.fields,
-    confirmText: __.confirm,
-    cancelText: __.cancel,
+    parent: parent,
+    config: config,
     onInitialize: function(refs) {
       setTimeout(function() {
         refs.name && refs.name.setState({
