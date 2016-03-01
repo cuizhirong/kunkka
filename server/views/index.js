@@ -20,11 +20,7 @@ var dashboardModelFactory = React.createFactory(dashboardModel);
 var tmplString = {};
 global.locales.availableLocales.forEach(function(lang) {
   var langDetail = JSON.parse(fs.readFileSync('i18n/server/' + lang + '.js', 'utf-8'));
-  tmplString[lang] = {};
-  tmplString[lang].index = ReactDOMServer.renderToString(dashboardModelFactory({
-    language: langDetail.shared
-  }));
-  tmplString[lang].login = ReactDOMServer.renderToString(loginModelFactory({
+  tmplString[lang] = ReactDOMServer.renderToString(loginModelFactory({
     accountPlaceholder: langDetail.shared.account_placeholder,
     pwdPlaceholder: langDetail.shared.pwd_placeholder,
     errorTip: langDetail.shared.error_tip,
@@ -93,7 +89,8 @@ module.exports = function(app) {
         },
         user: {
           projectId: req.session.user.projectId,
-          userId: req.session.user.userId
+          userId: req.session.user.userId,
+          username: req.session.user.username
         },
         region_list: regions[locale],
         current_region: req.session.region ? req.session.region : regions[locale][0].id
@@ -104,7 +101,10 @@ module.exports = function(app) {
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,
         uskinFile: uskinFile[0],
-        modelTmpl: tmplString[req.i18n.locale].index
+        modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
+          language: req.i18n.__('shared'),
+          username: req.session.user.username
+        }))
       });
     } else {
       res.render('login', {
@@ -116,7 +116,7 @@ module.exports = function(app) {
         loginJsFile: staticFiles[locale].loginJsFile,
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
-        modelTmpl: tmplString[req.i18n.locale].login
+        modelTmpl: tmplString[req.i18n.locale]
       });
     }
   }

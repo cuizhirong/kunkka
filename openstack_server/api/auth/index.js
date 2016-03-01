@@ -12,6 +12,7 @@ var prototype = {
   authentication: function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
+    var projects;
     // FIXME: need to do verification
     var that = this;
     async.waterfall([
@@ -31,7 +32,7 @@ var prototype = {
           if (err) {
             cb(err);
           } else {
-            var projects = response.body.projects;
+            projects = response.body.projects;
             if (projects.length < 1) {
               cb({error: 'no project'});
             } else {
@@ -59,6 +60,7 @@ var prototype = {
       } else {
         var expireDate = new Date(payload.token.expires_at),
           projectId = payload.token.project.id,
+          _username = payload.token.user.name,
           userId = payload.token.user.id;
         var opt = {
           path: '/',
@@ -70,16 +72,19 @@ var prototype = {
         var value = {
           'projectId': projectId,
           'userId': userId,
+          'username': _username,
           'locale': locale
         };
         res.cookie(config('sessionEngine').cookie_name, value, opt);
         req.session.cookie.expires = new Date(expireDate);
         req.session.user = {
-          projectId : projectId,
-          userId : userId,
-          token : token
+          'projectId': projectId,
+          'userId': userId,
+          'token': token,
+          'username': _username,
+          'projects': projects
         };
-        res.json({sucess: 'login sucess'});
+        res.json({success: 'login sucess'});
       }
     });
   },

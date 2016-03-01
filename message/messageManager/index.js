@@ -2,14 +2,12 @@ var EventEmitter = require('events');
 var util = require('util');
 
 var novaMsgHandler = require('./nova');
+var cinderMsgHandler = require('./cinder');
+var glanceMsgHandler = require('./glance');
 
 function MessageManager () {
   EventEmitter.call(this);
-  this.ignoreList = [
-    'compute.instance.update',
-    'scheduler.select_destinations.start',
-    'scheduler.select_destinations.end'
-  ];
+  this.ignoreList = novaMsgHandler.ignoreList.concat(glanceMsgHandler.ignoreList);
 }
 
 util.inherits(MessageManager, EventEmitter);
@@ -20,16 +18,23 @@ MessageManager.prototype.msgDispatcher = function (ws, msg) {
   }
 };
 
+MessageManager.prototype.getListenerName = function (msg) {
+  if (msg.event_type === 'image.delete') {
+    return msg.payload.properties.user_id + msg.payload.owner;
+  } else {
+    return msg._context_user_id + msg._context_project_id;
+  }
+};
+
 MessageManager.prototype.mqMessageListener = function (msg) {
   var msgContent = JSON.parse(msg.content.toString());
   if (this.isIgnoredMsg(msgContent)) {
     return;
   }
-  var userId = msgContent._context_user_id;
-  var projectId = msgContent._context_project_id;
+  var listener = this.getListenerName(msgContent);
   var formattedMsg = this.msgFormatter(msgContent);
   if (formattedMsg) {
-    this.emit(userId + projectId, formattedMsg);
+    this.emit(listener, formattedMsg);
   }
 };
 
@@ -40,6 +45,13 @@ MessageManager.prototype.msgFormatter = function (msg) {
   switch (type) {
     case 'compute':
       ret = novaMsgHandler.formatter(msg, eventTypeArray);
+      break;
+    case 'snapshot':
+    case 'volume':
+      ret = cinderMsgHandler.formatter(msg, eventTypeArray);
+      break;
+    case 'image':
+      ret = glanceMsgHandler.formatter(msg, eventTypeArray);
       break;
     default:
       ret = null;

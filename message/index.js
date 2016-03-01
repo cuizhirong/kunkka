@@ -12,18 +12,17 @@ mq.connect();
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: config.port });
 wss.on('connection', function connection(ws) {
-  var userId, projectId;
+  var listener;
   var _msgDispatcher = msgManager.msgDispatcher.bind(undefined, ws);
   ws.on('message', function incoming(message) {
     if (message !== 'h') {
       message = JSON.parse(message);
-      userId = message.userId;
-      projectId = message.projectId;
-      msgManager.addListener(userId + projectId, _msgDispatcher);
+      listener = message.userId + message.projectId;
+      msgManager.addListener(listener, _msgDispatcher);
     }
   });
   ws.onclose = function() {
-    msgManager.removeListener(userId + projectId, _msgDispatcher);
+    msgManager.removeListener(listener, _msgDispatcher);
   };
   ws.onerror = function (err) {
     console.log(err);
