@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
@@ -107,6 +108,15 @@ class Model extends React.Component {
     // console.log('Button clicked:', key);
     switch (key) {
       case 'create':
+        break;
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'security-group',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
         break;
       case 'refresh':
         this.refresh();
