@@ -1,0 +1,10 @@
+{
+  "en": {
+    "checksum": "Checksum",
+    "test": "Test"
+  },
+  "zh-CN": {
+    "checksum": "校验和",
+    "test": "测试"
+  }
+}

@@ -14,7 +14,8 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      modules: []
+      modules: [],
+      params: []
     };
 
     this.onClickSubmenu = this.onClickSubmenu.bind(this);
@@ -43,7 +44,8 @@ class Model extends React.Component {
     this.setState({
       modules: modules,
       selectedModule: pathList[1],
-      selectedMenu: this._filterMenu(_moduleName)
+      selectedMenu: this._filterMenu(_moduleName),
+      params: pathList
     });
   }
 
@@ -111,7 +113,7 @@ class Model extends React.Component {
               state.modules.map((m, index) => {
                 var M = modules[m];
                 if (M) {
-                  return <M key={index} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
+                  return <M key={index} params={state.params} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
                 }
               })
             }
