@@ -4,7 +4,12 @@ var __ = require('i18n/client/lang.json');
 
 var Input = require('./subs/input/index');
 var Text = require('./subs/text/index');
-var PopLink = require('./subs/pop_link/index');
+var Tip = require('./subs/tip/index');
+var Checkbox = require('./subs/checkbox/index');
+var IconLabel = require('./subs/icon_label/index');
+var TextArea = require('./subs/textarea/index');
+var Select = require('./subs/select/index');
+var SelectGroup = require('./subs/select_group/index');
 
 class ModalBase extends React.Component {
 
@@ -29,13 +34,26 @@ class ModalBase extends React.Component {
     var props = this.props;
     return props.config.fields.map((m) => {
       m.label = __[m.field];
+
       switch(m.type) {
         case 'text':
           return <Text key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'input':
           return <Input key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'pop_link':
-          return <PopLink key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'error':
+        case 'warning':
+        case 'info':
+          return <Tip key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'checkbox':
+          return <Checkbox key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'icon_label':
+          return <IconLabel key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'textarea':
+          return <TextArea key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'select':
+          return <Select key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'select_group':
+          return <SelectGroup key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }

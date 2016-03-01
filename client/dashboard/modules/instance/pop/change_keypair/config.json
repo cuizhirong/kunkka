@@ -1,0 +1,17 @@
+{
+  "title": ["change", "keypair"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "keypair",
+    "data": []
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}

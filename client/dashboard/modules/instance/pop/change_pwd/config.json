@@ -2,17 +2,14 @@
   "title": ["update", "instance"],
   "fields": [{
     "type": "input",
-    "field": "name",
-    "info": "tip_change_pwd"
-  },{
-    "type": "text",
-    "field": "volume",
-    "icon": "volume"
-  },{
-    "type": "input",
-    "input_type": "password",
-    "field": "associate",
-    "disabled": true
+    "field": "instance",
+    "tip_info": "tip_change_pwd",
+    "required": true,
+    "is_long_label": true
+  }, {
+    "type": "textarea",
+    "field": "password",
+    "is_long_label": true
   }],
   "btn": {
     "value": "update",

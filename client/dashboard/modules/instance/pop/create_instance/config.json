@@ -3,7 +3,8 @@
   "fields": [{
     "type": "input",
     "field": "name",
-    "info": "tip_change_pwd"
+    "tip_info": "tip_change_pwd",
+    "input-type": "text"
   }, {
     "type": "text",
     "field": "volume",

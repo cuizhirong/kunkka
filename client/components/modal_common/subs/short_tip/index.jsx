@@ -1,6 +1,6 @@
 var React = require('react');
 
-class Text extends React.Component {
+class ShortTip extends React.Component {
   constructor(props) {
     super(props);
 
@@ -21,10 +21,10 @@ class Text extends React.Component {
   }
 
   render() {
-    var className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
+    var className = this.state.hide ? 'modal-row short-tip-row hide' : 'modal-row short-tip-row';
 
     return <div className={className}>{this.props.label}</div>;
   }
 }
 
-module.exports = Text;
+module.exports = ShortTip;

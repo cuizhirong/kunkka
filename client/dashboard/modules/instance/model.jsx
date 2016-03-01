@@ -9,9 +9,12 @@ var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
-var deleteModal = require('client/components/modal_delete/index');
+//var deleteModal = require('client/components/modal_delete/index');
 var changePwd = require('./pop/change_pwd/index');
 var createInstance = require('./pop/create_instance/index');
+var shutdownInstance = require('./pop/shutdown/index');
+var associateFip = require('./pop/associate_fip/index');
+var changeKeypair = require('./pop/change_keypair/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -413,13 +416,9 @@ class Model extends React.Component {
         });
         break;
       case 'power_off':
-        deleteModal({
-          action: 'reboot',
-          type: 'instance',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
+        shutdownInstance({
+          name: 'abc'
+        }, function() {});
         break;
       case 'refresh':
         this.refresh();
@@ -439,7 +438,20 @@ class Model extends React.Component {
   }
 
   clickDropdownBtn(e, status) {
-    // console.log('clickDropdownBtn: status is', status);
+    switch (status.key) {
+      case 'assc_floating_ip':
+        associateFip({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_keypr':
+        changeKeypair({
+          name: 'abc'
+        }, function() {});
+        break;
+      default:
+        break;
+    }
   }
 
   changeSearchInput(str) {

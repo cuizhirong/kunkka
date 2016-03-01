@@ -1,3 +1,157 @@
+@import "../../../style/index.less";
+
+@short_tip_row_color: @color_gray_darker;
+@empty_text_label_color: @color_gray_darker;
+@textarea_border: 1px solid @color_gray_beige_dark;
+@strong_color: @color_red;
+@select_group_row_font_color: @color_font_dark;
+@select_group_row_bg_color: @color_gray_beige;
+@select_group_row_hover_bg_color: @color_blue_lighter;
+@select_group_row_selected_bg_color: @color_blue_light;
+@select_group_row_selected_icon_color: @color_blue_dark;
+
 .halo-com-modal-common {
   line-height: 18px;
+  &.modal-bd {
+    padding: 30px 36px 46px 0px;
+  }
+
+  .modal-row {
+    display: flex;
+    padding-left: 36px;
+
+    &:not(:first-child) {
+      margin-top: 17px;
+    }
+
+    &.label-row {
+      padding-left: 0;
+
+      >div:first-child {
+        .fixed-width(100px);
+        text-align: right;
+        margin-right: 12px;
+
+        >strong {
+          color: @strong_color;
+        }
+      }
+      >div:last-child {
+        flex: 1;
+      }
+
+      &.long-label-row {
+        >div:first-child {
+          .fixed-width(134px);
+        }
+      }
+    }
+
+    &.hide {
+      display: none;
+    }
+
+    &.checkbox-row {
+      padding-left: 36px;
+      >input {
+        vertical-align: middle;
+        margin-right: 7px;
+      }
+      >label {
+        vertical-align: middle;
+      }
+    }
+
+    &.short-tip-row {
+      color: @short_tip_row_color;
+    }
+
+    &.input-row {
+      input {
+        height: 26px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .short-tip-row {
+        padding-left: 0;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+    }
+
+    &.textarea-row {
+      textarea {
+        height: 78px;
+        width: 100%;
+        border: @textarea_border;
+        overflow: auto;
+      }
+      .short-tip-row {
+        padding-left: 0;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+    }
+
+    &.select-row {
+      select {
+        width: 100%;
+        height: 32px;
+        line-height: 27px;
+        background-color: white;
+        outline: none;
+      }
+      .empty-text-label {
+        color: @empty_text_label_color;
+      }
+    }
+
+    &.icon-label-row {
+      .glyphicon {
+        margin-right: 8px;
+      }
+    }
+
+    &.select-group-row {
+      a {
+        color: @select_group_row_font_color;
+        background-color: @select_group_row_bg_color;
+        display: block;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 2px;
+        padding-left: 12px;
+        margin-bottom: 10px;
+
+        &:hover,
+        &.selected {
+          &:before {
+            font-family: icons;
+            content: "\f110";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            float: right;
+            margin-right: 9px;
+          }
+        }
+
+        &:hover {
+          background-color: @select_group_row_hover_bg_color;
+
+          &:before {
+            color: white;
+          }
+        }
+
+        &.selected {
+          background-color: @select_group_row_selected_bg_color;
+
+          &:before {
+            color: @select_group_row_selected_icon_color;
+          }
+        }
+      }
+    }
+  }
 }

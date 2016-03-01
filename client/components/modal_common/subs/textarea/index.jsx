@@ -1,8 +1,7 @@
 var React = require('react');
 var ShortTip = require('../short_tip/index');
-var __ = require('i18n/client/lang.json');
 
-class Input extends React.Component {
+class Textarea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +35,7 @@ class Input extends React.Component {
 
   render() {
     var props = this.props;
-    var className = 'modal-row input-row';
+    var className = 'modal-row textarea-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {
@@ -55,9 +54,9 @@ class Input extends React.Component {
           {props.label + ':'}
         </div>
         <div>
-          <input className={this.state.error ? 'error' : ''} type={props.input_type} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />
+          <textarea className={this.state.error ? 'error' : ''} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />
           {
-            props.tip_info && <ShortTip label={__[props.tip_info]} />
+            props.tip_info && <ShortTip text={props.tip_info} />
           }
         </div>
       </div>
@@ -65,4 +64,4 @@ class Input extends React.Component {
   }
 }
 
-module.exports = Input;
+module.exports = Textarea;

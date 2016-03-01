@@ -48,7 +48,7 @@
         "items": [{
           "title": ["associate", "floating_ip"],
           "key": "assc_floating_ip",
-          "disabled": true
+          "disabled": false
         }, {
           "title": ["dissociate", "floating_ip"],
           "key": "dssc_floating_ip",
@@ -70,7 +70,7 @@
         }, {
           "title": ["change", "keypair"],
           "key": "chg_keypr",
-          "disabled": true
+          "disabled": false
         }]
       }, {
         "items": [{
