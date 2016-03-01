@@ -9,7 +9,8 @@ var dashboardModel = React.createFactory(Model);
 
 ReactDOM.render(
   dashboardModel({
-    language: __
+    language: __,
+    username: HALO.user.username
   }),
   document.getElementById('container')
 );

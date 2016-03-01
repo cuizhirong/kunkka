@@ -18,7 +18,7 @@ class NavBar extends React.Component {
         <div className="logo"></div>
         <div className="user-info">
           <i className="glyphicon icon-avatar"></i>
-          <span className="user-name">user name</span>
+          <span className="user-name">{this.props.username}</span>
           <div ref="settingBtn" className="settings-btn"></div>
           <div className="settings">
             <Settings />

@@ -102,7 +102,7 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar />
+          <NavBar username={this.props.username} />
         </div>
         <div id="main-wrapper">
           <SideMenu items={items} />
