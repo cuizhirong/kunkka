@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
+var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var Request = require('client/dashboard/cores/request');
@@ -183,6 +184,13 @@ class Model extends React.Component {
       case 'create':
         break;
       case 'del_img':
+        deleteModal({
+          action: 'delete',
+          type: 'image',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
         break;
       case 'refresh':
         this.refresh();
