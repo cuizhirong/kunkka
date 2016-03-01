@@ -3,26 +3,34 @@
 @toggle-bg-color: @color_gray_beige;
 @subnet-item-hover-color: @color_blue_x_light;
 
-.halo-com-detail-minitable .table-info {
-  margin-top: 10px;
-  i {
-    font-size: 14px;
-    cursor: pointer;
-  }
-  i.action {
-      display: inline-block;
-      margin-right: 16px;
-      color: @color_gray_dark;
-      &:hover {
-        color: @color_blue;
-      }
-  }
-  i.icon-delete {
-      display: inline-block;
-      margin-right: 16px;
-      color: @color_gray_dark;
-      &:hover {
-        color: @color_red;
-      }
+.halo-com-detail-minitable {
+  .table-info {
+    margin-top: 10px;
+    i {
+      font-size: 14px;
+      cursor: pointer;
     }
+    i.action {
+        display: inline-block;
+        margin-right: 16px;
+        color: @color_gray_dark;
+        &:hover {
+          color: @color_blue;
+        }
+    }
+    i.icon-delete {
+        display: inline-block;
+        margin-right: 16px;
+        color: @color_gray_dark;
+        &:hover {
+          color: @color_red;
+        }
+      }
+  }
+  .no-data-info {
+    color: @color_gray_dark;
+    margin-top: -15px;
+    line-height: 28px;
+    border-bottom: 1px solid @color_gray_beige;
+  }
 }
