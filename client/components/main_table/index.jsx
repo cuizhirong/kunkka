@@ -238,6 +238,9 @@ class MainTable extends React.Component {
 
   /* clicked from elements */
   clickTabs(e, item) {
+    var path = router.getPathList();
+    router.pushState('/' + path[0] + '/' + item.key);
+
     var func = this.eventList.clickTabs;
     func && func(e, item);
   }
