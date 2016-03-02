@@ -8,6 +8,7 @@ var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
+var deleteModal = require('client/components/modal_delete/index');
 
 class Model extends React.Component {
 
@@ -196,6 +197,19 @@ class Model extends React.Component {
 
   clickDropdownBtn(e, status) {
     // console.log('clickDropdownBtn: status is', status);
+    switch(status.key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'floating_ip',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   updateBtns(status, clickedRow, arr) {
@@ -203,6 +217,25 @@ class Model extends React.Component {
       btns = conf.btns;
 
     var shouldAssociate = (arr.length === 1) && !(arr[0].router || arr[0].server);
+    var updateDropdownBtns = (items) => {
+      items.map((item) => {
+        item.map((btn) => {
+          switch(btn.key) {
+            case 'dssc':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'chg_bandwidth':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'delete':
+              btn.disabled = (arr.length > 0) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      });
+    };
 
     btns.map((btn) => {
       switch (btn.key) {
@@ -214,6 +247,9 @@ class Model extends React.Component {
           break;
         case 'assc_to_ldbalacer':
           btn.disabled = shouldAssociate ? false : true;
+          break;
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
           break;
         default:
           break;
