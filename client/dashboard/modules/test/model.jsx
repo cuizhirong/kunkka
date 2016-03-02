@@ -1,15 +1,9 @@
 require('./style/index.less');
 
 var React = require('react');
-var {Button, DropdownButton, InputSearch, Tab, Table} = require('client/uskin/index');
 var Main = require('client/components/main/index');
-var Detail = require('client/components/main/detail');
 var request = require('./request');
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
-var converter = require('client/components/main_table/converter');
-var getStatusIcon = require('client/dashboard/utils/status_icon');
-var moment = require('client/libs/moment');
 
 class Model extends React.Component {
 
@@ -20,7 +14,9 @@ class Model extends React.Component {
       config: config
     };
 
-    this.onInitialize = this.onInitialize.bind(this);
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
 
   }
 
@@ -29,43 +25,42 @@ class Model extends React.Component {
   }
 
   onInitialize() {
-    moment.locale(HALO.configs.lang);
-    converter.convertLang(__, config);
     this.setTableColRender(this.state.config.table.column);
-    this.tableLoading();
     this.updateData();
   }
 
-  componentDidMount() {
-    if (this.props.params.length === 3) {
-      this.refs.detail.setState({
-        visible: true
-      });
+  onAction(obj) {
+    var {comType, actionType, refs, data} = obj;
+    switch(comType) {
+      case 'btns':
+        this.clickBtns(data, refs);
+        break;
+      case 'table':
+        this.clickTable(actionType, refs, data);
+        break;
+      default:
+        break;
     }
   }
 
-  onChangeState(pathList) {
-    var moduleID = this.refs.dashboard.props.moduleID,
-      shouldVisible = pathList[1] === moduleID && pathList.length > 2 ? true : false;
-
-    this.refs.detail.setState({
-      visible: shouldVisible
-    });
+  clickTable(actionType, refs, data) {
+    switch(actionType) {
+      case 'check':
+        this.clickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
   }
 
-  tableLoading() {
-    var _config = this.state.config;
-    _config.table.loading = true;
+  componentDidMount() {
 
-    this.setState({
-      config: _config
-    });
   }
 
   updateData() {
     request.listInstances((res) => {
       var table = this.state.config.table;
-      table.data = res.images;
+      table.data = res.servers;
       table.loading = false;
 
       this.setState({
@@ -77,33 +72,40 @@ class Model extends React.Component {
   setTableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'name':
+        case 'image':
           column.render = (col, item, i) => {
-            return (
-              <a className="captain" data-type="router" href={'/project/test/' + item.id}>
-                {item.name}
-              </a>
-            );
+            return item.image ?
+              <a data-type="router" href={'/project/image/' + item.image.id}>{item.image.name}</a> : '';
           };
           break;
-        case 'size':
+        case 'ip_address':
           column.render = (col, item, i) => {
-            return Math.round(item.size / 1024) + ' MB';
+            var str = '';
+            if (item.addresses.private) {
+              item.addresses.private.forEach((_item, index) => {
+                if (_item.version === 4 && _item['OS-EXT-IPS:type'] === 'fixed') {
+                  str += (index > 0) ? ', ' + _item.addr : _item.addr;
+                }
+              });
+            }
+            return str;
           };
           break;
-        case 'type':
+        case 'floating_ip':
           column.render = (col, item, i) => {
-            return item.image_type === 'snapshot' ? __.snapshot : __.image;
+            return item.floating_ip ?
+              <span>
+                <i className="glyphicon icon-floating-ip" />
+                <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
+                  {item.floating_ip.floating_ip_address}
+                </a>
+              </span>
+              : '';
           };
           break;
-        case 'status':
+        case 'instance_type':
           column.render = (col, item, i) => {
-            return getStatusIcon(item.status);
-          };
-          break;
-        case 'created':
-          column.render = (col, item, i) => {
-            return moment(item.created_at).fromNow();
+            return item.flavor ? item.flavor.name : '';
           };
           break;
         default:
@@ -119,97 +121,40 @@ class Model extends React.Component {
     return true;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.length === 3) {
-      this.refs.detail.setState({
-        visible: true
-      });
-    } else {
-      this.refs.detail.setState({
-        visible: false
-      });
+  clickBtns(data, refs) {
+    switch (data.key) {
+      default:
+        break;
     }
   }
 
-  render() {
-    var _config = this.state.config,
-      tabs = _config.tabs,
-      btns = _config.btns,
-      search = _config.search,
-      table = _config.table,
-      title = _config.tabs.filter((tab) => tab.default)[0].name,
-      detail = _config.table.detail;
+  clickTableCheckbox(refs, data) {
+    var {rows} = data;
+    var _config = this.state.config;
 
+    _config.btns.map((btn) => {
+      switch (btn.key) {
+        case 'vnc_console':
+          btn.disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'power_off':
+          btn.disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    });
+
+    this.setState({
+      config: _config
+    });
+
+  }
+
+  render() {
     return (
       <div className="halo-module-test" style={this.props.style}>
-        <Main ref="dashboard" moduleID="test" config={this.state.config}>
-          {tabs ?
-            <div className="submenu-tabs">
-              <Tab items={tabs} onClick={null} />
-            </div>
-            : null
-          }
-          <div className="operation-list">
-            {btns.map((btn, index) =>
-              btn.dropdown ?
-                <DropdownButton
-                  key={index}
-                  disabled={btn.dropdown.disabled}
-                  buttonData={btn}
-                  dropdownItems={btn.dropdown.items}
-                  dropdownOnClick={null} />
-              : <Button
-                  key={index}
-                  value={btn.value}
-                  btnKey={btn.key}
-                  type={btn.type}
-                  disabled={btn.disabled}
-                  iconClass={btn.icon}
-                  initial={true}
-                  onClick={null} />
-            )}
-            {search ?
-              <InputSearch
-                ref="search"
-                type="light"
-                width={search.width}
-                onChange={null} />
-              : null
-            }
-          </div>
-          <div className="table-box">
-            {!table.loading && !table.data.length ?
-              <div className="table-with-no-data">
-                <Table
-                  column={table.column}
-                  data={[]}
-                  checkbox={table.checkbox} />
-                <p>
-                  {__.there_is_no + title + __.comma + __.click}
-                  <a onClick={null}>{__.here}</a>
-                  {__.to_create + __.full_stop}
-                </p>
-              </div>
-            : <Table
-                ref="table"
-                column={table.column}
-                data={table.data}
-                dataKey={table.dataKey}
-                loading={table.loading}
-                checkbox={table.checkbox}
-                checkboxOnChange={null}
-                hover={table.hover}
-                striped={this.striped} />
-            }
-            {detail ?
-              <Detail
-                ref="detail"
-                tabs={detail.tabs}
-                clickTabs={null} />
-              : null
-            }
-          </div>
-        </Main>
+        <Main ref="dashboard" onAction={this.onAction} config={this.state.config} params={this.props.params} />
       </div>
     );
   }

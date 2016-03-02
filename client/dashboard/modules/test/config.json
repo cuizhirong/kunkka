@@ -1,26 +1,96 @@
 {
   "tabs": [{
-    "name": ["image"],
-    "key": "image",
+    "name": ["instance"],
+    "key": "instance",
     "default": true
   }],
   "btns": [{
     "value": ["create", "instance"],
     "key": "create",
     "type": "create",
-    "icon": "create",
-    "disabled": true
-  }, {
-    "value": ["create", "image"],
-    "key": "crt_img",
-    "type": "create",
     "icon": "create"
   }, {
-    "value": ["delete", "image"],
-    "key": "del_img",
-    "type": "delete",
-    "icon": "delete",
+    "value": ["vnc_console"],
+    "key": "vnc_console",
+    "icon": "volume",
     "disabled": true
+  }, {
+    "value": ["power_on"],
+    "key": "power_on",
+    "icon": "power-on",
+    "disabled": true
+  }, {
+    "value": ["power_off"],
+    "key": "power_off",
+    "icon": "power-off",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["reboot"],
+          "key": "reboot",
+          "disabled": false
+        }, {
+          "title": ["take_instance", "snapshot"],
+          "key": "inst_snps",
+          "disabled": true
+        }, {
+          "title": ["resize"],
+          "key": "resize",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["associate", "floating_ip"],
+          "key": "assc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["dissociate", "floating_ip"],
+          "key": "dssc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["join", "networks"],
+          "key": "join_ntw",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["change","security", "group"],
+          "key": "chg_security_grp",
+          "disabled": true
+        }, {
+          "title": ["change", "password"],
+          "key": "chg_psw",
+          "disabled": true
+        }, {
+          "title": ["change", "keypair"],
+          "key": "chg_keypr",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["add", "volume"],
+          "key": "add_volume",
+          "disabled": true
+        }, {
+          "title": ["detach", "volume"],
+          "key": "rmv_volume",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["terminate"],
+          "key": "terminate",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -39,13 +109,23 @@
       "key": "name",
       "type": "captain"
     }, {
-      "title": ["size"],
-      "dataIndex": "size",
-      "key": "size"
+      "title": ["image"],
+      "dataIndex": "",
+      "width": 160,
+      "key": "image"
     }, {
-      "title": ["type"],
-      "key": "type"
-      }, {
+      "title": ["ip_address"],
+      "dataIndex": "",
+      "key": "ip_address"
+    }, {
+      "title": ["floating_ip"],
+      "dataIndex": "",
+      "key": "floating_ip"
+    }, {
+      "title": ["instance_type"],
+      "dataIndex": "",
+      "key": "instance_type"
+    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
@@ -53,11 +133,11 @@
       "filter": [{
         "name": ["active"],
         "key": "active",
-        "filterBy": "active"
+        "filterBy": "ACTIVE"
       }]
     }, {
       "title": ["create", "time"],
-      "dataIndex": "created_at",
+      "dataIndex": "created",
       "key": "created",
       "type": "time"
     }],
@@ -67,6 +147,12 @@
         "name": ["description"],
         "key": "description",
         "default": true
+      }, {
+        "name": ["console", "output"],
+        "key": "console_output"
+      }, {
+        "name": ["vnc_console"],
+        "key": "vnc_console"
       }]
     }
   }
