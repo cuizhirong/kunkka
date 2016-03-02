@@ -11,6 +11,7 @@ var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
+var deleteModal = require('client/components/modal_delete/index');
 
 class Model extends React.Component {
 
@@ -48,7 +49,8 @@ class Model extends React.Component {
       updateBtns: this.updateBtns.bind(this),
       changeSearchInput: this.changeSearchInput,
       clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
+      clickDetailTabs: this.clickDetailTabs.bind(this),
+      clickDropdownBtn: this.clickDropdownBtn
     };
   }
 
@@ -268,6 +270,22 @@ class Model extends React.Component {
   updateBtns(status, clickedRow, arr) {
     var _conf = this.state.config,
       btns = _conf.btns;
+    var updateDropdownBtns = (items) => {
+      items.map((item) => {
+        item.items.map((btn) => {
+          switch(btn.key) {
+            case 'delete':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'dis_gw':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      });
+    };
 
     btns.map((btn) => {
       switch (btn.key) {
@@ -276,6 +294,9 @@ class Model extends React.Component {
           break;
         case 'delete':
           btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
           break;
         default:
           break;
@@ -286,6 +307,22 @@ class Model extends React.Component {
     this.setState({
       config: _conf
     });
+  }
+
+  clickDropdownBtn(e, item) {
+    switch(item.key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type:'router',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   changeSearchInput(str) {
