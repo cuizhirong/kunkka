@@ -10,7 +10,6 @@ var __ = require('i18n/client/lang.json');
 var converter = require('client/components/main_table/converter');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
 var moment = require('client/libs/moment');
-var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -21,17 +20,28 @@ class Model extends React.Component {
       config: config
     };
 
-    this.onChangeState = this.onChangeState.bind(this);
+    this.onInitialize = this.onInitialize.bind(this);
+
+  }
+
+  componentWillMount() {
+    this.onInitialize();
   }
 
   onInitialize() {
     moment.locale(HALO.configs.lang);
-    router.on('changeState', this.onChangeState);
-
     converter.convertLang(__, config);
     this.setTableColRender(this.state.config.table.column);
     this.tableLoading();
     this.updateData();
+  }
+
+  componentDidMount() {
+    if (this.props.params.length === 3) {
+      this.refs.detail.setState({
+        visible: true
+      });
+    }
   }
 
   onChangeState(pathList) {
@@ -53,20 +63,13 @@ class Model extends React.Component {
   }
 
   updateData() {
-    request.listInstances().then((res) => {
+    request.listInstances((res) => {
       var table = this.state.config.table;
       table.data = res.images;
       table.loading = false;
 
       this.setState({
         config: config
-      }, () => {
-        var path = router.getPathList(),
-          data = this.state.config.table.data;
-
-        if (path.length > 2 && data && data.length > 0) {
-          router.replaceState(router.getPathName(), null, null, true);
-        }
       });
     });
   }
@@ -109,11 +112,6 @@ class Model extends React.Component {
     });
   }
 
-  componentWillMount() {
-    console.log(this.props.params);
-    this.onInitialize();
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
       return false;
@@ -121,13 +119,16 @@ class Model extends React.Component {
     return true;
   }
 
-  componentWillReceiveProps() {
-  }
-
-  openDetail() {
-    this.refs.detail.setState({
-      visible: true
-    });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.params.length === 3) {
+      this.refs.detail.setState({
+        visible: true
+      });
+    } else {
+      this.refs.detail.setState({
+        visible: false
+      });
+    }
   }
 
   render() {
