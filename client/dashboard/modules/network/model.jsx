@@ -6,6 +6,7 @@ var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
+var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -224,6 +225,15 @@ class Model extends React.Component {
   clickBtns(e, key) {
     switch (key) {
       case 'create':
+        break;
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'prv_network',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
         break;
       case 'refresh':
         this.refresh();

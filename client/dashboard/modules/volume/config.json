@@ -35,11 +35,11 @@
           "key": "extd_capacity",
           "disabled": true
         }, {
-          "title": ["set", "rd_only"],
+          "title": ["set", "read_only"],
           "key": "set_rd_only",
           "disabled": true
         }, {
-          "title": ["set", "rd_wrt"],
+          "title": ["set", "read_write"],
           "key": "set_rd_wrt",
           "disabled": true
         }]
@@ -47,7 +47,8 @@
         "items": [{
           "title": ["delete"],
           "key": "delete",
-          "disabled": true
+          "disabled": true,
+          "danger": true
         }]
       }]
     }

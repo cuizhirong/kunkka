@@ -9,7 +9,7 @@ var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
-//var deleteModal = require('client/components/modal_delete/index');
+var deleteModal = require('client/components/modal_delete/index');
 var changePwd = require('./pop/change_pwd/index');
 var createInstance = require('./pop/create_instance/index');
 var shutdownInstance = require('./pop/shutdown/index');
@@ -438,8 +438,8 @@ class Model extends React.Component {
     this.listInstance();
   }
 
-  clickDropdownBtn(e, status) {
-    switch (status.key) {
+  clickDropdownBtn(e, btn) {
+    switch (btn.key) {
       case 'assc_floating_ip':
         associateFip({
           name: 'abc'
@@ -455,6 +455,15 @@ class Model extends React.Component {
           name: 'abc'
         }, function() {});
         break;
+      case 'terminate':
+        deleteModal({
+          action: 'terminate',
+          type: 'instance',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
       default:
         break;
     }
@@ -466,7 +475,23 @@ class Model extends React.Component {
 
   updateBtns(status, clickedRow, arr) {
     var _conf = this.state.config,
-      btns = _conf.btns;
+      btns = _conf.btns,
+      updateDropdownBtns = (items) => {
+        var allBtns = [];
+        items.forEach((element) => {
+          allBtns = allBtns.concat(element.items);
+        });
+
+        allBtns.map((btn) => {
+          switch (btn.key) {
+            case 'terminate':
+              btn.disabled = (arr.length > 0) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      };
 
     btns.map((btn) => {
       switch (btn.key) {
@@ -475,6 +500,9 @@ class Model extends React.Component {
           break;
         case 'power_off':
           btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
           break;
         default:
           break;

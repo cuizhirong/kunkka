@@ -7,6 +7,7 @@ var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
+var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
@@ -47,6 +48,7 @@ class Model extends React.Component {
     this._eventList = {
       clickBtns: this.clickBtns.bind(this),
       updateBtns: this.updateBtns.bind(this),
+      clickDropdownBtn: this.clickDropdownBtn,
       changeSearchInput: this.changeSearchInput,
       clickTableCheckbox: this.clickTableCheckbox.bind(this),
       clickDetailTabs: this.clickDetailTabs.bind(this)
@@ -290,9 +292,47 @@ class Model extends React.Component {
     this.refs.dashboard.clearState();
   }
 
+  clickDropdownBtn(e, btn) {
+    switch (btn.key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'subnet',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   updateBtns(status, clickedRow, arr) {
     var _conf = this.state.config,
-      btns = _conf.btns;
+      btns = _conf.btns,
+      updateDropdownBtns = (items) => {
+        var allBtns = [];
+        items.forEach((element) => {
+          allBtns = allBtns.concat(element.items);
+        });
+
+        allBtns.map((btn) => {
+          switch (btn.key) {
+            case 'add_inst':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'mdfy_subnet':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'delete':
+              btn.disabled = (arr.length > 0) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      };
 
     btns.map((btn) => {
       switch(btn.key) {
@@ -301,6 +341,9 @@ class Model extends React.Component {
           break;
         case 'delete':
           btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
           break;
         default:
           break;

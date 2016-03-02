@@ -34,7 +34,7 @@
         "items": [{
           "title": ["reboot"],
           "key": "reboot",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["take_instance", "snapshot"],
           "key": "inst_snps",

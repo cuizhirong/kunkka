@@ -6,6 +6,7 @@ var Button = uskin.Button;
 var MainTable = require('client/components/main_table/index');
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
+var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -285,8 +286,20 @@ class Model extends React.Component {
     this.refs.dashboard.clearState();
   }
 
-  clickDropdownBtn(e, status) {
-    // console.log('clickDropdownBtn: status is', status);
+  clickDropdownBtn(e, btn) {
+    switch (btn.key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'volume',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   changeSearchInput(str) {
@@ -295,7 +308,23 @@ class Model extends React.Component {
 
   updateBtns(status, clickedRow, arr) {
     var _conf = this.state.config,
-      btns = _conf.btns;
+      btns = _conf.btns,
+      updateDropdownBtns = (items) => {
+        var allBtns = [];
+        items.forEach((element) => {
+          allBtns = allBtns.concat(element.items);
+        });
+
+        allBtns.map((btn) => {
+          switch (btn.key) {
+            case 'delete':
+              btn.disabled = (arr.length > 0) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      };
 
     btns.map((btn) => {
       switch (btn.key) {
@@ -304,6 +333,9 @@ class Model extends React.Component {
           break;
         case 'attach_to_instance':
           btn.disabled = (arr.length === 1) ? false : true;
+          break;
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
           break;
         default:
           break;

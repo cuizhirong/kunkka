@@ -33,7 +33,7 @@
         "items": [{
           "title": ["add_", "instance"],
           "key": "add_inst",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["modify", "subnet"],
           "key": "mdfy_subnet",
@@ -41,7 +41,8 @@
         }, {
           "title": ["delete"],
           "key": "delete",
-          "disabled": true
+          "disabled": true,
+          "danger": true
         }]
       }]
     }
