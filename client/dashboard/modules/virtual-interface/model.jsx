@@ -8,6 +8,7 @@ var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 var Request = require('client/dashboard/cores/request');
+var deleteModal = require('client/components/modal_delete/index');
 
 class Model extends React.Component {
 
@@ -243,14 +244,50 @@ class Model extends React.Component {
 
   clickDropdownBtn(e, status) {
     // console.log('clickDropdownBtn: status is', status);
+    switch(status.key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type:'virtual-interface',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   updateBtns(status, clickedRow, arr) {
     var conf = this.state.config,
       btns = conf.btns;
 
+    var updateDropdownBtns = (items) => {
+      items.map((item) => {
+        item.map((btn) => {
+          switch(btn.key) {
+            case 'modify':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'disable':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            case 'delete':
+              btn.disabled = (arr.length === 1) ? false : true;
+              break;
+            default:
+              break;
+          }
+        });
+      });
+    };
+
     btns.map((btn) => {
       switch (btn.key) {
+        case 'more':
+          updateDropdownBtns(btn.dropdown.items);
+          break;
         default:
           break;
       }
