@@ -8,6 +8,7 @@ var __ = require('i18n/client/lang.json');
 var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var deleteModal = require('client/components/modal_delete/index');
 
 class Model extends React.Component {
 
@@ -186,6 +187,15 @@ class Model extends React.Component {
         break;
       case 'refresh':
         this.refresh();
+        break;
+      case 'del_snapshot':
+        deleteModal({
+          action: 'delete',
+          type: 'snapshot',
+          onDelete: function(data, cb) {
+            cb(true);
+          }
+        });
         break;
       default:
         break;
