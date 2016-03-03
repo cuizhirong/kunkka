@@ -1,0 +1,21 @@
+{
+	"title": ["create", "security_group"],
+  "fields": [{
+    "type": "info",
+    "field": "tip_info_security"
+  }, {
+    "type": "input",
+    "field": "name",
+    "tip_info": "tip_security_name",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "desc"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": false
+  }
+}

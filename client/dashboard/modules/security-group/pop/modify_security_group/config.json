@@ -1,0 +1,17 @@
+{
+  "title": ["modify", "security_group"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "tip_info": "tip_security_name",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "desc"
+  }],
+  "btn": {
+    "value": "modify",
+    "type": "create",
+    "disabled": false
+  }
+}

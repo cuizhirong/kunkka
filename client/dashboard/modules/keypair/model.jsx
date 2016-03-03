@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var MainTable = require('client/components/main_table/index');
+var createKeypair = require('./pop/create_keypair/index');
 var config = require('./config.json');
 var request = require('./request');
 var deleteModal = require('client/components/modal_delete/index');
@@ -78,7 +79,11 @@ class Model extends React.Component {
 
   clickBtns(e, key) {
     switch (key) {
-      case 'create':
+      case 'crt_keypair':
+        console.log(key);
+        createKeypair('123333', function(data) {
+          console.log(data);
+        });
         break;
       case 'refresh':
         this.listInstance();

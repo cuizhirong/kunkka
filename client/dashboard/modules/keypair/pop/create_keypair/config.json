@@ -1,0 +1,18 @@
+{
+  "title": ["create", "keypair"],
+  "fields": [{
+    "type": "tab",
+    "field": "create",
+    "data": ["create_keypair", "import_keypair"],
+    "value": "create_keypair"
+  }, {
+    "type": "input",
+    "field": "name",
+    "required": true
+    }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": false
+  }
+}

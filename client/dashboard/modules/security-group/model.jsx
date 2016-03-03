@@ -6,6 +6,8 @@ var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var createSecurityGroup = require('./pop/create_security_group/index');
+var modifySecurityGroup = require('./pop/modify_security_group/index');
 
 class Model extends React.Component {
 
@@ -108,6 +110,9 @@ class Model extends React.Component {
     // console.log('Button clicked:', key);
     switch (key) {
       case 'create':
+        createSecurityGroup('1212', function(data) {
+          console.log(data);
+        });
         break;
       case 'delete':
         deleteModal({
@@ -120,6 +125,11 @@ class Model extends React.Component {
         break;
       case 'refresh':
         this.refresh();
+        break;
+      case 'modify':
+        modifySecurityGroup('121212', function(data) {
+          console.log(data);
+        });
         break;
       default:
         break;
