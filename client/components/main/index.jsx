@@ -13,9 +13,13 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
 
+    moment.locale(HALO.configs.lang);
+
     this.stores = {
       rows: []
     };
+
+
   }
 
   componentWillMount() {
@@ -23,21 +27,10 @@ class Main extends React.Component {
   }
 
   onInitialize() {
-    moment.locale(HALO.configs.lang);
-
     var config = this.props.config;
+
     converter.convertLang(__, config);
     this.setTableColRender(config.table.column);
-    this.tableLoading(config);
-  }
-
-  onAction(comType, actionType, data) {
-    this.props.onAction({
-      comType: comType,
-      actionType: actionType,
-      refs: this.refs,
-      data: data
-    });
   }
 
   setTableColRender(columns) {
@@ -70,69 +63,87 @@ class Main extends React.Component {
     });
   }
 
-  tableLoading(config) {
-    var _config = config;
-    _config.table.loading = true;
-
-    this.setState({
-      config: _config
-    });
+  onAction(field, actionType, data) {
+    this.props.onAction(field, actionType, this.refs, data);
   }
 
   componentDidMount() {
-    this.onChangeParams(this.props.params);
+    // this.onChangeParams(this.props.params);
+    this.props.onInitialize(this.props.params);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params !== nextProps.params) {
-      this.onChangeParams(nextProps.params);
-    }
+    console.log('received: ', nextProps.params);
+    // if (this.props.params !== nextProps.params) {
+    //   this.onChangeParams(nextProps.params);
+    // }
+
+    this.onChangeParams(nextProps.params);
   }
 
-  onChangeParams(pathList) {
-    if (pathList[2]) {
-      var row = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
-      /* no row data means invalid path list */
-      if (!row) {
-        router.replaceState('/' + pathList.slice(0, 2).join('/'));
-        return;
-      }
-
-      this.stores = {
-        rows: [row]
-      };
-
+  onChangeParams(params) {
+    if (params.length === 3) {
       if (this.refs.detail && !this.refs.detail.state.visible) {
         this.refs.detail.setState({
           visible: true
         });
       }
-      this.refs.table.setState({
-        checkedKey: {
-          [pathList[2]]: true
-        }
-      });
-    } else {
-      this.stores = {
-        rows: []
-      };
 
-      if (this.refs.detail && this.refs.detail.state.visible) {
-        this.refs.detail.setState({
-          visible: false
+      if (this.refs.table) {
+        this.refs.table.setState({
+          checkedKey: {
+            [params[2]]: true
+          }
         });
       }
-      this.refs.table.setState({
-        checkedKey: {}
-      });
     }
-
-    this.onAction('table', 'check', {
-      status: pathList[2] ? true : false,
-      checkedRow: pathList[2] ? this.stores.rows[0] : null,
-      rows: this.stores.rows
-    });
   }
+
+  // // 这个直接渲染即可，不能做任何逻辑，否则会调用第二次
+  // onChangeParams(pathList) {
+  //   if (pathList[2]) {
+  //     var row = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
+  //     /* no row data means invalid path list */
+  //     if (!row) {
+  //       router.replaceState('/' + pathList.slice(0, 2).join('/'));
+  //       return;
+  //     }
+
+  //     this.stores = {
+  //       rows: [row]
+  //     };
+
+  //     if (this.refs.detail && !this.refs.detail.state.visible) {
+  //       this.refs.detail.setState({
+  //         visible: true
+  //       });
+  //     }
+  //     this.refs.table.setState({
+  //       checkedKey: {
+  //         [pathList[2]]: true
+  //       }
+  //     });
+  //   } else {
+  //     this.stores = {
+  //       rows: []
+  //     };
+
+  //     if (this.refs.detail && this.refs.detail.state.visible) {
+  //       this.refs.detail.setState({
+  //         visible: false
+  //       });
+  //     }
+  //     this.refs.table.setState({
+  //       checkedKey: {}
+  //     });
+  //   }
+
+  //   this.onAction('table', 'check', {
+  //     status: pathList[2] ? true : false,
+  //     checkedRow: pathList[2] ? this.stores.rows[0] : null,
+  //     rows: this.stores.rows
+  //   });
+  // }
 
   searchInTable(text) {
     if (this.refs.table) {
@@ -152,27 +163,6 @@ class Main extends React.Component {
           }
         });
       }
-    }
-  }
-
-  checkboxListener(e, status, clickedRow, arr) {
-    this.stores = {
-      rows: arr
-    };
-
-    var path = this.props.params;
-    if (arr.length <= 0) {
-      router.pushState('/project/' + path[1]);
-    } else if (arr.length <= 1) {
-      if (this.refs.detail.state.visible) {
-        if (path[2] === arr[0].id) {
-          router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
-        } else {
-          router.pushState('/project/' + path[1] + '/' + arr[0].id);
-        }
-      }
-    } else {
-      // this.refs.detail.updateContent(this.stores.rows);
     }
   }
 
@@ -196,15 +186,14 @@ class Main extends React.Component {
     router.pushState('/' + path[0] + '/' + item.key);
   }
 
-  clickDropdownBtn(e, item) {
-    this.onAction('btns', 'click', {
-      key: 'dropdown',
-      item: item
+  onClickDropdownBtn(e, item) {
+    this.onAction('btnList', 'click', {
+      key: item.key
     });
   }
 
-  clickBtns(e, key) {
-    this.onAction('btns', 'click', {
+  onClickBtnList(e, key) {
+    this.onAction('btnList', 'click', {
       key: key
     });
   }
@@ -215,6 +204,27 @@ class Main extends React.Component {
     this.onAction('serachInput', 'search', {
       text: str
     });
+  }
+
+  checkboxListener(e, status, clickedRow, arr) {
+    this.stores = {
+      rows: arr
+    };
+
+    var path = this.props.params;
+    if (arr.length <= 0) {
+      router.pushState('/project/' + path[1]);
+    } else if (arr.length <= 1) {
+      if (this.refs.detail.state.visible) {
+        if (path[2] === arr[0].id) {
+          router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
+        } else {
+          router.pushState('/project/' + path[1] + '/' + arr[0].id);
+        }
+      }
+    } else {
+      // this.refs.detail.updateContent(this.stores.rows);
+    }
   }
 
   changeCheckboxOnTable(e, status, clickedRow, rows) {
@@ -252,7 +262,7 @@ class Main extends React.Component {
                 disabled={btn.dropdown.disabled}
                 buttonData={btn}
                 dropdownItems={btn.dropdown.items}
-                dropdownOnClick={this.clickDropdownBtn.bind(this)} />
+                dropdownOnClick={this.onClickDropdownBtn.bind(this)} />
             : <Button
                 key={index}
                 value={btn.value}
@@ -261,7 +271,7 @@ class Main extends React.Component {
                 disabled={btn.disabled}
                 iconClass={btn.icon}
                 initial={true}
-                onClick={this.clickBtns.bind(this)} />
+                onClick={this.onClickBtnList.bind(this)} />
           )}
           {search ?
             <InputSearch

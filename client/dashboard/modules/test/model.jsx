@@ -21,52 +21,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    this.onInitialize();
-  }
-
-  onInitialize() {
     this.setTableColRender(this.state.config.table.column);
-    this.updateData();
-  }
-
-  onAction(obj) {
-    var {comType, actionType, refs, data} = obj;
-    switch(comType) {
-      case 'btns':
-        this.clickBtns(data, refs);
-        break;
-      case 'table':
-        this.clickTable(actionType, refs, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  clickTable(actionType, refs, data) {
-    switch(actionType) {
-      case 'check':
-        this.clickTableCheckbox(refs, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  componentDidMount() {
-
-  }
-
-  updateData() {
-    request.listInstances((res) => {
-      var table = this.state.config.table;
-      table.data = res.servers;
-      table.loading = false;
-
-      this.setState({
-        config: config
-      });
-    });
   }
 
   setTableColRender(columns) {
@@ -99,8 +54,7 @@ class Model extends React.Component {
                 <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
                   {item.floating_ip.floating_ip_address}
                 </a>
-              </span>
-              : '';
+              </span> : '';
           };
           break;
         case 'instance_type':
@@ -114,22 +68,53 @@ class Model extends React.Component {
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
-    }
-    return true;
+  onInitialize(params) {
+    // 初始化时，如果params长度为2，就不管
+    // 如果初始化时，params长度为3就render detail
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.servers;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+    });
   }
 
-  clickBtns(data, refs) {
-    switch (data.key) {
+
+  onAction(field, actionType, refs, data) {
+
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
       default:
         break;
     }
   }
 
-  clickTableCheckbox(refs, data) {
-    var {rows} = data;
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs) {
+    console.log('button key: ', key);
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {
+      rows
+    } = data;
     var _config = this.state.config;
 
     _config.btns.map((btn) => {
@@ -151,10 +136,27 @@ class Model extends React.Component {
 
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // this.onAction();
+  }
+
   render() {
     return (
       <div className="halo-module-test" style={this.props.style}>
-        <Main ref="dashboard" onAction={this.onAction} config={this.state.config} params={this.props.params} />
+        <Main
+          ref="dashboard"
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          config={this.state.config}
+          params={this.props.params}
+        />
       </div>
     );
   }

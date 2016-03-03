@@ -103,15 +103,16 @@
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "loading": true,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
-      "type": "captain"
+      "type": "captain",
+      "width": 130
     }, {
       "title": ["image"],
       "dataIndex": "",
-      "width": 160,
       "key": "image"
     }, {
       "title": ["ip_address"],
