@@ -76,7 +76,7 @@
         "items": [{
           "title": ["add", "volume"],
           "key": "add_volume",
-          "disabled": true
+          "disabled": false
         }, {
           "title": ["detach", "volume"],
           "key": "rmv_volume",

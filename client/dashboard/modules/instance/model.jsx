@@ -15,6 +15,7 @@ var createInstance = require('./pop/create_instance/index');
 var shutdownInstance = require('./pop/shutdown/index');
 var associateFip = require('./pop/associate_fip/index');
 var changeKeypair = require('./pop/change_keypair/index');
+var attachVolume = require('./pop/attach_volume/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -446,6 +447,11 @@ class Model extends React.Component {
         break;
       case 'chg_keypr':
         changeKeypair({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'add_volume':
+        attachVolume({
           name: 'abc'
         }, function() {});
         break;

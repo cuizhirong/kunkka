@@ -100,7 +100,7 @@ class SelectGroup extends React.Component {
         <div>
           {
             state.data.map((item, index) => {
-              return <a key={item.id} className={item.selected ? 'selected' : ''} href="#" onClick={this.onChange.bind(this, index)} value={item}>{item.name}</a>;
+              return <a key={item.id} className={item.selected ? 'selected' : ''} href="#" onClick={this.onChange.bind(this, index)}>{item.name}</a>;
             })
           }
           {this.renderEmpty()}
