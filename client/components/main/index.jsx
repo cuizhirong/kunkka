@@ -1,8 +1,9 @@
 require('./style/index.less');
 
 var React = require('react');
-var {Button, DropdownButton, InputSearch, Tab, Table} = require('client/uskin/index');
-var Detail = require('client/components/main/detail');
+var {InputSearch, Tab, Table} = require('client/uskin/index');
+var ButtonList = require('./button_list');
+var Detail = require('./detail');
 var __ = require('i18n/client/lang.json');
 var converter = require('client/components/main_table/converter');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
@@ -18,7 +19,6 @@ class Main extends React.Component {
     this.stores = {
       rows: []
     };
-
 
   }
 
@@ -41,7 +41,7 @@ class Main extends React.Component {
 
           column.render = (col, item, i) => {
             return (
-              <a className="captain" onClick={this.clickCaptain.bind(this, item)}>
+              <a className="captain" onClick={this.onClickCaptain.bind(this, item)}>
                 {output ? output : item[col.dataIndex]}
               </a>
             );
@@ -73,16 +73,25 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('received: ', nextProps.params);
-    // if (this.props.params !== nextProps.params) {
-    //   this.onChangeParams(nextProps.params);
-    // }
-
+    // console.log('received: ', nextProps.params, this.props.params !== nextProps.params);
+    //if (this.props.params !== nextProps.params) {
     this.onChangeParams(nextProps.params);
+    //}
   }
 
   onChangeParams(params) {
     if (params.length === 3) {
+      var row = this.props.config.table.data.filter((data) => data.id === params[2])[0];
+      /* no row data means invalid path list */
+      if (!row) {
+        router.replaceState('/' + params.slice(0, 2).join('/'));
+        return;
+      }
+
+      this.stores = {
+        rows: [row]
+      };
+
       if (this.refs.detail && !this.refs.detail.state.visible) {
         this.refs.detail.setState({
           visible: true
@@ -96,54 +105,31 @@ class Main extends React.Component {
           }
         });
       }
+    } else {
+      this.stores = {
+        rows: []
+      };
+
+      if (this.refs.detail && this.refs.detail.state.visible) {
+        this.refs.detail.setState({
+          visible: false
+        });
+      }
+
+      if (this.refs.table) {
+        this.refs.table.setState({
+          checkedKey: {}
+        });
+      }
     }
+
+    this.onAction('table', 'check', {
+      status: params[2] ? true : false,
+      checkedRow: params[2] ? this.stores.rows[0] : null,
+      rows: this.stores.rows
+    });
+
   }
-
-  // // 这个直接渲染即可，不能做任何逻辑，否则会调用第二次
-  // onChangeParams(pathList) {
-  //   if (pathList[2]) {
-  //     var row = this.props.config.table.data.filter((data) => data.id === pathList[2])[0];
-  //     /* no row data means invalid path list */
-  //     if (!row) {
-  //       router.replaceState('/' + pathList.slice(0, 2).join('/'));
-  //       return;
-  //     }
-
-  //     this.stores = {
-  //       rows: [row]
-  //     };
-
-  //     if (this.refs.detail && !this.refs.detail.state.visible) {
-  //       this.refs.detail.setState({
-  //         visible: true
-  //       });
-  //     }
-  //     this.refs.table.setState({
-  //       checkedKey: {
-  //         [pathList[2]]: true
-  //       }
-  //     });
-  //   } else {
-  //     this.stores = {
-  //       rows: []
-  //     };
-
-  //     if (this.refs.detail && this.refs.detail.state.visible) {
-  //       this.refs.detail.setState({
-  //         visible: false
-  //       });
-  //     }
-  //     this.refs.table.setState({
-  //       checkedKey: {}
-  //     });
-  //   }
-
-  //   this.onAction('table', 'check', {
-  //     status: pathList[2] ? true : false,
-  //     checkedRow: pathList[2] ? this.stores.rows[0] : null,
-  //     rows: this.stores.rows
-  //   });
-  // }
 
   searchInTable(text) {
     if (this.refs.table) {
@@ -166,7 +152,7 @@ class Main extends React.Component {
     }
   }
 
-  clickCaptain(item, e) {
+  onClickCaptain(item, e) {
     e.preventDefault();
 
     var shouldClose = this.refs.detail.state.visible
@@ -186,18 +172,6 @@ class Main extends React.Component {
     router.pushState('/' + path[0] + '/' + item.key);
   }
 
-  onClickDropdownBtn(e, item) {
-    this.onAction('btnList', 'click', {
-      key: item.key
-    });
-  }
-
-  onClickBtnList(e, key) {
-    this.onAction('btnList', 'click', {
-      key: key
-    });
-  }
-
   changeSearchInput(str) {
     this.searchInTable(str);
 
@@ -215,26 +189,29 @@ class Main extends React.Component {
     if (arr.length <= 0) {
       router.pushState('/project/' + path[1]);
     } else if (arr.length <= 1) {
-      if (this.refs.detail.state.visible) {
-        if (path[2] === arr[0].id) {
-          router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
-        } else {
-          router.pushState('/project/' + path[1] + '/' + arr[0].id);
-        }
+      if (path[2] === arr[0].id) {
+        router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
+      } else {
+        router.pushState('/project/' + path[1] + '/' + arr[0].id);
       }
     } else {
       // this.refs.detail.updateContent(this.stores.rows);
     }
+
   }
 
-  changeCheckboxOnTable(e, status, clickedRow, rows) {
-    this.checkboxListener(e, status, clickedRow, rows);
+  onChangeTableCheckbox(e, status, clickedRow, rows) {
+    if (this.refs.detail.state.visible) {
+      this.checkboxListener(e, status, clickedRow, rows);
+    }
 
-    this.onAction('table', 'check', {
-      status: status,
-      clickedRow: clickedRow,
-      rows: rows
-    });
+    if (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1)) {
+      this.onAction('table', 'check', {
+        status: status,
+        clickedRow: clickedRow,
+        rows: rows
+      });
+    }
   }
 
   render() {
@@ -255,24 +232,10 @@ class Main extends React.Component {
           : null
         }
         <div className="operation-list">
-          {btns.map((btn, index) =>
-            btn.dropdown ?
-              <DropdownButton
-                key={index}
-                disabled={btn.dropdown.disabled}
-                buttonData={btn}
-                dropdownItems={btn.dropdown.items}
-                dropdownOnClick={this.onClickDropdownBtn.bind(this)} />
-            : <Button
-                key={index}
-                value={btn.value}
-                btnKey={btn.key}
-                type={btn.type}
-                disabled={btn.disabled}
-                iconClass={btn.icon}
-                initial={true}
-                onClick={this.onClickBtnList.bind(this)} />
-          )}
+          <ButtonList
+            ref="btnList"
+            btns={btns}
+            onAction={this.onAction.bind(this)} />
           {search ?
             <InputSearch
               ref="search"
@@ -302,7 +265,7 @@ class Main extends React.Component {
               dataKey={table.dataKey}
               loading={table.loading}
               checkbox={table.checkbox}
-              checkboxOnChange={this.changeCheckboxOnTable.bind(this)}
+              checkboxOnChange={this.onChangeTableCheckbox.bind(this)}
               hover={table.hover}
               striped={this.striped} />
           }

@@ -21,10 +21,10 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    this.setTableColRender(this.state.config.table.column);
+    this.tableColRender(this.state.config.table.column);
   }
 
-  setTableColRender(columns) {
+  tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
         case 'image':
@@ -112,28 +112,59 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {
-      rows
-    } = data;
-    var _config = this.state.config;
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
 
-    _config.btns.map((btn) => {
-      switch (btn.key) {
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
         case 'vnc_console':
-          btn.disabled = (rows.length === 1) ? false : true;
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'power_on':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'shutoff') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
           break;
         case 'power_off':
-          btn.disabled = (rows.length === 1) ? false : true;
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'reboot':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'instance_snapshot':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'resize':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         default:
           break;
       }
-    });
+    }
 
-    this.setState({
-      config: _config
-    });
-
+    return btns;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
