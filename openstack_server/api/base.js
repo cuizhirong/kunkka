@@ -1,7 +1,21 @@
 function API () {
-
 }
 
+API.prototype.dicApiUrlParam = {
+  'projectId'    : 'project_id',
+  'serverId'     : 'server_id',
+  'volumeId'     : 'volume_id',
+  'snapshotId'   : 'snapshot_id',
+  'networkId'    : 'network_id',
+  'subnetId'     : 'subnet_id',
+  'portId'       : 'port_id',
+  'nicId'        : 'port_id',
+  'routerId'     : 'router_id',
+  'floatingipId' : 'floatingip_id',
+  'imageId'      : 'image_id',
+  'securityId'   : 'security_id',
+  'keypairName'  : 'keypair_name'
+};
 API.prototype.handleError = function (err, req, res, next) {
   if (err.status) {
     next(err);
@@ -40,8 +54,8 @@ API.prototype.asyncHandler = function (callback, err, payload) {
     callback(null, payload.body);
   }
 };
-API.prototype.paramChecker = function (service, action, req, res) {
-  var meta = service.meta[action];
+API.prototype.paramChecker = function (objService, action, req, res) {
+  var meta = objService.metadata[action];
   var paramPool = meta.required.concat(meta.optional, meta.oneOf);
   var arrMiss = [];
   var objExtra = {};
@@ -72,5 +86,34 @@ API.prototype.paramChecker = function (service, action, req, res) {
   } else {
     return paramObj;
   }
+};
+API.prototype.generateActionApi = function (metadata, handler) {
+  var that = this;
+  var api = {};
+  var method = 'post';
+  var _handler = handler ? handler : this.operate;
+  Object.keys(metadata).forEach(function (action) {
+    api = metadata[action];
+    method = api.method ? api.method : 'post';
+    that.app[method](api.apiDir + api.type, _handler.bind(that, action));
+  });
+};
+API.prototype.originalOperate = function (service, action, req, res, next) {
+  var that = this;
+  var token = req.session.user.token;
+  var region = req.headers.region;
+  var paramObj = this.paramChecker(service, action, req, res);
+  Object.keys(this.dicApiUrlParam).forEach(function (e) {
+    if (req.params[e]) {
+      paramObj[that.dicApiUrlParam[e]] = req.params[e];
+    }
+  });
+  service.action(token, region, function (err, payload) {
+    if (err) {
+      that.handleError(err, req, res, next);
+    } else {
+      res.json(payload.body);
+    }
+  }, action, paramObj);
 };
 module.exports = API;

@@ -1,0 +1,21 @@
+var neutronRemote = require('config')('remote').neutron;
+var Base = require('openstack_server/drivers/base.js');
+var driverSubnet = new Base('subnet');
+
+driverSubnet.listSubnets = function (token, region, callback, query) {
+  return driverSubnet.getMethod(
+    neutronRemote[region] + '/v2.0/subnets',
+    token,
+    callback,
+    query
+  );
+};
+driverSubnet.showSubnetDetails = function (subnetId, token, region, callback) {
+  return driverSubnet.getMethod(
+    neutronRemote[region] + '/v2.0/subnets/' + subnetId,
+    token,
+    callback
+  );
+};
+
+module.exports = driverSubnet;

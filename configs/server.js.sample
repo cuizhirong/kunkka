@@ -53,6 +53,9 @@ var config = {
   'backend': {
     'type': 'openstack',
     'dirname': 'openstack_server'
+  },
+  'extension': {
+    'type': 'example_qiniu'
   }
 };
 

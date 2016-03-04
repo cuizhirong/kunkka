@@ -12,7 +12,7 @@ var client = {};
 function generateLangObject (dirPath, obj, moduleName, extraIgnore) {
   fs.readdirSync(dirPath)
     .filter(function(fileName) {
-      return fileName !== 'index.js' && fileName !== extraIgnore;
+      return fileName !== 'index.js' && fileName !== extraIgnore && fileName !== '.DS_Store';
     })
     .forEach(function (dir) {
       try {
@@ -24,14 +24,24 @@ function generateLangObject (dirPath, obj, moduleName, extraIgnore) {
     });
 }
 
+function generateApiLangObject(dirPath, obj, moduleName, extraIgnore) {
+  fs.readdirSync(dirPath)
+    .filter(function (dir) {
+      return fs.statSync(dirPath + '/' + dir).isDirectory();
+    })
+    .forEach(function (dir) {
+      generateLangObject(dirPath + '/' + dir, obj, moduleName, extraIgnore);
+    });
+}
+
 var apiDirPath = path.join(__dirname, '..', config.backend.dirname, 'api');
-generateLangObject(apiDirPath, i18n.api, 'api', 'extensions');
+generateApiLangObject(apiDirPath, i18n.api, 'api', 'extensions');
 
 var viewsDirPath = path.join(__dirname, '../server/views');
 generateLangObject(viewsDirPath, i18n.views, 'views');
 
 var extensionsDirPath = path.join(__dirname, '../server/api/extensions');
-generateLangObject(extensionsDirPath, extensions, 'extension');
+generateApiLangObject(extensionsDirPath, extensions, 'extension');
 
 Object.keys(extensions).forEach(function (ex) {
   Object.keys(extensions[ex]).forEach(function (lang) {
