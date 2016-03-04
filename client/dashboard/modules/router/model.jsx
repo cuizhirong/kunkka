@@ -123,6 +123,7 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+    console.log(rows);
     switch (key) {
       case 'create':
         createRouter('1212', function(){});
@@ -144,25 +145,25 @@ class Model extends React.Component {
         });
         break;
       case 'en_gw':
-        publicGateway('1212', function() {});
+        publicGateway(data, function() {});
         break;
       case 'dis_gw':
-        disableGateway('1212', function() {});
+        disableGateway(data, function() {});
         break;
-      case 'ass_fip':
+      case 'assc_fip':
         associateFip({
-          name: '123'
+          name: rows[0].name
         }, function() {});
         break;
       case 'dis_fip':
         dissociateFip({
-          router: '123',
-          floating_ip: '10.10.10.10'
+          router: rows[0].name,
+          floating_ip: 'in'
         }, function() {});
         break;
-      case 'con_sn':
+      case 'cnt_subnet':
         relatedSubnet({
-          router: '123'
+          router: rows[0].name
         }, function() {});
         break;
       default:

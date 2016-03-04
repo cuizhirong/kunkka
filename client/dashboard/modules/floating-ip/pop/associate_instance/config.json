@@ -1,0 +1,28 @@
+{
+  "title": ["associate", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "floating_ip",
+    "icon_type": "floating-ip",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance",
+      "link_info": ["create", "instance"]
+    }
+  }, {
+    "type": "select",
+    "field": "network",
+    "empty_text": {
+      "info": "no_network",
+      "link_info": ["create", "network"]
+    }
+  }],
+  "btn": {
+    "value": "associate",
+    "type": "create",
+    "disabled": false
+  }
+}

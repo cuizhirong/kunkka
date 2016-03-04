@@ -139,6 +139,7 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+
     switch (key) {
       case 'delete':
         deleteModal({
@@ -151,22 +152,22 @@ class Model extends React.Component {
         });
         break;
       case 'create':
-        createPort('121212', function() {});
+        createPort(data, function() {});
         break;
       case 'associate_instance':
         associateInstance({
-          name: 'nic-f1df46cb (192.168.0.6)'
+          name: rows[0].name
         }, function() {});
         break;
       case 'detach_instance':
         detachInstance({
-          name: 'nic-f1df46cb (192.168.0.6)',
+          name: rows[0].name,
           instance: '123'
         }, function() {});
         break;
       case 'modify':
         modify({
-          name: 'nic-f1df46cb (192.168.0.6)'
+          name: rows[0].name
         }, function() {});
         break;
       case 'refresh':

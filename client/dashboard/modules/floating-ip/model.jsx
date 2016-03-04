@@ -11,6 +11,9 @@ var request = require('./request');
 var router = require('client/dashboard/cores/router');
 var deleteModal = require('client/components/modal_delete/index');
 var applyModal = require('./pop/apply_ip/index');
+var associateInstance = require('./pop/associate_instance/index');
+var associateRouter = require('./pop/associate_router/index');
+var dissociateRelated = require('./pop/dissociate_related/index');
 
 class Model extends React.Component {
 
@@ -140,6 +143,24 @@ class Model extends React.Component {
         break;
       case 'create':
         applyModal(function(){});
+        break;
+      case 'dssc':
+        dissociateRelated({
+          floating_ip: data.rows[0].name,
+          instance: 'instance 1'
+        }, function() {});
+        break;
+      case 'assc_to_instance':
+        associateInstance({
+          name: data.rows[0].name
+        }, function() {
+        });
+        break;
+      case 'assc_to_router':
+        associateRouter({
+          name: data.rows[0].name
+        }, function() {
+        });
         break;
       default:
         break;
