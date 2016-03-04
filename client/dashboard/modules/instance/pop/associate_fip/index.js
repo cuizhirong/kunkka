@@ -18,7 +18,7 @@ function pop(obj, callback, parent) {
             id: 2,
             name: '2.2.2.2'
           }],
-          value: 1
+          value: 2
         });
       }, 2000);
     },

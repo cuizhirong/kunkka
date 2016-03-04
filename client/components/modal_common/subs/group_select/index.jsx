@@ -11,7 +11,7 @@ var copyObj = function(obj) {
   return newobj;
 };
 
-class Select extends React.Component {
+class GroupSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,12 +64,20 @@ class Select extends React.Component {
     if (state.data && state.data.length > 0) {
       return (
         <select value={state.value} disabled={state.checkedField && state.checkedField !== props.field} onChange={this.onChange}>
-          {
-            state.data.map(function(v) {
-              return <option key={v.id} value={v.id}>{v.name}</option>;
-            })
-          }
-        </select>
+            {
+              state.data.map(function(group) {
+                return (
+                  <optgroup key={group.name} label={group.name}>
+                  {
+                    group.data.map(function(item) {
+                      return <option key={item.id} disabled={item.disabled} value={item.id}>{item.name}</option>;
+                    })
+                  }
+                  </optgroup>
+                );
+              })
+            }
+          </select>
       );
     } else if (props.empty_text) {
       if (props.empty_text.link_info) {
@@ -120,4 +128,4 @@ class Select extends React.Component {
   }
 }
 
-module.exports = Select;
+module.exports = GroupSelect;

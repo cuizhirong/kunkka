@@ -56,7 +56,7 @@
         }, {
           "title": ["join", "networks"],
           "key": "join_ntw",
-          "disabled": true
+          "disabled": false
         }]
       }, {
         "items": [{
@@ -76,7 +76,7 @@
         "items": [{
           "title": ["add", "volume"],
           "key": "add_volume",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["detach", "volume"],
           "key": "rmv_volume",

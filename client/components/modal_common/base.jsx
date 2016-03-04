@@ -11,6 +11,7 @@ var TextArea = require('./subs/textarea/index');
 var Select = require('./subs/select/index');
 var SelectGroup = require('./subs/select_group/index');
 var Tab = require('./subs/tab/index');
+var GroupSelect = require('./subs/group_select/index');
 
 class ModalBase extends React.Component {
 
@@ -57,6 +58,8 @@ class ModalBase extends React.Component {
           return <SelectGroup key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'tab':
           return <Tab key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'group_select':
+          return <GroupSelect key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }

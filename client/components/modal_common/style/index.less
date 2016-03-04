@@ -3,6 +3,8 @@
 @short_tip_row_color: @color_gray_darker;
 @empty_text_label_color: @color_gray_darker;
 @textarea_border: 1px solid @color_gray_beige_dark;
+@textarea_hover_border_color: @color_blue;
+@textarea_error_border_color: @color_red;
 @strong_color: @color_red;
 @select_group_row_font_color: @color_font_dark;
 @select_group_row_bg_color: @color_gray_beige;
@@ -14,6 +16,8 @@
 @tab_row_font_color: @color_font_dark;
 @tab_row_hover_bg_color: @color_blue_lighter;
 @tab_row_selected_bg_color: @color_blue_light;
+
+@radio_row_disabled_bg_color: @color_gray_beige;
 
 .halo-com-modal-common {
   line-height: 18px;
@@ -90,6 +94,15 @@
         width: 100%;
         border: @textarea_border;
         overflow: auto;
+
+        &:hover,
+        &:focus {
+          border-color: @textarea_hover_border_color;
+        }
+
+        &.error {
+          border-color: @textarea_error_border_color
+        }
       }
       .short-tip-row {
         padding-left: 0;
@@ -132,7 +145,7 @@
         &.selected {
           &:before {
             font-family: icons;
-            content: "\f110";
+            content: "\f103";
             display: inline-block;
             width: 14px;
             height: 14px;
@@ -186,6 +199,28 @@
           &:last-child {
             margin-right: 0;
           }
+        }
+      }
+    }
+
+    &.radio-row {
+      >div:last-child {
+        display: flex;
+
+        input[type="radio"] {
+          vertical-align: middle;
+          margin-right: 8px;
+          .fixed-width(16px);
+        }
+        select {
+          height: 32px;
+          line-height: 27px;
+          background-color: white;
+          outline: none;
+          flex: 1;
+        }
+        .empty-text-label {
+          color: @empty_text_label_color;
         }
       }
     }

@@ -16,6 +16,7 @@ var shutdownInstance = require('./pop/shutdown/index');
 var associateFip = require('./pop/associate_fip/index');
 var changeKeypair = require('./pop/change_keypair/index');
 var attachVolume = require('./pop/attach_volume/index');
+var joinNetwork = require('./pop/join_network/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -463,6 +464,11 @@ class Model extends React.Component {
             cb(true);
           }
         });
+        break;
+      case 'join_ntw':
+        joinNetwork({
+          name: 'abc'
+        }, function() {});
         break;
       default:
         break;
