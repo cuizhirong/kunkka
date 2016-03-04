@@ -3,8 +3,7 @@
   "fields": [{
     "type": "icon_label",
     "field": "instance",
-    "icon_type": "instance",
-    "text": ""
+    "icon_type": "instance"
   }, {
     "type": "select",
     "field": "floating_ip",

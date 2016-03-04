@@ -13,6 +13,7 @@
   }, {
     "type": "select_group",
     "field": "volume",
+    "empty_text": "no_volume",
     "data": []
     }],
   "btn": {

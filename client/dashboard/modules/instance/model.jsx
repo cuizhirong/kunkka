@@ -17,6 +17,10 @@ var associateFip = require('./pop/associate_fip/index');
 var changeKeypair = require('./pop/change_keypair/index');
 var attachVolume = require('./pop/attach_volume/index');
 var joinNetwork = require('./pop/join_network/index');
+var instSnapshot = require('./pop/inst_snapshot/index');
+var dissociateFIP = require('./pop/dissociate_fip/index');
+var changeSecurityGrp = require('./pop/change_security_grp/index');
+var detachVolume = require('./pop/detach_volume/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
@@ -413,9 +417,6 @@ class Model extends React.Component {
         });
         break;
       case 'vnc_console':
-        changePwd(function(data) {
-          console.log(data);
-        });
         break;
       case 'power_off':
         shutdownInstance({
@@ -446,6 +447,26 @@ class Model extends React.Component {
           name: 'abc'
         }, function() {});
         break;
+      case 'inst_snps':
+        instSnapshot({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'dssc_floating_ip':
+        dissociateFIP({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_security_grp':
+        changeSecurityGrp({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_psw':
+        changePwd({
+          name: 'abc'
+        }, function() {});
+        break;
       case 'chg_keypr':
         changeKeypair({
           name: 'abc'
@@ -453,6 +474,11 @@ class Model extends React.Component {
         break;
       case 'add_volume':
         attachVolume({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'rmv_volume':
+        detachVolume({
           name: 'abc'
         }, function() {});
         break;
@@ -490,10 +516,14 @@ class Model extends React.Component {
 
         allBtns.map((btn) => {
           switch (btn.key) {
+            case 'reboot':
+              btn.disabled = (arr.length > 0) ? false : true;
+              break;
             case 'terminate':
               btn.disabled = (arr.length > 0) ? false : true;
               break;
             default:
+              btn.disabled = (arr.length === 1) ? false : true;
               break;
           }
         });

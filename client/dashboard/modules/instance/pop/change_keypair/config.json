@@ -8,6 +8,7 @@
   }, {
     "type": "select_group",
     "field": "keypair",
+    "empty_text": "no_keypair",
     "data": []
   }],
   "btn": {

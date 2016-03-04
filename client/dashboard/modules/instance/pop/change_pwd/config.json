@@ -1,19 +1,17 @@
 {
-  "title": ["update", "instance"],
+  "title": ["modify", "instance", "password"],
   "fields": [{
     "type": "input",
-    "field": "instance",
-    "tip_info": "tip_change_pwd",
-    "required": true,
-    "is_long_label": true
-  }, {
-    "type": "textarea",
     "field": "password",
-    "is_long_label": true
+    "required": true,
+    "tip_info": "tip_password"
+  }, {
+    "type": "input",
+    "field": "confirm_pwd",
+    "required": true
   }],
   "btn": {
-    "value": "update",
-    "type": "create",
-    "disabled": true
+    "value": "save",
+    "disabled": false
   }
 }
