@@ -1,7 +1,6 @@
 require('../../style/index.less');
 
 var React = require('react');
-var Request = require('client/dashboard/cores/request');
 
 class EditContent extends React.Component {
 
@@ -14,7 +13,7 @@ class EditContent extends React.Component {
       edit: false
     };
 
-    this.inputOnChange = this.inputOnChange.bind(this);
+    this.onChangeInput = this.onChangeInput.bind(this);
     this.editable = this.editable.bind(this);
     this.onEdit = this.onEdit.bind(this);
     this.onCancel = this.onCancel.bind(this);
@@ -28,7 +27,7 @@ class EditContent extends React.Component {
     });
   }
 
-  inputOnChange(e) {
+  onChangeInput(e) {
     this.setState({
       value: e.target.value
     });
@@ -44,20 +43,17 @@ class EditContent extends React.Component {
     this.editable(true);
   }
 
-  onConfirm(item, e) {
-    var r = item.request;
-    var data = {};
-    data[r.body] = {};
-    data[r.body][r.modifyData] = this.state.value;
+  onKeyPressInput(e) {
+    if (e.key === 'Enter') {
+      this.onConfirm(e);
+    }
+  }
 
-    Request.put({
-      url: r.url,
-      data: data
-    }).then((res) => {
-      this.props.dashboard.refresh();
-      this.props.dashboard.refs.captain.forceUpdate();
-    }, (err) => {
-      // console.log('err', err);
+  onConfirm(e) {
+    var item = this.props.item;
+    this.props.onAction && this.props.onAction('edit_name', {
+      item: item,
+      newName: this.state.value
     });
   }
 
@@ -69,16 +65,16 @@ class EditContent extends React.Component {
   }
 
   render() {
-    var item = this.props.item,
-      value = this.state.value,
-      edit = this.state.edit,
-      content = this.state.content;
+    var state = this.state,
+      value = state.value,
+      edit = state.edit,
+      content = state.content;
 
     return (
       edit ?
         <span>
-          <input value={value} onChange={this.inputOnChange} />
-          <i className="glyphicon icon-delete edit-confirm" onClick={this.onConfirm.bind(this, item)} />
+          <input value={value} onChange={this.onChangeInput} onKeyPress={this.onKeyPressInput.bind(this)} />
+          <i className="glyphicon icon-delete edit-confirm" onClick={this.onConfirm.bind(this)} />
           <i className="glyphicon icon-remove edit-cancel" onClick={this.onCancel} />
         </span>
       : <span>

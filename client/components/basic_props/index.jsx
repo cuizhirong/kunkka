@@ -3,7 +3,6 @@ require('./style/index.less');
 
 var React = require('react');
 var EditContent = require('./edit_content');
-var Request = require('client/dashboard/cores/request');
 var moment = require('client/libs/moment');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
 
@@ -14,8 +13,7 @@ class BasicProps extends React.Component {
 
     this.state = {
       loading: false,
-      toggle: false,
-      data: this.props.items ? this.props.items : [] /* fix this part */
+      toggle: false
     };
 
     moment.locale(HALO.configs.lang);
@@ -29,35 +27,20 @@ class BasicProps extends React.Component {
     });
   }
 
-  componentDidMount() {
-    /* if there is url props, update data by itself */
-    var url = this.props.url;
-    url && Request.get({
-      url: this.props.url
-    }).then((res) => {
-      var data = this.props.getItems(res);
-      this.setState({
-        loading: false,
-        data: data
-      });
-    }, (err) => {
-      this.setState({
-        loading: false,
-        data: []
-      });
-    });
-  }
-
   toggle(e) {
     this.setState({
       toggle: !this.state.toggle
     });
   }
 
+  onAction(actionType, data) {
+    this.props.onAction && this.props.onAction(this.props.tabKey, actionType, data);
+  }
+
   getItemContent(item) {
     switch(item.type) {
       case 'editable':
-        return <EditContent item={item} dashboard={this.props.dashboard} />;
+        return <EditContent item={item} onAction={this.onAction.bind(this)} />;
       case 'status':
         return getStatusIcon(item.status);
       case 'time':

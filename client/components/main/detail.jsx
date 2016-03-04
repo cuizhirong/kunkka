@@ -9,7 +9,10 @@ class Detail extends React.Component {
     super(props);
 
     this.state = {
-      visible: false
+      visible: false,
+      loading: false,
+      tabs: this.props.tabs,
+      contents: {}
     };
   }
 
@@ -23,14 +26,63 @@ class Detail extends React.Component {
 
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.visible && (Object.keys(nextState.contents).length === 0)) {
+      return false;
+    }
+    return true;
+  }
+
+  updateDefaultTabContent() {
+    var item = this.findDefaultTab();
+    this.updateContent(item);
+  }
+
+  updateTabContent(item) {
+    var func = this.props.onClickTabs;
+    func && func(item);
+  }
+
+  onClickTabs(e, item) {
+    if (item.key !== this.findDefaultTab().key) {
+      var tabs = this.changeDefaultTab(item);
+      this.setState({
+        tabs: tabs
+      });
+
+      var contents = this.state.contents;
+      if (!contents[item.key]) {
+        this.updateTabContent(item);
+      }
+    }
+  }
+
+  findDefaultTab() {
+    return this.state.tabs.filter((t) => t.default)[0];
+  }
+
+  changeDefaultTab(tab) {
+    var tabs = this.state.tabs;
+    tabs.forEach((t) => {
+      t.default = (t.key === tab.key) ? true : false;
+    });
+
+    return tabs;
+  }
+
+  loading() {
+    this.setState({
+      loading: true
+    });
+  }
+
   onClose() {
     var path = router.getPathList();
     router.pushState('/' + path.slice(0, 2).join('/'));
   }
 
   render() {
-    var props = this.props,
-      state = this.state;
+    var state = this.state;
 
     return (
       <div className={'halo-com-table-detail' + (state.visible ? ' visible' : '')}>
@@ -38,8 +90,24 @@ class Detail extends React.Component {
           <div className="close" onClick={this.onClose.bind(this)}>
             <i className="glyphicon icon-close" />
           </div>
-          <Tab ref="tab" items={props.tabs} type="sm" onClick={this.props.clickTabs} />
+          <Tab ref="tab" items={state.tabs} type="sm" onClick={this.onClickTabs.bind(this)} />
         </div>
+        {state.loading ?
+          <div className="detail-loading">
+            <i className="glyphicon icon-loading" />
+          </div>
+          : null
+        }
+        {Object.keys(state.contents).map((key) =>
+          state.contents[key] ?
+          <div key={key}
+            className="detail-content"
+            data-filed={key}
+            style={{display: key === this.findDefaultTab().key ? 'block' : 'none'}}>
+            {state.contents[key]}
+          </div>
+          : null
+        )}
       </div>
     );
   }

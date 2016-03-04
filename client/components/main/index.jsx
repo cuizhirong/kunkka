@@ -64,19 +64,16 @@ class Main extends React.Component {
   }
 
   onAction(field, actionType, data) {
-    this.props.onAction(field, actionType, this.refs, data);
+    var func = this.props.onAction;
+    func && func(field, actionType, this.refs, data);
   }
 
   componentDidMount() {
-    // this.onChangeParams(this.props.params);
     this.props.onInitialize(this.props.params);
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log('received: ', nextProps.params, this.props.params !== nextProps.params);
-    //if (this.props.params !== nextProps.params) {
     this.onChangeParams(nextProps.params);
-    //}
   }
 
   onChangeParams(params) {
@@ -105,6 +102,12 @@ class Main extends React.Component {
           }
         });
       }
+
+      this.refs.detail.setState({
+        contents: {}
+      }, () => {
+        this.onClickDetailTabs();
+      });
     } else {
       this.stores = {
         rows: []
@@ -206,11 +209,38 @@ class Main extends React.Component {
     }
 
     if (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1)) {
+      if (this.refs.detail.state.visible) {
+        this.onClickDetailTabs();
+      }
       this.onAction('table', 'check', {
         status: status,
         clickedRow: clickedRow,
         rows: rows
       });
+    }
+  }
+
+  onClickDetailTabs(tab) {
+    this.onAction('detail', tab ? tab.key : this.refs.detail.findDefaultTab().key, {
+      rows: this.stores.rows
+    });
+  }
+
+  clearState() {
+    this.clearSearchState();
+    this.clearTableState();
+  }
+
+  clearSearchState() {
+    if (this.refs.search) {
+      this.refs.search.clearState();
+      this.searchInTable('');
+    }
+  }
+
+  clearTableState() {
+    if (this.tableNode) {
+      this.tableNode.clearState();
     }
   }
 
@@ -273,7 +303,7 @@ class Main extends React.Component {
             <Detail
               ref="detail"
               tabs={detail.tabs}
-              clickTabs={null} />
+              onClickTabs={this.onClickDetailTabs.bind(this)} />
             : null
           }
         </div>
