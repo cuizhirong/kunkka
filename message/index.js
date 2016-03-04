@@ -17,7 +17,7 @@ wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     if (message !== 'h') {
       message = JSON.parse(message);
-      listener = message.userId + message.projectId;
+      listener = message.projectId;
       msgManager.addListener(listener, _msgDispatcher);
     }
   });

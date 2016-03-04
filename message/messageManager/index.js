@@ -4,6 +4,7 @@ var util = require('util');
 var novaMsgHandler = require('./nova');
 var cinderMsgHandler = require('./cinder');
 var glanceMsgHandler = require('./glance');
+var neutronMsgHandler = require('./neutron');
 
 function MessageManager () {
   EventEmitter.call(this);
@@ -19,11 +20,7 @@ MessageManager.prototype.msgDispatcher = function (ws, msg) {
 };
 
 MessageManager.prototype.getListenerName = function (msg) {
-  if (msg.event_type === 'image.delete') {
-    return msg.payload.properties.user_id + msg.payload.owner;
-  } else {
-    return msg._context_user_id + msg._context_project_id;
-  }
+  return msg.event_type === 'image.delete' ? msg.payload.owner : msg._context_project_id;
 };
 
 MessageManager.prototype.mqMessageListener = function (msg) {
@@ -52,6 +49,13 @@ MessageManager.prototype.msgFormatter = function (msg) {
       break;
     case 'image':
       ret = glanceMsgHandler.formatter(msg, eventTypeArray);
+      break;
+    case 'network':
+    case 'subnet':
+    case 'floatingip':
+    case 'port':
+    case 'router':
+      ret = neutronMsgHandler.formatter(msg, eventTypeArray);
       break;
     default:
       ret = null;
