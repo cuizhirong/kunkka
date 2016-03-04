@@ -1,0 +1,21 @@
+{
+  "title": ["dissociate", "floating_ip"],
+  "fields": [{
+    "type": "text",
+    "field": "diss_fip"
+  }, {
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "floating_ip",
+    "icon_type": "floating_ip",
+    "text": ""
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}

@@ -1,10 +1,28 @@
 {
   "en": {
+    "en_gw": "Do you want to enable the public network gateway of router ?",
+    "enable_public_gateway": "Enable public gateway",
+    "ext_gatway": "External Gateway",
+    "diss_fip": "Do you want to dissociate the Floating IP?",
+    "no_subnet": "No subnet",
+    "info_en_gw":"Still need to bind a floating IP to a router or an instance before they can reachable from poublic network.",
+    "info_dis_gw": "Router will not be able to reachable from public network after disable.",
+    "public_gateway": "public gateway",
     "router": "Router",
-    "ext_gatway": "External Gateway"
+    "tip_en_gw": "",
+    "tip_dis_gw": "Do you want to disable external gateway of router ?"
   },
   "zh-CN": {
+    "en_gw": "是否开启路由器上的公网网关？",
+    "enable_public_gateway": "开启公网网关",
+    "ext_gatway": "公网网关",
+    "diss_fip": "是否解除绑定公网IP？",
+    "no_subnet": "没有可用的子网",
+    "info_en_gw": "开启“公网网关”后还需要给路由或云主机绑定公网IP地址才能进行通信。",
+    "info_dis_gw": "是否关闭路由器上的公网网关？",
+    "public_gateway": "公网网关",
     "router": "路由器",
-    "ext_gatway": "公网网关"
+    "tip_en_gw": "公网网关是路由器与外部网络（公网）通信的通道，开启公网网关让你的VDC内部具备与公网通信的能力。",
+    "tip_dis_gw": "是否关闭路由器上的公网网关？"
   }
 }

@@ -12,6 +12,12 @@ var request = require('./request');
 var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 var deleteModal = require('client/components/modal_delete/index');
+var createRouter = require('./pop/create_router/index');
+var publicGateway = require('./pop/enable_public_gateway/index');
+var disableGateway = require('./pop/disable_gateway/index');
+var associateFip = require('./pop/associate_fip/index');
+var dissociateFip = require('./pop/dissociate_fip/index');
+var relatedSubnet = require('./pop/related_subnet/index');
 
 class Model extends React.Component {
 
@@ -257,6 +263,9 @@ class Model extends React.Component {
       case 'refresh':
         this.refresh();
         break;
+      case 'create':
+        createRouter('1212', function(){});
+        break;
       default:
         break;
     }
@@ -319,6 +328,28 @@ class Model extends React.Component {
             cb(true);
           }
         });
+        break;
+      case 'en_gw':
+        publicGateway('1212', function() {});
+        break;
+      case 'dis_gw':
+        disableGateway('1212', function() {});
+        break;
+      case 'ass_fip':
+        associateFip({
+          name: '123'
+        }, function() {});
+        break;
+      case 'dis_fip':
+        dissociateFip({
+          router: '123',
+          floating_ip: '10.10.10.10'
+        }, function() {});
+        break;
+      case 'con_sn':
+        relatedSubnet({
+          router: '123'
+        }, function() {});
         break;
       default:
         break;

@@ -1,0 +1,21 @@
+{
+  "title": ["related", "subnet"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "subnet",
+    "empty_text": {
+      "info": "no_subnet",
+      "link_info": ["create", "subnet"]
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "related",
+    "disabled": false
+  }
+}
