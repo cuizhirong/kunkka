@@ -64,6 +64,10 @@ class Main extends React.Component {
   }
 
   onAction(field, actionType, data) {
+    if (!data) {
+      data = {};
+    }
+    data.rows = this.stores.rows;
     var func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
@@ -128,8 +132,7 @@ class Main extends React.Component {
 
     this.onAction('table', 'check', {
       status: params[2] ? true : false,
-      checkedRow: params[2] ? this.stores.rows[0] : null,
-      rows: this.stores.rows
+      checkedRow: params[2] ? this.stores.rows[0] : null
     });
 
   }
@@ -184,10 +187,6 @@ class Main extends React.Component {
   }
 
   checkboxListener(e, status, clickedRow, arr) {
-    this.stores = {
-      rows: arr
-    };
-
     var path = this.props.params;
     if (arr.length <= 0) {
       router.pushState('/project/' + path[1]);
@@ -204,6 +203,10 @@ class Main extends React.Component {
   }
 
   onChangeTableCheckbox(e, status, clickedRow, rows) {
+    this.stores = {
+      rows: rows
+    };
+
     if (this.refs.detail.state.visible) {
       this.checkboxListener(e, status, clickedRow, rows);
     }
@@ -214,16 +217,13 @@ class Main extends React.Component {
       }
       this.onAction('table', 'check', {
         status: status,
-        clickedRow: clickedRow,
-        rows: rows
+        clickedRow: clickedRow
       });
     }
   }
 
   onClickDetailTabs(tab) {
-    this.onAction('detail', tab ? tab.key : this.refs.detail.findDefaultTab().key, {
-      rows: this.stores.rows
-    });
+    this.onAction('detail', tab ? tab.key : this.refs.detail.findDefaultTab().key, {});
   }
 
   clearState() {

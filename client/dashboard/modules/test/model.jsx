@@ -107,7 +107,7 @@ class Model extends React.Component {
   onAction(field, actionType, refs, data) {
     switch (field) {
       case 'btnList':
-        this.onClickBtnList(data.key, refs);
+        this.onClickBtnList(data.key, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -130,10 +130,15 @@ class Model extends React.Component {
     }
   }
 
-  onClickBtnList(key, refs) {
+  onClickBtnList(key, refs, data) {
     switch(key) {
       case 'refresh':
-        this.refresh(true);
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      case 'terminate':
         break;
       default:
         break;
@@ -188,6 +193,9 @@ class Model extends React.Component {
         case 'resize':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
+        case 'terminate':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
         default:
           break;
       }
@@ -218,6 +226,8 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
+          var relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -227,29 +237,11 @@ class Model extends React.Component {
                 items={basicPropsItem}
                 onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-            </div>
-          );
-        }
-        break;
-      case 'console_output':
-        if (isAvailableView(rows)) {
-          var relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
-          contents[tabKey] = (
-            <div>
               <RelatedSources
                 title={__.related + __.sources}
                 tabKey={'console_output'}
                 defaultUnfold={true}
                 items={relatedSourcesItem} />
-            </div>
-          );
-        }
-        break;
-      case 'vnc_console':
-        if (isAvailableView(rows)) {
-          var relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
-          contents[tabKey] = (
-            <div>
               <RelatedSnapshot
                 title={__.related_image}
                 defaultUnfold={true}
@@ -258,6 +250,22 @@ class Model extends React.Component {
                 noItemAlert={__.no_related + __.instance + __.snapshot}>
                 <Button value={__.create + __.snapshot}/>
               </RelatedSnapshot>
+            </div>
+          );
+        }
+        break;
+      case 'console_output':
+        if (isAvailableView(rows)) {
+          contents[tabKey] = (
+            <div>
+            </div>
+          );
+        }
+        break;
+      case 'vnc_console':
+        if (isAvailableView(rows)) {
+          contents[tabKey] = (
+            <div>
             </div>
           );
         }
@@ -441,16 +449,19 @@ class Model extends React.Component {
     // this.onAction();
   }
 
-  refresh(detailLoading) {
+  refresh(data) {
     var path = router.getPathList();
     if (!path[2]) {
-      this.loadingTable();
+      if (data && data.tableLoading) {
+        this.loadingTable();
+      }
       this.refs.dashboard.clearState();
     } else {
-      if (detailLoading) {
+      if (data && data.detailLoading) {
         this.refs.dashboard.refs.detail.loading();
       }
     }
+
     this.getTableData();
   }
 
@@ -487,7 +498,7 @@ class Model extends React.Component {
           url: r.url,
           data: _data
         }).then((res) => {
-          this.refresh(false);
+          this.refresh();
         }, (err) => {
           // console.log('err', err);
         });
