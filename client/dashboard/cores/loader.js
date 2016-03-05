@@ -6,9 +6,10 @@ var configs = require('configs/index.json');
 var modules = {};
 
 configs.modules.forEach((m) => {
-  modules[m] = require('../modules/' + m + '/model');
+  m.items.forEach((n) => {
+    modules[n] = require('../modules/' + n + '/model');
+  });
 });
-
 
 module.exports = {
   configs: configs,

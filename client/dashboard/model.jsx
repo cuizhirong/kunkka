@@ -79,26 +79,27 @@ class Model extends React.Component {
   render() {
     var state = this.state,
       props = this.props,
-      __ = props.language;
-    var modules = loader.modules;
-
-    var submenu = [];
+      __ = props.language,
+      modules = loader.modules,
+      menus = [];
 
     props.menus.forEach((m) => {
-      submenu.push({
-        subtitle: __[m],
-        key: m,
-        onClick: this.onClickSubmenu,
-        iconClass: 'glyphicon icon-' + m,
-        selected: m === state.selectedMenu ? true : false
+      var submenu = [];
+      m.items.forEach((n) => {
+        submenu.push({
+          subtitle: __[n],
+          key: n,
+          onClick: this.onClickSubmenu,
+          iconClass: 'glyphicon icon-' + n,
+          selected: n === state.selectedMenu ? true : false
+        });
+      });
+      menus.push({
+        title: __[m.title],
+        key: m.title || 'overview',
+        submenu: submenu
       });
     });
-
-    var items = [{
-      title: __.project,
-      key: 'project',
-      submenu: submenu
-    }];
 
     return (
       <div id="wrapper">
@@ -106,7 +107,7 @@ class Model extends React.Component {
           <NavBar username={this.props.username} />
         </div>
         <div id="main-wrapper">
-          <SideMenu items={items} />
+          <SideMenu items={menus} />
           <div id="main">
             {
               state.modules.map((m, index) => {
@@ -124,20 +125,23 @@ class Model extends React.Component {
 
 }
 
-function filterMenu(list) {
-  return list.filter((m) => {
-    var b = configs.routers.some((n) => {
-      if (n.key === m) {
-        return true;
-      }
-      return false;
+function filterMenu(modules) {
+  modules.forEach((m) => {
+    m.items = m.items.filter((i) => {
+      var b = configs.routers.some((n) => {
+        if (n.key === i) {
+          return true;
+        }
+        return false;
+      });
+      return !b;
     });
-    return !b;
   });
+  return modules;
 }
 
 Model.defaultProps = {
-  menus: filterMenu(Object.keys(loader.modules))
+  menus: filterMenu(configs.modules)
 };
 
 module.exports = Model;

@@ -1,18 +1,31 @@
 {
-  "modules": [
-    "instance",
-    "volume",
-    "image",
-    "network",
-    "subnet",
-    "floating-ip",
-    "router",
-    "snapshot",
-    "keypair",
-    "security-group",
-    "virtual-interface"
-  ],
-  "default_module": "instance",
+  "modules": [{
+    "items": ["test"]
+  }, {
+    "title": "compute",
+    "items": [
+      "instance",
+      "image",
+      "keypair"
+    ]
+  }, {
+    "title": "network",
+    "items": [
+      "network",
+      "subnet",
+      "floating-ip",
+      "router",
+      "virtual-interface"
+    ]
+  }, {
+    "title": "storage",
+    "items": [
+      "volume",
+      "snapshot",
+      "security-group"
+    ]
+  }],
+  "default_module": "test",
   "languages": [
     "en",
     "zh-CN"
