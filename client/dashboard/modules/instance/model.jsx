@@ -1,14 +1,18 @@
 require('./style/index.less');
 
+//react components
 var React = require('react');
-var uskin = require('client/uskin/index');
-var Button = uskin.Button;
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+var {Button} = require('client/uskin/index');
+
+//detail components
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('client/components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
+
+//pop modals
 var deleteModal = require('client/components/modal_delete/index');
 var changePwd = require('./pop/change_pwd/index');
 var createInstance = require('./pop/create_instance/index');
@@ -21,47 +25,71 @@ var instSnapshot = require('./pop/inst_snapshot/index');
 var dissociateFIP = require('./pop/dissociate_fip/index');
 var changeSecurityGrp = require('./pop/change_security_grp/index');
 var detachVolume = require('./pop/detach_volume/index');
-var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
-var moment = require('client/libs/moment');
-var stores = require('./stores');
-// var storage = require('client/dashboard/cores/storage');
-var actions = require('./actions');
-var Request = require('client/dashboard/cores/request');
-var router = require('client/dashboard/cores/router');
 
-// var BasicPropsEvent = require('client/components/basic_props/event');
+var request = require('./request');
+var Request = require('client/dashboard/cores/request');
+var config = require('./config.json');
+var moment = require('client/libs/moment');
+var __ = require('i18n/client/lang.json');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
+    moment.locale(HALO.configs.lang);
+
     this.state = {
       config: config
     };
 
-    moment.locale(HALO.configs.lang);
-    this.bindEventList = this.bindEventList.bind(this);
-    this.clearTableState = this.clearTableState.bind(this);
-    this.loadingTable = this.loadingTable.bind(this);
-    this._eventList = {};
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
+    this.tableColRender(this.state.config.table.column);
+  }
 
-    this.loadingTable();
-    this.listInstance();
-
-    // BasicPropsEvent.on('refresh', this.refresh.bind(this));
-    stores.on('change', (actionType, data) => {
-      // console.log('storage changed:', storage.data('instance'));
-      // console.log('storage mix:', storage.mix(['instance', 'subnet']));
-      switch (actionType) {
-        case 'getItems':
-          this.updateTableData(data);
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'image':
+          column.render = (col, item, i) => {
+            return item.image ?
+              <a data-type="router" href={'/project/image/' + item.image.id}>{item.image.name}</a> : '';
+          };
+          break;
+        case 'ip_address':
+          column.render = (col, item, i) => {
+            var str = '';
+            if (item.addresses.private) {
+              item.addresses.private.forEach((_item, index) => {
+                if (_item.version === 4 && _item['OS-EXT-IPS:type'] === 'fixed') {
+                  str += (index > 0) ? ', ' + _item.addr : _item.addr;
+                }
+              });
+            }
+            return str;
+          };
+          break;
+        case 'floating_ip':
+          column.render = (col, item, i) => {
+            return item.floating_ip ?
+              <span>
+                <i className="glyphicon icon-floating-ip" />
+                <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
+                  {item.floating_ip.floating_ip_address}
+                </a>
+              </span> : '';
+          };
+          break;
+        case 'instance_type':
+          column.render = (col, item, i) => {
+            return item.flavor ? item.flavor.name : '';
+          };
           break;
         default:
           break;
@@ -69,29 +97,208 @@ class Model extends React.Component {
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
+  onInitialize(params) {
+    // 初始化时，如果params长度为2，就不管
+    // 如果初始化时，params长度为3就render detail
+    this.getTableData();
+  }
+
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.servers;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
     }
-    return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn,
-      changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this),
-      refresh: this.refresh.bind(this)
-    };
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
   }
 
-  clickDetailTabs(tab, item, callback) {
-    var isAvailableView = (_item) => {
-      if (_item.length > 1) {
-        callback(
+  onClickBtnList(key, refs, data) {
+    switch(key) {
+      case 'create':
+        createInstance('234245432523', function() {});
+        break;
+      case 'vnc_console':
+        break;
+      case 'power_on':
+        break;
+      case 'power_off':
+        shutdownInstance({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      case 'reboot':
+        break;
+      case 'instance_snapshot':
+        instSnapshot({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'resize':
+        break;
+      case 'assc_floating_ip':
+        associateFip({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'dssc_floating_ip':
+        dissociateFIP({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'join_ntw':
+        joinNetwork({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_security_grp':
+        changeSecurityGrp({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_psw':
+        changePwd({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_keypr':
+        changeKeypair({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'add_volume':
+        attachVolume({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'rmv_volume':
+        detachVolume({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'terminate':
+        deleteModal({
+          action: 'terminate',
+          type: 'instance',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'vnc_console':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'power_on':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'shutoff') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'power_off':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'reboot':
+          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'instance_snapshot':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'resize':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'terminate':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
           <div className="no-data-desc">
             <p>{__.view_is_unavailable}</p>
           </div>
@@ -102,76 +309,80 @@ class Model extends React.Component {
       }
     };
 
-    switch (tab.key) {
+    switch(tabKey) {
       case 'description':
-        if (!isAvailableView(item)) {
-          break;
-        }
-
-        Request.get({
-          url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id
-        }).then((data) => {
-          var basicPropsItem = this.getBasicPropsItems(data.server),
-            relatedSourcesItem = this.getRelatedSourcesItems(data.server),
-            relatedSnapshotItems = this.getRelatedSnapshotItems(data.server.instance_snapshot);
-
-          callback(
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
+          var relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
+          contents[tabKey] = (
             <div>
               <BasicProps
                 title={__.basic + __.properties}
                 defaultUnfold={true}
+                tabKey={'description'}
                 items={basicPropsItem}
+                onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
               <RelatedSources
                 title={__.related + __.sources}
+                tabKey={'console_output'}
                 defaultUnfold={true}
                 items={relatedSourcesItem} />
               <RelatedSnapshot
                 title={__.related_image}
                 defaultUnfold={true}
+                tabKey={'vnc_console'}
                 items={relatedSnapshotItems ? relatedSnapshotItems : []}
                 noItemAlert={__.no_related + __.instance + __.snapshot}>
                 <Button value={__.create + __.snapshot}/>
               </RelatedSnapshot>
             </div>
           );
-        });
+        }
         break;
       case 'console_output':
-        if (!isAvailableView(item)) {
-          break;
+        if (isAvailableView(rows)) {
+          var serverId = rows[0].id;
+          contents[tabKey] = (
+            <ConsoleOutput
+              refresh={true}
+              url={'/api/v1/' + HALO.user.projectId + '/servers/' + serverId + '/action/output'}
+              moduleID="instance"
+              tabKey="console_output"
+              data-id={serverId} />
+          );
         }
-
-        callback(
-          <ConsoleOutput
-            refresh={true}
-            url={'/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/output'}
-            moduleID="instance"
-            tabKey="console_output"
-            data-id={item[0].id} />, { tabKey: 'console_output' }
-        );
         break;
       case 'vnc_console':
-        if (!isAvailableView(item)) {
-          break;
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          Request.post({
+            url: '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/action/vnc'
+          }).then((res) => {
+            contents[tabKey] = (
+              <VncConsole
+                src={res.console.url}
+                data-id={rows[0].id} />
+            );
+
+            detail.setState({
+              contents: contents
+            });
+          }, () => {
+            contents[tabKey] = (<div />);
+          });
         }
-        Request.post({
-          url: '/api/v1/' + HALO.user.projectId + '/servers/' + item[0].id + '/action/vnc'
-        }).then((res) => {
-          callback(
-            <VncConsole
-              src={res.console.url}
-              data-id={item[0].id} />
-          );
-        }, () => {
-          callback(<div />);
-        });
         break;
       default:
-        callback(null);
         break;
     }
 
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
+    }
   }
 
   getBasicPropsItems(item) {
@@ -333,227 +544,87 @@ class Model extends React.Component {
     return data;
   }
 
-  updateTableData(data) {
-    var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
 
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+  componentWillReceiveProps(nextProps) {
+    // this.onAction();
+  }
+
+  refresh(data) {
+    var path = router.getPathList();
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
-
-  listInstance() {
-    actions.emit('instance', 'getItems');
-  }
-
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'image':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.image ?
-              <a data-type="router" href={'/project/image/' + ritem.image.id}>{ritem.image.name}</a> : '';
-          };
-          break;
-        case 'ip_address':
-          col.render = (rcol, ritem, rindex) => {
-            var str = '';
-            if (ritem.addresses.private) {
-              ritem.addresses.private.forEach((item, i) => {
-                if (item.version === 4 && item['OS-EXT-IPS:type'] === 'fixed') {
-                  str += (i > 0) ? ', ' + item.addr : item.addr;
-                }
-              });
-            }
-            return str;
-          };
-          break;
-        case 'floating_ip':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.floating_ip ?
-              <span>
-                <i className="glyphicon icon-floating-ip" />
-                <a data-type="router" href={'/project/floating-ip/' + ritem.floating_ip.id}>
-                  {ritem.floating_ip.floating_ip_address}
-                </a>
-              </span>
-              : '';
-          };
-          break;
-        case 'instance_type':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.flavor ? ritem.flavor.name : '';
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clearTableState() {
-    this.refs.dashboard.clearTableState();
-  }
-
-  clickBtns(e, key) {
-    switch (key) {
-      case 'create':
-        createInstance('234245432523', function(data) {
-          console.log(data);
-        });
-        break;
-      case 'vnc_console':
-        break;
-      case 'power_off':
-        shutdownInstance({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    var path = router.getPathList();
-    if (!path[2]) {
-      this.loadingTable();
-      this.refs.dashboard.clearState();
-    }
-    this.listInstance();
-  }
-
-  clickDropdownBtn(e, btn) {
-    switch (btn.key) {
-      case 'assc_floating_ip':
-        associateFip({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'inst_snps':
-        instSnapshot({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'dssc_floating_ip':
-        dissociateFIP({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'chg_security_grp':
-        changeSecurityGrp({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'chg_psw':
-        changePwd({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'chg_keypr':
-        changeKeypair({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'add_volume':
-        attachVolume({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'rmv_volume':
-        detachVolume({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'terminate':
-        deleteModal({
-          action: 'terminate',
-          type: 'instance',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      case 'join_ntw':
-        joinNetwork({
-          name: 'abc'
-        }, function() {});
-        break;
-      default:
-        break;
-    }
-  }
-
-  changeSearchInput(str) {
-    // console.log('search:', str);
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns,
-      updateDropdownBtns = (items) => {
-        var allBtns = [];
-        items.forEach((element) => {
-          allBtns = allBtns.concat(element.items);
-        });
-
-        allBtns.map((btn) => {
-          switch (btn.key) {
-            case 'reboot':
-              btn.disabled = (arr.length > 0) ? false : true;
-              break;
-            case 'terminate':
-              btn.disabled = (arr.length > 0) ? false : true;
-              break;
-            default:
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-          }
-        });
-      };
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'vnc_console':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'power_off':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'more':
-          updateDropdownBtns(btn.dropdown.items);
-          break;
-        default:
-          break;
-      }
-    });
+    var _config = this.state.config;
+    _config.table.loading = true;
 
     this.setState({
-      config: _conf
+      config: _config
     });
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'edit_name':
+        var {item, newName} = data;
+
+        var r = item.request;
+        var _data = {};
+        _data[r.body] = {};
+        _data[r.body][r.modifyData] = newName;
+
+        Request.put({
+          url: r.url,
+          data: _data
+        }).then((res) => {
+          this.refresh();
+        }, (err) => {
+          // console.log('err', err);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
     return (
-      <div className="halo-module-instance" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="instance" config={this.state.config} eventList={this._eventList} />
+      <div className="halo-module-test" style={this.props.style}>
+        <Main
+          ref="dashboard"
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params}
+        />
       </div>
     );
   }

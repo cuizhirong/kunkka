@@ -1,0 +1,17 @@
+{
+  "title": ["modify", "instance", "password"],
+  "fields": [{
+    "type": "input",
+    "field": "password",
+    "required": true,
+    "tip_info": "tip_password"
+  }, {
+    "type": "input",
+    "field": "confirm_pwd",
+    "required": true
+  }],
+  "btn": {
+    "value": "save",
+    "disabled": false
+  }
+}

@@ -1,18 +1,37 @@
 require('./style/index.less');
 
+//react components
 var React = require('react');
 var Main = require('client/components/main/index');
 var {Button} = require('client/uskin/index');
+
+//detail components
+var BasicProps = require('client/components/basic_props/index');
+var RelatedSources = require('client/components/related_sources/index');
+var RelatedSnapshot = require('client/components/related_snapshot/index');
+var ConsoleOutput = require('client/components/console_output/index');
+var VncConsole = require('client/components/vnc_console/index');
+
+//pop modals
+var deleteModal = require('client/components/modal_delete/index');
+var changePwd = require('./pop/change_pwd/index');
+var createInstance = require('./pop/create_instance/index');
+var shutdownInstance = require('./pop/shutdown/index');
+var associateFip = require('./pop/associate_fip/index');
+var changeKeypair = require('./pop/change_keypair/index');
+var attachVolume = require('./pop/attach_volume/index');
+var joinNetwork = require('./pop/join_network/index');
+var instSnapshot = require('./pop/inst_snapshot/index');
+var dissociateFIP = require('./pop/dissociate_fip/index');
+var changeSecurityGrp = require('./pop/change_security_grp/index');
+var detachVolume = require('./pop/detach_volume/index');
+
 var request = require('./request');
 var Request = require('client/dashboard/cores/request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
-
-var BasicProps = require('client/components/basic_props/index');
-var RelatedSources = require('client/components/related_sources/index');
-var RelatedSnapshot = require('client/components/related_snapshot/index');
 
 class Model extends React.Component {
 
@@ -132,13 +151,83 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     switch(key) {
+      case 'create':
+        createInstance('234245432523', function(_data) {
+          console.log(_data);
+        });
+        break;
+      case 'vnc_console':
+        break;
+      case 'power_on':
+        break;
+      case 'power_off':
+        shutdownInstance({
+          name: 'abc'
+        }, function() {});
+        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
           detailLoading: true
         });
         break;
+      case 'reboot':
+        break;
+      case 'instance_snapshot':
+        instSnapshot({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'resize':
+        break;
+      case 'assc_floating_ip':
+        associateFip({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'dssc_floating_ip':
+        dissociateFIP({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'join_ntw':
+        joinNetwork({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_security_grp':
+        changeSecurityGrp({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_psw':
+        changePwd({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'chg_keypr':
+        changeKeypair({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'add_volume':
+        attachVolume({
+          name: 'abc'
+        }, function() {});
+        break;
+      case 'rmv_volume':
+        detachVolume({
+          name: 'abc'
+        }, function() {});
+        break;
       case 'terminate':
+        deleteModal({
+          action: 'terminate',
+          type: 'instance',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
         break;
       default:
         break;
@@ -208,6 +297,7 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
+    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -256,27 +346,46 @@ class Model extends React.Component {
         break;
       case 'console_output':
         if (isAvailableView(rows)) {
+          var serverId = rows[0].id;
           contents[tabKey] = (
-            <div>
-            </div>
+            <ConsoleOutput
+              refresh={true}
+              url={'/api/v1/' + HALO.user.projectId + '/servers/' + serverId + '/action/output'}
+              moduleID="instance"
+              tabKey="console_output"
+              data-id={serverId} />
           );
         }
         break;
       case 'vnc_console':
         if (isAvailableView(rows)) {
-          contents[tabKey] = (
-            <div>
-            </div>
-          );
+          syncUpdate = false;
+          Request.post({
+            url: '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/action/vnc'
+          }).then((res) => {
+            contents[tabKey] = (
+              <VncConsole
+                src={res.console.url}
+                data-id={rows[0].id} />
+            );
+
+            detail.setState({
+              contents: contents
+            });
+          }, () => {
+            contents[tabKey] = (<div />);
+          });
         }
         break;
       default:
         break;
     }
 
-    detail.setState({
-      contents: contents
-    });
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
+    }
   }
 
   getBasicPropsItems(item) {

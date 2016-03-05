@@ -1,0 +1,17 @@
+{
+  "title": ["take_instance", "snapshot"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance_name",
+    "icon_type": "instance",
+    "text": "123"
+  }, {
+    "type": "input",
+    "field": "inst_snapshot_name",
+    "required": true
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": false
+  }
+}

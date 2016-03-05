@@ -1,12 +1,15 @@
 require('./style/index.less');
 
+//react components
 var React = require('react');
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+
+//detail components
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
+
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
-var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 
@@ -19,55 +22,160 @@ class Model extends React.Component {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this.clearTableState = this.clearTableState.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
-    this.listInstance();
+    this.tableColRender(this.state.config.table.column);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
-    }
-    return true;
-  }
-
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn,
-      changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
-    };
-  }
-
-  clickDetailTabs(tab, item, callback) {
-    switch (tab.key) {
-      case 'description':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
+  tableColRender(column) {
+    column.map((col) => {
+      switch (col.key) {
+        case 'size':
+          col.render = (rcol, ritem, rindex) => {
+            return Math.round(ritem.size / 1024) + ' MB';
+          };
           break;
-        }
+        case 'type':
+          col.render = (rcol, ritem, rindex) => {
+            return ritem.image_type === 'snapshot' ? __.snapshot : __.image;
+          };
+          break;
+        default:
+          break;
+      }
+    });
+  }
 
-        Request.get({
-          url: '/api/v1/images/' + item[0].id
-        }).then((data) => {
-          var basicPropsItem = this.getBasicPropsItems(data);
-          callback(
+  onInitialize(params) {
+    this.getTableData();
+  }
+
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.images;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'create':
+        break;
+      case 'crt_img':
+        break;
+      case 'del_img':
+        deleteModal({
+          action: 'delete',
+          type: 'image',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'crt_inst':
+          btns[key].disabled = (rows.length !== 1) ? true : false;
+          break;
+        case 'del_img':
+          btns[key].disabled = (rows.length === 0) ? true : false;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          contents[tabKey] = (
             <div>
               <BasicProps
                 title={__.basic + __.properties}
@@ -75,15 +183,19 @@ class Model extends React.Component {
                 items={basicPropsItem ? basicPropsItem : []} />
             </div>
           );
-        }, (err) => {
-          //console.log(err)
-        });
+        }
         break;
       default:
-        callback(null);
         break;
     }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
+    }
   }
+
 
   getBasicPropsItems(item) {
     var items = [{
@@ -119,127 +231,52 @@ class Model extends React.Component {
     return items;
   }
 
-  updateTableData(data) {
-    var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
 
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+  componentWillReceiveProps(nextProps) {
+    // this.onAction();
+  }
+
+  refresh(data) {
+    var path = router.getPathList();
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
+    var _config = this.state.config;
+    _config.table.loading = true;
 
-  listInstance() {
-    var that = this;
-
-    this.loadingTable();
-    request.listInstances().then(function(data) {
-      that.updateTableData(data.images);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
-    });
-
-  }
-
-
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'size':
-          col.render = (rcol, ritem, rindex) => {
-            return Math.round(ritem.size / 1024) + ' MB';
-          };
-          break;
-        case 'type':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.image_type === 'snapshot' ? __.snapshot : __.image;
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clearTableState() {
-    this.refs.dashboard.clearTableState();
-  }
-
-  clickBtns(e, key) {
-    switch (key) {
-      case 'create':
-        break;
-      case 'del_img':
-        deleteModal({
-          action: 'delete',
-          type: 'image',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  clickDropdownBtn(e, status) {
-    // console.log('clickDropdownBtn: status is', status);
-  }
-
-  changeSearchInput(str) {
-    // console.log('search:', str);
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns;
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'crt_inst':
-          btn.disabled = (arr.length !== 1) ? true : false;
-          break;
-        case 'del_img':
-          btn.disabled = (arr.length === 0) ? true : false;
-          break;
-        default:
-          break;
-      }
-    });
-
-    this._stores.checkedRow = arr;
     this.setState({
-      config: _conf
+      config: _config
     });
   }
 
   render() {
     return (
       <div className="halo-module-image" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="image" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }

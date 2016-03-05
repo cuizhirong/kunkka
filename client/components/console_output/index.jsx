@@ -3,7 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
-var captainEvent = require('../main_table/event');
+var mainEvent = require('../main/event');
 
 class VncConsole extends React.Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class VncConsole extends React.Component {
     }
 
     router.on('changeState', this.onChangeState);
-    captainEvent.on('changeTab', this.onChangeTab);
+    mainEvent.on('changeTab', this.onChangeTab);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,7 +41,7 @@ class VncConsole extends React.Component {
     this.stopRefreshing();
 
     router.removeListener('changeState', this.onChangeState);
-    captainEvent.removeListener('changeTab', this.onChangeTab);
+    mainEvent.removeListener('changeTab', this.onChangeTab);
   }
 
   onChangeState(pathList) {

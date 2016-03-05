@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var {Tab} = require('client/uskin/index');
 var router = require('client/dashboard/cores/router');
+var event = require('./event');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -62,6 +63,8 @@ class Detail extends React.Component {
   }
 
   changeDefaultTab(tab) {
+    event.emit('changeTab', tab);
+
     var tabs = this.state.tabs;
     tabs.forEach((t) => {
       t.default = (t.key === tab.key) ? true : false;
