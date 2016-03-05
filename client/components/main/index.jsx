@@ -77,7 +77,9 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.onChangeParams(nextProps.params);
+    if (nextProps.visible) {
+      this.onChangeParams(nextProps.params);
+    }
   }
 
   onChangeParams(params) {
