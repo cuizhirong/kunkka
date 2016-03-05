@@ -23,17 +23,12 @@ class Main extends React.Component {
   }
 
   componentWillMount() {
-    this.onInitialize();
-  }
-
-  onInitialize() {
     var config = this.props.config;
-
     converter.convertLang(__, config);
-    this.setTableColRender(config.table.column);
+    this.tableColRender(config.table.column);
   }
 
-  setTableColRender(columns) {
+  tableColRender(columns) {
     columns.map((column) => {
       switch (column.type) {
         case 'captain':
@@ -80,6 +75,13 @@ class Main extends React.Component {
     if (nextProps.visible) {
       this.onChangeParams(nextProps.params);
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.visible) {
+      return true;
+    }
+    return false;
   }
 
   onChangeParams(params) {

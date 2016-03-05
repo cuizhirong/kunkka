@@ -622,7 +622,6 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
-          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
         />
