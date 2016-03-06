@@ -55,6 +55,7 @@
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "loading": true,
     "column": [{
       "title": ["ip", "address"],
       "dataIndex": "floating_ip_address",
