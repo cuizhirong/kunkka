@@ -1,13 +1,16 @@
 require('./style/index.less');
 
 var React = require('react');
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+
 var deleteModal = require('client/components/modal_delete/index');
+var createSecurityGroup = require('./pop/create_security_group/index');
+var modifySecurityGroup = require('./pop/modify_security_group/index');
+
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
-var createSecurityGroup = require('./pop/create_security_group/index');
-var modifySecurityGroup = require('./pop/modify_security_group/index');
+var __ = require('i18n/client/lang.json');
 
 class Model extends React.Component {
 
@@ -18,18 +21,156 @@ class Model extends React.Component {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this.clearTableState = this.clearTableState.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
-    this.listInstance();
+  }
+
+  onInitialize(params) {
+    this.getTableData();
+  }
+
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.security_groups;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'create':
+        createSecurityGroup('1212', function(_data) {
+          // console.log(data);
+        });
+        break;
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'security-group',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      case 'modify':
+        modifySecurityGroup('121212', function(_data) {
+          // console.log(data);
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'create':
+          break;
+        case 'modify':
+        case 'delete':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          contents[tabKey] = (<div></div>);
+        }
+        break;
+      default:
+        break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -39,135 +180,42 @@ class Model extends React.Component {
     return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
-    };
-  }
-
-  updateTableData(data) {
+  refresh(data) {
     var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
-
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
+    var _config = this.state.config;
+    _config.table.loading = true;
 
-  listInstance() {
-    var that = this;
-
-    this.loadingTable();
-    request.listRouters().then(function(data) {
-      that.updateTableData(data.security_groups);
-    }, function(err) {
-      console.debug(err);
-    });
-  }
-
-  clickDetailTabs(tab, item, callback) {
-    switch (tab.key) {
-      case 'description':
-        callback();
-        break;
-      default:
-        callback(null);
-        break;
-    }
-  }
-
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        default:
-          break;
-      }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clearTableState() {
-    this.refs.dashboard.clearTableState();
-  }
-
-  clickBtns(e, key) {
-    // console.log('Button clicked:', key);
-    switch (key) {
-      case 'create':
-        createSecurityGroup('1212', function(data) {
-          console.log(data);
-        });
-        break;
-      case 'delete':
-        deleteModal({
-          action: 'delete',
-          type: 'security-group',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      case 'modify':
-        modifySecurityGroup('121212', function(data) {
-          console.log(data);
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns;
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'create':
-          break;
-        case 'modify':
-        case 'delete':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        default:
-          break;
-      }
-    });
-
-    this._stores.checkedRow = arr;
     this.setState({
-      config: _conf
+      config: _config
     });
   }
 
   render() {
     return (
       <div className="halo-module-security-group" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="security-group" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }
