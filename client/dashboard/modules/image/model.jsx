@@ -6,6 +6,8 @@ var Main = require('client/components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+
+//pop modal
 var deleteModal = require('client/components/modal_delete/index');
 
 var config = require('./config.json');
