@@ -1,17 +1,18 @@
 require('./style/index.less');
 
 var React = require('react');
-var uskin = require('client/uskin/index');
-var Button = uskin.Button;
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+var {Button} = require('client/uskin/index');
+
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
+
 var deleteModal = require('client/components/modal_delete/index');
+
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
 var request = require('./request');
-var Request = require('client/dashboard/cores/request');
 var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
@@ -19,21 +20,17 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    this.setTableColRender(config.table.column);
     this.state = {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.listInstance();
+    this.tableColRender(this.state.config.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -43,36 +40,181 @@ class Model extends React.Component {
     return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn,
-      changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
-    };
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'size':
+          column.render = (col, item, i) => {
+            return item.size + ' GB';
+          };
+          break;
+        case 'attch_instance':
+          column.render = (col, item, i) => {
+            var servers = [];
+
+            item.attachments && item.attachments.map((attch, index) => {
+              if (index > 0) {
+                servers.push(<span key={'comma' + index}> ,</span>);
+              }
+              servers.push(
+                <span key={index}>
+                  <i className="glyphicon icon-instance" />
+                  <a data-type="router" href={'/project/instance/' + attch.server.id}>
+                    {attch.server.name}
+                  </a>
+                </span>
+              );
+            });
+            return servers;
+          };
+          break;
+        case 'type':
+          column.render = (col, item, i) => {
+            return <span><i className="glyphicon icon-performance" />{item.volume_type}</span>;
+          };
+          break;
+        case 'shared':
+          column.render = (col, item, i) => {
+            return item.multiattach ? __.shared : '-';
+          };
+          break;
+        case 'attributes':
+          column.render = (col, item, i) => {
+            return item.metadata.readonly ? __.read_only : __.read_write;
+          };
+          break;
+        default:
+          break;
+      }
+    });
   }
 
-  clickDetailTabs(tab, item, callback) {
-    switch (tab.key) {
-      case 'description':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
+  onInitialize(params) {
+    this.getTableData();
+  }
+
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.volumes;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'volume',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'create':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        }
+        case 'attach_to_instance':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length > 0) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
 
-        Request.get({
-          url: '/api/v1/' + HALO.user.projectId + '/volumes/' + item[0].id
-        }).then((data) => {
-          var basicPropsItem = this.getBasicProps(data.volume),
-            relatedSnapshotItems = this.getRelatedSnapshotItems(data.volume.snapshots);
+    return btns;
+  }
 
-          callback(
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicProps(rows[0]),
+            relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].snapshots);
+          contents[tabKey] = (
             <div>
               <BasicProps title={__.basic + __.properties}
                 defaultUnfold={true}
@@ -80,18 +222,22 @@ class Model extends React.Component {
               <RelatedSnapshot
                 title={__.snapshot}
                 defaultUnfold={true}
+                noItemAlert={__.no_related + __.snapshot}
                 items={relatedSnapshotItems ? relatedSnapshotItems : []}>
                 <Button value={__.create + __.snapshot}/>
               </RelatedSnapshot>
             </div>
           );
-        }, (err) => {
-          // console.log(err);
-        });
+        }
         break;
       default:
-        callback(null);
         break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
     }
   }
 
@@ -170,189 +316,42 @@ class Model extends React.Component {
     return data;
   }
 
-  updateTableData(data) {
+  refresh(data) {
     var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
-
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
+    var _config = this.state.config;
+    _config.table.loading = true;
 
-  listInstance() {
-    var that = this;
-
-    this.loadingTable();
-    request.listVolumes().then(function(data) {
-      that.updateTableData(data.volumes ? data.volumes : []);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
-    });
-
-  }
-
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'size':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.size + ' GB';
-          };
-          break;
-        case 'attch_instance':
-          col.render = (rcol, ritem, rindex) => {
-            var servers = [];
-
-            ritem.attachments && ritem.attachments.map((attch, index) => {
-              if (index > 0) {
-                servers.push(<span key={'comma' + index}> ,</span>);
-              }
-              servers.push(
-                <span key={index}>
-                  <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + attch.server.id}>
-                    {attch.server.name}
-                  </a>
-                </span>
-              );
-            });
-            return servers;
-          };
-          break;
-        case 'type':
-          col.render = (rcol, ritem, rindex) => {
-            return <span><i className="glyphicon icon-performance" />{ritem.volume_type}</span>;
-          };
-          break;
-        case 'shared':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.multiattach ? __.shared : '-';
-          };
-          break;
-        case 'attributes':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.metadata.readonly ? __.read_only : __.read_write;
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  getTableLang(table) {
-    table.column.map((col) => {
-      if (col.title_key) {
-        col.title = '';
-        col.title_key.map((val) => {
-          col.title += __[val];
-        });
-      }
-
-      this.setTableColRender(col);
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    //   console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clickBtns(e, key) {
-    // console.log('clickBtns: key is', key);
-    switch (key) {
-      case 'create_instance':
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  clickDropdownBtn(e, btn) {
-    switch (btn.key) {
-      case 'delete':
-        deleteModal({
-          action: 'delete',
-          type: 'volume',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  changeSearchInput(str) {
-    // console.log('search: text is', str);
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns,
-      updateDropdownBtns = (items) => {
-        var allBtns = [];
-        items.forEach((element) => {
-          allBtns = allBtns.concat(element.items);
-        });
-
-        allBtns.map((btn) => {
-          switch (btn.key) {
-            case 'delete':
-              btn.disabled = (arr.length > 0) ? false : true;
-              break;
-            default:
-              break;
-          }
-        });
-      };
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'create':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'attach_to_instance':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'more':
-          updateDropdownBtns(btn.dropdown.items);
-          break;
-        default:
-          break;
-      }
-    });
-
-    this._stores.checkedRow = arr;
     this.setState({
-      config: _conf
+      config: _config
     });
   }
 
   render() {
-
     return (
       <div className="halo-module-volume" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="volume" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }
