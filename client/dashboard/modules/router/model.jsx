@@ -1,16 +1,12 @@
 require('./style/index.less');
 
 var React = require('react');
-var uskin = require('client/uskin/index');
-var Button = uskin.Button;
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+var {Button} = require('client/uskin/index');
+
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
-var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
-var request = require('./request');
-var Request = require('client/dashboard/cores/request');
-var router = require('client/dashboard/cores/router');
+
 var deleteModal = require('client/components/modal_delete/index');
 var createRouter = require('./pop/create_router/index');
 var publicGateway = require('./pop/enable_public_gateway/index');
@@ -18,6 +14,11 @@ var disableGateway = require('./pop/disable_gateway/index');
 var associateFip = require('./pop/associate_fip/index');
 var dissociateFip = require('./pop/dissociate_fip/index');
 var relatedSubnet = require('./pop/related_subnet/index');
+
+var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
+var request = require('./request');
+var router = require('client/dashboard/cores/router');
 
 class Model extends React.Component {
 
@@ -28,18 +29,13 @@ class Model extends React.Component {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this.clearTableState = this.clearTableState.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
-    this.listInstance();
+    this.tableColRender(this.state.config.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -49,34 +45,185 @@ class Model extends React.Component {
     return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn
-    };
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'floating_ip':
+          column.render = (col, item, i) => {
+            if(item.floatingip) {
+              return (
+                  <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
+                    {item.floatingip.floating_ip_address}
+                  </a>
+              );
+            } else {
+              return '';
+            }
+          };
+          break;
+        case 'ext_gw':
+          column.render = (col, item, i) => {
+            if(item.external_gateway_info) {
+              return item.external_gateway_info.enable_snat ? __.on : __.off;
+            } else {
+              return '';
+            }
+          };
+          break;
+        default:
+          break;
+      }
+    });
   }
 
-  clickDetailTabs(tab, item, callback) {
-    switch (tab.key) {
-      case 'description':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
-        }
+  onInitialize(params) {
+    this.getTableData();
+  }
 
-        Request.get({
-          url: '/api/v1/routers/' + item[0].id
-        }).then((res) => {
-          var basicPropsItem = this.getBasicPropsItems(res.routers),
-            subnetConfig = this.getDetailTableConfig(res.routers.subnets);
-          callback(
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.routers;
+      table.loading = false;
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'create':
+        createRouter('1212', function(){});
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type:'router',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      case 'en_gw':
+        publicGateway('1212', function() {});
+        break;
+      case 'dis_gw':
+        disableGateway('1212', function() {});
+        break;
+      case 'ass_fip':
+        associateFip({
+          name: '123'
+        }, function() {});
+        break;
+      case 'dis_fip':
+        dissociateFip({
+          router: '123',
+          floating_ip: '10.10.10.10'
+        }, function() {});
+        break;
+      case 'con_sn':
+        relatedSubnet({
+          router: '123'
+        }, function() {});
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'delete':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'dis_gw':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+            subnetConfig = this.getDetailTableConfig(rows[0].subnets);
+          contents[tabKey] = (
             <div>
               <BasicProps
                 title={__.basic + __.properties}
@@ -90,11 +237,16 @@ class Model extends React.Component {
               </DetailMinitable>
             </div>
           );
-        });
+        }
         break;
       default:
-        callback(null);
         break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
     }
   }
 
@@ -180,190 +332,42 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  updateTableData(data) {
+  refresh(data) {
     var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
-
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
+    var _config = this.state.config;
+    _config.table.loading = true;
 
-  listInstance() {
-    var that = this;
-
-    this.loadingTable();
-    request.listRouters().then(function(data) {
-      that.updateTableData(data.routers);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
-    });
-  }
-
-  setTableColRender(column) {
-    var listener = (id, e) => {
-      e.preventDefault();
-      router.pushState('/project/floating-ip/' + id);
-    };
-
-    column.map((col) => {
-      switch (col.key) {
-        case 'floating_ip':
-          col.render = (rcol, ritem, rindex) => {
-            if(ritem.floatingip) {
-              return (
-                  <a onClick={listener.bind(null, ritem.floatingip.id)}>
-                    {ritem.floatingip.floating_ip_address}
-                  </a>
-              );
-            } else {
-              return '';
-            }
-          };
-          break;
-        case 'ext_gw':
-          col.render = (rcol, ritem, rindex) => {
-            if(ritem.external_gateway_info) {
-              return ritem.external_gateway_info.enable_snat ? __.on : __.off;
-            } else {
-              return '';
-            }
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clearTableState() {
-    this.refs.dashboard.clearTableState();
-  }
-
-  clickBtns(e, key) {
-    // console.log('Button clicked:', key);
-    switch (key) {
-      case 'prv_network':
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      case 'create':
-        createRouter('1212', function(){});
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns;
-    var updateDropdownBtns = (items) => {
-      items.map((item) => {
-        item.items.map((btn) => {
-          switch(btn.key) {
-            case 'delete':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            case 'dis_gw':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            default:
-              break;
-          }
-        });
-      });
-    };
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'create':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'delete':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'more':
-          updateDropdownBtns(btn.dropdown.items);
-          break;
-        default:
-          break;
-      }
-    });
-
-    this._stores.checkedRow = arr;
     this.setState({
-      config: _conf
+      config: _config
     });
-  }
-
-  clickDropdownBtn(e, item) {
-    switch(item.key) {
-      case 'delete':
-        deleteModal({
-          action: 'delete',
-          type:'router',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      case 'en_gw':
-        publicGateway('1212', function() {});
-        break;
-      case 'dis_gw':
-        disableGateway('1212', function() {});
-        break;
-      case 'ass_fip':
-        associateFip({
-          name: '123'
-        }, function() {});
-        break;
-      case 'dis_fip':
-        dissociateFip({
-          router: '123',
-          floating_ip: '10.10.10.10'
-        }, function() {});
-        break;
-      case 'con_sn':
-        relatedSubnet({
-          router: '123'
-        }, function() {});
-        break;
-      default:
-        break;
-    }
-  }
-
-  changeSearchInput(str) {
-    // console.log('search:', str);
   }
 
   render() {
     return (
       <div className="halo-module-router" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="router" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }
