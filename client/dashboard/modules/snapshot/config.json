@@ -28,6 +28,7 @@
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "loading": true,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
