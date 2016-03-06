@@ -1,14 +1,16 @@
 require('./style/index.less');
 
 var React = require('react');
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+
 var BasicProps = require('client/components/basic_props/index');
+
+var deleteModal = require('client/components/modal_delete/index');
+
 var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
-var Request = require('client/dashboard/cores/request');
-var deleteModal = require('client/components/modal_delete/index');
 
 class Model extends React.Component {
 
@@ -19,17 +21,13 @@ class Model extends React.Component {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
-    this.listInstance();
+    this.tableColRender(this.state.config.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -39,20 +37,167 @@ class Model extends React.Component {
     return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
-    };
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'subnet':
+          column.render = (col, item, i) => {
+            return item.subnet.id ?
+              <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a></div> : '';
+          };
+          break;
+        case 'related_instance':
+          column.render = (col, item, i) => {
+            return item.instance ?
+              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.instance.id}>{item.instance.name}</a></div> : '';
+          };
+          break;
+        case 'restrict':
+          column.render = (col, item, i) => {
+            return item.port_security_enabled ?
+              <span className="label-active">已开启</span> : <span className="label-down">未开启</span>;
+          };
+          break;
+        case 'ip_adrs':
+          column.render = (col, item, i) => {
+            return <span>{
+              item.fixed_ips.map((_item, _i) =>
+                <span key={_i}>{(_i > 0 ? ', ' : '') + _item.ip_address}</span>
+              )
+            }</span>;
+          };
+          break;
+        case 'floating_ip':
+          column.render = (col, item, i) => {
+            return item.floatingip.id ?
+              <div>
+                <i className="glyphicon icon-floating-ip" />
+                <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
+                  {item.floatingip.floating_ip_address}
+                </a>
+              </div> : '';
+          };
+          break;
+        default:
+          break;
+      }
+    });
   }
 
-  clickDetailTabs(tab, item, callback) {
-    var isAvailableView = (_item) => {
-      if (_item.length > 1) {
-        callback(
+  onInitialize(params) {
+    this.getTableData();
+  }
+
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.nics;
+      table.loading = false;
+
+      table.data.map((item, i) => {
+        item.name = item.name ? item.name : '(' + item.id.substring(0, 8) + ')';
+      });
+
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type:'virtual-interface',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'modify':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'disable':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
           <div className="no-data-desc">
             <p>{__.view_is_unavailable}</p>
           </div>
@@ -63,18 +208,11 @@ class Model extends React.Component {
       }
     };
 
-    switch (tab.key) {
+    switch(tabKey) {
       case 'description':
-        if (!isAvailableView(item)) {
-          break;
-        }
-
-        Request.get({
-          url: '/api/v1/' + HALO.user.projectId + '/nic/' + item[0].id
-        }).then((data) => {
-          var basicPropsItem = this.getBasicPropsItems(data.nic);
-
-          callback(
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          contents[tabKey] = (
             <div>
               <BasicProps
                 title = {__.basic + __.properties}
@@ -82,11 +220,16 @@ class Model extends React.Component {
                 items = {basicPropsItem}/>
             </div>
           );
-        });
+        }
         break;
       default:
-        callback(null);
         break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
     }
   }
 
@@ -144,165 +287,42 @@ class Model extends React.Component {
     return items;
   }
 
-  updateTableData(data) {
+  refresh(data) {
     var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
-
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
+      }
+    }
+
+    this.getTableData();
   }
 
   loadingTable() {
-    this.updateTableData(null);
-  }
+    var _config = this.state.config;
+    _config.table.loading = true;
 
-  listInstance() {
-    var that = this;
-
-    this.loadingTable();
-    request.listInstances().then(function(data) {
-      data.nics.map((item, i) => {
-        data.nics[i].name = item.name ? item.name : '(' + item.id.substring(0, 8) + ')';
-      });
-      that.updateTableData(data.nics);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
-    });
-
-  }
-
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'subnet':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.subnet.id ?
-              <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + ritem.subnet.id}>{ritem.subnet.name}</a></div> : '';
-          };
-          break;
-        case 'related_instance':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.instance ?
-              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + ritem.instance.id}>{ritem.instance.name}</a></div> : '';
-          };
-          break;
-        case 'restrict':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.port_security_enabled ?
-              <span className="label-active">已开启</span> : <span className="label-down">未开启</span>;
-          };
-          break;
-        case 'ip_adrs':
-          col.render = (rcol, ritem, rindex) => {
-            return <span>{
-              ritem.fixed_ips.map((item, i) =>
-                <span key={i}>{(i > 0 ? ', ' : '') + item.ip_address}</span>
-              )
-            }</span>;
-          };
-          break;
-        case 'floating_ip':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.floatingip.id ?
-              <div><i className="glyphicon icon-floating-ip"></i><a data-type="router" href={'/project/floatingips/' + ritem.floatingip.id}>{ritem.floatingip.name}</a></div> : '';
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clickBtns(e, key) {
-    switch (key) {
-      case 'create':
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  clickDropdownBtn(e, status) {
-    // console.log('clickDropdownBtn: status is', status);
-    switch(status.key) {
-      case 'delete':
-        deleteModal({
-          action: 'delete',
-          type:'virtual-interface',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var conf = this.state.config,
-      btns = conf.btns;
-
-    var updateDropdownBtns = (items) => {
-      items.map((item) => {
-        item.map((btn) => {
-          switch(btn.key) {
-            case 'modify':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            case 'disable':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            case 'delete':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            default:
-              break;
-          }
-        });
-      });
-    };
-
-    btns.map((btn) => {
-      switch (btn.key) {
-        case 'more':
-          updateDropdownBtns(btn.dropdown.items);
-          break;
-        default:
-          break;
-      }
-    });
-
-    this._stores.checkedRow = arr;
     this.setState({
-      config: conf
+      config: _config
     });
   }
 
   render() {
     return (
       <div className="halo-module-virtual-interface" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="virtual-interface" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }
