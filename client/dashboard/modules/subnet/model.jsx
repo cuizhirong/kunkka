@@ -1,17 +1,18 @@
 require('./style/index.less');
 
 var React = require('react');
-var uskin = require('client/uskin/index');
-var Button = uskin.Button;
-var MainTable = require('client/components/main_table/index');
+var Main = require('client/components/main/index');
+var {Button} = require('client/uskin/index');
+
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
+
 var deleteModal = require('client/components/modal_delete/index');
+
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
-var Request = require('client/dashboard/cores/request');
 var request = require('./request');
 
 class Model extends React.Component {
@@ -23,18 +24,13 @@ class Model extends React.Component {
       config: config
     };
 
-    this.bindEventList = this.bindEventList.bind(this);
-    this.clearTableState = this.clearTableState.bind(this);
-    this._eventList = {};
-    this._stores = {
-      checkedRow: []
-    };
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    this.bindEventList();
-    this.setTableColRender(config.table.column);
-    this.listInstance();
+    this.tableColRender(this.state.config.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -44,66 +40,173 @@ class Model extends React.Component {
     return true;
   }
 
-  bindEventList() {
-    this._eventList = {
-      clickBtns: this.clickBtns.bind(this),
-      updateBtns: this.updateBtns.bind(this),
-      clickDropdownBtn: this.clickDropdownBtn,
-      changeSearchInput: this.changeSearchInput,
-      clickTableCheckbox: this.clickTableCheckbox.bind(this),
-      clickDetailTabs: this.clickDetailTabs.bind(this)
-    };
-  }
-
-  updateTableData(data) {
-    var path = router.getPathList();
-    var _conf = this.state.config;
-    _conf.table.data = data;
-
-    this.setState({
-      config: _conf
-    }, () => {
-      if (path.length > 2 && data && data.length > 0) {
-        router.replaceState(router.getPathName(), null, null, true);
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'prv_network':
+          column.render = (col, item, i) => {
+            return item.network ?
+              <span>
+                <i className="glyphicon icon-network" />
+                <a data-type="router" href={'/project/network/' + item.network.id}>
+                  {item.network.name}
+                </a>
+              </span> : '';
+          };
+          break;
+        case 'assc_router':
+          column.render = (col, item, i) => {
+            return item.router.id ?
+              <span>
+                <i className="glyphicon icon-router" />
+                <a data-type="router" href={'/project/router/' + item.router.id}>
+                  {item.router.name}
+                </a>
+              </span> : '';
+          };
+          break;
+        case 'ip_ver':
+          column.render = (col, item, i) => {
+            return item.ip_version === 4 ? 'IP v4' : item.ip_version;
+          };
+          break;
+        case 'enable_dhcp':
+          column.render = (col, item, i) => {
+            return item.enable_dhcp ? __.yes : __.no;
+          };
+          break;
+        default:
+          break;
       }
     });
   }
 
-  loadingTable() {
-    this.updateTableData(null);
+  onInitialize(params) {
+    this.getTableData();
   }
 
-  listInstance() {
-    var that = this;
+  getTableData() {
+    request.getList((res) => {
+      var table = this.state.config.table;
+      table.data = res.subnets;
+      table.loading = false;
 
-    this.loadingTable();
-    request.listInstances().then(function(data) {
-      that.updateTableData(data.subnets);
-    }, function(err) {
-      that.updateTableData([]);
-      console.debug(err);
+      this.setState({
+        config: config
+      });
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
     });
   }
 
-  clickDetailTabs(tab, item, callback) {
-    switch(tab.key) {
-      case 'description':
-        if (item.length > 1) {
-          callback(
-            <div className="no-data-desc">
-              <p>{__.view_is_unavailable}</p>
-            </div>
-          );
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    switch (key) {
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true
+        });
+        break;
+      case 'delete':
+        deleteModal({
+          action: 'delete',
+          type: 'subnet',
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'add_inst':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        }
+        case 'mdfy_subnet':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
 
-        Request.get({
-          url: '/api/v1/' + HALO.user.projectId + '/subnets/' + item[0].id
-        }).then((data) => {
-          var basicPropsItem = this.getBasicPropsItems(data.subnet),
-            virtualInterfaceItem = this.getVirtualInterfaceItems(data.subnet.nics);
+    return btns;
+  }
 
-          callback(
+  onClickDetailTabs(tabKey, refs, data) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+    var syncUpdate = true;
+
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+            virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0].nics);
+          contents[tabKey] = (
             <div>
               <BasicProps title={__.basic + __.properties}
                 defaultUnfold={true}
@@ -116,12 +219,16 @@ class Model extends React.Component {
               </DetailMinitable>
             </div>
           );
-        }, (err) => {
-          //console.log(err);
-        });
+        }
         break;
       default:
         break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents
+      });
     }
   }
 
@@ -177,10 +284,12 @@ class Model extends React.Component {
         name: <a data-type="router" href={'/project/virtual-interface/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
-        instance: <div>
+        instance: element.instance ?
+          <div>
             <i className="glyphicon icon-instance"/>
             <a data-type="router" href={'/project/instance/' + element.instance.id}>{element.instance.name}</a>
-          </div>,
+          </div>
+          : null,
         status: getStatusIcon(element.status),
         operation: <div>
             <i className="glyphicon icon-associate action"/>
@@ -224,146 +333,42 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  setTableColRender(column) {
-    column.map((col) => {
-      switch (col.key) {
-        case 'prv_network':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.network ?
-              <span>
-                <i className="glyphicon icon-network" />
-                <a data-type="router" href={'/project/network/' + ritem.network.id}>
-                  {ritem.network.name}
-                </a>
-              </span> : '';
-          };
-          break;
-        case 'assc_router':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.router.id ?
-              <span>
-                <i className="glyphicon icon-router" />
-                <a data-type="router" href={'/project/router/' + ritem.router.id}>
-                  {ritem.router.name}
-                </a>
-              </span> : '';
-          };
-          break;
-        case 'ip_ver':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.ip_version === 4 ? 'IP v4' : ritem.ip_version;
-          };
-          break;
-        case 'enable_dhcp':
-          col.render = (rcol, ritem, rindex) => {
-            return ritem.enable_dhcp ? __.yes : __.no;
-          };
-          break;
-        default:
-          break;
+  refresh(data) {
+    var path = router.getPathList();
+    if (!path[2]) {
+      if (data && data.tableLoading) {
+        this.loadingTable();
       }
-    });
-  }
-
-  clickTableCheckbox(e, status, clickedRow, arr) {
-    // console.log('tableOnClick: ', e, status, clickedRow, arr);
-    this.updateBtns(status, clickedRow, arr);
-  }
-
-  clearTableState() {
-    this.refs.dashboard.clearTableState();
-  }
-
-  clickBtns(e, key) {
-    // console.log('Button clicked:', key);
-    switch (key) {
-      case 'prv_network':
-        break;
-      case 'refresh':
-        this.refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  refresh() {
-    this.listInstance();
-    this.refs.dashboard.clearState();
-  }
-
-  clickDropdownBtn(e, btn) {
-    switch (btn.key) {
-      case 'delete':
-        deleteModal({
-          action: 'delete',
-          type: 'subnet',
-          onDelete: function(data, cb) {
-            cb(true);
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  updateBtns(status, clickedRow, arr) {
-    var _conf = this.state.config,
-      btns = _conf.btns,
-      updateDropdownBtns = (items) => {
-        var allBtns = [];
-        items.forEach((element) => {
-          allBtns = allBtns.concat(element.items);
-        });
-
-        allBtns.map((btn) => {
-          switch (btn.key) {
-            case 'add_inst':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            case 'mdfy_subnet':
-              btn.disabled = (arr.length === 1) ? false : true;
-              break;
-            case 'delete':
-              btn.disabled = (arr.length > 0) ? false : true;
-              break;
-            default:
-              break;
-          }
-        });
-      };
-
-    btns.map((btn) => {
-      switch(btn.key) {
-        case 'create':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'delete':
-          btn.disabled = (arr.length === 1) ? false : true;
-          break;
-        case 'more':
-          updateDropdownBtns(btn.dropdown.items);
-          break;
-        default:
-          break;
+      this.refs.dashboard.clearState();
+    } else {
+      if (data && data.detailLoading) {
+        this.refs.dashboard.refs.detail.loading();
       }
-    });
+    }
 
-    this._stores.checkedRow = arr;
+    this.getTableData();
+  }
+
+  loadingTable() {
+    var _config = this.state.config;
+    _config.table.loading = true;
+
     this.setState({
-      config: _conf
+      config: _config
     });
-  }
-
-  changeSearchInput(str) {
-    // console.log('search:', str);
   }
 
   render() {
     return (
       <div className="halo-module-subnet" style={this.props.style}>
-        <MainTable ref="dashboard" moduleID="subnet" config={this.state.config} eventList={this._eventList} />
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params} />
       </div>
     );
   }

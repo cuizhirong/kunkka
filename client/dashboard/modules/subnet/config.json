@@ -58,7 +58,7 @@
   "table": {
     "checkbox": true,
     "dataKey": "id",
-    "loading": false,
+    "loading": true,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
