@@ -106,7 +106,7 @@ class Model extends React.Component {
   getTableData() {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.servers;
+      table.data = res;
       table.loading = false;
 
       this.setState({
@@ -628,7 +628,6 @@ class Model extends React.Component {
       </div>
     );
   }
-
 }
 
 module.exports = Model;

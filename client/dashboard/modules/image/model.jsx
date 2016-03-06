@@ -57,7 +57,7 @@ class Model extends React.Component {
   getTableData() {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.images;
+      table.data = res;
       table.loading = false;
 
       this.setState({
