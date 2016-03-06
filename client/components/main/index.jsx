@@ -211,12 +211,12 @@ class Main extends React.Component {
       rows: rows
     };
 
-    if (this.refs.detail.state.visible) {
+    if (this.refs.detail && this.refs.detail.state.visible) {
       this.checkboxListener(e, status, clickedRow, rows);
     }
 
-    if (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1)) {
-      if (this.refs.detail.state.visible) {
+    if (!this.refs.detail || (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1))) {
+      if (this.refs.detail && this.refs.detail.state.visible) {
         this.onClickDetailTabs();
       }
       this.onAction('table', 'check', {

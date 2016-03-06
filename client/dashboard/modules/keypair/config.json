@@ -25,6 +25,7 @@
   "table": {
     "checkbox": true,
     "dataKey": "fingerprint",
+    "loading": true,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
@@ -33,6 +34,7 @@
       "title": ["finger_print"],
       "dataIndex": "fingerprint",
       "key": "finger_prt"
-    }]
+    }],
+    "data":[]
   }
 }
