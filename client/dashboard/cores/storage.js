@@ -1,16 +1,16 @@
 /**
- * united-storage used as cache
+ * distributed united-storage used as cache
+ * 当收到消息，通知storage更新数据，当数据更新后，通知具体的module更新
  */
 
 var RSVP = require('rsvp');
 var Promise = RSVP.Promise;
-// var notification = require('client/uskin/index').Notification;
 
 var instance = require('../modules/instance/cache');
 var image = require('../modules/image/cache');
 
 function Storage() {
-  window.cache = this.cache = [];
+  this.cache = [];
 }
 
 Storage.prototype = {
@@ -29,14 +29,6 @@ Storage.prototype = {
       }
 
       promises[type] = that['get' + type[0].toUpperCase() + type.slice(1) + 'List']().then(function(data) {
-        // notification.addNotice({
-        //   title: 'Note:',
-        //   showIcon: true,
-        //   content: 'I am a notification',
-        //   type: 'success',
-        //   isAutoHide: true,
-        //   id: 6
-        // });
         that.cache[type] = data;
         return data;
       });

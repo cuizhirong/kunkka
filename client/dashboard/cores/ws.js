@@ -1,3 +1,5 @@
+var notification = require('client/uskin/index').Notification;
+
 function connectWS(opt) {
   var ws = new WebSocket('ws://localhost:8080');
   var interval;
@@ -8,7 +10,16 @@ function connectWS(opt) {
     }, 25000);
   };
   ws.onmessage = function(event) {
-    console.log(JSON.parse(event.data));
+    var data = JSON.parse(event.data);
+    console.log(data);
+    notification.addNotice({
+      title: 'Note:',
+      showIcon: true,
+      content: 'I am a notification',
+      type: 'success',
+      isAutoHide: true,
+      id: 6
+    });
   };
   ws.onclose = function() {
     clearInterval(interval);
