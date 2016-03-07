@@ -1,0 +1,17 @@
+{
+  "title": ["change", "security_group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "virtual_interface",
+    "icon_type": "virtual-interface",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "security_group",
+    "data": []
+  }],
+  "btn": {
+    "value": "change",
+    "disabled": false
+  }
+}

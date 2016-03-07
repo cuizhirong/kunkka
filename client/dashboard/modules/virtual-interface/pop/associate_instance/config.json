@@ -1,0 +1,23 @@
+{
+  "title": ["associate", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "virtual_interface",
+    "icon_type": "virtual-interface",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance",
+      "link_info": ["create", "instance"]
+    }
+  }, {
+    "type": "warning",
+    "field": "ass_warning"
+  }],
+  "btn": {
+    "value": "associate",
+    "disabled": false
+  }
+}

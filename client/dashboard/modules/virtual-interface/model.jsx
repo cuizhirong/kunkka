@@ -11,6 +11,10 @@ var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var createVirtual = require('./pop/create_virtual_interface/index');
+var associateInstance = require('./pop/associate_instance/index');
+var detachInstance = require('./pop/detach_instance/index');
+var modify = require('./pop/modify_security_group/index');
 
 class Model extends React.Component {
 
@@ -145,6 +149,25 @@ class Model extends React.Component {
             cb(true);
           }
         });
+        break;
+      case 'create':
+        createVirtual('121212', function() {});
+        break;
+      case 'associate_instance':
+        associateInstance({
+          name: 'nic-f1df46cb (192.168.0.6)'
+        }, function() {});
+        break;
+      case 'detach_instance':
+        detachInstance({
+          name: 'nic-f1df46cb (192.168.0.6)',
+          instance: '123'
+        }, function() {});
+        break;
+      case 'modify':
+        modify({
+          name: 'nic-f1df46cb (192.168.0.6)'
+        }, function() {});
         break;
       case 'refresh':
         this.refresh({

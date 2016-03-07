@@ -1,0 +1,27 @@
+{
+  "title": ["create", "virtual_interface"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "input_type": "text"
+  }, {
+    "type": "select",
+    "field": "subnet",
+    "empty_text": {
+      "info": "no_subnet",
+      "link_info": ["create", "subnet"]
+    }
+  }, {
+    "type": "input",
+    "field": "address_ip",
+    "tip_info": "ip_info"
+  }, {
+    "type": "select_group",
+    "field": "security_group",
+    "data": []
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": false
+  }
+}
