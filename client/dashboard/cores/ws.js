@@ -24,7 +24,7 @@ function connectWS(opt) {
   ws.onclose = function() {
     clearInterval(interval);
     setTimeout(function() {
-      connectWS();
+      connectWS(opt);
     }, 1000);
 
   };

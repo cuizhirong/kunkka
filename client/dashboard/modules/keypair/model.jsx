@@ -34,11 +34,17 @@ class Model extends React.Component {
     return true;
   }
 
-  onInitialize(params) {
-    this.getTableData();
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.style.display !== 'none') {
+      this.getTableData(false);
+    }
   }
 
-  getTableData() {
+  onInitialize(params) {
+    this.getTableData(false);
+  }
+
+  getTableData(forceUpdate) {
     request.getList((res) => {
       var table = this.state.config.table;
       table.data = res.keypairs;
@@ -54,7 +60,7 @@ class Model extends React.Component {
           loading: false
         });
       }
-    });
+    }, forceUpdate);
   }
 
   onAction(field, actionType, refs, data) {
@@ -94,7 +100,7 @@ class Model extends React.Component {
         this.refresh({
           tableLoading: true,
           detailLoading: true
-        });
+        }, true);
         break;
       default:
         break;

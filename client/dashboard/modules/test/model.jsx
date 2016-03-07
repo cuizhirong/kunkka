@@ -47,11 +47,23 @@ class Model extends React.Component {
     ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
-
   }
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.style.display !== 'none') {
+      this.getTableData(false);
+    }
   }
 
   tableColRender(columns) {
@@ -101,13 +113,13 @@ class Model extends React.Component {
   onInitialize(params) {
     // 初始化时，如果params长度为2，就不管
     // 如果初始化时，params长度为3就render detail
-    this.getTableData();
+    this.getTableData(false);
   }
 
-  getTableData() {
+  getTableData(forceUpdate) {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.servers;
+      table.data = res;
       table.loading = false;
 
       this.setState({
@@ -120,7 +132,7 @@ class Model extends React.Component {
           loading: false
         });
       }
-    });
+    }, forceUpdate);
   }
 
   onAction(field, actionType, refs, data) {
@@ -152,9 +164,7 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     switch(key) {
       case 'create':
-        createInstance('234245432523', function(_data) {
-          console.log(_data);
-        });
+        createInstance('234245432523', function() {});
         break;
       case 'vnc_console':
         break;
@@ -169,7 +179,7 @@ class Model extends React.Component {
         this.refresh({
           tableLoading: true,
           detailLoading: true
-        });
+        }, true);
         break;
       case 'reboot':
         break;
@@ -547,18 +557,7 @@ class Model extends React.Component {
     return data;
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
-    }
-    return true;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // this.onAction();
-  }
-
-  refresh(data) {
+  refresh(data, forceUpdate) {
     var path = router.getPathList();
     if (!path[2]) {
       if (data && data.tableLoading) {
@@ -571,7 +570,7 @@ class Model extends React.Component {
       }
     }
 
-    this.getTableData();
+    this.getTableData(forceUpdate);
   }
 
   loadingTable() {
@@ -607,7 +606,7 @@ class Model extends React.Component {
           url: r.url,
           data: _data
         }).then((res) => {
-          this.refresh();
+          // this.refresh();
         }, (err) => {
           // console.log('err', err);
         });
@@ -622,16 +621,15 @@ class Model extends React.Component {
       <div className="halo-module-test" style={this.props.style}>
         <Main
           ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
-          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
         />
       </div>
     );
   }
-
 }
 
 module.exports = Model;

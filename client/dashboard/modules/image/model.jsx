@@ -33,6 +33,19 @@ class Model extends React.Component {
     this.tableColRender(this.state.config.table.column);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.style.display !== 'none') {
+      this.getTableData(false);
+    }
+  }
+
   tableColRender(column) {
     column.map((col) => {
       switch (col.key) {
@@ -53,10 +66,10 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    this.getTableData();
+    this.getTableData(false);
   }
 
-  getTableData() {
+  getTableData(forceUpdate) {
     request.getList((res) => {
       var table = this.state.config.table;
       table.data = res;
@@ -72,7 +85,7 @@ class Model extends React.Component {
           loading: false
         });
       }
-    });
+    }, forceUpdate);
   }
 
   onAction(field, actionType, refs, data) {
@@ -110,7 +123,7 @@ class Model extends React.Component {
         this.refresh({
           tableLoading: true,
           detailLoading: true
-        });
+        }, true);
         break;
       default:
         break;
@@ -233,18 +246,7 @@ class Model extends React.Component {
     return items;
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
-    }
-    return true;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // this.onAction();
-  }
-
-  refresh(data) {
+  refresh(data, forceUpdate) {
     var path = router.getPathList();
     if (!path[2]) {
       if (data && data.tableLoading) {
@@ -257,7 +259,7 @@ class Model extends React.Component {
       }
     }
 
-    this.getTableData();
+    this.getTableData(forceUpdate);
   }
 
   loadingTable() {
