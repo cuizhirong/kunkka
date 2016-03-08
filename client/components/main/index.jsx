@@ -251,10 +251,10 @@ class Main extends React.Component {
   render() {
     var _config = this.props.config,
       tabs = _config.tabs,
+      title = _config.tabs.filter((tab) => tab.default)[0].name,
       btns = _config.btns,
       search = _config.search,
       table = _config.table,
-      title = _config.tabs.filter((tab) => tab.default)[0].name,
       detail = _config.table.detail;
 
     return (

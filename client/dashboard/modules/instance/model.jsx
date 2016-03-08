@@ -622,7 +622,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-test" style={this.props.style}>
+      <div className="halo-module-instance" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

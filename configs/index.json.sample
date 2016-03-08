@@ -1,6 +1,6 @@
 {
   "modules": [{
-    "items": ["test"]
+    "items": ["overview"]
   }, {
     "title": "compute",
     "items": [
