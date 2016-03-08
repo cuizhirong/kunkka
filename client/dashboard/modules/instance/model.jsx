@@ -32,6 +32,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -51,6 +52,9 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+    msgEvent.on('dataChange', function(data) {
+      console.log('refresh: ', data);
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {

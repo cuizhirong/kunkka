@@ -11,11 +11,14 @@ var instance = require('../modules/instance/cache');
 var image = require('../modules/image/cache');
 
 function Storage() {
+  var that = this;
   this.cache = [];
   msgEvent.on('message', function(data) {
     console.log('msg: ', data);
-    this.getList([data.resource_type], true);
-    msgEvent.on('dataChange', data);
+    that.getList([data.resource_type], true).then(function() {
+      msgEvent.emit('dataChange', data);
+    });
+
   });
 }
 
