@@ -5,12 +5,18 @@
 
 var RSVP = require('rsvp');
 var Promise = RSVP.Promise;
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 var instance = require('../modules/instance/cache');
 var image = require('../modules/image/cache');
 
 function Storage() {
   this.cache = [];
+  msgEvent.on('message', function(data) {
+    console.log('msg: ', data);
+    this.getList([data.resource_type], true);
+    msgEvent.on('dataChange', data);
+  });
 }
 
 Storage.prototype = {
@@ -36,9 +42,7 @@ Storage.prototype = {
     });
 
     return RSVP.hash(promises);
-  },
-
-  getSingleData: function(type, forced) {}
+  }
 
 };
 

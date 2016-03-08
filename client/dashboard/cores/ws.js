@@ -1,4 +1,6 @@
 var notification = require('client/uskin/index').Notification;
+var msgEvent = require('client/dashboard/cores/msg_event');
+var __ = require('i18n/client/lang.json');
 
 function connectWS(opt) {
   var ws = new WebSocket('ws://localhost:8080');
@@ -11,15 +13,17 @@ function connectWS(opt) {
   };
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-    console.log(data);
+
     notification.addNotice({
-      title: 'Note:',
       showIcon: true,
-      content: 'I am a notification',
+      content: __.msg_notify.replace('{0}', __[data.action]).
+              replace('{1}', __[data.resource_type]).
+              replace('{2}', data.resource_name),
       type: 'success',
       isAutoHide: true,
-      id: 6
+      id: data.resource_id
     });
+    msgEvent.emit('message', data);
   };
   ws.onclose = function() {
     clearInterval(interval);
