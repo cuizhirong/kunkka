@@ -59,7 +59,7 @@ class SelectGroup extends React.Component {
         return (
           <span className={'empty-text-label'}>
             {__[props.empty_text.info]}
-            <a href="#" onClick={props.onLinkClick}>
+            <a onClick={props.onLinkClick}>
               {
                 props.empty_text.link_info.map((m) => {
                   return __[m];
@@ -100,7 +100,7 @@ class SelectGroup extends React.Component {
         <div>
           {
             state.data.map((item, index) => {
-              return <a key={item.id} className={item.selected ? 'selected' : ''} href="#" onClick={this.onChange.bind(this, index)}>{item.name}</a>;
+              return <a key={item.id} className={item.selected ? 'selected' : ''} onClick={this.onChange.bind(this, index)}>{item.name}</a>;
             })
           }
           {this.renderEmpty()}

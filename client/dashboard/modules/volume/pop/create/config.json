@@ -1,0 +1,56 @@
+{
+  "title": ["create", "volume"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "tab",
+    "field": "type",
+    "data": ["performance", "capacity"],
+    "value": "performance"
+  }, {
+    "type": "slider",
+    "field": "performance_size",
+    "min": 10,
+    "max": 1000,
+    "unit": "GB"
+  }, {
+    "type": "progress",
+    "field": "iops",
+    "min": 1500,
+    "max": 6000,
+    "unit": "IOPS"
+  }, {
+    "type": "progress",
+    "field": "throughput",
+    "min": 80,
+    "max": 170,
+    "unit": "MB/s"
+  }, {
+    "type": "slider",
+    "field": "capacity_size",
+    "min": 10,
+    "max": 5000,
+    "unit": "GB",
+    "hide": true
+  }, {
+    "type": "short_tip",
+    "field": "capacity_tip",
+    "hide": true,
+    "has_label": true
+  }, {
+    "type": "checkbox",
+    "field": "shared_volume",
+    "has_label": true
+  }, {
+    "type": "warning",
+    "field": "shared_tip",
+    "hide": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": false
+  }
+}

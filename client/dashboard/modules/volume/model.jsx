@@ -8,6 +8,7 @@ var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 
 var deleteModal = require('client/components/modal_delete/index');
+var createModal = require('./pop/create/index');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -136,6 +137,9 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     switch (key) {
+      case 'create':
+        createModal(function(){});
+        break;
       case 'delete':
         deleteModal({
           action: 'delete',
@@ -179,9 +183,6 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'create':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
         case 'attach_to_instance':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;

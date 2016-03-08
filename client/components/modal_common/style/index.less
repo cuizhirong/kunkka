@@ -19,6 +19,9 @@
 
 @radio_row_disabled_bg_color: @color_gray_beige;
 
+@slider_tip_color: @color_gray_darker;
+@progress_tip_color: @color_gray_darker;
+
 .halo-com-modal-common {
   line-height: 18px;
   &.modal-bd {
@@ -30,7 +33,7 @@
     padding-left: 36px;
 
     &:not(:first-child) {
-      margin-top: 17px;
+      margin-top: 18px;
     }
 
     &.label-row {
@@ -62,22 +65,38 @@
 
     &.checkbox-row {
       padding-left: 36px;
-      >input {
-        vertical-align: middle;
+      height: 18px;
+
+      >input[type="checkbox"] {
         margin-right: 7px;
+        height: 18px;
+        line-height: 18px;
+        margin-top: 3px;
       }
       >label {
         vertical-align: middle;
+      }
+      &.label-row {
+        padding-left: 110px;
+      }
+      &.long-label-row {
+        padding-left: 144px;
       }
     }
 
     &.short-tip-row {
       color: @short_tip_row_color;
+
+      &.label-row {
+        padding-left: 110px;
+      }
+      &.long-label-row {
+        padding-left: 144px;
+      }
     }
 
     &.input-row {
       input {
-        height: 26px;
         width: 100%;
         box-sizing: border-box;
       }
@@ -90,7 +109,7 @@
 
     &.textarea-row {
       textarea {
-        height: 78px;
+        height: 100px;
         width: 100%;
         border: @textarea_border;
         overflow: auto;
@@ -108,19 +127,6 @@
         padding-left: 0;
         margin-bottom: 0;
         margin-top: 0;
-      }
-    }
-
-    &.select-row {
-      select {
-        width: 100%;
-        height: 32px;
-        line-height: 27px;
-        background-color: white;
-        outline: none;
-      }
-      .empty-text-label {
-        color: @empty_text_label_color;
       }
     }
 
@@ -203,7 +209,7 @@
       }
     }
 
-    &.radio-row {
+    &.select-row {
       >div:last-child {
         display: flex;
 
@@ -211,6 +217,7 @@
           vertical-align: middle;
           margin-right: 8px;
           .fixed-width(16px);
+          height: 18px;
         }
         select {
           height: 32px;
@@ -222,6 +229,71 @@
         .empty-text-label {
           color: @empty_text_label_color;
         }
+      }
+    }
+
+    &.slider-row {
+      >div:last-child {
+        display: flex;
+
+        .slidearea {
+          flex: 1;
+          position: relative;
+          margin-right: 16px;
+          .dragarea {
+            background-color: #f0f0f0;
+            height: 15px;
+            .selectedarea {
+              background-color: #9de6f1;
+              height: 15px;
+            }
+            .thumbnail {
+              position: absolute;
+              width: 1px;
+              height: 11px;
+              border: 5px solid #00afc8;
+              border-radius: 1px;
+              top: -3px;
+              cursor: pointer;
+              background-color: #fff;
+            }
+          }
+          .range {
+            float: right;
+            color: @slider_tip_color;
+            margin-top: 10px
+          }
+        }
+        .inputarea {
+          .fixed-width(105px);
+          >input[type="text"] {
+            height: 28px;
+            line-height: 20px;
+            padding: 4px 5px;
+            width: 62px;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+
+    &.progress-row {
+      display: flex;
+      margin-left: 76px;
+
+      >div:first-child {
+        flex: 1;
+        margin-right: 16px;
+        margin-bottom: 5px;
+        color: @progress_tip_color;
+      }
+      >div:last-child {
+        .fixed-width(105px);
+        padding-top: 16px;
+      }
+
+      &.hide {
+        display: none;
       }
     }
   }

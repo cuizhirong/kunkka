@@ -5,12 +5,12 @@ var Main = require('client/components/main/index');
 
 var BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var deleteModal = require('client/components/modal_delete/index');
+var applyModal = require('./pop/apply_ip/index');
 
 class Model extends React.Component {
 
@@ -131,6 +131,9 @@ class Model extends React.Component {
           tableLoading: true,
           detailLoading: true
         }, true);
+        break;
+      case 'create':
+        applyModal(function(){});
         break;
       default:
         break;

@@ -33,7 +33,7 @@ function pop(obj, callback, parent) {
           value: 3
         });
       }, 2000);
-      setTimeout(function(){
+      /*setTimeout(function(){
         refs.select_interface.setState({
           data: [{
             id: 1,
@@ -44,7 +44,7 @@ function pop(obj, callback, parent) {
           }],
           value: 1
         });
-      }, 2000);
+      }, 2000);*/
     },
     onConfirm: function(refs, cb) {
       callback();

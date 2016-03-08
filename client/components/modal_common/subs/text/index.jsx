@@ -23,7 +23,7 @@ class Text extends React.Component {
   render() {
     var className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
 
-    return <div className={className}>{this.props.label}</div>;
+    return <div className={className}>{this.props.info}</div>;
   }
 }
 

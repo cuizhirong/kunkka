@@ -168,7 +168,7 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     switch(key) {
       case 'create':
-        createInstance('234245432523', function() {});
+        createInstance({name: 'abc'}, function() {});
         break;
       case 'vnc_console':
         break;

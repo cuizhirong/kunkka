@@ -30,12 +30,21 @@ class Checkbox extends React.Component {
   }
 
   render() {
-    var className = this.state.hide ? 'modal-row checkbox-row hide' : 'modal-row checkbox-row';
+    var props = this.props;
+    var className = 'modal-row checkbox-row';
+    if (props.has_label) {
+      className += ' label-row';
+    } else if (props.has_long_label) {
+      className += ' long-label-row';
+    }
+    if (this.state.hide) {
+      className += ' hide';
+    }
 
     return (
       <div className={className}>
         <input type="checkbox" onChange={this.onChange} checked={this.state.checked} />
-        <label onClick={this.onChange}>{this.props.label}</label>
+        <label onClick={this.onChange}>{props.label}</label>
       </div>
     );
   }

@@ -21,9 +21,18 @@ class ShortTip extends React.Component {
   }
 
   render() {
-    var className = this.state.hide ? 'modal-row short-tip-row hide' : 'modal-row short-tip-row';
+    var props = this.props;
+    var className = 'modal-row short-tip-row';
+    if (props.has_label) {
+      className += ' label-row';
+    } else if (props.has_long_label) {
+      className += ' long-label-row';
+    }
+    if (this.state.hide) {
+      className += ' hide';
+    }
 
-    return <div className={className}>{this.props.label}</div>;
+    return <div className={className} dangerouslySetInnerHTML={{__html: props.label}}></div>;
   }
 }
 

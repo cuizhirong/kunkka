@@ -7,6 +7,7 @@
     "carrier": "Carrier",
     "down": "Down",
     "floating-ip": "Floating IP",
+    "need_record": "Need Record",
     "resource": "resource",
     "to": " to "
   },
@@ -18,6 +19,7 @@
     "carrier": "IP路线",
     "down": "可用",
     "floating-ip": "公网IP",
+    "need_record": "需要备案",
     "resource": "资源",
     "to": "到"
   }

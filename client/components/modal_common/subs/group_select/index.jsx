@@ -84,7 +84,7 @@ class GroupSelect extends React.Component {
         return (
           <span className={'empty-text-label'}>
             {__[props.empty_text.info]}
-            <a href="#" onClick={props.onLinkClick}>
+            <a onClick={props.onLinkClick}>
               {
                 props.empty_text.link_info.map(function(m) {
                   return __[m];
@@ -104,7 +104,7 @@ class GroupSelect extends React.Component {
   render() {
     var props = this.props,
       state = this.state;
-    var className = 'modal-row radio-row';
+    var className = 'modal-row select-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

@@ -56,7 +56,7 @@ class Tab extends React.Component {
         <div>
           {
             props.data.map((value, index) => {
-              return <a key={value} className={value === state.value ? 'selected' : ''} href="#" onClick={this.onChange.bind(this, value)}>{__[value]}</a>;
+              return <a key={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{__[value]}</a>;
             })
           }
         </div>

@@ -12,6 +12,9 @@ var Select = require('./subs/select/index');
 var SelectGroup = require('./subs/select_group/index');
 var Tab = require('./subs/tab/index');
 var GroupSelect = require('./subs/group_select/index');
+var Slider = require('./subs/slider/index');
+var Progress = require('./subs/progress/index');
+var ShortTip = require('./subs/short_tip/index');
 
 class ModalBase extends React.Component {
 
@@ -60,6 +63,12 @@ class ModalBase extends React.Component {
           return <Tab key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'group_select':
           return <GroupSelect key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'slider':
+          return <Slider key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'progress':
+          return <Progress key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'short_tip':
+          return <ShortTip key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }

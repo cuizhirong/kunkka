@@ -2,7 +2,8 @@
   "title": ["power_off"],
   "fields": [{
     "type": "text",
-    "field": "ensure_shutdown"
+    "field": "ensure_shutdown",
+    "info": "ensure_shutdown"
   }, {
     "type": "warning",
     "field": "shutdown_tip"
