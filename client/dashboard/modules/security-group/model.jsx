@@ -75,6 +75,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
     switch (key) {
       case 'create':
         createSecurityGroup('1212', function(_data) {
@@ -85,6 +86,7 @@ class Model extends React.Component {
         deleteModal({
           action: 'delete',
           type: 'security-group',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }
@@ -132,8 +134,10 @@ class Model extends React.Component {
         case 'create':
           break;
         case 'modify':
-        case 'delete':
           btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length >= 1) ? false : true;
           break;
         default:
           break;

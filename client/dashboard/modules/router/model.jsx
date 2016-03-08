@@ -122,6 +122,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
     switch (key) {
       case 'create':
         createRouter('1212', function(){});
@@ -136,6 +137,7 @@ class Model extends React.Component {
         deleteModal({
           action: 'delete',
           type:'router',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }
@@ -192,7 +194,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'delete':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length >= 1) ? false : true;
           break;
         case 'dis_gw':
           btns[key].disabled = (rows.length === 1) ? false : true;

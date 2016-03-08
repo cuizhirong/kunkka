@@ -134,11 +134,13 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
     switch (key) {
       case 'delete':
         deleteModal({
           action: 'delete',
           type:'virtual-interface',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }
@@ -185,7 +187,7 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length >= 1) ? false : true;
           break;
         default:
           break;

@@ -80,6 +80,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
     switch (key) {
       case 'crt_keypair':
         console.log(key);
@@ -91,6 +92,7 @@ class Model extends React.Component {
         deleteModal({
           action: 'delete',
           type: 'keypair',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }

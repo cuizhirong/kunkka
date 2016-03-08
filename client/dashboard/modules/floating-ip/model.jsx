@@ -116,11 +116,17 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
+    rows.forEach((row) => {
+      row.name = row.floating_ip_address;
+    });
+
     switch (key) {
       case 'delete':
         deleteModal({
           action: 'delete',
           type: 'floating_ip',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }

@@ -136,6 +136,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
     switch (key) {
       case 'create':
         createModal(function(){});
@@ -144,6 +145,7 @@ class Model extends React.Component {
         deleteModal({
           action: 'delete',
           type: 'volume',
+          data: rows,
           onDelete: function(_data, cb) {
             cb(true);
           }
