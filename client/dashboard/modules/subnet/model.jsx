@@ -13,7 +13,12 @@ var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
+var createSubnet = require('./pop/create_subnet/index');
 var request = require('./request');
+var connectRouter = require('./pop/connect_router/index');
+var disconnectRouter = require('./pop/disconnect_router/index');
+var addInstance = require('./pop/add_instance/index');
+var modifySubnet = require('./pop/modify_subnet/index');
 
 class Model extends React.Component {
 
@@ -134,6 +139,31 @@ class Model extends React.Component {
           tableLoading: true,
           detailLoading: true
         }, true);
+        break;
+      case 'create':
+        createSubnet(data, function() {});
+        break;
+      case 'cnt_rter':
+        connectRouter({
+          name: data.rows[0].name
+        }, function() {});
+        break;
+      case 'discnt_rter':
+        disconnectRouter({
+          name: data.rows[0].name,
+          router: data.rows[0].router.name
+        }, function() {});
+        break;
+      case 'add_inst':
+        addInstance({
+          name: data.rows[0].name
+        }, function() {});
+        break;
+      case 'mdfy_subnet':
+        modifySubnet({
+          subnet: data.rows[0].name,
+          address: data.rows[0].gateway_ip
+        }, function() {});
         break;
       case 'delete':
         deleteModal({

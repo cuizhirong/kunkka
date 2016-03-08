@@ -78,7 +78,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createSecurityGroup('1212', function(_data) {
+        createSecurityGroup(data, function(_data) {
           // console.log(data);
         });
         break;
@@ -99,7 +99,10 @@ class Model extends React.Component {
         }, true);
         break;
       case 'modify':
-        modifySecurityGroup('121212', function(_data) {
+        modifySecurityGroup({
+          name: data.rows[0].name,
+          description: data.rows[0].description
+        }, function(_data) {
           // console.log(data);
         });
         break;

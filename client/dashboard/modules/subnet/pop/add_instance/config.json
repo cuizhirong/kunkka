@@ -1,0 +1,23 @@
+{
+  "title": ["add", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance",
+      "link_info": ["create", "instance"]
+    }
+  }, {
+    "type": "warning",
+    "field": "add_warning"
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": false
+  }
+}

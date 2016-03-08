@@ -1,0 +1,26 @@
+{
+  "title": ["create", "prv_network"],
+  "fields": [{
+    "type": "info",
+    "field": "prv_info"
+  }, {
+    "type": "input",
+    "field": "network_name",
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "create_subnet",
+    "checked": true
+  }, {
+    "type": "input",
+    "field": "subnet_name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "net_address"
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": false
+  }
+}

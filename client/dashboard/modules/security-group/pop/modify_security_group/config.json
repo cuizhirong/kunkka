@@ -4,10 +4,12 @@
     "type": "input",
     "field": "name",
     "tip_info": "tip_security_name",
-    "required": true
+    "required": true,
+    "value": ""
   }, {
     "type": "textarea",
-    "field": "desc"
+    "field": "desc",
+    "value": ""
   }],
   "btn": {
     "value": "modify",

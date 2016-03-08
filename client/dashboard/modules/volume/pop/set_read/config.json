@@ -2,7 +2,8 @@
   "title": ["set_read"],
   "fields": [{
     "type": "text",
-    "field": "set_read_only"
+    "field": "set_read_only",
+    "info": "set_read_only"
   }],
   "btn": {
     "value": "set",

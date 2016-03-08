@@ -2,18 +2,20 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
 function pop(obj, callback, parent) {
-  config.fields[0].value = obj.name;
-  config.fields[1].value = obj.description;
+  config.fields[1].text = obj.name;
+  config.fields[2].text = obj.router;
 
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+    },
     onConfirm: function(refs, cb) {
       callback();
       cb(true);
     },
-    onAction: function(field, status, refs) {}
+    onAction: function(field, status, refs) {
+    }
   };
 
   commonModal(props);

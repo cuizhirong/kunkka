@@ -83,8 +83,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'crt_keypair':
-        console.log(key);
-        createKeypair('123333', function(_data) {
+        createKeypair(data, function(_data) {
           // console.log(data);
         });
         break;

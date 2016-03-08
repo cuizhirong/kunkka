@@ -1,0 +1,26 @@
+{
+  "title": ["modify", "subnet"],
+  "fields": [{
+    "type": "input",
+    "field": "subnet_name",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "checkbox",
+    "field": "enable_gw",
+    "checked": true
+  }, {
+    "type": "input",
+    "field": "gw_address",
+    "tip_info": "change_info",
+    "value": ""
+  }, {
+    "type": "checkbox",
+    "field": "enable_dhcp",
+    "checked": true
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

@@ -13,6 +13,8 @@ var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var request = require('./request');
+var createNetwork = require('./pop/create_network/index');
+var createSubnet = require('./pop/create_subnet/index');
 
 class Model extends React.Component {
 
@@ -120,6 +122,10 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
+        createNetwork('1212', function() {});
+        break;
+      case 'crt_subnet':
+        createSubnet('1212', function() {});
         break;
       case 'delete':
         deleteModal({

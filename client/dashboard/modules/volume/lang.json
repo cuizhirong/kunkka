@@ -1,11 +1,16 @@
 {
   "en": {
+    "attach": "Attach",
     "attach_to": "Attach to ",
     "attributes": "Attributes",
     "dtch_volume": "Detach",
     "extd_capacity": "Extend Capacity",
     "read_only": "Read Only",
     "read_write": "Read Write",
+    "read_write_all": "Set volume to read write?",
+    "set_read": "Set Read Only",
+    "set_read_write": "Set Read Write",
+    "set_read_only": "Set volume to read only?",
     "shared": "Shared",
     "performance_size": "Capacity",
     "capacity_size": "Capacity",
@@ -13,15 +18,22 @@
     "iops": "IOPS",
     "shared_volume": "Shared Volume",
     "capacity_tip": "<strong>Performance</strong>: 500 IOPS, 48 MB/s",
-    "shared_tip": "When shared volume is attached to multi instances, this volume is expected to run under cluster filesystem such as GFS, OCFS. If ext4, xfs or ntfs is used, multi instances's concurrent ops will result in data corruption."
+    "shared_tip": "When shared volume is attached to multi instances, this volume is expected to run under cluster filesystem such as GFS, OCFS. If ext4, xfs or ntfs is used, multi instances's concurrent ops will result in data corruption.",
+    "snapshot_name": "Snapshot Name",
+    "volume_info": "Create snapshot for volumes. The performance volume can only create performance snap. So is capacity volume."
   },
   "zh-CN": {
+    "attach": "挂载",
     "attach_to": "挂载到",
     "attributes": "属性",
     "dtch_volume": "从云主机卸载",
     "extd_capacity": "扩容",
     "read_only": "只读盘",
     "read_write": "读写盘",
+    "read_write_all": "将云硬盘设置为可读写吗？",
+    "set_read": "设置只读",
+    "set_read_write": "设置读写",
+    "set_read_only": "将云硬盘设置为只读吗？",
     "shared": "共享盘",
     "performance_size": "容量",
     "capacity_size": "容量",
@@ -29,6 +41,8 @@
     "iops": "IOPS",
     "shared_volume": "设为共享盘",
     "capacity_tip": "<strong>读写性能</strong>: 500 IOPS, 48 MB/s",
-    "shared_tip": "共享盘以读写的方式挂载到多台云主机时，需要在云主机上安装OCFS，GPFS等专用分布式文件系统。若使用ext4、xfs或ntfs等本地本地文件系统，多机同时做读写操作会导致数据丢失！"
+    "shared_tip": "共享盘以读写的方式挂载到多台云主机时，需要在云主机上安装OCFS，GPFS等专用分布式文件系统。若使用ext4、xfs或ntfs等本地本地文件系统，多机同时做读写操作会导致数据丢失！",
+    "snapshot_name": "快照名称",
+    "volume_info": "为云硬盘创建快照，性能型的云硬盘只可以创建性能型的快照，也有容量型云硬盘"
   }
 }
