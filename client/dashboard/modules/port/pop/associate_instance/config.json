@@ -2,8 +2,8 @@
   "title": ["associate", "instance"],
   "fields": [{
     "type": "icon_label",
-    "field": "virtual_interface",
-    "icon_type": "virtual-interface",
+    "field": "port",
+    "icon_type": "port",
     "text": ""
   }, {
     "type": "select",

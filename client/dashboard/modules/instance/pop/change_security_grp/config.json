@@ -6,7 +6,7 @@
     "icon_type": "instance"
   }, {
     "type": "select",
-    "field": "virtual_interface",
+    "field": "port",
     "empty_text": "no_interface",
     "data": []
   }, {

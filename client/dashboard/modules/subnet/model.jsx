@@ -220,10 +220,10 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 items={basicPropsItem ? basicPropsItem : []}/>
               <DetailMinitable
-                title={__['virtual-interface']}
+                title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __['virtual-interface']}/>
+                <Button value={__.add_ + __.port}/>
               </DetailMinitable>
             </div>
           );
@@ -289,7 +289,7 @@ class Model extends React.Component {
     item.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/virtual-interface/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
         instance: element.instance ?

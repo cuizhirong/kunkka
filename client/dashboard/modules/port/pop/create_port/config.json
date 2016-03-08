@@ -1,5 +1,5 @@
 {
-  "title": ["create", "virtual_interface"],
+  "title": ["create", "port"],
   "fields": [{
     "type": "input",
     "field": "name",

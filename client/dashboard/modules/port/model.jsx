@@ -11,7 +11,7 @@ var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
-var createVirtual = require('./pop/create_virtual_interface/index');
+var createPort = require('./pop/create_port/index');
 var associateInstance = require('./pop/associate_instance/index');
 var detachInstance = require('./pop/detach_instance/index');
 var modify = require('./pop/modify_security_group/index');
@@ -143,7 +143,7 @@ class Model extends React.Component {
       case 'delete':
         deleteModal({
           action: 'delete',
-          type:'virtual-interface',
+          type:'port',
           data: rows,
           onDelete: function(_data, cb) {
             cb(true);
@@ -151,7 +151,7 @@ class Model extends React.Component {
         });
         break;
       case 'create':
-        createVirtual('121212', function() {});
+        createPort('121212', function() {});
         break;
       case 'associate_instance':
         associateInstance({
@@ -345,7 +345,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-virtual-interface" style={this.props.style}>
+      <div className="halo-module-port" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

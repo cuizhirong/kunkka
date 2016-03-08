@@ -487,8 +487,8 @@ class Model extends React.Component {
           }
 
           networks.push({
-            virtual_interface:
-              <a data-type="router" href={'/project/virtual-interface/' + item.port.fixed_ips[0].subnet_id}>
+            port:
+              <a data-type="router" href={'/project/port/' + item.port.fixed_ips[0].subnet_id}>
                 {item.addr}
               </a>,
             subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a>,
@@ -520,9 +520,9 @@ class Model extends React.Component {
       type: 'mini-table',
       content: {
         column: [{
-          title: __.virtual_interface,
-          key: 'virtual_interface',
-          dataIndex: 'virtual_interface'
+          title: __.port,
+          key: 'port',
+          dataIndex: 'port'
         }, {
           title: __.subnet,
           key: 'subnet',

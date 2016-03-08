@@ -1,11 +1,11 @@
 {
   "tabs": [{
-    "name": ["virtual-interface"],
-    "key": "virtual-interface",
+    "name": ["port"],
+    "key": "port",
     "default": true
   }],
   "btns": [{
-    "value": ["create", "virtual-interface"],
+    "value": ["create", "port"],
     "key": "create",
     "type": "create",
     "icon": "create"

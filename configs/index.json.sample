@@ -15,7 +15,7 @@
       "subnet",
       "floating-ip",
       "router",
-      "virtual-interface"
+      "port"
     ]
   }, {
     "title": "storage",

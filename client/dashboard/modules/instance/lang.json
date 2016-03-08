@@ -40,7 +40,6 @@
     "tip_join_network": "Connecting network or subnet for the Cloud VM is up to a maximum of 3. Adding more than one network may lead to routing problems which will cause poor external networks connetions, please proceed with caution.",
     "tip_password": "Password must start with a number or letter, containing both uppercase and lowercase letters and numbers, and the length ranges from 8 to 20.",
     "topology": "Topology",
-    "virtual_interface": "Virtual Interface",
     "vnc_console": "VNC Console",
     "ensure_shutdown": "Do you want to shudown instance {0} ？",
     "shutdown_tip": "The instance will be free 30 days after shut down. After 30 days, will charge system disk's space. CPU/Memory is free."
@@ -87,7 +86,6 @@
     "tip_join_network": "一台云主机最多只允许加入3个网络或者子网。加入多个网络可能会引发云主机路由问题而导致连不上外网，请谨慎操作。",
     "tip_password": "密码要求必须以数字或字母开头，同时包含大写字母、小写字母、数字，并且长度在8-20位字符之间。",
     "topology": "拓扑",
-    "virtual_interface": "虚拟网卡",
     "vnc_console": "VNC登录",
     "ensure_shutdown": "确定关闭云主机{0}吗？",
     "shutdown_tip": "自关机起30天内该云主机不收取任何费用，30天之后仅收取该虚拟机系统盘占用空间的费用（等同于云硬盘的费用）。"
