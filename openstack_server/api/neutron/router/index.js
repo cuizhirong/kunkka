@@ -22,6 +22,30 @@ function Router (app, neutron) {
 }
 
 var prototype = {
+  makeRouter: function (router, obj) {
+    router.floatingip = {}; // customized floatingip.
+    obj.floatingips.some(function (fip) {
+      obj.ports.some(function (port) {
+        if (port.id === fip.port_id && port.device_owner === 'network:router_gateway' && port.device_id === router.id) {
+          router.floatingip = fip;
+          return true;
+        } else {
+          return false;
+        }
+      });
+      // return fip.router_id === router.id && (router.floatingip = fip);
+    });
+    router.subnets = [];
+    obj.ports.forEach(function (port) {
+      if (port.device_id === router.id && port.device_owner === 'network:router_interface') {
+        obj.subnets.forEach(function (subnet) {
+          if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
+            router.subnets.push(subnet);
+          }
+        });
+      }
+    });
+  },
   getRouterList: function (req, res, next) {
     this.token = req.session.user.token;
     this.region = req.headers.region;
@@ -38,21 +62,9 @@ var prototype = {
         ['routers'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
+        that.orderByCreatedTime(obj.routers);
         obj.routers.forEach(function (router) {
-          router.floatingip = {};
-          obj.floatingips.some(function (fip) {
-            return fip.router_id === router.id && (router.floatingip = fip);
-          });
-          router.subnets = [];
-          obj.ports.forEach(function (port) {
-            if (port.device_id === router.id) {
-              obj.subnets.forEach(function (subnet) {
-                if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
-                  router.subnets.push(subnet);
-                }
-              });
-            }
-          });
+          that.makeRouter(router, obj);
         });
         res.json({routers: obj.routers});
       }
@@ -75,19 +87,7 @@ var prototype = {
         ['router'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
-        obj.floatingips.some(function (f) {
-          return obj.router.id === f.router_id && (obj.router.floatingip = f);
-        });
-        obj.router.subnets = [];
-        obj.ports.forEach(function (port) {
-          if (port.device_id === obj.router.id) {
-            obj.subnets.forEach(function (subnet) {
-              if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
-                obj.router.subnets.push(subnet);
-              }
-            });
-          }
-        });
+        that.makeRouter(obj.router, obj);
         res.json({routers: obj.router});
       }
     });

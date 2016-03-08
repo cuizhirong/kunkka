@@ -41,6 +41,7 @@ var prototype = {
         ['snapshots'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
+        that.orderByCreatedTime(obj.snapshots);
         obj.snapshots.forEach(function (snapshot) {
           that.makeSnapshot(snapshot, obj);
         });

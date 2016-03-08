@@ -12,10 +12,12 @@ var prototype = {
     var projectId = req.params.projectId;
     var region = req.headers.region;
     var token = req.session.user.token;
+    var that = this;
     this.nova.security.listSecurity(projectId, token, region, function (err, payload) {
       if (err) {
         res.status(err.status).json(err);
       } else {
+        that.orderByCreatedTime(payload.body.security_groups);
         res.json(payload.body);
       }
     }, req.query);

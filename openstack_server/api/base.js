@@ -9,7 +9,6 @@ API.prototype.dicApiUrlParam = {
   'networkId'    : 'network_id',
   'subnetId'     : 'subnet_id',
   'portId'       : 'port_id',
-  'nicId'        : 'port_id',
   'routerId'     : 'router_id',
   'floatingipId' : 'floatingip_id',
   'imageId'      : 'image_id',
@@ -115,5 +114,33 @@ API.prototype.originalOperate = function (service, action, req, res, next) {
       res.json(payload.body);
     }
   }, action, paramObj);
+};
+API.prototype.orderByCreatedTime = function (arr, flag) {
+  // default is DESC.
+  if (!arr.length) {
+    return;
+  }
+  if (flag === undefined) {
+    flag = 'DESC';
+  }
+  if (['ASC', 'DESC'].indexOf(flag) === -1) {
+    throw new Error('parameter flag must be ASC or DESC.');
+  } else {
+    var comparision = '';
+    var pool = ['created', 'created_at'];
+    pool.some(function (k) {
+      return (arr[0][k] !== undefined) && (comparision = k);
+    });
+    if (!comparision) {
+      return;
+    } else {
+      arr.sort(function (a, b) {
+        return (new Date(b[comparision]) - new Date(a[comparision]));
+      });
+      if (flag === 'ASC') {
+        arr.reverse();
+      }
+    }
+  }
 };
 module.exports = API;

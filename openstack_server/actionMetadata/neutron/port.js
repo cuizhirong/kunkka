@@ -5,7 +5,7 @@ var defaultMeta = {
   method      : 'post',
   remote      : neutronRemote,
   type        : null,
-  apiDir      : '/api/v1/nic/:nicId/action/',
+  apiDir      : '/api/v1/port/:portId/action/',
   dir         : '/v2.0/ports/{port_id}',
   actionKey   : 'port',
   actionValue : {},
@@ -16,15 +16,15 @@ var defaultMeta = {
 };
 
 var metadata = {
-  'nicCreate': {
+  'portCreate': {
     type     : 'create',
-    apiDir   : '/api/v1/nic/action/',
+    apiDir   : '/api/v1/port/action/',
     dir      : '/v2.0/ports',
     required : ['network_id'],
     optional : ['name', 'fixed_ips', 'security_groups', 'allowed_address_pairs', 'device_owner', 'device_id', 'mac_address'],
     urlParam : []
   },
-  'nicBindInstance': {
+  'portBindInstance': {
     type      : 'bindserver',
     remote    : novaRemote,
     dir       : '/v2.1/{tenant_id}/servers/{server_id}/os-interface',
@@ -32,7 +32,7 @@ var metadata = {
     required  : ['project_id', 'server_id'],
     urlParam  : ['project_id', 'server_id']
   },
-  'nicUnbindInstance': {
+  'portUnbindInstance': {
     type      : 'unbindserver',
     remote    : novaRemote,
     method    : 'delete',
@@ -41,21 +41,21 @@ var metadata = {
     required  : ['project_id', 'server_id'],
     urlParam  : ['project_id', 'server_id', 'port_id']
   },
-  'nicUpdateSecurity': {
+  'portUpdateSecurity': {
     type     : 'updatesecurity',
     method   : 'put',
     required : ['security_groups']
   },
-  'nicDelete': {
+  'portDelete': {
     type   : 'delete',
     method : 'delete'
   },
-  'nicOpenSecurity': {
+  'portOpenSecurity': {
     type        : 'opensecurity',
     method      : 'put',
     actionValue : { 'port_security_enabled': true }
   },
-  'nicCloseSecurity': {
+  'portCloseSecurity': {
     type        : 'closesecurity',
     method      : 'put',
     actionValue : { 'port_security_enabled': false }

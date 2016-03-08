@@ -61,6 +61,7 @@ var prototype = {
         ['volumes'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
+        that.orderByCreatedTime(obj.volumes);
         obj.volumes.forEach(function (volume) {
           that.makeVolume(volume, obj);
         });

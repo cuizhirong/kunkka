@@ -70,9 +70,7 @@ var prototype = {
         ['networks'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
-        obj.networks = obj.networks.filter(function (n) {
-          return n.shared === false && n['router:external'] === false;
-        });
+        that.orderByCreatedTime(obj.networks);
         obj.networks.forEach(function (network) {
           that.makeNetwork(network, obj);
         });

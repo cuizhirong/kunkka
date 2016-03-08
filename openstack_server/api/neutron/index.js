@@ -6,7 +6,7 @@
 module.exports = {
   floatingip : require('./floatingip'),
   network    : require('./network'),
-  nic        : require('./nic'),
+  port       : require('./port'),
   router     : require('./router'),
   subnet     : require('./subnet')
 };

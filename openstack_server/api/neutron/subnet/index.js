@@ -9,8 +9,11 @@ function Subnet (app, neutron, nova) {
   this.app = app;
   this.neutron = neutron;
   this.nova = nova;
-  this.arrAsyncTarget = ['networks', 'routers', 'ports'];
+  this.arrAsyncTarget = ['servers', 'networks', 'routers', 'ports'];
   this.arrAsync = [
+    function (callback) {
+      that.nova.server.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+    },
     function (callback) {
       that.neutron.network.listNetworks(that.token, that.region, that.asyncHandler.bind(this, callback));
     },
@@ -28,23 +31,23 @@ var prototype = {
     obj.networks.some(function (n) {
       return subnet.network_id === n.id && (subnet.network = n);
     });
-    subnet.nics = [];
+    subnet.ports = [];
     subnet.router = {};
     obj.ports.forEach(function (p) {
       p.fixed_ips.some(function (ip) {
         if (ip.subnet_id === subnet.id) {
-          if (p.device_owner === 'compute:nova') {
+          if (p.device_owner === 'compute:nova' || p.device_owner === 'compute:None') {
             if (obj.servers) {
               obj.servers.some(function(server) {
-                return server.id === p.device_id && (p.instance = server);
+                return server.id === p.device_id && (p.server = server);
               });
             }
-            subnet.nics.push(p);
           } else if (p.device_owner === 'network:router_interface') {
             obj.routers.some(function (r) {
               return r.id === p.device_id && (subnet.router = r);
             });
           }
+          subnet.ports.push(p);
           return true;
         } else {
           return false;
@@ -53,6 +56,7 @@ var prototype = {
     });
   },
   getSubnetList: function (req, res, next) {
+    this.projectId = req.params.projectId;
     this.token = req.session.user.token;
     this.region = req.headers.region;
     var that = this;
@@ -69,6 +73,7 @@ var prototype = {
         ['subnets'].concat(that.arrAsyncTarget).forEach(function (e, index) {
           obj[e] = results[index][e];
         });
+        that.orderByCreatedTime(obj.subnets);
         obj.subnets = obj.subnets.filter(function (s) {
           obj.networks.some(function (n) {
             return n.id === s.network_id && (s.network = n);
@@ -111,7 +116,7 @@ var prototype = {
     });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/subnets', this.getSubnetList.bind(this));
+    this.app.get('/api/v1/:projectId/subnets', this.getSubnetList.bind(this));
     this.app.get('/api/v1/:projectId/subnets/:subnetId', this.getSubnetDetails.bind(this));
     this.operate = this.originalOperate.bind(this, this.neutron.subnet);
     this.generateActionApi(this.neutron.subnet.metadata, this.operate);

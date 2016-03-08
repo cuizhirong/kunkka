@@ -22,6 +22,7 @@ var prototype = {
         payload.body.keypairs.forEach(function (k) {
           keypairs.keypairs.push(k.keypair);
         });
+        that.orderByCreatedTime(keypairs.keypairs);
         res.json(keypairs);
       }
     }, req.query);

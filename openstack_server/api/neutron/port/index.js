@@ -4,8 +4,8 @@ var Neutron = Driver.neutron;
 var Nova = Driver.nova;
 var Base = require('openstack_server/api/base.js');
 
-// due to Nic is reserved word
-function Nic (app, neutron, nova) {
+// due to Port is reserved word
+function Port (app, neutron, nova) {
   var that = this;
   this.app = app;
   this.neutron = neutron;
@@ -28,10 +28,10 @@ function Nic (app, neutron, nova) {
 }
 
 var prototype = {
-  makeNic: function (port, obj) {
+  makePort: function (port, obj) {
     obj.servers.some(function(server, i) {
       if ( server.id === port.device_id) {
-        port.instance = server;
+        port.server = server;
         return true;
       } else {
         return false;
@@ -63,7 +63,7 @@ var prototype = {
       });
     });
   },
-  getNicList: function (req, res, next) {
+  getPortList: function (req, res, next) {
     var that = this;
     this.projectId = req.params.projectId;
     this.region = req.headers.region;
@@ -80,28 +80,31 @@ var prototype = {
           ['ports'].concat(that.arrAsyncTarget).forEach(function(e, index){
             obj[e] = results[index][e];
           });
-          obj.nic = [];
+          that.orderByCreatedTime(obj.ports);
+          obj.port = [];
           obj.ports.forEach(function(port, index){
-            if (port.device_owner === 'compute:nova' || port.device_owner === 'compute:None' || port.device_owner === '') {
-              obj.nic.push(port);
-              that.makeNic(port, obj);
+            var flag = true;
+            // flag = Boolean(port.device_owner === 'compute:nova' || port.device_owner === 'compute:None' || port.device_owner === '');
+            if (flag) {
+              obj.port.push(port);
+              that.makePort(port, obj);
             }
           });
           res.json({
-            nics: obj.nic
+            ports: obj.port
           });
         }
       });
   },
-  getNicDetails: function (req, res, next) {
+  getPortDetails: function (req, res, next) {
     var that = this;
     this.projectId = req.params.projectId;
-    this.nicId = req.params.nicId;
+    this.portId = req.params.portId;
     this.token = req.session.user.token;
     this.region = req.headers.region;
     async.parallel([
       function (callback) {
-        that.neutron.port.showPortDetails(that.nicId, that.token, that.region, that.asyncHandler.bind(this, callback));
+        that.neutron.port.showPortDetails(that.portId, that.token, that.region, that.asyncHandler.bind(this, callback));
       }].concat(that.arrAsync),
       function (err, results) {
         if (err) {
@@ -111,27 +114,27 @@ var prototype = {
           ['port'].concat(that.arrAsyncTarget).forEach(function(e, index){
             obj[e] = results[index][e];
           });
-          that.makeNic(obj.port, obj);
+          that.makePort(obj.port, obj);
           res.json({
-            nic: obj.port
+            port: obj.port
           });
         }
       });
   },
   initRoutes: function () {
-    this.app.get('/api/v1/:projectId/nic', this.getNicList.bind(this));
-    this.app.get('/api/v1/:projectId/nic/:nicId', this.getNicDetails.bind(this));
+    this.app.get('/api/v1/:projectId/ports', this.getPortList.bind(this));
+    this.app.get('/api/v1/:projectId/ports/:portId', this.getPortDetails.bind(this));
     this.operate = this.originalOperate.bind(this, this.neutron.port);
     this.generateActionApi(this.neutron.port.metadata, this.operate);
   }
 };
 
 module.exports = function (app, extension) {
-  Object.assign(Nic.prototype, Base.prototype);
-  Object.assign(Nic.prototype, prototype);
+  Object.assign(Port.prototype, Base.prototype);
+  Object.assign(Port.prototype, prototype);
   if (extension) {
-    Object.assign(Nic.prototype, extension);
+    Object.assign(Port.prototype, extension);
   }
-  var security = new Nic(app, Neutron, Nova);
+  var security = new Port(app, Neutron, Nova);
   security.initRoutes();
 };

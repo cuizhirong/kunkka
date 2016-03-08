@@ -136,6 +136,7 @@ var prototype = {
           ['servers'].concat(that.arrAsyncTarget).forEach(function(e, index){
             obj[e] = results[index][e];
           });
+          that.orderByCreatedTime(obj.servers);
           obj.servers.forEach(function (server) {
             that.makeServer(server, obj);
           });

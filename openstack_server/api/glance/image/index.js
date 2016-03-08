@@ -17,7 +17,9 @@ var prototype = {
       if (err) {
         that.handleError(err, req, res, next);
       } else {
-        res.json(payload.body);
+        var images = payload.body.images;
+        that.orderByCreatedTime(images);
+        res.json({images: images});
       }
     }, req.query);
   },
