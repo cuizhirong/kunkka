@@ -1,0 +1,17 @@
+{
+  "title": ["detach", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "volume",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "instance",
+    "data": []
+  }],
+  "btn": {
+    "value": "detach",
+    "disabled": false
+  }
+}

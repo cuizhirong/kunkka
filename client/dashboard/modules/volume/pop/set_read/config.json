@@ -1,0 +1,11 @@
+{
+  "title": ["set_read"],
+  "fields": [{
+    "type": "text",
+    "field": "set_read_only"
+  }],
+  "btn": {
+    "value": "set",
+    "disabled": false
+  }
+}

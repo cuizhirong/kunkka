@@ -15,6 +15,11 @@ var __ = require('i18n/client/lang.json');
 var moment = require('client/libs/moment');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var attachInstance = require('./pop/attach_instance/index');
+var createSnapshot = require('./pop/create_snapshot/index');
+var detachInstance = require('./pop/detach_instance/index');
+var setRead = require('./pop/set_read/index');
+var setReadWrite = require('./pop/set_read_write/index');
 
 class Model extends React.Component {
 
@@ -150,6 +155,27 @@ class Model extends React.Component {
             cb(true);
           }
         });
+        break;
+      case 'create_snapshot':
+        createSnapshot({
+          name: data.rows[0].name
+        }, function(){});
+        break;
+      case 'attach_to_instance':
+        attachInstance({
+          name: data.rows[0].name
+        }, function() {});
+        break;
+      case 'dtch_volume':
+        detachInstance({
+          name: data.rows[0].name
+        }, function() {});
+        break;
+      case 'set_rd_only':
+        setRead(data, function() {});
+        break;
+      case 'set_rd_wrt':
+        setReadWrite(data, function() {});
         break;
       case 'refresh':
         this.refresh({

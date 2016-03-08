@@ -1,0 +1,20 @@
+{
+  "title": ["create", "snapshot"],
+  "fields": [{
+    "type": "info",
+    "field": "volume_info"
+  }, {
+    "type": "icon_label",
+    "field": "volume",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "snapshot_name",
+    "required": true
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": false
+  }
+}
