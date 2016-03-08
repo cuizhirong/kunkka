@@ -34,59 +34,59 @@
         "items": [{
           "title": ["reboot"],
           "key": "reboot",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["take_instance", "snapshot"],
           "key": "instance_snapshot",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["resize"],
           "key": "resize",
-          "disabled": false
+          "disabled": true
         }]
       }, {
         "items": [{
           "title": ["associate", "floating_ip"],
           "key": "assc_floating_ip",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["dissociate", "floating_ip"],
           "key": "dssc_floating_ip",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["join", "networks"],
           "key": "join_ntw",
-          "disabled": false
+          "disabled": true
         }]
       }, {
         "items": [{
           "title": ["change","security", "group"],
           "key": "chg_security_grp",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["change", "password"],
           "key": "chg_psw",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["change", "keypair"],
           "key": "chg_keypr",
-          "disabled": false
+          "disabled": true
         }]
       }, {
         "items": [{
           "title": ["add", "volume"],
           "key": "add_volume",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["detach", "volume"],
           "key": "rmv_volume",
-          "disabled": false
+          "disabled": true
         }]
       }, {
         "items": [{
           "title": ["terminate"],
           "key": "terminate",
-          "disabled": false,
+          "disabled": true,
           "danger": true
         }]
       }]

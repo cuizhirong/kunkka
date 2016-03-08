@@ -173,6 +173,20 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'cnt_rter':
+          if (rows.length === 1 && !rows[0].router.id) {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'discnt_rter':
+          if (rows.length === 1 && rows[0].router.id) {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
         case 'add_inst':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;

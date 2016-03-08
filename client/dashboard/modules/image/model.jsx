@@ -155,6 +155,9 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'create':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
         case 'crt_inst':
           btns[key].disabled = (rows.length !== 1) ? true : false;
           break;

@@ -159,6 +159,9 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'create':
+          btns[key].disabled = rows.length === 1 ? false : true;
+          break;
         case 'del_snapshot':
           btns[key].disabled = rows.length > 0 ? false : true;
           break;

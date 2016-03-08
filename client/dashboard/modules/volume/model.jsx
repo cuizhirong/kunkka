@@ -87,7 +87,7 @@ class Model extends React.Component {
           break;
         case 'attributes':
           column.render = (col, item, i) => {
-            return item.metadata.readonly ? __.read_only : __.read_write;
+            return item.metadata.readonly ? __.read_write : __.read_only;
           };
           break;
         default:
@@ -185,8 +185,31 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'attach_to_instance':
+        case 'create_snapshot':
           btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'attach_to_instance':
+          btns[key].disabled = (rows.length === 1 && !rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          break;
+        case 'dtch_volume':
+          btns[key].disabled = (rows.length === 1 && rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          break;
+        case 'extd_capacity':
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
+          break;
+        case 'set_rd_only':
+          if(rows.length === 1 && rows[0].status === 'available') {
+            btns[key].disabled = rows[0].metadata.readonly ? false : true;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'set_rd_wrt':
+          if(rows.length === 1 && rows[0].status === 'available') {
+            btns[key].disabled = !rows[0].metadata.readonly ? false : true;
+          } else {
+            btns[key].disabled = true;
+          }
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;

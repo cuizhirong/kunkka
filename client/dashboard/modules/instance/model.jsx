@@ -262,6 +262,12 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var allActive = true;
+    rows.forEach((ele, i) => {
+      var thisState = ele.status.toLowerCase() === 'active' ? true : false;
+      allActive = allActive && thisState;
+    });
+
     for(let key in btns) {
       switch (key) {
         case 'vnc_console':
@@ -286,7 +292,7 @@ class Model extends React.Component {
           }
           break;
         case 'reboot':
-          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
+          if (rows.length > 0 && allActive) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
@@ -298,8 +304,40 @@ class Model extends React.Component {
         case 'resize':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
+        case 'assc_floating_ip':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'dssc_floating_ip':
+          if (rows.length === 1 && rows[0].floating_ip) {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
+        case 'join_ntw':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'chg_security_grp':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'chg_psw':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'chg_keypr':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'add_volume':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'rmv_volume':
+          if (rows.length === 1 && rows[0].volume.length !== 0) {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
+          break;
         case 'terminate':
-          btns[key].disabled = (rows.length >= 1) ? false : true;
+          btns[key].disabled = (rows.length > 0) ? false : true;
           break;
         default:
           break;

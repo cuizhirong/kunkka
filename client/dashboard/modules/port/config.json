@@ -11,7 +11,7 @@
     "icon": "create"
   }, {
     "value": ["associate", "to", "instance"],
-    "key": "associate_instance",
+    "key": "assc_instance",
     "icon": "associate",
     "disabled": true
   }, {

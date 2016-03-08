@@ -131,13 +131,11 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'create':
-          break;
         case 'modify':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].name !== 'default') ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length >= 1) ? false : true;
+          btns[key].disabled = (rows.length > 0 && rows[0].name !== 'default') ? false : true;
           break;
         default:
           break;

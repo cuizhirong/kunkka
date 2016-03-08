@@ -165,10 +165,10 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'crt_subnet':
-          btns[key].disabled = (rows.length !== 1) ? true : false;
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 0) ? true : false;
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         default:
           break;

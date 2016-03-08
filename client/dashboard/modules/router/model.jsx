@@ -193,10 +193,22 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'delete':
-          btns[key].disabled = (rows.length >= 1) ? false : true;
+        case 'en_gw':
+          btns[key].disabled = (rows.length === 1 && !rows[0].external_gateway_info) ? false : true;
           break;
         case 'dis_gw':
+          btns[key].disabled = (rows.length === 1 && rows[0].external_gateway_info) ? false : true;
+          break;
+        case 'assc_fip':
+          btns[key].disabled = (rows.length === 1 && !rows[0].floatingip.id) ? false : true;
+          break;
+        case 'dis_fip':
+          btns[key].disabled = (rows.length === 1 && rows[0].floatingip.id) ? false : true;
+          break;
+        case 'cnt_subnet':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         default:

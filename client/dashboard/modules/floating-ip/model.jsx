@@ -167,26 +167,23 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var shouldAssociate = (rows.length === 1) && !(rows[0].router || rows[0].server);
+    var shouldAssociate = (rows.length === 1) && !(rows[0].router.id || rows[0].server);
     for(let key in btns) {
       switch (key) {
-        case 'dssc':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'chg_bandwidth':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'delete':
-          btns[key].disabled = (rows.length > 0) ? false : true;
-          break;
         case 'assc_to_instance':
           btns[key].disabled = shouldAssociate ? false : true;
           break;
         case 'assc_to_router':
           btns[key].disabled = shouldAssociate ? false : true;
           break;
-        case 'assc_to_ldbalacer':
-          btns[key].disabled = shouldAssociate ? false : true;
+        case 'dssc':
+          btns[key].disabled = (rows.length === 1 && (rows[0].router.id || rows[0].server)) ? false : true;
+          break;
+        case 'chg_bandwidth':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length > 0) ? false : true;
           break;
         default:
           break;

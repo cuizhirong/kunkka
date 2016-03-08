@@ -19,27 +19,28 @@
         "items": [{
           "title": ["enable", "ext_gatway"],
           "key": "en_gw",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["disable", "ext_gatway"],
           "key": "dis_gw",
-          "disabled": false
+          "disabled": true
         }, {
           "title": ["associate", "floating_ip"],
-          "key": "dis_gw",
-          "disabled": false
+          "key": "assc_fip",
+          "disabled": true
         }, {
           "title": ["dissociate", "floating_ip"],
-          "key": "dis_gw",
-          "disabled": false
+          "key": "dis_fip",
+          "disabled": true
         }, {
           "title": ["connect", "subnet"],
-          "key": "dis_gw",
-          "disabled": false
+          "key": "cnt_subnet",
+          "disabled": true
         }, {
           "title": ["delete"],
           "key": "delete",
-          "disabled": false
+          "disabled": true,
+          "danger": true
         }]
       }]
     }
