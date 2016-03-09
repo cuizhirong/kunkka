@@ -56,8 +56,10 @@ class Model extends React.Component {
 
             var subnetRender = [];
             item.subnets.map((_item, _i) => {
-              _i && subnetRender.push(', ');
-              subnetRender.push(<a key={_i} onClick={listener.bind(null, _item.id)}>{_item.name}</a>);
+              if (typeof _item === 'object') {
+                _i && subnetRender.push(', ');
+                subnetRender.push(<a key={_i} onClick={listener.bind(null, _item.id)}>{_item.name}</a>);
+              }
             });
 
             return item.subnets.length ? <div>{subnetRender.map((_item) => _item)}</div> : '';

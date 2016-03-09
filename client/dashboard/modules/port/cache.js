@@ -1,11 +1,14 @@
 var request = require('client/dashboard/cores/request');
 
 module.exports = {
-  getList: function(cb) {
+  getPortList: function() {
     return request.get({
-      url: '/api/v1/' + HALO.user.projectId + '/subnets'
+      url: '/api/v1/' + HALO.user.projectId + '/ports'
     }).then(function(data) {
-      cb(data);
+      return data.ports;
     });
+  },
+  getInstance: function() {
+
   }
 };

@@ -9,6 +9,7 @@ var msgEvent = require('client/dashboard/cores/msg_event');
 
 var instance = require('../modules/instance/cache');
 var image = require('../modules/image/cache');
+var port = require('../modules/port/cache');
 
 function Storage() {
   var that = this;
@@ -49,6 +50,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image);
+Object.assign(Storage.prototype, instance, image, port);
 
 module.exports = new Storage();

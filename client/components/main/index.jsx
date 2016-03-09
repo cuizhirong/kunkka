@@ -20,6 +20,7 @@ class Main extends React.Component {
       rows: []
     };
 
+    this.initialized = false;
   }
 
   componentWillMount() {
@@ -72,9 +73,11 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.visible) {
+    if (!this.initialized || (nextProps.visible && (this.props.params !== nextProps.params))) {
       this.onChangeParams(nextProps.params);
     }
+
+    this.initialized = true;
   }
 
   shouldComponentUpdate(nextProps) {
@@ -82,6 +85,35 @@ class Main extends React.Component {
       return true;
     }
     return false;
+  }
+
+  componentDidUpdate() {
+    this.updateRows(this.props.config.table.data);
+  }
+
+  updateRows(data) {
+    //update main store rows
+    var newRows = [];
+
+    this.stores.rows.forEach((item) => {
+      var existed = data.filter((d) => d.id === item.id)[0];
+
+      if (existed) {
+        newRows.push(item);
+      }
+    });
+
+    this.stores.rows = newRows;
+
+    //update table checkedKey
+    var checkedKey = {};
+    newRows.forEach((item) => {
+      checkedKey[item.id] = true;
+    });
+
+    this.refs.table.setState({
+      checkedKey: checkedKey
+    });
   }
 
   onChangeParams(params) {
@@ -231,6 +263,12 @@ class Main extends React.Component {
   }
 
   clearState() {
+    this.stores.rows = [];
+    this.onAction('table', 'check', {
+      status: false,
+      clickedRow: this.stores.rows
+    });
+
     this.clearSearchState();
     this.clearTableState();
   }
@@ -243,8 +281,8 @@ class Main extends React.Component {
   }
 
   clearTableState() {
-    if (this.tableNode) {
-      this.tableNode.clearState();
+    if (this.refs.table) {
+      this.refs.table.clearState();
     }
   }
 

@@ -48,21 +48,21 @@ class Model extends React.Component {
       switch (column.key) {
         case 'assc_resource': //router.name or server
           column.render = (col, item, i) => {
-            if (item.router_id) {
+            if (item.association.type === 'router') {
               return (
                 <span>
                   <i className="glyphicon icon-router" />
-                  <a data-type="router" href={'/project/router/' + item.router.id}>
-                    {item.router.name}
+                  <a data-type="router" href={'/project/router/' + item.association.device.id}>
+                    {item.association.device.name}
                   </a>
                 </span>
               );
-            } else if (item.server) {
+            } else if (item.association.type === 'server') {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + item.server.id}>
-                    {item.server.name}
+                  <a data-type="router" href={'/project/instance/' + item.association.device.id}>
+                    {item.association.device.name}
                   </a>
                 </span>
               );
@@ -167,7 +167,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var shouldAssociate = (rows.length === 1) && !(rows[0].router.id || rows[0].server);
+    var shouldAssociate = (rows.length === 1) && !(rows[0].association.type);
     for(let key in btns) {
       switch (key) {
         case 'assc_to_instance':
@@ -177,7 +177,7 @@ class Model extends React.Component {
           btns[key].disabled = shouldAssociate ? false : true;
           break;
         case 'dssc':
-          btns[key].disabled = (rows.length === 1 && (rows[0].router.id || rows[0].server)) ? false : true;
+          btns[key].disabled = shouldAssociate ? false : true;
           break;
         case 'chg_bandwidth':
           btns[key].disabled = (rows.length === 1) ? false : true;
@@ -246,11 +246,11 @@ class Model extends React.Component {
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,
-      content: item.router_id ?
+      content: item.association.type === 'router' ?
         <span>
           <i className="glyphicon icon-router" />
-          <a data-type="router" href={'/project/router/' + item.router_id}>
-            {item.router.name}
+          <a data-type="router" href={'/project/router/' + item.association.device.id}>
+            {item.association.device.name}
           </a>
         </span> : ''
     }, {

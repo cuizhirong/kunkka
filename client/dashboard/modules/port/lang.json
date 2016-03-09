@@ -4,7 +4,7 @@
     "ass_warning": "Connecting network or subnet for the Cloud VM is up to a maximum of 3. Adding more than one network may lead to routing problems which will cause poor external networks connetions, please proceed with caution. Read here to learn more.",
     "detach_instance": "Do you want to detach?",
     "ip_info": "System will auto assign if not filled.",
-    "port": "Ports",
+    "port": "Port",
     "restrict": "Restrict"
   },
   "zh-CN": {

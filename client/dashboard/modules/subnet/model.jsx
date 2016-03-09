@@ -227,7 +227,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]),
-            virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0].nics);
+            virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0].ports);
           contents[tabKey] = (
             <div>
               <BasicProps title={__.basic + __.properties}

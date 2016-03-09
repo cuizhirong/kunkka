@@ -58,8 +58,8 @@ class Model extends React.Component {
           break;
         case 'related_instance':
           column.render = (col, item, i) => {
-            return item.instance ?
-              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.instance.id}>{item.instance.name}</a></div> : '';
+            return item.server ?
+              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.server.id}>{item.server.name}</a></div> : '';
           };
           break;
         case 'restrict':
@@ -101,7 +101,7 @@ class Model extends React.Component {
   getTableData(forceUpdate) {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.nics;
+      table.data = res;
       table.loading = false;
 
       table.data.map((item, i) => {
@@ -204,10 +204,10 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'assc_instance':
-          btns[key].disabled = (rows.length === 1 && !rows[0].instance.id) ? false : true;
+          btns[key].disabled = (rows.length === 1 && !rows[0].server) ? false : true;
           break;
         case 'detach_instance':
-          btns[key].disabled = (rows.length === 1 && rows[0].instance.id) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].server) ? false : true;
           break;
         case 'modify':
           btns[key].disabled = (rows.length === 1) ? false : true;
