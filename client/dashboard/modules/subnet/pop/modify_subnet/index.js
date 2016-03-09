@@ -2,8 +2,8 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
 function pop(obj, callback, parent) {
-  config.fields[0].value = obj.subnet;
-  config.fields[2].value = obj.address;
+  config.fields[0].value = obj.name;
+  config.fields[2].value = obj.gateway_ip;
 
   var props = {
     parent: parent,
@@ -18,7 +18,7 @@ function pop(obj, callback, parent) {
       switch(field){
         case 'enable_gw':
           refs.gw_address.setState({
-            disabled: true
+            disabled: !refs.enable_gw.state.checked
           });
           break;
         default:

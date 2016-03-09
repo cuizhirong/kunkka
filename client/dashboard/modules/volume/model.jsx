@@ -157,25 +157,19 @@ class Model extends React.Component {
         });
         break;
       case 'create_snapshot':
-        createSnapshot({
-          name: data.rows[0].name
-        }, function(){});
+        createSnapshot(rows[0], function(){});
         break;
       case 'attach_to_instance':
-        attachInstance({
-          name: data.rows[0].name
-        }, function() {});
+        attachInstance(rows[0], function() {});
         break;
       case 'dtch_volume':
-        detachInstance({
-          name: data.rows[0].name
-        }, function() {});
+        detachInstance(rows[0], function() {});
         break;
       case 'set_rd_only':
-        setRead(data, function() {});
+        setRead(rows[0], function() {});
         break;
       case 'set_rd_wrt':
-        setReadWrite(data, function() {});
+        setReadWrite(rows[0], function() {});
         break;
       case 'refresh':
         this.refresh({

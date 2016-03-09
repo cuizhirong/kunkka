@@ -2,7 +2,8 @@
   "title": ["enable", "public_gateway"],
   "fields": [{
     "type": "text",
-    "field": "en_gw"
+    "field": "en_gw",
+    "info": "en_gw"
   }, {
     "type": "text",
     "field": "tip_en_gw"

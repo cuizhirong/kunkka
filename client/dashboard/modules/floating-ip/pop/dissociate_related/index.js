@@ -3,8 +3,8 @@ var config = require('./config.json');
 
 function pop(obj, callback, parent) {
 
-  config.fields[1].text = obj.floating_ip;
-  config.fields[2].text = obj.instance;
+  config.fields[1].text = obj.name;
+  config.fields[2].text = 'instance1';
 
   var props = {
     parent: parent,

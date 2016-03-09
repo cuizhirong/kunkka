@@ -123,10 +123,9 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
-    console.log(rows);
     switch (key) {
       case 'create':
-        createRouter('1212', function(){});
+        createRouter(function(){});
         break;
       case 'refresh':
         this.refresh({
@@ -145,26 +144,19 @@ class Model extends React.Component {
         });
         break;
       case 'en_gw':
-        publicGateway(data, function() {});
+        publicGateway(rows[0], function() {});
         break;
       case 'dis_gw':
-        disableGateway(data, function() {});
+        disableGateway(rows[0], function() {});
         break;
       case 'assc_fip':
-        associateFip({
-          name: rows[0].name
-        }, function() {});
+        associateFip(rows[0], function() {});
         break;
       case 'dis_fip':
-        dissociateFip({
-          router: rows[0].name,
-          floating_ip: 'in'
-        }, function() {});
+        dissociateFip(rows[0], function() {});
         break;
       case 'cnt_subnet':
-        relatedSubnet({
-          router: rows[0].name
-        }, function() {});
+        relatedSubnet(rows[0], function() {});
         break;
       default:
         break;

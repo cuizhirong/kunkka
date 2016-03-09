@@ -141,29 +141,19 @@ class Model extends React.Component {
         }, true);
         break;
       case 'create':
-        createSubnet(data, function() {});
+        createSubnet(function() {});
         break;
       case 'cnt_rter':
-        connectRouter({
-          name: data.rows[0].name
-        }, function() {});
+        connectRouter(rows[0], function() {});
         break;
       case 'discnt_rter':
-        disconnectRouter({
-          name: data.rows[0].name,
-          router: data.rows[0].router.name
-        }, function() {});
+        disconnectRouter(rows[0], function() {});
         break;
       case 'add_inst':
-        addInstance({
-          name: data.rows[0].name
-        }, function() {});
+        addInstance(rows[0], function() {});
         break;
       case 'mdfy_subnet':
-        modifySubnet({
-          subnet: data.rows[0].name,
-          address: data.rows[0].gateway_ip
-        }, function() {});
+        modifySubnet(rows[0], function() {});
         break;
       case 'delete':
         deleteModal({

@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
 function pop(obj, callback, parent) {
-  config.fields[0].text = obj.router;
+  config.fields[0].text = obj.name;
 
   var props = {
     parent: parent,

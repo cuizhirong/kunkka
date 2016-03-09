@@ -145,21 +145,14 @@ class Model extends React.Component {
         applyModal(function(){});
         break;
       case 'dssc':
-        dissociateRelated({
-          floating_ip: data.rows[0].name,
-          instance: 'instance 1'
-        }, function() {});
+        dissociateRelated(rows[0], function() {});
         break;
       case 'assc_to_instance':
-        associateInstance({
-          name: data.rows[0].name
-        }, function() {
+        associateInstance(rows[0], function() {
         });
         break;
       case 'assc_to_router':
-        associateRouter({
-          name: data.rows[0].name
-        }, function() {
+        associateRouter(rows[0], function() {
         });
         break;
       default:

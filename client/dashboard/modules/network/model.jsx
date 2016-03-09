@@ -122,10 +122,10 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createNetwork('1212', function() {});
+        createNetwork(function() {});
         break;
       case 'crt_subnet':
-        createSubnet('1212', function() {});
+        createSubnet(function() {});
         break;
       case 'delete':
         deleteModal({

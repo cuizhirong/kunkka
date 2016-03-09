@@ -152,23 +152,16 @@ class Model extends React.Component {
         });
         break;
       case 'create':
-        createPort(data, function() {});
+        createPort(function() {});
         break;
-      case 'associate_instance':
-        associateInstance({
-          name: rows[0].name
-        }, function() {});
+      case 'assc_instance':
+        associateInstance(rows[0], function() {});
         break;
       case 'detach_instance':
-        detachInstance({
-          name: rows[0].name,
-          instance: '123'
-        }, function() {});
+        detachInstance(rows[0], function() {});
         break;
       case 'modify':
-        modify({
-          name: rows[0].name
-        }, function() {});
+        modify(rows[0], function() {});
         break;
       case 'refresh':
         this.refresh({

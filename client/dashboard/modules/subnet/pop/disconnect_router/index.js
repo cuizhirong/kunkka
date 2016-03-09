@@ -3,7 +3,7 @@ var config = require('./config.json');
 
 function pop(obj, callback, parent) {
   config.fields[1].text = obj.name;
-  config.fields[2].text = obj.router;
+  config.fields[2].text = obj.router.name;
 
   var props = {
     parent: parent,
