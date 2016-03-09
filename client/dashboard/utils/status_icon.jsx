@@ -29,19 +29,14 @@ module.exports = (str) => {
       type.icon = 'paused';
       type.status = 'shutoff';
       break;
-    case 'build':
-      type.status = 'loading';
-      break;
     default:
       break;
   }
 
-  var className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'
-    : 'glyphicon icon-status-' + type.icon + ' ' + type.status;
   return (
     <span>
-      <i className={className} />
-      {__[status] ? __[status] : status}
+      <i className={'glyphicon icon-status-' + type.icon + ' ' + type.status} />
+      {__[status]}
     </span>
   );
 };

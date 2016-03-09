@@ -25,7 +25,7 @@
       "security-group"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "test",
   "languages": [
     "en",
     "zh-CN"
