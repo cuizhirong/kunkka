@@ -1,6 +1,7 @@
 {
   "en": {
     "basic": "Basic ",
+    "build": "Building",
     "console": "Console ",
     "capacity": "Capacity",
     "confirm_pwd": "Confirm Password",
@@ -46,6 +47,7 @@
   },
   "zh-CN": {
     "basic": "基本",
+    "build": "正在创建",
     "console": "监控",
     "capacity": "容量型",
     "confirm_pwd": "确认密码",

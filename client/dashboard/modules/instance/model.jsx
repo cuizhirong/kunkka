@@ -52,8 +52,13 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
-    msgEvent.on('dataChange', function(data) {
-      console.log('refresh: ', data);
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'instance') {
+        this.refresh(null, false);
+        if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/instance');
+        }
+      }
     });
   }
 
@@ -166,7 +171,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    var {rows} = data;
     switch(key) {
       case 'create':
         createInstance({name: 'abc'}, function() {});
@@ -177,13 +182,16 @@ class Model extends React.Component {
         break;
       case 'power_off':
         shutdownInstance({
-          name: 'abc'
-        }, function() {});
+          name: rows[0].name
+        }, function(_data, cb) {
+          request.poweroff(rows[0], cb);
+        });
         break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
-          detailLoading: true
+          detailLoading: true,
+          clearState: true
         }, true);
         break;
       case 'reboot':
@@ -241,7 +249,7 @@ class Model extends React.Component {
           type: 'instance',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteItem(rows, cb);
           }
         });
         break;
@@ -607,7 +615,9 @@ class Model extends React.Component {
       if (data && data.tableLoading) {
         this.loadingTable();
       }
-      this.refs.dashboard.clearState();
+      if (data && data.clearState) {
+        this.refs.dashboard.clearState();
+      }
     } else {
       if (data && data.detailLoading) {
         this.refs.dashboard.refs.detail.loading();

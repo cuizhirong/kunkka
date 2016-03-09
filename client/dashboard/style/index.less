@@ -2,6 +2,7 @@
 @import "./layout.less";
 
 @toggle-bg-color: @color_gray_beige;
+@loading-color: @color_font_dark;
 
 a {
   cursor: pointer;
@@ -64,5 +65,12 @@ i[class^="glyphicon icon-status-"] {
   }
   &.shutoff {
     color: @color_red;
+  }
+}
+
+.icon-loading {
+  &.status-loading {
+    color: @loading-color;
+    .loading-ani();
   }
 }

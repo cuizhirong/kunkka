@@ -36,5 +36,16 @@ module.exports = {
         REGION: 'RegionOne'
       }
     }).catch(errHandler);
+  },
+  delete: function(options) {
+    return request.delete({
+      url: options.url,
+      dataType: options.dataType || 'json',
+      contentType: 'application/json',
+      data: options.data,
+      headers: {
+        REGION: 'RegionOne'
+      }
+    }).catch(errHandler);
   }
 };
