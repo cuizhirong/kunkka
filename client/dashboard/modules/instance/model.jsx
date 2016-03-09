@@ -344,7 +344,7 @@ class Model extends React.Component {
           if (rows.length === 1 && rows[0].volume.length !== 0) {
             btns[key].disabled = false;
           } else {
-            btns[key].disabled = true;
+            btns[key].disabled = false;
           }
           break;
         case 'terminate':

@@ -14,6 +14,7 @@ var applyModal = require('./pop/apply_ip/index');
 var associateInstance = require('./pop/associate_instance/index');
 var associateRouter = require('./pop/associate_router/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
+var updateBandwidth = require('./pop/update/index');
 
 class Model extends React.Component {
 
@@ -155,6 +156,9 @@ class Model extends React.Component {
         associateRouter(rows[0], function() {
         });
         break;
+      case 'chg_bandwidth':
+        updateBandwidth(rows[0], function(){});
+        break;
       default:
         break;
     }
@@ -191,7 +195,7 @@ class Model extends React.Component {
           btns[key].disabled = shouldAssociate ? false : true;
           break;
         case 'dssc':
-          btns[key].disabled = shouldAssociate ? false : true;
+          btns[key].disabled = !shouldAssociate ? false : true;
           break;
         case 'chg_bandwidth':
           btns[key].disabled = (rows.length === 1) ? false : true;

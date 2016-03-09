@@ -6,6 +6,7 @@ var Main = require('client/components/main/index');
 var BasicProps = require('client/components/basic_props/index');
 
 var deleteModal = require('client/components/modal_delete/index');
+var createVolume = require('../volume/pop/create/index');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -112,6 +113,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
+        createVolume(rows[0], function() {});
         break;
       case 'crt_img':
         break;

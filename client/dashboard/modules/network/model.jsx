@@ -14,7 +14,7 @@ var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var request = require('./request');
 var createNetwork = require('./pop/create_network/index');
-var createSubnet = require('./pop/create_subnet/index');
+var createSubnet = require('../subnet/pop/create_subnet/index');
 
 class Model extends React.Component {
 

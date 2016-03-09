@@ -85,7 +85,7 @@ class Model extends React.Component {
       case 'delete':
         deleteModal({
           action: 'delete',
-          type: 'security-group',
+          type: 'security_group',
           data: rows,
           onDelete: function(_data, cb) {
             cb(true);

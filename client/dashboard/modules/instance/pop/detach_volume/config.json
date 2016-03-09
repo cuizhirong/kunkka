@@ -5,8 +5,9 @@
     "field": "instance",
     "icon_type": "instance"
   }, {
-    "type": "select",
+    "type": "select_group",
     "field": "volume",
+    "is_warning": true,
     "data": []
   }],
   "btn": {

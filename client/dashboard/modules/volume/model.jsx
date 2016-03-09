@@ -20,6 +20,7 @@ var createSnapshot = require('./pop/create_snapshot/index');
 var detachInstance = require('./pop/detach_instance/index');
 var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
+var resizeVolume = require('./pop/resize/index');
 
 class Model extends React.Component {
 
@@ -176,6 +177,9 @@ class Model extends React.Component {
           tableLoading: true,
           detailLoading: true
         }, true);
+        break;
+      case 'extd_capacity':
+        resizeVolume(rows[0], function() {});
         break;
       default:
         break;

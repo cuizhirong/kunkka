@@ -6,11 +6,7 @@ function pop(callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      setTimeout(function() {
-        refs.name.setState({
-          value: 'default'
-        });
-      }, 1000);
+
     },
     onConfirm: function(refs, cb) {
       callback();

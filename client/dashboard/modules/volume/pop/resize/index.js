@@ -1,7 +1,8 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
-function pop(callback, parent) {
+function pop(obj, callback, parent) {
+  console.log(obj);
   var props = {
     parent: parent,
     config: config,
@@ -18,27 +19,6 @@ function pop(callback, parent) {
     },
     onAction: function(field, state, refs) {
       switch (field) {
-        case 'type':
-          var b = false;
-          if (state.value === 'performance') {
-            b = true;
-          }
-          refs.performance_size.setState({
-            hide: !b
-          });
-          refs.iops.setState({
-            hide: !b
-          });
-          refs.throughput.setState({
-            hide: !b
-          });
-          refs.capacity_size.setState({
-            hide: b
-          });
-          refs.capacity_tip.setState({
-            hide: b
-          });
-          break;
         case 'performance_size':
           if (state.value < 100) {
             refs.iops.setState({
@@ -55,12 +35,6 @@ function pop(callback, parent) {
               value: config.fields[4].min + Math.floor((state.value - 100) / 10)
             });
           }
-          break;
-        case 'shared_volume':
-          console.log(state);
-          refs.shared_tip.setState({
-            hide: !state.checked
-          });
           break;
         default:
           break;

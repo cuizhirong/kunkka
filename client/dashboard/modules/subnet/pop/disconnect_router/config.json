@@ -2,7 +2,8 @@
   "title": ["disconnect", "router"],
   "fields": [{
     "type": "text",
-    "field": "dis_router"
+    "field": "dis_router",
+    "info": "dis_router"
   }, {
     "type": "icon_label",
     "field": "subnet",

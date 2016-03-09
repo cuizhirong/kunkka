@@ -11,6 +11,9 @@
 @select_group_row_hover_bg_color: @color_blue_lighter;
 @select_group_row_selected_bg_color: @color_blue_light;
 @select_group_row_selected_icon_color: @color_blue_dark;
+@select_group_row_warning_hover_bg_color: @color_red_light;
+@select_group_row_warning_selected_bg_color: @color_red;
+@select_group_row_warning_selected_icon_color: @color_red_dark;
 
 @tab_row_bg_color: @color_gray_beige;
 @tab_row_font_color: @color_font_dark;
@@ -26,10 +29,12 @@
   line-height: 18px;
   &.modal-bd {
     padding: 30px 36px 46px 0px;
+    min-height: 18px;
   }
 
   .modal-row {
     display: flex;
+    align-items: center;
     padding-left: 36px;
 
     &:not(:first-child) {
@@ -71,7 +76,7 @@
         margin-right: 7px;
         height: 18px;
         line-height: 18px;
-        margin-top: 3px;
+        margin-top: 6px;
       }
       >label {
         vertical-align: middle;
@@ -96,6 +101,7 @@
     }
 
     &.input-row {
+      align-items: baseline;
       input {
         width: 100%;
         box-sizing: border-box;
@@ -108,10 +114,18 @@
     }
 
     &.textarea-row {
+      align-items: flex-start;
+      height: 100px;
+
+      >div:first-child {
+        padding-top: 5px;
+      }
       textarea {
         height: 100px;
+        line-height: 22px;
         width: 100%;
         border: @textarea_border;
+        padding: 4px 10px;
         overflow: auto;
 
         &:hover,
@@ -137,6 +151,7 @@
     }
 
     &.select-group-row {
+      align-items: baseline;
       a {
         color: @select_group_row_font_color;
         background-color: @select_group_row_bg_color;
@@ -145,7 +160,10 @@
         line-height: 32px;
         border-radius: 2px;
         padding-left: 12px;
-        margin-bottom: 10px;
+
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
 
         &:hover,
         &.selected {
@@ -176,6 +194,21 @@
           }
         }
       }
+
+      &.warning-row {
+        a {
+          &:hover {
+            background-color: @select_group_row_warning_hover_bg_color;
+          }
+          &.selected {
+            background-color: @select_group_row_warning_selected_bg_color;
+
+            &:before {
+              color: @select_group_row_warning_selected_icon_color;
+            }
+          }
+        }
+      }
     }
 
     &.tab-row {
@@ -189,7 +222,6 @@
           height: 32px;
           line-height: 32px;
           border-radius: 2px;
-          margin-bottom: 10px;
           text-align: center;
           margin-right: 14px;
           flex: 1;
@@ -212,6 +244,7 @@
     &.select-row {
       >div:last-child {
         display: flex;
+        align-items: center;
 
         input[type="radio"] {
           vertical-align: middle;
@@ -233,6 +266,7 @@
     }
 
     &.slider-row {
+      align-items: flex-start;
       >div:last-child {
         display: flex;
 

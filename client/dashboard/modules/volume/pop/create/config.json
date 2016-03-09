@@ -1,6 +1,12 @@
 {
   "title": ["create", "volume"],
   "fields": [{
+    "type": "icon_label",
+    "field": "snapshot",
+    "icon_type": "snapshot",
+    "text": "",
+    "hide": true
+  }, {
     "type": "input",
     "field": "name",
     "required": true

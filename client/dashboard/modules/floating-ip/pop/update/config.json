@@ -1,0 +1,20 @@
+{
+  "title": ["change", "bandwidth"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "name",
+    "icon_type": "floating-ip",
+    "text": ""
+  }, {
+    "type": "slider",
+    "field": "bandwidth",
+    "min": 1,
+    "max": 30,
+    "unit": "Mpbs",
+    "value": ""
+  }],
+  "btn": {
+    "value": "change",
+    "disabled": false
+  }
+}

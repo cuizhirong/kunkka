@@ -1,4 +1,5 @@
 var React = require('react');
+var __ = require('i18n/client/lang.json');
 
 class Text extends React.Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class Text extends React.Component {
   render() {
     var className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
 
-    return <div className={className}>{this.props.info}</div>;
+    return <div className={className}>{__[this.props.info] || this.props.info}</div>;
   }
 }
 

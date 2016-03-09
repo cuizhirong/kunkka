@@ -6,10 +6,12 @@
       "required": true
   }, {
       "type": "checkbox",
-      "field": "enable_public_gateway"
+      "field": "enable_public_gateway",
+      "has_label": true
   }],
   "btn": {
     "value": "create",
+    "type": "create",
     "disabled": false
   }
 }

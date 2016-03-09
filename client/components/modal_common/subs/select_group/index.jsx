@@ -85,6 +85,9 @@ class SelectGroup extends React.Component {
     } else {
       className += ' label-row';
     }
+    if (props.is_warning) {
+      className += ' warning-row';
+    }
     if (state.hide) {
       className += ' hide';
     }

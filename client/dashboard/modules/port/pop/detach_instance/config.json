@@ -2,7 +2,8 @@
   "title": ["detach", "instance"],
   "fields": [{
     "type": "text",
-    "field": "detach_instance"
+    "field": "detach_instance",
+    "info": "detach_instance"
   }, {
     "type": "icon_label",
     "field": "port",

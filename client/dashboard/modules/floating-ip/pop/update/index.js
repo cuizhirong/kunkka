@@ -1,7 +1,10 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
-function pop(callback, parent) {
+function pop(obj, callback, parent) {
+  console.log(obj);
+  config.fields[0].text = obj.name;
+  //config.fields[1].value = obj.
   var props = {
     parent: parent,
     config: config,
@@ -11,12 +14,10 @@ function pop(callback, parent) {
       callback();
       cb(true);
     },
-    onAction: function(filed, state, refs) {
-      switch (filed) {
-        case 'create':
-          refs.public_key.setState({
-            hide: state.value === 'create_keypair'
-          });
+    onAction: function(field, state, refs) {
+      switch(field) {
+        case 'bandwidth':
+          console.log(state);
           break;
         default:
           break;
