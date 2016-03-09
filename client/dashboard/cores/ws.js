@@ -2,6 +2,39 @@ var notification = require('client/uskin/index').Notification;
 var msgEvent = require('client/dashboard/cores/msg_event');
 var __ = require('i18n/client/lang.json');
 
+var stack = {};
+
+function notify(data) {
+  var isAutoHide = true,
+    icon = 'icon-status-active',
+    func = notification.addNotice,
+    placeholder = 'msg_notify_end';
+
+  if (data.stage === 'start') {
+    isAutoHide = false;
+    icon = 'loading-notification';
+    placeholder = 'msg_notify_start';
+    stack[data.resource_id] = true;
+  }
+
+  if (stack[data.resource_id] && data.stage === 'end') {
+    func = notification.updateNotice;
+    delete stack[data.resource_id];
+  }
+
+  func({
+    showIcon: true,
+    content: __[placeholder].replace('{0}', __[data.action]).
+    replace('{1}', __[data.resource_type]).
+    replace('{2}', data.resource_name),
+    isAutoHide: isAutoHide,
+    icon: icon,
+    type: 'info',
+    id: data.resource_id
+  });
+  msgEvent.emit('message', data);
+}
+
 function connectWS(opt) {
   var ws = new WebSocket('ws://localhost:8080');
   var interval;
@@ -13,17 +46,7 @@ function connectWS(opt) {
   };
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
-
-    notification.addNotice({
-      showIcon: true,
-      content: __.msg_notify.replace('{0}', __[data.action]).
-              replace('{1}', __[data.resource_type]).
-              replace('{2}', data.resource_name),
-      type: 'success',
-      isAutoHide: true,
-      id: data.resource_id
-    });
-    msgEvent.emit('message', data);
+    notify(data);
   };
   ws.onclose = function() {
     clearInterval(interval);

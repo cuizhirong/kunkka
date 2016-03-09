@@ -15,7 +15,6 @@ function Storage() {
   var that = this;
   this.cache = [];
   msgEvent.on('message', function(data) {
-    console.log('msg: ', data);
     that.getList([data.resource_type], true).then(function() {
       msgEvent.emit('dataChange', data);
     });

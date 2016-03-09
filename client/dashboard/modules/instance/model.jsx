@@ -52,6 +52,7 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
     msgEvent.on('dataChange', (data) => {
       if (data.resource_type === 'instance') {
         this.refresh(null, false);
