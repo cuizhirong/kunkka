@@ -264,7 +264,7 @@ class Model extends React.Component {
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.related + __.subnet}/>
+                <Button value={__.connect + __.subnet}/>
               </DetailMinitable>
             </div>
           );
@@ -339,7 +339,7 @@ class Model extends React.Component {
 
     var tableConfig = {
       column: [{
-        title: __.subnet + __.name,
+        title: __.subnet_name,
         key: 'name',
         dataIndex: 'name'
       }, {
