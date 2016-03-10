@@ -8,11 +8,11 @@
     "dis_router": "Do you want to disconnect this subnet from the router?",
     "enable_dhcp": "Enable DHCP",
     "enable_gw": "Enable Gateway",
-    "no_router": "No routers available",
     "gateway": "Gateway ",
     "gw_address": "Gateway Address",
     "gw_tip": "Optional. System will generate automaticlly. The address will be used as the instance which in the subnet's default gateway.",
     "ip": "IP",
+    "no_subnet": "No subnet",
     "pool": "Pool",
     "version": "version"
   },
@@ -25,11 +25,11 @@
     "dis_router": "是否断开子网与路由器之间的连接？",
     "enable_dhcp": "开启DHCP",
     "enable_gw": "开启网关",
-    "no_router": "没有可用路由器",
     "gateway": "网关",
     "gw_address": "网关地址",
     "gw_tip": "如不填，系统将自动生成。这个地址可以被用于该私有网络内其他主机的缺省网关。",
     "ip": "IP",
+    "no_subnet": "没有可用子网",
     "pool": "池",
     "version": "版本"
   }

@@ -5,6 +5,7 @@
     "import_keypair": "Import Keypair",
     "keypair_": "Key Pair",
     "keypair_tip": "Dash, number and alphabelt only",
+    "no_keypair": "No Available Keypair",
     "public_key": "Public Key"
   },
   "zh-CN": {
@@ -13,6 +14,7 @@
     "import_keypair": "导入密钥",
     "keypair_": "密钥",
     "keypair_tip": "仅限字母、数字和下划线",
+    "no_keypair": "没有可用的密钥",
     "public_key": "公钥"
   }
 }

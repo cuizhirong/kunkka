@@ -9,9 +9,7 @@
     "dissociation": "This will dissociate the floating IP from this resource.",
     "floating-ip": "Floating IP",
     "need_record": "Need Record",
-    "no_instance": "No available Instance",
-    "no_network": "No available Virtual Network",
-    "no_router": "No available router",
+    "no_floatingip": "No available Floating IP, ",
     "resource": "resource",
     "tip_info_floatingip": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT(Show More)",
     "to": " to "
@@ -26,9 +24,7 @@
     "dissociation": "公网IP与资源之间的关联将被解除。",
     "floating-ip": "公网IP",
     "need_record": "需要备案",
-    "no_instance": "没有可用的云主机",
-    "no_network": "没有可用的虚拟网络",
-    "no_router": "没有可用的路由器",
+    "no_floatingip": "没有可用公网IP，",
     "resource": "资源",
     "tip_info_floatingip": "解除绑定之后云主机将不能通过公共网络使用,它仍然可以从公共网络通过路由器的SNAT访问",
     "to": "到"

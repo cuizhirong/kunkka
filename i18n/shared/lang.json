@@ -93,7 +93,7 @@
     "connect": "连接",
     "create": "创建",
     "delete": "删除",
-    "dissociate": "解除",
+    "dissociate": "解绑",
     "detach": "卸载",
     "disable": "禁用",
     "disconnect": "断开",
