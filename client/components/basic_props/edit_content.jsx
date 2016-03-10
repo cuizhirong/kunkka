@@ -76,7 +76,7 @@ class EditContent extends React.Component {
       edit ?
         <span>
           <input value={value} onChange={this.onChangeInput} onKeyPress={this.onKeyPressInput.bind(this)} />
-          <i className="glyphicon icon-delete edit-confirm" onClick={this.onConfirm.bind(this)} />
+          <i className="glyphicon icon-active edit-confirm" onClick={this.onConfirm.bind(this)} />
           <i className="glyphicon icon-remove edit-cancel" onClick={this.onCancel} />
         </span>
       : <span>

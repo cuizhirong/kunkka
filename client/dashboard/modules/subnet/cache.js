@@ -5,7 +5,7 @@ module.exports = {
     return request.get({
       url: '/api/v1/' + HALO.user.projectId + '/subnets'
     }).then(function(data) {
-      return data.images;
+      return data.subnets;
     });
   }
 };

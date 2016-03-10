@@ -5,7 +5,7 @@ module.exports = {
     return request.get({
       url: '/api/v1/routers'
     }).then(function(data) {
-      return data.images;
+      return data.routers;
     });
   }
 };
