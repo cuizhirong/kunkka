@@ -5,9 +5,6 @@ module.exports = {
     return storage.getList(['image', 'instance'], forced).then(function(data) {
       cb(data.image);
     });
-  },
-  getSingle: function(cb, forced) {
-    cb && cb([]);
   }
 
 };

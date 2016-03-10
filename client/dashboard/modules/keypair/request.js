@@ -1,11 +1,9 @@
-var request = require('client/dashboard/cores/request');
+var storage = require('client/dashboard/cores/storage');
 
 module.exports = {
-  getList: function(cb) {
-    return request.get({
-      url: '/api/v1/' + HALO.user.projectId + '/keypairs/detail'
-    }).then(function(data) {
-      cb(data);
+  getList: function(cb, forced) {
+    return storage.getList(['keypair'], forced).then(function(data) {
+      cb(data.keypair);
     });
   }
 };

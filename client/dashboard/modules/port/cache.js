@@ -7,8 +7,5 @@ module.exports = {
     }).then(function(data) {
       return data.ports;
     });
-  },
-  getInstance: function() {
-
   }
 };

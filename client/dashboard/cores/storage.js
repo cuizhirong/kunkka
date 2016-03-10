@@ -10,6 +10,14 @@ var msgEvent = require('client/dashboard/cores/msg_event');
 var instance = require('../modules/instance/cache');
 var image = require('../modules/image/cache');
 var port = require('../modules/port/cache');
+var floatingip = require('../modules/floating-ip/cache');
+var keypair = require('../modules/keypair/cache');
+var network = require('../modules/network/cache');
+var router = require('../modules/router/cache');
+var securitygroup = require('../modules/security-group/cache');
+var snapshot = require('../modules/snapshot/cache');
+var subnet = require('../modules/subnet/cache');
+var volume = require('../modules/volume/cache');
 
 function Storage() {
   var that = this;
@@ -18,7 +26,6 @@ function Storage() {
     that.getList([data.resource_type], true).then(function() {
       msgEvent.emit('dataChange', data);
     });
-
   });
 }
 
@@ -49,6 +56,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port);
+Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume);
 
 module.exports = new Storage();

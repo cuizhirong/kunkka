@@ -1,11 +1,9 @@
-var request = require('client/dashboard/cores/request');
+var storage = require('client/dashboard/cores/storage');
 
 module.exports = {
-  getList: function(cb) {
-    return request.get({
-      url: '/api/v1/' + HALO.user.projectId + '/subnets'
-    }).then(function(data) {
-      cb(data);
+  getList: function(cb, forced) {
+    return storage.getList(['subnet'], forced).then(function(data) {
+      cb(data.subnet);
     });
   }
 };
