@@ -19,13 +19,9 @@ class Detail extends React.Component {
 
   componentWillMount() {}
 
-  componentDidMount() {
+  componentDidMount() {}
 
-  }
-
-  componentWillReceiveProps() {
-
-  }
+  componentWillReceiveProps(nextProps, nextState) {}
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.visible && (Object.keys(nextState.contents).length === 0)) {
@@ -34,26 +30,23 @@ class Detail extends React.Component {
     return true;
   }
 
-  updateDefaultTabContent() {
-    var item = this.findDefaultTab();
-    this.updateContent(item);
-  }
+  componentDidUpdate() {}
 
-  updateTabContent(item) {
+  updateTabContent(tab) {
     var func = this.props.onClickTabs;
-    func && func(item);
+    func && func(tab);
   }
 
-  onClickTabs(e, item) {
-    if (item.key !== this.findDefaultTab().key) {
-      var tabs = this.changeDefaultTab(item);
+  onClickTabs(e, tab) {
+    if (tab.key !== this.findDefaultTab().key) {
+      var tabs = this.changeDefaultTab(tab);
       this.setState({
         tabs: tabs
       });
 
       var contents = this.state.contents;
-      if (!contents[item.key]) {
-        this.updateTabContent(item);
+      if (!contents[tab.key]) {
+        this.updateTabContent(tab);
       }
     }
   }
@@ -71,6 +64,14 @@ class Detail extends React.Component {
     });
 
     return tabs;
+  }
+
+  refresh() {
+    this.setState({
+      contents: {}
+    }, () => {
+      this.updateTabContent();
+    });
   }
 
   loading() {

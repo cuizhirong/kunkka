@@ -11,11 +11,6 @@
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["create", "image"],
-    "key": "crt_img",
-    "type": "create",
-    "icon": "create"
-  }, {
     "value": ["delete", "image"],
     "key": "del_img",
     "type": "delete",

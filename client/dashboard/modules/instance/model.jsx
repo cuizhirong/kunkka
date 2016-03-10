@@ -128,22 +128,26 @@ class Model extends React.Component {
     this.getTableData(false);
   }
 
-  getTableData(forceUpdate) {
+  getTableData(forceUpdate, detailRefresh) {
     request.getList((res) => {
       var table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      this.setState({
-        config: config
-      });
-
       var detail = this.refs.dashboard.refs.detail;
-      if (detail.state.loading) {
+      if (detail && detail.state.loading) {
         detail.setState({
           loading: false
         });
       }
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
     }, forceUpdate);
   }
 
@@ -187,14 +191,17 @@ class Model extends React.Component {
         shutdownInstance({
           name: rows[0].name
         }, function(_data, cb) {
-          request.poweroff(rows[0], cb);
+          request.poweroff(rows[0]).then((res) => {
+            cb(true);
+          });
         });
         break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
           detailLoading: true,
-          clearState: true
+          clearState: true,
+          detailRefresh: true
         }, true);
         break;
       case 'reboot':
@@ -252,7 +259,9 @@ class Model extends React.Component {
           type: 'instance',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteItem(rows, cb);
+            request.deleteItem(rows[0]).then((res) => {
+              cb(true);
+            });
           }
         });
         break;
@@ -348,7 +357,7 @@ class Model extends React.Component {
           }
           break;
         case 'terminate':
-          btns[key].disabled = (rows.length > 0) ? false : true;
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         default:
           break;
@@ -390,6 +399,7 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tabKey={'description'}
                 items={basicPropsItem}
+                rawItem={rows[0]}
                 onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
               <RelatedSources
@@ -448,7 +458,8 @@ class Model extends React.Component {
 
     if (syncUpdate) {
       detail.setState({
-        contents: contents
+        contents: contents,
+        loading: false
       });
     }
   }
@@ -457,12 +468,7 @@ class Model extends React.Component {
     var items = [{
       title: __.name,
       content: item.name,
-      type: 'editable',
-      request: {
-        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id,
-        body: 'server',
-        modifyData: 'name'
-      }
+      type: 'editable'
     }, {
       title: __.id,
       content: item.id
@@ -613,21 +619,23 @@ class Model extends React.Component {
   }
 
   refresh(data, forceUpdate) {
-    var path = router.getPathList();
-    if (!path[2]) {
-      if (data && data.tableLoading) {
-        this.loadingTable();
-      }
-      if (data && data.clearState) {
-        this.refs.dashboard.clearState();
-      }
-    } else {
-      if (data && data.detailLoading) {
-        this.refs.dashboard.refs.detail.loading();
+    if (data) {
+      var path = router.getPathList();
+      if (path[2]) {
+        if (data.detailLoading) {
+          this.refs.dashboard.refs.detail.loading();
+        }
+      } else {
+        if (data.tableLoading) {
+          this.loadingTable();
+        }
+        if (data.clearState) {
+          this.refs.dashboard.clearState();
+        }
       }
     }
 
-    this.getTableData(forceUpdate);
+    this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
 
   loadingTable() {
@@ -652,20 +660,11 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {item, newName} = data;
-
-        var r = item.request;
-        var _data = {};
-        _data[r.body] = {};
-        _data[r.body][r.modifyData] = newName;
-
-        Request.put({
-          url: r.url,
-          data: _data
-        }).then((res) => {
-          // this.refresh();
-        }, (err) => {
-          // console.log('err', err);
+        var {rawItem, newName} = data;
+        request.editServerName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
         });
         break;
       default:

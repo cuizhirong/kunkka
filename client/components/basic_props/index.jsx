@@ -37,10 +37,10 @@ class BasicProps extends React.Component {
     this.props.onAction && this.props.onAction(this.props.tabKey, actionType, data);
   }
 
-  getItemContent(item) {
+  getItemContent(item, rawItem) {
     switch(item.type) {
       case 'editable':
-        return <EditContent item={item} onAction={this.onAction.bind(this)} />;
+        return <EditContent item={item} rawItem={rawItem} onAction={this.onAction.bind(this)} />;
       case 'status':
         return getStatusIcon(item.status);
       case 'time':
@@ -52,6 +52,7 @@ class BasicProps extends React.Component {
 
   render() {
     var items = this.props.items,
+      rawItem = this.props.rawItem,
       state = this.state;
 
     return (
@@ -71,7 +72,7 @@ class BasicProps extends React.Component {
                   {items.map((item, index) =>
                     <tr key={index}>
                       <th>{item.title}</th>
-                      <td>{this.getItemContent(item)}</td>
+                      <td>{this.getItemContent(item, rawItem)}</td>
                     </tr>
                   )}
                 </tbody>

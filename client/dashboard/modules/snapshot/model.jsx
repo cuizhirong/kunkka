@@ -12,6 +12,7 @@ var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -29,6 +30,17 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'router') {
+        this.refresh(null, false);
+        if (data.action === 'delete'
+          && data.stage === 'end'
+          && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/router');
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -74,23 +86,27 @@ class Model extends React.Component {
     this.getTableData(false);
   }
 
-  getTableData(forceUpdate) {
+  getTableData(forceUpdate, detailRefresh) {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.snapshots;
+      table.data = res;
       table.loading = false;
 
-      this.setState({
-        config: config
-      });
-
       var detail = this.refs.dashboard.refs.detail;
-      if (detail.state.loading) {
+      if (detail && detail.state.loading) {
         detail.setState({
           loading: false
         });
       }
-    }, true);
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
+    }, forceUpdate);
   }
 
   onAction(field, actionType, refs, data) {
@@ -130,7 +146,9 @@ class Model extends React.Component {
       case 'refresh':
         this.refresh({
           tableLoading: true,
-          detailLoading: true
+          detailLoading: true,
+          clearState: true,
+          detailRefresh: true
         }, true);
         break;
       default:
@@ -252,20 +270,24 @@ class Model extends React.Component {
     return data;
   }
 
-  refresh(data) {
-    var path = router.getPathList();
-    if (!path[2]) {
-      if (data && data.tableLoading) {
-        this.loadingTable();
-      }
-      this.refs.dashboard.clearState();
-    } else {
-      if (data && data.detailLoading) {
-        this.refs.dashboard.refs.detail.loading();
+  refresh(data, forceUpdate) {
+    if (data) {
+      var path = router.getPathList();
+      if (path[2]) {
+        if (data.detailLoading) {
+          this.refs.dashboard.refs.detail.loading();
+        }
+      } else {
+        if (data.tableLoading) {
+          this.loadingTable();
+        }
+        if (data.clearState) {
+          this.refs.dashboard.clearState();
+        }
       }
     }
 
-    this.getTableData();
+    this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
 
   loadingTable() {

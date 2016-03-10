@@ -7,20 +7,24 @@ module.exports = {
       cb(data.instance);
     });
   },
-  deleteItem: function(rows, cb) {
-    rows.forEach((item) => {
-      request.delete({
-        url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
-      }).then((res) => {
-        cb(true);
-      });
+  deleteItem: function(item) {
+    return request.delete({
+      url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
     });
   },
-  poweroff: function(item, cb) {
-    request.post({
+  poweroff: function(item) {
+    return request.post({
       url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/stop'
-    }).then((res) => {
-      cb(true);
+    });
+  },
+  editServerName: function(item, newName) {
+    var data = {};
+    data.server = {};
+    data.server.name = newName;
+
+    return request.put({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id,
+      data: data
     });
   }
 };

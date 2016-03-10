@@ -50,9 +50,11 @@ class EditContent extends React.Component {
   }
 
   onConfirm(e) {
-    var item = this.props.item;
+    var item = this.props.item,
+      rawItem = this.props.rawItem;
     this.props.onAction && this.props.onAction('edit_name', {
       item: item,
+      rawItem: rawItem,
       newName: this.state.value
     });
   }

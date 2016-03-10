@@ -8,13 +8,14 @@ var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 
 var deleteModal = require('client/components/modal_delete/index');
+var createNetwork = require('./pop/create_network/index');
+var createSubnet = require('../subnet/pop/create_subnet/index');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var request = require('./request');
-var createNetwork = require('./pop/create_network/index');
-var createSubnet = require('../subnet/pop/create_subnet/index');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -32,6 +33,17 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'network') {
+        this.refresh(null, false);
+        if (data.action === 'delete'
+          && data.stage === 'end'
+          && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/network');
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -60,16 +72,12 @@ class Model extends React.Component {
             item.subnets.map((_item, _i) => {
               if (typeof _item === 'object') {
                 _i && subnetRender.push(', ');
-                subnetRender.push(<a key={_i} onClick={listener.bind(null, _item.id)}>{_item.name}</a>);
+                subnetRender.push(<i key={'icon' + _i}className="glyphicon icon-subnet" />);
+                subnetRender.push(<a key={'subnetName' + _i} onClick={listener.bind(null, _item.id)}>{_item.name}</a>);
               }
             });
 
             return item.subnets.length ? <div>{subnetRender.map((_item) => _item)}</div> : '';
-          };
-          break;
-        case 'umngd_ntw':
-          column.render = (col, item, i) => {
-            return item.admin_state_up ? __.yes : __.no;
           };
           break;
         default:
@@ -82,23 +90,26 @@ class Model extends React.Component {
     this.getTableData(false);
   }
 
-
-  getTableData(forceUpdate) {
+  getTableData(forceUpdate, detailRefresh) {
     request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.networks;
+      table.data = res;
       table.loading = false;
 
-      this.setState({
-        config: config
-      });
-
       var detail = this.refs.dashboard.refs.detail;
-      if (detail.state.loading) {
+      if (detail && detail.state.loading) {
         detail.setState({
           loading: false
         });
       }
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
     }, forceUpdate);
   }
 
@@ -141,7 +152,9 @@ class Model extends React.Component {
       case 'refresh':
         this.refresh({
           tableLoading: true,
-          detailLoading: true
+          detailLoading: true,
+          clearState: true,
+          detailRefresh: true
         }, true);
         break;
       default:
@@ -253,9 +266,6 @@ class Model extends React.Component {
       type: 'status',
       status: item.status,
       content: __[item.status.toLowerCase()]
-    }, {
-      title: __.create + __.time,
-      content: ''
     }];
 
     return items;
@@ -300,20 +310,24 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  refresh(data) {
-    var path = router.getPathList();
-    if (!path[2]) {
-      if (data && data.tableLoading) {
-        this.loadingTable();
-      }
-      this.refs.dashboard.clearState();
-    } else {
-      if (data && data.detailLoading) {
-        this.refs.dashboard.refs.detail.loading();
+  refresh(data, forceUpdate) {
+    if (data) {
+      var path = router.getPathList();
+      if (path[2]) {
+        if (data.detailLoading) {
+          this.refs.dashboard.refs.detail.loading();
+        }
+      } else {
+        if (data.tableLoading) {
+          this.loadingTable();
+        }
+        if (data.clearState) {
+          this.refs.dashboard.clearState();
+        }
       }
     }
 
-    this.getTableData();
+    this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
 
   loadingTable() {

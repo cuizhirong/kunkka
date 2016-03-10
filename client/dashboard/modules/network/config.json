@@ -47,10 +47,6 @@
       "dataIndex": "",
       "key": "subnet"
     }, {
-      "title": ["unmanaged", "network"],
-      "dataIndex": "",
-      "key": "umngd_ntw"
-    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
@@ -60,11 +56,6 @@
         "key": "active",
         "filterBy": "ACTIVE"
       }]
-    }, {
-      "title": ["create", "time"],
-      "dataIndex": "created",
-      "key": "created",
-      "type": "time"
     }],
     "data": [],
     "detail": {

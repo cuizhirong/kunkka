@@ -78,6 +78,7 @@ class Main extends React.Component {
     }
 
     this.initialized = true;
+    this.updateRows(nextProps.config.table.data);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -85,10 +86,6 @@ class Main extends React.Component {
       return true;
     }
     return false;
-  }
-
-  componentDidUpdate() {
-    this.updateRows(this.props.config.table.data);
   }
 
   updateRows(data) {
@@ -99,7 +96,7 @@ class Main extends React.Component {
       var existed = data.filter((d) => d.id === item.id)[0];
 
       if (existed) {
-        newRows.push(item);
+        newRows.push(existed);
       }
     });
 
@@ -111,8 +108,16 @@ class Main extends React.Component {
       checkedKey[item.id] = true;
     });
 
-    this.refs.table.setState({
-      checkedKey: checkedKey
+    if (this.refs.table) {
+      this.refs.table.setState({
+        checkedKey: checkedKey
+      });
+    }
+
+    //update btn status
+    this.onAction('table', 'check', {
+      status: false,
+      checkedRow: this.stores.rows
     });
   }
 
@@ -266,7 +271,7 @@ class Main extends React.Component {
     this.stores.rows = [];
     this.onAction('table', 'check', {
       status: false,
-      clickedRow: this.stores.rows
+      clickedRow: []
     });
 
     this.clearSearchState();
@@ -345,6 +350,7 @@ class Main extends React.Component {
             <Detail
               ref="detail"
               tabs={detail.tabs}
+              rows={this.stores.rows}
               onClickTabs={this.onClickDetailTabs.bind(this)} />
             : null
           }
