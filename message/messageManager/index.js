@@ -25,6 +25,9 @@ MessageManager.prototype.getListenerName = function (msg) {
 
 MessageManager.prototype.mqMessageListener = function (msg) {
   var msgContent = JSON.parse(msg.content.toString());
+  if (msgContent['oslo.version'] === '2.0') {
+    msgContent = JSON.parse(msgContent['oslo.message']);
+  }
   if (this.isIgnoredMsg(msgContent)) {
     return;
   }

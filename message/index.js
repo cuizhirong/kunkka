@@ -15,10 +15,11 @@ wss.on('connection', function connection(ws) {
   var listener;
   var _msgDispatcher = msgManager.msgDispatcher.bind(undefined, ws);
   ws.on('message', function incoming(message) {
-    if (message !== 'h') {
-      message = JSON.parse(message);
-      listener = message.projectId;
+    if (message && message !== 'h') {
+      listener = message;
       msgManager.addListener(listener, _msgDispatcher);
+    } else if (message !== 'h') {
+      ws.close();
     }
   });
   ws.onclose = function() {

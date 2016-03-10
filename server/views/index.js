@@ -1,8 +1,6 @@
-/**
- * External dependencies
- */
-
-require('babel-core/register');
+require('babel-core/register')({
+  ignore: ['node_modules', 'server', 'openstack_server', 'configs']
+});
 require('../helpers/less_register');
 
 var fs = require('fs');
@@ -78,6 +76,7 @@ module.exports = function(app) {
     });
   });
 
+  var websocketUrl = config('websocket').url;
 
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
@@ -93,7 +92,10 @@ module.exports = function(app) {
           username: req.session.user.username
         },
         region_list: regions[locale],
-        current_region: req.session.region ? req.session.region : regions[locale][0].id
+        current_region: req.session.region ? req.session.region : regions[locale][0].id,
+        websocket: {
+          url: websocketUrl
+        }
       };
 
       res.render('index', {

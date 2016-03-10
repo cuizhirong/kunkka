@@ -36,10 +36,10 @@ function notify(data) {
 }
 
 function connectWS(opt) {
-  var ws = new WebSocket('ws://localhost:8080');
+  var ws = new WebSocket(opt.url);
   var interval;
   ws.onopen = function() {
-    ws.send(JSON.stringify(opt));
+    ws.send(opt.projectId);
     interval = setInterval(function() {
       ws.send('h');
     }, 25000);
@@ -62,10 +62,11 @@ function connectWS(opt) {
 
 try {
   var opt = {
-    userId: HALO.user.userId,
     projectId: HALO.user.projectId
   };
-
+  var hostname = window.location.hostname;
+  var protocol = window.location.protocol === 'https' ? 'wss://' : 'ws://';
+  opt.url = protocol + hostname + HALO.websocket.url;
   console.log('load websocket');
   connectWS(opt);
 } catch (e) {

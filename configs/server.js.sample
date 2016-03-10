@@ -1,17 +1,17 @@
 var config = {
   'remote': {
-    'keystone': 'http://42.62.93.184:5000',
+    'keystone': 'http://121.201.52.153:5000',
     'nova': {
-      'RegionOne': 'http://42.62.93.184:8774'
+      'RegionOne': 'http://121.201.52.153:8774'
     },
     'cinder': {
-      'RegionOne': 'http://42.62.93.184:8776'
+      'RegionOne': 'http://121.201.52.153:8776'
     },
     'neutron': {
-      'RegionOne': 'http://42.62.93.184:9696'
+      'RegionOne': 'http://121.201.52.153:9696'
     },
     'glance': {
-      'RegionOne': 'http://42.62.93.184:9292'
+      'RegionOne': 'http://121.201.52.153:9292'
     }
   },
   'region': [{
@@ -43,7 +43,7 @@ var config = {
   },
   'mq': {
     'enabled': true,
-    'remote': 'amqp://stackrabbit:ustack@42.62.93.184:5672',
+    'remote': 'amqp://openstack:RABBIT_PASS@121.201.52.153:5672',
     'sourceExchanges': ['nova', 'neutron', 'glance', 'openstack'],
     reconnectTimeout: 1000
   },

@@ -22,6 +22,7 @@ sudo npm install pm2 -g
 Under the *configs* directory, generate the config file
 ```
 cp ./configs/server.js.sample ./config/server.js
+cp ./configs/index.json.sample ./config/index.json
 ```
 and then customize your own js file
 
@@ -36,6 +37,10 @@ npm run build
 npm start
 ```
 
+Start websocket server
+```
+npm run message
+```
 
 ### Production Mode
 Under the production mode, you need to run the build script to generate the static files:
