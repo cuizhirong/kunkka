@@ -11,8 +11,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var createRouter = require('./pop/create_router/index');
 var publicGateway = require('./pop/enable_public_gateway/index');
 var disableGateway = require('./pop/disable_gateway/index');
-var associateFip = require('./pop/associate_fip/index');
-var dissociateFip = require('./pop/dissociate_fip/index');
+var changeFip = require('./pop/change_fip/index');
 var relatedSubnet = require('./pop/related_subnet/index');
 
 var config = require('./config.json');
@@ -167,11 +166,8 @@ class Model extends React.Component {
       case 'dis_gw':
         disableGateway(rows[0], function() {});
         break;
-      case 'assc_fip':
-        associateFip(rows[0], function() {});
-        break;
-      case 'dis_fip':
-        dissociateFip(rows[0], function() {});
+      case 'change_fip':
+        changeFip(rows[0], function() {});
         break;
       case 'cnt_subnet':
         relatedSubnet(rows[0], function() {});
@@ -210,17 +206,14 @@ class Model extends React.Component {
         case 'dis_gw':
           btns[key].disabled = (rows.length === 1 && rows[0].external_gateway_info) ? false : true;
           break;
-        case 'assc_fip':
+        case 'change_fip':
           btns[key].disabled = (rows.length === 1 && !rows[0].floatingip.id) ? false : true;
-          break;
-        case 'dis_fip':
-          btns[key].disabled = (rows.length === 1 && rows[0].floatingip.id) ? false : true;
           break;
         case 'cnt_subnet':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length > 0) ? false : true;
           break;
         default:
           break;

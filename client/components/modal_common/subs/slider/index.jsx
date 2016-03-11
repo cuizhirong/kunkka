@@ -79,7 +79,7 @@ class Slide extends React.Component {
     return (
       <div className={className}>
         <div>
-          {props.label + ':'}
+          {props.label}
         </div>
         <div>
           <div className="slidearea">

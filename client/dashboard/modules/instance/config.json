@@ -60,15 +60,11 @@
         }]
       }, {
         "items": [{
-          "title": ["change","security", "group"],
+          "title": ["modify","security", "group"],
           "key": "chg_security_grp",
           "disabled": true
         }, {
-          "title": ["change", "password"],
-          "key": "chg_psw",
-          "disabled": true
-        }, {
-          "title": ["change", "keypair"],
+          "title": ["modify", "keypair"],
           "key": "chg_keypr",
           "disabled": true
         }]

@@ -52,7 +52,7 @@ class Input extends React.Component {
           {
             props.required && <strong>*</strong>
           }
-          {props.label + ':'}
+          {props.label}
         </div>
         <div>
           <input className={this.state.error ? 'error' : ''} type={props.input_type} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />

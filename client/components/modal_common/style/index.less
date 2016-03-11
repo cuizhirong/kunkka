@@ -105,6 +105,7 @@
       input {
         width: 100%;
         box-sizing: border-box;
+        height: 32px;
       }
       .short-tip-row {
         padding-left: 0;
@@ -127,6 +128,8 @@
         border: @textarea_border;
         padding: 4px 10px;
         overflow: auto;
+        box-sizing: border-box;
+        resize: none;
 
         &:hover,
         &:focus {
@@ -242,6 +245,7 @@
     }
 
     &.select-row {
+      height: 32px;
       >div:last-child {
         display: flex;
         align-items: center;
@@ -269,6 +273,7 @@
       align-items: flex-start;
       >div:last-child {
         display: flex;
+        user-select: none;
 
         .slidearea {
           flex: 1;
@@ -295,7 +300,7 @@
           .range {
             float: right;
             color: @slider_tip_color;
-            margin-top: 10px
+            margin-top: 10px;
           }
         }
         .inputarea {
@@ -306,6 +311,7 @@
             padding: 4px 5px;
             width: 62px;
             margin-right: 10px;
+            box-sizing: border-box
           }
         }
       }

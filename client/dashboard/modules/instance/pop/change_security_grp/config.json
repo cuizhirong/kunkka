@@ -1,5 +1,5 @@
 {
-  "title": ["change", "security-group"],
+  "title": ["modify", "security_group"],
   "fields": [{
     "type": "icon_label",
     "field": "instance",

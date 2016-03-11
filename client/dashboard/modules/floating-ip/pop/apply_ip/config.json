@@ -13,10 +13,6 @@
     "type": "select",
     "field": "carrier",
     "data": []
-  }, {
-    "type": "checkbox",
-    "field": "need_record",
-    "has_label": true
   }],
   "btn": {
     "value": "allocate",

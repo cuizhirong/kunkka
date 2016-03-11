@@ -90,11 +90,6 @@ class Model extends React.Component {
               </span> : '';
           };
           break;
-        case 'shared':
-          column.render = (col, item, i) => {
-            return item.multiattach ? __.shared : '';
-          };
-          break;
         case 'attributes':
           column.render = (col, item, i) => {
             return item.metadata.readonly ? __.read_write : __.read_only;
@@ -217,33 +212,26 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    console.log(rows);
     for(let key in btns) {
       switch (key) {
         case 'create_snapshot':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        case 'attach_to_instance':
-          btns[key].disabled = (rows.length === 1 && !rows[0].attachments[0]) ? false : true;
-          break;
         case 'dtch_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].attachments[0]) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'in-use') ? false : true;
           break;
-        case 'extd_capacity':
+        case 'attach_to_instance':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
           break;
+        case 'extd_capacity':
+          btns[key].disabled = (rows.length === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
+          break;
         case 'set_rd_only':
-          if(rows.length === 1 && rows[0].status === 'available') {
-            btns[key].disabled = rows[0].metadata.readonly ? false : true;
-          } else {
-            btns[key].disabled = true;
-          }
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'False') ? false : true;
           break;
         case 'set_rd_wrt':
-          if(rows.length === 1 && rows[0].status === 'available') {
-            btns[key].disabled = !rows[0].metadata.readonly ? false : true;
-          } else {
-            btns[key].disabled = true;
-          }
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && !rows[0].metadata.readonly) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;
@@ -346,9 +334,6 @@ class Model extends React.Component {
     }, {
       title: __.attach_to + __.instance,
       content: getAttachments(item)
-    }, {
-      title: __.shared,
-      content: item.multiattach ? __.yes : __.no
     }, {
       title: __.attributes,
       content: item.metadata.readonly ? __.read_only : __.read_write

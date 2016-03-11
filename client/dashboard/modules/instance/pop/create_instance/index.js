@@ -1,8 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
-var changePwd = require('../change_pwd/index');
-
 function pop(id, callback, parent) {
 
   var props = {
@@ -25,14 +23,6 @@ function pop(id, callback, parent) {
       switch(field) {
         case 'name':
           console.log('onAction: ', state.value);
-          break;
-        case 'yaoli':
-          console.log('弹出');
-          changePwd(function(data) {
-            refs.name.setState({
-              value: data.name.state.value
-            });
-          }, refs.modal);
           break;
         default:
           break;

@@ -1,5 +1,5 @@
 {
-  "title": ["change", "keypair"],
+  "title": ["modify", "keypair"],
   "fields": [{
     "type": "icon_label",
     "field": "instance",

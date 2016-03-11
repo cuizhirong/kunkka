@@ -214,7 +214,7 @@ class Model extends React.Component {
           btns[key].disabled = shouldAssociate ? false : true;
           break;
         case 'dssc':
-          btns[key].disabled = !shouldAssociate ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].association.type) ? false : true;
           break;
         case 'chg_bandwidth':
           btns[key].disabled = (rows.length === 1) ? false : true;

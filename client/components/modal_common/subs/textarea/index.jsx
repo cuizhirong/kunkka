@@ -51,7 +51,7 @@ class Textarea extends React.Component {
           {
             props.required && <strong>*</strong>
           }
-          {props.label + ':'}
+          {props.label}
         </div>
         <div>
           <textarea className={this.state.error ? 'error' : ''} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />

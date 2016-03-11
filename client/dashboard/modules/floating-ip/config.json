@@ -30,7 +30,7 @@
           "key": "dssc",
           "disabled": true
         }, {
-          "title": ["change", "bandwidth"],
+          "title": ["modify", "bandwidth"],
           "key": "chg_bandwidth",
           "disabled": true
         }]

@@ -1,0 +1,16 @@
+{
+  "title": ["change", "floating_ip"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "floating_ip"
+  }],
+  "btn": {
+    "value": "change",
+    "disabled": false
+  }
+}

@@ -109,7 +109,7 @@ class Select extends React.Component {
     return (
       <div className={className}>
         <div>
-          {props.label + ':'}
+          {props.label}
         </div>
         <div>
           {props.checkedField && <input type="radio" checked={state.checkedField === props.field} onChange={this.onChange} />}

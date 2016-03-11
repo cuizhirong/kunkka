@@ -79,10 +79,6 @@
       "dataIndex": "",
       "key": "attch_instance"
     }, {
-      "title": ["shared"],
-      "dataIndex": "",
-      "key": "shared"
-    }, {
       "title": ["type"],
       "dataIndex": "volume_type",
       "key": "type"

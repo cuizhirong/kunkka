@@ -25,12 +25,8 @@
           "key": "dis_gw",
           "disabled": true
         }, {
-          "title": ["associate", "floating_ip"],
-          "key": "assc_fip",
-          "disabled": true
-        }, {
-          "title": ["dissociate", "floating_ip"],
-          "key": "dis_fip",
+          "title": ["change", "floating_ip"],
+          "key": "change_fip",
           "disabled": true
         }, {
           "title": ["connect", "subnet"],

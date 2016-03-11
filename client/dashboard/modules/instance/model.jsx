@@ -14,7 +14,6 @@ var VncConsole = require('client/components/vnc_console/index');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
-var changePwd = require('./pop/change_pwd/index');
 var createInstance = require('./pop/create_instance/index');
 var shutdownInstance = require('./pop/shutdown/index');
 var associateFip = require('./pop/associate_fip/index');
@@ -234,11 +233,6 @@ class Model extends React.Component {
           name: 'abc'
         }, function() {});
         break;
-      case 'chg_psw':
-        changePwd({
-          name: 'abc'
-        }, function() {});
-        break;
       case 'chg_keypr':
         changeKeypair({
           name: 'abc'
@@ -339,9 +333,6 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'chg_security_grp':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'chg_psw':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'chg_keypr':

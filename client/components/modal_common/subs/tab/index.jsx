@@ -51,7 +51,7 @@ class Tab extends React.Component {
           {
             props.required && <strong>*</strong>
           }
-          {props.label + ':'}
+          {props.label}
         </div>
         <div>
           {

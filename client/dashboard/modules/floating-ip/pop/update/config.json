@@ -1,5 +1,5 @@
 {
-  "title": ["change", "bandwidth"],
+  "title": ["modify", "bandwidth"],
   "fields": [{
     "type": "icon_label",
     "field": "name",
@@ -14,7 +14,7 @@
     "value": ""
   }],
   "btn": {
-    "value": "change",
+    "value": "modify",
     "disabled": false
   }
 }
