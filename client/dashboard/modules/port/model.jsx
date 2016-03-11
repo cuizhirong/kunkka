@@ -253,6 +253,9 @@ class Model extends React.Component {
               <BasicProps
                 title = {__.basic + __.properties}
                 defaultUnfold = {true}
+                tabKey={"description"}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}
                 items = {basicPropsItem}/>
             </div>
           );
@@ -269,10 +272,36 @@ class Model extends React.Component {
     }
   }
 
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editPortName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   getBasicPropsItems(item) {
     var items = [{
       title: __.name,
-      content: item.name ? item.name : '(' + item.id.substring(0, 8) + ')'
+      content: item.name ? item.name : '(' + item.id.substring(0, 8) + ')',
+      type: 'editable'
     }, {
       title: 'ID',
       content: item.device_id
