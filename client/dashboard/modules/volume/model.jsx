@@ -83,12 +83,16 @@ class Model extends React.Component {
           break;
         case 'type':
           column.render = (col, item, i) => {
-            return <span><i className="glyphicon icon-performance" />{item.volume_type}</span>;
+            return item.volume_type ?
+              <span>
+                <i className="glyphicon icon-performance" />
+                {item.volume_type}
+              </span> : '';
           };
           break;
         case 'shared':
           column.render = (col, item, i) => {
-            return item.multiattach ? __.shared : '-';
+            return item.multiattach ? __.shared : '';
           };
           break;
         case 'attributes':
@@ -219,10 +223,10 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'attach_to_instance':
-          btns[key].disabled = (rows.length === 1 && !rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          // btns[key].disabled = (rows.length === 1 && !rows[0].volume_image_metadata.instance_uuid) ? false : true;
           break;
         case 'dtch_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          // btns[key].disabled = (rows.length === 1 && rows[0].volume_image_metadata.instance_uuid) ? false : true;
           break;
         case 'extd_capacity':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;

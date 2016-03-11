@@ -481,7 +481,7 @@ class Model extends React.Component {
             {item.floating_ip.floating_ip_address}
           </a>
         </span>
-      : null
+      : '-'
     }, {
       title: __.image,
       content:

@@ -289,13 +289,13 @@ class Model extends React.Component {
           <a data-type="router" href={'/project/router/' + item.association.device.id}>
             {item.association.device.name}
           </a>
-        </span> : ''
+        </span> : '-'
     }, {
       title: __.bandwidth,
-      content: ''
+      content: '-'
     }, {
       title: __.carrier,
-      content: ''
+      content: '-'
     }, {
       title: __.status,
       type: 'status',

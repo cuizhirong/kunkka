@@ -41,7 +41,8 @@
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
-      "type": "captain"
+      "type": "captain",
+      "width": 200
     }, {
       "title": ["subnet"],
       "dataIndex": "",
@@ -51,6 +52,7 @@
       "dataIndex": "status",
       "type": "status",
       "key": "status",
+      "width": 200,
       "filter": [{
         "name": ["active"],
         "key": "active",

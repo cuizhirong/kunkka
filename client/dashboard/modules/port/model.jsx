@@ -278,8 +278,13 @@ class Model extends React.Component {
       content: item.device_id
     }, {
       title: __.associate_gl + __.instance,
-      content: item.instance ?
-        <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.instance.id}>{item.instance.name}</a></div> : ''
+      content: item.server ?
+        <div>
+          <i className="glyphicon icon-instance" />
+          <a data-type="router" href={'/project/instance/' + item.server.id}>
+            {item.server.name}
+          </a>
+        </div> : '-'
     }, {
       title: 'IP' + __.address,
       content:
@@ -297,7 +302,12 @@ class Model extends React.Component {
     }, {
       title: __.floating_ip,
       content: item.floatingip.id ?
-        <div><i className="glyphicon icon-floating-ip"></i><a data-type="router" href={'/project/floatingips/' + item.floatingip.id}>{item.floatingip.name}</a></div> : ''
+        <div>
+          <i className="glyphicon icon-floating-ip" />
+          <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
+            {item.floatingip.floating_ip_address}
+          </a>
+        </div> : '-'
     }, {
       title: __.security + __.group,
       content:

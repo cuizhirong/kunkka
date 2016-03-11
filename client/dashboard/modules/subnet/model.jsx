@@ -304,7 +304,7 @@ class Model extends React.Component {
           <a data-type="router" href={'/project/router/' + item.router.id}>
             {item.router.name}
           </a>
-        </span> : null
+        </span> : '-'
     }, {
       title: __.gateway + __.address,
       content: item.gateway_ip

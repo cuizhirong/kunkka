@@ -33,12 +33,10 @@ class Main extends React.Component {
     columns.map((column) => {
       switch (column.type) {
         case 'captain':
-          var output = column.render ? column.render() : undefined;
-
           column.render = (col, item, i) => {
             return (
               <a className="captain" onClick={this.onClickCaptain.bind(this, item)}>
-                {output ? output : item[col.dataIndex]}
+                {item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')'}
               </a>
             );
           };

@@ -301,10 +301,10 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.floating_ip,
-      content: item.floatingip ?
+      content: item.floatingip.id ?
         <a onClick={routerListener.bind(null, item.floatingip.id)}>
           {item.floatingip.floating_ip_address}
-        </a> : ''
+        </a> : '-'
     }, {
       title: __.ext_gatway,
       content: getGatewayState()

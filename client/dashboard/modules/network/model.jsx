@@ -73,7 +73,11 @@ class Model extends React.Component {
               if (typeof _item === 'object') {
                 _i && subnetRender.push(', ');
                 subnetRender.push(<i key={'icon' + _i}className="glyphicon icon-subnet" />);
-                subnetRender.push(<a key={'subnetName' + _i} onClick={listener.bind(null, _item.id)}>{_item.name}</a>);
+                subnetRender.push(
+                  <a key={'subnetName' + _i} onClick={listener.bind(null, _item.id)}>
+                    {_item.name ? _item.name : _item.cidr}
+                  </a>
+                );
               }
             });
 
@@ -258,9 +262,6 @@ class Model extends React.Component {
     }, {
       title: __.id,
       content: item.id
-    }, {
-      title: __.unmanaged + __.network,
-      content: ''
     }, {
       title: __.status,
       type: 'status',
