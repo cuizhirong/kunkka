@@ -313,9 +313,6 @@ class Model extends React.Component {
       type: 'status',
       status: item.status,
       content: __[item.status.toLowerCase()]
-    }, {
-      title: __.create + __.time,
-      content: ''
     }];
 
     return items;

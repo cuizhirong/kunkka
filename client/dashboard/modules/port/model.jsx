@@ -277,7 +277,7 @@ class Model extends React.Component {
       title: 'ID',
       content: item.device_id
     }, {
-      title: __.associate_gl + __.instance,
+      title: __.associate_gl + __.resource,
       content: item.server ?
         <div>
           <i className="glyphicon icon-instance" />

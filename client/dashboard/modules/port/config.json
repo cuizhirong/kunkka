@@ -71,7 +71,7 @@
       "dataIndex": "",
       "key": "floating_ip"
     }, {
-      "title": ["related", "instance"],
+      "title": ["related", "resource"],
       "dataIndex": "",
       "key": "related_instance"
     }, {

@@ -89,15 +89,16 @@ class Model extends React.Component {
           break;
         case 'ip_address':
           column.render = (col, item, i) => {
-            var str = '';
+            var arr = [];
             if (item.addresses.private) {
               item.addresses.private.forEach((_item, index) => {
                 if (_item.version === 4 && _item['OS-EXT-IPS:type'] === 'fixed') {
-                  str += (index > 0) ? ', ' + _item.addr : _item.addr;
+                  index && arr.push(', ');
+                  arr.push(<a key={'port' + index} data-type="router" href={'/project/port/' + _item.port.id}>{_item.addr}</a>);
                 }
               });
             }
-            return str;
+            return arr;
           };
           break;
         case 'floating_ip':
@@ -113,7 +114,7 @@ class Model extends React.Component {
           break;
         case 'instance_type':
           column.render = (col, item, i) => {
-            return item.flavor ? item.flavor.name : '';
+            return item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '';
           };
           break;
         default:
@@ -490,7 +491,7 @@ class Model extends React.Component {
         </a>
     }, {
       title: __.instance_type,
-      content: item.flavor ? item.flavor.name : ''
+      content: item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '-'
     }, {
       title: __.status,
       type: 'status',
