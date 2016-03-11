@@ -10,7 +10,9 @@ fs.readdirSync(__dirname).forEach(function (f) {
   if ( fs.statSync(__dirname + '/' + f).isDirectory() ) {
     driver[f] = {};
     fs.readdirSync(__dirname + '/' + f).forEach(function (file) {
-      driver[f][file] = require('./' + f + '/' + file);
+      if (file !== '.DS_Store') {
+        driver[f][file] = require('./' + f + '/' + file);
+      }
     });
   }
 });

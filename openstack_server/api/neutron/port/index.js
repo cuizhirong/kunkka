@@ -22,7 +22,7 @@ function Port (app, neutron, nova) {
       that.nova.server.listServers(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
     },
     function (callback) {
-      that.nova.security.listSecurity(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
+      that.neutron.security.listSecurity(that.projectId, that.token, that.region, that.asyncHandler.bind(this, callback));
     }
   ];
 }

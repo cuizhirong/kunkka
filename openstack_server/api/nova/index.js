@@ -6,6 +6,5 @@
 
 module.exports = {
   server   : require('./instance'),
-  keypair  : require('./keypair'),
-  security : require('./security')
+  keypair  : require('./keypair')
 };

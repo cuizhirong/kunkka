@@ -22,12 +22,14 @@ module.exports = function(app) {
       return m !== 'base.js';
     })
     .forEach(function (m) {
-      var apiComponent = require(path.join(apiModulePath, m));
-      Object.keys(apiComponent).forEach(function(k){
-        var apiModule = apiComponent[k];
-        var extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;
-        apiModule(app, extension);
-      });
+      if (m !== '.DS_Store') {
+        var apiComponent = require(path.join(apiModulePath, m));
+        Object.keys(apiComponent).forEach(function(k){
+          var apiModule = apiComponent[k];
+          var extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;
+          apiModule(app, extension);
+        });
+      }
     });
 
   return app;

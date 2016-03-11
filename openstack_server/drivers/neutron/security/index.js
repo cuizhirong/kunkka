@@ -1,10 +1,10 @@
-var novaRemote = require('config')('remote').nova;
+var neutronRemote = require('config')('remote').neutron;
 var Base = require('openstack_server/drivers/base.js');
 var driverSecurity = new Base('security');
 
 driverSecurity.listSecurity = function (projectId, token, region, callback, query) {
   return driverSecurity.getMethod(
-    novaRemote[region] + '/v2.1/' + projectId + '/os-security-groups',
+    neutronRemote[region] + '/v2.0/security-groups',
     token,
     callback,
     query
@@ -12,7 +12,7 @@ driverSecurity.listSecurity = function (projectId, token, region, callback, quer
 };
 driverSecurity.showSecurityDetails = function (projectId, securityId, token, region, callback) {
   return driverSecurity.getMethod(
-    novaRemote[region] + '/v2.1/' + projectId + '/os-security-groups/' + securityId,
+    neutronRemote[region] + '/v2.0/security-groups/' + securityId,
     token,
     callback
   );

@@ -8,5 +8,6 @@ module.exports = {
   network    : require('./network'),
   port       : require('./port'),
   router     : require('./router'),
+  security   : require('./security'),
   subnet     : require('./subnet')
 };

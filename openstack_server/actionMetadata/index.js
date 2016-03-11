@@ -28,7 +28,9 @@ var metadata = {
 fs.readdirSync(__dirname).forEach(function (f) {
   if ( fs.statSync(__dirname + '/' + f).isDirectory() ) {
     fs.readdirSync(__dirname + '/' + f).forEach(function (file) {
-      metadata[path.basename(file, '.js')] = require('./' + f + '/' + file);
+      if (file !== '.DS_Store') {
+        metadata[path.basename(file, '.js')] = require('./' + f + '/' + file);
+      }
     });
   }
 });
