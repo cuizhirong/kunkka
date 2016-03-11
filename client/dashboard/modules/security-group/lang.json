@@ -1,13 +1,30 @@
 {
   "en": {
     "security-group": "Security Group",
+    "security_group_": "Security Group ",
     "desc": "Description",
+    "egress": "Egress",
+    "ingress": "Ingress",
+    "port": "Port ",
+    "protocol": "Protocol",
+    "range": "Range",
+    "rules": "Rules",
+    "source_type": "Source",
+    "target": "Target",
     "tip_security_name": "The name is duplicated with the an one.",
     "tip_info_security": "Security Group is the whitelist in the virtual interface on an instance."
   },
   "zh-CN": {
     "security-group": "安全组",
+    "security_group_": "安全组",
     "desc": "描述",
+    "egress": "上行",
+    "ingress": "下行",
+    "protocol": "协议",
+    "range": "范围",
+    "rules": "规则",
+    "source_type": "源类型",
+    "target": "目标",
     "tip_security_name": "安全组名字不能重复",
     "tip_info_security": "安全组是云主机的虚拟网卡上行和下行流量的白名单防火墙，即在名单中的安全组规则允许流量通过。"
   }

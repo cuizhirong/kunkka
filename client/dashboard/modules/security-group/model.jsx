@@ -2,6 +2,9 @@ require('./style/index.less');
 
 var React = require('react');
 var Main = require('client/components/main/index');
+var {Button} = require('client/uskin/index');
+
+var SecurityDetail = require('client/components/security_detail/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createSecurityGroup = require('./pop/create_security_group/index');
@@ -184,7 +187,22 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          contents[tabKey] = (<div></div>);
+          var itemKeys = ['ingress', 'egress'];
+          var items = this.getSecurityDetailData(rows[0]);
+
+          contents[tabKey] = (
+            <SecurityDetail
+              title={__.security_group + __.rules}
+              defaultUnfold={true}
+              itemKeys={itemKeys}
+              defaultKey="ingress"
+              items={items}
+              rawItem={rows[0]}>
+              <Button value={__.add_ + __.rules} onClick={this.onDetailAction.bind(this, 'description', 'create_rule', {
+                rawItem: rows[0]
+              })}/>
+            </SecurityDetail>
+          );
         }
         break;
       default:
@@ -196,6 +214,81 @@ class Model extends React.Component {
         contents: contents
       });
     }
+  }
+
+  getSecurityDetailData(item) {
+    var data = {
+      ingress: {
+        value: __.ingress,
+        tip: {
+          title: 'Ingress Rules',
+          content: 'this is Ingress'
+        },
+        table: {
+          column: [{
+            title: __.protocol,
+            key: 'protocol',
+            dataIndex: 'protocol'
+          }, {
+            title: __.port + __.range,
+            key: 'port_range',
+            dataIndex: 'port_range'
+          }, {
+            title: '',
+            key: '_',
+            dataIndex: 'fix_name'
+          }, {
+            title: __.source_type,
+            key: 'source_type',
+            dataIndex: 'source_type'
+          }, {
+            title: __.operation,
+            key: 'action',
+            dataIndex: 'action'
+          }],
+          data: [{
+            id: 1,
+            protocol: 'test',
+            port_range: 'test',
+            fix_name: 'test',
+            source_type: 'test',
+            action:
+              <i className="glyphicon icon-delete delete-action"
+                onClick={this.onDetailAction.bind(this, 'description', 'delete_ingress', { rawItem: {}})} />
+          }],
+          dataKey: 'id'
+        }
+      },
+      egress: {
+        value: __.egress,
+        tip:  {
+          title: 'Egress Rules',
+          content: 'this is Egress'
+        },
+        table: {
+          column: [{
+            title: __.protocol,
+            key: 'protocol'
+          }, {
+            title: __.port + __.range,
+            key: 'port_range'
+          }, {
+            title: '',
+            key: '_'
+          }, {
+            title: __.target,
+            key: 'target'
+          }, {
+            title: __.operation,
+            key: 'action'
+          }],
+          data: [],
+          dataKey: 'id'
+        }
+      }
+    };
+
+    return data;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -232,6 +325,29 @@ class Model extends React.Component {
     this.setState({
       config: _config
     });
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'create_rule':
+        // console.log(actionType, data);
+        break;
+      case 'delete_ingress':
+        // console.log(actionType, data);
+        break;
+      default:
+        break;
+    }
   }
 
   render() {

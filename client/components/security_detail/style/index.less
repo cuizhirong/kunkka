@@ -1,0 +1,27 @@
+@import "../../../style/index.less";
+
+.halo-com-security-detail {
+  display: flex;
+  .sg-image {
+    flex: 1;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+  }
+  .sg-data {
+    flex: 1;
+  }
+  .tip,
+  .btn-group,
+  .create-btn,
+  .table {
+    margin-bottom: 16px;
+  }
+  i.delete-action {
+    color: @color_gray_dark;
+    cursor: pointer;
+    &:hover {
+      color: @color_blue;
+    }
+  }
+}
