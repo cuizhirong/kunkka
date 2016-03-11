@@ -48,7 +48,7 @@ var config = {
     reconnectTimeout: 1000
   },
   'websocket': {
-    'url': ':8080'
+    'url': ':8080',
     'port': 8080
   },
   'backend': {
