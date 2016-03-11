@@ -223,10 +223,10 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'attach_to_instance':
-          // btns[key].disabled = (rows.length === 1 && !rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          btns[key].disabled = (rows.length === 1 && !rows[0].attachments[0]) ? false : true;
           break;
         case 'dtch_volume':
-          // btns[key].disabled = (rows.length === 1 && rows[0].volume_image_metadata.instance_uuid) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].attachments[0]) ? false : true;
           break;
         case 'extd_capacity':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
@@ -284,7 +284,10 @@ class Model extends React.Component {
             <div>
               <BasicProps title={__.basic + __.properties}
                 defaultUnfold={true}
-                items={basicPropsItem ? basicPropsItem : []}/>
+                tabKey={'description'}
+                items={basicPropsItem ? basicPropsItem : []}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}/>
               <RelatedSnapshot
                 title={__.snapshot}
                 defaultUnfold={true}
@@ -329,6 +332,7 @@ class Model extends React.Component {
 
     var data = [{
       title: __.name,
+      type: 'editable',
       content: item.name
     }, {
       title: __.id,
@@ -409,6 +413,31 @@ class Model extends React.Component {
     this.setState({
       config: _config
     });
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editVolumeName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   render() {

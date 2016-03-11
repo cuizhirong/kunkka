@@ -259,7 +259,10 @@ class Model extends React.Component {
               <BasicProps
                 title={__.basic + __.properties}
                 defaultUnfold={true}
-                items={basicPropsItem ? basicPropsItem : []} />
+                tabKey={'description'}
+                items={basicPropsItem ? basicPropsItem : []}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}/>
               <DetailMinitable
                 title={__.subnet}
                 defaultUnfold={true}
@@ -295,6 +298,7 @@ class Model extends React.Component {
     };
     var items = [{
       title: __.name,
+      type: 'editable',
       content: item.name
     }, {
       title: __.id,
@@ -387,6 +391,31 @@ class Model extends React.Component {
     this.setState({
       config: _config
     });
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editRouterName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
