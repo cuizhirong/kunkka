@@ -5,8 +5,12 @@
     "title": "compute",
     "items": [
       "instance",
-      "image",
       "keypair"
+    ]
+  }, {
+    "title": "image_service",
+    "items": [
+      "image"
     ]
   }, {
     "title": "network",
@@ -15,14 +19,14 @@
       "subnet",
       "floating-ip",
       "router",
-      "port"
+      "port",
+      "security-group"
     ]
   }, {
     "title": "storage",
     "items": [
       "volume",
-      "snapshot",
-      "security-group"
+      "snapshot"
     ]
   }],
   "default_module": "instance",
@@ -33,9 +37,6 @@
   "routers": [{
     "key": "subnet",
     "link": "network"
-  }, {
-    "key": "security-group",
-    "link": "keypair"
   }],
   "theme": "default"
 }

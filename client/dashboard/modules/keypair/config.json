@@ -3,9 +3,6 @@
     "name": ["keypair"],
     "key": "keypair",
     "default": true
-  }, {
-    "name": ["security", "group"],
-    "key": "security-group"
   }],
   "btns": [{
     "value": ["create", "keypair_"],

@@ -1,8 +1,5 @@
 {
   "tabs": [{
-    "name": ["keypair"],
-    "key": "keypair"
-  }, {
     "name": ["security", "group"],
     "key": "security-group",
     "default": true
