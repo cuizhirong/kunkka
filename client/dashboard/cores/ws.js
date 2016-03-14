@@ -8,7 +8,8 @@ function notify(data) {
   var isAutoHide = true,
     icon = 'icon-status-active',
     func = notification.addNotice,
-    placeholder = 'msg_notify_end';
+    placeholder = 'msg_notify_end',
+    name = data.resource_name ? ('"' + data.resource_name + '"') : '';
 
   if (data.stage === 'start') {
     isAutoHide = false;
@@ -26,7 +27,7 @@ function notify(data) {
     showIcon: true,
     content: __[placeholder].replace('{0}', __[data.action]).
     replace('{1}', __[data.resource_type]).
-    replace('{2}', data.resource_name),
+    replace('{2}', name),
     isAutoHide: isAutoHide,
     icon: icon,
     type: 'info',
