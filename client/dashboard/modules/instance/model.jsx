@@ -16,7 +16,6 @@ var deleteModal = require('client/components/modal_delete/index');
 var createInstance = require('./pop/create_instance/index');
 var shutdownInstance = require('./pop/shutdown/index');
 var associateFip = require('./pop/associate_fip/index');
-var changeKeypair = require('./pop/change_keypair/index');
 var attachVolume = require('./pop/attach_volume/index');
 var joinNetwork = require('./pop/join_network/index');
 var instSnapshot = require('./pop/inst_snapshot/index');
@@ -91,8 +90,10 @@ class Model extends React.Component {
             if (item.addresses.private) {
               item.addresses.private.forEach((_item, index) => {
                 if (_item.version === 4 && _item['OS-EXT-IPS:type'] === 'fixed') {
-                  index && arr.push(', ');
-                  arr.push(<a key={'port' + index} data-type="router" href={'/project/port/' + _item.port.id}>{_item.addr}</a>);
+                  if (_item.port) {
+                    index && arr.push(', ');
+                    arr.push(<a key={'port' + index} data-type="router" href={'/project/port/' + _item.port.id}>{_item.addr}</a>);
+                  }
                 }
               });
             }
@@ -229,11 +230,6 @@ class Model extends React.Component {
         break;
       case 'chg_security_grp':
         changeSecurityGrp({
-          name: 'abc'
-        }, function() {});
-        break;
-      case 'chg_keypr':
-        changeKeypair({
           name: 'abc'
         }, function() {});
         break;
@@ -395,9 +391,11 @@ class Model extends React.Component {
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
               <RelatedSources
                 title={__.related + __.sources}
-                tabKey={'console_output'}
+                tabKey={'description'}
                 defaultUnfold={true}
-                items={relatedSourcesItem} />
+                items={relatedSourcesItem}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)} />
               <RelatedSnapshot
                 title={__.related_image}
                 btnConfig={{
@@ -491,6 +489,14 @@ class Model extends React.Component {
       title: __.instance_type,
       content: item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '-'
     }, {
+      title: __.keypair,
+      content: item.keypair ?
+        <span>
+          <i className="glyphicon icon-keypair" />
+          <a data-type="router" href="/project/keypair">{item.keypair.name}</a>
+        </span>
+        : '-'
+    }, {
       title: __.status,
       type: 'status',
       status: item.status,
@@ -505,27 +511,30 @@ class Model extends React.Component {
   }
 
   getRelatedSourcesItems(items) {
-    var keypairs = [];
-    if(items.keypair) {
-      keypairs.push({
-        key: items.keypair.name,
-        data: items.keypair.name,
-        link: '/project/keypair'
-      });
-    }
-
     var attchVolumes = [];
     items.volume.forEach((volume, i) => {
       attchVolumes.push({
         key: volume.name,
-        data: volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )',
-        link: '/project/volume/' + volume.id
+        data:
+          <a data-type="router" href={'/project/volume/' + volume.id}>
+            {volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
+          </a>,
+        childItem: volume
       });
     });
 
     var networks = [];
     var count = 0;
     for(let key in items.addresses) {
+      let floatingIp;
+      for(let item of items.addresses[key]) {
+        if(item['OS-EXT-IPS:type'] === 'floating') {
+          floatingIp = {};
+          floatingIp.addr = item.addr;
+          floatingIp.id = items.floating_ip.id;
+        }
+      }
+
       for(let item of items.addresses[key]) {
         if(item['OS-EXT-IPS:type'] === 'fixed') {
           let securityGroups = [];
@@ -547,8 +556,11 @@ class Model extends React.Component {
               </a>,
             subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a>,
             security_group: securityGroups,
-            floating_ip: '-',
-            __renderKey: count
+            floating_ip: floatingIp ?
+              <a data-type="router" href={'/project/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a>
+              : '-',
+            __renderKey: count,
+            childItem: item
           });
           count++;
         }
@@ -556,21 +568,13 @@ class Model extends React.Component {
     }
 
     var data = [{
-      title: __.keypair,
-      content: keypairs,
-      icon: 'keypair',
-      deleteAction: (delItem) => {
-        // console.log(delItem);
-      }
-    }, {
       title: __.volume,
+      key: 'volume',
       content: attchVolumes,
-      icon: 'volume',
-      deleteAction: (delItem) => {
-        // console.log(delItem);
-      }
+      icon: 'volume'
     }, {
       title: __.networks,
+      key: 'network',
       type: 'mini-table',
       content: {
         column: [{
@@ -592,9 +596,6 @@ class Model extends React.Component {
         }],
         data: networks,
         dataKey: '__renderKey'
-      },
-      deleteAction: (delItem) => {
-        // console.log(delItem);
       }
     }];
 
@@ -667,14 +668,19 @@ class Model extends React.Component {
           }, true);
         });
         break;
+      case 'create_volume':
+        break;
+      case 'delete_volume':
+        break;
+      case 'create_network':
+        break;
+      case 'delete_network':
+        break;
       case 'create_related_snapshot':
-        // console.log(actionType, data);
         break;
       case 'create_related_instance':
-        // console.log(actionType, data);
         break;
       case 'delete_related_snapshot':
-        // console.log(actionType, data);
         break;
       default:
         break;

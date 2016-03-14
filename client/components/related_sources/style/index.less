@@ -30,10 +30,13 @@
       height: 14px;
       line-height: 14px;
       }
-    i {
+    i.create-action {
       color: @color_gray_darker;
       float: right;
       cursor: pointer;
+      &:hover {
+        color: @color_blue;
+      }
     }
   }
   .content-no-data {
@@ -67,11 +70,21 @@
       }
     }
     .table-mini {
-      i.delete {
-        color: @color_gray_darker;
-        cursor: pointer;
-        &:hover {
-          color: @color_red;
+      .table-body {
+        .row {
+          i.delete {
+            display: none;
+          }
+          &:hover {
+            i.delete {
+              display: inline-block;
+              color: @color_gray_darker;
+              cursor: pointer;
+              &:hover {
+                color: @color_red;
+              }
+            }
+          }
         }
       }
     }

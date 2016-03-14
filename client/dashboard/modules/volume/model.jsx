@@ -211,7 +211,6 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    console.log(rows);
     for(let key in btns) {
       switch (key) {
         case 'create_snapshot':
@@ -430,13 +429,10 @@ class Model extends React.Component {
         });
         break;
       case 'create_related_snapshot':
-      // console.log(actionType, data);
         break;
       case 'create_related_volume':
-      // console.log(actionType, data);
         break;
       case 'delete_related_snapshot':
-      // console.log(actionType, data);
         break;
       default:
         break;

@@ -5,7 +5,6 @@ var React = require('react');
 var __ = require('i18n/client/lang.json');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
-var router = require('client/dashboard/cores/router');
 
 class RelatedSources extends React.Component {
 
@@ -31,16 +30,31 @@ class RelatedSources extends React.Component {
     });
   }
 
+  createAction(key) {
+    this.onAction('create_' + key);
+  }
+
+  deleteAction(key, childItem) {
+    this.onAction('delete_' + key, {
+      childItem: childItem
+    });
+  }
+
+  onAction(actionType, data) {
+    var props = this.props,
+      tabKey = props.tabKey,
+      rawItem = props.rawItem;
+
+    var newData = data;
+    if (!newData) {
+      newData = {};
+    }
+    newData.rawItem = rawItem;
+
+    this.props.onAction && this.props.onAction(tabKey, actionType, newData);
+  }
+
   getContent(item, i) {
-    var routerListener = (link, e) => {
-      e.preventDefault();
-      router.pushState(link);
-    };
-
-    var deleteAction = (ele, e) => {
-      item.deleteAction && item.deleteAction(ele);
-    };
-
     switch(item.type) {
       case 'mini-table':
         item.content.column.push({
@@ -51,14 +65,17 @@ class RelatedSources extends React.Component {
         });
 
         item.content.data.forEach((data) => {
-          data.deleteIcon = <i onClick={deleteAction.bind(null, data)} className="glyphicon icon-delete delete" />;
+          data.deleteIcon = <i onClick={this.deleteAction.bind(this, item.key, data.childItem)} className="glyphicon icon-delete delete" />;
         });
 
         return (
           <div key={i}>
             <div className="related-sources-title">
               <div>{item.title}</div>
-              <a><i className="glyphicon icon-create"/></a>
+              {!item.actionDisabled ?
+                <a><i className="glyphicon icon-create create-action" onClick={this.createAction.bind(this, item.key)} /></a>
+                : null
+              }
             </div>
             {item.content.data.length > 0 ?
               <div className="related-sources-content">
@@ -80,17 +97,21 @@ class RelatedSources extends React.Component {
           <div key={i}>
             <div className="related-sources-title">
               <div>{item.title}</div>
-              <a><i className="glyphicon icon-create"/></a>
+              {!item.actionDisabled ?
+                <a><i className="glyphicon icon-create create-action" onClick={this.createAction.bind(this, item.key)}/></a>
+                : null
+              }
             </div>
             <div className="related-sources-content">
               {item.content.length > 0 ?
                 item.content.map((ele, index) =>
                   <div key={index} className="content-item">
                     <i className={'glyphicon icon-' + item.icon} />
-                    {ele.link ?
-                      <a onClick={routerListener.bind(null, ele.link)}>{ele.data}</a>
-                    : <span>{ele.data}</span>}
-                    <i onClick={deleteAction.bind(null, ele)} className="glyphicon icon-delete delete" />
+                    <span>{ele.data}</span>
+                    {!item.actionDisabled ?
+                      <i onClick={this.deleteAction.bind(this, item.key, ele.childItem)} className="glyphicon icon-delete delete" />
+                      : null
+                    }
                   </div>
                 )
               : <div className="content-no-data">

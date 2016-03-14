@@ -63,10 +63,6 @@
           "title": ["modify","security", "group"],
           "key": "chg_security_grp",
           "disabled": true
-        }, {
-          "title": ["modify", "keypair"],
-          "key": "chg_keypr",
-          "disabled": true
         }]
       }, {
         "items": [{
