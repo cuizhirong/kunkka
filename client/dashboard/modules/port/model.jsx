@@ -147,7 +147,9 @@ class Model extends React.Component {
           type:'port',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deletePorts(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

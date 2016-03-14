@@ -149,7 +149,9 @@ class Model extends React.Component {
           type: 'floating_ip',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteFloatingIps(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

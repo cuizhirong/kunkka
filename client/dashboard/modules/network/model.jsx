@@ -149,7 +149,9 @@ class Model extends React.Component {
           data: rows,
           iconType: 'network',
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteNetworks(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

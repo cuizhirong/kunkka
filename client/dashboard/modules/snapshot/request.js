@@ -1,5 +1,6 @@
 var storage = require('client/dashboard/cores/storage');
 var request = require('client/dashboard/cores/request');
+var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(cb, forced) {
@@ -16,5 +17,14 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + item.id,
       data: data
     });
+  },
+  deleteSnapshots: function(items) {
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(request.delete({
+        url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + item.id
+      }));
+    });
+    return RSVP.all(deferredList);
   }
 };

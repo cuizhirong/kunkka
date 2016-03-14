@@ -156,7 +156,9 @@ class Model extends React.Component {
           type:'router',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteRouters(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

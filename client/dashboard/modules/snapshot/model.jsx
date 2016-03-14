@@ -139,7 +139,9 @@ class Model extends React.Component {
           type: 'snapshot',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteSnapshots(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

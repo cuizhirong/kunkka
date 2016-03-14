@@ -155,7 +155,9 @@ class Model extends React.Component {
           type: 'volume',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteVolumes(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

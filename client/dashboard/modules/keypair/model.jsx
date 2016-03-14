@@ -99,7 +99,7 @@ class Model extends React.Component {
     switch (key) {
       case 'crt_keypair':
         createKeypair(function(_data) {
-          // console.log(data);
+          //console.log(data);
         });
         break;
       case 'delete':
@@ -108,7 +108,9 @@ class Model extends React.Component {
           type: 'keypair',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteKeypairs(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;
