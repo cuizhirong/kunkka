@@ -94,10 +94,11 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+    var that = this;
     switch (key) {
       case 'create':
-        createSecurityGroup(function(_data) {
-          // console.log(data);
+        createSecurityGroup(function() {
+          that.refresh(null, true);
         });
         break;
       case 'delete':
@@ -106,6 +107,9 @@ class Model extends React.Component {
           type: 'security_group',
           data: rows,
           onDelete: function(_data, cb) {
+            request.deleteSecurityGroup(rows).then(() => {
+              that.refresh(null, true);
+            });
             cb(true);
           }
         });
@@ -120,7 +124,7 @@ class Model extends React.Component {
         break;
       case 'modify':
         modifySecurityGroup(rows[0], function(_data) {
-          // console.log(data);
+          that.refresh(null, true);
         });
         break;
       default:
@@ -149,13 +153,17 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var noDefault = true;
+    rows.forEach((ele) => {
+      noDefault = noDefault && (ele.name === 'default' ? false : true);
+    });
     for(let key in btns) {
       switch (key) {
         case 'modify':
-          btns[key].disabled = (rows.length === 1 && rows[0].name !== 'default') ? false : true;
+          btns[key].disabled = (rows.length === 1 && noDefault) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length > 0 && rows[0].name !== 'default') ? false : true;
+          btns[key].disabled = (rows.length > 0 && noDefault) ? false : true;
           break;
         default:
           break;
