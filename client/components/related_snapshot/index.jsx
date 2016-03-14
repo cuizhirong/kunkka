@@ -1,6 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
+var {Button} = require('client/uskin/index');
 var __ = require('i18n/client/lang.json');
 
 class RelatedSnapshot extends React.Component {
@@ -27,6 +28,33 @@ class RelatedSnapshot extends React.Component {
     });
   }
 
+  onBtnAction(actionType) {
+    this.onAction(actionType);
+  }
+
+  createAcion(childItem) {
+    var actionType = this.props.actionType.create;
+    this.onAction(actionType, childItem);
+  }
+
+  deleteAcion(childItem) {
+    var actionType = this.props.actionType.delete;
+    this.onAction(actionType, childItem);
+  }
+
+  onAction(actionType, childItem) {
+    var props = this.props,
+      tabKey = props.tabKey;
+
+    var data = {};
+    data.rawItem = props.rawItem;
+    if (childItem) {
+      data.childItem = childItem;
+    }
+
+    this.props.onAction && this.props.onAction(tabKey, actionType, data);
+  }
+
   getStatusIcon(item) {
     switch(item.status.toLowerCase()) {
       case 'active':
@@ -37,7 +65,8 @@ class RelatedSnapshot extends React.Component {
   }
 
   render() {
-    var items = this.props.items;
+    var btnConfig = this.props.btnConfig,
+      items = this.props.items;
 
     return (
       <div className="toggle">
@@ -47,7 +76,7 @@ class RelatedSnapshot extends React.Component {
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-com-related-snapshot">
-            {this.props.children}
+            <Button value={btnConfig.value} onClick={this.onBtnAction.bind(this, btnConfig.actionType)}/>
             {items.length > 0 ?
               <div className="timeline">
                 {items.map((item, i) =>
@@ -66,8 +95,8 @@ class RelatedSnapshot extends React.Component {
                         {__[item.status.toLowerCase()]}
                       </div>
                       <div className="icon-set">
-                        <i className={'glyphicon icon-' + item.createIcon + ' create'}/>
-                        <i className="glyphicon icon-delete delete"/>
+                        <i className={'glyphicon icon-' + item.createIcon + ' create'} onClick={this.createAcion.bind(this, item.childItem)}/>
+                        <i className="glyphicon icon-delete delete" onClick={this.deleteAcion.bind(this, item.childItem)}/>
                       </div>
                     </div>
                   </div>

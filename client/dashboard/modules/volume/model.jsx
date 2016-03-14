@@ -2,7 +2,6 @@ require('./style/index.less');
 
 var React = require('react');
 var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
@@ -279,10 +278,19 @@ class Model extends React.Component {
               <RelatedSnapshot
                 title={__.snapshot}
                 defaultUnfold={true}
+                tabKey={'description'}
                 noItemAlert={__.no_related + __.snapshot}
-                items={relatedSnapshotItems ? relatedSnapshotItems : []}>
-                <Button value={__.create + __.snapshot}/>
-              </RelatedSnapshot>
+                items={relatedSnapshotItems ? relatedSnapshotItems : []}
+                rawItem={rows[0]}
+                btnConfig={{
+                  value: __.create + __.snapshot,
+                  actionType: 'create_related_snapshot'
+                }}
+                onAction={this.onDetailAction.bind(this)}
+                actionType={{
+                  create: 'create_related_volume',
+                  delete: 'delete_related_snapshot'
+                }} />
             </div>
           );
         }
@@ -364,7 +372,8 @@ class Model extends React.Component {
         size: item.size + 'GB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
         status: item.status,
-        createIcon: 'volume'
+        createIcon: 'volume',
+        childItem: item
       });
     });
 
@@ -419,6 +428,15 @@ class Model extends React.Component {
             detailRefresh: true
           }, true);
         });
+        break;
+      case 'create_related_snapshot':
+      // console.log(actionType, data);
+        break;
+      case 'create_related_volume':
+      // console.log(actionType, data);
+        break;
+      case 'delete_related_snapshot':
+      // console.log(actionType, data);
         break;
       default:
         break;

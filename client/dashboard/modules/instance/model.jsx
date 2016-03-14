@@ -3,7 +3,6 @@ require('./style/index.less');
 //react components
 var React = require('react');
 var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
@@ -401,12 +400,20 @@ class Model extends React.Component {
                 items={relatedSourcesItem} />
               <RelatedSnapshot
                 title={__.related_image}
+                btnConfig={{
+                  value: __.create + __.snapshot,
+                  actionType: 'create_related_snapshot'
+                }}
                 defaultUnfold={true}
-                tabKey={'vnc_console'}
+                tabKey={'description'}
                 items={relatedSnapshotItems ? relatedSnapshotItems : []}
-                noItemAlert={__.no_related + __.instance + __.snapshot}>
-                <Button value={__.create + __.snapshot}/>
-              </RelatedSnapshot>
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}
+                actionType={{
+                  create: 'create_related_instance',
+                  delete: 'delete_related_snapshot'
+                }}
+                noItemAlert={__.no_related + __.instance + __.snapshot} />
             </div>
           );
         }
@@ -603,7 +610,8 @@ class Model extends React.Component {
         size: item.size / 1024 + 'MB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
         status: item.status,
-        createIcon: 'instance'
+        createIcon: 'instance',
+        childItem: item
       });
     });
 
@@ -658,6 +666,15 @@ class Model extends React.Component {
             detailRefresh: true
           }, true);
         });
+        break;
+      case 'create_related_snapshot':
+        // console.log(actionType, data);
+        break;
+      case 'create_related_instance':
+        // console.log(actionType, data);
+        break;
+      case 'delete_related_snapshot':
+        // console.log(actionType, data);
         break;
       default:
         break;
