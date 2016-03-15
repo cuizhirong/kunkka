@@ -14,6 +14,7 @@
     "ip": "IP",
     "no_subnet": "No subnet",
     "pool": "Pool",
+    "select_network": "Select NetWork",
     "version": "version"
   },
   "zh-CN": {
@@ -31,6 +32,7 @@
     "ip": "IP",
     "no_subnet": "没有可用子网",
     "pool": "池",
+    "select_network": "选择私有网络",
     "version": "版本"
   }
 }

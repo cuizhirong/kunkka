@@ -21,6 +21,7 @@ module.exports = {
       url: options.url,
       dataType: options.dataType || 'json',
       data: options.data,
+      contentType: 'application/json',
       headers: {
         REGION: 'RegionOne'
       }

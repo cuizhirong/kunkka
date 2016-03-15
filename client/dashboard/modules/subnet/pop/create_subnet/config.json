@@ -3,12 +3,17 @@
   "fields": [{
     "type": "input",
     "field": "subnet_name",
-    "required": true,
+    "is_long_label": true
+  }, {
+    "type": "select",
+    "field": "select_network",
+    "data": [],
     "is_long_label": true
   }, {
     "type": "input",
     "field": "net_address",
-    "is_long_label": true
+    "is_long_label": true,
+    "required": true
   }, {
     "type": "checkbox",
     "field": "show_more",
@@ -34,6 +39,6 @@
   }],
   "btn": {
     "value": "create",
-    "disabled": false
+    "disabled": true
   }
 }

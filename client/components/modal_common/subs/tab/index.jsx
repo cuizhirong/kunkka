@@ -48,9 +48,6 @@ class Tab extends React.Component {
     return (
       <div className={className}>
         <div>
-          {
-            props.required && <strong>*</strong>
-          }
           {props.label}
         </div>
         <div>

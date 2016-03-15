@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
   config.fields[0].text = obj.name;
@@ -8,19 +9,15 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      setTimeout(function() {
+      request.getList().then((data) => {
         refs.instance.setState({
-          data: [{
-            id: 1,
-            name: 'a1'
-          }, {
-            id: 2,
-            name: 'a2'
-          }]
+          data: data.instance,
+          value: data.instance[0].id
         });
-      }, 500);
+      });
     },
     onConfirm: function(refs, cb) {
+      request.addInstance(refs.instance.state.value, obj.id, obj.network_id);
       callback();
       cb(true);
     },

@@ -80,10 +80,24 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    var isEmpty = false;
+    var refs = this.refs;
+    this.props.config.fields.forEach((m) => {
+      if (m.required && (m.type === 'input' || m.type === 'textarea') && !refs[m.field].state.value) {
+        refs[m.field].setState({
+          error: true
+        });
+        isEmpty = true;
+      }
+    });
+    if (isEmpty) {
+      return;
+    }
+
     this.setState({
       disabled: true
     });
-    this.props.onConfirm && this.props.onConfirm(this.refs, (success) => {
+    this.props.onConfirm && this.props.onConfirm(refs, (success) => {
       if (success) {
         this.setState({
           visible: false

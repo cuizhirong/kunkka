@@ -19,6 +19,7 @@ var connectRouter = require('./pop/connect_router/index');
 var disconnectRouter = require('./pop/disconnect_router/index');
 var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -36,6 +37,15 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'subnet') {
+        this.refresh(null, false);
+        if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/subnet');
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -97,9 +107,9 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList((res) => {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
-      table.data = res;
+      table.data = res.subnet;
       table.loading = false;
 
       var detail = this.refs.dashboard.refs.detail;
@@ -167,6 +177,7 @@ class Model extends React.Component {
           type: 'subnet',
           data: rows,
           onDelete: function(_data, cb) {
+            request.deleteSubnets(rows);
             cb(true);
           }
         });

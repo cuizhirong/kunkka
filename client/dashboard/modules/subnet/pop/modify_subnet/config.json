@@ -3,7 +3,6 @@
   "fields": [{
     "type": "input",
     "field": "subnet_name",
-    "required": true,
     "value": "",
     "is_long_label": true
   }, {

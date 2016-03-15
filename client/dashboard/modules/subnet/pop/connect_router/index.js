@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
   config.fields[0].text = obj.name;
@@ -8,19 +9,20 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      setTimeout(function() {
+      request.getList().then((data) => {
         refs.router.setState({
-          data: [{
-            id: 1,
-            name: 'a1'
-          }, {
-            id: 2,
-            name: 'a2'
-          }]
+          data: data.router,
+          value: data.router[0].id
         });
-      }, 500);
+        refs.btn.setState({
+          disabled: false
+        });
+      });
     },
     onConfirm: function(refs, cb) {
+      request.connectRouter(refs.router.state.value, {
+        subnet_id: obj.id
+      });
       callback();
       cb(true);
     },

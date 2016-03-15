@@ -63,7 +63,7 @@ class ModalBase extends React.Component {
           <div className="data-list">
             {
               props.data.map((item) => {
-                return <span key={item.id}><i className={'glyphicon icon-' + iconType}></i>{item.name}</span>;
+                return <span key={item.id || item.name}><i className={'glyphicon icon-' + iconType}></i>{item.name || '(' + item.id.substr(0, 8) + ')'}</span>;
               })
             }
           </div>

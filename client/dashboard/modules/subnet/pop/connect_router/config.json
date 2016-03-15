@@ -11,10 +11,11 @@
     "empty_text": {
       "info": "no_router",
       "link_info": ["create", "router"]
-    }
+    },
+    "data": []
   }],
   "btn": {
     "value": "connect",
-    "disabled": false
+    "disabled": true
   }
 }
