@@ -35,6 +35,10 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-groups',
       data: data
     });
+  },
+  deleteRules: function(item) {
+    return request.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-group-rules/' + item.id
+    });
   }
-
 };

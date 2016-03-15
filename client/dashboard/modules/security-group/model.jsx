@@ -206,7 +206,7 @@ class Model extends React.Component {
               defaultKey="ingress"
               items={items}
               rawItem={rows[0]}>
-              <Button value={__.add_ + __.rules} onClick={this.onDetailAction.bind(this, 'description', 'create_rule', {
+              <Button value={__.add_ + __.security_group + __.rules} onClick={this.onDetailAction.bind(this, 'description', 'create_rule', {
                 rawItem: rows[0]
               })}/>
             </SecurityDetail>
@@ -225,12 +225,48 @@ class Model extends React.Component {
   }
 
   getSecurityDetailData(item) {
+    var allRulesData = [],
+      ingressRulesData = [],
+      egressRulesData = [];
+    var getPortRange = function(_ele) {
+      if(_ele.port_range_min) {
+        if(_ele.port_range_min === _ele.port_range_max) {
+          return _ele.port_range_min;
+        } else {
+          return _ele.port_range_min + '-' + _ele.port_range_max;
+        }
+      } else {
+        return '-';
+      }};
+
+    item.security_group_rules.forEach((ele) => {
+      allRulesData.push({
+        id: ele.id,
+        direction: ele.direction,
+        protocol: ele.protocol ? ele.protocol.toUpperCase() : ele.ethertype,
+        port_range: getPortRange(ele),
+        fix_name: '-',
+        source_type: ele.remote_ip_prefix ? ele.remote_ip_prefix : '',
+        target: ele.remote_ip_prefix ? ele.remote_ip_prefix : '',
+        action:
+          <i className="glyphicon icon-delete delete-action"
+              onClick={this.onDetailAction.bind(this, 'description', 'delete_ingress', ele)} />
+      });
+    });
+    allRulesData.forEach((rule) => {
+      if(rule.direction === 'ingress') {
+        ingressRulesData.push(rule);
+      } else {
+        egressRulesData.push(rule);
+      }
+    });
+
     var data = {
       ingress: {
         value: __.ingress,
         tip: {
-          title: 'Ingress Rules',
-          content: 'this is Ingress'
+          title: __.ingress + __.security_group + __.rules,
+          content: __.ingress_tip
         },
         table: {
           column: [{
@@ -242,8 +278,8 @@ class Model extends React.Component {
             key: 'port_range',
             dataIndex: 'port_range'
           }, {
-            title: '',
-            key: '_',
+            title: __.fix_name,
+            key: 'fix_name',
             dataIndex: 'fix_name'
           }, {
             title: __.source_type,
@@ -254,43 +290,39 @@ class Model extends React.Component {
             key: 'action',
             dataIndex: 'action'
           }],
-          data: [{
-            id: 1,
-            protocol: 'test',
-            port_range: 'test',
-            fix_name: 'test',
-            source_type: 'test',
-            action:
-              <i className="glyphicon icon-delete delete-action"
-                onClick={this.onDetailAction.bind(this, 'description', 'delete_ingress', { rawItem: {}})} />
-          }],
+          data: ingressRulesData,
           dataKey: 'id'
         }
       },
       egress: {
         value: __.egress,
         tip:  {
-          title: 'Egress Rules',
-          content: 'this is Egress'
+          title: __.egress + __.security_group + __.rules,
+          content: __.egress_tip
         },
         table: {
           column: [{
             title: __.protocol,
-            key: 'protocol'
+            key: 'protocol',
+            dataIndex: 'protocol'
           }, {
             title: __.port + __.range,
-            key: 'port_range'
+            key: 'port_range',
+            dataIndex: 'port_range'
           }, {
-            title: '',
-            key: '_'
+            title: __.fix_name,
+            key: 'fix_name',
+            dataIndex: 'fix_name'
           }, {
             title: __.target,
-            key: 'target'
+            key: 'target',
+            dataIndex: 'target'
           }, {
             title: __.operation,
-            key: 'action'
+            key: 'action',
+            dataIndex: 'action'
           }],
-          data: [],
+          data: egressRulesData,
           dataKey: 'id'
         }
       }
@@ -351,7 +383,11 @@ class Model extends React.Component {
         // console.log(actionType, data);
         break;
       case 'delete_ingress':
-        // console.log(actionType, data);
+        request.deleteRules(data).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       default:
         break;
