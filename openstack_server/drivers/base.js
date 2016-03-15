@@ -2,8 +2,10 @@ var request = require('superagent');
 var metadata = require('openstack_server/actionMetadata');
 
 function Driver(service) {
-  this.metadata = metadata[service];
-  this.generateMeta(this.metadata);
+  if (metadata[service]) {
+    this.metadata = metadata[service];
+    this.generateMeta(this.metadata);
+  }
 }
 
 var fillUrlWithValue = function (slugs, dir, obj) {

@@ -10,6 +10,14 @@ driverVolume.listVolumes = function (projectId, token, region, callback, query) 
     query
   );
 };
+driverVolume.listVolumeTypes = function (projectId, token, region, callback, query) {
+  return driverVolume.getMethod(
+    cinderRemote[region] + '/v2/' + projectId + '/types',
+    token,
+    callback,
+    query
+  );
+};
 driverVolume.showVolumeDetails = function (projectId, volumeId, token, region, callback) {
   return driverVolume.getMethod(
     cinderRemote[region] + '/v2/' + projectId + '/volumes/' + volumeId,
