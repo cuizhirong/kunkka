@@ -72,7 +72,7 @@
         }, {
           "title": ["detach", "volume"],
           "key": "rmv_volume",
-          "disabled": false
+          "disabled": true
         }]
       }, {
         "items": [{

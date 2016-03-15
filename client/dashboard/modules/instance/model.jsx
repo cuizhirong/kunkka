@@ -278,73 +278,41 @@ class Model extends React.Component {
       allActive = allActive && thisState;
     });
 
+    var status;
+    if (rows.length > 0) {
+      status = rows[0].status.toLowerCase();
+    }
+
     for(let key in btns) {
       switch (key) {
         case 'vnc_console':
-          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = true;
-          }
+        case 'power_off':
+        case 'chg_security_grp':
+        case 'add_volume':
+          btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
           break;
         case 'power_on':
-          if (rows.length === 1 && rows[0].status.toLowerCase() === 'shutoff') {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = true;
-          }
-          break;
-        case 'power_off':
-          if (rows.length === 1 && rows[0].status.toLowerCase() === 'active') {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = true;
-          }
+          btns[key].disabled = (rows.length === 1 && status === 'shutoff') ? false : true;
           break;
         case 'reboot':
-          if (rows.length > 0 && allActive) {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = true;
-          }
+          btns[key].disabled = (rows.length > 0 && allActive) ? false : true;
           break;
         case 'instance_snapshot':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
         case 'resize':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+        case 'join_ntw':
+          btns[key].disabled = (rows.length === 1 && (status === 'active' || status === 'shutoff')) ? false : true;
           break;
         case 'assc_floating_ip':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length === 1 && status === 'active' && !rows[0].floating_ip) ? false : true;
           break;
         case 'dssc_floating_ip':
-          if (rows.length === 1 && rows[0].floating_ip) {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = true;
-          }
-          break;
-        case 'join_ntw':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'chg_security_grp':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'chg_keypr':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'add_volume':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].floating_ip) ? false : true;
           break;
         case 'rmv_volume':
-          if (rows.length === 1 && rows[0].volume.length !== 0) {
-            btns[key].disabled = false;
-          } else {
-            btns[key].disabled = false;
-          }
+          btns[key].disabled = (rows.length === 1 && rows[0].volume.length !== 0) ? false : true;
           break;
         case 'terminate':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length > 0) ? false : true;
           break;
         default:
           break;

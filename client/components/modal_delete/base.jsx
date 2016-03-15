@@ -59,7 +59,7 @@ class ModalBase extends React.Component {
     return (
       <Modal {..._props} visible={state.visible}>
         <div className="modal-bd halo-com-modal-delete">
-          {content}
+          <span dangerouslySetInnerHTML={{__html: content}}></span>
           <div className="data-list">
             {
               props.data.map((item) => {
