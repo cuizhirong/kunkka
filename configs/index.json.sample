@@ -5,12 +5,8 @@
     "title": "compute",
     "items": [
       "instance",
+      "image",
       "keypair"
-    ]
-  }, {
-    "title": "image_service",
-    "items": [
-      "image"
     ]
   }, {
     "title": "network",
