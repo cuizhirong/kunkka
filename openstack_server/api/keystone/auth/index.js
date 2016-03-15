@@ -89,6 +89,20 @@ var prototype = {
       }
     });
   },
+  swtichPorject: function (req, res) {
+    var projectId = req.body.projectId ? req.body.projectId : req.params.projectId;
+    var token = req.session.user.token;
+    this.keystone.authAndToken.scopedAuth(projectId, token, function (err, response) {
+      if (err) {
+        res.status(err.status).json(err);
+      } else {
+        req.session.cookie.expires = new Date(response.body.token.expires_at);
+        req.session.user.token = response.header['x-subject-token'];
+        req.session.user.projectId = projectId;
+        res.json({success: 'switch successfully'});
+      }
+    });
+  },
   logout: function (req, res) {
     req.session.destroy();
     res.clearCookie(config('sessionEngine').cookie_name);
@@ -96,6 +110,8 @@ var prototype = {
   },
   initRoutes: function() {
     this.app.post('/auth/login', this.authentication.bind(this));
+    this.app.post('/auth/switch', this.swtichPorject.bind(this));
+    this.app.get('/auth/switch/:projectId', this.swtichPorject.bind(this));
     this.app.get('/auth/logout', this.logout.bind(this));
   }
 };
