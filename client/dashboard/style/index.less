@@ -52,25 +52,37 @@ a {
   }
 }
 
-i[class^="glyphicon icon-status-"] {
-  margin-right: 4px;
-  &.active, &.available {
-    color: @color_green;
+.status-data {
+  display: inline-block;
+  height: 15px;
+  line-height: 15px;
+  i[class^="glyphicon icon-status-"],
+  .icon-loading {
+    margin-right: 4px;
+    font-size: 15px;
+    height: 15px;
+    line-height: 15px;
   }
-  &.in-use {
-    color: @color_orange;
-  }
-  &.down {
-    color: @color_gray;
-  }
-  &.shutoff {
-    color: @color_red;
-  }
-}
 
-.icon-loading {
-  &.status-loading {
-    color: @loading-color;
-    .loading-ani();
+  i[class^="glyphicon icon-status-"] {
+    &.active, &.available {
+      color: @color_green;
+    }
+    &.in-use {
+      color: @color_orange;
+    }
+    &.down {
+      color: @color_gray;
+    }
+    &.shutoff {
+      color: @color_red;
+    }
+  }
+
+  .icon-loading {
+    &.status-loading {
+      color: @loading-color;
+      .loading-ani();
+    }
   }
 }

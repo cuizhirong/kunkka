@@ -40,9 +40,9 @@ module.exports = (str) => {
     : 'glyphicon icon-status-' + type.icon + ' ' + type.status;
 
   return (
-    <span>
+    <div className="status-data">
       <i className={className} />
       {__[status] ? __[status] : status}
-    </span>
+    </div>
   );
 };
