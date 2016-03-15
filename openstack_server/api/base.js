@@ -1,6 +1,69 @@
-function API () {
+var Driver = require('openstack_server/drivers');
+
+function API (arrService, arrServiceObject) {
+  this.arrAsync = [];
+  /* get services. */
+  arrService.forEach( s => this[s] = Driver[s] );
+  /* get methods of show serviceObject list. */
+  arrServiceObject.forEach( s => this.arrAsync.push(this.apilist[s].bind(this)) );
 }
 
+API.prototype.apilist = {
+  servers: function (callback) {
+    this.nova.server.listServers(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  flavors: function (callback) {
+    this.nova.flavor.listFlavors(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  keypairs: function (callback) {
+    this.nova.keypair.listKeypairs(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  volumes: function (callback) {
+    this.cinder.volume.listVolumes(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  volumeTypes: function (callback) {
+    this.cinder.volume.listVolumeTypes(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  snapshots: function (callback) {
+    this.cinder.snapshot.listSnapshots(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  floatingips: function (callback) {
+    this.neutron.floatingip.listFloatingips(this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  networks: function (callback) {
+    this.neutron.network.listNetworks(this.token, this.region, this.asyncHandler.bind(this, callback), this.reqQuery);
+  },
+  ports: function (callback) {
+    this.neutron.port.listPorts(this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  routers: function (callback) {
+    this.neutron.router.listRouters(this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  security_groups: function (callback) {
+    this.neutron.security.listSecurity(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  subnets: function (callback) {
+    this.neutron.subnet.listSubnets(this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  images: function (callback) {
+    this.glance.image.listImages(this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  novaQuota: function (callback) {
+    this.nova.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  cinderQuota: function (callback) {
+    this.cinder.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  neutronQuota: function (callback) {
+    this.neutron.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  serverDetail: function (callback) {
+    this.nova.server.showServerDetails(this.projectId, this.serverId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  },
+  volumeDetail: function (callback) {
+    this.cinder.volume.showVolumeDetails(this.projectId, this.volumeId, this.token, this.region, this.asyncHandler.bind(this, callback));
+  }
+};
 API.prototype.dicApiUrlParam = {
   'projectId'    : 'project_id',
   'serverId'     : 'server_id',

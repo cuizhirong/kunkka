@@ -5,6 +5,7 @@
 
 
 module.exports = {
-  server   : require('./instance'),
-  keypair  : require('./keypair')
+  server  : require('./instance'),
+  keypair : require('./keypair'),
+  quota   : require('./quota')
 };
