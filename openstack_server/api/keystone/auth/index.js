@@ -14,6 +14,15 @@ var prototype = {
     var username = req.body.username;
     var password = req.body.password;
     var projects;
+    var cookies;
+    if (!req.cookies[username]) {
+      cookies = {
+        region: '',
+        project: ''
+      };
+    } else {
+      cookies = req.cookies[username];
+    }
     // FIXME: need to do verification
     var that = this;
     async.waterfall([
@@ -38,6 +47,11 @@ var prototype = {
               cb({error: 'no project'});
             } else {
               var projectId = projects[0].id;
+              if (cookies.project) {
+                Object.keys(projects).some( p => {
+                  return (p.id === cookies.project) && (projectId = cookies.project);
+                });
+              }
               cb(null, projectId, token);
             }
           }
@@ -61,6 +75,7 @@ var prototype = {
       } else {
         var expireDate = new Date(payload.token.expires_at),
           projectId = payload.token.project.id,
+          regionId = cookies.region ? cookies.region : '',
           _username = payload.token.user.name,
           userId = payload.token.user.id;
         var opt = {
@@ -72,13 +87,19 @@ var prototype = {
         var locale = req.i18n.getLocale();
         var value = {
           'projectId': projectId,
+          'regionId': regionId,
           'userId': userId,
           'username': _username,
           'locale': locale
         };
         res.cookie(config('sessionEngine').cookie_name, value, opt);
+        res.cookie(_username, Object.assign(cookies, {
+          region: regionId,
+          project: projectId
+        }));
         req.session.cookie.expires = new Date(expireDate);
         req.session.user = {
+          'regionId': regionId,
           'projectId': projectId,
           'userId': userId,
           'token': token,
@@ -99,9 +120,20 @@ var prototype = {
         req.session.cookie.expires = new Date(response.body.token.expires_at);
         req.session.user.token = response.header['x-subject-token'];
         req.session.user.projectId = projectId;
-        res.json({success: 'switch successfully'});
+        var username = req.session.user.username;
+        res.cookie(username, Object.assign(req.cookies[username], {
+          project: projectId
+        }));
+        res.json({success: 'switch project successfully'});
       }
     });
+  },
+  swtichRegion: function (req, res) {
+    var username = req.session.user.username;
+    res.cookie(username, Object.assign(req.cookies[username], {
+      region: (req.session.user.regionId = req.body.region ? req.body.region : req.params.region)
+    }));
+    res.stats(200).json({success: 'switch region successfully'});
   },
   logout: function (req, res) {
     req.session.destroy();
@@ -110,7 +142,9 @@ var prototype = {
   },
   initRoutes: function() {
     this.app.post('/auth/login', this.authentication.bind(this));
+    this.app.post('/auth/switchRegion', this.swtichRegion.bind(this));
     this.app.post('/auth/switch', this.swtichPorject.bind(this));
+    this.app.get('/auth/switchRegion/:region', this.swtichRegion.bind(this));
     this.app.get('/auth/switch/:projectId', this.swtichPorject.bind(this));
     this.app.get('/auth/logout', this.logout.bind(this));
   }

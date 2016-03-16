@@ -82,6 +82,7 @@ module.exports = function(app) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     var __ = req.i18n.__.bind(req.i18n);
     if (req.session && req.session.user) {
+      var username = req.session.user.username;
       var HALO = {
         configs: {
           lang: locale
@@ -89,15 +90,18 @@ module.exports = function(app) {
         user: {
           projectId: req.session.user.projectId,
           userId: req.session.user.userId,
-          username: req.session.user.username
+          username: username
         },
         region_list: regions[locale],
-        current_region: req.session.region ? req.session.region : regions[locale][0].id,
+        current_region: req.session.user.regionId ? req.session.user.regionId : regions[locale][0].id,
+        // FIXME:
         websocket: {
           url: websocketUrl
         }
       };
-
+      res.cookie(username, Object.assign(req.cookies[username], {
+        region: HALO.current_region
+      }));
       res.render('index', {
         HALO: JSON.stringify(HALO),
         mainJsFile: staticFiles[locale].mainJsFile,
@@ -105,7 +109,7 @@ module.exports = function(app) {
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
           language: req.i18n.__('shared'),
-          username: req.session.user.username
+          username: username
         }))
       });
     } else {
