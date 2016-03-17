@@ -62,7 +62,7 @@ class Model extends React.Component {
         case 'name':
           col.formatter = function(rcol, ritem, rindex) {
             var label = ritem.image_label && ritem.image_label.toLowerCase();
-            return <div><i className={'icon-image-default ' + label}/> {ritem.name}</div>;
+            return <div><i className={'icon-image-default ' + label}/>{' ' + ritem.name}</div>;
           };
           break;
         case 'size':
@@ -204,7 +204,6 @@ class Model extends React.Component {
     } = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
-    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -237,18 +236,18 @@ class Model extends React.Component {
         break;
     }
 
-    if (syncUpdate) {
-      detail.setState({
-        contents: contents
-      });
-    }
+    detail.setState({
+      contents: contents
+    });
   }
 
-
   getBasicPropsItems(item) {
+    var label = item.image_label && item.image_label.toLowerCase();
+    var name = <div><i className={'icon-image-default ' + label}/>{' ' + item.name}</div>;
+
     var items = [{
       title: __.name,
-      content: item.name
+      content: name
     }, {
       title: __.id,
       content: item.id
@@ -260,7 +259,7 @@ class Model extends React.Component {
       content: item.image_type === 'snapshot' ? __.snapshot : __.image
     }, {
       title: __.checksum,
-      content: item.checksum
+      content: item.checksum ? item.checksum : '-'
     }, {
       title: __.status,
       type: 'status',

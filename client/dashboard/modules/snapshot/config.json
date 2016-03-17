@@ -40,10 +40,6 @@
       "dataIndex": "",
       "key": "size"
     }, {
-      "title": ["type"],
-      "dataIndex": "",
-      "key": "type"
-    }, {
       "title": ["volume"],
       "dataIndex": "",
       "key": "volume"

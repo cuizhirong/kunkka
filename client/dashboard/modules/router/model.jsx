@@ -224,7 +224,6 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
-    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -267,11 +266,9 @@ class Model extends React.Component {
         break;
     }
 
-    if (syncUpdate) {
-      detail.setState({
-        contents: contents
-      });
-    }
+    detail.setState({
+      contents: contents
+    });
   }
 
   getBasicPropsItems(item) {

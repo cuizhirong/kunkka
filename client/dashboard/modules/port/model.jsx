@@ -231,7 +231,6 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
-    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -267,11 +266,9 @@ class Model extends React.Component {
         break;
     }
 
-    if (syncUpdate) {
-      detail.setState({
-        contents: contents
-      });
-    }
+    detail.setState({
+      contents: contents
+    });
   }
 
   onDetailAction(tabKey, actionType, data) {
@@ -306,7 +303,7 @@ class Model extends React.Component {
       type: 'editable'
     }, {
       title: 'ID',
-      content: item.device_id
+      content: item.id
     }, {
       title: __.associate_gl + __.resource,
       content: item.server ?
@@ -342,10 +339,16 @@ class Model extends React.Component {
     }, {
       title: __.security + __.group,
       content:
-        <div>{
-          item.security_groups.map((ritem, i) =>
-            <div key={i}><i className="glyphicon icon-security-group"></i><a data-type="router" href={'/project/security-group/' + ritem.id}>{ritem.name}</a></div>)
-        }</div>
+        <div>
+        {item.security_groups.length ? item.security_groups.map((ritem, i) =>
+          <div key={i}>
+            <i className="glyphicon icon-security-group" />
+            <a data-type="router" href={'/project/security-group/' + ritem.id}>
+              {ritem.name}
+            </a>
+          </div>
+        ) : '-'}
+        </div>
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?

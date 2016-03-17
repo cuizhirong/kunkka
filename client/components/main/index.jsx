@@ -25,6 +25,11 @@ class Main extends React.Component {
 
   componentWillMount() {
     var config = this.props.config;
+    config.table.column.forEach((col) => {
+      if (col.filter) {
+        col.filterAll = ['all'];
+      }
+    });
     converter.convertLang(__, config);
     this.tableColRender(config.table.column);
   }
