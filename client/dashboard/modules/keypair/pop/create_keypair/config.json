@@ -2,7 +2,7 @@
   "title": ["create", "keypair"],
   "fields": [{
     "type": "tab",
-    "field": "create",
+    "field": "type",
     "data": ["create_keypair", "import_keypair"],
     "value": "create_keypair"
   }, {

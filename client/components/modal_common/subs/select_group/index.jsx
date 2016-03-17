@@ -17,11 +17,13 @@ class SelectGroup extends React.Component {
     this.state = {
       disabled: !!props.disabled,
       hide: !!props.hide,
-      data: props.data ? copyObj(props.data) : []
+      data: props.data ? copyObj(props.data) : [],
+      clicked: false
     };
 
     this.onChange = this.onChange.bind(this);
     this.renderEmpty = this.renderEmpty.bind(this);
+    this.onLinkClick = this.onLinkClick.bind(this);
   }
 
   onChange(index) {
@@ -30,6 +32,13 @@ class SelectGroup extends React.Component {
     this.setState({
       data: data
     });
+  }
+
+  onLinkClick() {
+    this.setState({
+      clicked: true
+    });
+    this.props.onAction(this.props.field, this.state);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -59,7 +68,7 @@ class SelectGroup extends React.Component {
         return (
           <span className={'empty-text-label'}>
             {__[props.empty_text.info]}
-            <a onClick={props.onLinkClick}>
+            <a onClick={this.onLinkClick}>
               {
                 props.empty_text.link_info.map((m) => {
                   return __[m];

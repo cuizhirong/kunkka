@@ -19,11 +19,13 @@ class GroupSelect extends React.Component {
       disabled: !!props.disabled,
       hide: !!props.hide,
       data: props.data ? copyObj(props.data) : [],
-      checkedField: props.checkedField ? props.checkedField : false
+      checkedField: props.checkedField ? props.checkedField : false,
+      clicked: false
     };
 
     this.onChange = this.onChange.bind(this);
     this.renderData = this.renderData.bind(this);
+    this.onLinkClick = this.onLinkClick.bind(this);
   }
 
   onChange(e) {
@@ -37,6 +39,13 @@ class GroupSelect extends React.Component {
         value: e.target.value
       });
     }
+  }
+
+  onLinkClick() {
+    this.setState({
+      clicked: true
+    });
+    this.props.onAction(this.props.field, this.state);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -84,7 +93,7 @@ class GroupSelect extends React.Component {
         return (
           <span className={'empty-text-label'}>
             {__[props.empty_text.info]}
-            <a onClick={props.onLinkClick}>
+            <a onClick={this.onLinkClick}>
               {
                 props.empty_text.link_info.map(function(m) {
                   return __[m];

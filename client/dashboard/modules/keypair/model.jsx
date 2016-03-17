@@ -96,10 +96,11 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+    var that = this;
     switch (key) {
       case 'crt_keypair':
         createKeypair(function(_data) {
-          //console.log(data);
+          that.refresh(null, true);
         });
         break;
       case 'delete':
@@ -110,6 +111,7 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteKeypairs(rows).then((res) => {
               cb(true);
+              that.refresh(null, true);
             });
           }
         });
