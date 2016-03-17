@@ -16,6 +16,6 @@
   }],
   "btn": {
     "value": "related",
-    "disabled": false
+    "disabled": true
   }
 }

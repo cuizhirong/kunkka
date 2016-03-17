@@ -1,6 +1,9 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var request = require('../../request');
+
+var gatewayId = null;
 
 function pop(obj, callback, parent) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
@@ -8,15 +11,25 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-
+      request.getGateway((res) => {
+        gatewayId = res;
+        refs.btn.setState({
+          disabled: false
+        });
+      });
     },
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      var data = {
+        external_gateway_info: {
+          network_id: gatewayId
+        }
+      };
+      request.updateRouter(obj.id, data).then((res) => {
+        cb(true);
+        callback && callback(res.router);
+      });
     },
-    onAction: function() {
-
-    }
+    onAction: function() {}
   };
 
   commonModal(props);

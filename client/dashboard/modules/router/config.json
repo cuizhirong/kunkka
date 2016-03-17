@@ -25,10 +25,6 @@
           "key": "dis_gw",
           "disabled": true
         }, {
-          "title": ["change", "floating_ip"],
-          "key": "change_fip",
-          "disabled": true
-        }, {
           "title": ["connect", "subnet"],
           "key": "cnt_subnet",
           "disabled": true

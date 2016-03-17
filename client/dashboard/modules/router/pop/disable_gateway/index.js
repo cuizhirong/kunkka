@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
@@ -8,12 +9,15 @@ function pop(obj, callback, parent) {
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {
-
-    },
+    onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      var data = {
+        external_gateway_info: null
+      };
+      request.updateRouter(obj.id, data).then((res) => {
+        cb(true);
+        callback && callback(res.router);
+      });
     },
     onAction: function() {}
   };

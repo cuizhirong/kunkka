@@ -11,7 +11,6 @@ var deleteModal = require('client/components/modal_delete/index');
 var createRouter = require('./pop/create_router/index');
 var publicGateway = require('./pop/enable_public_gateway/index');
 var disableGateway = require('./pop/disable_gateway/index');
-var changeFip = require('./pop/change_fip/index');
 var relatedSubnet = require('./pop/related_subnet/index');
 
 var config = require('./config.json');
@@ -67,15 +66,17 @@ class Model extends React.Component {
       switch (column.key) {
         case 'floating_ip':
           column.render = (col, item, i) => {
-            if(item.floatingip) {
-              return (
-                  <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
-                    {item.floatingip.floating_ip_address}
-                  </a>
-              );
-            } else {
-              return '';
+            var fip = '';
+            if(item.external_gateway_info) {
+              item.external_gateway_info.external_fixed_ips.some((ip) => {
+                if (ip.ip_address.indexOf(':') < 0) {
+                  fip = ip.ip_address;
+                  return true;
+                }
+                return false;
+              });
             }
+            return fip;
           };
           break;
         case 'ext_gw':
@@ -168,9 +169,6 @@ class Model extends React.Component {
       case 'dis_gw':
         disableGateway(rows[0], function() {});
         break;
-      case 'change_fip':
-        changeFip(rows[0], function() {});
-        break;
       case 'cnt_subnet':
         relatedSubnet(rows[0], function() {});
         break;
@@ -207,9 +205,6 @@ class Model extends React.Component {
           break;
         case 'dis_gw':
           btns[key].disabled = (rows.length === 1 && rows[0].external_gateway_info) ? false : true;
-          break;
-        case 'change_fip':
-          btns[key].disabled = (rows.length === 1 && !rows[0].floatingip.id) ? false : true;
           break;
         case 'cnt_subnet':
           btns[key].disabled = (rows.length === 1) ? false : true;
@@ -287,10 +282,17 @@ class Model extends React.Component {
         return '';
       }
     };
-    var routerListener = (id, e) => {
-      e.preventDefault();
-      router.pushState('/project/floating-ip/' + id);
-    };
+
+    var fip = '-';
+    if (item.external_gateway_info) {
+      item.external_gateway_info.external_fixed_ips.some((ip) => {
+        if (ip.ip_address.indexOf(':') < 0) {
+          fip = ip.ip_address;
+          return true;
+        }
+        return false;
+      });
+    }
     var items = [{
       title: __.name,
       type: 'editable',
@@ -300,10 +302,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.floating_ip,
-      content: item.floatingip.id ?
-        <a onClick={routerListener.bind(null, item.floatingip.id)}>
-          {item.floatingip.floating_ip_address}
-        </a> : '-'
+      content: fip
     }, {
       title: __.ext_gatway,
       content: getGatewayState()
