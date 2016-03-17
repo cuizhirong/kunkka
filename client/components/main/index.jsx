@@ -34,9 +34,13 @@ class Main extends React.Component {
       switch (column.type) {
         case 'captain':
           column.render = (col, item, i) => {
+            var formatData = column.formatter && column.formatter(col, item, i);
+            if (!formatData) {
+              formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')');
+            }
             return (
               <a className="captain" onClick={this.onClickCaptain.bind(this, item)}>
-                {item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')'}
+                {formatData}
               </a>
             );
           };

@@ -36,9 +36,7 @@ class Model extends React.Component {
     msgEvent.on('dataChange', (data) => {
       if (data.resource_type === 'image') {
         this.refresh(null, false);
-        if (data.action === 'delete'
-          && data.stage === 'end'
-          && data.resource_id === router.getPathList()[2]) {
+        if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
           router.replaceState('/project/image');
         }
       }
@@ -61,9 +59,21 @@ class Model extends React.Component {
   tableColRender(column) {
     column.map((col) => {
       switch (col.key) {
+        case 'name':
+          col.formatter = function(rcol, ritem, rindex) {
+            var label = ritem.image_label && ritem.image_label.toLowerCase();
+            return <div><i className={'icon-image-default ' + label}/> {ritem.name}</div>;
+          };
+          break;
         case 'size':
           col.render = (rcol, ritem, rindex) => {
-            return Math.round(ritem.size / 1024) + ' MB';
+            let size = ritem.size / 1024 / 1024;
+            if (size > 1024) {
+              size = (size / 1024 + ' GB');
+            } else {
+              size = size + ' MB';
+            }
+            return size;
           };
           break;
         case 'type':
@@ -169,16 +179,16 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    for(let key in btns) {
+    for (let key in btns) {
       switch (key) {
         case 'create':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        case 'crt_inst':
-          btns[key].disabled = (rows.length !== 1) ? true : false;
-          break;
         case 'del_img':
-          btns[key].disabled = (rows.length === 0) ? true : false;
+          let b = rows.some((m) => {
+            return m.image_type === 'distribution';
+          });
+          btns[key].disabled = (rows.length === 0 || b) ? true : false;
           break;
         default:
           break;
@@ -189,7 +199,9 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
+    var {
+      rows
+    } = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
     var syncUpdate = true;
@@ -207,7 +219,7 @@ class Model extends React.Component {
       }
     };
 
-    switch(tabKey) {
+    switch (tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
