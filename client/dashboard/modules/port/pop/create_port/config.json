@@ -18,10 +18,14 @@
   }, {
     "type": "select_group",
     "field": "security_group",
+    "empty_text": {
+      "info": "no_security_group",
+      "link_info": ["create", "security_group"]
+    },
     "data": []
   }],
   "btn": {
     "value": "create",
-    "disabled": false
+    "disabled": true
   }
 }

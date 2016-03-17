@@ -165,6 +165,22 @@ class Model extends React.Component {
       case 'modify':
         modify(rows[0], function() {});
         break;
+      case 'enable':
+        var _data = {
+          port: {
+            port_security_enabled: true
+          }
+        };
+        request.editSecurityGroup(_data, rows[0].id);
+        break;
+      case 'disable':
+        var ele = {
+          port: {
+            port_security_enabled: false
+          }
+        };
+        request.editSecurityGroup(ele, rows[0].id);
+        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,

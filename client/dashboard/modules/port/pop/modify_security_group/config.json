@@ -8,10 +8,13 @@
   }, {
     "type": "select_group",
     "field": "security_group",
-    "data": []
+    "empty_text": {
+      "info": "no_security_group",
+      "link_info": ["create", "security_group"]
+    }
   }],
   "btn": {
     "value": "modify",
-    "disabled": false
+    "disabled": true
   }
 }
