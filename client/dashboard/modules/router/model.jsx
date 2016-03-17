@@ -12,6 +12,7 @@ var createRouter = require('./pop/create_router/index');
 var publicGateway = require('./pop/enable_public_gateway/index');
 var disableGateway = require('./pop/disable_gateway/index');
 var relatedSubnet = require('./pop/related_subnet/index');
+var detachSubnet = require('./pop/detach_subnet/index');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -242,7 +243,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]),
-            subnetConfig = this.getDetailTableConfig(rows[0].subnets);
+            subnetConfig = this.getDetailTableConfig(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -256,7 +257,9 @@ class Model extends React.Component {
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.connect + __.subnet}/>
+                <Button value={__.connect + __.subnet} onClick={this.onDetailAction.bind(this, 'description', 'cnt_subnet', {
+                  rawItem: rows[0]
+                })}/>
               </DetailMinitable>
             </div>
           );
@@ -315,7 +318,7 @@ class Model extends React.Component {
 
   getDetailTableConfig(item) {
     var dataContent = [];
-    item.forEach((element, index) => {
+    item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
         name: <div>
@@ -324,7 +327,10 @@ class Model extends React.Component {
           </div>,
         cidr: element.cidr,
         gateway_ip: element.gateway_ip,
-        operation: <i className="glyphicon icon-delete" />
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'detach_subnet', {
+          rawItem: item,
+          childItem: element
+        })} />
       };
       dataContent.push(dataObj);
     });
@@ -403,6 +409,15 @@ class Model extends React.Component {
             detailRefresh: true
           }, true);
         });
+        break;
+      case 'cnt_subnet':
+        request.getSubnets((res) => {
+          data.subnet = res;
+          relatedSubnet(data, function() {});
+        });
+        break;
+      case 'detach_subnet':
+        detachSubnet(data, function() {});
         break;
       default:
         break;

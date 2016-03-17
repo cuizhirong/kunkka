@@ -227,7 +227,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]),
-            subnetConfig = this.getDetailTableConfig(rows[0].subnets);
+            subnetConfig = this.getDetailTableConfig(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -237,13 +237,14 @@ class Model extends React.Component {
                 tabKey={'description'}
                 items={basicPropsItem ? basicPropsItem : []}
                 rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)}
-                />
+                onAction={this.onDetailAction.bind(this)} />
               <DetailMinitable
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.create + __.subnet}/>
+                <Button value={__.create + __.subnet} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
+                  rawItem: rows[0]
+                })}/>
               </DetailMinitable>
             </div>
           );
@@ -278,6 +279,19 @@ class Model extends React.Component {
           }, true);
         });
         break;
+      case 'crt_subnet':
+        createSubnet(function() {});
+        break;
+      case 'rmv_subnet':
+        deleteModal({
+          action: 'terminate',
+          type: 'subnet',
+          data: [data.childItem],
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
+        break;
       default:
         break;
     }
@@ -303,13 +317,16 @@ class Model extends React.Component {
 
   getDetailTableConfig(item) {
     var dataContent = [];
-    item.forEach((element, index) => {
+    item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
         name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name}</a>,
         cidr: element.cidr,
         router: element.router ? element.router.name : '',
-        operation: <i className="glyphicon icon-delete" />
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
+          rawItem: item,
+          childItem: element
+        })} />
       };
       dataContent.push(dataObj);
     });

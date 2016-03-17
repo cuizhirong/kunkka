@@ -82,5 +82,10 @@ module.exports = {
     return storage.getList(['router']).then(function(data) {
       cb(data.router);
     });
+  },
+  getSecurityGroups: function(cb, forced) {
+    return storage.getList(['securitygroup'], forced).then(function(data) {
+      cb(data.securitygroup);
+    });
   }
 };

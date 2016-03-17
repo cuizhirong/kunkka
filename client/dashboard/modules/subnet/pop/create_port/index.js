@@ -1,10 +1,17 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
-function pop(obj, callback, parent) {
-
-  config.fields[0].text = obj.name;
-  config.fields[1].data = obj.volume;
+function pop(data, callback, parent) {
+  config.fields[1].data = [];
+  config.fields[1].data.push({
+    value: 0,
+    name: data.rawItem.network.name,
+    data: [{
+      id: 0,
+      name: data.rawItem.name
+    }]
+  });
+  config.fields[3].data = data.sg;
 
   var props = {
     parent: parent,
@@ -14,10 +21,7 @@ function pop(obj, callback, parent) {
       callback();
       cb(true);
     },
-    onAction: function(field, state, refs) {
-
-    },
-    onLinkClick: function() {
+    onAction: function(field, status, refs) {
 
     }
   };

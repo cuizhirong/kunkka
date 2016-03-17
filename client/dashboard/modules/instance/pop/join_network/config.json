@@ -25,7 +25,7 @@
     "field": "join_network_tip"
   }],
   "btn": {
-    "value": "ok",
+    "value": "join",
     "disabled": false
   }
 }

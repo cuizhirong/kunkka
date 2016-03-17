@@ -1,0 +1,23 @@
+{
+  "title": ["dissociate", "subnet"],
+  "fields": [{
+    "type": "text",
+    "field": "dissociate",
+    "info": "msg_diss_subnet"
+  }, {
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet",
+    "text": ""
+  }],
+  "btn": {
+    "value": "add",
+    "type": "create",
+    "disabled": false
+  }
+}

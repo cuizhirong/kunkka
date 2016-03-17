@@ -22,6 +22,7 @@ var instSnapshot = require('./pop/inst_snapshot/index');
 var dissociateFIP = require('./pop/dissociate_fip/index');
 var changeSecurityGrp = require('./pop/change_security_grp/index');
 var detachVolume = require('./pop/detach_volume/index');
+var detachNetwork = require('./pop/detach_network/index');
 
 var request = require('./request');
 var Request = require('client/dashboard/cores/request');
@@ -646,18 +647,40 @@ class Model extends React.Component {
         });
         break;
       case 'create_volume':
+        request.getVolumeList((res) => {
+          data.volume = res;
+          attachVolume(data, function() {});
+        });
         break;
       case 'delete_volume':
+        detachVolume(data.rawItem, function() {});
         break;
       case 'create_network':
+        request.getSubnetList((res) => {
+          data.subnet = res;
+          request.getPortList((ports) => {
+            data.port = ports;
+            joinNetwork(data, function() {});
+          });
+        });
         break;
       case 'delete_network':
+        detachNetwork(data, function() {});
         break;
       case 'create_related_snapshot':
+        instSnapshot(data.rawItem, function() {});
         break;
       case 'create_related_instance':
         break;
       case 'delete_related_snapshot':
+        deleteModal({
+          action: 'terminate',
+          type: 'inst_snapshot',
+          data: [data.childItem],
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
         break;
       default:
         break;

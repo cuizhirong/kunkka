@@ -428,10 +428,20 @@ class Model extends React.Component {
         });
         break;
       case 'create_related_snapshot':
+        createSnapshot(data.rawItem, function(){});
         break;
       case 'create_related_volume':
+        createModal(data.childItem, function(){});
         break;
       case 'delete_related_snapshot':
+        deleteModal({
+          action: 'delete',
+          type: 'snapshot',
+          data: [data.childItem],
+          onDelete: function(_data, cb) {
+            cb(true);
+          }
+        });
         break;
       default:
         break;

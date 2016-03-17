@@ -5,7 +5,48 @@ var request = require('../../request');
 var createSubnet = require('client/dashboard/modules/subnet/pop/create_subnet/index');
 
 function pop(obj, callback, parent) {
-  config.fields[0].text = obj.name;
+  var getSubnetGroup = function(subnets) {
+    var subnetArray = [];
+    subnets.map((subnet, i) => {
+      if(subnetArray.length === 0) {
+        subnetArray.push({
+          value: i,
+          name: subnet.network.name,
+          data: [{
+            id: i,
+            name: subnet.name + '(' + subnet.cidr + ')'
+          }]
+        });
+      } else {
+        var duplication = false;
+        subnetArray.forEach((ele) => {
+          if(ele.name === subnet.network.name) {
+            duplication = duplication || true;
+            ele.data.push({
+              id: i,
+              name: subnet.name + '(' + subnet.cidr + ')'
+            });
+          } else {
+            duplication = duplication || false;
+          }
+        });
+        if(!duplication) {
+          subnetArray.push({
+            value: i,
+            name: subnet.network.name,
+            data: [{
+              id: i,
+              name: subnet.name + '(' + subnet.cidr + ')'
+            }]
+          });
+        }
+      }
+    });
+    return subnetArray;
+  };
+
+  config.fields[0].text = obj.rawItem.name;
+  config.fields[1].data = getSubnetGroup(obj.subnet);
 
   var props = {
     parent: parent,

@@ -2,25 +2,20 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 
 function pop(obj, callback, parent) {
-
-  config.fields[0].text = obj.name;
+  config.fields[0].text = obj.rawItem.name;
+  config.fields[2].data = [];
+  obj.volume.forEach((ele, i) => {
+    var item = {
+      id: i,
+      name: ele.name
+    };
+    config.fields[2].data.push(item);
+  });
 
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {
-      setTimeout(function(){
-        refs.volume.setState({
-          data: [{
-            id: 1,
-            name: '111'
-          }, {
-            id: 2,
-            name: '222'
-          }]
-        });
-      }, 500);
-    },
+    onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       callback();
       cb(true);

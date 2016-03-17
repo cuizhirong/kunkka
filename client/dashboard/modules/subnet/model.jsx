@@ -19,6 +19,8 @@ var connectRouter = require('./pop/connect_router/index');
 var disconnectRouter = require('./pop/disconnect_router/index');
 var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
+var connectInst = require('./pop/connect_inst/index');
+var createPort = require('./pop/create_port/index');
 var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
@@ -263,7 +265,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]),
-            virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0].ports);
+            virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps title={__.basic + __.properties}
@@ -276,7 +278,7 @@ class Model extends React.Component {
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __.port}/>
+                <Button value={__.add_ + __.port} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', {rawItem: rows[0]})}/>
               </DetailMinitable>
             </div>
           );
@@ -309,6 +311,18 @@ class Model extends React.Component {
           this.refresh({
             detailRefresh: true
           }, true);
+        });
+        break;
+      case 'crt_port':
+        request.getSecurityGroups((res) => {
+          data.sg = res;
+          createPort(data, function() {});
+        });
+        break;
+      case 'connect_inst':
+        request.getInstances((res) => {
+          data.inst = res;
+          connectInst(data, function() {});
         });
         break;
       default:
@@ -363,7 +377,7 @@ class Model extends React.Component {
 
   getVirtualInterfaceItems(item) {
     var tableContent = [];
-    item.forEach((element, index) => {
+    item.ports.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
         name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
@@ -377,7 +391,7 @@ class Model extends React.Component {
           : null,
         status: getStatusIcon(element.status),
         operation: <div>
-            <i className="glyphicon icon-associate action"/>
+            <i className="glyphicon icon-associate action" onClick={this.onDetailAction.bind(this, 'description', 'connect_inst', {rawItem: element})}/>
             <i className="glyphicon icon-delete" />
           </div>
       };

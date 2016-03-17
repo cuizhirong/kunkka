@@ -1,6 +1,9 @@
 {
   "title": ["create", "snapshot"],
   "fields": [{
+    "type": "info",
+    "field": "tip_volume_snapshot"
+  }, {
     "type": "icon_label",
     "field": "volume",
     "icon_type": "volume",
