@@ -3,8 +3,10 @@ var request = require('client/dashboard/cores/request');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(forced) {
-    return storage.getList(['subnet', 'network', 'router', 'instance'], forced);
+  getList: function(cb, forced) {
+    return storage.getList(['subnet', 'network', 'router', 'instance'], forced).then(function(data) {
+      cb(data.subnet);
+    });
   },
   editSubnetName: function(item, newName) {
     var data = {};
@@ -64,6 +66,21 @@ module.exports = {
           net_id: networkId
         }
       }
+    });
+  },
+  getNetworks: function(cb) {
+    return storage.getList(['network']).then(function(data) {
+      cb(data.network);
+    });
+  },
+  getInstances: function(cb) {
+    return storage.getList(['instance']).then(function(data) {
+      cb(data.instance);
+    });
+  },
+  getRouters: function(cb) {
+    return storage.getList(['router']).then(function(data) {
+      cb(data.router);
     });
   }
 };

@@ -8,6 +8,10 @@
     "type": "select",
     "field": "select_network",
     "data": [],
+    "empty_text": {
+      "info": "no_network",
+      "link_info": ["create", "network"]
+    },
     "is_long_label": true
   }, {
     "type": "input",
@@ -39,6 +43,7 @@
   }],
   "btn": {
     "value": "create",
+    "type": "create",
     "disabled": true
   }
 }

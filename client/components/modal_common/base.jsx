@@ -83,7 +83,7 @@ class ModalBase extends React.Component {
     var isEmpty = false;
     var refs = this.refs;
     this.props.config.fields.forEach((m) => {
-      if (m.required && (m.type === 'input' || m.type === 'textarea') && !refs[m.field].state.value) {
+      if (m.required && (m.type === 'input' || m.type === 'textarea') && !refs[m.field].state.value && !refs[m.field].state.hide) {
         refs[m.field].setState({
           error: true
         });

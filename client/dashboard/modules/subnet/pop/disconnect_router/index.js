@@ -14,10 +14,10 @@ function pop(obj, callback, parent) {
     onConfirm: function(refs, cb) {
       request.disconnectRouter(obj.router.id, {
         subnet_id: obj.id
+      }).then((res) => {
+        cb(true);
+        callback && callback(res);
       });
-
-      callback();
-      cb(true);
     },
     onAction: function(field, status, refs) {
     }

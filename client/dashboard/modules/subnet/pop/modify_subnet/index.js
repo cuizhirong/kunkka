@@ -39,9 +39,10 @@ function pop(obj, callback, parent) {
       } else if (refs.gw_address.state.value) {
         data.gateway_ip = refs.gw_address.state.value;
       }
-      request.updateSubnet(obj.id, data);
-      callback();
-      cb(true);
+      request.updateSubnet(obj.id, data).then((res) => {
+        cb(true);
+        callback && callback(res);
+      });
     },
     onAction: function(field, status, refs) {
       switch (field) {

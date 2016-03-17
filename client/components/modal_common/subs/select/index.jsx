@@ -19,11 +19,20 @@ class Select extends React.Component {
       disabled: !!props.disabled,
       hide: !!props.hide,
       data: props.data ? copyObj(props.data) : [],
-      checkedField: props.checkedField ? props.checkedField : false
+      checkedField: props.checkedField ? props.checkedField : false,
+      clicked: false
     };
 
     this.onChange = this.onChange.bind(this);
     this.renderData = this.renderData.bind(this);
+    this.onLinkClick = this.onLinkClick.bind(this);
+  }
+
+  onLinkClick() {
+    this.setState({
+      clicked: true
+    });
+    this.props.onAction(this.props.field, this.state);
   }
 
   onChange(e) {
@@ -66,7 +75,7 @@ class Select extends React.Component {
         <select value={state.value} disabled={state.checkedField && state.checkedField !== props.field} onChange={this.onChange}>
           {
             state.data.map(function(v) {
-              return <option key={v.id} value={v.id}>{v.name}</option>;
+              return <option key={v.id} value={v.id}>{v.name || '(' + v.id.substr(0, 8) + ')'}</option>;
             })
           }
         </select>
@@ -76,7 +85,7 @@ class Select extends React.Component {
         return (
           <span className={'empty-text-label'}>
             {__[props.empty_text.info]}
-            <a onClick={props.onLinkClick}>
+            <a onClick={this.onLinkClick}>
               {
                 props.empty_text.link_info.map(function(m) {
                   return __[m];

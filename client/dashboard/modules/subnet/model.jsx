@@ -107,9 +107,9 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList(forceUpdate).then((res) => {
+    request.getList((res) => {
       var table = this.state.config.table;
-      table.data = res.subnet;
+      table.data = res;
       table.loading = false;
 
       var detail = this.refs.dashboard.refs.detail;

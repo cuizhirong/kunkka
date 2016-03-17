@@ -4,7 +4,7 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(cb, forced) {
-    return storage.getList(['network'], forced).then(function(data) {
+    return storage.getList(['network', 'subnet'], forced).then(function(data) {
       cb(data.network);
     });
   },
@@ -26,5 +26,21 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  createNetwork: function(data) {
+    return request.post({
+      url: '/proxy/neutron/v2.0/networks',
+      data: {
+        network: data
+      }
+    });
+  },
+  createSubnet: function(data) {
+    return request.post({
+      url: '/proxy/neutron/v2.0/subnets',
+      data: {
+        subnet: data
+      }
+    });
   }
 };

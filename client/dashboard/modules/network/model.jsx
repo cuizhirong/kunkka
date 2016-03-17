@@ -140,7 +140,7 @@ class Model extends React.Component {
         createNetwork(function() {});
         break;
       case 'crt_subnet':
-        createSubnet(function() {});
+        createSubnet(rows[0], function() {});
         break;
       case 'delete':
         deleteModal({
