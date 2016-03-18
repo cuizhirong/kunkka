@@ -62,17 +62,18 @@ class Model extends React.Component {
         case 'name':
           col.formatter = function(rcol, ritem, rindex) {
             var label = ritem.image_label && ritem.image_label.toLowerCase();
-            return <div><i className={'icon-image-default ' + label}/>{' ' + ritem.name}</div>;
+            return <div><i className={'icon-image-default ' + label}/> {ritem.name}</div>;
           };
           break;
         case 'size':
           col.render = (rcol, ritem, rindex) => {
             let size = ritem.size / 1024 / 1024;
-            if (size > 1024) {
-              size = (size / 1024 + ' GB');
+            if (size >= 1024) {
+              size = (Math.round(size / 1024) + ' GB');
             } else {
-              size = size + ' MB';
+              size = Math.round(size) + ' MB';
             }
+
             return size;
           };
           break;
@@ -186,7 +187,7 @@ class Model extends React.Component {
           break;
         case 'del_img':
           let b = rows.some((m) => {
-            return m.image_type === 'distribution';
+            return m.image_type !== 'snapshot';
           });
           btns[key].disabled = (rows.length === 0 || b) ? true : false;
           break;
@@ -243,7 +244,13 @@ class Model extends React.Component {
 
   getBasicPropsItems(item) {
     var label = item.image_label && item.image_label.toLowerCase();
-    var name = <div><i className={'icon-image-default ' + label}/>{' ' + item.name}</div>;
+    var name = <div><i className={'icon-image-default ' + label}/> {item.name}</div>;
+    var size = item.size / 1024 / 1024;
+    if (size >= 1024) {
+      size = (Math.round(size / 1024) + ' GB');
+    } else {
+      size = Math.round(size) + ' MB';
+    }
 
     var items = [{
       title: __.name,
@@ -253,7 +260,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.size,
-      content: Math.round(item.size / 1024) + ' MB'
+      content: size
     }, {
       title: __.type,
       content: item.image_type === 'snapshot' ? __.snapshot : __.image

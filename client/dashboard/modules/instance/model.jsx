@@ -80,8 +80,13 @@ class Model extends React.Component {
       switch (column.key) {
         case 'image':
           column.render = (col, item, i) => {
+            var label = item.image_label && item.image_label.toLowerCase();
             return item.image ?
-              <a data-type="router" href={'/project/image/' + item.image.id}>{item.image.name}</a> : '';
+              <span>
+                <i className={'icon-image-default ' + label}/>
+                <a data-type="router" href={'/project/image/' + item.image.id}>{' ' + item.image.name}</a>
+              </span>
+              : '';
           };
           break;
         case 'ip_address':
@@ -113,7 +118,7 @@ class Model extends React.Component {
           break;
         case 'instance_type':
           column.render = (col, item, i) => {
-            return item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '';
+            return item.flavor ? item.flavor.vcpus + 'CPU / ' + item.flavor.ram / 1024 + 'GB' : '';
           };
           break;
         default:
@@ -430,6 +435,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var label = item.image.image_label && item.image.image_label.toLowerCase();
     var items = [{
       title: __.name,
       content: item.name,
@@ -450,9 +456,12 @@ class Model extends React.Component {
     }, {
       title: __.image,
       content:
-        <a data-type="router" href={'/project/image/' + item.image.id}>
-          {item.image.name}
-        </a>
+        <span>
+          <i className={'icon-image-default ' + label}/>
+          <a data-type="router" href={'/project/image/' + item.image.id}>
+            {' ' + item.image.name}
+          </a>
+        </span>
     }, {
       title: __.instance_type,
       content: item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '-'
