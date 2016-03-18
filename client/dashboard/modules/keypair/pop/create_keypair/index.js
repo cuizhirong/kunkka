@@ -17,8 +17,10 @@ function pop(callback, parent) {
         request.createKeypair(data, (res) => {
           var container = document.getElementById('modal-container').getElementsByClassName('modal')[0];
           var linkNode = document.createElement('a');
-          linkNode.download = res.name + '.pem';
-          linkNode.href = 'data:application/x-pem-file,' + res.private_key;
+          if (linkNode.download !== undefined) {
+            linkNode.download = res.name + '.pem';
+          }
+          linkNode.href = 'data:application/x-pem-file,' + encodeURIComponent(res.private_key);
           container.appendChild(linkNode);
           linkNode.click();
           callback && callback(res);
