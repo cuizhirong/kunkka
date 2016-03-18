@@ -27,6 +27,19 @@ class BasicProps extends React.Component {
     this.setState({
       selectedKey: value
     });
+    var sgImage = document.querySelector('.sg-image');
+    switch(value) {
+      case 'ingress':
+        sgImage.classList.remove('sg-image-egress');
+        sgImage.classList.add('sg-image-ingress');
+        break;
+      case 'egress':
+        sgImage.classList.remove('sg-image-ingress');
+        sgImage.classList.add('sg-image-egress');
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
@@ -45,7 +58,11 @@ class BasicProps extends React.Component {
         </div>
         <div className={'toggle-content' + (state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-com-security-detail">
-            <div className="sg-image">
+            <div className="sg-image sg-image-ingress">
+              <span className="arrow-up"></span>
+              <span className="arrow-left"></span>
+              <span className="arrow-right"></span>
+              <span className="arrow-circle"></span>
             </div>
             <div className="sg-data">
               <Tip title={selectedItem.tip.title} content={selectedItem.tip.content} type="info"/>
