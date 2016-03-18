@@ -29,8 +29,7 @@ var config = {
   }],
   'sessionEngine': {
     'type': 'Session',                               // 'Redis' | 'Memcached' | 'Session' (do not use it in production)
-    'address': '127.0.0.1',
-    'port': 6379,
+    'remotes': ['127.0.0.1:11211'],
     'secret': 'keyboard cat',
     'cookie_name': 'ustack'
   },
@@ -43,9 +42,14 @@ var config = {
   },
   'mq': {
     'enabled': true,
-    'remote': 'amqp://openstack:RABBIT_PASS@121.201.52.153:5672',
+    'remotes': ['121.201.52.153'],
+    'port': '5672',
+    'heartbeat': 60,
+    'username': 'guest',
+    'password': 'guest',
     'sourceExchanges': ['nova', 'neutron', 'glance', 'openstack'],
-    reconnectTimeout: 1000
+    'reconnectTimeout': 1000,
+    'maxTimeoutLimit': 120000
   },
   'websocket': {
     'url': ':8080',

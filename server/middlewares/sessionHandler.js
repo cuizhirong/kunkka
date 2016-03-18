@@ -40,8 +40,11 @@ module.exports = function(app) {
   } else if (sessionEngine.type === 'Memcached') {
     var Memcached = require('memcached');
     var MemcachedStore = require('connect-memcached')(session);
-    var MemcachedClient = new Memcached(sessionEngine.address + ':' + sessionEngine.port, {
-      'factor': 1.2
+    console.log(sessionEngine.remotes);
+    var MemcachedClient = new Memcached(sessionEngine.remotes, {
+      'factor': 1,
+      'failOverServers': sessionEngine.remotes,
+      'remove': true
     });
     MemcachedClient.on('issue', function (details) {
       logger.error('Memcached' + details.messages.join(' '));

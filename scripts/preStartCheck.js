@@ -92,7 +92,7 @@ function checkService(service) {
   execShell(stc, 'Can not connect to ' + cyan(Config.sessionEngine.address + ':' + Config.sessionEngine.port));
 }
 
-checkService(Config.sessionEngine.type);
+//checkService(Config.sessionEngine.type);
 checkAndCreate([Config.log.accessLogPath, Config.log.errorLogPath]);
 
 console.log = oldLog;
