@@ -8,18 +8,19 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createModal = require('./pop/create/index');
-
-var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
-var moment = require('client/libs/moment');
-var request = require('./request');
-var router = require('client/dashboard/cores/router');
 var attachInstance = require('./pop/attach_instance/index');
 var createSnapshot = require('./pop/create_snapshot/index');
 var detachInstance = require('./pop/detach_instance/index');
 var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
+
+var config = require('./config.json');
+var __ = require('i18n/client/lang.json');
+var moment = require('client/libs/moment');
+var request = require('./request');
+var router = require('client/dashboard/cores/router');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -37,6 +38,17 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'volume') {
+        this.refresh(null, false);
+        if (data.action === 'delete'
+          && data.stage === 'end'
+          && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/volume');
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -91,7 +103,7 @@ class Model extends React.Component {
           break;
         case 'attributes':
           column.render = (col, item, i) => {
-            return item.metadata.readonly ? __.read_write : __.read_only;
+            return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
           };
           break;
         default:
@@ -145,9 +157,13 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+
+    var that = this;
     switch (key) {
       case 'create':
-        createModal(function(){});
+        createModal(rows[0], function(){
+          that.refresh(null, true);
+        });
         break;
       case 'delete':
         deleteModal({
@@ -157,24 +173,33 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteVolumes(rows).then((res) => {
               cb(true);
+              that.refresh(null, true);
             });
           }
         });
         break;
       case 'create_snapshot':
-        createSnapshot(rows[0], function(){});
+        createSnapshot(rows[0], function(){
+
+        });
         break;
       case 'attach_to_instance':
-        attachInstance(rows[0], function() {});
+        attachInstance(rows[0], function() {
+        });
         break;
-      case 'dtch_volume':
-        detachInstance(rows[0], function() {});
+      case 'dtch_instance':
+        detachInstance(rows[0], function() {
+        });
         break;
       case 'set_rd_only':
-        setRead(rows[0], function() {});
+        setRead(rows[0], function() {
+          that.refresh(null, true);
+        });
         break;
       case 'set_rd_wrt':
-        setReadWrite(rows[0], function() {});
+        setReadWrite(rows[0], function() {
+          that.refresh(null, true);
+        });
         break;
       case 'refresh':
         this.refresh({
@@ -218,20 +243,20 @@ class Model extends React.Component {
         case 'create_snapshot':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        case 'dtch_volume':
+        case 'dtch_instance':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'in-use') ? false : true;
           break;
         case 'attach_to_instance':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
           break;
         case 'extd_capacity':
-          btns[key].disabled = (rows.length === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
           break;
         case 'set_rd_only':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'False') ? false : true;
           break;
         case 'set_rd_wrt':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && !rows[0].metadata.readonly) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'False') ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;

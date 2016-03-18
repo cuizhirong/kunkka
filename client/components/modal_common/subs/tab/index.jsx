@@ -1,13 +1,24 @@
 var React = require('react');
 var __ = require('i18n/client/lang.json');
 
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return newobj;
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
+
 class Tab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: props.value ? props.value : '',
       disabled: !!props.disabled,
-      hide: !!props.hide
+      hide: !!props.hide,
+      data: props.data ? copyObj(props.data) : []
     };
 
     this.onChange = this.onChange.bind(this);
@@ -21,8 +32,14 @@ class Tab extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     for (var index in this.state) {
-      if (this.state[index] !== nextState[index]) {
-        return true;
+      if (typeof this.state[index] !== 'object') {
+        if (this.state[index] !== nextState[index]) {
+          return true;
+        }
+      } else {
+        if (JSON.stringify(this.state[index]) !== JSON.stringify(nextState[index])) {
+          return true;
+        }
       }
     }
     return false;
@@ -52,8 +69,8 @@ class Tab extends React.Component {
         </div>
         <div>
           {
-            props.data.map((value, index) => {
-              return <a key={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{__[value]}</a>;
+            state.data.map((value, index) => {
+              return <a key={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{__[value] || value}</a>;
             })
           }
         </div>

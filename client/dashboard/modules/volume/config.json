@@ -28,7 +28,7 @@
       "items": [{
         "items": [{
           "title": ["dtch_volume"],
-          "key": "dtch_volume",
+          "key": "dtch_instance",
           "disabled": true
         }, {
           "title": ["extd_capacity"],
