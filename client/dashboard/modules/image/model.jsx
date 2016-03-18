@@ -31,7 +31,9 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    this.tableColRender(this.state.config.table.column);
+    var columns = this.state.config.table.column;
+    this.setTableFilter(columns);
+    this.tableColRender(columns);
 
     msgEvent.on('dataChange', (data) => {
       if (data.resource_type === 'image') {
@@ -54,6 +56,15 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none') {
       this.getTableData(false);
     }
+  }
+
+  setTableFilter(columns) {
+    var filters = columns.filter((col) => col.key === 'type')[0].filter;
+    var imageFilter = filters.filter((fil) => fil.key === 'image')[0];
+
+    imageFilter.filterBy = function(item) {
+      return item.image_type ? false : true;
+    };
   }
 
   tableColRender(column) {

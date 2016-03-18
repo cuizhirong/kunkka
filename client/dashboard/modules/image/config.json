@@ -40,8 +40,17 @@
       "key": "size"
     }, {
       "title": ["type"],
-      "key": "type"
+      "key": "type",
+      "dataIndex": "image_type",
+      "filter": [{
+        "name": ["snapshot"],
+        "key": "snapshot",
+        "filterBy": "snapshot"
       }, {
+        "name": ["image"],
+        "key": "image"
+      }]
+    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
