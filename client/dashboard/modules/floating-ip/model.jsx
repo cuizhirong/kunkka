@@ -8,9 +8,7 @@ var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
 var applyModal = require('./pop/apply_ip/index');
 var associateInstance = require('./pop/associate_instance/index');
-var associateRouter = require('./pop/associate_router/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
-var updateBandwidth = require('./pop/update/index');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -142,6 +140,7 @@ class Model extends React.Component {
       row.name = row.floating_ip_address;
     });
 
+    var that = this;
     switch (key) {
       case 'delete':
         deleteModal({
@@ -151,6 +150,7 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteFloatingIps(rows).then((res) => {
               cb(true);
+              that.refresh({}, true);
             });
           }
         });
@@ -164,21 +164,19 @@ class Model extends React.Component {
         }, true);
         break;
       case 'create':
-        applyModal(function(){});
+        applyModal(function() {
+          that.refresh({}, true);
+        });
         break;
-      case 'dssc':
-        dissociateRelated(rows[0], function() {});
+      case 'dissociate':
+        dissociateRelated(rows[0], function() {
+          that.refresh({}, true);
+        });
         break;
       case 'assc_to_instance':
         associateInstance(rows[0], function() {
+          that.refresh({}, true);
         });
-        break;
-      case 'assc_to_router':
-        associateRouter(rows[0], function() {
-        });
-        break;
-      case 'chg_bandwidth':
-        updateBandwidth(rows[0], function(){});
         break;
       default:
         break;
@@ -212,14 +210,8 @@ class Model extends React.Component {
         case 'assc_to_instance':
           btns[key].disabled = shouldAssociate ? false : true;
           break;
-        case 'assc_to_router':
-          btns[key].disabled = shouldAssociate ? false : true;
-          break;
-        case 'dssc':
+        case 'dissociate':
           btns[key].disabled = (rows.length === 1 && rows[0].association.type) ? false : true;
-          break;
-        case 'chg_bandwidth':
-          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;

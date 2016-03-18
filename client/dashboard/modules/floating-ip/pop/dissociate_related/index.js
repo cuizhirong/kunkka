@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
 
@@ -13,8 +14,10 @@ function pop(obj, callback, parent) {
 
     },
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      request.dissociateInstance(obj).then((res) => {
+        callback(res.floatingip);
+        cb(true);
+      });
     },
     onAnction: function(field, status, refs) {
 

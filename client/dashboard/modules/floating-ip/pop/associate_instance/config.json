@@ -14,11 +14,8 @@
     }
   }, {
     "type": "select",
-    "field": "network",
-    "empty_text": {
-      "info": "no_network",
-      "link_info": ["create", "network"]
-    }
+    "field": "port",
+    "hide": true
   }],
   "btn": {
     "value": "associate",

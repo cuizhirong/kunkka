@@ -15,34 +15,16 @@
     "icon": "associate",
     "disabled": true
   }, {
-    "value": ["associate", "to", "router"],
-    "key": "assc_to_router",
-    "icon": "associate",
+    "value": ["dissociate"],
+    "key": "dissociate",
+    "icon": "dissociate",
     "disabled": true
   }, {
-    "value": ["more"],
-    "key": "more",
-    "iconClass": "more",
-    "dropdown": {
-      "items": [{
-        "items": [{
-          "title": ["dissociate"],
-          "key": "dssc",
-          "disabled": true
-        }, {
-          "title": ["modify", "bandwidth"],
-          "key": "chg_bandwidth",
-          "disabled": true
-        }]
-      }, {
-        "items": [{
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
-        }]
-      }]
-    }
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -66,10 +48,6 @@
       "title": ["associate_gl", "resource"],
       "dataIndex": "",
       "key": "assc_resource"
-    }, {
-      "title": ["bandwidth"],
-      "dataIndex": "",
-      "key": "bandwidth"
     }, {
       "title": ["carrier"],
       "dataIndex": "",

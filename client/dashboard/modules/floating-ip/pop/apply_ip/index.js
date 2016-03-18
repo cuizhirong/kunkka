@@ -1,28 +1,29 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(callback, parent) {
   var props = {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      setTimeout(function(){
-        refs.carrier.setState({
-          data: [{
-            id: 1,
-            name: 'BGP'
-          }]
-        });
-      }, 100);
     },
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      request.getNetworks((networks) => {
+        var floatingNetworkId = networks.filter((item) => item['router:external'])[0].id;
+        var data = {};
+        data.floatingip = {};
+        data.floatingip.floating_network_id = floatingNetworkId;
+
+        request.createFloatingIp(data).then((res) => {
+          callback(res.floatingip);
+          cb(true);
+        });
+      });
     },
     onAction: function(field, state, refs) {
       switch(field) {
         case 'bandwidth':
-          console.log(state);
           break;
         default:
           break;

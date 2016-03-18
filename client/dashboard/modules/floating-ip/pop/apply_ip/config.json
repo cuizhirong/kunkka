@@ -1,19 +1,6 @@
 {
   "title": ["allocate", "floating_ip"],
-  "fields": [{
-    "type": "input",
-    "field": "name"
-  }, {
-    "type": "slider",
-    "field": "bandwidth",
-    "min": 1,
-    "max": 30,
-    "unit": "Mpbs"
-  }, {
-    "type": "select",
-    "field": "carrier",
-    "data": []
-  }],
+  "fields": [],
   "btn": {
     "value": "allocate",
     "type": "create",
