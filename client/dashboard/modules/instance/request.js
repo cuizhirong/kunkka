@@ -12,9 +12,32 @@ module.exports = {
       url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
     });
   },
-  poweroff: function(item) {
+  poweron: function(item) {
+    var data = {};
+    data['os-start'] = null;
+
     return fetch.post({
-      url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/stop'
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
+    });
+  },
+  poweroff: function(item, forceShutdown) {
+    var data = {};
+    data['os-stop'] = null;
+
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
+    });
+  },
+  reboot: function(item) {
+    var data = {};
+    data.reboot = {};
+    data.reboot.type = 'SOFT';
+
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
     });
   },
   editServerName: function(item, newName) {
@@ -25,6 +48,11 @@ module.exports = {
     return fetch.put({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id,
       data: data
+    });
+  },
+  getVncConsole: function(item) {
+    return fetch.post({
+      url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/vnc'
     });
   },
   getVolumeList: function() {

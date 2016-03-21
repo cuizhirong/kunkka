@@ -25,7 +25,6 @@ var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 
 var request = require('./request');
-var fetch = require('client/dashboard/cores/fetch');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
@@ -192,14 +191,11 @@ class Model extends React.Component {
       case 'vnc_console':
         break;
       case 'power_on':
+        request.poweron(rows[0]).then(function(res) {});
         break;
       case 'power_off':
-        shutdownInstance({
-          name: rows[0].name
-        }, function(_data, cb) {
-          request.poweroff(rows[0]).then((res) => {
-            cb(true);
-          });
+        shutdownInstance(rows[0], function() {
+
         });
         break;
       case 'refresh':
@@ -211,11 +207,10 @@ class Model extends React.Component {
         }, true);
         break;
       case 'reboot':
+        request.reboot(rows[0]).then(function(res) {});
         break;
       case 'instance_snapshot':
-        instSnapshot({
-          name: 'abc'
-        }, function() {});
+        instSnapshot(rows[0], function() {});
         break;
       case 'resize':
         break;
@@ -406,9 +401,7 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          fetch.post({
-            url: '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/action/vnc'
-          }).then((res) => {
+          fetch.getVncConsole(rows[0]).then((res) => {
             contents[tabKey] = (
               <VncConsole
                 src={res.console.url}

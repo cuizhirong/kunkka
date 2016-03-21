@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
 
@@ -10,16 +11,14 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      var forceShutdown = refs.is_force_shutdown.state.checked;
+      request.poweroff(obj, forceShutdown).then((res) => {
+        callback(res);
+        cb(true);
+      });
     },
     onAction: function(field, state, refs) {
       switch(field) {
-        case 'checkbox':
-          refs.warning_tip.setState({
-            hide: true
-          });
-          break;
         default:
           break;
       }
