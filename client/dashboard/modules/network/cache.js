@@ -1,8 +1,8 @@
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 
 module.exports = {
   getNetworkList: function() {
-    return request.get({
+    return fetch.get({
       url: '/api/v1/networks'
     }).then(function(data) {
       return data.networks;

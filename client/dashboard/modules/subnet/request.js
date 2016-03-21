@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     data.subnet = {};
     data.subnet.name = newName;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/subnets/' + item.id,
       data: data
     });
@@ -21,14 +21,14 @@ module.exports = {
   deleteSubnets: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/subnets/' + item.id
       }));
     });
     return RSVP.all(deferredList);
   },
   createSubnet: function(data) {
-    return request.post({
+    return fetch.post({
       url: '/proxy/neutron/v2.0/subnets',
       data: {
         subnet: data
@@ -36,7 +36,7 @@ module.exports = {
     });
   },
   updateSubnet: function(subnetId, data) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/subnets/' + subnetId,
       data: {
         subnet: data
@@ -44,19 +44,19 @@ module.exports = {
     });
   },
   connectRouter: function(routerId, data) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + routerId + '/add_router_interface',
       data: data
     });
   },
   disconnectRouter: function(routerId, data) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + routerId + '/remove_router_interface',
       data: data
     });
   },
   addInstance: function(serverId, subnetId, networkId) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + 'servers/' + serverId + '/os-interface',
       data: {
         interfaceAttachment: {

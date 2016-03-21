@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -14,12 +14,12 @@ module.exports = {
     });
   },
   getOverview: function() {
-    return request.get({
+    return fetch.get({
       url: '/api/v1/' + HALO.user.projectId + '/overview'
     });
   },
   getVolumeTypes: function() {
-    return request.get({
+    return fetch.get({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
     });
   },
@@ -27,7 +27,7 @@ module.exports = {
     var data = {};
     data.volume = _data;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
       data: data
     });
@@ -36,7 +36,7 @@ module.exports = {
     var data = {};
     data.snapshot = _data;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots',
       data: data
     });
@@ -46,13 +46,13 @@ module.exports = {
     data.volumeAttachment = {};
     data.volumeAttachment.volumeId = _data.volumeId;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + _data.serverId + '/os-volume_attachments',
       data: data
     });
   },
   detachInstance: function(data) {
-    return request.delete({
+    return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + data.serverId + '/os-volume_attachments/' + data.attachmentId
     });
   },
@@ -60,7 +60,7 @@ module.exports = {
     var data = {};
     data['os-extend'] = _data;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action',
       data: data
     });
@@ -70,7 +70,7 @@ module.exports = {
     data['os-update_readonly_flag'] = {};
     data['os-update_readonly_flag'].readonly = true;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action',
       data: data
     });
@@ -80,7 +80,7 @@ module.exports = {
     data['os-update_readonly_flag'] = {};
     data['os-update_readonly_flag'].readonly = false;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action',
       data: data
     });
@@ -90,7 +90,7 @@ module.exports = {
     data.volume = {};
     data.volume.name = newName;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id,
       data: data
     });
@@ -98,7 +98,7 @@ module.exports = {
   deleteVolumes: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id
       }));
     });

@@ -25,7 +25,7 @@ var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 
 var request = require('./request');
-var Request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
@@ -406,7 +406,7 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          Request.post({
+          fetch.post({
             url: '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/action/vnc'
           }).then((res) => {
             contents[tabKey] = (

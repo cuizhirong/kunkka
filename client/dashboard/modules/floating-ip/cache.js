@@ -1,8 +1,8 @@
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 
 module.exports = {
   getFloatingipList: function() {
-    return request.get({
+    return fetch.get({
       url: '/api/v1/' + HALO.user.projectId + '/floatingips'
     }).then(function(data) {
       return data.floatingips;

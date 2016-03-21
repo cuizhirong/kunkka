@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var Request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var router = require('client/dashboard/cores/router');
 var mainEvent = require('../main/event');
 
@@ -61,7 +61,7 @@ class VncConsole extends React.Component {
   }
 
   getData() {
-    Request.post({
+    fetch.post({
       url: this.props.url
     }).then((res) => {
       if (this.refresh) {

@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
   deleteSecurityGroup: function(items) {
     var deferredList = [];
     items.forEach((ele) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-groups/' + ele.id
       }));
     });
@@ -22,7 +22,7 @@ module.exports = {
     data.security_group = {};
     data.security_group = newData;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-groups/' + item.id,
       data: data
     });
@@ -31,13 +31,13 @@ module.exports = {
     let data = {};
     data.security_group = items;
 
-    return request.post({
+    return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-groups',
       data: data
     });
   },
   deleteRules: function(item) {
-    return request.delete({
+    return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-group-rules/' + item.id
     });
   }

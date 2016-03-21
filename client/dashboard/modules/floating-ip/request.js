@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
     });
   },
   createFloatingIp: function(data) {
-    return request.post({
+    return fetch.post({
       url: '/proxy/neutron/v2.0/floatingips',
       data: data
     });
@@ -29,7 +29,7 @@ module.exports = {
     data.floatingip = {};
     data.floatingip.port_id = portId;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/floatingips/' + item.id,
       data: data
     });
@@ -39,7 +39,7 @@ module.exports = {
     data.floatingip = {};
     data.floatingip.port_id = null;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/floatingips/' + item.id,
       data: data
     });
@@ -47,7 +47,7 @@ module.exports = {
   deleteFloatingIps: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-floating-ips/' + item.id
       }));
     });

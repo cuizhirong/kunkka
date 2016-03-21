@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     data.router = {};
     data.router.name = newName;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + item.id,
       data: data
     });
@@ -21,14 +21,14 @@ module.exports = {
   deleteRouters: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/routers/' + item.id
       }));
     });
     return RSVP.all(deferredList);
   },
   createRouter: function(data) {
-    return request.post({
+    return fetch.post({
       url: '/proxy/neutron/v2.0/routers',
       data: {
         router: data
@@ -36,7 +36,7 @@ module.exports = {
     });
   },
   updateRouter: function(routerId, data) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + routerId,
       data: {
         router: data
@@ -44,13 +44,13 @@ module.exports = {
     });
   },
   addInterface: function(routerId, data) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + routerId + '/add_router_interface',
       data: data
     });
   },
   changeFip: function(routerId, fipId) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/floatingips/' + fipId,
       data: {
         floatingip: {

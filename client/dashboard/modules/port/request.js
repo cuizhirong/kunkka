@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     data.port = {};
     data.port.name = newName;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/ports/' + item.id,
       data: data
     });
@@ -30,7 +30,7 @@ module.exports = {
   deletePorts: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/ports/' + item.id
       }));
     });
@@ -40,19 +40,19 @@ module.exports = {
     var data = {
       port: port
     };
-    return request.post({
+    return fetch.post({
       url: '/proxy/neutron/v2.0/ports',
       data: data
     });
   },
   editSecurityGroup: function(data, id) {
-    return request.put({
+    return fetch.put({
       url: '/proxy/neutron/v2.0/ports/' + id,
       data: data
     });
   },
   attachInstance: function(serverId, portId) {
-    return request.post({
+    return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/os-interface',
       data: {
         interfaceAttachment: {
@@ -62,7 +62,7 @@ module.exports = {
     });
   },
   detchInstance: function(serverId, portId) {
-    return request.delete({
+    return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/os-interface/' + portId
     });
   }

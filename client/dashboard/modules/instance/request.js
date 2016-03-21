@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 
 module.exports = {
   getList: function(cb, forced) {
@@ -8,12 +8,12 @@ module.exports = {
     });
   },
   deleteItem: function(item) {
-    return request.delete({
+    return fetch.delete({
       url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
     });
   },
   poweroff: function(item) {
-    return request.post({
+    return fetch.post({
       url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/stop'
     });
   },
@@ -22,7 +22,7 @@ module.exports = {
     data.server = {};
     data.server.name = newName;
 
-    return request.put({
+    return fetch.put({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id,
       data: data
     });

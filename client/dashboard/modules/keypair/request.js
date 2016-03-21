@@ -1,5 +1,5 @@
 var storage = require('client/dashboard/cores/storage');
-var request = require('client/dashboard/cores/request');
+var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -11,14 +11,14 @@ module.exports = {
   deleteKeypairs: function(items) {
     var deferredList = [];
     items.forEach((item) => {
-      deferredList.push(request.delete({
+      deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-keypairs/' + item.name
       }));
     });
     return RSVP.all(deferredList);
   },
   createKeypair: function(data, cb) {
-    return request.post({
+    return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-keypairs',
       data: {
         keypair: data
@@ -28,7 +28,7 @@ module.exports = {
     });
   },
   getKeypairByName: function(name) {
-    return request.get({
+    return fetch.get({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-keypairs/' + name
     });
   }
