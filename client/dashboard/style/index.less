@@ -65,16 +65,19 @@ a {
   }
 
   i[class^="glyphicon icon-status-"] {
-    &.active, &.available {
+    &.active,
+    &.available {
       color: @color_green;
     }
     &.in-use {
       color: @color_orange;
     }
-    &.down {
+    &.down,
+    &.paused {
       color: @color_gray;
     }
-    &.shutoff {
+    &.shutoff,
+    &.error {
       color: @color_red;
     }
   }

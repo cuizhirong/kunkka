@@ -21,18 +21,24 @@ module.exports = (str) => {
       type.icon = 'active';
       type.status = 'down';
       break;
+    case 'error':
+      type.icon = 'warning';
+      type.status = 'error';
+      break;
     case 'in-use':
       type.icon = 'light';
       type.status = 'in-use';
       break;
-    case 'shutoff':
+    case 'paused':
       type.icon = 'paused';
+      type.status = 'paused';
+      break;
+    case 'shutoff':
+      type.icon = 'shutdown';
       type.status = 'shutoff';
       break;
-    case 'build':
-      type.status = 'loading';
-      break;
     default:
+      type.status = 'loading';
       break;
   }
 
