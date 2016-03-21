@@ -5,7 +5,12 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['network', 'subnet'], forced).then(function(data) {
-      return data.network;
+      return data.network.filter((n) => {
+        if (n['router:external']) {
+          return false;
+        }
+        return true;
+      });
     });
   },
   editNetworkName: function(item, newName) {

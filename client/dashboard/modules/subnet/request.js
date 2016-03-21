@@ -70,7 +70,12 @@ module.exports = {
   },
   getNetworks: function() {
     return storage.getList(['network']).then(function(data) {
-      return data.network;
+      return data.network.filter((n) => {
+        if (n['router:external']) {
+          return false;
+        }
+        return true;
+      });
     });
   },
   getInstances: function() {
