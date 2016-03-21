@@ -51,7 +51,7 @@ class Model extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.style.display !== 'none') {
+    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.getTableData(false);
     }
   }
