@@ -14,7 +14,6 @@ var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 var __ = require('i18n/client/lang.json');
-var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -31,16 +30,6 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'router') {
-        this.refresh(null, false);
-        if (data.action === 'delete'
-          && data.stage === 'end'
-          && data.resource_id === router.getPathList()[2]) {
-          router.replaceState('/project/router');
-        }
-      }
-    });
   }
 
   componentWillReceiveProps(nextProps) {

@@ -9,7 +9,6 @@ var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
-var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -26,16 +25,6 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'keypair') {
-        this.refresh(null, false);
-        if (data.action === 'delete'
-          && data.stage === 'end'
-          && data.resource_id === router.getPathList()[2]) {
-          router.replaceState('/project/keypair');
-        }
-      }
-    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {

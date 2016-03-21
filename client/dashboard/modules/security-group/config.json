@@ -38,11 +38,6 @@
       "title": ["description"],
       "dataIndex": "description",
       "key": "desc"
-    }, {
-      "title": ["create", "time"],
-      "dataIndex": "created",
-      "key": "created",
-      "type": "time"
     }],
     "data": [],
     "detail": {

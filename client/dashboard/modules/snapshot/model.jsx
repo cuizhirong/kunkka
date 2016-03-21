@@ -32,12 +32,12 @@ class Model extends React.Component {
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'router') {
+      if (data.resource_type === 'snapshot') {
         this.refresh(null, false);
         if (data.action === 'delete'
           && data.stage === 'end'
           && data.resource_id === router.getPathList()[2]) {
-          router.replaceState('/project/router');
+          router.replaceState('/project/snapshot');
         }
       }
     });
