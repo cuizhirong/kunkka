@@ -274,19 +274,13 @@ class Model extends React.Component {
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,
-      content: item.association.type === 'router' ?
+      content: item.association.type === 'server' ?
         <span>
           <i className="glyphicon icon-router" />
           <a data-type="router" href={'/project/router/' + item.association.device.id}>
             {item.association.device.name}
           </a>
         </span> : '-'
-    }, {
-      title: __.bandwidth,
-      content: '-'
-    }, {
-      title: __.carrier,
-      content: '-'
     }, {
       title: __.status,
       type: 'status',

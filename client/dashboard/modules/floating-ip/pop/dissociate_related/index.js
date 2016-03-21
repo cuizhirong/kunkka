@@ -3,9 +3,8 @@ var config = require('./config.json');
 var request = require('../../request');
 
 function pop(obj, callback, parent) {
-
   config.fields[1].text = obj.name;
-  config.fields[2].text = 'instance1';
+  config.fields[2].text = obj.association.device.name;
 
   var props = {
     parent: parent,

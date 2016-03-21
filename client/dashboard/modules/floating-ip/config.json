@@ -49,10 +49,6 @@
       "dataIndex": "",
       "key": "assc_resource"
     }, {
-      "title": ["carrier"],
-      "dataIndex": "",
-      "key": "carrier"
-    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",

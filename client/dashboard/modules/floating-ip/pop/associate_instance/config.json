@@ -13,6 +13,11 @@
       "link_info": ["create", "instance"]
     }
   }, {
+    "type": "short_tip",
+    "field": "tip_no_port_instance",
+    "has_label": true,
+    "hide": false
+  }, {
     "type": "select",
     "field": "port",
     "hide": true
