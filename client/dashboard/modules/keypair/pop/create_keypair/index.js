@@ -14,7 +14,7 @@ function pop(callback, parent) {
         data = {
           name: name
         };
-        request.createKeypair(data, (res) => {
+        request.createKeypair(data).then((res) => {
           var container = document.getElementById('modal-container').getElementsByClassName('modal')[0];
           var linkNode = document.createElement('a');
           if (linkNode.download !== undefined) {
@@ -31,7 +31,7 @@ function pop(callback, parent) {
           name: name,
           public_key: refs.public_key.state.value
         };
-        request.createKeypair(data, (res) => {
+        request.createKeypair(data).then((res) => {
           cb(true);
           callback && callback(res);
         });

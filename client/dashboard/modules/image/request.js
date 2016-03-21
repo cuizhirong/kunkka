@@ -1,9 +1,9 @@
 var storage = require('client/dashboard/cores/storage');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['image'], forced).then(function(data) {
-      cb(data.image);
+      return data.image;
     });
   }
 

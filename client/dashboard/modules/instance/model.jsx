@@ -135,7 +135,7 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList((res) => {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
       table.data = res;
       table.loading = false;
@@ -154,7 +154,7 @@ class Model extends React.Component {
           detail.refresh();
         }
       });
-    }, forceUpdate);
+    });
   }
 
   onAction(field, actionType, refs, data) {
@@ -647,7 +647,7 @@ class Model extends React.Component {
         });
         break;
       case 'create_volume':
-        request.getVolumeList((res) => {
+        request.getVolumeList().then((res) => {
           data.volume = res;
           attachVolume(data, function() {});
         });
@@ -656,9 +656,9 @@ class Model extends React.Component {
         detachVolume(data.rawItem, function() {});
         break;
       case 'create_network':
-        request.getSubnetList((res) => {
+        request.getSubnetList().then((res) => {
           data.subnet = res;
-          request.getPortList((ports) => {
+          request.getPortList().then((ports) => {
             data.port = ports;
             joinNetwork(data, function() {});
           });

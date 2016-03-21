@@ -87,7 +87,7 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList((res) => {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
       table.data = res;
       table.loading = false;
@@ -106,7 +106,7 @@ class Model extends React.Component {
           detail.refresh();
         }
       });
-    }, forceUpdate);
+    });
   }
 
   onAction(field, actionType, refs, data) {

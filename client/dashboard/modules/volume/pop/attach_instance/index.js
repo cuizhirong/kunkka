@@ -9,7 +9,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getInstances((instances) => {
+      request.getInstances().then((instances) => {
         var data = [];
 
         instances.forEach((ele) => {

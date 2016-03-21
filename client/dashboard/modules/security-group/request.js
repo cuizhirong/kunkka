@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['securitygroup'], forced).then(function(data) {
-      cb(data.securitygroup);
+      return data.securitygroup;
     });
   },
   deleteSecurityGroup: function(items) {

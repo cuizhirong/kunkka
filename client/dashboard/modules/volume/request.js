@@ -3,14 +3,14 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['volume', 'instance'], forced).then(function(data) {
-      cb(data.volume);
+      return data.volume;
     });
   },
-  getInstances: function(cb) {
+  getInstances: function() {
     return storage.getList(['instance']).then(function(data) {
-      cb(data.instance);
+      return data.instance;
     });
   },
   getOverview: function() {

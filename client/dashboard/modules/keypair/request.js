@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['keypair'], forced).then(function(data) {
-      cb(data.keypair);
+      return data.keypair;
     });
   },
   deleteKeypairs: function(items) {
@@ -17,14 +17,14 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  createKeypair: function(data, cb) {
+  createKeypair: function(data) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-keypairs',
       data: {
         keypair: data
       }
     }).then(function(res) {
-      cb(res.keypair);
+      return res.keypair;
     });
   },
   getKeypairByName: function(name) {

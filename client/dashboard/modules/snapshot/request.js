@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['snapshot'], forced).then(function(data) {
-      cb(data.snapshot);
+      return data.snapshot;
     });
   },
   editSnapshotName: function(item, newName) {

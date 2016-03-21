@@ -3,19 +3,19 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['floatingip', 'instance', 'network'], forced).then(function(data) {
-      cb(data.floatingip);
+      return data.floatingip;
     });
   },
-  getNetworks: function(cb) {
+  getNetworks: function() {
     return storage.getList(['network']).then(function(data) {
-      cb(data.network);
+      return data.network;
     });
   },
-  getInstances: function(cb) {
+  getInstances: function() {
     return storage.getList(['instance']).then(function(data) {
-      cb(data.instance);
+      return data.instance;
     });
   },
   createFloatingIp: function(data) {

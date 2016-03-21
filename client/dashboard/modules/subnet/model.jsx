@@ -109,7 +109,7 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList((res) => {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
       table.data = res;
       table.loading = false;
@@ -128,7 +128,7 @@ class Model extends React.Component {
           detail.refresh();
         }
       });
-    }, forceUpdate);
+    });
   }
 
   onAction(field, actionType, refs, data) {
@@ -314,13 +314,13 @@ class Model extends React.Component {
         });
         break;
       case 'crt_port':
-        request.getSecurityGroups((res) => {
+        request.getSecurityGroups().then((res) => {
           data.sg = res;
           createPort(data, function() {});
         });
         break;
       case 'connect_inst':
-        request.getInstances((res) => {
+        request.getInstances().then((res) => {
           data.inst = res;
           connectInst(data, function() {});
         });

@@ -10,7 +10,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getInstances((instances) => {
+      request.getInstances().then((instances) => {
         refs.instance.setState({
           data: instances,
           value: instances[0].id
@@ -24,7 +24,7 @@ function pop(obj, callback, parent) {
       });
     },
     onAction: function(field, status, refs) {
-      switch(field) {
+      switch (field) {
         case 'instance':
           if (refs.instance.state.clicked) {
             createInstance((res) => {

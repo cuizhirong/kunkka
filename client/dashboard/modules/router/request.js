@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['router', 'network', 'subnet'], forced).then(function(data) {
-      cb(data.router);
+      return data.router;
     });
   },
   editRouterName: function(item, newName) {
@@ -59,18 +59,22 @@ module.exports = {
       }
     });
   },
-  getGateway: function(cb) {
+  getGateway: function() {
     return storage.getList(['network']).then(function(data) {
+      var ret;
       data.network.some((item) => {
         if (item['router:external']) {
-          cb(item.id);
+          ret = item.id;
+          return true;
         }
+        return false;
       });
+      return ret;
     });
   },
-  getSubnets: function(cb) {
+  getSubnets: function() {
     return storage.getList(['subnet']).then(function(data) {
-      cb(data.subnet);
+      return data.subnet;
     });
   }
 };

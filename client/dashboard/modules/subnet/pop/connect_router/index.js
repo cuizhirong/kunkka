@@ -10,7 +10,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getRouters((data) => {
+      request.getRouters().then((data) => {
         if (data.length > 0) {
           refs.router.setState({
             data: data,

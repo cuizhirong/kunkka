@@ -6,10 +6,9 @@ function pop(callback, parent) {
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {
-    },
+    onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      request.getNetworks((networks) => {
+      request.getNetworks().then((networks) => {
         var floatingNetworkId = networks.filter((item) => item['router:external'])[0].id;
         var data = {};
         data.floatingip = {};
@@ -22,7 +21,7 @@ function pop(callback, parent) {
       });
     },
     onAction: function(field, state, refs) {
-      switch(field) {
+      switch (field) {
         case 'bandwidth':
           break;
         default:

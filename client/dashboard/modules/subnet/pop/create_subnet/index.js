@@ -10,7 +10,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getNetworks((data) => {
+      request.getNetworks().then((data) => {
         if (data.length > 0) {
           var selectedItem = data[0].id;
           if (obj && obj.id) {

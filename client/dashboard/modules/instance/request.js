@@ -2,9 +2,9 @@ var storage = require('client/dashboard/cores/storage');
 var fetch = require('client/dashboard/cores/fetch');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['instance'], forced).then(function(data) {
-      cb(data.instance);
+      return data.instance;
     });
   },
   deleteItem: function(item) {
@@ -27,19 +27,19 @@ module.exports = {
       data: data
     });
   },
-  getVolumeList: function(cb, forced) {
-    return storage.getList(['volume'], forced).then(function(data) {
-      cb(data.volume);
+  getVolumeList: function() {
+    return storage.getList(['volume']).then(function(data) {
+      return data.volume;
     });
   },
-  getSubnetList: function(cb, forced) {
-    return storage.getList(['subnet'], forced).then(function(data) {
-      cb(data.subnet);
+  getSubnetList: function() {
+    return storage.getList(['subnet']).then(function(data) {
+      return data.subnet;
     });
   },
-  getPortList: function(cb, forced) {
-    return storage.getList(['port'], forced).then(function(data) {
-      cb(data.port);
+  getPortList: function() {
+    return storage.getList(['port']).then(function(data) {
+      return data.port;
     });
   }
 };

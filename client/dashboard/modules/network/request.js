@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['network', 'subnet'], forced).then(function(data) {
-      cb(data.network);
+      return data.network;
     });
   },
   editNetworkName: function(item, newName) {

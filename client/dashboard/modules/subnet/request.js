@@ -3,9 +3,9 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['subnet', 'network', 'router', 'instance'], forced).then(function(data) {
-      cb(data.subnet);
+      return data.subnet;
     });
   },
   editSubnetName: function(item, newName) {
@@ -68,24 +68,24 @@ module.exports = {
       }
     });
   },
-  getNetworks: function(cb) {
+  getNetworks: function() {
     return storage.getList(['network']).then(function(data) {
-      cb(data.network);
+      return data.network;
     });
   },
-  getInstances: function(cb) {
+  getInstances: function() {
     return storage.getList(['instance']).then(function(data) {
-      cb(data.instance);
+      return data.instance;
     });
   },
-  getRouters: function(cb) {
+  getRouters: function() {
     return storage.getList(['router']).then(function(data) {
-      cb(data.router);
+      return data.router;
     });
   },
-  getSecurityGroups: function(cb, forced) {
+  getSecurityGroups: function(forced) {
     return storage.getList(['securitygroup'], forced).then(function(data) {
-      cb(data.securitygroup);
+      return data.securitygroup;
     });
   }
 };

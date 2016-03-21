@@ -100,7 +100,7 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList((res) => {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
       table.data = res;
       table.loading = false;
@@ -119,7 +119,7 @@ class Model extends React.Component {
           detail.refresh();
         }
       });
-    }, forceUpdate);
+    });
   }
 
   onAction(field, actionType, refs, data) {
@@ -411,7 +411,7 @@ class Model extends React.Component {
         });
         break;
       case 'cnt_subnet':
-        request.getSubnets((res) => {
+        request.getSubnets().then((res) => {
           data.subnet = res;
           relatedSubnet(data, function() {});
         });

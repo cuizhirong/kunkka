@@ -52,7 +52,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getSubnets((res) => {
+      request.getSubnets().then((res) => {
         if (res.length > 0) {
           refs.subnet.setState({
             data: res,

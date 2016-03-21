@@ -3,18 +3,18 @@ var fetch = require('client/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function(cb, forced) {
+  getList: function(forced) {
     return storage.getList(['port', 'instance', 'subnet', 'securitygroup'], forced).then((data) => {
-      cb(data.port);
+      return data.port;
     });
   },
-  getSecuritygroupList: function(cb, forced) {
+  getSecuritygroupList: function(forced) {
     return storage.getList(['securitygroup'], forced);
   },
-  getInstanceList: function(cb, forced) {
+  getInstanceList: function(forced) {
     return storage.getList(['instance'], forced);
   },
-  getSubnetList: function(cb, forced) {
+  getSubnetList: function(forced) {
     return storage.getList(['subnet'], forced);
   },
   editPortName: function(item, newName) {

@@ -10,7 +10,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getInstances((data) => {
+      request.getInstances().then((data) => {
         if (data.length > 0) {
           refs.instance.setState({
             data: data,

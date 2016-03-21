@@ -11,7 +11,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getGateway((res) => {
+      request.getGateway().then((res) => {
         gatewayId = res;
         refs.btn.setState({
           disabled: false
