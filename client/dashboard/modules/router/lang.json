@@ -11,7 +11,9 @@
     "public_gateway": "public gateway",
     "router": "Router",
     "tip_en_gw": "",
-    "tip_dis_gw": "Do you want to disable external gateway of router {0} ?"
+    "tip_dis_gw": "Do you want to disable external gateway of router {0} ?",
+    "add_interface": "Bind ",
+    "delete_interface": "Unbind "
   },
   "zh-CN": {
     "en_gw": "是否开启路由器{0}上的公网网关？",
@@ -25,6 +27,8 @@
     "public_gateway": "公网网关",
     "router": "路由器",
     "tip_en_gw": "公网网关是路由器与外部网络（公网）通信的通道，开启公网网关让你的VDC内部具备与公网通信的能力。",
-    "tip_dis_gw": "是否关闭路由器{0}上的公网网关？"
+    "tip_dis_gw": "是否关闭路由器{0}上的公网网关？",
+    "add_interface": "绑定",
+    "delete_interface": "解绑"
   }
 }

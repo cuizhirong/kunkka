@@ -19,11 +19,26 @@ var snapshot = require('../modules/snapshot/cache');
 var subnet = require('../modules/subnet/cache');
 var volume = require('../modules/volume/cache');
 
+
+var map = {
+  network: ['subnet'],
+  subnet: ['network']
+};
+
 function Storage() {
   var that = this;
   this.cache = [];
   msgEvent.on('message', function(data) {
-    that.getList([data.resource_type], true).then(function() {
+    var type = data.resource_type,
+      list = [];
+
+    if (map[type]) {
+      list = map[type].concat(type);
+    } else {
+      list = [type];
+    }
+
+    that.getList(list, true).then(function() {
       msgEvent.emit('dataChange', data);
     });
   });

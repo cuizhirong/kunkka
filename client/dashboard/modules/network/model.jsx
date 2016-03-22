@@ -35,7 +35,7 @@ class Model extends React.Component {
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'network') {
+      if (data.resource_type === 'network' || data.resource_type === 'subnet') {
         this.refresh(null, false);
         if (data.action === 'delete'
           && data.stage === 'end'
