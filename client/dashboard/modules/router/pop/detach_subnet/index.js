@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
   config.fields[1].text = obj.rawItem.name;
@@ -10,7 +11,9 @@ function pop(obj, callback, parent) {
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      callback();
+      request.detachSubnet(obj).then(() => {
+        callback();
+      });
       cb(true);
     },
     onAction: function(field, state, refs) {},

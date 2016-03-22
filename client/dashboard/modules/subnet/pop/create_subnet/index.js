@@ -40,14 +40,9 @@ function pop(obj, callback, parent) {
         data.gateway_ip = refs.gw_address.state.value;
       }
       request.createSubnet(data).then((res) => {
-        cb(true);
         callback && callback(res.subnet);
+        cb(true);
       });
-      /*request.createSubnet(data).then((message) => {
-        console.log(message);
-      }).catch((error) => {
-        console.log(error);
-      });*/
     },
     onAction: function(field, status, refs) {
       switch (field) {

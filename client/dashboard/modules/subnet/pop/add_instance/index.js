@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createInstance = require('client/dashboard/modules/instance/pop/create_instance/index');
 
-function pop(obj, callback, parent) {
+function pop(obj, detailBtn, callback, parent) {
   config.fields[0].text = obj.name;
 
   var props = {
@@ -23,7 +23,24 @@ function pop(obj, callback, parent) {
       });
     },
     onConfirm: function(refs, cb) {
-      request.addInstance(refs.instance.state.value, obj.id, obj.network_id).then((res) => {
+      var networkId = {};
+      if(detailBtn === false) {
+        networkId = {
+          interfaceAttachment: {
+            fixed_ips: [{
+              subnet_id: obj.id
+            }],
+            net_id: obj.network_id
+          }
+        };
+      } else {
+        networkId = {
+          interfaceAttachment: {
+            port_id: obj.id
+          }
+        };
+      }
+      request.addInstance(refs.instance.state.value, networkId).then((res) => {
         cb(true);
         callback && callback(res);
       });

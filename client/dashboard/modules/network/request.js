@@ -47,5 +47,10 @@ module.exports = {
         subnet: data
       }
     });
+  },
+  deleteSubnet: function(item) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/subnets/' + item.id
+    });
   }
 };

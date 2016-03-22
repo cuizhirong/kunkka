@@ -174,7 +174,12 @@ class Model extends React.Component {
         disableGateway(rows[0], function() {});
         break;
       case 'cnt_subnet':
-        relatedSubnet(rows[0], function() {});
+        request.getSubnets().then((res) => {
+          var items = {};
+          items.rawItem = rows[0];
+          items.subnet = res;
+          relatedSubnet(data, function() {});
+        });
         break;
       default:
         break;
@@ -407,11 +412,7 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editRouterName(rawItem, newName).then((res) => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
+        request.editRouterName(rawItem, newName).then((res) => {});
         break;
       case 'cnt_subnet':
         request.getSubnets().then((res) => {

@@ -2,8 +2,6 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-var createSubnet = require('client/dashboard/modules/subnet/pop/create_subnet/index');
-
 function pop(obj, callback, parent) {
   var getSubnetGroup = function(subnets) {
     var subnetArray = [];
@@ -14,6 +12,7 @@ function pop(obj, callback, parent) {
           name: subnet.network.name,
           data: [{
             id: i,
+            uuid: subnet.id,
             name: subnet.name + '(' + subnet.cidr + ')'
           }]
         });
@@ -24,6 +23,7 @@ function pop(obj, callback, parent) {
             duplication = duplication || true;
             ele.data.push({
               id: i,
+              uuid: subnet.id,
               name: subnet.name + '(' + subnet.cidr + ')'
             });
           } else {
@@ -36,6 +36,7 @@ function pop(obj, callback, parent) {
             name: subnet.network.name,
             data: [{
               id: i,
+              uuid: subnet.id,
               name: subnet.name + '(' + subnet.cidr + ')'
             }]
           });
@@ -54,43 +55,31 @@ function pop(obj, callback, parent) {
     onInitialize: function(refs) {
       request.getSubnets().then((res) => {
         if (res.length > 0) {
-          refs.subnet.setState({
-            data: res,
-            value: res[0].id
-          });
           refs.btn.setState({
             disabled: false
+          });
+          refs.subnet.setState({
+            value: res[0].id
           });
         }
       });
     },
     onConfirm: function(refs, cb) {
-      request.addInterface(obj.id, {
+      request.addInterface(obj.rawItem.id, {
         subnet_id: refs.subnet.state.value
       }).then((res) => {
+        callback && callback();
         cb(true);
-        callback && callback(res);
       });
     },
     onAction: function(field, status, refs) {
-      switch (field) {
-        case 'subnet':
-          if (refs.subnet.state.clicked) {
-            createSubnet(null, (res) => {
-              refs.subnet.setState({
-                data: [res],
-                value: res.id,
-                clicked: false
-              });
-              refs.btn.setState({
-                disabled: false
-              });
-            }, refs.modal);
-          }
-          break;
-        default:
-          break;
-      }
+      var index = refs.subnet.state.value,
+        allSubnet = [];
+      status.data.map(ele => allSubnet.push(...ele.data));
+      allSubnet.sort((a, b) => {
+        return a.id - b.id;
+      });
+      refs.subnet.state.value = allSubnet[index].uuid;
     }
   };
 

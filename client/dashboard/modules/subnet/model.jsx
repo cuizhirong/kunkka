@@ -19,7 +19,6 @@ var connectRouter = require('./pop/connect_router/index');
 var disconnectRouter = require('./pop/disconnect_router/index');
 var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
-var connectInst = require('./pop/connect_inst/index');
 var createPort = require('./pop/create_port/index');
 var msgEvent = require('client/dashboard/cores/msg_event');
 
@@ -171,7 +170,7 @@ class Model extends React.Component {
         disconnectRouter(rows[0], function() {});
         break;
       case 'add_inst':
-        addInstance(rows[0], function() {});
+        addInstance(rows[0], false, function() {});
         break;
       case 'mdfy_subnet':
         modifySubnet(rows[0], function() {});
@@ -310,11 +309,7 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editSubnetName(rawItem, newName).then((res) => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
+        request.editSubnetName(rawItem, newName).then((res) => {});
         break;
       case 'crt_port':
         request.getSecurityGroups().then((res) => {
@@ -322,11 +317,11 @@ class Model extends React.Component {
           createPort(data, function() {});
         });
         break;
+      case 'rmv_port':
+        request.deletePort(data).then(() => {});
+        break;
       case 'connect_inst':
-        request.getInstances().then((res) => {
-          data.inst = res;
-          connectInst(data, function() {});
-        });
+        addInstance(data.rawItem, true, function() {});
         break;
       default:
         break;
@@ -395,7 +390,7 @@ class Model extends React.Component {
         status: getStatusIcon(element.status),
         operation: <div>
             <i className="glyphicon icon-associate action" onClick={this.onDetailAction.bind(this, 'description', 'connect_inst', {rawItem: element})}/>
-            <i className="glyphicon icon-delete" />
+            <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_port', element)} />
           </div>
       };
       tableContent.push(dataObj);

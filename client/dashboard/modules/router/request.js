@@ -76,5 +76,14 @@ module.exports = {
     return storage.getList(['subnet']).then(function(data) {
       return data.subnet;
     });
+  },
+  detachSubnet: function(item) {
+    var data = {};
+    data.subnet_id = item.childItem.id;
+
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/routers/' + item.rawItem.id + '/remove_router_interface',
+      data: data
+    });
   }
 };

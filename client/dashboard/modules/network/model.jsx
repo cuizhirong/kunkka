@@ -276,14 +276,10 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editNetworkName(rawItem, newName).then((res) => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
+        request.editNetworkName(rawItem, newName).then((res) => {});
         break;
       case 'crt_subnet':
-        createSubnet(function() {});
+        createSubnet(data.rawItem, function() {});
         break;
       case 'rmv_subnet':
         deleteModal({
@@ -291,6 +287,7 @@ class Model extends React.Component {
           type: 'subnet',
           data: [data.childItem],
           onDelete: function(_data, cb) {
+            request.deleteSubnet(data.childItem).then(() => {});
             cb(true);
           }
         });
@@ -323,7 +320,7 @@ class Model extends React.Component {
     item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name}</a>,
+        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.slice(0, 8) + ')'}</a>,
         cidr: element.cidr,
         router: element.router ? element.router.name : '',
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {

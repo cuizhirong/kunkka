@@ -16,7 +16,7 @@
     "text": ""
   }],
   "btn": {
-    "value": "add",
+    "value": "dissociate",
     "type": "create",
     "disabled": false
   }
