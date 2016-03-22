@@ -36,7 +36,7 @@ class DetailMinitable extends React.Component {
       <div className="toggle">
         <div className="toggle-title" onClick={this.toggle}>
           {this.props.title}
-          <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'down' : 'up')} />
+          <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'up' : 'down')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-com-detail-minitable">

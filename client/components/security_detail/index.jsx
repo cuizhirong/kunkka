@@ -54,7 +54,7 @@ class BasicProps extends React.Component {
       <div className="toggle">
         <div className="toggle-title" onClick={this.toggle}>
           {this.props.title}
-          <i className={'glyphicon icon-arrow-' + (state.toggle ? 'down' : 'up')} />
+          <i className={'glyphicon icon-arrow-' + (state.toggle ? 'up' : 'down')} />
         </div>
         <div className={'toggle-content' + (state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-com-security-detail">

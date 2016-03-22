@@ -80,7 +80,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'image':
           column.render = (col, item, i) => {
-            var label = item.image_label && item.image_label.toLowerCase();
+            var label = item.image.image_label && item.image.image_label.toLowerCase();
             return item.image ?
               <span>
                 <i className={'icon-image-default ' + label}/>
@@ -189,6 +189,10 @@ class Model extends React.Component {
         createInstance({name: 'abc'}, function() {});
         break;
       case 'vnc_console':
+        request.getVncConsole(rows[0]).then((res) => {
+          var url = res.console.url;
+          window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
+        });
         break;
       case 'power_on':
         request.poweron(rows[0]).then(function(res) {});
@@ -401,7 +405,7 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          fetch.getVncConsole(rows[0]).then((res) => {
+          request.getVncConsole(rows[0]).then((res) => {
             contents[tabKey] = (
               <VncConsole
                 src={res.console.url}
