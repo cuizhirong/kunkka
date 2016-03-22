@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
   var getSubnetGroup = function(subnets) {
@@ -11,6 +12,7 @@ function pop(obj, callback, parent) {
           name: subnet.network.name,
           data: [{
             id: i,
+            uuid: subnet.network_id,
             name: subnet.name + '(' + subnet.cidr + ')'
           }]
         });
@@ -21,6 +23,7 @@ function pop(obj, callback, parent) {
             duplication = duplication || true;
             ele.data.push({
               id: i,
+              uuid: subnet.network_id,
               name: subnet.name + '(' + subnet.cidr + ')'
             });
           } else {
@@ -33,6 +36,7 @@ function pop(obj, callback, parent) {
             name: subnet.network.name,
             data: [{
               id: i,
+              uuid: subnet.network_id,
               name: subnet.name + '(' + subnet.cidr + ')'
             }]
           });
@@ -45,12 +49,14 @@ function pop(obj, callback, parent) {
     var portArray = [];
     ports.map((port, i) => {
       portArray.push({
-        id: i,
+        id: port.id,
         name: port.fixed_ips[0].ip_address + '/' + (port.name || ('(' + port.id.slice(0, 8) + ')'))
       });
     });
     return portArray;
   };
+  var networkId = {},
+    allSubnet = [];
 
   config.fields[0].text = obj.rawItem.name;
   config.fields[1].data = getSubnetGroup(obj.subnet);
@@ -59,9 +65,19 @@ function pop(obj, callback, parent) {
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      getSubnetGroup(obj.subnet).map((group) => {
+        allSubnet.push(...group.data);
+      });
+      allSubnet.sort((a, b) => {
+        return a.id - b.id;
+      });
+      networkId.net_id = allSubnet[0].uuid;
+    },
     onConfirm: function(refs, cb) {
-      callback();
+      request.joinNetwork(obj.rawItem, networkId).then(() => {
+        callback();
+      });
       cb(true);
     },
     onAction: function(field, state, refs) {
@@ -78,6 +94,15 @@ function pop(obj, callback, parent) {
           break;
         default:
           break;
+      }
+      if(state.checkedField === 'select_subnet') {
+        networkId = {};
+        var index = refs.select_subnet.state.value;
+        networkId.net_id = index ? allSubnet[index].uuid : allSubnet[0].uuid;
+      } else {
+        networkId = {};
+        var portId = refs.select_interface.state.value;
+        networkId.port_id = portId ? portId : getPort(obj.port)[0].id;
       }
     },
     onLinkClick: function() {

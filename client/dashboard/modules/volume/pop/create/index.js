@@ -2,10 +2,12 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
-  if (typeof obj === 'object') {
-    config.fields[0].text = '';
+function pop(obj, detailBtn, callback, parent) {
+  if (detailBtn === true) {
+    config.fields[0].text = obj.name;
     config.fields[0].hide = false;
+  } else {
+    config.fields[0].hide = true;
   }
 
   request.getOverview().then((overview) => {

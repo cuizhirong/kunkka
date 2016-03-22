@@ -638,6 +638,7 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
@@ -650,28 +651,48 @@ class Model extends React.Component {
       case 'create_volume':
         request.getVolumeList().then((res) => {
           data.volume = res;
-          attachVolume(data, function() {});
+          attachVolume(data, function() {
+            that.refresh({
+              detailRefresh: true
+            }, true);
+          });
         });
         break;
       case 'delete_volume':
-        detachVolume(data.rawItem, function() {});
+        detachVolume(data, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'create_network':
         request.getSubnetList().then((res) => {
           data.subnet = res;
           request.getPortList().then((ports) => {
             data.port = ports;
-            joinNetwork(data, function() {});
+            joinNetwork(data, function() {
+              that.refresh({
+                detailRefresh: true
+              }, true);
+            });
           });
         });
         break;
       case 'delete_network':
-        detachNetwork(data, function() {});
-        break;
-      case 'create_related_snapshot':
-        instSnapshot(data.rawItem, function() {});
+        detachNetwork(data, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'create_related_instance':
+        break;
+      case 'create_related_snapshot':
+        instSnapshot(data.rawItem, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete_related_snapshot':
         deleteModal({
@@ -679,6 +700,11 @@ class Model extends React.Component {
           type: 'inst_snapshot',
           data: [data.childItem],
           onDelete: function(_data, cb) {
+            request.deleteSnapshot(data.childItem).then(() => {
+              that.refresh({
+                detailRefresh: true
+              }, true);
+            });
             cb(true);
           }
         });

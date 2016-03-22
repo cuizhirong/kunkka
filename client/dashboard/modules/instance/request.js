@@ -69,5 +69,47 @@ module.exports = {
     return storage.getList(['port']).then(function(data) {
       return data.port;
     });
+  },
+  deleteSnapshot: function(item) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/images/' + item.id
+    });
+  },
+  createSnapshot: function(snapshot, item) {
+    var data = {};
+    data.createImage = snapshot;
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
+    });
+  },
+  attachVolume: function(item, volume) {
+    var data = {};
+    data.volumeAttachment = {
+      volumeId: volume.volumeId
+    };
+
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/os-volume_attachments',
+      data: data
+    });
+  },
+  detachVolume: function(item) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.rawItem.id + '/os-volume_attachments/' + item.childItem.id
+    });
+  },
+  joinNetwork: function(item, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/os-interface',
+      data: {
+        interfaceAttachment: data
+      }
+    });
+  },
+  detachNetwork: function(item) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.rawItem.id + '/os-interface/' + item.childItem.port.id
+    });
   }
 };

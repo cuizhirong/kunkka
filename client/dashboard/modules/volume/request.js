@@ -103,5 +103,10 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  deleteSnapshot: function(item) {
+    return fetch.delete({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + item.id
+    });
   }
 };

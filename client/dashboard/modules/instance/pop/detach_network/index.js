@@ -1,5 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
+var request = require('../../request');
 
 function pop(obj, callback, parent) {
 
@@ -11,8 +12,10 @@ function pop(obj, callback, parent) {
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      callback();
-      cb(true);
+      request.detachNetwork(obj).then(() => {
+        callback();
+        cb(true);
+      });
     },
     onAction: function(field, state, refs) {},
     onLinkClick: function() {}

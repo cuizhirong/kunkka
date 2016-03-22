@@ -160,11 +160,10 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
-
     var that = this;
     switch (key) {
       case 'create':
-        createModal(rows[0], function(){
+        createModal(rows[0], false, function(){
           that.refresh(null, true);
         });
         break;
@@ -446,6 +445,7 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
@@ -455,11 +455,17 @@ class Model extends React.Component {
           }, true);
         });
         break;
-      case 'create_related_snapshot':
-        createSnapshot(data.rawItem, function(){});
-        break;
       case 'create_related_volume':
-        createModal(data.childItem, function(){});
+        createModal(data.childItem, true, function(){
+          that.refresh(null, true);
+        });
+        break;
+      case 'create_related_snapshot':
+        createSnapshot(data.rawItem, function(){
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete_related_snapshot':
         deleteModal({
@@ -467,6 +473,16 @@ class Model extends React.Component {
           type: 'snapshot',
           data: [data.childItem],
           onDelete: function(_data, cb) {
+            request.deleteSnapshot(data.childItem).then(() => {
+              that.refresh({
+                detailRefresh: true
+              }, true);
+              setTimeout(() => {
+                that.refresh({
+                  detailRefresh: true
+                }, true);
+              }, 2000);
+            });
             cb(true);
           }
         });
