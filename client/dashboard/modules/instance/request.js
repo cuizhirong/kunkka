@@ -1,16 +1,21 @@
 var storage = require('client/dashboard/cores/storage');
 var fetch = require('client/dashboard/cores/fetch');
+var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['instance'], forced).then(function(data) {
+    return storage.getList(['instance', 'image', 'network', 'subnet', 'keypair', 'flavor'], forced).then(function(data) {
       return data.instance;
     });
   },
-  deleteItem: function(item) {
-    return fetch.delete({
-      url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
+  deleteItem: function(items) {
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.delete({
+        url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
+      }));
     });
+    return RSVP.all(deferredList);
   },
   poweron: function(item) {
     var data = {};
@@ -110,6 +115,32 @@ module.exports = {
   detachNetwork: function(item) {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.rawItem.id + '/os-interface/' + item.childItem.port.id
+    });
+  },
+  getData: function() {
+    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair']).then(function(data) {
+      return data;
+    });
+  },
+  getFlavors: function() {
+    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair']).then(function(data) {
+      return data.flavor;
+    });
+  },
+  createInstance: function(data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers',
+      data: {
+        server: data
+      }
+    }).then(function(res) {
+      return res.server;
+    });
+  },
+  resizeInstance: function(serverId, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
+      data: data
     });
   }
 };

@@ -23,6 +23,7 @@ var dissociateFIP = require('./pop/dissociate_fip/index');
 var changeSecurityGrp = require('./pop/change_security_grp/index');
 var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
+var resizeInstance = require('./pop/resize/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -190,7 +191,7 @@ class Model extends React.Component {
 
     switch(key) {
       case 'create':
-        createInstance({name: 'abc'}, function() {});
+        createInstance(function() {});
         break;
       case 'vnc_console':
         request.getVncConsole(rows[0]).then((res) => {
@@ -221,6 +222,7 @@ class Model extends React.Component {
         instSnapshot(rows[0], function() {});
         break;
       case 'resize':
+        resizeInstance(rows[0], function(){});
         break;
       case 'assc_floating_ip':
         associateFip({
@@ -258,7 +260,7 @@ class Model extends React.Component {
           type: 'instance',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteItem(rows[0]).then((res) => {
+            request.deleteItem(rows).then((res) => {
               cb(true);
             });
           }
