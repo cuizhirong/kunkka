@@ -11,8 +11,7 @@ function pop(obj, callback, parent) {
     parent: parent,
     config: config,
     onConfirm: function(refs, cb) {
-      var forceShutdown = refs.is_force_shutdown.state.checked;
-      request.poweroff(obj, forceShutdown).then((res) => {
+      request.poweroff(obj).then((res) => {
         callback(res);
         cb(true);
       });

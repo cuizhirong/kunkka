@@ -21,7 +21,7 @@ module.exports = {
       data: data
     });
   },
-  poweroff: function(item, forceShutdown) {
+  poweroff: function(item) {
     var data = {};
     data['os-stop'] = null;
 

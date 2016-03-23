@@ -42,7 +42,10 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (data.resource_type === 'subnet') {
-        this.refresh(null, false);
+        this.refresh({
+          detailRefresh: true
+        }, false);
+
         if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
           router.replaceState('/project/subnet');
         }

@@ -6,15 +6,16 @@ var Main = require('client/components/main/index');
 var BasicProps = require('client/components/basic_props/index');
 
 var deleteModal = require('client/components/modal_delete/index');
+var createPort = require('./pop/create_port/index');
+var associateInstance = require('./pop/associate_instance/index');
+var detachInstance = require('./pop/detach_instance/index');
+var modify = require('./pop/modify_security_group/index');
 
 var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
-var createPort = require('./pop/create_port/index');
-var associateInstance = require('./pop/associate_instance/index');
-var detachInstance = require('./pop/detach_instance/index');
-var modify = require('./pop/modify_security_group/index');
+var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -32,6 +33,20 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+
+    msgEvent.on('dataChange', (data) => {
+      if (data.resource_type === 'port') {
+        this.refresh({
+          detailRefresh: true
+        }, false);
+
+        if (data.action === 'delete'
+          && data.stage === 'end'
+          && data.resource_id === router.getPathList()[2]) {
+          router.replaceState('/project/port');
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {

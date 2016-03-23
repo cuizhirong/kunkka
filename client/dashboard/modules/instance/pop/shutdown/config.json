@@ -7,9 +7,6 @@
   }, {
     "type": "warning",
     "field": "shutdown_tip"
-  }, {
-    "type": "checkbox",
-    "field": "is_force_shutdown"
   }],
   "btn": {
     "value": "ok",

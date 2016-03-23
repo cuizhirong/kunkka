@@ -52,7 +52,10 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (data.resource_type === 'instance') {
-        this.refresh(null, false);
+        this.refresh({
+          detailRefresh: true
+        }, false);
+
         if (data.action === 'delete'
           && data.stage === 'end'
           && data.resource_id === router.getPathList()[2]) {
@@ -184,6 +187,7 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var {rows} = data;
+
     switch(key) {
       case 'create':
         createInstance({name: 'abc'}, function() {});
