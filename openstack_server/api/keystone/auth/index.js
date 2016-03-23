@@ -142,10 +142,8 @@ var prototype = {
   },
   initRoutes: function() {
     this.app.post('/auth/login', this.authentication.bind(this));
-    this.app.post('/auth/switchRegion', this.swtichRegion.bind(this));
-    this.app.post('/auth/switch', this.swtichPorject.bind(this));
-    this.app.get('/auth/switchRegion/:region', this.swtichRegion.bind(this));
-    this.app.get('/auth/switch/:projectId', this.swtichPorject.bind(this));
+    this.app.put('/auth/switch_region', this.swtichRegion.bind(this));
+    this.app.put('/auth/switch_project', this.swtichPorject.bind(this));
     this.app.get('/auth/logout', this.logout.bind(this));
   }
 };

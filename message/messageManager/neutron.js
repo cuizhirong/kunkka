@@ -57,7 +57,7 @@ function floatingipFormatter (msg, originMsg) {
       break;
     case 'update':
       msg.resource_id = msg.stage === 'start' ? originMsg.payload.id : originMsg.payload.floatingip.id;
-      msg.action = originMsg.payload.floatingip.port_id ? 'associate' : 'disassociate';
+      msg.action = originMsg.payload.floatingip.port_id ? 'associate' : 'dissociate';
       msg.floatingip_address = msg.stage === 'end' ? originMsg.payload.floatingip.floating_ip_address : undefined;
       break;
     default:
