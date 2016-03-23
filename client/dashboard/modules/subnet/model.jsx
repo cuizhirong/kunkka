@@ -40,7 +40,7 @@ class Model extends React.Component {
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'subnet') {
+      if (data.resource_type === 'subnet' || data.resource_type === 'port') {
         this.refresh({
           detailRefresh: true
         }, false);

@@ -287,8 +287,9 @@ class Model extends React.Component {
           type: 'subnet',
           data: [data.childItem],
           onDelete: function(_data, cb) {
-            request.deleteSubnet(data.childItem).then(() => {});
-            cb(true);
+            request.deleteSubnet(data.childItem).then(() => {
+              cb(true);
+            });
           }
         });
         break;

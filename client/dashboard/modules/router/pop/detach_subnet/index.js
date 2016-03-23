@@ -13,8 +13,8 @@ function pop(obj, callback, parent) {
     onConfirm: function(refs, cb) {
       request.detachSubnet(obj).then(() => {
         callback();
+        cb(true);
       });
-      cb(true);
     },
     onAction: function(field, state, refs) {},
     onLinkClick: function() {}

@@ -1,17 +1,17 @@
 var config = {
   'remote': {
-    'keystone': 'http://121.201.52.153:5000',
+    'keystone': 'http://42.62.93.98:5000',
     'nova': {
-      'RegionOne': 'http://121.201.52.153:8774'
+      'RegionOne': 'http://42.62.93.98:8774'
     },
     'cinder': {
-      'RegionOne': 'http://121.201.52.153:8776'
+      'RegionOne': 'http://42.62.93.98:8776'
     },
     'neutron': {
-      'RegionOne': 'http://121.201.52.153:9696'
+      'RegionOne': 'http://42.62.93.98:9696'
     },
     'glance': {
-      'RegionOne': 'http://121.201.52.153:9292'
+      'RegionOne': 'http://42.62.93.98:9292'
     }
   },
   'region': [{
@@ -42,12 +42,12 @@ var config = {
   },
   'mq': {
     'enabled': true,
-    'remotes': ['121.201.52.153'],
+    'remotes': ['42.62.101.195'],
     'port': '5672',
     'heartbeat': 60,
-    'username': 'guest',
-    'password': 'guest',
-    'sourceExchanges': ['nova', 'neutron', 'glance', 'openstack'],
+    'username': 'openstack',
+    'password': '4260ea44d3c55ac74c3241db',
+    'sourceExchanges': ['nova', 'cinder', 'neutron'],
     'reconnectTimeout': 1000,
     'maxTimeoutLimit': 120000
   },
