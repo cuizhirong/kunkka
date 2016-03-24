@@ -3,6 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 
 function pop(obj, callback, parent) {
+  config.fields[0].min = obj.size;
 
   request.getOverview().then((overview) => {
     var capacity = overview.overview_usage['gigabytes_' + obj.volume_type];
@@ -15,7 +16,6 @@ function pop(obj, callback, parent) {
       config: config,
       onInitialize: function(refs) {
         refs.capacity_size.setState({
-          min: obj.size,
           max: capacity.total - capacity.used,
           value: obj.size
         });

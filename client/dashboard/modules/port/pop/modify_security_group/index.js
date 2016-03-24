@@ -12,9 +12,19 @@ function pop(obj, callback, parent) {
     onInitialize: function(refs) {
       request.getSecuritygroupList().then((data) => {
         if(data.securitygroup.length > 0) {
+          var securitygroups = data.securitygroup;
+          obj.security_groups.forEach((item) => {
+            securitygroups.some((s) => {
+              if (s.id === item.id) {
+                s.selected = true;
+                return true;
+              }
+              return false;
+            });
+          });
           refs.security_group.setState({
-            data: data.securitygroup,
-            value: data.securitygroup[0].id
+            data: securitygroups,
+            value: securitygroups[0].id
           });
           refs.btn.setState({
             disabled: false

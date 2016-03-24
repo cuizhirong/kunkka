@@ -8,10 +8,13 @@
   }, {
     "type": "select_group",
     "field": "instance",
-    "data": []
+    "data": [],
+    "is_warning": true,
+    "single": true
   }],
   "btn": {
     "value": "detach",
-    "disabled": false
+    "type": "delete",
+    "disabled": true
   }
 }

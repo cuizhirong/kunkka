@@ -18,7 +18,9 @@ class SelectGroup extends React.Component {
       disabled: !!props.disabled,
       hide: !!props.hide,
       data: props.data ? copyObj(props.data) : [],
-      clicked: false
+      clicked: false,
+      value: props.value ? props.value : '',
+      single: props.single
     };
 
     this.onChange = this.onChange.bind(this);
@@ -29,9 +31,24 @@ class SelectGroup extends React.Component {
   onChange(index) {
     var data = copyObj(this.state.data);
     data[index].selected = !data[index].selected;
-    this.setState({
-      data: data
-    });
+    if (this.state.single) {
+      data.forEach((item) => {
+        if (item.id !== data[index].id) {
+          item.selected = false;
+        }
+      });
+    }
+    if (data[index].selected) {
+      this.setState({
+        data: data,
+        value: data[index].id
+      });
+    } else {
+      this.setState({
+        data: data,
+        value: ''
+      });
+    }
   }
 
   onLinkClick() {
@@ -109,7 +126,13 @@ class SelectGroup extends React.Component {
         <div>
           {
             state.data.map((item, index) => {
-              return <a key={item.id} className={item.selected ? 'selected' : ''} onClick={this.onChange.bind(this, index)}>{item.name || '(' + item.id.substr(0, 8) + ')'}</a>;
+              var selected = false;
+              if (state.single && item.id === state.value) {
+                selected = true;
+              } else if (!state.single) {
+                selected = item.selected;
+              }
+              return <a key={item.id} className={selected ? 'selected' : ''} onClick={this.onChange.bind(this, index)}>{item.name || '(' + item.id.substr(0, 8) + ')'}</a>;
             })
           }
           {this.renderEmpty()}

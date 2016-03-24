@@ -25,17 +25,27 @@ function pop(obj, callback, parent) {
       });
     },
     onConfirm: function(refs, cb) {
-      var selected = refs.instance.state.data.filter((ele) => ele.selected)[0];
-
-      request.attachInstance({
-        serverId: selected.id,
-        volumeId: obj.id
-      }).then((res) => {
-        callback(res);
-        cb(true);
-      });
+      var selected = refs.instance.state.value;
+      if (selected) {
+        request.attachInstance({
+          serverId: selected,
+          volumeId: obj.id
+        }).then((res) => {
+          callback(res);
+          cb(true);
+        });
+      }
     },
-    onAction: function(field, status, refs){
+    onAction: function(field, status, refs) {
+      switch (field) {
+        case 'instance':
+          refs.btn.setState({
+            disabled: !status.value
+          });
+          break;
+        default:
+          break;
+      }
     }
   };
 

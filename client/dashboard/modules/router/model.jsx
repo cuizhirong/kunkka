@@ -178,7 +178,7 @@ class Model extends React.Component {
           var items = {};
           items.rawItem = rows[0];
           items.subnet = res;
-          relatedSubnet(data, function() {});
+          relatedSubnet(items, function() {});
         });
         break;
       default:

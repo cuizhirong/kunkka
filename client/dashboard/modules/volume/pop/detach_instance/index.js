@@ -37,7 +37,17 @@ function pop(obj, callback, parent) {
         cb(true);
       });
     },
-    onAction: function(field, status, refs){}
+    onAction: function(field, status, refs){
+      switch (field) {
+        case 'instance':
+          refs.btn.setState({
+            disabled: !status.value
+          });
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   commonModal(props);

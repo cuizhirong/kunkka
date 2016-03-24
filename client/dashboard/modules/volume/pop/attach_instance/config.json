@@ -8,7 +8,8 @@
   }, {
     "type": "select_group",
     "field": "instance",
-    "data": []
+    "data": [],
+    "single": true
   }],
   "btn": {
     "value": "attach",
