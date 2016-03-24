@@ -86,9 +86,9 @@ class Model extends React.Component {
         case 'ext_gw':
           column.render = (col, item, i) => {
             if(item.external_gateway_info) {
-              return item.external_gateway_info.enable_snat ? __.on : __.off;
+              return __.on;
             } else {
-              return '';
+              return __.off;
             }
           };
           break;
@@ -285,9 +285,9 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var getGatewayState = function() {
       if(item.external_gateway_info) {
-        return item.external_gateway_info.enable_snat ? __.on : __.off;
+        return __.on;
       } else {
-        return '';
+        return __.off;
       }
     };
 

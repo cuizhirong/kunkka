@@ -31,6 +31,7 @@ function notify(data) {
     isAutoHide: isAutoHide,
     icon: icon,
     type: 'info',
+    width: 300,
     id: data.resource_id
   });
   msgEvent.emit('message', data);
