@@ -304,16 +304,17 @@ function pop(item, direction, securityGroups, callback) {
       }
 
       request.addSecurityGroupRule(sgRule).then((res) => {
-        if (res.status < 300) {
-          callback(res);
-          cb(true);
-        } else if (res.status === 409) {
-          var errMsg = JSON.parse(res.responseText);
+        if (res.status === 409) {
+          let errMsg = JSON.parse(res.responseText).NeutronError.message;
+
           refs.error_msg.setState({
             hide: false,
-            value: errMsg.NeutronError.message
+            value: errMsg
           });
           cb(false);
+        } else {
+          callback(res);
+          cb(true);
         }
       });
     },

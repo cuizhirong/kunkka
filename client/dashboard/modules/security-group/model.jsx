@@ -254,14 +254,16 @@ class Model extends React.Component {
     };
 
     item.security_group_rules.forEach((ele) => {
+      var sourceOrTarget = getSourceType(ele);
+
       allRulesData.push({
         id: ele.id,
         direction: ele.direction,
         protocol: ele.protocol ? ele.protocol.toUpperCase() : __.all_protocols,
         port_range: getPortRange(ele),
         icmp_type_code: getICMPTypeCode(ele),
-        source_type: getSourceType(ele),
-        target: ele.remote_ip_prefix ? ele.remote_ip_prefix : '',
+        source_type: sourceOrTarget,
+        target: sourceOrTarget,
         action:
           <i className="glyphicon icon-delete delete-action"
               onClick={this.onDetailAction.bind(this, 'description', 'delete_ingress', ele)} />

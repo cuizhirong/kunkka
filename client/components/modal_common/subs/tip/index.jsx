@@ -13,7 +13,7 @@ class Error extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.hide === nextState.hide) {
+    if (this.state.hide === nextState.hide && this.state.value === nextState.value) {
       return false;
     }
     return true;
