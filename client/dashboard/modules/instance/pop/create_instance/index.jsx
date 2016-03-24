@@ -4,7 +4,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Base = require('./base');
 
-function modal(callback, parent) {
+function modal(obj, callback, parent) {
 
   var container = null;
 
@@ -39,6 +39,7 @@ function modal(callback, parent) {
   var _props = {
     onAfterClose: onAfterClose,
     parent: parent,
+    obj: obj,
     callback: callback
   };
 

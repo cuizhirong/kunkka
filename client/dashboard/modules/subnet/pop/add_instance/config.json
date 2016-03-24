@@ -9,8 +9,7 @@
     "type": "select",
     "field": "instance",
     "empty_text": {
-      "info": "no_instance",
-      "link_info": ["create", "instance"]
+      "info": "no_instance"
     }
   }, {
     "type": "warning",

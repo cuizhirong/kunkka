@@ -16,6 +16,8 @@ var request = require('./request');
 var router = require('client/dashboard/cores/router');
 var msgEvent = require('client/dashboard/cores/msg_event');
 
+var createInstance = require('../instance/pop/create_instance/index');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -149,6 +151,9 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
+        createInstance(rows[0], function() {
+          router.pushState('/project/instance');
+        });
         break;
       case 'del_img':
         deleteModal({
@@ -156,7 +161,9 @@ class Model extends React.Component {
           type: 'image',
           data: rows,
           onDelete: function(_data, cb) {
-            cb(true);
+            request.deleteImage(rows).then((res) => {
+              cb(true);
+            });
           }
         });
         break;

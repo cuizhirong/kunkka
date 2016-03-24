@@ -191,7 +191,7 @@ class Model extends React.Component {
 
     switch(key) {
       case 'create':
-        createInstance(function() {});
+        createInstance(null, function() {});
         break;
       case 'vnc_console':
         request.getVncConsole(rows[0]).then((res) => {

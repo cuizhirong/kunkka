@@ -12,7 +12,7 @@ module.exports = {
     var deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
-        url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/delete'
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
       }));
     });
     return RSVP.all(deferredList);

@@ -5,6 +5,16 @@ var createNetwork = require('client/dashboard/modules/network/pop/create_network
 var createKeypair = require('client/dashboard/modules/keypair/pop/create_keypair/index');
 var request = require('../../request');
 
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return newobj;
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
+
 class ModalBase extends React.Component {
 
   constructor(props) {
@@ -24,7 +34,7 @@ class ModalBase extends React.Component {
       securityGroupData: [],
       keypairData: [],
       selectedKeypair: '',
-      imageType: 'system',
+      imageType: 'distribution',
       selectedImage: '',
       prevPage: null,
       currentPage: 'page1',
@@ -135,11 +145,11 @@ class ModalBase extends React.Component {
       return a.ram - b.ram;
     }
 
-    var resFlavors = res.flavor,
-      resImages = res.image,
-      resNetworks = res.network,
-      resSecurityGroups = res.securitygroup,
-      resKeypair = res.keypair;
+    var resFlavors = copyObj(res.flavor),
+      resImages = copyObj(res.image),
+      resNetworks = copyObj(res.network),
+      resSecurityGroups = copyObj(res.securitygroup),
+      resKeypair = copyObj(res.keypair);
 
     var flavorData = {},
       vcpus = [],
@@ -178,7 +188,9 @@ class ModalBase extends React.Component {
     });
 
     var images = [],
-      snapshots = [];
+      snapshots = [],
+      selectedImage,
+      imageType = 'distribution';
     resImages.forEach((item) => {
       if (item.image_type === 'snapshot') {
         snapshots.push(item);
@@ -186,6 +198,12 @@ class ModalBase extends React.Component {
         images.push(item);
       }
     });
+    if (this.props.obj) {
+      selectedImage = this.props.obj;
+      imageType = this.props.obj.image_type;
+    } else {
+      selectedImage = images[0];
+    }
 
     this.setState({
       flavorData: flavorData,
@@ -195,7 +213,8 @@ class ModalBase extends React.Component {
       selectedCPU: vcpus[0],
       imageList: images,
       snapshotList: snapshots,
-      selectedImage: images[0],
+      selectedImage: selectedImage,
+      imageType: imageType,
       userName: JSON.parse(images[0].image_meta).os_username,
       credentialType: images[0].image_label === 'Windows' ? 'password' : 'keypair',
       networkData: resNetworks,
@@ -527,18 +546,18 @@ class ModalBase extends React.Component {
                 {__.image}
               </div>
               <div>
-                <a className={state.imageType === 'system' ? 'selected' : ''} onClick={this.onImageTypeChange.bind(this, 'system')}>{__.system_image}</a>
+                <a className={state.imageType === 'distribution' ? 'selected' : ''} onClick={this.onImageTypeChange.bind(this, 'distribution')}>{__.system_image}</a>
                 <a className={state.imageType === 'snapshot' ? 'selected' : ''} onClick={this.onImageTypeChange.bind(this, 'snapshot')}>{__.instance_snapshot}</a>
               </div>
             </div>
-            <div className={'image-list-row' + (state.imageType === 'system' ? '' : ' hide')}>
+            <div className={'image-list-row' + (state.imageType === 'distribution' ? '' : ' hide')}>
               {
                 state.imageList.map((item, index) => {
                   return <a key={item.id} className={state.selectedImage.id === item.id ? 'selected' : ''} onClick={this.onImageChange.bind(this, item)}><i className={'icon-image-default ' + (item.image_label && item.image_label.toLowerCase())}></i>{item.name}</a>;
                 })
               }
             </div>
-            <div className={'image-list-row' + (state.imageType === 'system' ? ' hide' : '')}>
+            <div className={'image-list-row' + (state.imageType === 'distribution' ? ' hide' : '')}>
               {
                 state.snapshotList.map((item, index) => {
                   return <a key={item.id} className={state.selectedImage.id === item.id ? 'selected' : ''} onClick={this.onImageChange.bind(this, item)}><i className={'icon-image-default ' + (item.image_label && item.image_label.toLowerCase())}></i>{item.name}</a>;
