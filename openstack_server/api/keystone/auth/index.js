@@ -133,7 +133,7 @@ var prototype = {
     res.cookie(username, Object.assign(req.cookies[username], {
       region: (req.session.user.regionId = req.body.region ? req.body.region : req.params.region)
     }));
-    res.stats(200).json({success: 'switch region successfully'});
+    res.status(200).json({success: 'switch region successfully'});
   },
   logout: function (req, res) {
     req.session.destroy();

@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var Settings = require('./settings');
+var Regions = require('./regions');
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -13,17 +14,23 @@ class NavBar extends React.Component {
   }
 
   render() {
+    var regionName = 'xxx';
+    // var currentRegion = HALO.current_region;
+    // HALO.region_list.map((region) => {
+    //   regionName = region.id === currentRegion ? region.name : '';
+    // });
+
     return (
       <div className="halo-com-navbar">
         <div className="logo"></div>
         <div className="region-wp">
-          <i className="glyphicon icon-region"></i>
-          <span>Region One</span>
+          <div className="region-name">
+            <i className="glyphicon icon-region"></i>
+            <span ref="name">{regionName}</span>
+            <div ref="settingBtn" className="settings-btn"></div>
+          </div>
           <div className="region">
-            <ul className="region-dropdown">
-              <li><a>设置</a></li>
-              <li><a>帮助</a></li>
-            </ul>
+            <Regions />
           </div>
         </div>
         <div className="user-info">
