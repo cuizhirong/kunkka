@@ -56,7 +56,7 @@ module.exports = {
     });
   },
   addInstance: function(serverId, networkId) {
-    return fetch.put({
+    return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/os-interface',
       data: networkId
     });

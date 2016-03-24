@@ -5,7 +5,7 @@ var request = require('../../request');
 function pop(obj, callback, parent) {
   config.fields[0].text = obj.rawItem.name;
   config.fields[2].data = [];
-  obj.volume.forEach((ele, i) => {
+  obj.rawItem.volume.forEach((ele, i) => {
     var item = {
       id: i,
       volumeId: ele.id,
@@ -18,7 +18,23 @@ function pop(obj, callback, parent) {
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      request.getVolumeList().then((data) => {
+        var dataArray = [];
+        data.some((volume) => {
+          if(volume.status === 'available') {
+            dataArray.push(volume);
+          }
+        });
+        refs.volume.setState({
+          data: dataArray,
+          value: dataArray[0].id
+        });
+        refs.btn.setState({
+          disabled: false
+        });
+      });
+    },
     onConfirm: function(refs, cb) {
       request.attachVolume(obj.rawItem, selectedVolume).then(() => {
         callback();
@@ -28,10 +44,9 @@ function pop(obj, callback, parent) {
     onAction: function(field, state, refs) {
       switch(field) {
         case 'volume':
-          state.data.forEach((elem) => {
+          state.data.some((elem) => {
             if (elem.selected) {
-              selectedVolume.index = elem.id;
-              selectedVolume.volumeId = elem.volumeId;
+              selectedVolume.volumeId = elem.id;
             }
             elem.selected = false;
           });

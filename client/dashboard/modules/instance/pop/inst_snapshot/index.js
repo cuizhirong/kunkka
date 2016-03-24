@@ -16,8 +16,8 @@ function pop(obj, callback, parent) {
           meta_var: 'meta_val'
         }
       };
-      request.createSnapshot(snapshot, obj).then(() => {
-        callback();
+      request.createSnapshot(snapshot, obj).then((res) => {
+        callback(res);
         cb(true);
       });
     },

@@ -27,9 +27,6 @@ function pop(obj, detailBtn, callback, parent) {
       if(detailBtn === false) {
         networkId = {
           interfaceAttachment: {
-            fixed_ips: [{
-              subnet_id: obj.id
-            }],
             net_id: obj.network_id
           }
         };

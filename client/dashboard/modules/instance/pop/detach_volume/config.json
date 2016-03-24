@@ -8,6 +8,7 @@
     "type": "select_group",
     "field": "volume",
     "is_warning": true,
+    "selected": true,
     "data": []
   }],
   "btn": {

@@ -5,9 +5,9 @@
     "field": "instance",
     "icon_type": "instance"
   }, {
-    "type": "select",
+    "type": "icon_label",
     "field": "floating_ip",
-    "data": []
+    "icon_type": "floating-ip"
   }],
   "btn": {
     "value": "dissociate",

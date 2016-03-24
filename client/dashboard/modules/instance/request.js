@@ -4,7 +4,7 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['instance', 'image', 'network', 'subnet', 'keypair', 'flavor'], forced).then(function(data) {
+    return storage.getList(['instance', 'image', 'network', 'subnet', 'keypair', 'flavor', 'port'], forced).then(function(data) {
       return data.instance;
     });
   },
@@ -16,6 +16,16 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  getSecuritygroupList: function() {
+    return storage.getList(['securitygroup']).then((data) => {
+      return data.securitygroup;
+    });
+  },
+  getFloatingIpList: function() {
+    return storage.getList(['floatingip']).then(function(data) {
+      return data.floatingip;
+    });
   },
   poweron: function(item) {
     var data = {};
@@ -140,6 +150,27 @@ module.exports = {
   resizeInstance: function(serverId, data) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
+      data: data
+    });
+  },
+  create: function(serverId, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
+      data: data
+    });
+  },
+  detachSomeVolume: function(serverId, items) {
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/os-volume_attachments/' + item.id
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  updateSecurity: function(portId, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/ports/' + portId,
       data: data
     });
   }

@@ -225,34 +225,22 @@ class Model extends React.Component {
         resizeInstance(rows[0], function(){});
         break;
       case 'assc_floating_ip':
-        associateFip({
-          name: 'abc'
-        }, function() {});
+        associateFip(rows[0], function() {});
         break;
       case 'dssc_floating_ip':
-        dissociateFIP({
-          name: 'abc'
-        }, function() {});
+        dissociateFIP(rows[0], function() {});
         break;
       case 'join_ntw':
-        joinNetwork({
-          name: 'abc'
-        }, function() {});
+        joinNetwork({rawItem: rows[0]}, function() {});
         break;
       case 'chg_security_grp':
-        changeSecurityGrp({
-          name: 'abc'
-        }, function() {});
+        changeSecurityGrp(rows[0], function() {});
         break;
       case 'add_volume':
-        attachVolume({
-          name: 'abc'
-        }, function() {});
+        attachVolume({rawItem: rows[0]}, function() {});
         break;
       case 'rmv_volume':
-        detachVolume({
-          name: 'abc'
-        }, function() {});
+        detachVolume({rawItem: rows[0]}, false, function() {});
         break;
       case 'terminate':
         deleteModal({
@@ -651,17 +639,11 @@ class Model extends React.Component {
         });
         break;
       case 'create_volume':
-        request.getVolumeList().then((res) => {
-          data.volume = res;
-          attachVolume(data, function() {
-            that.refresh({
-              detailRefresh: true
-            }, true);
-          });
+        attachVolume(data, function() {
         });
         break;
       case 'delete_volume':
-        detachVolume(data, function() {
+        detachVolume(data, true, function() {
           that.refresh({
             detailRefresh: true
           }, true);

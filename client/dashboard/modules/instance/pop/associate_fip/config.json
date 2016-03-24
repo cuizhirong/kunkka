@@ -21,6 +21,6 @@
   }],
   "btn": {
     "value": "associate",
-    "disabled": false
+    "disabled": true
   }
 }

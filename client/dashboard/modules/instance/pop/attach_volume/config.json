@@ -19,6 +19,6 @@
   "btn": {
     "value": "add",
     "type": "create",
-    "disabled": false
+    "disabled": true
   }
 }
