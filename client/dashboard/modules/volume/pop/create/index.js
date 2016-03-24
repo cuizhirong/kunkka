@@ -2,8 +2,8 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, detailBtn, callback, parent) {
-  if (detailBtn === true) {
+function pop(obj, btnType, callback, parent) {
+  if (btnType) {
     config.fields[0].text = obj.name;
     config.fields[0].hide = false;
   } else {

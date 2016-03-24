@@ -40,7 +40,8 @@
         }, {
           "title": ["delete"],
           "key": "delete",
-          "disabled": true
+          "disabled": true,
+          "danger": true
         }]
       }]
     }

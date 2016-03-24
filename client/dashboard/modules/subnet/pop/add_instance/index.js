@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createInstance = require('client/dashboard/modules/instance/pop/create_instance/index');
 
-function pop(obj, detailBtn, callback, parent) {
+function pop(obj, btnType, callback, parent) {
   config.fields[0].text = obj.name;
 
   var props = {
@@ -24,16 +24,16 @@ function pop(obj, detailBtn, callback, parent) {
     },
     onConfirm: function(refs, cb) {
       var networkId = {};
-      if(detailBtn === false) {
+      if(btnType) {
         networkId = {
           interfaceAttachment: {
-            net_id: obj.network_id
+            port_id: obj.id
           }
         };
       } else {
         networkId = {
           interfaceAttachment: {
-            port_id: obj.id
+            net_id: obj.network_id
           }
         };
       }

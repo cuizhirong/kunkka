@@ -2,16 +2,16 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, detailBtn, callback, parent) {
+function pop(obj, btnType, callback, parent) {
   config.fields[0].text = obj.rawItem.name;
-  config.fields[1].data = detailBtn ? [obj.childItem] : obj.rawItem.volume;
+  config.fields[1].data = btnType ? [obj.childItem] : obj.rawItem.volume;
 
   var props = {
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      if(detailBtn) {
+      if(btnType) {
         request.detachVolume(obj).then((res) => {
           callback(res);
           cb(true);

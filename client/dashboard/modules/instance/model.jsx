@@ -520,7 +520,7 @@ class Model extends React.Component {
 
           networks.push({
             port:
-              <a data-type="router" href={'/project/port/' + item.port.fixed_ips[0].subnet_id}>
+              <a data-type="router" href={'/project/port/' + item.port.id}>
                 {item.addr}
               </a>,
             subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a>,
