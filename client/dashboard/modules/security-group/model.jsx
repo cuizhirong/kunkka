@@ -2,13 +2,13 @@ require('./style/index.less');
 
 var React = require('react');
 var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
 
 var SecurityDetail = require('client/components/security_detail/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createSecurityGroup = require('./pop/create_security_group/index');
 var modifySecurityGroup = require('./pop/modify_security_group/index');
+var createRule = require('./pop/create_rule/index');
 
 var config = require('./config.json');
 var request = require('./request');
@@ -184,7 +184,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var itemKeys = ['ingress', 'egress'];
-          var items = this.getSecurityDetailData(rows[0]);
+          var items = this.getSecurityDetailData(rows[0], this);
 
           contents[tabKey] = (
             <SecurityDetail
@@ -192,12 +192,10 @@ class Model extends React.Component {
               defaultUnfold={true}
               itemKeys={itemKeys}
               defaultKey="ingress"
+              tabKey="description"
               items={items}
-              rawItem={rows[0]}>
-              <Button value={__.add_ + __.security_group + __.rules} onClick={this.onDetailAction.bind(this, 'description', 'create_rule', {
-                rawItem: rows[0]
-              })}/>
-            </SecurityDetail>
+              rawItem={rows[0]}
+              onClick={this.onDetailAction.bind(this)} />
           );
         }
         break;
@@ -210,29 +208,59 @@ class Model extends React.Component {
     });
   }
 
-  getSecurityDetailData(item) {
+  getSecurityDetailData(item, that) {
     var allRulesData = [],
       ingressRulesData = [],
       egressRulesData = [];
+
     var getPortRange = function(_ele) {
-      if(_ele.port_range_min) {
+      if(_ele.protocol === null) {
+        return __.all_ports;
+      } else if(_ele.protocol === 'tcp' || _ele.protocol === 'udp') {
         if(_ele.port_range_min === _ele.port_range_max) {
           return _ele.port_range_min;
         } else {
-          return _ele.port_range_min + '-' + _ele.port_range_max;
+          return _ele.port_range_min + ' - ' + _ele.port_range_max;
         }
       } else {
         return '-';
-      }};
+      }
+    };
+
+    var getICMPTypeCode = function(_ele) {
+      if (_ele.protocol === 'icmp') {
+        var min = _ele.port_range_min === null ? '' : _ele.port_range_min;
+        var max = _ele.port_range_max === null ? '' : _ele.port_range_max;
+        return min + '/' + max;
+      } else {
+        return '-';
+      }
+    };
+
+    var getSourceType = function(_ele) {
+      if(_ele.remote_ip_prefix) {
+        return _ele.remote_ip_prefix;
+      } else if (_ele.remote_group_id) {
+        var data = that.state.config.table.data;
+        var source = data.filter((d) => d.id === _ele.remote_group_id)[0];
+
+        return (
+          <span>
+            <i className="glyphicon icon-security-group" />
+            <a data-type="router" href={'/project/security-group/' + source.id}>{source.name}</a>
+          </span>
+        );
+      }
+    };
 
     item.security_group_rules.forEach((ele) => {
       allRulesData.push({
         id: ele.id,
         direction: ele.direction,
-        protocol: ele.protocol ? ele.protocol.toUpperCase() : ele.ethertype,
+        protocol: ele.protocol ? ele.protocol.toUpperCase() : __.all_protocols,
         port_range: getPortRange(ele),
-        fix_name: '-',
-        source_type: ele.remote_ip_prefix ? ele.remote_ip_prefix : '',
+        icmp_type_code: getICMPTypeCode(ele),
+        source_type: getSourceType(ele),
         target: ele.remote_ip_prefix ? ele.remote_ip_prefix : '',
         action:
           <i className="glyphicon icon-delete delete-action"
@@ -264,9 +292,9 @@ class Model extends React.Component {
             key: 'port_range',
             dataIndex: 'port_range'
           }, {
-            title: __.fix_name,
-            key: 'fix_name',
-            dataIndex: 'fix_name'
+            title: __.icmp_type_code,
+            key: 'icmp_type_code',
+            dataIndex: 'icmp_type_code'
           }, {
             title: __.source_type,
             key: 'source_type',
@@ -296,9 +324,9 @@ class Model extends React.Component {
             key: 'port_range',
             dataIndex: 'port_range'
           }, {
-            title: __.fix_name,
-            key: 'fix_name',
-            dataIndex: 'fix_name'
+            title: __.icmp_type_code,
+            key: 'icmp_type_code',
+            dataIndex: 'icmp_type_code'
           }, {
             title: __.target,
             key: 'target',
@@ -364,9 +392,17 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var {tab, rawItem} = data;
+
+    var that = this;
     switch(actionType) {
       case 'create_rule':
-        // console.log(actionType, data);
+        var securityGroups = this.state.config.table.data;
+        createRule(rawItem, tab, securityGroups, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete_ingress':
         request.deleteRules(data).then((res) => {

@@ -3,6 +3,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button, ButtonGroup, Table, Tip} = require('client/uskin/index');
+var __ = require('i18n/client/lang.json');
 
 class BasicProps extends React.Component {
 
@@ -23,7 +24,7 @@ class BasicProps extends React.Component {
     });
   }
 
-  onClickBtn(value) {
+  onClickTab(value) {
     this.setState({
       selectedKey: value
     });
@@ -39,6 +40,20 @@ class BasicProps extends React.Component {
         break;
       default:
         break;
+    }
+  }
+
+  onClickBtn(e) {
+    var props = this.props,
+      onDetailAction = props.onClick,
+      tabKey = props.tabKey,
+      rawItem = props.rawItem;
+
+    if (onDetailAction){
+      onDetailAction(tabKey, 'create_rule', {
+        tab: this.state.selectedKey,
+        rawItem: rawItem
+      });
     }
   }
 
@@ -75,11 +90,13 @@ class BasicProps extends React.Component {
                     type="status"
                     initial={true}
                     selected={selectedKey === keyName}
-                    onClick={this.onClickBtn.bind(this, keyName)}/>
+                    onClick={this.onClickTab.bind(this, keyName)}/>
                 )}
               </ButtonGroup>
               <div className="create-btn">
-                {this.props.children}
+                <Button
+                  value={__.add_ + __.security_group + __.rules}
+                  onClick={this.onClickBtn.bind(this)} />
               </div>
               <Table
                 mini={true}

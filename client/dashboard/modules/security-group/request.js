@@ -36,6 +36,15 @@ module.exports = {
       data: data
     });
   },
+  addSecurityGroupRule: function(newData) {
+    var data = {};
+    data.security_group_rule = newData;
+
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/security-group-rules',
+      data: data
+    });
+  },
   deleteRules: function(item) {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-group-rules/' + item.id

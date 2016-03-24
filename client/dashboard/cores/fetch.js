@@ -4,6 +4,7 @@ function errHandler(err) {
   if (err.status === 401) {
     window.location = '/auth/logout';
   }
+  return err;
 }
 
 var fetch = {};

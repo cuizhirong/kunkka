@@ -10,6 +10,7 @@ var IconLabel = require('./subs/icon_label/index');
 var TextArea = require('./subs/textarea/index');
 var Select = require('./subs/select/index');
 var SelectGroup = require('./subs/select_group/index');
+var SelectSingle = require('./subs/select_single/index');
 var Tab = require('./subs/tab/index');
 var GroupSelect = require('./subs/group_select/index');
 var Slider = require('./subs/slider/index');
@@ -59,6 +60,8 @@ class ModalBase extends React.Component {
           return <Select key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'select_group':
           return <SelectGroup key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'select_single':
+          return <SelectSingle key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'tab':
           return <Tab key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'group_select':

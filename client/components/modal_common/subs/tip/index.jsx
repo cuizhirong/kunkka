@@ -7,7 +7,8 @@ class Error extends React.Component {
     super(props);
 
     this.state = {
-      hide: !!props.hide
+      hide: !!props.hide,
+      value: null
     };
   }
 
@@ -23,14 +24,15 @@ class Error extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    var props = this.props,
+      state = this.state;
 
     var className = this.state.hide ? 'modal-row tip-row hide' : 'modal-row tip-row';
     var type = (props.type === 'error') ? 'danger' : props.type;
 
     return (
       <div className={className}>
-        <Tip type={type} title={__[props.title]} content={props.label} showIcon={true} width={466} />
+        <Tip type={type} title={__[props.title]} content={state.value === null ? props.label : state.value} showIcon={true} width={466} />
       </div>
     );
   }
