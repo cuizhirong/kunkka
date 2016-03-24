@@ -15,7 +15,6 @@
     "msg_disconnect_inst": "Do you want to disconnect server ?",
     "no_subnet": "No subnet",
     "pool": "Pool",
-    "related_inst": "Related Instance",
     "select_network": "Select NetWork",
     "version": "version"
   },
@@ -35,7 +34,6 @@
     "msg_disconnect_inst": "是否断开云主机?",
     "no_subnet": "没有可用子网",
     "pool": "池",
-    "related_inst": "关联云主机",
     "select_network": "选择私有网络",
     "version": "版本"
   }

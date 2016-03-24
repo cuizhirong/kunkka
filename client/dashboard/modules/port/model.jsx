@@ -80,7 +80,7 @@ class Model extends React.Component {
         case 'restrict':
           column.render = (col, item, i) => {
             return item.port_security_enabled ?
-              <span className="label-active">已开启</span> : <span className="label-down">未开启</span>;
+              <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>;
           };
           break;
         case 'ip_adrs':
@@ -383,7 +383,7 @@ class Model extends React.Component {
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
-        <span className="label-active">已开启</span> : <span className="label-down">未开启</span>
+        <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }, {
       title: __.status,
       type: 'status',
