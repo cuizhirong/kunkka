@@ -71,10 +71,11 @@ class Model extends React.Component {
               <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a></div> : '';
           };
           break;
-        case 'related_instance':
+        case 'related_resource':
           column.render = (col, item, i) => {
             return item.server ?
-              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.server.id}>{item.server.name}</a></div> : '';
+              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.server.id}>{item.server.name}</a></div>
+              : <div>{__[item.device_owner]}</div>;
           };
           break;
         case 'restrict':
@@ -343,7 +344,8 @@ class Model extends React.Component {
           <a data-type="router" href={'/project/instance/' + item.server.id}>
             {item.server.name}
           </a>
-        </div> : '-'
+        </div> :
+        <div>{__[item.device_owner]}</div>
     }, {
       title: 'IP' + __.address,
       content:

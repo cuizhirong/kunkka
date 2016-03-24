@@ -6,7 +6,9 @@
     "ip_info": "System will auto assign if not filled.",
     "no_port": "No associated port",
     "port": "Port",
-    "restrict": "Restrict"
+    "restrict": "Restrict",
+    "network:dhcp": "DHCP",
+    "network:router_interface": "Router"
   },
   "zh-CN": {
     "address_ip": "IP地址",
@@ -15,6 +17,8 @@
     "ip_info": "如不填系统会自动分配",
     "no_port": "没有关联网卡",
     "port": "网络端口",
-    "restrict": "限制"
+    "restrict": "限制",
+    "network:dhcp": "DHCP",
+    "network:router_interface": "路由器"
   }
 }

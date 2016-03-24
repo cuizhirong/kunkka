@@ -73,7 +73,7 @@
     }, {
       "title": ["related", "resource"],
       "dataIndex": "",
-      "key": "related_instance"
+      "key": "related_resource"
     }, {
       "title": ["status"],
       "dataIndex": "status",

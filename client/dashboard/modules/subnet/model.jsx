@@ -386,12 +386,14 @@ class Model extends React.Component {
             <i className="glyphicon icon-instance"/>
             <a data-type="router" href={'/project/instance/' + element.instance.id}>{element.instance.name}</a>
           </div>
-          : null,
+          : <div>{__[element.device_owner]}</div>,
         status: getStatusIcon(element.status),
-        operation: <div>
+        operation: (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') ? (
+          <div>
             <i className="glyphicon icon-associate action" onClick={this.onDetailAction.bind(this, 'description', 'connect_inst', {rawItem: element})}/>
             <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_port', element)} />
           </div>
+          ) : '-'
       };
       tableContent.push(dataObj);
     });
