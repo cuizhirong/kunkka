@@ -21,6 +21,7 @@ function pop(data, callback, parent) {
       return 0;
     }
   });
+  var sg = [];
 
   var props = {
     parent: parent,
@@ -30,7 +31,8 @@ function pop(data, callback, parent) {
       var port = {
         network_id: data.rawItem.network_id,
         name: refs.name.state.value,
-        admin_state_up: true
+        admin_state_up: true,
+        security_groups: sg
       };
       request.addPort(port).then(() => {
         callback();
@@ -38,6 +40,13 @@ function pop(data, callback, parent) {
       });
     },
     onAction: function(field, status, refs) {
+      switch(field) {
+        case 'security_group':
+          sg.push(status.value);
+          break;
+        default:
+          break;
+      }
 
     }
   };

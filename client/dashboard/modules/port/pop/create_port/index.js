@@ -5,22 +5,50 @@ var createSubnet = require('client/dashboard/modules/subnet/pop/create_subnet/in
 var createSecurityGroup = require('client/dashboard/modules/security-group/pop/create_security_group/index');
 
 function pop(callback, parent) {
+  var copyObj = function(obj) {
+    var newobj = obj.constructor === Array ? [] : {};
+    if (typeof obj !== 'object') {
+      return newobj;
+    } else {
+      newobj = JSON.parse(JSON.stringify(obj));
+    }
+    return newobj;
+  };
 
   var props = {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      var subnetGroup = [];
       request.getSubnetList().then((data) => {
-        if(data.subnet.length > 0) {
-          refs.subnet.setState({
-            data: data.subnet,
-            value: data.subnet[0].id
-          });
-          refs.btn.setState({
-            disabled: false
+        var subnets = copyObj(data.subnet);
+        if(subnets.length > 0) {
+          subnets.forEach((subnet) => {
+            var hasGroup = subnetGroup.some((group) => {
+              if(group.id === subnet.network_id) {
+                group.data.push(subnet);
+                return true;
+              }
+              return false;
+            });
+            if(!hasGroup) {
+              subnetGroup.push({
+                id: subnet.network_id,
+                name: subnet.network.name,
+                data: [subnet]
+              });
+            }
           });
         }
+        refs.subnet.setState({
+          data: subnetGroup,
+          value: data.subnet[0].id
+        });
+        refs.btn.setState({
+          disabled: false
+        });
       });
+
       request.getSecuritygroupList().then((data) => {
         if(data.securitygroup.length > 0) {
           refs.security_group.setState({
@@ -47,9 +75,11 @@ function pop(callback, parent) {
       });
       var subnet = refs.subnet.state;
       subnet.data.forEach((ele) => {
-        if(ele.id === subnet.value) {
-          port.network_id = ele.network_id;
-        }
+        ele.data.forEach((s) => {
+          if(s.id === subnet.value) {
+            port.network_id = ele.id;
+          }
+        });
       });
       if(refs.address_ip.state.value !== '') {
         port.fixed_ips[0].ip_address = '';

@@ -5,7 +5,7 @@
     "field": "name",
     "input_type": "text"
   }, {
-    "type": "select",
+    "type": "group_select",
     "field": "subnet",
     "empty_text": {
       "info": "no_subnet",

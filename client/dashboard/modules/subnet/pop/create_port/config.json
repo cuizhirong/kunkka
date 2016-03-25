@@ -17,7 +17,7 @@
     "field": "address_ip",
     "tip_info": "ip_info"
   }, {
-    "type": "select",
+    "type": "select_group",
     "field": "security_group",
     "data": []
   }],
