@@ -81,19 +81,6 @@ module.exports = {
       return data.router;
     });
   },
-  getSecurityGroups: function(forced) {
-    return storage.getList(['securitygroup'], forced).then(function(data) {
-      return data.securitygroup;
-    });
-  },
-  addPort: function(data) {
-    return fetch.post({
-      url: '/proxy/neutron/v2.0/ports',
-      data: {
-        port: data
-      }
-    });
-  },
   deletePort: function(item) {
     return fetch.delete({
       url: '/proxy/neutron/v2.0/ports/' + item.id

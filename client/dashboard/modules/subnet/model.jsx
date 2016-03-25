@@ -19,7 +19,7 @@ var connectRouter = require('./pop/connect_router/index');
 var disconnectRouter = require('./pop/disconnect_router/index');
 var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
-var createPort = require('./pop/create_port/index');
+var createPort = require('../port/pop/create_port/index');
 var msgEvent = require('client/dashboard/cores/msg_event');
 
 class Model extends React.Component {
@@ -282,7 +282,7 @@ class Model extends React.Component {
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __.port} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', {rawItem: rows[0]})}/>
+                <Button value={__.add_ + __.port} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
               </DetailMinitable>
             </div>
           );
@@ -318,10 +318,7 @@ class Model extends React.Component {
         });
         break;
       case 'crt_port':
-        request.getSecurityGroups().then((res) => {
-          data.sg = res;
-          createPort(data, function() {});
-        });
+        createPort(function() {}, data);
         break;
       case 'rmv_port':
         request.deletePort(data).then(() => {});

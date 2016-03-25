@@ -4,7 +4,7 @@ var request = require('../../request');
 var createSubnet = require('client/dashboard/modules/subnet/pop/create_subnet/index');
 var createSecurityGroup = require('client/dashboard/modules/security-group/pop/create_security_group/index');
 
-function pop(callback, parent) {
+function pop(callback, subnetData, parent) {
   var copyObj = function(obj) {
     var newobj = obj.constructor === Array ? [] : {};
     if (typeof obj !== 'object') {
@@ -22,35 +22,43 @@ function pop(callback, parent) {
       var subnetGroup = [];
       request.getSubnetList().then((data) => {
         var subnets = copyObj(data.subnet);
-        if(subnets.length > 0) {
+        if (subnets.length > 0) {
           subnets.forEach((subnet) => {
             var hasGroup = subnetGroup.some((group) => {
-              if(group.id === subnet.network_id) {
+              if (group.id === subnet.network_id) {
                 group.data.push(subnet);
                 return true;
               }
               return false;
             });
-            if(!hasGroup) {
+            if (!hasGroup) {
               subnetGroup.push({
                 id: subnet.network_id,
                 name: subnet.network.name,
+                port_security_enabled: subnet.network.port_security_enabled,
                 data: [subnet]
               });
             }
           });
         }
-        refs.subnet.setState({
-          data: subnetGroup,
-          value: data.subnet[0].id
-        });
+        if (subnetData) {
+          refs.subnet.setState({
+            data: subnetGroup,
+            value: subnetData.id
+          });
+        } else {
+          refs.subnet.setState({
+            data: subnetGroup,
+            value: data.subnet[0].id
+          });
+        }
         refs.btn.setState({
           disabled: false
         });
       });
 
       request.getSecuritygroupList().then((data) => {
-        if(data.securitygroup.length > 0) {
+        if (data.securitygroup.length > 0) {
           refs.security_group.setState({
             data: data.securitygroup,
             value: data.securitygroup[0].id
@@ -70,30 +78,39 @@ function pop(callback, parent) {
           subnet_id: refs.subnet.state.value
         }]
       };
+
       refs.security_group.state.data.forEach(function(ele) {
         ele.selected && port.security_groups.push(ele.id);
       });
       var subnet = refs.subnet.state;
-      subnet.data.forEach((ele) => {
-        ele.data.forEach((s) => {
-          if(s.id === subnet.value) {
+
+      subnet.data.some((ele) => {
+        return ele.data.some((s) => {
+          if (s.id === subnet.value) {
             port.network_id = ele.id;
+            port.port_security_enabled = ele.port_security_enabled;
+            return true;
           }
+          return false;
         });
       });
-      if(refs.address_ip.state.value !== '') {
+
+      if (refs.address_ip.state.value !== '') {
         port.fixed_ips[0].ip_address = '';
         port.fixed_ips[0].ip_address = refs.address_ip.state.value;
       }
+
       request.createPort(port).then((res) => {
         callback(res);
         cb(true);
+      }, () => {
+        cb(false);
       });
     },
     onAction: function(field, status, refs) {
-      switch(field) {
+      switch (field) {
         case 'subnet':
-          if(refs.subnet.state.clicked) {
+          if (refs.subnet.state.clicked) {
             createSubnet((res) => {
               refs.subnet.setState({
                 data: [res],
@@ -107,7 +124,7 @@ function pop(callback, parent) {
           }
           break;
         case 'security_group':
-          if(refs.security_group.state.clicked) {
+          if (refs.security_group.state.clicked) {
             createSecurityGroup((res) => {
               refs.security_group.setState({
                 data: [res],
