@@ -9,6 +9,11 @@
     "is_long_label": true
   }, {
     "type": "checkbox",
+    "field": "enable_security",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "checkbox",
     "field": "create_subnet",
     "checked": true,
     "has_long_label": true
@@ -24,6 +29,7 @@
   }],
   "btn": {
     "value": "create",
+    "type": "create",
     "disabled": false
   }
 }

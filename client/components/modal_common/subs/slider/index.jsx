@@ -8,7 +8,8 @@ class Slide extends React.Component {
     this.state = {
       value: props.value ? props.value : props.min,
       hide: !!props.hide,
-      max: props.max
+      max: props.max,
+      min: props.min
     };
 
     this.onInputChange = this.onInputChange.bind(this);
@@ -17,7 +18,7 @@ class Slide extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.value === nextState.value && this.state.hide === nextState.hide && this.state.max === nextState.max) {
+    if (this.state.value === nextState.value && this.state.hide === nextState.hide && this.state.max === nextState.max && this.state.min === nextState.min) {
       return false;
     }
     return true;
@@ -33,10 +34,10 @@ class Slide extends React.Component {
     var value = e.target.value;
     var v = parseFloat(value);
     if (!isNaN(v)) {
-      if (props.initValue && props.increase && props.initValue > props.min && v < props.initValue) {
+      if (props.initValue && props.increase && props.initValue > state.min && v < props.initValue) {
         v = props.initValue;
-      } else if (v < props.min) {
-        v = props.min;
+      } else if (v < state.min) {
+        v = state.min;
       }
       if (v > state.max) {
         v = state.max;
@@ -56,7 +57,7 @@ class Slide extends React.Component {
   onBlur(e) {
     var value = e.target.value;
     if (value.length < 1) {
-      value = this.props.min;
+      value = this.state.min;
       this.setState({
         value: value
       });
@@ -83,8 +84,8 @@ class Slide extends React.Component {
         </div>
         <div>
           <div className="slidearea">
-            <Slider min={props.min} max={state.max} step={props.step} value={state.value} onChange={this.onSliderChange} />
-            <div className="range">{props.min + '-' + state.max + props.unit}</div>
+            <Slider min={state.min} max={state.max} step={props.step} value={state.value} onChange={this.onSliderChange} />
+            <div className="range">{state.min + '-' + state.max + props.unit}</div>
           </div>
           <div className="inputarea">
             <input type="text" value={state.value} onBlur={this.onBlur} onChange={this.onInputChange} />

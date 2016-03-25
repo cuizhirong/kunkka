@@ -96,7 +96,7 @@ class Select extends React.Component {
         );
       } else {
         return (
-          <span className="empty-text-label">{__[props.empty_text]}</span>
+          <span className="empty-text-label">{__[props.empty_text.info]}</span>
         );
       }
     }

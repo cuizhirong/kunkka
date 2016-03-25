@@ -30,14 +30,6 @@
           "key": "modify",
           "disabled": true
         }, {
-          "title": ["enable", "security", "group"],
-          "key": "enable",
-          "disabled": true
-        }, {
-          "title": ["disable", "security", "group"],
-          "key": "disable",
-          "disabled": true
-        }, {
           "title": ["delete"],
           "key": "delete",
           "disabled": true,

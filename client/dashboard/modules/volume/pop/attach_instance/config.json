@@ -8,6 +8,9 @@
   }, {
     "type": "select_group",
     "field": "instance",
+    "empty_text": {
+      "info": "no_instance"
+    },
     "data": [],
     "single": true
   }],

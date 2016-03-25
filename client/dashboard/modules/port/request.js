@@ -4,7 +4,18 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['port', 'instance', 'subnet', 'securitygroup'], forced).then((data) => {
+    return storage.getList(['port', 'instance', 'subnet', 'securitygroup', 'router'], forced).then((data) => {
+      data.port.forEach((item) => {
+        if (item.device_owner === 'network:router_interface') {
+          data.router.some((r) => {
+            if (r.id === item.device_id) {
+              item.router = r;
+              return true;
+            }
+            return false;
+          });
+        }
+      });
       return data.port;
     });
   },

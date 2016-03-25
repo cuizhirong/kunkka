@@ -12,6 +12,9 @@ function pop(callback, parent) {
       var data = {
         name: refs.network_name.state.value
       };
+      if (!refs.enable_security.state.checked) {
+        data.port_security_enabled = false;
+      }
       request.createNetwork(data).then((res) => {
         if (refs.create_subnet.state.checked) {
           data = {

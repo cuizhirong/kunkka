@@ -163,7 +163,7 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'create':
-        createModal(rows[0], false, function(){
+        createModal(null, function(){
           that.refresh(null, true);
         });
         break;
@@ -456,7 +456,7 @@ class Model extends React.Component {
         });
         break;
       case 'create_related_volume':
-        createModal(data.childItem, true, function(){
+        createModal(data.childItem, function(){
           that.refresh(null, true);
         });
         break;

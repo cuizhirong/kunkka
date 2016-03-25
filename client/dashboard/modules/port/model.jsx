@@ -73,9 +73,13 @@ class Model extends React.Component {
           break;
         case 'related_resource':
           column.render = (col, item, i) => {
-            return item.server ?
-              <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.server.id}>{item.server.name}</a></div>
-              : <div>{__[item.device_owner]}</div>;
+            if (item.device_owner.indexOf('compute') > -1) {
+              return <div><i className="glyphicon icon-instance"></i><a data-type="instance" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+            } else if (item.device_owner === 'network:router_interface') {
+              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.id.substr(0, 8) + ')'}</a></div>;
+            } else {
+              return <div>{__[item.device_owner]}</div>;
+            }
           };
           break;
         case 'restrict':
@@ -183,22 +187,6 @@ class Model extends React.Component {
           this.refresh({detailRefresh: true}, true);
         });
         break;
-      case 'enable':
-        var _data = {
-          port: {
-            port_security_enabled: true
-          }
-        };
-        request.editSecurityGroup(_data, rows[0].id);
-        break;
-      case 'disable':
-        var ele = {
-          port: {
-            port_security_enabled: false
-          }
-        };
-        request.editSecurityGroup(ele, rows[0].id);
-        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
@@ -236,22 +224,16 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'assc_instance':
-          btns[key].disabled = (rows.length === 1 && !rows[0].server) ? false : true;
+          btns[key].disabled = (rows.length === 1 && !rows[0].device_owner) ? false : true;
           break;
         case 'detach_instance':
-          btns[key].disabled = (rows.length === 1 && rows[0].server) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].device_owner.indexOf('compute') > -1) ? false : true;
           break;
         case 'modify':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'enable':
-          btns[key].disabled = (rows.length === 1 && !rows[0].port_security_enabled) ? false : true;
-          break;
-        case 'disable':
           btns[key].disabled = (rows.length === 1 && rows[0].port_security_enabled) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length >= 1) ? false : true;
+          btns[key].disabled = (rows.length >= 1 && rows[0].device_owner.indexOf('compute') > -1) ? false : true;
           break;
         default:
           break;

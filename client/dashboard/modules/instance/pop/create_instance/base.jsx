@@ -215,13 +215,13 @@ class ModalBase extends React.Component {
       snapshotList: snapshots,
       selectedImage: selectedImage,
       imageType: imageType,
-      userName: JSON.parse(images[0].image_meta).os_username,
-      credentialType: images[0].image_label === 'Windows' ? 'password' : 'keypair',
+      userName: JSON.parse(selectedImage.image_meta).os_username,
+      credentialType: selectedImage.image_label === 'Windows' ? 'password' : 'keypair',
       networkData: resNetworks,
-      selectedNetwork: resNetworks[0].id,
+      selectedNetwork: resNetworks.length > 0 ? resNetworks[0].id : '',
       securityGroupData: resSecurityGroups,
       keypairData: resKeypair,
-      selectedKeypair: resKeypair[0].name
+      selectedKeypair: resKeypair.length > 0 ? resKeypair[0].name : ''
     });
   }
 
@@ -247,7 +247,8 @@ class ModalBase extends React.Component {
     var that = this;
     createNetwork(null, (res) => {
       that.setState({
-        networkData: [res]
+        networkData: [res],
+        selectedNetwork: res.id
       });
     }, this.refs.modal);
     this.setState({
@@ -259,7 +260,8 @@ class ModalBase extends React.Component {
     var that = this;
     createKeypair((res) => {
       that.setState({
-        keypairData: [res]
+        keypairData: [res],
+        selectedKeypair: res.name
       });
     }, this.refs.modal);
     this.setState({

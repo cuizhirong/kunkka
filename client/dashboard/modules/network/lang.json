@@ -1,6 +1,7 @@
 {
   "en": {
     "create_subnet": "Create Subnet",
+    "enable_security": "Enable security restrict(Once be set, it can not be changed)",
     "net_address": "CIDR",
     "network_name": "Network Name",
     "no_network": "No available Virtual Network",
@@ -13,6 +14,7 @@
   },
   "zh-CN": {
     "create_subnet": "创建子网",
+    "enable_security": "开启安全限制（设置后不能更改）",
     "net_address": "网络地址",
     "network_name": "私有网络名称",
     "no_network": "没有可用的虚拟网络",
