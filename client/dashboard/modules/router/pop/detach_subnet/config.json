@@ -17,7 +17,6 @@
   }],
   "btn": {
     "value": "dissociate",
-    "type": "create",
     "disabled": false
   }
 }

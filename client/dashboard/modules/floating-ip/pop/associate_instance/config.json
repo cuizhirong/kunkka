@@ -23,7 +23,6 @@
   }],
   "btn": {
     "value": "associate",
-    "type": "create",
-    "disabled": false
+    "disabled": true
   }
 }

@@ -13,7 +13,6 @@
   }],
   "btn": {
     "value": "modify",
-    "type": "create",
     "disabled": false
   }
 }

@@ -15,6 +15,7 @@
   }],
   "btn": {
     "value": "create",
+    "type": "create",
     "disabled": false
   }
 }

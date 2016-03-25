@@ -17,6 +17,7 @@
   }],
   "btn": {
     "value": "add",
+    "type": "create",
     "disabled": true
   }
 }

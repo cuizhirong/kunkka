@@ -50,6 +50,10 @@ function pop(obj, callback, parent) {
               value: ports[0].id,
               hide: false
             });
+
+            refs.btn.setState({
+              disabled: false
+            });
           }
           break;
         default:

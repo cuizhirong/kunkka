@@ -26,6 +26,7 @@
   }],
   "btn": {
     "value": "create",
+    "type": "create",
     "disabled": true
   }
 }
