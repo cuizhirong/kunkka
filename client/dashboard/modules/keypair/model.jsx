@@ -28,7 +28,7 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+    if (this.props.style.display === 'none') {
       return false;
     }
     return true;

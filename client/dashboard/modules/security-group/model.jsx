@@ -32,6 +32,13 @@ class Model extends React.Component {
   componentWillMount() {
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.getTableData(false);
@@ -345,13 +352,6 @@ class Model extends React.Component {
     };
 
     return data;
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
-      return false;
-    }
-    return true;
   }
 
   refresh(data, forceUpdate) {

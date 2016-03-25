@@ -52,22 +52,24 @@ class Model extends React.Component {
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
-      if (data.resource_type === 'instance') {
-        this.refresh({
-          detailRefresh: true
-        }, false);
+      if (this.props.style.display !== 'none') {
+        if (data.resource_type === 'instance') {
+          this.refresh({
+            detailRefresh: true
+          }, false);
 
-        if (data.action === 'delete'
-          && data.stage === 'end'
-          && data.resource_id === router.getPathList()[2]) {
-          router.replaceState('/project/instance');
+          if (data.action === 'delete'
+            && data.stage === 'end'
+            && data.resource_id === router.getPathList()[2]) {
+            router.replaceState('/project/instance');
+          }
         }
       }
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+    if (this.props.style.display === 'none') {
       return false;
     }
     return true;
