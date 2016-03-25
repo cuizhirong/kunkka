@@ -78,7 +78,7 @@ var prototype = {
           obj.networks.some(function (n) {
             return n.id === s.network_id && (s.network = n);
           });
-          return s.ip_version === 4 && s.network.shared === false && s.network['router:external'] === false;
+          return s.ip_version === 4 && s.network['router:external'] === false;
         });
         obj.subnets.forEach(function (subnet) {
           that.makeSubnet(subnet, obj);
