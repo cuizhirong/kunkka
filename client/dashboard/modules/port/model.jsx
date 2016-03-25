@@ -9,7 +9,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var createPort = require('./pop/create_port/index');
 var associateInstance = require('./pop/associate_instance/index');
 var detachInstance = require('./pop/detach_instance/index');
-var modify = require('./pop/modify_security_group/index');
+var modifySecurityGroup = require('./pop/modify_security_group/index');
 
 var __ = require('i18n/client/lang.json');
 var config = require('./config.json');
@@ -179,7 +179,9 @@ class Model extends React.Component {
         detachInstance(rows[0], function() {});
         break;
       case 'modify':
-        modify(rows[0], function() {});
+        modifySecurityGroup(rows[0], () => {
+          this.refresh({detailRefresh: true}, true);
+        });
         break;
       case 'enable':
         var _data = {

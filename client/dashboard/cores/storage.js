@@ -21,7 +21,7 @@ var volume = require('../modules/volume/cache');
 
 
 var map = {
-  network: ['subnet', 'router'],
+  network: ['subnet'],
   subnet: ['network'],
   port: ['subnet'],
   router: ['subnet', 'port']

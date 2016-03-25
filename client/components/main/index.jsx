@@ -337,9 +337,7 @@ class Main extends React.Component {
                 data={[]}
                 checkbox={table.checkbox} />
               <p>
-                {__.there_is_no + title + __.comma + __.click}
-                <a onClick={null}>{__.here}</a>
-                {__.to_create + __.full_stop}
+                {__.there_is_no + title + __.full_stop}
               </p>
             </div>
           : <Table
