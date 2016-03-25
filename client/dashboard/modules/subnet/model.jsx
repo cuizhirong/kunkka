@@ -309,7 +309,11 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editSubnetName(rawItem, newName).then((res) => {});
+        request.editSubnetName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'crt_port':
         request.getSecurityGroups().then((res) => {

@@ -276,7 +276,11 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editNetworkName(rawItem, newName).then((res) => {});
+        request.editNetworkName(rawItem, newName).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'crt_subnet':
         createSubnet(data.rawItem, function() {});
