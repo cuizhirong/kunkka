@@ -70,7 +70,7 @@ class Model extends React.Component {
     var imageFilter = filters.filter((fil) => fil.key === 'image')[0];
 
     imageFilter.filterBy = function(item) {
-      return item.image_type ? false : true;
+      return item.image_type === 'snapshot' ? false : true;
     };
   }
 
