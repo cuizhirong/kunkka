@@ -58,7 +58,7 @@ class Model extends React.Component {
             detailRefresh: true
           }, false);
 
-          if (data.action === 'delete'
+          if (data.action.indexOf('delete') > -1
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
             router.replaceState('/project/instance');
