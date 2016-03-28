@@ -70,7 +70,7 @@ class Model extends React.Component {
         case 'subnet':
           column.render = (col, item, i) => {
             return item.subnet.id ?
-              <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a></div> : '';
+              <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substr(0, 8) + ')'}</a></div> : '';
           };
           break;
         case 'related_resource':
@@ -345,7 +345,7 @@ class Model extends React.Component {
     }, {
       title: __.subnet,
       content: item.subnet.id ?
-        <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a></div> : ''
+        <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substr(0, 8) + ')'}</a></div> : ''
     }, {
       title: __.floating_ip,
       content: item.floatingip.id ?

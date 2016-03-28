@@ -384,10 +384,10 @@ class Model extends React.Component {
         name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
-        instance: element.instance ?
+        instance: element.server ?
           <div>
             <i className="glyphicon icon-instance"/>
-            <a data-type="router" href={'/project/instance/' + element.instance.id}>{element.instance.name}</a>
+            <a data-type="router" href={'/project/instance/' + element.server.id}>{element.server.name}</a>
           </div>
           : <div>{__[element.device_owner]}</div>,
         status: getStatusIcon(element.status),
