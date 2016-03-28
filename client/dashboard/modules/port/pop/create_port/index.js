@@ -121,6 +121,20 @@ function pop(callback, subnetData, parent) {
                 disabled: false
               });
             }, refs.modal);
+          } else {
+            var portSecurityEnabled = true;
+            status.data.some((group) => {
+              return group.data.some((s) => {
+                if (s.id === status.value) {
+                  portSecurityEnabled = group.port_security_enabled;
+                  return true;
+                }
+                return false;
+              });
+            });
+            refs.security_group.setState({
+              hide: !portSecurityEnabled
+            });
           }
           break;
         case 'security_group':

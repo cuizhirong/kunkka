@@ -15,6 +15,11 @@ module.exports = {
             return false;
           });
         }
+        if (!item.device_owner && item.status === 'ACTIVE') {
+          item.status = 'DOWN';
+        } else {
+          item.status = 'ACTIVE';
+        }
       });
       return data.port;
     });

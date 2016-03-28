@@ -89,6 +89,12 @@ class Model extends React.Component {
             return item.subnets.length ? <div>{subnetRender.map((_item) => _item)}</div> : '';
           };
           break;
+        case 'restrict':
+          column.render = (col, item, i) => {
+            return item.port_security_enabled ?
+              <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>;
+          };
+          break;
         default:
           break;
       }
@@ -317,6 +323,10 @@ class Model extends React.Component {
       type: 'status',
       status: item.status,
       content: __[item.status.toLowerCase()]
+    }, {
+      title: __.security + __.restrict,
+      content: item.port_security_enabled ?
+         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }];
 
     return items;

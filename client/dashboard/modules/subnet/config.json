@@ -80,6 +80,11 @@
     }, {
       "title": ["enable", "dhcp"],
       "key": "enable_dhcp"
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
     }],
     "data": [],
     "detail": {

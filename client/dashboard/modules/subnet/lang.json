@@ -1,6 +1,5 @@
 {
   "en": {
-    "add_warning": "An instance can only join 3 networks or subnets.",
     "allocation": "Allocation ",
     "change_info": "The address will be used as the instance which in the subnet's default gateway.",
     "cidr": "CIDR",
@@ -19,7 +18,6 @@
     "version": "version"
   },
   "zh-CN": {
-    "add_warning": "一台云主机最多只允许加入3个网络或者子网。",
     "allocation": "分配",
     "change_info": "这个地址可以被用于该私有网络内其他主机的缺省网关。",
     "cidr": "CIDR网段",

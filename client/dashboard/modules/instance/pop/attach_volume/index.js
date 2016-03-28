@@ -5,61 +5,38 @@ var request = require('../../request');
 function pop(obj, callback, parent) {
   config.fields[0].text = obj.rawItem.name;
   config.fields[2].data = [];
-  obj.rawItem.volume.forEach((ele, i) => {
-    var item = {
-      id: i,
-      volumeId: ele.id,
-      name: ele.name
-    };
-    config.fields[2].data.push(item);
+  obj.volumes.forEach((ele) => {
+    var hasVolume = obj.rawItem.volume.some((v) => {
+      if (v.id === ele.id) {
+        return true;
+      }
+      return false;
+    });
+    if (!hasVolume) {
+      config.fields[2].data.push(ele);
+    }
   });
 
-  var selectedVolume = {};
   var props = {
     parent: parent,
     config: config,
-    onInitialize: function(refs) {
-      request.getVolumeList().then((data) => {
-        var dataArray = [];
-        data.some((volume) => {
-          if(volume.status === 'available') {
-            dataArray.push(volume);
-          }
-        });
-        refs.volume.setState({
-          data: dataArray,
-          value: dataArray[0].id
-        });
-        refs.btn.setState({
-          disabled: false
-        });
-      });
-    },
+    onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      request.attachVolume(obj.rawItem, selectedVolume).then(() => {
+      request.attachVolume(obj.rawItem, refs.volume.state.value).then(() => {
         callback();
         cb(true);
       });
     },
     onAction: function(field, state, refs) {
-      switch(field) {
+      switch (field) {
         case 'volume':
-          state.data.some((elem) => {
-            if (elem.selected) {
-              selectedVolume.volumeId = elem.id;
-            }
-            elem.selected = false;
+          refs.btn.setState({
+            disabled: !state.value
           });
-          break;
-        case 'type':
-          console.log(state.value);
           break;
         default:
           break;
       }
-    },
-    onLinkClick: function() {
-
     }
   };
 

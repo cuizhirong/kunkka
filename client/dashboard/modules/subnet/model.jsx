@@ -102,6 +102,12 @@ class Model extends React.Component {
             return item.enable_dhcp ? __.yes : __.no;
           };
           break;
+        case 'restrict':
+          column.render = (col, item, i) => {
+            return item.port_security_enabled ?
+              <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>;
+          };
+          break;
         default:
           break;
       }
@@ -371,6 +377,10 @@ class Model extends React.Component {
       content: item.allocation_pools[0] ?
         '(Start) ' + item.allocation_pools[0].start + ' - ' + '(End) ' + item.allocation_pools[0].end
         : null
+    }, {
+      title: __.security + __.restrict,
+      content: item.port_security_enabled ?
+         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }];
 
     return data;

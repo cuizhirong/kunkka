@@ -2,65 +2,67 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return newobj;
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
 function pop(obj, callback, parent) {
-  var getSubnetGroup = function(subnets) {
-    var subnetArray = [];
-    subnets.map((subnet, i) => {
-      if(subnetArray.length === 0) {
-        subnetArray.push({
-          value: subnet.network.id,
-          name: subnet.network.name,
-          data: [{
-            id: i,
-            uuid: subnet.network_id,
-            name: subnet.name + '(' + subnet.cidr + ')'
-          }]
-        });
-      } else {
-        var duplication = false;
-        subnetArray.some((ele) => {
-          if(ele.name === subnet.network.name) {
-            duplication = duplication || true;
-            ele.data.push({
-              id: i,
-              uuid: subnet.network_id,
-              name: subnet.name + '(' + subnet.cidr + ')'
-            });
-          } else {
-            duplication = duplication || false;
-          }
-        });
-        if(!duplication) {
-          subnetArray.push({
-            value: subnet.network.id,
-            name: subnet.network.name,
-            data: [{
-              id: i,
-              uuid: subnet.network_id,
-              name: subnet.name + '(' + subnet.cidr + ')'
-            }]
-          });
+  function getSubnetGroup(subnetArray) {
+    var subnets = copyObj(subnetArray),
+      joinedSubnet = [],
+      subnetGroup = [],
+      hasAvailableSubnet = false;
+    for(let key in obj.addresses) {
+      for(let item of obj.addresses[key]) {
+        if(item['OS-EXT-IPS:type'] === 'fixed') {
+          joinedSubnet.push(item.subnet);
         }
       }
-    });
-    return subnetArray;
-  };
-  var getPort = function(ports) {
-    var portArray = [];
-    ports.map((port, i) => {
-      if(!port.server) {
-        portArray.push({
-          id: port.id,
-          name: port.fixed_ips[0].ip_address + '/' + (port.name || ('(' + port.id.slice(0, 8) + ')'))
-        });
-      }
-    });
-    return portArray;
-  };
-  var networkId = {},
-    allSubnet = [];
+    }
 
-  config.fields[0].text = obj.rawItem.name;
+    if (joinedSubnet.length === 0 && subnets.length > 0) {
+      hasAvailableSubnet = true;
+    }
+
+    joinedSubnet.forEach((item) => {
+      subnets.some((subnet) => {
+        if (subnet.id === item.id) {
+          subnet.disabled = true;
+          return true;
+        }
+        hasAvailableSubnet = true;
+        return false;
+      });
+    });
+
+    if (hasAvailableSubnet) {
+      subnets.forEach((subnet) => {
+        var hasGroup = subnetGroup.some((group) => {
+          if (group.id === subnet.network_id && !subnet.disabled) {
+            group.data.push(subnet);
+            return true;
+          }
+          return false;
+        });
+        if (!hasGroup && !subnet.disabled) {
+          subnetGroup.push({
+            id: subnet.network_id,
+            name: subnet.network.name,
+            port_security_enabled: subnet.network.port_security_enabled,
+            data: [subnet]
+          });
+        }
+      });
+    }
+    return subnetGroup;
+  }
+
+  config.fields[0].text = obj.name;
 
   var props = {
     parent: parent,
@@ -68,32 +70,67 @@ function pop(obj, callback, parent) {
     onInitialize: function(refs) {
       request.getSubnetList().then((data) => {
         if(data.length > 0) {
-          getSubnetGroup(data).map((group) => {
-            allSubnet.push(...group.data);
-          });
-          allSubnet.sort((a, b) => {
-            return a.id - b.id;
-          });
-          networkId.net_id = allSubnet[0].uuid;
+          var subnetGroup = getSubnetGroup(data);
           refs.select_subnet.setState({
-            data: getSubnetGroup(data)
+            data: subnetGroup,
+            value: (subnetGroup.length > 0) ? subnetGroup[0].data[0].id : ''
           });
         }
       });
       request.getPortList().then((data) => {
         if(data.length > 0) {
+          var ports = copyObj(data);
+          var filteredData = ports.filter((port) => {
+            if (!port.device_owner) {
+              var ip = '';
+              if (port.fixed_ips && port.fixed_ips.length > 0) {
+                ip = port.fixed_ips[0].ip_address;
+              }
+              port.name = ip + ' / ' + (port.name ? port.name : '(' + port.id.substring(0, 8) + ')');
+            }
+            return !port.device_owner;
+          });
           refs.select_interface.setState({
-            data: getPort(data),
-            value: data[0].id
+            data: filteredData,
+            value: filteredData[0].id
           });
         }
       });
     },
     onConfirm: function(refs, cb) {
-      request.joinNetwork(obj.rawItem, networkId).then((res) => {
-        callback(res);
-        cb(true);
-      });
+      if (refs.select_subnet.state.checkedField === 'select_subnet') {
+        var networkId = '',
+          portSecurityEnabled = true;
+        refs.select_subnet.state.data.some((group) => {
+          return group.data.some((s) => {
+            if (s.id === refs.select_subnet.state.value) {
+              networkId = group.id;
+              portSecurityEnabled = group.port_security_enabled;
+              return true;
+            }
+            return false;
+          });
+        });
+
+        var port = {
+          network_id: networkId,
+          fixed_ips: [{
+            subnet_id: refs.select_subnet.state.value
+          }],
+          port_security_enabled: portSecurityEnabled
+        };
+        request.createPort(port).then((p) => {
+          request.joinNetwork(obj, p.port.id).then((res) => {
+            callback(res);
+            cb(true);
+          });
+        });
+      } else {
+        request.joinNetwork(obj, refs.select_interface.state.value).then((res) => {
+          callback(res);
+          cb(true);
+        });
+      }
     },
     onAction: function(field, state, refs) {
       switch(field) {
@@ -110,18 +147,6 @@ function pop(obj, callback, parent) {
         default:
           break;
       }
-      if(state.checkedField === 'select_subnet') {
-        networkId = {};
-        var index = refs.select_subnet.state.value;
-        networkId.net_id = index ? allSubnet[index].uuid : allSubnet[0].uuid;
-      } else {
-        networkId = {};
-        var portId = refs.select_interface.state.value;
-        networkId.port_id = portId;
-      }
-    },
-    onLinkClick: function() {
-
     }
   };
 

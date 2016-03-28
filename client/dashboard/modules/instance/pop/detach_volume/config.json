@@ -9,10 +9,12 @@
     "field": "volume",
     "is_warning": true,
     "selected": true,
+    "single": true,
     "data": []
   }],
   "btn": {
     "value": "detach",
-    "disabled": false
+    "type": "delete",
+    "disabled": true
   }
 }

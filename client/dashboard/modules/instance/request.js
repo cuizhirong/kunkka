@@ -4,7 +4,7 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['instance', 'image', 'network', 'subnet', 'keypair', 'flavor', 'port'], forced).then(function(data) {
+    return storage.getList(['instance', 'image', 'network', 'subnet', 'keypair', 'flavor', 'port', 'floatingip', 'securitygroup', 'volume'], forced).then(function(data) {
       return data.instance;
     });
   },
@@ -98,10 +98,10 @@ module.exports = {
       data: data
     });
   },
-  attachVolume: function(item, volume) {
+  attachVolume: function(item, volumeId) {
     var data = {};
     data.volumeAttachment = {
-      volumeId: volume.volumeId
+      volumeId: volumeId
     };
 
     return fetch.post({
@@ -114,11 +114,21 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.rawItem.id + '/os-volume_attachments/' + item.childItem.id
     });
   },
-  joinNetwork: function(item, data) {
+  joinNetwork: function(item, portId) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/os-interface',
       data: {
-        interfaceAttachment: data
+        interfaceAttachment: {
+          port_id: portId
+        }
+      }
+    });
+  },
+  createPort: function(port) {
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/ports',
+      data: {
+        port: port
       }
     });
   },

@@ -5,7 +5,11 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['subnet', 'network', 'router', 'instance'], forced).then(function(data) {
-      return data.subnet;
+      var subnets = data.subnet;
+      subnets.forEach((subnet) => {
+        subnet.port_security_enabled = subnet.network.port_security_enabled;
+      });
+      return subnets;
     });
   },
   editSubnetName: function(item, newName) {

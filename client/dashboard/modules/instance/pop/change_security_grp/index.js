@@ -2,10 +2,19 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return newobj;
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
 function pop(obj, callback, parent) {
-
   config.fields[0].text = obj.name;
-  var ports = [];
+  var ports = [],
+    securityGroups = [];
   var addresses = obj.addresses;
 
   for (let key in addresses) {
@@ -32,9 +41,20 @@ function pop(obj, callback, parent) {
 
         request.getSecuritygroupList().then((data) => {
           if(data.length > 0) {
+            var res = copyObj(data);
+            securityGroups = copyObj(data);
+            ports[0].security_groups.forEach((item) => {
+              res.some((r) => {
+                if (r.name === item.name) {
+                  r.selected = true;
+                  return true;
+                }
+                return false;
+              });
+            });
             refs.security_group.setState({
-              data: data,
-              value: data[0].id
+              data: res,
+              value: res[0].id
             });
           }
         });
@@ -61,10 +81,42 @@ function pop(obj, callback, parent) {
       });
     },
     onAction: function(field, state, refs) {
-
-    },
-    onLinkClick: function() {
-
+      switch (field) {
+        case 'security_group':
+          var hasSecurity = state.data.some((item) => {
+            if (item.selected) {
+              return true;
+            }
+            return false;
+          });
+          refs.btn.setState({
+            disabled: !hasSecurity
+          });
+          break;
+        case 'port':
+          ports.some((item) => {
+            if (item.id === state.value) {
+              var sgs = copyObj(securityGroups);
+              item.security_groups.forEach((ele) => {
+                sgs.some((s) => {
+                  if (ele.name === s.name) {
+                    s.selected = true;
+                    return true;
+                  }
+                  return false;
+                });
+              });
+              refs.security_group.setState({
+                data: sgs
+              });
+              return true;
+            }
+            return false;
+          });
+          break;
+        default:
+          break;
+      }
     }
   };
 

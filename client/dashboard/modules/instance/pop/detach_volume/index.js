@@ -30,10 +30,15 @@ function pop(obj, btnType, callback, parent) {
       }
     },
     onAction: function(field, state, refs) {
-
-    },
-    onLinkClick: function() {
-
+      switch (field) {
+        case 'volume':
+          refs.btn.setState({
+            disabled: !state.value
+          });
+          break;
+        default:
+          break;
+      }
     }
   };
 

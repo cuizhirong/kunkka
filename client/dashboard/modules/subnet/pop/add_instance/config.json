@@ -13,7 +13,7 @@
     }
   }, {
     "type": "warning",
-    "field": "add_warning"
+    "field": "join_network_tip"
   }],
   "btn": {
     "value": "add",

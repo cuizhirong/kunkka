@@ -58,6 +58,11 @@
         "key": "active",
         "filterBy": "ACTIVE"
       }]
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
     }],
     "data": [],
     "detail": {

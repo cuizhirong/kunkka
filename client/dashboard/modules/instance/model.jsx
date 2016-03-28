@@ -233,13 +233,15 @@ class Model extends React.Component {
         dissociateFIP(rows[0], function() {});
         break;
       case 'join_ntw':
-        joinNetwork({rawItem: rows[0]}, function() {});
+        joinNetwork(rows[0], function() {});
         break;
       case 'chg_security_grp':
         changeSecurityGrp(rows[0], function() {});
         break;
       case 'add_volume':
-        attachVolume({rawItem: rows[0]}, function() {});
+        request.getVolumeList().then((res) => {
+          attachVolume({rawItem: rows[0], volumes: res}, function() {});
+        });
         break;
       case 'rmv_volume':
         detachVolume({rawItem: rows[0]}, false, function() {});
@@ -652,16 +654,10 @@ class Model extends React.Component {
         });
         break;
       case 'create_network':
-        request.getSubnetList().then((res) => {
-          data.subnet = res;
-          request.getPortList().then((ports) => {
-            data.port = ports;
-            joinNetwork(data, function() {
-              that.refresh({
-                detailRefresh: true
-              }, true);
-            });
-          });
+        joinNetwork(data.rawItem, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
         });
         break;
       case 'delete_network':

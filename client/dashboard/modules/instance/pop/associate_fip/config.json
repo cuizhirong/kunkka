@@ -15,7 +15,9 @@
   }, {
     "type": "select",
     "field": "local_ip",
-    "empty_text": "no_port",
+    "empty_text": {
+      "info": "no_port"
+    },
     "long_label": true,
     "data": []
   }],
