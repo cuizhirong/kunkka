@@ -317,7 +317,7 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var items = [{
       title: __.name,
-      content: item.name ? item.name : '(' + item.id.substring(0, 8) + ')',
+      content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
     }, {
       title: 'ID',

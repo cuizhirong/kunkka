@@ -345,7 +345,7 @@ class Model extends React.Component {
           <span key={index}>
             <i className="glyphicon icon-instance" />
             <a data-type="router" href={'/project/instance/' + attch.server.id}>
-              {attch.server.name}
+              {attch.server.name || '(' + attch.server.id.substring(0, 8) + ')'}
             </a>
           </span>
         );

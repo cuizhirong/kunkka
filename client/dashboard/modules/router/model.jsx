@@ -306,7 +306,7 @@ class Model extends React.Component {
     var items = [{
       title: __.name,
       type: 'editable',
-      content: item.name
+      content: item.name || '(' + item.id.substring(0, 8) + ')'
     }, {
       title: __.id,
       content: item.id
@@ -333,7 +333,7 @@ class Model extends React.Component {
         id: index + 1,
         name: <div>
             <i className="glyphicon icon-subnet" />
-            <a data-type="router" href={'/project/subnet/' + element.id}>{element.name}</a>
+            <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>
           </div>,
         cidr: element.cidr,
         gateway_ip: element.gateway_ip,

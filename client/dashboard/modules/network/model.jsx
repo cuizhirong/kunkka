@@ -307,7 +307,7 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var items = [{
       title: __.name,
-      content: item.name,
+      content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
     }, {
       title: __.id,
@@ -327,7 +327,7 @@ class Model extends React.Component {
     item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.slice(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
         cidr: element.cidr,
         router: element.router ? element.router.name : '',
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {

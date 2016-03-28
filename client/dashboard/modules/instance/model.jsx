@@ -432,7 +432,7 @@ class Model extends React.Component {
     var label = item.image.image_label && item.image.image_label.toLowerCase();
     var items = [{
       title: __.name,
-      content: item.name,
+      content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
     }, {
       title: __.id,

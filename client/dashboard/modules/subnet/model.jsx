@@ -334,7 +334,7 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var data = [{
       title: __.name,
-      content: item.name,
+      content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
     }, {
       title: __.id,
@@ -381,7 +381,7 @@ class Model extends React.Component {
     item.ports.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.slice(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
         instance: element.server ?
