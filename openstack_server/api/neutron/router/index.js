@@ -95,8 +95,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/routers', this.getRouterList.bind(this));
     this.app.get('/api/v1/routers/:routerId', this.getRouterDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.router);
-    this.generateActionApi(this.neutron.router.metadata, this.operate);
   }
 };
 module.exports = function (app, extension) {

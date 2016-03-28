@@ -38,8 +38,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/security', this.getSecurityList.bind(this));
     this.app.get('/api/v1/:projectId/security/:securityId', this.getSecurityDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.security);
-    this.generateActionApi(this.neutron.security.metadata);
   }
 };
 

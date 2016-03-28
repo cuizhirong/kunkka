@@ -196,8 +196,6 @@ var prototype = {
     this.app.get('/api/v1/:projectId/servers/detail', this.getInstanceList.bind(this));
     this.app.get('/api/v1/:projectId/flavors/detail', this.getFlavorList.bind(this));
     this.app.get('/api/v1/:projectId/servers/:serverId', this.getInstanceDetails.bind(this));
-    this.serverOperate = this.originalOperate.bind(this, this.nova.server);
-    this.generateActionApi(this.nova.server.metadata, this.serverOperate);
   }
 };
 

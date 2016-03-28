@@ -96,8 +96,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/volumes/detail', this.getVolumeList.bind(this));
     this.app.get('/api/v1/:projectId/volumes/:volumeId', this.getVolumeDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.cinder.volume);
-    this.generateActionApi(this.cinder.volume.metadata, this.operate);
   }
 };
 

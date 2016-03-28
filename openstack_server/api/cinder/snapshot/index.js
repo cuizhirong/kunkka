@@ -117,8 +117,6 @@ var prototype = {
     this.app.get('/api/v1/:projectId/snapshots/:snapshotId', this.getSnapshotDetails.bind(this));
     this.app.get('/api/v1/instanceSnapshots', this.getInstanceSnapshotList.bind(this));
     this.app.get('/api/v1/instanceSnapshots/:snapshotId', this.getInstanceSnapshotDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.cinder.snapshot);
-    this.generateActionApi(this.cinder.snapshot.metadata, this.operate);
   }
 };
 

@@ -29,8 +29,6 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/keypairs/detail', this.getKeypairList.bind(this));
-    this.operate = this.originalOperate.bind(this, this.nova.keypair);
-    this.generateActionApi(this.nova.keypair.metadata, this.operate);
   }
 };
 

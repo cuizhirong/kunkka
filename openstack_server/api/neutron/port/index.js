@@ -124,8 +124,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/ports', this.getPortList.bind(this));
     this.app.get('/api/v1/:projectId/ports/:portId', this.getPortDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.port);
-    this.generateActionApi(this.neutron.port.metadata, this.operate);
   }
 };
 

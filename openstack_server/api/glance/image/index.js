@@ -38,8 +38,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/images', this.getImageList.bind(this));
     this.app.get('/api/v1/images/:imageId', this.getImageDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.glance.image);
-    this.generateActionApi(this.glance.image.metadata, this.operate);
   }
 };
 

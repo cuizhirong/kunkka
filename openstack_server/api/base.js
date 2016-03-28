@@ -64,20 +64,6 @@ API.prototype.apilist = {
     this.cinder.volume.showVolumeDetails(this.projectId, this.volumeId, this.token, this.region, this.asyncHandler.bind(this, callback));
   }
 };
-API.prototype.dicApiUrlParam = {
-  'projectId'    : 'project_id',
-  'serverId'     : 'server_id',
-  'volumeId'     : 'volume_id',
-  'snapshotId'   : 'snapshot_id',
-  'networkId'    : 'network_id',
-  'subnetId'     : 'subnet_id',
-  'portId'       : 'port_id',
-  'routerId'     : 'router_id',
-  'floatingipId' : 'floatingip_id',
-  'imageId'      : 'image_id',
-  'securityId'   : 'security_id',
-  'keypairName'  : 'keypair_name'
-};
 API.prototype.handleError = function (err, req, res, next) {
   if (err.status) {
     next(err);
@@ -115,68 +101,6 @@ API.prototype.asyncHandler = function (callback, err, payload) {
   } else {
     callback(null, payload.body);
   }
-};
-API.prototype.paramChecker = function (objService, action, req, res) {
-  var meta = objService.metadata[action];
-  var paramPool = meta.required.concat(meta.optional, meta.oneOf);
-  var arrMiss = [];
-  var objExtra = {};
-  var hasOneof = true;
-  var paramObj = {};
-  if (meta.oneOf.length) {
-    hasOneof = false;
-  }
-  Object.keys(req.body).forEach(function(k) {
-    if (paramPool.indexOf(k) === -1) {
-      objExtra[k] = req.body[k];
-    } else {
-      paramObj[k] = req.body[k];
-    }
-    if (meta.oneOf.indexOf(k) !== -1) {
-      hasOneof = true;
-    }
-  });
-  meta.required.forEach(function(r) {
-    if (paramObj[r] === undefined) {
-      arrMiss.push(r);
-    }
-  });
-  if (arrMiss.length) {
-    return res.status(400).json({'error': req.i18n.__('shared.error_parameters_required') + arrMiss});
-  } else if (!hasOneof) {
-    return res.status(400).json({'error': req.i18n.__('shared.error_parameters_oneof') + meta.oneOf});
-  } else {
-    return paramObj;
-  }
-};
-API.prototype.generateActionApi = function (metadata, handler) {
-  var that = this;
-  var api = {};
-  var method = 'post';
-  var _handler = handler ? handler : this.operate;
-  Object.keys(metadata).forEach(function (action) {
-    api = metadata[action];
-    method = api.method ? api.method : 'post';
-    that.app[method](api.apiDir + api.type, _handler.bind(that, action));
-  });
-};
-API.prototype.originalOperate = function (service, action, req, res, next) {
-  var that = this;
-  var token = req.session.user.token;
-  var region = req.headers.region;
-  var paramObj = this.paramChecker(service, action, req, res);
-  Object.keys(this.dicApiUrlParam).forEach(function (e) {
-    if (req.params[e]) {
-      paramObj[that.dicApiUrlParam[e]] = req.params[e];
-    }
-  });
-  service.action(token, region, function (err, payload) {
-    if (err) {
-      that.handleError(err, req, res, next);
-    } else {
-      res.json(payload.body);
-    }
-  }, action, paramObj);
 };
 API.prototype.orderByCreatedTime = function (arr, flag) {
   // default is DESC.

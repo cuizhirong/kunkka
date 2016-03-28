@@ -118,8 +118,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/subnets', this.getSubnetList.bind(this));
     this.app.get('/api/v1/:projectId/subnets/:subnetId', this.getSubnetDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.subnet);
-    this.generateActionApi(this.neutron.subnet.metadata, this.operate);
   }
 };
 module.exports = function (app, extension) {

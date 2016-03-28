@@ -93,8 +93,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/floatingips', this.getFloatingipList.bind(this));
     this.app.get('/api/v1/:projectId/floatingips/:floatingipId', this.getFloatingipDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.floatingip);
-    this.generateActionApi(this.neutron.floatingip.metadata, this.operate);
   }
 };
 module.exports = function (app, extension) {

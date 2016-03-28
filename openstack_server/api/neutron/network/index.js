@@ -104,8 +104,6 @@ var prototype = {
   initRoutes: function () {
     this.app.get('/api/v1/networks', this.getNetworkList.bind(this));
     this.app.get('/api/v1/networks/:networkId', this.getNetworkDetails.bind(this));
-    this.operate = this.originalOperate.bind(this, this.neutron.network);
-    this.generateActionApi(this.neutron.network.metadata, this.operate);
   }
 };
 module.exports = function (app, extension) {
