@@ -3,8 +3,8 @@ var config = require('./config.json');
 var request = require('../../request');
 
 function pop(obj, callback, parent) {
-  config.fields[1].text = obj.name;
-  config.fields[2].text = obj.router.name;
+  config.fields[1].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
+  config.fields[2].text = obj.router.name || '(' + obj.router.id.substr(0, 8) + ')';
 
   var props = {
     parent: parent,

@@ -4,7 +4,7 @@ var request = require('../../request');
 var createRouter = require('client/dashboard/modules/router/pop/create_router/index');
 
 function pop(obj, callback, parent) {
-  config.fields[0].text = obj.name;
+  config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
 
   var props = {
     parent: parent,

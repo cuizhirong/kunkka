@@ -80,7 +80,7 @@ class Model extends React.Component {
                 subnetRender.push(<i key={'icon' + _i}className="glyphicon icon-subnet" />);
                 subnetRender.push(
                   <a key={'subnetName' + _i} onClick={listener.bind(null, _item.id)}>
-                    {_item.name ? _item.name : _item.cidr}
+                    {_item.name ? _item.name : '(' + _item.id.substr(0, 8) + ')'}
                   </a>
                 );
               }
@@ -339,7 +339,11 @@ class Model extends React.Component {
         id: index + 1,
         name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
         cidr: element.cidr,
-        router: element.router ? element.router.name : '',
+        router: element.router ?
+          <span>
+            <i className="glyphicon icon-router"/>
+            <a data-type="router" href={'/project/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
+          </span> : '',
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
           rawItem: item,
           childItem: element

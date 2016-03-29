@@ -76,7 +76,7 @@ class Model extends React.Component {
               <span>
                 <i className="glyphicon icon-network" />
                 <a data-type="router" href={'/project/network/' + item.network.id}>
-                  {item.network.name}
+                  {item.network.name || '(' + item.network.id.substr(0, 8) + ')'}
                 </a>
               </span> : '';
           };
@@ -87,7 +87,7 @@ class Model extends React.Component {
               <span>
                 <i className="glyphicon icon-router" />
                 <a data-type="router" href={'/project/router/' + item.router.id}>
-                  {item.router.name}
+                  {item.router.name || '(' + item.router.id.substr(0, 8) + ')'}
                 </a>
               </span> : '';
           };
