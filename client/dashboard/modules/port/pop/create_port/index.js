@@ -4,16 +4,22 @@ var request = require('../../request');
 var createSubnet = require('client/dashboard/modules/subnet/pop/create_subnet/index');
 var createSecurityGroup = require('client/dashboard/modules/security-group/pop/create_security_group/index');
 
-function pop(callback, subnetData, parent) {
-  var copyObj = function(obj) {
-    var newobj = obj.constructor === Array ? [] : {};
-    if (typeof obj !== 'object') {
-      return newobj;
-    } else {
-      newobj = JSON.parse(JSON.stringify(obj));
-    }
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
     return newobj;
-  };
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
+
+function pop(obj, callback, parent) {
+  if (obj) {
+    config.title[0] = 'add_';
+  } else {
+    config.title[0] = 'create';
+  }
 
   var props = {
     parent: parent,
@@ -41,10 +47,10 @@ function pop(callback, subnetData, parent) {
             }
           });
         }
-        if (subnetData) {
+        if (obj) {
           refs.subnet.setState({
             data: subnetGroup,
-            value: subnetData.id
+            value: obj.id
           });
         } else {
           refs.subnet.setState({

@@ -44,7 +44,8 @@ class ModalBase extends React.Component {
       instanceNum: 1,
       userName: '',
       password: '',
-      instanceName: ''
+      instanceName: '',
+      portSecurityEnable: true
     };
 
     this.onConfirm = this.onConfirm.bind(this);
@@ -107,16 +108,18 @@ class ModalBase extends React.Component {
         serverObj.adminPass = state.password;
       }
 
-      var securityGroups = [];
-      state.securityGroupData.forEach((item) => {
-        if (item.selected) {
-          securityGroups.push({
-            name: item.name
-          });
+      if (state.portSecurityEnable) {
+        var securityGroups = [];
+        state.securityGroupData.forEach((item) => {
+          if (item.selected) {
+            securityGroups.push({
+              name: item.name
+            });
+          }
+        });
+        if (securityGroups.length > 0) {
+          serverObj.security_groups = securityGroups;
         }
-      });
-      if (securityGroups.length > 0) {
-        serverObj.security_groups = securityGroups;
       }
 
       request.createInstance(serverObj).then((res) => {
@@ -221,7 +224,8 @@ class ModalBase extends React.Component {
       selectedNetwork: resNetworks.length > 0 ? resNetworks[0].id : '',
       securityGroupData: resSecurityGroups,
       keypairData: resKeypair,
-      selectedKeypair: resKeypair.length > 0 ? resKeypair[0].name : ''
+      selectedKeypair: resKeypair.length > 0 ? resKeypair[0].name : '',
+      portSecurityEnable: resNetworks.length > 0 ? resNetworks[0].port_security_enabled : true
     });
   }
 
@@ -248,7 +252,8 @@ class ModalBase extends React.Component {
     createNetwork(null, (res) => {
       that.setState({
         networkData: [res],
-        selectedNetwork: res.id
+        selectedNetwork: res.id,
+        portSecurityEnable: res.port_security_enable
       });
     }, this.refs.modal);
     this.setState({
@@ -326,8 +331,16 @@ class ModalBase extends React.Component {
   }
 
   onNetworkChange(e) {
-    this.setState({
-      selectedNetwork: e.target.value
+    var selectedNetworkId = e.target.value;
+    this.state.networkData.some((network) => {
+      if (network.id === selectedNetworkId) {
+        this.setState({
+          selectedNetwork: selectedNetworkId,
+          portSecurityEnable: network.port_security_enabled
+        });
+        return true;
+      }
+      return false;
     });
   }
 
@@ -576,7 +589,7 @@ class ModalBase extends React.Component {
                 {this.renderNetworkData()}
               </div>
             </div>
-            <div className="security-group-row">
+            <div className={'security-group-row' + (state.portSecurityEnable ? '' : ' hide')}>
               <div className="modal-label long-label">
                 <span>{__.security_group}</span>
               </div>

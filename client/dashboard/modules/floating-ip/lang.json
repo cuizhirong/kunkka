@@ -9,7 +9,7 @@
     "dissociation": "This will dissociate the floating IP from this resource.",
     "floating-ip": "Floating IP",
     "no_floatingip": "No available Floating IP, ",
-    "resource": "resource",
+    "resource": "Resource",
     "tip_info_floatingip": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT(Show More)",
     "tip_no_port_instance": "The instances with no port are excluded in the list",
     "to": " to ",

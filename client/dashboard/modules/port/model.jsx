@@ -75,7 +75,7 @@ class Model extends React.Component {
           break;
         case 'related_resource':
           column.render = (col, item, i) => {
-            if (item.device_owner.indexOf('compute') > -1) {
+            if (item.device_owner && item.device_owner.indexOf('compute') > -1) {
               return <div><i className="glyphicon icon-instance"></i><a data-type="instance" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
             } else if (item.device_owner === 'network:router_interface') {
               return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.id.substr(0, 8) + ')'}</a></div>;
@@ -176,7 +176,7 @@ class Model extends React.Component {
         });
         break;
       case 'create':
-        createPort(function() {});
+        createPort(null, function() {});
         break;
       case 'assc_instance':
         associateInstance(rows[0], function() {});

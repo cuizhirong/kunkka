@@ -324,7 +324,7 @@ class Model extends React.Component {
         });
         break;
       case 'crt_port':
-        createPort(function() {}, data);
+        createPort(data, function() {});
         break;
       case 'rmv_port':
         request.deletePort(data).then(() => {});
@@ -394,12 +394,25 @@ class Model extends React.Component {
         name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
-        instance: element.server ?
-          <div>
-            <i className="glyphicon icon-instance"/>
-            <a data-type="router" href={'/project/instance/' + element.server.id}>{element.server.name}</a>
-          </div>
-          : <div>{__[element.device_owner]}</div>,
+        instance: (function() {
+          if (element.device_owner && element.device_owner.indexOf('compute') > -1) {
+            return (
+              <div>
+                <i className="glyphicon icon-instance"></i>
+                <a data-type="instance" href={'/project/instance/' + element.device_id}>{element.server.name}</a>
+              </div>
+            );
+          } else if (element.device_owner === 'network:router_interface') {
+            return (
+              <div>
+                <i className="glyphicon icon-router"></i>
+                <a data-type="router" href={'/project/router/' + element.device_id}>{element.router.name || '(' + element.id.substr(0, 8) + ')'}</a>
+              </div>
+            );
+          } else {
+            return <div>{__[element.device_owner]}</div>;
+          }
+        })(),
         status: getStatusIcon(element.status),
         operation: (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') ? (
           <div>
