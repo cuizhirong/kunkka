@@ -50,7 +50,7 @@ module.exports = function(app) {
   locales.forEach(function(locale) {
     staticFiles[locale] = {};
     files.forEach(function(file) {
-      if (file.indexOf(locale) > -1 && file.match(/main.min.js$/)) {
+      if (file.indexOf(locale) > -1 && file.match(/dashboard.min.js$/)) {
         staticFiles[locale].mainJsFile = file;
       } else if (file.indexOf(locale) > -1 && file.match(/login.min.js$/)) {
         staticFiles[locale].loginJsFile = file;
@@ -61,7 +61,7 @@ module.exports = function(app) {
     return el.match(/login.min.css$/) !== null;
   });
   staticFiles.mainCssFile = files.find(function(el) {
-    return el.match(/main.min.css$/) !== null;
+    return el.match(/dashboard.min.css$/) !== null;
   });
 
   var regions = {};
