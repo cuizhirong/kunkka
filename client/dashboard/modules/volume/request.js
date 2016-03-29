@@ -4,7 +4,15 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['volume', 'instance'], forced).then(function(data) {
+    return storage.getList(['volume', 'instance', 'snapshot'], forced).then(function(data) {
+      data.volume.forEach((m) => {
+        m.snapshots = [];
+        data.snapshot.forEach((s) => {
+          if (s.volume_id === m.id) {
+            m.snapshots.push(s);
+          }
+        });
+      });
       return data.volume;
     });
   },
