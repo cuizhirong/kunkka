@@ -38,13 +38,13 @@ function setup() {
     }));
   }
 
-  var proxy = require('../middlewares/proxy');
-  app.use('/proxy', proxy);
-
   app.use(bodyParser.urlencoded({
     extended: true
   }));
   app.use(bodyParser.json());
+
+  var proxy = require('../middlewares/proxy');
+  app.use('/proxy', proxy);
 
   var i18n = require('../middlewares/i18n');
   i18n(app);

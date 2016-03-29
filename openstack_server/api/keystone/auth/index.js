@@ -80,23 +80,13 @@ var prototype = {
           userId = payload.token.user.id;
         var opt = {
           path: '/',
-          expires: expireDate,
-          signed: true,
+          maxAge: config('sessionEngine').maxAge ? config('sessionEngine').maxAge : 1000 * 3600 * 24 * 7,
           httpOnly: true
         };
-        var locale = req.i18n.getLocale();
-        var value = {
-          'projectId': projectId,
-          'regionId': regionId,
-          'userId': userId,
-          'username': _username,
-          'locale': locale
-        };
-        res.cookie(config('sessionEngine').cookie_name, value, opt);
         res.cookie(_username, Object.assign(cookies, {
           region: regionId,
           project: projectId
-        }));
+        }), opt);
         req.session.cookie.expires = new Date(expireDate);
         req.session.user = {
           'regionId': regionId,
@@ -137,7 +127,6 @@ var prototype = {
   },
   logout: function (req, res) {
     req.session.destroy();
-    res.clearCookie(config('sessionEngine').cookie_name);
     res.redirect('/');
   },
   initRoutes: function() {

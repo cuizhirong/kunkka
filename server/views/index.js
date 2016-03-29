@@ -101,9 +101,11 @@ module.exports = function(app) {
           url: websocketUrl
         }
       };
-      res.cookie(username, Object.assign(req.cookies[username], {
-        region: HALO.current_region
-      }));
+      if (req.cookies[username]) {
+        res.cookie(username, Object.assign(req.cookies[username], {
+          region: HALO.current_region
+        }));
+      }
       res.render('dashboard', {
         HALO: JSON.stringify(HALO),
         mainJsFile: staticFiles[locale].mainJsFile,
