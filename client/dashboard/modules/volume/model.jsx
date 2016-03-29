@@ -41,7 +41,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'volume') {
+        if (data.resource_type === 'volume' || data.resource_type === 'snapshot') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -464,9 +464,6 @@ class Model extends React.Component {
         break;
       case 'create_related_snapshot':
         createSnapshot(data.rawItem, function(){
-          that.refresh({
-            detailRefresh: true
-          }, true);
         });
         break;
       case 'delete_related_snapshot':
