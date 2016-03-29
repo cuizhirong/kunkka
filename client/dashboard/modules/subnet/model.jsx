@@ -21,6 +21,7 @@ var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
 var createPort = require('../port/pop/create_port/index');
 var msgEvent = require('client/dashboard/cores/msg_event');
+var notify = require('client/dashboard/utils/notify');
 
 class Model extends React.Component {
 
@@ -159,6 +160,7 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+    var that = this;
     switch (key) {
       case 'refresh':
         this.refresh({
@@ -169,19 +171,30 @@ class Model extends React.Component {
         }, true);
         break;
       case 'create':
-        createSubnet(function() {});
+        createSubnet(rows[0]);
         break;
       case 'cnt_rter':
-        connectRouter(rows[0], function() {});
+        connectRouter(rows[0]);
         break;
       case 'discnt_rter':
-        disconnectRouter(rows[0], function() {});
+        disconnectRouter(rows[0]);
         break;
       case 'add_inst':
-        addInstance(rows[0], false, function() {});
+        addInstance(rows[0], false);
         break;
       case 'mdfy_subnet':
-        modifySubnet(rows[0], function() {});
+        modifySubnet(rows[0], null, function(res) {
+          notify({
+            resource_name: rows[0].name,
+            stage: 'end',
+            action: 'modify',
+            resource_type: 'subnet',
+            resource_id: rows[0].id
+          });
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete':
         deleteModal({
@@ -323,6 +336,12 @@ class Model extends React.Component {
       case 'edit_name':
         var {rawItem, newName} = data;
         request.editSubnetName(rawItem, newName).then((res) => {
+          notify({
+            resource_type: 'subnet',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rawItem.id
+          });
           this.refresh({
             detailRefresh: true
           }, true);
@@ -335,7 +354,7 @@ class Model extends React.Component {
         request.deletePort(data).then(() => {});
         break;
       case 'connect_inst':
-        addInstance(data.rawItem, true, function() {});
+        addInstance(data.rawItem);
         break;
       default:
         break;

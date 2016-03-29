@@ -88,7 +88,7 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'crt_keypair':
-        createKeypair(function(_data) {
+        createKeypair(null, function(_data) {
           that.refresh(null, true);
         });
         break;

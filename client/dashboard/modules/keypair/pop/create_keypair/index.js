@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(callback, parent) {
+function pop(parent, callback) {
   var props = {
     parent: parent,
     config: config,

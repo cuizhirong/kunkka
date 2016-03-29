@@ -153,7 +153,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createInstance(rows[0], function() {
+        createInstance(rows[0], null, function() {
           router.pushState('/project/instance');
         });
         break;

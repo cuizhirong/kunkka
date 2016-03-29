@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(callback, parent) {
+function pop(parent, callback) {
   var props = {
     parent: parent,
     config: config,
@@ -15,7 +15,7 @@ function pop(callback, parent) {
         data.floatingip.floating_network_id = floatingNetworkId;
 
         request.createFloatingIp(data).then((res) => {
-          callback(res.floatingip);
+          callback && callback(res.floatingip);
           cb(true);
         });
       });

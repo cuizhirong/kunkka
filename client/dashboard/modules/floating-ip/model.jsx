@@ -35,7 +35,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'floating-ip') {
+        if (data.resource_type === 'floatingip' || data.resource_type === 'instance') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -169,19 +169,13 @@ class Model extends React.Component {
         }, true);
         break;
       case 'create':
-        applyModal(function() {
-          that.refresh({}, true);
-        });
+        applyModal();
         break;
       case 'dissociate':
-        dissociateRelated(rows[0], function() {
-          that.refresh({}, true);
-        });
+        dissociateRelated(rows[0]);
         break;
       case 'assc_to_instance':
-        associateInstance(rows[0], function() {
-          that.refresh({}, true);
-        });
+        associateInstance(rows[0]);
         break;
       default:
         break;

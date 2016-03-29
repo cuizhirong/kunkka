@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, btnType, callback, parent) {
+function pop(obj, btnType, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
   config.fields[1].data = btnType ? [obj.childItem] : obj.rawItem.volume;
 
@@ -13,7 +13,7 @@ function pop(obj, btnType, callback, parent) {
     onConfirm: function(refs, cb) {
       if(btnType) {
         request.detachVolume(obj).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       } else {
@@ -24,7 +24,7 @@ function pop(obj, btnType, callback, parent) {
           }
         });
         request.detachSomeVolume(obj.rawItem.id, dataArray).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       }

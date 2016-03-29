@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, btnType, callback, parent) {
+function pop(obj, btnType, parent, callback) {
   config.fields[0].text = obj.name;
 
   var props = {

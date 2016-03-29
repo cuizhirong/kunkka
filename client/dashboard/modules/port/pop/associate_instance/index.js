@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
   var props = {
@@ -26,7 +26,7 @@ function pop(obj, callback, parent) {
       var serverId = refs.instance.state.value,
         portId = obj.id;
       request.attachInstance(serverId, portId).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       });
     },

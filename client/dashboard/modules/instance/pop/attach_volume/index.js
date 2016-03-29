@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
   config.fields[2].data = [];
   obj.volumes.forEach((ele) => {
@@ -23,7 +23,7 @@ function pop(obj, callback, parent) {
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       request.attachVolume(obj.rawItem, refs.volume.state.value).then(() => {
-        callback();
+        callback && callback();
         cb(true);
       });
     },

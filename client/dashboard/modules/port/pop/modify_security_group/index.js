@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('client/dashboard/modules/port/request');
 var createSecurityGroup = require('client/dashboard/modules/security-group/pop/create_security_group/index');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
 
   var props = {
@@ -43,7 +43,7 @@ function pop(obj, callback, parent) {
         ele.selected && data.port.security_groups.push(ele.id);
       });
       request.editSecurityGroup(data, obj.id).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       });
     },
@@ -51,7 +51,7 @@ function pop(obj, callback, parent) {
       switch(field) {
         case 'security_group':
           if(refs.security_group.state.clicked) {
-            createSecurityGroup((res) => {
+            createSecurityGroup(refs.modal, (res) => {
               refs.security_group.setState({
                 data: [res],
                 value: res.id,
@@ -60,7 +60,7 @@ function pop(obj, callback, parent) {
               refs.btn.setState({
                 disabled: false
               });
-            }, refs.modal);
+            });
           }
           break;
         default:

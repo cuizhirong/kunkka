@@ -123,7 +123,7 @@ class ModalBase extends React.Component {
       }
 
       request.createInstance(serverObj).then((res) => {
-        this.props.callback(res.server);
+        this.props.callback && this.props.callback(res.server);
         this.setState({
           visible: false
         });

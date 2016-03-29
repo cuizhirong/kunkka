@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createFloatingIp = require('client/dashboard/modules/floating-ip/pop/apply_ip/index');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
@@ -68,7 +68,7 @@ function pop(obj, callback, parent) {
         });
       }
       request.create(obj.id, data).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       });
     },
@@ -76,7 +76,7 @@ function pop(obj, callback, parent) {
       switch(field) {
         case 'floating_ip':
           if(refs.floating_ip.state.clicked) {
-            createFloatingIp((res) => {
+            createFloatingIp(refs.modal, (res) => {
               refs.floating_ip.setState({
                 data: [res],
                 value: res.id,
@@ -85,7 +85,7 @@ function pop(obj, callback, parent) {
               refs.btn.setState({
                 disabled: false
               });
-            }, refs.modal);
+            });
           }
           break;
         default:

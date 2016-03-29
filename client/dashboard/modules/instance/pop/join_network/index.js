@@ -11,7 +11,7 @@ var copyObj = function(obj) {
   }
   return newobj;
 };
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   function getSubnetGroup(subnetArray) {
     var subnets = copyObj(subnetArray),
       joinedSubnet = [],
@@ -121,13 +121,13 @@ function pop(obj, callback, parent) {
         };
         request.createPort(port).then((p) => {
           request.joinNetwork(obj, p.port.id).then((res) => {
-            callback(res);
+            callback && callback(res);
             cb(true);
           });
         });
       } else {
         request.joinNetwork(obj, refs.select_interface.state.value).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       }

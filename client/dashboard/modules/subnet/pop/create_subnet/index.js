@@ -4,7 +4,7 @@ var request = require('../../request');
 
 var createNetwork = require('client/dashboard/modules/network/pop/create_network/index');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
 
   var props = {
     parent: parent,
@@ -70,7 +70,7 @@ function pop(obj, callback, parent) {
           break;
         case 'select_network':
           if (refs.select_network.state.clicked) {
-            createNetwork((res) => {
+            createNetwork(refs.modal, (res) => {
               refs.select_network.setState({
                 data: [res],
                 value: res.id,
@@ -79,7 +79,7 @@ function pop(obj, callback, parent) {
               refs.btn.setState({
                 disabled: false
               });
-            }, refs.modal);
+            });
           }
           break;
         default:

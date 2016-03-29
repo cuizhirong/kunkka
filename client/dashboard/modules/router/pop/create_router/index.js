@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 
 var gatewayId = null;
-function pop(callback, parent) {
+function pop(parent, callback) {
   var props = {
     parent: parent,
     config: config,

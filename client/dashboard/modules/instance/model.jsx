@@ -32,6 +32,7 @@ var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var msgEvent = require('client/dashboard/cores/msg_event');
 var getStatusIcon = require('client/dashboard/utils/status_icon');
+var notify = require('client/dashboard/utils/notify');
 
 class Model extends React.Component {
 
@@ -54,7 +55,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'instance') {
+        if (data.resource_type === 'instance' || data.resource_type === 'volume' || data.resource_type === 'floatingip' || data.resource_type === 'port') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -194,7 +195,7 @@ class Model extends React.Component {
 
     switch(key) {
       case 'create':
-        createInstance(null, function() {});
+        createInstance();
         break;
       case 'vnc_console':
         request.getVncConsole(rows[0]).then((res) => {
@@ -206,9 +207,7 @@ class Model extends React.Component {
         request.poweron(rows[0]).then(function(res) {});
         break;
       case 'power_off':
-        shutdownInstance(rows[0], function() {
-
-        });
+        shutdownInstance(rows[0]);
         break;
       case 'refresh':
         this.refresh({
@@ -222,30 +221,30 @@ class Model extends React.Component {
         request.reboot(rows[0]).then(function(res) {});
         break;
       case 'instance_snapshot':
-        instSnapshot(rows[0], function() {});
+        instSnapshot(rows[0]);
         break;
       case 'resize':
-        resizeInstance(rows[0], function(){});
+        resizeInstance(rows[0]);
         break;
       case 'assc_floating_ip':
-        associateFip(rows[0], function() {});
+        associateFip(rows[0]);
         break;
       case 'dssc_floating_ip':
-        dissociateFIP(rows[0], function() {});
+        dissociateFIP(rows[0]);
         break;
       case 'join_ntw':
-        joinNetwork(rows[0], function() {});
+        joinNetwork(rows[0]);
         break;
       case 'chg_security_grp':
-        changeSecurityGrp(rows[0], function() {});
+        changeSecurityGrp(rows[0]);
         break;
       case 'add_volume':
         request.getVolumeList().then((res) => {
-          attachVolume({rawItem: rows[0], volumes: res}, function() {});
+          attachVolume({rawItem: rows[0], volumes: res});
         });
         break;
       case 'rmv_volume':
-        detachVolume({rawItem: rows[0]}, false, function() {});
+        detachVolume({rawItem: rows[0]}, false);
         break;
       case 'terminate':
         deleteModal({
@@ -637,44 +636,58 @@ class Model extends React.Component {
       case 'edit_name':
         var {rawItem, newName} = data;
         request.editServerName(rawItem, newName).then((res) => {
+          notify({
+            resource_type: 'instance',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rawItem.id
+          });
           this.refresh({
             detailRefresh: true
           }, true);
         });
         break;
       case 'create_volume':
-        attachVolume(data, function() {
+        request.getVolumeList().then((res) => {
+          data.volumes = res;
+          attachVolume(data);
         });
         break;
       case 'delete_volume':
-        detachVolume(data, true, function() {
-          that.refresh({
-            detailRefresh: true
-          }, true);
-        });
+        detachVolume(data, true);
         break;
       case 'create_network':
-        joinNetwork(data.rawItem, function() {
+        joinNetwork(data.rawItem, null, function() {
           that.refresh({
             detailRefresh: true
           }, true);
+          notify({
+            action: 'create',
+            resource_id: data.rawItem.id,
+            resource_name: data.rawItem.name,
+            resource_type: 'port',
+            stage: 'end'
+          });
         });
         break;
       case 'delete_network':
-        detachNetwork(data, function() {
+        detachNetwork(data, null, function() {
           that.refresh({
             detailRefresh: true
           }, true);
+          notify({
+            resource_name: data.rawItem.name,
+            stage: 'end',
+            action: 'delete_interface',
+            resource_type: 'port',
+            resource_id: data.rawItem.id
+          });
         });
         break;
       case 'create_related_instance':
         break;
       case 'create_related_snapshot':
-        instSnapshot(data.rawItem, function() {
-          that.refresh({
-            detailRefresh: true
-          }, true);
-        });
+        instSnapshot(data.rawItem);
         break;
       case 'delete_related_snapshot':
         deleteModal({

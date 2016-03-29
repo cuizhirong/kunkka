@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[1].text = obj.rawItem.name;
   config.fields[2].text = obj.childItem.name + '(' + obj.childItem.cidr + ')';
 
@@ -12,7 +12,7 @@ function pop(obj, callback, parent) {
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       request.detachSubnet(obj).then(() => {
-        callback();
+        callback && callback();
         cb(true);
       });
     },

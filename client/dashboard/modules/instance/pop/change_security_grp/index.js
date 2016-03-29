@@ -11,7 +11,7 @@ var copyObj = function(obj) {
   }
   return newobj;
 };
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
   var ports = [],
     securityGroups = [];
@@ -76,7 +76,7 @@ function pop(obj, callback, parent) {
         }
       });
       request.updateSecurity(refs.port.state.value, data).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       });
     },

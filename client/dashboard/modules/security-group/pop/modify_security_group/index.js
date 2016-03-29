@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].value = obj.name;
   config.fields[1].value = obj.description;
 
@@ -16,7 +16,7 @@ function pop(obj, callback, parent) {
         description: refs.desc.state.value
       };
       request.editSecurityGroup(obj, newData).then(() => {
-        callback();
+        callback && callback();
       });
       cb(true);
     },

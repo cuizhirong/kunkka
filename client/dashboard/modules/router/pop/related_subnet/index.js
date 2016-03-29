@@ -12,7 +12,7 @@ var copyObj = function(obj) {
   return newobj;
 };
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   var subnets = copyObj(obj.subnet);
   var subnetGroup = [],
     hasAvailableSubnet = false;

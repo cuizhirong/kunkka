@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[1].text = obj.name;
   config.fields[2].text = obj.association.device.name;
 
@@ -14,7 +14,7 @@ function pop(obj, callback, parent) {
     },
     onConfirm: function(refs, cb) {
       request.dissociateInstance(obj).then((res) => {
-        callback(res.floatingip);
+        callback && callback(res.floatingip);
         cb(true);
       });
     },

@@ -5,7 +5,7 @@ var request = require('../../request');
 
 var gatewayId = null;
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
   var props = {
     parent: parent,

@@ -16,6 +16,7 @@ var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var request = require('./request');
 var msgEvent = require('client/dashboard/cores/msg_event');
+var notify = require('client/dashboard/utils/notify');
 
 class Model extends React.Component {
 
@@ -148,10 +149,10 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createNetwork(function() {});
+        createNetwork();
         break;
       case 'crt_subnet':
-        createSubnet(rows[0], function() {});
+        createSubnet(rows[0]);
         break;
       case 'delete':
         deleteModal({
@@ -290,13 +291,19 @@ class Model extends React.Component {
       case 'edit_name':
         var {rawItem, newName} = data;
         request.editNetworkName(rawItem, newName).then((res) => {
+          notify({
+            resource_type: 'network',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rawItem.id
+          });
           this.refresh({
             detailRefresh: true
           }, true);
         });
         break;
       case 'crt_subnet':
-        createSubnet(data.rawItem, function() {});
+        createSubnet(data.rawItem);
         break;
       case 'rmv_subnet':
         deleteModal({

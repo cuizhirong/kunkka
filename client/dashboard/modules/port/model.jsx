@@ -16,6 +16,7 @@ var config = require('./config.json');
 var request = require('./request');
 var router = require('client/dashboard/cores/router');
 var msgEvent = require('client/dashboard/cores/msg_event');
+var notify = require('client/dashboard/utils/notify');
 
 class Model extends React.Component {
 
@@ -36,7 +37,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'port' || data.resource_type === 'router') {
+        if (data.resource_type === 'port' || data.resource_type === 'router' || data.resource_type === 'instance') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -160,7 +161,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    var rows = data.rows,
+      that = this;
 
     switch (key) {
       case 'delete':
@@ -179,14 +181,36 @@ class Model extends React.Component {
         createPort();
         break;
       case 'assc_instance':
-        associateInstance(rows[0], function() {});
+        associateInstance(rows[0], null, () => {
+          notify({
+            resource_type: 'instance',
+            action: 'add_interface',
+            stage: 'end',
+            resource_id: rows[0].id
+          });
+          that.refresh(null, true);
+        });
         break;
       case 'detach_instance':
-        detachInstance(rows[0], function() {});
+        detachInstance(rows[0], null, () => {
+          notify({
+            resource_type: 'instance',
+            action: 'delete_interface',
+            stage: 'end',
+            resource_id: rows[0].id
+          });
+          that.refresh(null, true);
+        });
         break;
       case 'modify':
-        modifySecurityGroup(rows[0], () => {
-          this.refresh({detailRefresh: true}, true);
+        modifySecurityGroup(rows[0], null, () => {
+          notify({
+            resource_type: 'security_group',
+            action: 'modify',
+            stage: 'end',
+            resource_id: rows[0].id
+          });
+          this.refresh(null, true);
         });
         break;
       case 'refresh':
@@ -313,6 +337,12 @@ class Model extends React.Component {
       case 'edit_name':
         var {rawItem, newName} = data;
         request.editPortName(rawItem, newName).then((res) => {
+          notify({
+            resource_type: 'port',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rawItem.id
+          });
           this.refresh({
             detailRefresh: true
           }, true);

@@ -93,7 +93,7 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'create':
-        createSecurityGroup(function() {
+        createSecurityGroup(null, function() {
           that.refresh(null, true);
         });
         break;
@@ -119,7 +119,7 @@ class Model extends React.Component {
         }, true);
         break;
       case 'modify':
-        modifySecurityGroup(rows[0], function(_data) {
+        modifySecurityGroup(rows[0], null, function(_data) {
           that.refresh(null, true);
         });
         break;

@@ -14,7 +14,7 @@ var copyObj = function(obj) {
   return newobj;
 };
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   if (obj) {
     config.title[0] = 'add_';
   } else {
@@ -129,7 +129,7 @@ function pop(obj, callback, parent) {
       switch (field) {
         case 'subnet':
           if (refs.subnet.state.clicked) {
-            createSubnet((res) => {
+            createSubnet(refs.modal, (res) => {
               refs.subnet.setState({
                 data: [res],
                 value: res.id,
@@ -157,7 +157,7 @@ function pop(obj, callback, parent) {
           break;
         case 'security_group':
           if (refs.security_group.state.clicked) {
-            createSecurityGroup((res) => {
+            createSecurityGroup(refs.modal, (res) => {
               refs.security_group.setState({
                 data: [res],
                 value: res.id,
@@ -166,7 +166,7 @@ function pop(obj, callback, parent) {
               refs.btn.setState({
                 disabled: false
               });
-            }, refs.modal);
+            });
           }
           break;
         default:

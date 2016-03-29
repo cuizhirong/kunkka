@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createRouter = require('client/dashboard/modules/router/pop/create_router/index');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
 
   var props = {
@@ -34,7 +34,7 @@ function pop(obj, callback, parent) {
       switch (field) {
         case 'router':
           if (refs.router.state.clicked) {
-            createRouter((res) => {
+            createRouter(refs.modal, (res) => {
               refs.router.setState({
                 data: [res],
                 value: res.id,
@@ -43,7 +43,7 @@ function pop(obj, callback, parent) {
               refs.btn.setState({
                 disabled: false
               });
-            }, refs.modal);
+            });
           }
           break;
         default:

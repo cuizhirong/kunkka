@@ -14,7 +14,7 @@ function getField(fieldName) {
   return res;
 }
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   getField('subnet_name').value = obj.name;
   getField('gw_address').value = obj.gateway_ip;
   if (!obj.gateway_ip) {

@@ -3,7 +3,7 @@ var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
 
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
 
@@ -12,7 +12,7 @@ function pop(obj, callback, parent) {
     config: config,
     onConfirm: function(refs, cb) {
       request.poweroff(obj).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       });
     },

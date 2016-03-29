@@ -4,7 +4,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Base = require('./base');
 
-function modal(obj, callback, parent) {
+function modal(obj, parent, callback) {
 
   var container = null;
 

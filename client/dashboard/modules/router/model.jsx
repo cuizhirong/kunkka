@@ -147,7 +147,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createRouter(function(){});
+        createRouter();
         break;
       case 'refresh':
         this.refresh({
@@ -170,17 +170,17 @@ class Model extends React.Component {
         });
         break;
       case 'en_gw':
-        publicGateway(rows[0], function() {});
+        publicGateway(rows[0]);
         break;
       case 'dis_gw':
-        disableGateway(rows[0], function() {});
+        disableGateway(rows[0]);
         break;
       case 'cnt_subnet':
         request.getSubnets().then((res) => {
           var items = {};
           items.rawItem = rows[0];
           items.subnet = res;
-          relatedSubnet(items, function() {});
+          relatedSubnet(items);
         });
         break;
       default:
@@ -419,11 +419,11 @@ class Model extends React.Component {
       case 'cnt_subnet':
         request.getSubnets().then((res) => {
           data.subnet = res;
-          relatedSubnet(data, function() {});
+          relatedSubnet(data);
         });
         break;
       case 'detach_subnet':
-        detachSubnet(data, function() {});
+        detachSubnet(data);
         break;
       default:
         break;
