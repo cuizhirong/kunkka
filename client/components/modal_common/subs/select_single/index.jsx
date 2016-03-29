@@ -35,20 +35,9 @@ class SelectSingle extends React.Component {
     var now = (new Date()).getTime();
     if (nextState.value === null && (now - this.time < 50)) {
       return false;
+    } else {
+      return true;
     }
-
-    for (var index in this.state) {
-      if (typeof this.state[index] !== 'object') {
-        if (this.state[index] !== nextState[index]) {
-          return true;
-        }
-      } else {
-        if (JSON.stringify(this.state[index]) !== JSON.stringify(nextState[index])) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   componentDidUpdate() {
