@@ -223,19 +223,28 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var len = rows.length,
+      device = rows[0] ? rows[0].device_owner : null;
+
     for(let key in btns) {
       switch (key) {
         case 'assc_instance':
-          btns[key].disabled = (rows.length === 1 && !rows[0].device_owner) ? false : true;
+          btns[key].disabled = (len === 1 && !device) ? false : true;
           break;
         case 'detach_instance':
-          btns[key].disabled = (rows.length === 1 && rows[0].device_owner.indexOf('compute') > -1) ? false : true;
+          btns[key].disabled = (len === 1 && device.indexOf('compute') > -1) ? false : true;
           break;
         case 'modify':
-          btns[key].disabled = (rows.length === 1 && rows[0].port_security_enabled) ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].port_security_enabled) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length >= 1 && rows[0].device_owner.indexOf('compute') > -1) ? false : true;
+          var b = rows.every((m) => {
+            if (!m.device_owner || m.device_owner.indexOf('compute') > -1) {
+              return true;
+            }
+            return false;
+          });
+          btns[key].disabled = (len >= 1 && b) ? false : true;
           break;
         default:
           break;
