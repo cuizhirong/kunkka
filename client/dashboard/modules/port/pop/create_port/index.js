@@ -119,7 +119,7 @@ function pop(obj, callback, parent) {
       }
 
       request.createPort(port).then((res) => {
-        callback(res);
+        callback && callback(res);
         cb(true);
       }, () => {
         cb(false);

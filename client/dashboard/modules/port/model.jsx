@@ -176,7 +176,7 @@ class Model extends React.Component {
         });
         break;
       case 'create':
-        createPort(null, function() {});
+        createPort();
         break;
       case 'assc_instance':
         associateInstance(rows[0], function() {});

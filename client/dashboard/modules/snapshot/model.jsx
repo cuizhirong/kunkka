@@ -134,7 +134,7 @@ class Model extends React.Component {
     var rows = data.rows;
     switch (key) {
       case 'create':
-        createVolume(rows[0], function() {});
+        createVolume(rows[0]);
         break;
       case 'crt_img':
         break;

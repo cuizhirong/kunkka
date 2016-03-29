@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].min = obj.size;
 
   request.getOverview().then((overview) => {
@@ -25,7 +25,7 @@ function pop(obj, callback, parent) {
         data.new_size = Number(refs.capacity_size.state.value);
 
         request.extendVolumeSize(obj, data).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       },

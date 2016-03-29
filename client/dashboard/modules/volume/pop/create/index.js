@@ -12,7 +12,7 @@ var copyObj = function(obj) {
   return newobj;
 };
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   var copyConfig = copyObj(config);
   if (obj) {
     copyConfig.fields[1].hide = true;
@@ -59,7 +59,7 @@ function pop(obj, callback, parent) {
         }
 
         request.createVolume(data).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       },

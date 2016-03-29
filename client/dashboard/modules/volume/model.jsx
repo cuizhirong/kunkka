@@ -14,6 +14,7 @@ var detachInstance = require('./pop/detach_instance/index');
 var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
+var notify = require('../../utils/notify');
 
 var config = require('./config.json');
 var __ = require('i18n/client/lang.json');
@@ -165,9 +166,7 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'create':
-        createModal(null, function(){
-          that.refresh(null, true);
-        });
+        createModal();
         break;
       case 'delete':
         deleteModal({
@@ -177,31 +176,38 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteVolumes(rows).then((res) => {
               cb(true);
-              that.refresh(null, true);
             });
           }
         });
         break;
       case 'create_snapshot':
-        createSnapshot(rows[0], function(){
-
-        });
+        createSnapshot(rows[0]);
         break;
       case 'attach_to_instance':
-        attachInstance(rows[0], function() {
-        });
+        attachInstance(rows[0]);
         break;
       case 'dtch_instance':
-        detachInstance(rows[0], function() {
-        });
+        detachInstance(rows[0]);
         break;
       case 'set_rd_only':
-        setRead(rows[0], function() {
+        setRead(rows[0], null, function() {
+          notify({
+            resource_name: rows[0].name,
+            stage: 'end',
+            action: 'update',
+            resource_type: 'volume'
+          });
           that.refresh(null, true);
         });
         break;
       case 'set_rd_wrt':
-        setReadWrite(rows[0], function() {
+        setReadWrite(rows[0], null, function() {
+          notify({
+            resource_name: rows[0].name,
+            stage: 'end',
+            action: 'update',
+            resource_type: 'volume'
+          });
           that.refresh(null, true);
         });
         break;
@@ -214,7 +220,7 @@ class Model extends React.Component {
         }, true);
         break;
       case 'extd_capacity':
-        resizeVolume(rows[0], function() {});
+        resizeVolume(rows[0]);
         break;
       default:
         break;
@@ -242,28 +248,30 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var len = rows.length;
+
     for(let key in btns) {
       switch (key) {
         case 'create_snapshot':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (len === 1) ? false : true;
           break;
         case 'dtch_instance':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'in-use') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
           break;
         case 'attach_to_instance':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
           break;
         case 'extd_capacity':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
           break;
         case 'set_rd_only':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'False') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'False') ? false : true;
           break;
         case 'set_rd_wrt':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'False') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'False') ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length > 0) ? false : true;
+          btns[key].disabled = (len > 0) ? false : true;
           break;
         default:
           break;
@@ -447,7 +455,6 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
@@ -458,13 +465,10 @@ class Model extends React.Component {
         });
         break;
       case 'create_related_volume':
-        createModal(data.childItem, function(){
-          that.refresh(null, true);
-        });
+        createModal(data.childItem);
         break;
       case 'create_related_snapshot':
-        createSnapshot(data.rawItem, function(){
-        });
+        createSnapshot(data.rawItem);
         break;
       case 'delete_related_snapshot':
         deleteModal({
@@ -472,16 +476,7 @@ class Model extends React.Component {
           type: 'snapshot',
           data: [data.childItem],
           onDelete: function(_data, cb) {
-            request.deleteSnapshot(data.childItem).then(() => {
-              that.refresh({
-                detailRefresh: true
-              }, true);
-              setTimeout(() => {
-                that.refresh({
-                  detailRefresh: true
-                }, true);
-              }, 2000);
-            });
+            request.deleteSnapshot(data.childItem);
             cb(true);
           }
         });

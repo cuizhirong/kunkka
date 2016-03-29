@@ -329,7 +329,7 @@ class Model extends React.Component {
         });
         break;
       case 'crt_port':
-        createPort(data, function() {});
+        createPort(data);
         break;
       case 'rmv_port':
         request.deletePort(data).then(() => {});

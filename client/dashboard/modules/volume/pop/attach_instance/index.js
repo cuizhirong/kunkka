@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, callback, parent) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
   var props = {
@@ -31,7 +31,7 @@ function pop(obj, callback, parent) {
           serverId: selected,
           volumeId: obj.id
         }).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       }
