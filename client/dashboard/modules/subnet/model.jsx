@@ -220,30 +220,35 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var length = rows.length,
+      shared = rows[0] ? rows[0].network.shared : null;
     for(let key in btns) {
       switch (key) {
         case 'cnt_rter':
-          if (rows.length === 1 && !rows[0].router.id) {
+          if (length === 1 && !rows[0].router.id && !shared) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
           }
           break;
         case 'discnt_rter':
-          if (rows.length === 1 && rows[0].router.id) {
+          if (length === 1 && rows[0].router.id) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
           }
           break;
         case 'add_inst':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = length === 1 ? false : true;
           break;
         case 'mdfy_subnet':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (length === 1 && !shared) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length >= 1) ? false : true;
+          var disableDelete = rows.some((row) => {
+            return row.network.shared;
+          });
+          btns[key].disabled = (rows.length >= 1 && !disableDelete) ? false : true;
           break;
         default:
           break;
@@ -288,7 +293,7 @@ class Model extends React.Component {
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __.port} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
+                <Button value={__.add_ + __.port} disabled={rows[0].network.shared} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
               </DetailMinitable>
             </div>
           );
@@ -341,7 +346,7 @@ class Model extends React.Component {
     var data = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
-      type: 'editable'
+      type: item.network.shared ? '' : 'editable'
     }, {
       title: __.id,
       content: item.id

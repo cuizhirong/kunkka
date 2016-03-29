@@ -200,13 +200,18 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var length = rows.length;
+
     for(let key in btns) {
       switch (key) {
         case 'crt_subnet':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (length === 1 && !rows[0].shared) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length > 0) ? false : true;
+          var disableDelete = rows.some((row) => {
+            return row.shared;
+          });
+          btns[key].disabled = (length > 0 && !disableDelete) ? false : true;
           break;
         default:
           break;
@@ -253,7 +258,7 @@ class Model extends React.Component {
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.create + __.subnet} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
+                <Button value={__.create + __.subnet} disabled={rows[0].shared} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
                   rawItem: rows[0]
                 })}/>
               </DetailMinitable>
@@ -314,7 +319,7 @@ class Model extends React.Component {
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
-      type: 'editable'
+      type: item.shared ? '' : 'editable'
     }, {
       title: __.id,
       content: item.id
@@ -344,7 +349,7 @@ class Model extends React.Component {
             <i className="glyphicon icon-router"/>
             <a data-type="router" href={'/project/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
           </span> : '',
-        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
+        operation: item.shared ? '-' : <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
           rawItem: item,
           childItem: element
         })} />

@@ -16,8 +16,14 @@ function pop(obj, callback, parent) {
           if (obj && obj.id) {
             selectedItem = obj.id;
           }
+          var networks = [];
+          data.forEach((ele) => {
+            if (!ele.shared) {
+              networks.push(ele);
+            }
+          });
           refs.select_network.setState({
-            data: data,
+            data: networks,
             value: selectedItem
           });
           refs.btn.setState({

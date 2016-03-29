@@ -26,19 +26,21 @@ function pop(obj, callback, parent) {
 
   if (hasAvailableSubnet) {
     subnets.forEach((subnet) => {
-      var hasGroup = subnetGroup.some((group) => {
-        if (group.id === subnet.network_id) {
-          group.data.push(subnet);
-          return true;
-        }
-        return false;
-      });
-      if (!hasGroup) {
-        subnetGroup.push({
-          id: subnet.network_id,
-          name: subnet.network.name,
-          data: [subnet]
+      if (!subnet.network.shared) {
+        var hasGroup = subnetGroup.some((group) => {
+          if (group.id === subnet.network_id) {
+            group.data.push(subnet);
+            return true;
+          }
+          return false;
         });
+        if (!hasGroup) {
+          subnetGroup.push({
+            id: subnet.network_id,
+            name: subnet.network.name,
+            data: [subnet]
+          });
+        }
       }
     });
   }

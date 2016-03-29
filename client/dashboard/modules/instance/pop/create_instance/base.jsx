@@ -151,7 +151,6 @@ class ModalBase extends React.Component {
     var resFlavors = copyObj(res.flavor),
       resImages = copyObj(res.image),
       resNetworks = copyObj(res.network),
-      resSecurityGroups = copyObj(res.securitygroup),
       resKeypair = copyObj(res.keypair);
 
     var flavorData = {},
@@ -207,6 +206,18 @@ class ModalBase extends React.Component {
     } else {
       selectedImage = images[0];
     }
+
+    var resSecurityGroups = [],
+      defaultSecurity;
+    copyObj(res.securitygroup).forEach((item) => {
+      if (item.name === 'default') {
+        defaultSecurity = item;
+        defaultSecurity.selected = true;
+      } else {
+        resSecurityGroups.push(item);
+      }
+    });
+    resSecurityGroups.unshift(defaultSecurity);
 
     this.setState({
       flavorData: flavorData,

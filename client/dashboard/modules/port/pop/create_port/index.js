@@ -30,44 +30,56 @@ function pop(obj, callback, parent) {
         var subnets = copyObj(data.subnet);
         if (subnets.length > 0) {
           subnets.forEach((subnet) => {
-            var hasGroup = subnetGroup.some((group) => {
-              if (group.id === subnet.network_id) {
-                group.data.push(subnet);
-                return true;
-              }
-              return false;
-            });
-            if (!hasGroup) {
-              subnetGroup.push({
-                id: subnet.network_id,
-                name: subnet.network.name,
-                port_security_enabled: subnet.network.port_security_enabled,
-                data: [subnet]
+            if (!subnet.network.shared) {
+              var hasGroup = subnetGroup.some((group) => {
+                if (group.id === subnet.network_id) {
+                  group.data.push(subnet);
+                  return true;
+                }
+                return false;
               });
+              if (!hasGroup) {
+                subnetGroup.push({
+                  id: subnet.network_id,
+                  name: subnet.network.name,
+                  port_security_enabled: subnet.network.port_security_enabled,
+                  data: [subnet]
+                });
+              }
             }
           });
-        }
-        if (obj) {
+
+          var selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
+          selectedSubnet = obj ? obj : selectedSubnet;
           refs.subnet.setState({
             data: subnetGroup,
-            value: obj.id
+            value: selectedSubnet ? selectedSubnet.id : null
           });
-        } else {
-          refs.subnet.setState({
-            data: subnetGroup,
-            value: data.subnet[0].id
+          refs.security_group.setState({
+            hide: selectedSubnet ? !selectedSubnet.network.port_security_enabled : false
+          });
+          refs.btn.setState({
+            disabled: false
           });
         }
-        refs.btn.setState({
-          disabled: false
-        });
       });
 
       request.getSecuritygroupList().then((data) => {
         if (data.securitygroup.length > 0) {
+          var securitygroups = [],
+            defaultSecurity;
+          copyObj(data.securitygroup).forEach((item) => {
+            if (item.name === 'default') {
+              defaultSecurity = item;
+              defaultSecurity.selected = true;
+            } else {
+              securitygroups.push(item);
+            }
+          });
+          securitygroups.unshift(defaultSecurity);
+
           refs.security_group.setState({
-            data: data.securitygroup,
-            value: data.securitygroup[0].id
+            data: securitygroups
           });
           refs.btn.setState({
             disabled: false
