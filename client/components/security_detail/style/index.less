@@ -1,5 +1,8 @@
 @import "../../../style/index.less";
 
+@delete-icon-color: @color_font_400;
+@delete-icon-hover-color: @color_delete;
+
 .halo-com-security-detail {
   display: flex;
   .sg-image {
@@ -84,10 +87,10 @@
     margin-bottom: 16px;
   }
   i.delete-action {
-    color: @color_gray_dark;
+    color: @delete-icon-color;
     cursor: pointer;
     &:hover {
-      color: @color_red;
+      color: @delete-icon-hover-color;
     }
   }
 }

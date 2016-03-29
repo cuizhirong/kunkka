@@ -1,10 +1,9 @@
 @import "../../../style/index.less";
 
-@status-icon-color-active: @color_green;
-@status-icon-color-available: @color_orange;
-@detail-border-color: @color_gray;
-@close-icon-hover-color: @color_blue;
-@loading-color: @color_font_dark;
+@detail-head-bg-color: @color_grey;
+@detail-border-color: @color_grey_600;
+@close-icon-hover-color: @color_info;
+@loading-color: @color_font_800;
 
 .halo-com-main {
   position: relative;
@@ -17,7 +16,7 @@
     flex: 1;
     .fixed-height(31px);
     padding-bottom: 12px;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid @detail-head-bg-color;
     box-sizing: border-box;
 
     h3 {

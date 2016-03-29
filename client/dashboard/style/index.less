@@ -1,8 +1,12 @@
 @import "../../style/index.less";
 @import "./layout.less";
 
-@toggle-bg-color: @color_gray_beige;
-@loading-color: @color_font_dark;
+@toggle-bg-color: @color_grey;
+@loading-color: @color_font_800;
+@icon-status-success-color: @color_success;
+@icon-status-warning-color: @color_warning;
+@icon-status-danger-color: @color_delete;
+@icon-status-cancel-color: @color_cancel;
 
 a {
   cursor: pointer;
@@ -56,6 +60,7 @@ a {
   display: inline-block;
   height: 15px;
   line-height: 15px;
+  vertical-align: middle;
   i[class^="glyphicon icon-status-"],
   .icon-loading {
     margin-right: 4px;
@@ -67,18 +72,18 @@ a {
   i[class^="glyphicon icon-status-"] {
     &.active,
     &.available {
-      color: @color_green;
+      color: @icon-status-success-color;
     }
     &.in-use {
-      color: @color_orange;
+      color: @icon-status-warning-color;
     }
     &.down,
     &.paused {
-      color: @color_gray;
+      color: @icon-status-cancel-color;
     }
     &.shutoff,
     &.error {
-      color: @color_red;
+      color: @icon-status-danger-color;
     }
   }
 

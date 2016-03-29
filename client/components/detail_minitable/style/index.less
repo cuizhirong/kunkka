@@ -1,7 +1,11 @@
 @import "../../../style/index.less";
 
-@toggle-bg-color: @color_gray_beige;
-@subnet-item-hover-color: @color_blue_x_light;
+@icon-color: @color_font_400;
+@icon-action-hover-color: @color_info;
+@icon-delete-hover-color: @color_delete;
+
+@no-data-color: @color_font_700;
+@no-data-bottom-color: @color_grey;
 
 .halo-com-detail-minitable {
   .table-info {
@@ -11,27 +15,27 @@
       cursor: pointer;
     }
     i.action {
-        display: inline-block;
-        margin-right: 16px;
-        color: @color_gray_dark;
-        &:hover {
-          color: @color_blue;
-        }
+      display: inline-block;
+      margin-right: 16px;
+      color: @icon-color;
+      &:hover {
+        color: @icon-action-hover-color;
+      }
     }
     i.icon-delete {
-        display: inline-block;
-        margin-right: 16px;
-        color: @color_gray_dark;
-        &:hover {
-          color: @color_red;
-        }
+      display: inline-block;
+      margin-right: 16px;
+      color: @icon-color;
+      &:hover {
+        color: @icon-delete-hover-color;
       }
+    }
   }
   .no-data-info {
-    color: @color_gray_dark;
+    color: @no-data-color;
     margin-top: -20px;
     line-height: 36px;
-    border-bottom: 1px solid @color_gray_beige;
+    border-bottom: 1px solid @no-data-bottom-color;
     padding-left: 16px;
   }
 }

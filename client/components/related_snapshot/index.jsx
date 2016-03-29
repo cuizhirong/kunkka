@@ -2,7 +2,6 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button} = require('client/uskin/index');
-var __ = require('i18n/client/lang.json');
 
 class RelatedSnapshot extends React.Component {
 
@@ -90,10 +89,7 @@ class RelatedSnapshot extends React.Component {
                       <div className="name">{item.name}</div>
                       <div className="size">{item.size}</div>
                       <div className="time">{item.time}</div>
-                      <div className="status">
-                        {this.getStatusIcon(item)}
-                        {__[item.status.toLowerCase()]}
-                      </div>
+                      <div className="status">{item.status}</div>
                       <div className="icon-set">
                         <i className={'glyphicon icon-' + item.createIcon + ' create'} onClick={this.createAcion.bind(this, item.childItem)}/>
                         <i className="glyphicon icon-delete delete" onClick={this.deleteAcion.bind(this, item.childItem)}/>

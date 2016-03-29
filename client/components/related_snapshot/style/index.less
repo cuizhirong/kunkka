@@ -1,11 +1,20 @@
 @import "../../../style/index.less";
 
-@toggle-bg-color: @color_gray_beige;
+@toggle-bg-color: @color_grey;
+@no-related-data-font-color: @color_font_700;
+@timeline-bg-hover-color: @color_info_100;
+@title-bg-color: @color_grey;
+@timespot-color: @color_disabled_400;
+@content-bottom-color: @color_grey;
+
+@icon-color: @color_font_400;
+@icon-action-hover-color: @color_info;
+@icon-delete-hover-color: @color_delete;
 
 .halo-com-related-snapshot {
   .no-related-data {
     margin-top: 20px;
-    color: @color_gray_darker;
+    color: @no-related-data-font-color;
   }
   .timeline {
     margin-top: 20px;
@@ -24,7 +33,7 @@
       }
       &:hover {
         .content {
-          background-color: @color_blue_x_light;
+          background-color: @timeline-bg-hover-color;
         }
       }
       .title {
@@ -36,7 +45,7 @@
         max-width: 115px;
         height: 28px;
         line-height: 28px;
-        background-color: @color_gray_light;
+        background-color: @title-bg-color;
         position: relative;
         margin-top: 6px;
         display: inline-block;
@@ -46,7 +55,7 @@
           position: absolute;
           border-top: 5px solid transparent;
           border-bottom: 5px solid transparent;
-          border-left: 5px solid @color_gray_light;
+          border-left: 5px solid @title-bg-color;
           right: -9px;
           top: 50%;
           width: 5px;
@@ -64,7 +73,7 @@
         .time-spot {
           width: 50px;
           display: inline-block;
-          border: 1px solid @color_gray;
+          border: 1px solid @timespot-color;
           background-color: white;
           border-radius: 15px;
           width: 15px;
@@ -79,7 +88,7 @@
             width: 11px;
             height: 11px;
             border-radius: 11px;
-            background-color: @color_gray;
+            background-color: @timespot-color;
             display: block;
             position: absolute;
             left: 2px;
@@ -91,7 +100,7 @@
             content: "";
             width: 1px;
             height: 17px;
-            background-color: @color_gray;
+            background-color: @timespot-color;
             position: absolute;
             top: 0;
             right: 28.5px;
@@ -100,7 +109,7 @@
             content: "";
             width: 1px;
             height: 17px;
-            background-color: @color_gray;
+            background-color: @timespot-color;
             position: absolute;
             top: 24px;
             right: 28.5px;
@@ -111,7 +120,7 @@
         flex: 1;
         height: 40px;
         line-height: 40px;
-        border-bottom: 1px solid @color_gray_light;
+        border-bottom: 1px solid @content-bottom-color;
         display: flex;
         div {
           flex: 1;
@@ -134,28 +143,22 @@
           }
           &.status {
             flex: 2;
-            i {
-              margin-right: 4px;
-              &.active {
-                color: @color_green;
-              }
-            }
           }
           &.icon-set {
             flex: 1;
             i {
               font-size: 14px;
               margin-right: 16px;
-              color: @color_gray_dark;
+              color: @icon-color;
               cursor: pointer;
               &.create {
                 &:hover {
-                  color: @color_blue;
+                  color: @icon-action-hover-color;
                 }
               }
               &.delete {
                 &:hover {
-                  color: @color_red;
+                  color: @icon-delete-hover-color;
                 }
               }
             }

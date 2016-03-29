@@ -1,5 +1,13 @@
 @import "../../../style/index.less";
 
+@title-bg-color: @color_grey_600;
+@create-icon-color: @color_grey_400;
+@create-icon-hover-color: @color_info;
+@no-data-desc-color: @color_font_700;
+@content-bg-color: @color_info_100;
+@content-delete-icon-color: @color_font_800;
+@content-delete-icon-hover-color: @color_delete;
+
 .halo-com-related-sources {
   position: relative;
   width: 526px;
@@ -15,7 +23,7 @@
       top: 50%;
       margin-top: -1px;
       height: 1px;
-      background-color: @color_gray_light;
+      background-color: @title-bg-color;
       display: block;
       position: absolute;
     }
@@ -31,29 +39,29 @@
       line-height: 14px;
       }
     i.create-action {
-      color: @color_gray_darker;
+      color: @create-icon-color;
       float: right;
       cursor: pointer;
       &:hover {
-        color: @color_blue;
+        color: @create-icon-hover-color;
       }
     }
   }
   .content-no-data {
     height: 14px;
     padding: 8px;
-    color: @color_gray_darker;
+    color: @no-data-desc-color;
   }
   .related-sources-content {
     margin-right: 24px;
     .content-item {
       padding: 8px;
       &:hover {
-        background-color: @color_blue_x_light;
+        background-color: @content-bg-color;
         i.delete {
-          color: @color_gray_darker;
+          color: @content-delete-icon-color;
           &:hover {
-            color: @color_red;
+            color: @content-delete-icon-hover-color;
           }
         }
       }
@@ -78,10 +86,10 @@
           &:hover {
             i.delete {
               display: inline-block;
-              color: @color_gray_darker;
+              color: @content-delete-icon-color;
               cursor: pointer;
               &:hover {
-                color: @color_red;
+                color: @content-delete-icon-hover-color;
               }
             }
           }
