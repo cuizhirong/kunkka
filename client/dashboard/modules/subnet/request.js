@@ -18,6 +18,21 @@ module.exports = {
               return false;
             });
           }
+          if (item.device_owner.indexOf('compute') > -1) {
+            data.instance.some((i) => {
+              if (i.id === item.device_id) {
+                item.server = i;
+                return true;
+              }
+              return false;
+            });
+            if (!item.server) {
+              item.server = {
+                id: item.device_id,
+                status: 'SOFT_DELETED'
+              };
+            }
+          }
         });
       });
       return subnets;
@@ -99,6 +114,15 @@ module.exports = {
   deletePort: function(item) {
     return fetch.delete({
       url: '/proxy/neutron/v2.0/ports/' + item.id
+    });
+  },
+  createPort: function(port) {
+    var data = {
+      port: port
+    };
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/ports',
+      data: data
     });
   }
 };

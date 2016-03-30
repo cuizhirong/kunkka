@@ -71,9 +71,12 @@ module.exports = {
     });
   },
   getVolumeList: function() {
-    return storage.getList(['volume']).then(function(data) {
-      return data.volume;
-    });
+    var deferredList = [];
+    deferredList.push(storage.getList(['volume']));
+    deferredList.push(fetch.get({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
+    }));
+    return RSVP.all(deferredList);
   },
   getSubnetList: function() {
     return storage.getList(['subnet']).then(function(data) {
@@ -114,13 +117,11 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.rawItem.id + '/os-volume_attachments/' + item.childItem.id
     });
   },
-  joinNetwork: function(item, portId) {
+  joinNetwork: function(item, data) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/os-interface',
       data: {
-        interfaceAttachment: {
-          port_id: portId
-        }
+        interfaceAttachment: data
       }
     });
   },

@@ -11,15 +11,16 @@ var copyObj = function(obj) {
   }
   return newobj;
 };
+
 function pop(obj, parent, callback) {
   function getSubnetGroup(subnetArray) {
     var subnets = copyObj(subnetArray),
       joinedSubnet = [],
       subnetGroup = [],
       hasAvailableSubnet = false;
-    for(let key in obj.addresses) {
-      for(let item of obj.addresses[key]) {
-        if(item['OS-EXT-IPS:type'] === 'fixed') {
+    for (let key in obj.addresses) {
+      for (let item of obj.addresses[key]) {
+        if (item['OS-EXT-IPS:type'] === 'fixed') {
           joinedSubnet.push(item.subnet);
         }
       }
@@ -54,6 +55,7 @@ function pop(obj, parent, callback) {
             id: subnet.network_id,
             name: subnet.network.name,
             port_security_enabled: subnet.network.port_security_enabled,
+            shared: subnet.network.shared,
             data: [subnet]
           });
         }
@@ -69,7 +71,7 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getSubnetList().then((data) => {
-        if(data.length > 0) {
+        if (data.length > 0) {
           var subnetGroup = getSubnetGroup(data);
           refs.select_subnet.setState({
             data: subnetGroup,
@@ -78,7 +80,7 @@ function pop(obj, parent, callback) {
         }
       });
       request.getPortList().then((data) => {
-        if(data.length > 0) {
+        if (data.length > 0) {
           var ports = copyObj(data);
           var filteredData = ports.filter((port) => {
             if (!port.device_owner) {
@@ -100,40 +102,55 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       if (refs.select_subnet.state.checkedField === 'select_subnet') {
         var networkId = '',
-          portSecurityEnabled = true;
+          portSecurityEnabled = true,
+          shared = false;
         refs.select_subnet.state.data.some((group) => {
           return group.data.some((s) => {
             if (s.id === refs.select_subnet.state.value) {
               networkId = group.id;
               portSecurityEnabled = group.port_security_enabled;
+              shared = group.shared;
               return true;
             }
             return false;
           });
         });
 
-        var port = {
-          network_id: networkId,
-          fixed_ips: [{
-            subnet_id: refs.select_subnet.state.value
-          }],
-          port_security_enabled: portSecurityEnabled
-        };
-        request.createPort(port).then((p) => {
-          request.joinNetwork(obj, p.port.id).then((res) => {
-            callback && callback(res);
+        if (shared) {
+          request.joinNetwork(obj, {
+            net_id: networkId
+          }).then((res) => {
+            callback(res);
             cb(true);
           });
-        });
+        } else {
+          var port = {
+            network_id: networkId,
+            fixed_ips: [{
+              subnet_id: refs.select_subnet.state.value
+            }],
+            port_security_enabled: portSecurityEnabled
+          };
+          request.createPort(port).then((p) => {
+            request.joinNetwork(obj, {
+              port_id: p.port.id
+            }).then((res) => {
+              callback(res);
+              cb(true);
+            });
+          });
+        }
       } else {
-        request.joinNetwork(obj, refs.select_interface.state.value).then((res) => {
-          callback && callback(res);
+        request.joinNetwork(obj, {
+          port_id: refs.select_interface.state.value
+        }).then((res) => {
+          callback(res);
           cb(true);
         });
       }
     },
     onAction: function(field, state, refs) {
-      switch(field) {
+      switch (field) {
         case 'select_subnet':
           refs.select_interface.setState({
             checkedField: state.checkedField

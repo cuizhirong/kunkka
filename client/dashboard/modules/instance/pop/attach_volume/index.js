@@ -4,18 +4,33 @@ var request = require('../../request');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
-  config.fields[2].data = [];
+
+  var volumeData = {};
+  var typeData = [];
+  obj.types.forEach((type) => {
+    var name = type.name;
+    volumeData[name] = [];
+    typeData.push(name);
+  });
+  config.fields[1].data = typeData;
+  config.fields[1].value = typeData[0];
+
   obj.volumes.forEach((ele) => {
-    var hasVolume = obj.rawItem.volume.some((v) => {
-      if (v.id === ele.id) {
-        return true;
+    if (ele.status === 'available') {
+      var hasVolume = obj.rawItem.volume.some((v) => {
+        if (v.id === ele.id) {
+          return true;
+        }
+        return false;
+      });
+
+      if (!hasVolume) {
+        volumeData[ele.volume_type].push(ele);
       }
-      return false;
-    });
-    if (!hasVolume) {
-      config.fields[2].data.push(ele);
     }
   });
+
+  config.fields[2].data = volumeData[config.fields[1].value];
 
   var props = {
     parent: parent,
@@ -32,6 +47,11 @@ function pop(obj, parent, callback) {
         case 'volume':
           refs.btn.setState({
             disabled: !state.value
+          });
+          break;
+        case 'type':
+          refs.volume.setState({
+            data: volumeData[state.value]
           });
           break;
         default:

@@ -8,8 +8,7 @@
   }, {
     "type": "tab",
     "field": "type",
-    "data": ["performance", "capacity"],
-    "value": "performance"
+    "data": []
   }, {
     "type": "select_group",
     "field": "volume",

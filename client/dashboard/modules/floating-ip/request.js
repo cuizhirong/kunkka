@@ -5,6 +5,11 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['floatingip', 'instance', 'network'], forced).then(function(data) {
+      data.floatingip.forEach((f) => {
+        if (f.association.type) {
+          f.status = 'active';
+        }
+      });
       return data.floatingip;
     });
   },

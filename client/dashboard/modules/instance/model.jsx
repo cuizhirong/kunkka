@@ -240,7 +240,7 @@ class Model extends React.Component {
         break;
       case 'add_volume':
         request.getVolumeList().then((res) => {
-          attachVolume({rawItem: rows[0], volumes: res});
+          attachVolume({rawItem: rows[0], volumes: res[0].volume, types: res[1].volume_types}, null, function() {});
         });
         break;
       case 'rmv_volume':

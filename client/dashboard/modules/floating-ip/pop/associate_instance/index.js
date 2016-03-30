@@ -38,7 +38,7 @@ function pop(obj, parent, callback) {
               for (let ele of addresses[key]) {
                 if (ele['OS-EXT-IPS:type'] === 'fixed') {
                   ports.push({
-                    id: ele.port.id,
+                    id: ele.port && ele.port.id,
                     name: ele.addr
                   });
                 }
@@ -47,12 +47,12 @@ function pop(obj, parent, callback) {
 
             refs.port.setState({
               data: ports,
-              value: ports[0].id,
-              hide: false
+              value: ports.length > 0 && ports[0].id,
+              hide: ports.length > 0 ? false : true
             });
 
             refs.btn.setState({
-              disabled: false
+              disabled: ports.length > 0 ? false : true
             });
           }
           break;

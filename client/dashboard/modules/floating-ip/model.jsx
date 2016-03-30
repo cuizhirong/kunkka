@@ -68,21 +68,13 @@ class Model extends React.Component {
       switch (column.key) {
         case 'assc_resource': //router.name or server
           column.render = (col, item, i) => {
-            if (item.association.type === 'router') {
-              return (
-                <span>
-                  <i className="glyphicon icon-router" />
-                  <a data-type="router" href={'/project/router/' + item.association.device.id}>
-                    {item.association.device.name}
-                  </a>
-                </span>
-              );
-            } else if (item.association.type === 'server') {
+            if (item.association && item.association.type === 'server') {
+              var server = item.association.device;
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + item.association.device.id}>
-                    {item.association.device.name}
+                  <a data-type="router" href={'/project/instance/' + server.id}>
+                    {server.name}
                   </a>
                 </span>
               );
@@ -273,10 +265,10 @@ class Model extends React.Component {
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,
-      content: item.association.type === 'server' ?
+      content: (item.association && item.association.type === 'server') ?
         <span>
-          <i className="glyphicon icon-router" />
-          <a data-type="router" href={'/project/router/' + item.association.device.id}>
+          <i className="glyphicon icon-instance" />
+          <a data-type="router" href={'/project/instance/' + item.association.device.id}>
             {item.association.device.name}
           </a>
         </span> : '-'

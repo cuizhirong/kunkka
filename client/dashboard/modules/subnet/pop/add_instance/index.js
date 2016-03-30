@@ -2,7 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 
-function pop(obj, btnType, parent, callback) {
+function pop(obj, isDetail, parent, callback) {
   config.fields[0].text = obj.name;
 
   var props = {
@@ -23,23 +23,33 @@ function pop(obj, btnType, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       var networkId = {};
-      if(btnType) {
+      if (isDetail) {
         networkId = {
           interfaceAttachment: {
             port_id: obj.id
           }
         };
+        request.addInstance(refs.instance.state.value, networkId).then((res) => {
+          callback && callback(res);
+          cb(true);
+        });
       } else {
-        networkId = {
-          interfaceAttachment: {
-            net_id: obj.network_id
-          }
+        var port = {
+          network_id: obj.network_id,
+          fixed_ips: [{
+            subnet_id: obj.id
+          }],
+          port_security_enabled: obj.portSecurityEnabled
         };
+        request.createPort(port).then((p) => {
+          request.joinNetwork(obj, {
+            port_id: p.port.id
+          }).then((res) => {
+            callback(res);
+            cb(true);
+          });
+        });
       }
-      request.addInstance(refs.instance.state.value, networkId).then((res) => {
-        cb(true);
-        callback && callback(res);
-      });
     },
     onAction: function(field, status, refs) {}
   };

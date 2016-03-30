@@ -80,22 +80,19 @@ class Model extends React.Component {
           break;
         case 'attch_instance':
           column.render = (col, item, i) => {
-            var servers = [];
-
-            item.attachments && item.attachments.map((attch, index) => {
-              if (index > 0) {
-                servers.push(<span key={'comma' + index}> ,</span>);
-              }
-              servers.push(
-                <span key={index}>
+            var server = item.server;
+            if (server && server.status === 'SOFT_DELETED') {
+              return <span><i className="glyphicon icon-instance"></i>{'(' + server.id.substr(0, 8) + ')'}</span>;
+            } else if (server) {
+              return (
+                <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + attch.server.id}>
-                    {attch.server.name}
+                  <a data-type="router" href={'/project/instance/' + server.id}>
+                    {server.name}
                   </a>
                 </span>
               );
-            });
-            return servers;
+            }
           };
           break;
         case 'type':
@@ -343,22 +340,19 @@ class Model extends React.Component {
 
   getBasicProps(item) {
     var getAttachments = (_item) => {
-      var servers = [];
-
-      _item.attachments && _item.attachments.map((attch, index) => {
-        if (index > 0) {
-          servers.push(<span key={'comma' + index}> ,</span>);
-        }
-        servers.push(
-          <span key={index}>
+      var server = _item.server;
+      if (server && server.status === 'SOFT_DELETED') {
+        return <span><i className="glyphicon icon-instance"></i>{'(' + server.id.substr(0, 8) + ')'}</span>;
+      } else if (server) {
+        return (
+          <span>
             <i className="glyphicon icon-instance" />
-            <a data-type="router" href={'/project/instance/' + attch.server.id}>
-              {attch.server.name || '(' + attch.server.id.substring(0, 8) + ')'}
+            <a data-type="router" href={'/project/instance/' + server.id}>
+              {server.name}
             </a>
           </span>
         );
-      });
-      return servers;
+      }
     };
 
     var data = [{

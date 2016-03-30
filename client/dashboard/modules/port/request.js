@@ -15,7 +15,22 @@ module.exports = {
             return false;
           });
         }
-        if (!item.device_owner && item.status === 'ACTIVE') {
+        if (item.device_owner.indexOf('compute') > -1) {
+          data.instance.some((i) => {
+            if (i.id === item.device_id) {
+              item.server = i;
+              return true;
+            }
+            return false;
+          });
+          if (!item.server) {
+            item.server = {
+              id: item.device_id,
+              status: 'SOFT_DELETED'
+            };
+          }
+        }
+        if (!item.device_owner) {
           item.status = 'DOWN';
         } else {
           item.status = 'ACTIVE';

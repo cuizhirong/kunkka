@@ -77,9 +77,13 @@ class Model extends React.Component {
         case 'related_resource':
           column.render = (col, item, i) => {
             if (item.device_owner && item.device_owner.indexOf('compute') > -1) {
-              return <div><i className="glyphicon icon-instance"></i><a data-type="instance" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+              if (item.server && item.server.status === 'SOFT_DELETED') {
+                return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
+              } else if (item.server) {
+                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+              }
             } else if (item.device_owner === 'network:router_interface') {
-              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.id.substr(0, 8) + ')'}</a></div>;
+              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
             } else {
               return <div>{__[item.device_owner]}</div>;
             }
@@ -363,14 +367,19 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.associate_gl + __.resource,
-      content: item.server ?
-        <div>
-          <i className="glyphicon icon-instance" />
-          <a data-type="router" href={'/project/instance/' + item.server.id}>
-            {item.server.name}
-          </a>
-        </div> :
-        <div>{__[item.device_owner]}</div>
+      content: (function() {
+        if (item.device_owner && item.device_owner.indexOf('compute') > -1) {
+          if (item.server && item.server.status === 'SOFT_DELETED') {
+            return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
+          } else if (item.server) {
+            return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+          }
+        } else if (item.device_owner === 'network:router_interface') {
+          return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+        } else {
+          return <div>{__[item.device_owner]}</div>;
+        }
+      })()
     }, {
       title: 'IP' + __.address,
       content:

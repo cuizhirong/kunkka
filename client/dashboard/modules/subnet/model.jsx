@@ -180,7 +180,7 @@ class Model extends React.Component {
         disconnectRouter(rows[0]);
         break;
       case 'add_inst':
-        addInstance(rows[0], false);
+        addInstance(rows[0]);
         break;
       case 'mdfy_subnet':
         modifySubnet(rows[0], null, function(res) {
@@ -354,7 +354,7 @@ class Model extends React.Component {
         request.deletePort(data).then(() => {});
         break;
       case 'connect_inst':
-        addInstance(data.rawItem);
+        addInstance(data.rawItem, true);
         break;
       default:
         break;
@@ -420,12 +420,20 @@ class Model extends React.Component {
         mac_address: element.mac_address,
         instance: (function() {
           if (element.device_owner && element.device_owner.indexOf('compute') > -1) {
-            return (
-              <div>
-                <i className="glyphicon icon-instance"></i>
-                <a data-type="instance" href={'/project/instance/' + element.device_id}>{element.server.name}</a>
-              </div>
-            );
+            if (element.server && element.server.status === 'SOFT_DELETED') {
+              return (
+                <div>
+                  <i className="glyphicon icon-instance"></i>{'(' + element.id.substr(0, 8) + ')'}
+                </div>
+              );
+            } else if (element.server) {
+              return (
+                <div>
+                  <i className="glyphicon icon-instance"></i>
+                  <a data-type="router" href={'/project/instance/' + element.device_id}>{element.server.name}</a>
+                </div>
+              );
+            }
           } else if (element.device_owner === 'network:router_interface') {
             return (
               <div>
@@ -438,12 +446,24 @@ class Model extends React.Component {
           }
         })(),
         status: getStatusIcon(element.status),
-        operation: (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') ? (
-          <div>
-            <i className="glyphicon icon-associate action" onClick={this.onDetailAction.bind(this, 'description', 'connect_inst', {rawItem: element})}/>
-            <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_port', element)} />
-          </div>
-          ) : '-'
+        operation: (function(_this) {
+          if (!element.device_owner) {
+            return (
+              <div>
+                <i className="glyphicon icon-associate action" onClick={_this.onDetailAction.bind(_this, 'description', 'connect_inst', {rawItem: element})}/>
+                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
+              </div>
+            );
+          } else if (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') {
+            return (
+              <div>
+                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
+              </div>
+            );
+          } else {
+            return '-';
+          }
+        })(this)
       };
       tableContent.push(dataObj);
     });

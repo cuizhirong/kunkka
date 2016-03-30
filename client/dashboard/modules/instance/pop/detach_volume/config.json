@@ -11,6 +11,9 @@
     "selected": true,
     "single": true,
     "data": []
+  }, {
+    "type": "warning",
+    "field": "detach_volume_tip"
   }],
   "btn": {
     "value": "detach",

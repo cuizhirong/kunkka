@@ -30,22 +30,21 @@ function pop(obj, parent, callback) {
         var subnets = copyObj(data.subnet);
         if (subnets.length > 0) {
           subnets.forEach((subnet) => {
-            if (!subnet.network.shared) {
-              var hasGroup = subnetGroup.some((group) => {
-                if (group.id === subnet.network_id) {
-                  group.data.push(subnet);
-                  return true;
-                }
-                return false;
-              });
-              if (!hasGroup) {
-                subnetGroup.push({
-                  id: subnet.network_id,
-                  name: subnet.network.name,
-                  port_security_enabled: subnet.network.port_security_enabled,
-                  data: [subnet]
-                });
+            var hasGroup = subnetGroup.some((group) => {
+              if (group.id === subnet.network_id) {
+                group.data.push(subnet);
+                return true;
               }
+              return false;
+            });
+            if (!hasGroup) {
+              subnetGroup.push({
+                id: subnet.network_id,
+                name: subnet.network.name,
+                port_security_enabled: subnet.network.port_security_enabled,
+                shared: subnet.network.shared,
+                data: [subnet]
+              });
             }
           });
 
@@ -102,18 +101,20 @@ function pop(obj, parent, callback) {
       });
       var subnet = refs.subnet.state;
 
+      var shared = false;
       subnet.data.some((ele) => {
         return ele.data.some((s) => {
           if (s.id === subnet.value) {
             port.network_id = ele.id;
             port.port_security_enabled = ele.port_security_enabled;
+            shared = ele.shared;
             return true;
           }
           return false;
         });
       });
 
-      if (refs.address_ip.state.value !== '') {
+      if (!shared && refs.address_ip.state.value !== '') {
         port.fixed_ips[0].ip_address = '';
         port.fixed_ips[0].ip_address = refs.address_ip.state.value;
       }

@@ -5,13 +5,30 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['volume', 'instance', 'snapshot'], forced).then(function(data) {
-      data.volume.forEach((m) => {
-        m.snapshots = [];
+      data.volume.forEach((v) => {
+        v.snapshots = [];
         data.snapshot.forEach((s) => {
-          if (s.volume_id === m.id) {
-            m.snapshots.push(s);
+          if (s.volume_id === v.id) {
+            v.snapshots.push(s);
           }
         });
+
+        if (v.attachments.length > 0) {
+          var serverId = v.attachments[0].server_id;
+          data.instance.some((ele) => {
+            if (ele.id === serverId) {
+              v.server = ele;
+              return true;
+            }
+            return false;
+          });
+          if (!v.server) {
+            v.server = {
+              id: serverId,
+              status: 'SOFT_DELETED'
+            };
+          }
+        }
       });
       return data.volume;
     });
