@@ -19,6 +19,11 @@
     "key": "refresh",
     "icon": "refresh"
   }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
   "table": {
     "checkbox": true,
     "dataKey": "fingerprint",
