@@ -41,6 +41,10 @@ class ResourceInfo extends React.Component {
   renderContent(info, overview) {
     var halfLength = Math.floor(info.length / 2);
 
+    if (overview) {
+      overview = {};
+    }
+
     var leftSide = [],
       rightSide = [];
 
