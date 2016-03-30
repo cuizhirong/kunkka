@@ -102,7 +102,7 @@ module.exports = function(app) {
       res.cookie(username, Object.assign(req.cookies[username], {
         region: HALO.current_region
       }));
-      res.render('index', {
+      res.render('dashboard', {
         HALO: JSON.stringify(HALO),
         mainJsFile: staticFiles[locale].mainJsFile,
         mainCssFile: staticFiles.mainCssFile,

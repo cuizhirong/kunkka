@@ -26,7 +26,8 @@ function portFormatter (msg, originMsg) {
       } else {
         msg.resource_id = originMsg.payload.port.id;
         msg.resource_name = originMsg.payload.port.name;
-        if (originMsg.payload.port.device_owner === 'compute:nova') {
+        var deviceOwner = originMsg.payload.port.device_owner;
+        if (deviceOwner === 'compute:nova' || deviceOwner === 'compute:None') {
           msg.instance_id = originMsg.payload.port.device_id;
         } else {
           msg.device_id = originMsg.payload.port.device_id;

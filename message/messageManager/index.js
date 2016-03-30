@@ -20,7 +20,14 @@ MessageManager.prototype.msgDispatcher = function (ws, msg) {
 };
 
 MessageManager.prototype.getListenerName = function (msg) {
-  return msg.event_type === 'image.delete' ? msg.payload.owner : msg._context_project_id;
+  switch (msg.event_type) {
+    case 'image.delete':
+      return msg.payload.owner;
+    case 'port.create.end':
+      return msg.payload.port.tenant_id;
+    default:
+      return msg._context_project_id;
+  }
 };
 
 MessageManager.prototype.mqMessageListener = function (msg) {
