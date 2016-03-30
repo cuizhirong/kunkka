@@ -82,18 +82,20 @@ module.exports = function(app) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     var __ = req.i18n.__.bind(req.i18n);
     if (req.session && req.session.user) {
-      var username = req.session.user.username;
+      var user = req.session.user;
+      var username = user.username;
       var HALO = {
         configs: {
           lang: locale
         },
         user: {
-          projectId: req.session.user.projectId,
-          userId: req.session.user.userId,
+          projectId: user.projectId,
+          projects: user.projects,
+          userId: user.userId,
           username: username
         },
         region_list: regions[locale],
-        current_region: req.session.user.regionId ? req.session.user.regionId : regions[locale][0].id,
+        current_region: user.regionId ? user.regionId : regions[locale][0].id,
         // FIXME:
         websocket: {
           url: websocketUrl
