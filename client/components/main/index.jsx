@@ -29,6 +29,15 @@ class Main extends React.Component {
       if (col.filter) {
         col.filterAll = ['all'];
       }
+      if (col.sort) {
+        col.sortBy = function(item1, item2) {
+          var key = col.dataIndex,
+            a = item1[key] ? item1[key] : '(' + item1.id + ')',
+            b = item2[key] ? item2[key] : '(' + item2.id + ')';
+
+          return a.localeCompare(b);
+        };
+      }
     });
     converter.convertLang(__, config);
     this.tableColRender(config.table.column);
@@ -80,6 +89,9 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!nextProps.visible) {
+      this.clearState();
+    }
     if (!this.initialized || (nextProps.visible && (this.props.params !== nextProps.params))) {
       this.onChangeParams(nextProps.params);
     }

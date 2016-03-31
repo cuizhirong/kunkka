@@ -63,7 +63,8 @@
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
-      "type": "captain"
+      "type": "captain",
+      "sort": true
     }, {
       "title": ["prv_network"],
       "key": "prv_network"

@@ -41,7 +41,8 @@
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
-      "type": "captain"
+      "type": "captain",
+      "sort": true
     }, {
       "title": ["subnet"],
       "dataIndex": "",

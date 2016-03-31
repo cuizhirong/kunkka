@@ -43,7 +43,8 @@
       "title": ["ip", "address"],
       "dataIndex": "floating_ip_address",
       "key": "ip_adrs",
-      "type": "captain"
+      "type": "captain",
+      "sort": true
     }, {
       "title": ["associate_gl", "resource"],
       "dataIndex": "",

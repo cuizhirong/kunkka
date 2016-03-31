@@ -101,7 +101,8 @@
       "dataIndex": "name",
       "key": "name",
       "type": "captain",
-      "width": 130
+      "width": 130,
+      "sort": true
     }, {
       "title": ["image"],
       "dataIndex": "",

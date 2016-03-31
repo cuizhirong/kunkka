@@ -31,7 +31,8 @@
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
-      "key": "name"
+      "key": "name",
+      "sort": true
     }, {
       "title": ["finger_print"],
       "dataIndex": "fingerprint",
