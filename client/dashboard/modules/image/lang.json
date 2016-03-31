@@ -1,8 +1,10 @@
 {
   "en": {
-    "checksum": "Checksum"
+    "checksum": "Checksum",
+    "instance_snapshot": "Instance snapshot"
   },
   "zh-CN": {
-    "checksum": "校验和"
+    "checksum": "校验和",
+    "instance_snapshot": "主机镜像"
   }
 }

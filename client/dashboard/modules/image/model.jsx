@@ -97,7 +97,7 @@ class Model extends React.Component {
           break;
         case 'type':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.image_type === 'snapshot' ? __.snapshot : __.image;
+            return ritem.image_type === 'snapshot' ? __.instance_snapshot : __.image;
           };
           break;
         default:
@@ -286,7 +286,7 @@ class Model extends React.Component {
       content: size
     }, {
       title: __.type,
-      content: item.image_type === 'snapshot' ? __.snapshot : __.image
+      content: item.image_type === 'snapshot' ? __.instance_snapshot : __.image
     }, {
       title: __.checksum,
       content: item.checksum ? item.checksum : '-'
