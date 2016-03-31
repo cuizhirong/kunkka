@@ -30,7 +30,7 @@ class Model extends React.Component {
     if (pathList.length <= 1) {
       pathList[1] = configs.default_module;
     }
-    router.replaceState('/project/' + pathList.slice(1).join('/'), null, null, true);
+    router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
   }
 
   onChangeState(pathList) {
@@ -73,7 +73,7 @@ class Model extends React.Component {
   }
 
   onClickSubmenu(e, m) {
-    router.pushState('/project/' + m.key);
+    router.pushState('/admin/' + m.key);
   }
 
   render() {

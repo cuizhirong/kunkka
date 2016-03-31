@@ -1,7 +1,7 @@
 /**
  * @func load modules dynamically
  */
-var configs = require('configs/index.json');
+var configs = require('../config.json');
 
 var modules = {};
 

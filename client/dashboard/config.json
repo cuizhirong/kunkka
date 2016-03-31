@@ -1,7 +1,5 @@
 {
   "modules": [{
-    "items": ["overview"]
-  }, {
     "title": "compute",
     "items": [
       "instance",

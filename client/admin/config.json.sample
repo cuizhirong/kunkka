@@ -1,0 +1,15 @@
+{
+  "modules": [{
+    "title": "overview",
+    "items": [
+      "overview"
+    ]
+  }],
+  "default_module": "overview",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [],
+  "theme": "default"
+}
