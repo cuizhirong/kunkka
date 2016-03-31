@@ -24,7 +24,8 @@ var map = {
   network: ['subnet'],
   subnet: ['network', 'port'],
   port: ['subnet'],
-  router: ['subnet', 'port']
+  router: ['subnet', 'port'],
+  floatingip: ['instance']
 };
 
 function Storage() {

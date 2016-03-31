@@ -75,7 +75,7 @@ class RelatedSnapshot extends React.Component {
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-com-related-snapshot">
-            <Button value={btnConfig.value} onClick={this.onBtnAction.bind(this, btnConfig.actionType)}/>
+            <Button type={btnConfig.type} value={btnConfig.value} onClick={this.onBtnAction.bind(this, btnConfig.actionType)}/>
             {items.length > 0 ?
               <div className="timeline">
                 {items.map((item, i) =>

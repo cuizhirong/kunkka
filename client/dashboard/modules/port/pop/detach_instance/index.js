@@ -17,7 +17,7 @@ function pop(obj, parent, callback) {
         portId = obj.id;
 
       request.detchInstance(serverId, portId).then((res) => {
-        callback && callback(res);
+        callback && callback();
         cb(true);
       });
     },

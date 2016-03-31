@@ -191,7 +191,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    var {rows} = data,
+      that = this;
 
     switch(key) {
       case 'create':
@@ -236,7 +237,15 @@ class Model extends React.Component {
         joinNetwork(rows[0]);
         break;
       case 'chg_security_grp':
-        changeSecurityGrp(rows[0]);
+        changeSecurityGrp(rows[0], null, () => {
+          that.refresh(null, true);
+          notify({
+            resource_type: 'security_group',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rows[0].id
+          });
+        });
         break;
       case 'add_volume':
         request.getVolumeList().then((res) => {
@@ -371,6 +380,7 @@ class Model extends React.Component {
                 title={__.related_image}
                 btnConfig={{
                   value: __.create + __.snapshot,
+                  type: 'create',
                   actionType: 'create_related_snapshot'
                 }}
                 defaultUnfold={true}
@@ -526,7 +536,7 @@ class Model extends React.Component {
               <a data-type="router" href={'/project/port/' + item.port.id}>
                 {item.addr}
               </a>,
-            subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name}</a>,
+            subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
             floating_ip: floatingIp ?
               <a data-type="router" href={'/project/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a>
@@ -664,7 +674,7 @@ class Model extends React.Component {
           notify({
             action: 'create',
             resource_id: data.rawItem.id,
-            resource_name: data.rawItem.name,
+            resource_name: data.childItem.addr,
             resource_type: 'port',
             stage: 'end'
           });
@@ -676,7 +686,7 @@ class Model extends React.Component {
             detailRefresh: true
           }, true);
           notify({
-            resource_name: data.rawItem.name,
+            resource_name: data.childItem.addr,
             stage: 'end',
             action: 'delete_interface',
             resource_type: 'port',
