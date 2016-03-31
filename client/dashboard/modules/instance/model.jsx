@@ -31,7 +31,6 @@ var moment = require('client/libs/moment');
 var __ = require('i18n/client/lang.json');
 var router = require('client/dashboard/cores/router');
 var msgEvent = require('client/dashboard/cores/msg_event');
-var getStatusIcon = require('client/dashboard/utils/status_icon');
 var notify = require('client/dashboard/utils/notify');
 
 class Model extends React.Component {
@@ -592,7 +591,7 @@ class Model extends React.Component {
         name: <a data-type="router" href={'/project/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
-        status: getStatusIcon(item.status),
+        status: item.status,
         createIcon: 'instance',
         childItem: item
       });

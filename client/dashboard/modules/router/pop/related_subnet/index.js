@@ -19,6 +19,8 @@ function pop(obj, parent, callback) {
   subnets.forEach((s) => {
     if (s.router.id) {
       s.disabled = true;
+    } else if (s.gateway_ip === null) {
+      s.disabled = true;
     } else {
       hasAvailableSubnet = true;
     }
@@ -37,7 +39,7 @@ function pop(obj, parent, callback) {
         if (!hasGroup) {
           subnetGroup.push({
             id: subnet.network_id,
-            name: subnet.network.name,
+            name: subnet.network.name || '(' + subnet.network.id.substr(0, 8) + ')',
             data: [subnet]
           });
         }
@@ -45,7 +47,7 @@ function pop(obj, parent, callback) {
     });
   }
 
-  config.fields[0].text = obj.rawItem.name;
+  config.fields[0].text = obj.rawItem.name || '(' + obj.rawItem.id.substr(0, 8) + ')';
   config.fields[1].data = subnetGroup;
   subnets.some((s) => {
     if (!s.disabled) {

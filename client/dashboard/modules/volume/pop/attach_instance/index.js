@@ -13,10 +13,12 @@ function pop(obj, parent, callback) {
         var data = [];
 
         instances.forEach((ele) => {
-          data.push({
-            id: ele.id,
-            name: ele.name + ' (' + ele.id.substr(0, 8) + ')'
-          });
+          if (ele.status === 'ACTIVE') {
+            data.push({
+              id: ele.id,
+              name: ele.name + ' (' + ele.id.substr(0, 8) + ')'
+            });
+          }
         });
 
         refs.instance.setState({

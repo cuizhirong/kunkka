@@ -3,7 +3,7 @@
     "create_keypair": "Create Keypair",
     "finger_print": "Finger Print",
     "import_keypair": "Import Keypair",
-    "keypair_": "Key Pair",
+    "keypair_": "Keypair",
     "keypair_tip": "Dash, number and alphabelt only",
     "no_keypair": "No Available Keypair",
     "public_key": "Public Key"

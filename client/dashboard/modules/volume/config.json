@@ -96,6 +96,10 @@
         "name": ["in-use"],
         "key": "in_use",
         "filterBy": "in-use"
+      }, {
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
       }]
     }, {
       "title": ["create", "time"],

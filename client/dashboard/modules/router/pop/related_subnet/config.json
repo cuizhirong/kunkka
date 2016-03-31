@@ -13,6 +13,9 @@
       "link_info": ["create", "subnet"]
     },
     "data": []
+  }, {
+    "type": "warning",
+    "field": "tip_related_subnet"
   }],
   "btn": {
     "value": "related",

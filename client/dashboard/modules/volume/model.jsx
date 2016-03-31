@@ -42,7 +42,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'volume' || data.resource_type === 'snapshot') {
+        if (data.resource_type === 'volume' || data.resource_type === 'snapshot' || data.resource_type === 'instance') {
           this.refresh({
             detailRefresh: true
           }, false);
