@@ -2,7 +2,11 @@
 
 @basic-props-title-color: @color_grey_800;
 @loading-color: @color_font_800;
-@remodify-icon-color: @color_info;
+@edit-name-icon-color: @color_info;
+@edit-name-icon-hover-color: @color_info_700;
+@edit-confirm-icon-color: @color_font_700;
+@edit-confirm-icon-hover-color: @color_info;
+@edit-cancel-icon-hover-color: @color_delete;
 
 .halo-com-basic-props {
   .content-loading {
@@ -45,18 +49,28 @@
           margin-right: 4px;
           &.remodify {
             margin-left: 4px;
-            color: @remodify-icon-color;
+            color: @edit-name-icon-color;
             cursor: pointer;
+            &:hover {
+              color: @edit-name-icon-hover-color;
+            }
           }
           &.edit-confirm, &.edit-cancel {
-            margin-left: 4px;
+            font-size: 15px;
             cursor: pointer;
+            color: @edit-confirm-icon-color;
           }
           &.edit-confirm {
-
+            margin-left: 8px;
+            &:hover {
+              color: @edit-confirm-icon-hover-color;
+            }
           }
           &.edit-cancel {
-
+            margin-left: 4px;
+            &:hover {
+              color: @edit-cancel-icon-hover-color;
+            }
           }
         }
       }
