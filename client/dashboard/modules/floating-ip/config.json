@@ -20,7 +20,7 @@
     "icon": "dissociate",
     "disabled": true
   }, {
-    "value": ["delete"],
+    "value": ["release"],
     "key": "delete",
     "icon": "delete",
     "type": "delete",
