@@ -41,7 +41,7 @@ class ResourceInfo extends React.Component {
   renderContent(info, overview) {
     var halfLength = Math.floor(info.length / 2);
 
-    if (overview) {
+    if (!overview) {
       overview = {};
     }
 
@@ -51,10 +51,8 @@ class ResourceInfo extends React.Component {
     function renderItem(item, index) {
       return (
         <div className="item" key={index}>
-          <a data-type="router" href={item.link ? '/project/' + item.link : null}>
-            <div>{item.title}</div>
-            <div>{overview[item.key] ? overview[item.key].used : 0}</div>
-          </a>
+          <div>{item.title}</div>
+          <div>{overview[item.key] ? overview[item.key].used : 0}</div>
         </div>
       );
     }

@@ -74,19 +74,16 @@
               &:hover {
                 background-color: @resource-info-item-hover-color;
               }
-              > a {
-                color: @default-font-color;
-                > div:first-child {
-                  width: 60%;
-                  float: left;
-                  .text-overflow();
-                }
-                > div:last-child {
-                  width: 40%;
-                  float: right;
-                  text-align: right;
-                  color: @resource-info-item-usage-color;
-                }
+              > div:first-child {
+                width: 60%;
+                float: left;
+                .text-overflow();
+              }
+              > div:last-child {
+                width: 40%;
+                float: right;
+                text-align: right;
+                color: @resource-info-item-usage-color;
               }
             }
           }

@@ -142,11 +142,9 @@ class ResourceQuota extends React.Component {
                         <div>{item.title}</div>
                         <div>{used + ' / ' + total}</div>
                       </div>
-                      <a data-type="router" href={item.link ? '/project/' + item.link : null}>
-                        <div className="stripe">
-                          <div className={inUseClassName} style={{width: inUse + '%'}}/>
-                        </div>
-                      </a>
+                      <div className="stripe">
+                        <div className={inUseClassName} style={{width: inUse + '%'}}/>
+                      </div>
                     </li>
                   );
                 })}
