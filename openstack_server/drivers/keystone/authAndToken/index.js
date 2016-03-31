@@ -6,7 +6,7 @@ module.exports = {
    * Password authentication with unscoped authorization
    * /v3/auth/tokens
    */
-  unscopedAuth: function (username, password, callback) {
+  unscopedAuth: function (username, password, domain, callback) {
     request
       .post(keystoneRemote + '/v3/auth/tokens')
       .send({
@@ -22,7 +22,7 @@ module.exports = {
               'user': {
                 'name': username,
                 'domain': {
-                  'id': 'default'
+                  'name': domain
                 },
                 'password': password
               }

@@ -10,10 +10,13 @@ var ReactDOMServer = require('react-dom/server');
 
 var loginModel = require('client/login/model.jsx');
 var dashboardModel = require('client/dashboard/model.jsx');
+var adminModel = require('client/admin/model.jsx');
+
 var config = require('config');
 
 var loginModelFactory = React.createFactory(loginModel);
 var dashboardModelFactory = React.createFactory(dashboardModel);
+var adminModelFactory = React.createFactory(adminModel);
 
 var tmplString = {};
 global.locales.availableLocales.forEach(function(lang) {
@@ -27,7 +30,7 @@ global.locales.availableLocales.forEach(function(lang) {
 });
 
 module.exports = function(app) {
-  app.set('views', [__dirname + '/dashboard', __dirname + '/login']);
+  app.set('views', [__dirname + '/dashboard', __dirname + '/login', __dirname + '/admin']);
 
   function upperCaseLocale(locale) {
     if (locale.indexOf('-') > -1) {
@@ -51,17 +54,22 @@ module.exports = function(app) {
     staticFiles[locale] = {};
     files.forEach(function(file) {
       if (file.indexOf(locale) > -1 && file.match(/dashboard.min.js$/)) {
-        staticFiles[locale].mainJsFile = file;
+        staticFiles[locale].dashboardJsFile = file;
       } else if (file.indexOf(locale) > -1 && file.match(/login.min.js$/)) {
         staticFiles[locale].loginJsFile = file;
+      } else if (file.indexOf(locale) > -1 && file.match(/admin.min.js$/)) {
+        staticFiles[locale].adminJsFile = file;
       }
     });
   });
   staticFiles.loginCssFile = files.find(function(el) {
     return el.match(/login.min.css$/) !== null;
   });
-  staticFiles.mainCssFile = files.find(function(el) {
+  staticFiles.dashboardCssFile = files.find(function(el) {
     return el.match(/dashboard.min.css$/) !== null;
+  });
+  staticFiles.adminCssFile = files.find(function(el) {
+    return el.match(/admin.min.css$/) !== null;
   });
 
   var regions = {};
@@ -81,10 +89,13 @@ module.exports = function(app) {
   function renderStaticTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     var __ = req.i18n.__.bind(req.i18n);
-    if (req.session && req.session.user) {
-      var user = req.session.user;
-      var username = user.username;
-      var HALO = {
+    var user,
+      username,
+      HALO;
+    if (req.session && req.session.user && !req.session.user.isAdmin) {
+      user = req.session.user;
+      username = user.username;
+      HALO = {
         configs: {
           lang: locale
         },
@@ -108,10 +119,41 @@ module.exports = function(app) {
       }
       res.render('dashboard', {
         HALO: JSON.stringify(HALO),
-        mainJsFile: staticFiles[locale].mainJsFile,
-        mainCssFile: staticFiles.mainCssFile,
+        mainJsFile: staticFiles[locale].dashboardJsFile,
+        mainCssFile: staticFiles.dashboardCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
+          language: req.i18n.__('shared'),
+          username: username
+        }))
+      });
+    } else if (req.session && req.session.user && req.session.user.isAdmin) {
+      user = req.session.user;
+      username = user.username;
+      HALO = {
+        configs: {
+          lang: locale
+        },
+        user: {
+          projectId: user.projectId,
+          projects: user.projects,
+          userId: user.userId,
+          username: username,
+          isAdmin: true
+        },
+        region_list: regions[locale],
+        current_region: user.regionId ? user.regionId : regions[locale][0].id,
+        // FIXME:
+        websocket: {
+          url: websocketUrl
+        }
+      };
+      res.render('admin', {
+        HALO: JSON.stringify(HALO),
+        mainJsFile: staticFiles[locale].adminJsFile,
+        mainCssFile: staticFiles.adminCssFile,
+        uskinFile: uskinFile[0],
+        modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
           language: req.i18n.__('shared'),
           username: username
         }))

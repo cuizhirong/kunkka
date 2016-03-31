@@ -10,9 +10,10 @@ function Auth (app, keystone) {
 }
 
 var prototype = {
-  authentication: function (req, res) {
+  authentication: function (req, res, next) {
     var username = req.body.username;
     var password = req.body.password;
+    var domain = req.body.domain || config('domain') || 'Default';
     var projects;
     var cookies;
     if (!req.cookies[username]) {
@@ -27,7 +28,7 @@ var prototype = {
     var that = this;
     async.waterfall([
       function (cb) {
-        that.keystone.authAndToken.unscopedAuth(username, password, function(err, response) {
+        that.keystone.authAndToken.unscopedAuth(username, password, domain, function(err, response) {
           if (err) {
             cb(err);
           } else {
@@ -70,8 +71,7 @@ var prototype = {
     ],
     function (err, token, payload) {
       if (err) {
-        //FIXME: add err handler
-        res.status(400).json(err);
+        next(err);
       } else {
         var expireDate = new Date(payload.token.expires_at),
           projectId = payload.token.project.id,
@@ -88,28 +88,35 @@ var prototype = {
           project: projectId
         }), opt);
         req.session.cookie.expires = new Date(expireDate);
+        var isAdmin = payload.token.roles.some(role => {
+          return role.name === 'admin';
+        });
         req.session.user = {
           'regionId': regionId,
           'projectId': projectId,
           'userId': userId,
           'token': token,
           'username': _username,
-          'projects': projects
+          'projects': projects,
+          'isAdmin': isAdmin
         };
         res.json({success: 'login sucess'});
       }
     });
   },
-  swtichPorject: function (req, res) {
+  swtichPorject: function (req, res, next) {
     var projectId = req.body.projectId ? req.body.projectId : req.params.projectId;
     var token = req.session.user.token;
     this.keystone.authAndToken.scopedAuth(projectId, token, function (err, response) {
       if (err) {
-        res.status(err.status).json(err);
+        next(err);
       } else {
         req.session.cookie.expires = new Date(response.body.token.expires_at);
         req.session.user.token = response.header['x-subject-token'];
         req.session.user.projectId = projectId;
+        req.session.user.isAdmin = response.body.token.roles.some(role => {
+          return role.name === 'admin';
+        });
         var username = req.session.user.username;
         res.cookie(username, Object.assign(req.cookies[username], {
           project: projectId
