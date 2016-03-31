@@ -4,8 +4,9 @@ var remote = require('config')('remote');
 var getQueryString = require('./getQueryString.js');
 
 var request = require('superagent');
+var noBodyMethodList = ['get', 'head', 'delete'];
 
-router.all('/*', function (req, res) {
+router.all('/*', function (req, res, next) {
   if (req.body) {
     if (req.body.forceDelete !== undefined) {
       return res.status(403).json({Error: 'Request is not allowwed!'});
@@ -14,17 +15,31 @@ router.all('/*', function (req, res) {
   var region = req.headers.region;
   var service = req.path.split('/')[1];
   var target = remote[service][region] + '/' + req.path.split('/').slice(2).join('/');
-  request[req.method.toLowerCase()](target + getQueryString(req.query))
-    .set(req.headers)
-    .set('X-Auth-Token', req.session.user.token)
-    .send(req.body)
-    .end(function (err, payload) {
-      if (err) {
-        res.status(err.status || 500).json(err.response.body);
-      } else {
-        res.status(200).json(payload.body);
-      }
-    });
+  var method = req.method.toLowerCase();
+  if (noBodyMethodList.indexOf(method) !== -1) {
+    request[method](target + getQueryString(req.query))
+      .set(req.headers)
+      .set('X-Auth-Token', req.session.user.token)
+      .end(function (err, payload) {
+        if (err) {
+          next(err);
+        } else {
+          res.status(200).json(payload.body);
+        }
+      });
+  } else {
+    request[method](target + getQueryString(req.query))
+      .set(req.headers)
+      .set('X-Auth-Token', req.session.user.token)
+      .send(req.body)
+      .end(function (err, payload) {
+        if (err) {
+          next(err);
+        } else {
+          res.status(200).json(payload.body);
+        }
+      });
+  }
 });
 
 // var httpProxy = require('http-proxy');
