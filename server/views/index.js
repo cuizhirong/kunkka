@@ -86,13 +86,13 @@ module.exports = function(app) {
 
   var websocketUrl = config('websocket').url;
 
-  function renderStaticTemplate(req, res, next) {
+  function renderProjectTemplate(req, res, next) {
     var locale = upperCaseLocale(req.i18n.getLocale());
     var __ = req.i18n.__.bind(req.i18n);
     var user,
       username,
       HALO;
-    if (req.session && req.session.user && !req.session.user.isAdmin) {
+    if (req.session && req.session.user) {
       user = req.session.user;
       username = user.username;
       HALO = {
@@ -123,11 +123,32 @@ module.exports = function(app) {
         mainCssFile: staticFiles.dashboardCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
-          language: req.i18n.__('shared'),
+          language: __('shared'),
           username: username
         }))
       });
-    } else if (req.session && req.session.user && req.session.user.isAdmin) {
+    } else {
+      res.render('login', {
+        locale: locale,
+        unitedstack: __('views.login.unitedstack'),
+        login: __('views.login.login'),
+        signup: __('views.login.signup'),
+        forgotPass: __('views.login.forgotPass'),
+        loginJsFile: staticFiles[locale].loginJsFile,
+        loginCssFile: staticFiles.loginCssFile,
+        uskinFile: uskinFile[0],
+        modelTmpl: tmplString[req.i18n.locale]
+      });
+    }
+  }
+
+  function renderAdminTemplate (req, res, next) {
+    var locale = upperCaseLocale(req.i18n.getLocale());
+    var __ = req.i18n.__.bind(req.i18n);
+    var user,
+      username,
+      HALO;
+    if (req.session && req.session.user && req.session.user.isAdmin) {
       user = req.session.user;
       username = user.username;
       HALO = {
@@ -154,28 +175,16 @@ module.exports = function(app) {
         mainCssFile: staticFiles.adminCssFile,
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
-          language: req.i18n.__('shared'),
+          language: __('shared'),
           username: username
         }))
       });
     } else {
-      res.render('login', {
-        locale: locale,
-        unitedstack: __('views.login.unitedstack'),
-        login: __('views.login.login'),
-        signup: __('views.login.signup'),
-        forgotPass: __('views.login.forgotPass'),
-        loginJsFile: staticFiles[locale].loginJsFile,
-        loginCssFile: staticFiles.loginCssFile,
-        uskinFile: uskinFile[0],
-        modelTmpl: tmplString[req.i18n.locale]
-      });
+      res.redirect('/');
     }
   }
 
-  app.get('/', renderStaticTemplate);
-  app.get(/^\/project\/(.*)/, renderStaticTemplate);
-  app.get(/^\/admin\/(.*)/, renderStaticTemplate);
-  app.get(/^\/identity\/(.*)/, renderStaticTemplate);
-  app.get(/^\/bill\/(.*)/, renderStaticTemplate);
+  app.get('/', renderProjectTemplate);
+  app.get(/^\/project\/(.*)/, renderProjectTemplate);
+  app.get(/^\/admin\/(.*)/, renderAdminTemplate);
 };
