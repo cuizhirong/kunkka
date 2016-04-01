@@ -26,8 +26,8 @@ function pop(obj, parent, callback) {
       request.connectRouter(refs.router.state.value, {
         subnet_id: obj.id
       }).then((res) => {
-        cb(true);
         callback && callback(res);
+        cb(true);
       });
     },
     onAction: function(field, status, refs) {

@@ -25,8 +25,8 @@ function pop(obj, parent, callback) {
         }
       };
       request.updateRouter(obj.id, data).then((res) => {
-        cb(true);
         callback && callback(res.router);
+        cb(true);
       });
     },
     onAction: function() {}

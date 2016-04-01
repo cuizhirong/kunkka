@@ -15,8 +15,8 @@ function pop(obj, parent, callback) {
         external_gateway_info: null
       };
       request.updateRouter(obj.id, data).then((res) => {
-        cb(true);
         callback && callback(res.router);
+        cb(true);
       });
     },
     onAction: function() {}

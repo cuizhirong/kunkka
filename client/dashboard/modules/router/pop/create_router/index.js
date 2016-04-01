@@ -25,8 +25,8 @@ function pop(parent, callback) {
         };
       }
       request.createRouter(data).then((res) => {
-        cb(true);
         callback && callback(res.router);
+        cb(true);
       });
     },
     onAction: function(field, status, refs) {}

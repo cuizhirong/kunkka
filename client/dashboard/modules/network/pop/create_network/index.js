@@ -25,12 +25,12 @@ function pop(parent, callback) {
             enable_dhcp: true
           };
           request.createSubnet(data).then(() => {
-            cb(true);
             callback && callback(res.network);
+            cb(true);
           });
         } else {
-          cb(true);
           callback && callback(res.network);
+          cb(true);
         }
       });
     },

@@ -313,7 +313,7 @@ function pop(item, direction, securityGroups, callback) {
           });
           cb(false);
         } else {
-          callback(res);
+          callback && callback(res);
           cb(true);
         }
       });

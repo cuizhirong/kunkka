@@ -32,8 +32,8 @@ function pop(parent, callback) {
           public_key: refs.public_key.state.value
         };
         request.createKeypair(data).then((res) => {
-          cb(true);
           callback && callback(res);
+          cb(true);
         }).catch(function() {
           cb(false);
         });

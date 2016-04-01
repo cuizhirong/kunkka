@@ -14,8 +14,8 @@ function pop(parent, callback) {
       };
       request.addSecurityGroup(data).then(() => {
         callback && callback();
+        cb(true);
       });
-      cb(true);
     },
     onAction: function(filed, status, refs) {}
   };

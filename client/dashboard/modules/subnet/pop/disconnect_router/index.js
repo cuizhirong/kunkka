@@ -15,8 +15,8 @@ function pop(obj, parent, callback) {
       request.disconnectRouter(obj.router.id, {
         subnet_id: obj.id
       }).then((res) => {
-        cb(true);
         callback && callback(res);
+        cb(true);
       });
     },
     onAction: function(field, status, refs) {

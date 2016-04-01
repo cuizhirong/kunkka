@@ -17,8 +17,8 @@ function pop(obj, parent, callback) {
       };
       request.editSecurityGroup(obj, newData).then(() => {
         callback && callback();
+        cb(true);
       });
-      cb(true);
     },
     onAction: function(field, status, refs) {}
   };

@@ -689,7 +689,6 @@ class Model extends React.Component {
           notify({
             action: 'create',
             resource_id: data.rawItem.id,
-            resource_name: data.childItem.addr,
             resource_type: 'port',
             stage: 'end'
           });
