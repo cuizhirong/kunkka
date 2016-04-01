@@ -76,7 +76,7 @@ class GroupSelect extends React.Component {
             {
               state.data.map(function(group) {
                 return (
-                  <optgroup key={group.name} label={group.name}>
+                  <optgroup key={group.id} label={group.name}>
                   {
                     group.data.map(function(item) {
                       return <option key={item.id} disabled={item.disabled} value={item.id}>{item.name || '(' + item.id.substr(0, 8) + ')'}</option>;

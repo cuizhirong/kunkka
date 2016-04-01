@@ -53,7 +53,7 @@ function pop(obj, parent, callback) {
         if (!hasGroup && !subnet.disabled) {
           subnetGroup.push({
             id: subnet.network_id,
-            name: subnet.network.name,
+            name: subnet.network.name || '(' + subnet.network.id.substring(0, 8) + ')',
             port_security_enabled: subnet.network.port_security_enabled,
             shared: subnet.network.shared,
             data: [subnet]
