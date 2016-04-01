@@ -34,6 +34,8 @@ function pop(parent, callback) {
         request.createKeypair(data).then((res) => {
           cb(true);
           callback && callback(res);
+        }).catch(function() {
+          cb(false);
         });
       }
     },
