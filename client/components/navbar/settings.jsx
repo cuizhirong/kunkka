@@ -86,7 +86,6 @@ class Settings extends React.Component {
   }
 
   render() {
-    console.log(this.state.initialized);
     return (
       <ul className="settings-dropdown">
         {this.state.initialized ? this.setTmpl() : null}

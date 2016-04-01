@@ -126,7 +126,7 @@ module.exports = function(app) {
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
           language: __('shared'),
-          username: username
+          HALO: HALO
         }))
       });
     } else {

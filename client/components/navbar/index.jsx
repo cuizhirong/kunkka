@@ -14,11 +14,7 @@ class NavBar extends React.Component {
   }
 
   render() {
-    var regionName = 'xxx';
-    // var currentRegion = HALO.current_region;
-    // HALO.region_list.map((region) => {
-    //   regionName = region.id === currentRegion ? region.name : '';
-    // });
+    var HALO = this.props.HALO;
 
     return (
       <div className="halo-com-navbar">
@@ -26,7 +22,7 @@ class NavBar extends React.Component {
         <div className="region-wp">
           <div className="region-name">
             <i className="glyphicon icon-region"></i>
-            <span ref="name">{regionName}</span>
+            <span ref="name">{HALO.current_region}</span>
             <div ref="settingBtn" className="settings-btn"></div>
           </div>
           <div className="region">
@@ -35,7 +31,7 @@ class NavBar extends React.Component {
         </div>
         <div className="user-info">
           <i className="glyphicon icon-avatar"></i>
-          <span className="user-name">{this.props.username}</span>
+          <span className="user-name">{HALO.user.username}</span>
           <div ref="settingBtn" className="settings-btn"></div>
           <div className="settings">
             <Settings />
