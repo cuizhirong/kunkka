@@ -1,3 +1,5 @@
+'use strict';
+
 var WebpackDevServer = require('webpack-dev-server');
 var webpack = require('webpack');
 var path = require('path');

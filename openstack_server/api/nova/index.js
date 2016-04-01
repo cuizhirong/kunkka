@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 * merge all nova api methods to one object and export it
 */

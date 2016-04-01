@@ -1,3 +1,5 @@
+'use strict';
+
 var i18n = require('i18n-2');
 var path = require('path');
 module.exports = function (app) {

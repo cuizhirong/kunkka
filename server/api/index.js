@@ -1,13 +1,15 @@
+'use strict';
+
 /**
  * Internal dependencies
  */
-var version = require('package.json').version;
-var extensions = require('./extensions');
-var extenstionList = Object.keys(extensions);
-var config = require('config');
-var path = require('path');
+const version = require('package.json').version;
+const extensions = require('./extensions');
+const extenstionList = Object.keys(extensions);
+const config = require('config');
+const path = require('path');
 
-var fs = require('fs');
+const fs = require('fs');
 
 module.exports = function(app) {
   app.get('/version', function(request, response) {
@@ -16,17 +18,17 @@ module.exports = function(app) {
     });
   });
 
-  var apiModulePath = path.join(__dirname, '../../', config('backend').dirname, 'api');
+  let apiModulePath = path.join(__dirname, '../../', config('backend').dirname, 'api');
   fs.readdirSync(apiModulePath)
     .filter(function (m) {
       return m !== 'base.js';
     })
     .forEach(function (m) {
       if (m !== '.DS_Store') {
-        var apiComponent = require(path.join(apiModulePath, m));
+        let apiComponent = require(path.join(apiModulePath, m));
         Object.keys(apiComponent).forEach(function(k){
-          var apiModule = apiComponent[k];
-          var extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;
+          let apiModule = apiComponent[k];
+          let extension = extenstionList.indexOf(m) > -1 ? extensions[m] : undefined;
           apiModule(app, extension);
         });
       }

@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var Driver = require('openstack_server/drivers');
 var Neutron = Driver.neutron;
@@ -51,11 +53,11 @@ var prototype = {
         }
       });
     });
-    port.subnet = {};
+    port.subnets = [];
     port.fixed_ips.forEach(function(e, index) {
       obj.subnets.some(function(subnet, i) {
-        if ( subnet.id === e.subnet_id) {
-          port.subnet = subnet;
+        if ( subnet.id === e.subnet_id ) {
+          port.subnets.push(subnet);
           return true;
         } else {
           return false;

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function (query) {
   var str = '';
   if (query) {

@@ -1,4 +1,6 @@
-var Driver = require('openstack_server/drivers');
+'use strict';
+
+const Driver = require('openstack_server/drivers');
 
 function API (arrService, arrServiceObject) {
   this.arrAsync = [];
@@ -69,7 +71,7 @@ API.prototype.handleError = function (err, req, res, next) {
     next(err);
   } else {
     if (err.code && err.code === 'ECONNREFUSED' && err.port) {
-      var errorMsg = req.i18n.__('shared.out_of_service');
+      let errorMsg = req.i18n.__('shared.out_of_service');
       switch (err.port) {
         case 8774:
           err.message = 'Nova ' + errorMsg;
@@ -113,8 +115,8 @@ API.prototype.orderByCreatedTime = function (arr, flag) {
   if (['ASC', 'DESC'].indexOf(flag) === -1) {
     throw new Error('parameter flag must be ASC or DESC.');
   } else {
-    var comparision = '';
-    var pool = ['created', 'created_at'];
+    let comparision = '';
+    let pool = ['created', 'created_at'];
     pool.some(function (k) {
       return (arr[0][k] !== undefined) && (comparision = k);
     });

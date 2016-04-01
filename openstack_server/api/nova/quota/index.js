@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var Base = require('openstack_server/api/base.js');
 

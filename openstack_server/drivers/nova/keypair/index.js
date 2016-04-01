@@ -1,3 +1,5 @@
+'use strict';
+
 var novaRemote = require('config')('remote').nova;
 var Base = require('openstack_server/drivers/base.js');
 var driverKeypair = new Base('keypair');

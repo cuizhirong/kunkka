@@ -1,3 +1,5 @@
+'use strict';
+
 var Nova = require('openstack_server/drivers').nova;
 var Base = require('openstack_server/api/base.js');
 

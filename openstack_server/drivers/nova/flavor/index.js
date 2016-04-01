@@ -1,3 +1,5 @@
+'use strict';
+
 var novaRemote = require('config')('remote').nova;
 var Base = require('openstack_server/drivers/base.js');
 var driverFlavor = new Base('flavor');

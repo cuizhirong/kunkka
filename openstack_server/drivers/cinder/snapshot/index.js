@@ -1,3 +1,5 @@
+'use strict';
+
 var cinderRemote = require('config')('remote').cinder;
 var Base = require('openstack_server/drivers/base.js');
 var driverSnapshot = new Base('snapshot');

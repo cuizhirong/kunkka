@@ -1,3 +1,5 @@
+'use strict';
+
 var glanceRemote = require('config')('remote').glance;
 var Base = require('openstack_server/drivers/base.js');
 var driverImage = new Base('image');

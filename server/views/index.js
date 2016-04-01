@@ -1,3 +1,5 @@
+'use strict';
+
 require('babel-core/register')({
   ignore: ['node_modules', 'server', 'openstack_server', 'configs']
 });

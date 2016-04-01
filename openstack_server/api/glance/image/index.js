@@ -1,3 +1,5 @@
+'use strict';
+
 var Driver = require('openstack_server/drivers');
 var Glance = Driver.glance;
 var Base = require('openstack_server/api/base.js');

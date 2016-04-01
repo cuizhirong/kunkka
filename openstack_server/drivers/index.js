@@ -1,9 +1,11 @@
-var fs = require('fs');
-// var path = require('path');
-var config = require('config');
-var driverExtension = require('extensions/' + config('extension').type + '/server/drivers');
+'use strict';
 
-var driver = {};
+const fs = require('fs');
+// const path = require('path');
+const config = require('config');
+const driverExtension = require('extensions/' + config('extension').type + '/server/drivers');
+
+const driver = {};
 
 // original driver.
 fs.readdirSync(__dirname).forEach(function (f) {

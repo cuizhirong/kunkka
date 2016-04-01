@@ -1,3 +1,5 @@
+'use strict';
+
 var Neutron = require('openstack_server/drivers').neutron;
 var Base = require('openstack_server/api/base.js');
 

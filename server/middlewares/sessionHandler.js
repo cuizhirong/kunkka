@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require('../config');
 var session = require('express-session');
 var logger = require('./logger').logger;

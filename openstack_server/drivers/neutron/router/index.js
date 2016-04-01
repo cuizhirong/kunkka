@@ -1,3 +1,5 @@
+'use strict';
+
 var neutronRemote = require('config')('remote').neutron;
 var Base = require('openstack_server/drivers/base.js');
 var driverRouter = new Base('router');
