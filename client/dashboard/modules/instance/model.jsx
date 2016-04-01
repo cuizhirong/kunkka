@@ -238,7 +238,9 @@ class Model extends React.Component {
         dissociateFIP(rows[0]);
         break;
       case 'join_ntw':
-        joinNetwork(rows[0]);
+        joinNetwork(rows[0], null, function() {
+          that.refresh(null, true);
+        });
         break;
       case 'chg_security_grp':
         changeSecurityGrp(rows[0], null, () => {
@@ -310,7 +312,6 @@ class Model extends React.Component {
         case 'vnc_console':
         case 'power_off':
         case 'chg_security_grp':
-        case 'add_volume':
           btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
           break;
         case 'power_on':
@@ -332,6 +333,9 @@ class Model extends React.Component {
           break;
         case 'rmv_volume':
           btns[key].disabled = (rows.length === 1 && rows[0].volume.length !== 0) ? false : true;
+          break;
+        case 'add_volume':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'terminate':
           btns[key].disabled = (rows.length > 0) ? false : true;

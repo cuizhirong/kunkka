@@ -25,7 +25,7 @@
           "key": "dis_gw",
           "disabled": true
         }, {
-          "title": ["related", "subnet"],
+          "title": ["connect", "subnet"],
           "key": "cnt_subnet",
           "disabled": true
         }, {

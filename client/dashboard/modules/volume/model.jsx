@@ -100,7 +100,7 @@ class Model extends React.Component {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {item.volume_type}
+                {item.volume_type === 'sata' ? __.performance : __.capacity}
               </span> : '';
           };
           break;
@@ -367,13 +367,13 @@ class Model extends React.Component {
       content: item.size + ' GB'
     }, {
       title: __.type,
-      content: item.volume_type
+      content: item.volume_type === 'sata' ? __.performance : __.capacity
     }, {
       title: __.attach_to + __.instance,
       content: item.attachments.length > 0 ? getAttachments(item) : '-'
     }, {
       title: __.attributes,
-      content: item.metadata.readonly ? __.read_only : __.read_write
+      content: item.metadata.readonly === 'False' ? __.read_write : __.read_only
     }, {
       title: __.status,
       type: 'status',

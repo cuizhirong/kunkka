@@ -42,7 +42,6 @@ function pop(obj, parent, callback) {
           res.volume_types.forEach((type) => {
             types.push(type.name);
           });
-
           refs.type.setState({
             data: types,
             value: types[0] ? types[0] : null
