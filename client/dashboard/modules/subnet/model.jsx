@@ -180,7 +180,17 @@ class Model extends React.Component {
         disconnectRouter(rows[0]);
         break;
       case 'add_inst':
-        addInstance(rows[0]);
+        addInstance(rows[0], false, null, function() {
+          notify({
+            resource_type: 'instance',
+            action: 'associate',
+            stage: 'end',
+            resource_id: rows[0].id
+          });
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'mdfy_subnet':
         modifySubnet(rows[0], null, function(res) {
@@ -332,6 +342,7 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
@@ -354,7 +365,17 @@ class Model extends React.Component {
         request.deletePort(data).then(() => {});
         break;
       case 'connect_inst':
-        addInstance(data.rawItem, true);
+        addInstance(data.rawItem, true, null, function() {
+          notify({
+            resource_type: 'instance',
+            action: 'associate',
+            stage: 'end',
+            resource_id: data.rawItem.id
+          });
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       default:
         break;

@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 
 function pop(obj, isDetail, parent, callback) {
-  config.fields[0].text = obj.name;
+  config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
 
   var props = {
     parent: parent,

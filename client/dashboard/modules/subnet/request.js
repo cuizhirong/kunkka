@@ -33,6 +33,9 @@ module.exports = {
               };
             }
           }
+          if (item.device_owner) {
+            item.status = 'ACTIVE';
+          }
         });
       });
       return subnets;
