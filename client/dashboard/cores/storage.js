@@ -24,10 +24,10 @@ var map = {
   network: ['subnet'],
   subnet: ['network', 'port'],
   port: ['subnet', 'instance'],
-  instance: ['port'],
   router: ['subnet', 'port', 'network'],
   floatingip: ['instance', 'port'],
-  instance: ['volume', 'image']
+  instance: ['port', 'volume', 'image'],
+  image: ['instance']
 };
 
 function Storage() {

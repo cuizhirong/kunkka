@@ -54,16 +54,22 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'instance' || data.resource_type === 'volume' || data.resource_type === 'floatingip' || data.resource_type === 'port') {
-          this.refresh({
-            detailRefresh: true
-          }, false);
+        switch (data.resource_type) {
+          case 'instance':
+          case 'volume':
+          case 'floatingip':
+          case 'port':
+          case 'image':
+            this.refresh({
+              detailRefresh: true
+            }, false);
 
-          if (data.action.indexOf('delete') > -1
-            && data.stage === 'end'
-            && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/instance');
-          }
+            if (data.action.indexOf('delete') > -1 && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
+              router.replaceState('/project/instance');
+            }
+            break;
+          default:
+            break;
         }
       }
     });
@@ -92,8 +98,7 @@ class Model extends React.Component {
               <span>
                 <i className={'icon-image-default ' + label}/>
                 <a data-type="router" href={'/project/image/' + item.image.id}>{' ' + item.image.name}</a>
-              </span>
-              : '';
+              </span> : '';
           };
           break;
         case 'ip_address':
@@ -193,7 +198,7 @@ class Model extends React.Component {
     var {rows} = data,
       that = this;
 
-    switch(key) {
+    switch (key) {
       case 'create':
         createInstance();
         break;
@@ -248,11 +253,17 @@ class Model extends React.Component {
         break;
       case 'add_volume':
         request.getVolumeList().then((res) => {
-          attachVolume({rawItem: rows[0], volumes: res[0].volume, types: res[1].volume_types}, null, function() {});
+          attachVolume({
+            rawItem: rows[0],
+            volumes: res[0].volume,
+            types: res[1].volume_types
+          }, null, function() {});
         });
         break;
       case 'rmv_volume':
-        detachVolume({rawItem: rows[0]}, false);
+        detachVolume({
+          rawItem: rows[0]
+        }, false);
         break;
       case 'terminate':
         deleteModal({
@@ -294,7 +305,7 @@ class Model extends React.Component {
       status = rows[0].status.toLowerCase();
     }
 
-    for(let key in btns) {
+    for (let key in btns) {
       switch (key) {
         case 'vnc_console':
         case 'power_off':
@@ -334,7 +345,9 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
+    var {
+      rows
+    } = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
     var syncUpdate = true;
@@ -352,7 +365,7 @@ class Model extends React.Component {
       }
     };
 
-    switch(tabKey) {
+    switch (tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
@@ -456,12 +469,10 @@ class Model extends React.Component {
           <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
             {item.floating_ip.floating_ip_address}
           </a>
-        </span>
-      : '-'
+        </span> : '-'
     }, {
       title: __.image,
-      content:
-        <span>
+      content: <span>
           <i className={'icon-image-default ' + label}/>
           <a data-type="router" href={'/project/image/' + item.image.id}>
             {' ' + item.image.name}
@@ -476,8 +487,7 @@ class Model extends React.Component {
         <span>
           <i className="glyphicon icon-keypair" />
           <a data-type="router" href="/project/keypair">{item.keypair.name}</a>
-        </span>
-        : '-'
+        </span> : '-'
     }, {
       title: __.status,
       type: 'status',
@@ -496,8 +506,7 @@ class Model extends React.Component {
     items.volume.forEach((volume, i) => {
       attchVolumes.push({
         key: volume.name,
-        data:
-          <a data-type="router" href={'/project/volume/' + volume.id}>
+        data: <a data-type="router" href={'/project/volume/' + volume.id}>
             {volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
           </a>,
         childItem: volume
@@ -506,20 +515,20 @@ class Model extends React.Component {
 
     var networks = [];
     var count = 0;
-    for(let key in items.addresses) {
+    for (let key in items.addresses) {
       let floatingIp;
-      for(let item of items.addresses[key]) {
-        if(item['OS-EXT-IPS:type'] === 'floating') {
+      for (let item of items.addresses[key]) {
+        if (item['OS-EXT-IPS:type'] === 'floating') {
           floatingIp = {};
           floatingIp.addr = item.addr;
           floatingIp.id = items.floating_ip.id;
         }
       }
 
-      for(let item of items.addresses[key]) {
-        if(item['OS-EXT-IPS:type'] === 'fixed') {
+      for (let item of items.addresses[key]) {
+        if (item['OS-EXT-IPS:type'] === 'fixed') {
           let securityGroups = [];
-          for(let i in item.security_groups) {
+          for (let i in item.security_groups) {
             if (i > 0) {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
@@ -531,15 +540,13 @@ class Model extends React.Component {
           }
 
           networks.push({
-            port:
-              <a data-type="router" href={'/project/port/' + item.port.id}>
+            port: <a data-type="router" href={'/project/port/' + item.port.id}>
                 {item.addr}
               </a>,
             subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
             floating_ip: floatingIp ?
-              <a data-type="router" href={'/project/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a>
-              : '-',
+              <a data-type="router" href={'/project/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
             __renderKey: count,
             childItem: item
           });
@@ -630,7 +637,7 @@ class Model extends React.Component {
   }
 
   onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
+    switch (tabKey) {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
@@ -641,9 +648,11 @@ class Model extends React.Component {
 
   onDescriptionAction(actionType, data) {
     var that = this;
-    switch(actionType) {
+    switch (actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        var {
+          rawItem, newName
+        } = data;
         request.editServerName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'instance',
@@ -658,7 +667,11 @@ class Model extends React.Component {
         break;
       case 'create_volume':
         request.getVolumeList().then((res) => {
-          attachVolume({rawItem: data.rawItem, volumes: res[0].volume, types: res[1].volume_types});
+          attachVolume({
+            rawItem: data.rawItem,
+            volumes: res[0].volume,
+            types: res[1].volume_types
+          });
         });
         break;
       case 'delete_volume':
