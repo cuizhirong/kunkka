@@ -188,7 +188,7 @@ class Model extends React.Component {
         associateInstance(rows[0], null, () => {
           notify({
             resource_type: 'instance',
-            action: 'add_interface',
+            action: 'associate',
             stage: 'end',
             resource_id: rows[0].id
           });
@@ -199,7 +199,7 @@ class Model extends React.Component {
         detachInstance(rows[0], null, () => {
           notify({
             resource_type: 'instance',
-            action: 'delete_interface',
+            action: 'detach',
             stage: 'end',
             resource_id: rows[0].id
           });

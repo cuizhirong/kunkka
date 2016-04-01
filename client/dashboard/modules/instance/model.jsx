@@ -659,8 +659,7 @@ class Model extends React.Component {
         break;
       case 'create_volume':
         request.getVolumeList().then((res) => {
-          data.volumes = res;
-          attachVolume(data);
+          attachVolume({rawItem: data.rawItem, volumes: res[0].volume, types: res[1].volume_types});
         });
         break;
       case 'delete_volume':

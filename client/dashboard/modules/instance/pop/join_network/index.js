@@ -120,7 +120,7 @@ function pop(obj, parent, callback) {
           request.joinNetwork(obj, {
             net_id: networkId
           }).then((res) => {
-            callback(res);
+            callback && callback(res);
             cb(true);
           });
         } else {
@@ -135,7 +135,7 @@ function pop(obj, parent, callback) {
             request.joinNetwork(obj, {
               port_id: p.port.id
             }).then((res) => {
-              callback(res);
+              callback && callback(res);
               cb(true);
             });
           });
@@ -144,7 +144,7 @@ function pop(obj, parent, callback) {
         request.joinNetwork(obj, {
           port_id: refs.select_interface.state.value
         }).then((res) => {
-          callback(res);
+          callback && callback(res);
           cb(true);
         });
       }
