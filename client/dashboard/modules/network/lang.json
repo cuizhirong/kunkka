@@ -6,7 +6,7 @@
     "network_name": "Network Name",
     "no_network": "No available Virtual Network",
     "prv_network": "Network",
-    "prv_info": "Network is a isolate layer 2 network brocadcast domain. User can create layer 3 network called Subnet in this network. In VDC, network is used as the container of subnets.",
+    "prv_info": "Network is an isolate layer 2 network brocadcast domain. User can create layer 3 network called Subnet in this network. In VDC, network is used as the container of subnets.",
     "show_more": "Show More Options",
     "subnet": "Subnet",
     "subnet_name": "Subnet Name",

@@ -238,7 +238,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'cnt_rter':
-          if (length === 1 && !rows[0].router.id && !shared) {
+          if (length === 1 && !rows[0].router.id && !shared && rows[0].gateway_ip) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
@@ -375,7 +375,7 @@ class Model extends React.Component {
         <span>
           <i className="glyphicon icon-network" />
           <a data-type="router" href={'/project/network/' + item.network.id}>
-            {item.network.name}
+            {item.network.name || '(' + item.network.id.substring(0, 8) + ')'}
           </a>
         </span> : null
     }, {
@@ -384,7 +384,7 @@ class Model extends React.Component {
         <span>
           <i className="glyphicon icon-router" />
           <a data-type="router" href={'/project/router/' + item.router.id}>
-            {item.router.name}
+            {item.router.name || '(' + item.router.id.substring(0, 8) + ')'}
           </a>
         </span> : '-'
     }, {
@@ -401,6 +401,10 @@ class Model extends React.Component {
       content: item.allocation_pools[0] ?
         '(Start) ' + item.allocation_pools[0].start + ' - ' + '(End) ' + item.allocation_pools[0].end
         : null
+    }, {
+      title: 'DHCP',
+      content: item.enable_dhcp ?
+         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
@@ -423,7 +427,7 @@ class Model extends React.Component {
             if (element.server && element.server.status === 'SOFT_DELETED') {
               return (
                 <div>
-                  <i className="glyphicon icon-instance"></i>{'(' + element.id.substr(0, 8) + ')'}
+                  <i className="glyphicon icon-instance"></i>{'(' + element.device_id.substr(0, 8) + ')'}
                 </div>
               );
             } else if (element.server) {
@@ -438,7 +442,7 @@ class Model extends React.Component {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
-                <a data-type="router" href={'/project/router/' + element.device_id}>{element.router.name || '(' + element.id.substr(0, 8) + ')'}</a>
+                <a data-type="router" href={'/project/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
           } else {

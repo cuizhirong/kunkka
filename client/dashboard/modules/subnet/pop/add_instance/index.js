@@ -42,10 +42,13 @@ function pop(obj, isDetail, parent, callback) {
           port_security_enabled: obj.portSecurityEnabled
         };
         request.createPort(port).then((p) => {
-          request.joinNetwork(obj, {
-            port_id: p.port.id
-          }).then((res) => {
-            callback(res);
+          networkId = {
+            interfaceAttachment: {
+              port_id: p.port.id
+            }
+          };
+          request.addInstance(refs.instance.state.value, networkId).then((res) => {
+            callback && callback(res);
             cb(true);
           });
         });

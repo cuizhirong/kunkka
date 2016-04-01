@@ -263,7 +263,7 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && device.indexOf('compute') > -1) ? false : true;
           break;
         case 'modify':
-          btns[key].disabled = (len === 1 && rows[0].port_security_enabled) ? false : true;
+          btns[key].disabled = (len === 1 && (!device || device.indexOf('compute') > -1) && rows[0].port_security_enabled) ? false : true;
           break;
         case 'delete':
           var b = rows.every((m) => {

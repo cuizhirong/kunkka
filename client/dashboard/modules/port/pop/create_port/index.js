@@ -96,9 +96,6 @@ function pop(obj, parent, callback) {
         }]
       };
 
-      refs.security_group.state.data.forEach(function(ele) {
-        ele.selected && port.security_groups.push(ele.id);
-      });
       var subnet = refs.subnet.state;
 
       var shared = false;
@@ -113,6 +110,12 @@ function pop(obj, parent, callback) {
           return false;
         });
       });
+
+      if (port.port_security_enabled) {
+        refs.security_group.state.data.forEach(function(ele) {
+          ele.selected && port.security_groups.push(ele.id);
+        });
+      }
 
       if (!shared && refs.address_ip.state.value !== '') {
         port.fixed_ips[0].ip_address = '';

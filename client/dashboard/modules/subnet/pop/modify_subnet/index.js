@@ -20,9 +20,14 @@ function pop(obj, parent, callback) {
   if (!obj.gateway_ip) {
     getField('enable_gw').checked = false;
     getField('gw_address').disabled = true;
+  } else {
+    getField('enable_gw').checked = true;
+    getField('gw_address').disabled = false;
   }
   if (!obj.enable_dhcp) {
     getField('enable_dhcp').checked = false;
+  } else {
+    getField('enable_dhcp').checked = true;
   }
 
   var props = {
