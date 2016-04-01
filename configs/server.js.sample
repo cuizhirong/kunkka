@@ -48,7 +48,7 @@ var config = {
     'heartbeat': 60,
     'username': 'openstack',
     'password': '4260ea44d3c55ac74c3241db',
-    'sourceExchanges': ['nova', 'cinder', 'neutron'],
+    'sourceExchanges': ['nova', 'cinder', 'neutron', 'glance'],
     'reconnectTimeout': 1000,
     'maxTimeoutLimit': 120000
   },

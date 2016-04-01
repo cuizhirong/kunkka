@@ -116,9 +116,9 @@
       "dataIndex": "",
       "key": "floating_ip"
     }, {
-      "title": ["instance_type"],
+      "title": ["flavor"],
       "dataIndex": "",
-      "key": "instance_type"
+      "key": "flavor"
     }, {
       "title": ["status"],
       "dataIndex": "status",

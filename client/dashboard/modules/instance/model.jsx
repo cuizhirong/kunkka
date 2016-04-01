@@ -123,7 +123,7 @@ class Model extends React.Component {
               </span> : '';
           };
           break;
-        case 'instance_type':
+        case 'flavor':
           column.render = (col, item, i) => {
             return item.flavor ? item.flavor.vcpus + 'CPU / ' + item.flavor.ram / 1024 + 'GB' : '';
           };
@@ -468,8 +468,8 @@ class Model extends React.Component {
           </a>
         </span>
     }, {
-      title: __.instance_type,
-      content: item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '-'
+      title: __.flavor,
+      content: item.flavor ? item.flavor.vcpus + 'CPU / ' + item.flavor.ram / 1024 + 'GB' : '-'
     }, {
       title: __.keypair,
       content: item.keypair ?
