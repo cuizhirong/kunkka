@@ -4,9 +4,6 @@
     "type": "text",
     "field": "ensure_shutdown",
     "info": "ensure_shutdown"
-  }, {
-    "type": "warning",
-    "field": "shutdown_tip"
   }],
   "btn": {
     "value": "ok",

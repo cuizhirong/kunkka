@@ -46,7 +46,6 @@
     "topology": "Topology",
     "vnc_console": "VNC Console",
     "ensure_shutdown": "Do you want to shudown instance {0} ？",
-    "shutdown_tip": "The instance will be free 30 days after shut down. After 30 days, will charge system disk's space. CPU/Memory is free.",
     "user_name": "User Name"
   },
   "zh-CN": {
@@ -96,7 +95,6 @@
     "topology": "拓扑",
     "vnc_console": "VNC登录",
     "ensure_shutdown": "确定关闭云主机{0}吗？",
-    "shutdown_tip": "自关机起30天内该云主机不收取任何费用，30天之后仅收取该虚拟机系统盘占用空间的费用（等同于云硬盘的费用）。",
     "user_name": "用户名"
   }
 }
