@@ -40,24 +40,18 @@ module.exports = function(app) {
       }
     });
   } else if (sessionEngine.type === 'Memcached') {
-    var Memcached = require('memcached');
-    var MemcachedStore = require('connect-memcached')(session);
-    console.log(sessionEngine.remotes);
-    var MemcachedClient = new Memcached(sessionEngine.remotes, {
-      'factor': 1,
-      'failOverServers': sessionEngine.remotes,
-      'remove': true
-    });
-    MemcachedClient.on('issue', function (details) {
-      logger.error('Memcached' + details.messages.join(' '));
-    });
-    app.set('CacheClient', MemcachedClient);
+    // var Memcached = require('memjs');
+    // var MemcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
+    //   failover: true
+    // });
+    var MemcachedStore = require('connect-memjs')(session);
     app.use(session({
       secret: sessionEngine.secret,
       resave: false,
       saveUninitialized: true,
       store: new MemcachedStore({
-        client: MemcachedClient
+        servers: sessionEngine.remotes,
+        failover: true
       })
     }));
     // handle lost connection to Memcached
