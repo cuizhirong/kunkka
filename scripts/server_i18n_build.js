@@ -50,7 +50,7 @@ Object.keys(extensions).forEach(function (ex) {
 });
 
 var clientModules = {};
-var clientDirPath = path.join(__dirname, '../client/dashboard/modules');
+var clientDirPath = path.join(__dirname, '../client/applications/dashboard/modules');
 generateLangObject(clientDirPath, clientModules, 'client module');
 
 
