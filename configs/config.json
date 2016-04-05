@@ -1,0 +1,6 @@
+{
+  "applications": [
+    "dashboard",
+    "admin"
+  ]
+}

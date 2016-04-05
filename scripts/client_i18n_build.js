@@ -2,16 +2,20 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var chalk = require('chalk');
+var configs = require('../configs/config.json');
 
 var language = process.env.npm_config_lang || process.env.language;
 if (!language) {
   language = 'zh-CN';
 }
 
-var rootDir = path.resolve(__dirname, '..');
+var app = process.env.npm_config_app || configs.applications[0];
 
-glob(rootDir + '/client/applications/dashboard/modules/**/lang.json', {}, function(er, files) {
-  files.unshift('../i18n/shared/lang.json');
+var rootDir = path.resolve(__dirname, '..');
+var appDir = rootDir + '/client/applications/'+ app;
+
+glob(appDir + '/modules/**/lang.json', {}, function(er, files) {
+  files.unshift(appDir + '/locale/lang.json');
   var file = '';
   try {
     var output = {};
