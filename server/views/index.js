@@ -11,7 +11,7 @@ var React = require('react');
 var ReactDOMServer = require('react-dom/server');
 
 var loginModel = require('client/login/model.jsx');
-var dashboardModel = require('client/dashboard/model.jsx');
+var dashboardModel = require('client/applications/dashboard/model.jsx');
 var adminModel = require('client/admin/model.jsx');
 
 var config = require('config');
