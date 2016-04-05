@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(parent, callback) {
   var props = {
@@ -34,8 +35,8 @@ function pop(parent, callback) {
         request.createKeypair(data).then((res) => {
           callback && callback(res);
           cb(true);
-        }).catch(function() {
-          cb(false);
+        }).catch(function(error) {
+          cb(false, getErrorMessage(error));
         });
       }
     },

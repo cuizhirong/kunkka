@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var createFloatingIp = require('client/applications/dashboard/modules/floating-ip/pop/apply_ip/index');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
 
@@ -70,6 +71,8 @@ function pop(obj, parent, callback) {
       request.create(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {

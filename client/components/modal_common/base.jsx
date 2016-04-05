@@ -1,5 +1,6 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
+var UskinTip = require('client/uskin/index').Tip;
 var __ = require('i18n/client/lang.json');
 
 var Input = require('./subs/input/index');
@@ -100,15 +101,22 @@ class ModalBase extends React.Component {
     this.setState({
       disabled: true
     });
-    this.props.onConfirm && this.props.onConfirm(refs, (success) => {
+    this.props.onConfirm && this.props.onConfirm(refs, (success, errorMessage) => {
       if (success) {
         this.setState({
           visible: false
         });
       } else {
-        this.setState({
-          disabled: false
-        });
+        if (errorMessage) {
+          this.setState({
+            errorMessage: errorMessage,
+            disabled: false
+          });
+        } else {
+          this.setState({
+            disabled: false
+          });
+        }
       }
 
     });
@@ -150,6 +158,9 @@ class ModalBase extends React.Component {
       <Modal ref="modal" {...props} title={title} visible={state.visible}>
         <div className="modal-bd halo-com-modal-common">
           {this.initialize()}
+          <div className={state.errorMessage ? 'modal-row tip-row' : 'modal-row tip-row hide'}>
+            <UskinTip type="danger" content={state.errorMessage} showIcon={true} width={466} />
+          </div>
         </div>
         <div className="modal-ft">
           <Button ref="btn" value={__[btn.value]} disabled={state.disabled} type={btn.type} onClick={this.onConfirm}/>
