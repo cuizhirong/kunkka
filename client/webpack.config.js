@@ -14,7 +14,7 @@ module.exports = {
 
   entry: {
     login: './login/index.jsx',
-    dashboard: './dashboard/index.jsx',
+    dashboard: './applications/dashboard/index.jsx',
     admin: './admin/index.jsx'
   },
 

@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button} = require('client/uskin/index');
-var getStatusIcon = require('client/dashboard/utils/status_icon');
+var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
 class RelatedSnapshot extends React.Component {
 

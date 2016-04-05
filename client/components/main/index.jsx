@@ -6,9 +6,9 @@ var ButtonList = require('./button_list');
 var Detail = require('./detail');
 var __ = require('i18n/client/lang.json');
 var converter = require('client/components/main/converter');
-var getStatusIcon = require('client/dashboard/utils/status_icon');
+var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 var moment = require('client/libs/moment');
-var router = require('client/dashboard/cores/router');
+var router = require('client/applications/dashboard/cores/router');
 
 class Main extends React.Component {
   constructor(props) {

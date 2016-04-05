@@ -3,7 +3,6 @@ var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
 var router = require('./cores/router');
 
-require('./cores/ws');
 require('./utils/router_delegate');
 
 var loader = require('./cores/loader'),

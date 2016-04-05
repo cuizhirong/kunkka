@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Tab} = require('client/uskin/index');
-var router = require('client/dashboard/cores/router');
+var router = require('client/applications/dashboard/cores/router');
 var event = require('./event');
 
 class Detail extends React.Component {

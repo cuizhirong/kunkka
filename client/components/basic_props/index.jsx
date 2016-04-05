@@ -4,7 +4,7 @@ require('./style/index.less');
 var React = require('react');
 var EditContent = require('./edit_content');
 var moment = require('client/libs/moment');
-var getStatusIcon = require('client/dashboard/utils/status_icon');
+var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
 class BasicProps extends React.Component {
 

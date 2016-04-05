@@ -1,6 +1,6 @@
 var React = require('react');
 
-var fetch = require('client/dashboard/cores/fetch');
+var fetch = require('client/applications/dashboard/cores/fetch');
 
 class Regions extends React.Component{
   constructor(props) {

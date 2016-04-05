@@ -10,7 +10,7 @@ if (!language) {
 
 var rootDir = path.resolve(__dirname, '..');
 
-glob(rootDir + '/client/dashboard/modules/**/lang.json', {}, function(er, files) {
+glob(rootDir + '/client/applications/dashboard/modules/**/lang.json', {}, function(er, files) {
   files.unshift('../i18n/shared/lang.json');
   var file = '';
   try {

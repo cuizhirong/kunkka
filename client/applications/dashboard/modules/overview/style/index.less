@@ -1,0 +1,170 @@
+@import "../../../style/theme.less";
+
+@default-font-color: @color_font;
+@resource-box-color: @color_grey;
+@resource-info-item-usage-color: @color_info;
+@resource-info-item-hover-color: @color_info_200;
+@resource-quota-title-color: @color_font_400;
+@resource-quota-strip-bg-color: @color_grey_400;
+@resource-quota-strip-default-color: @color_info;
+@resource-quota-strip-general-color: @color_warning;
+@resource-quota-strip-shortage-color: @color_delete;
+
+.resource-box-title() {
+  height: 48px;
+  line-height: 48px;
+  font-size: 16px;
+  padding: 0 24px;
+  background-color: @resource-box-color;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.resource-box-content() {
+  padding: 20px;
+  overflow: auto;
+  border: 1px solid @resource-box-color;
+}
+
+.text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.halo-module-overview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  overflow: auto;
+
+  .project-name {
+    flex: 1;
+    min-height: 48px;
+    max-height: 48px;
+    margin: 10px 0 20px;
+    .resource-box-title();
+  }
+
+  .project-resources {
+    flex: 1;
+    display: flex;
+
+    .left-side {
+      flex: 1;
+      margin-right: 20px;
+
+      .resource-info {
+        margin-bottom: 20px;
+        .title {
+          .resource-box-title();
+        }
+        .content {
+          .resource-box-content();
+          padding: 16px 12px;
+          display: flex;
+          > div {
+            flex: 1;
+            .item {
+              height: 28px;
+              line-height: 28px;
+              cursor: pointer;
+              padding: 0 10px;
+              &:hover {
+                background-color: @resource-info-item-hover-color;
+              }
+              > div:first-child {
+                width: 60%;
+                float: left;
+                .text-overflow();
+              }
+              > div:last-child {
+                width: 40%;
+                float: right;
+                text-align: right;
+                color: @resource-info-item-usage-color;
+              }
+            }
+          }
+          > div:first-child {
+            padding-right: 10px;
+            border-right: 1px solid @resource-box-color;
+          }
+          > div:last-child {
+            padding-left: 10px;
+          }
+        }
+      }
+    }
+
+    .right-side {
+      flex: 1;
+      .resource-quota {
+        margin-bottom: 20px;
+        .title {
+          .resource-box-title();
+        }
+        .content {
+          .resource-box-content();
+          padding: 8px 24px;
+          > div {
+            overflow: auto;
+
+          h3 {
+            font-size: 16px;
+            font-weight: 300;
+            padding: 16px 0;
+            color: @resource-quota-title-color;
+          }
+          ul > li {
+            float: left;
+            width: 50%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            &:nth-child(2n+1) {
+              padding-right: 16px;
+            }
+            &:nth-child(2n) {
+              padding-left: 16px;
+            }
+            .description {
+              height: 20px;
+              > div:first-child {
+                float: left;
+                width: 70%;
+                .text-overflow();
+              }
+              > div:last-child {
+                float: right;
+                width: 30%;
+                text-align: right;
+              }
+            }
+            .stripe {
+              width: 100%;
+              height: 14px;
+              background-color: @resource-quota-strip-bg-color;
+              cursor: pointer;
+              &:hover {
+                box-shadow: 0 0 4px rgba(0,175,200,0.5);
+              }
+              > div {
+                height: inherit;
+                transition: 500ms;
+                background-color: @resource-quota-strip-default-color;
+                &.in-general {
+                  background-color: @resource-quota-strip-general-color;
+                }
+                &.in-shortage {
+                  background-color: @resource-quota-strip-shortage-color;
+                }
+              }
+            }
+          }
+          }
+        }
+      }
+    }
+  }
+}
