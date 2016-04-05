@@ -1,6 +1,6 @@
 {
   "applications": [
     "dashboard",
-    "admin"
+    "login"
   ]
 }

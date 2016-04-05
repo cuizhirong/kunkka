@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var configs = require('../configs/config.json');
 
 var language = process.env.language;
 
@@ -9,14 +10,15 @@ if (!language) {
   language = 'zh-CN';
 }
 
+var entry = {};
+configs.applications.forEach(function(m) {
+  entry[m] = './applications/' + m + '/index.jsx';
+});
+
 module.exports = {
   context: __dirname,
 
-  entry: {
-    login: './login/index.jsx',
-    dashboard: './applications/dashboard/index.jsx',
-    admin: './admin/index.jsx'
-  },
+  entry: entry,
 
   output: {
     path: 'client/dist',

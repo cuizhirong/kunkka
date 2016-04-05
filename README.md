@@ -70,6 +70,11 @@ npm run dev
 ```
 Currently, we only support two languages: `en` and `zh-CN`.
 
+Besides, we can also compile specific application as you want by:
+```
+npm run dev --app=dashboard // dasboard or admin
+```
+
 ###i18n
 In the client side, in order to optimise the size of output files, we need to collect all the languages files, and transpile all of them to a specific language file `lang.json` under the `i18n/client` directory.
 
