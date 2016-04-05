@@ -10,6 +10,7 @@
     "show_more": "Show More Options",
     "subnet": "Subnet",
     "subnet_name": "Subnet Name",
+    "shared": "Shared",
     "unmanaged": "Unmanaged "
   },
   "zh-CN": {
@@ -23,6 +24,7 @@
     "show_more": "显示高级选项",
     "subnet": "子网",
     "subnet_name": "子网名称",
+    "shared": "共享网络",
     "unmanaged": "受管"
   }
 }

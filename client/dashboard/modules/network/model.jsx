@@ -339,6 +339,9 @@ class Model extends React.Component {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
          <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
+    }, {
+      title: __.shared,
+      content: item.shared ? __.yes : __.no
     }];
 
     return items;

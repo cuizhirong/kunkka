@@ -254,11 +254,17 @@ class Model extends React.Component {
         });
         break;
       case 'add_volume':
-        request.getVolumeList().then((res) => {
+        request.getVolumeList(!HALO.volume_types).then((res) => {
+          if (!HALO.volume_types) {
+            HALO.volume_types = [];
+            res[1].volume_types.forEach((type) => {
+              HALO.volume_types.push(type.name);
+            });
+          }
           attachVolume({
             rawItem: rows[0],
             volumes: res[0].volume,
-            types: res[1].volume_types
+            types: HALO.volume_types
           }, null, function() {});
         });
         break;

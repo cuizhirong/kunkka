@@ -24,65 +24,65 @@ function pop(obj, parent, callback) {
     });
   }
 
-  request.getOverview().then((overview) => {
-    var typeCapacity = {};
-    overview.volume_types.forEach((type) => {
-      typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
-      if (typeCapacity[type].total < 0) {
-        typeCapacity[type].total = overview.overview_usage.gigabytes.total;
-      }
-    });
+  var typeCapacity = {};
 
-    var props = {
-      parent: parent,
-      config: copyConfig,
-      onInitialize: function(refs) {
-        request.getVolumeTypes().then((res) => {
-          var types = [];
-          res.volume_types.forEach((type) => {
-            types.push(type.name);
-          });
-          refs.type.setState({
-            data: types,
-            value: types[0] ? types[0] : null
-          });
-        });
-      },
-      onConfirm: function(refs, cb) {
-        var data = {};
-        data.name = refs.name.state.value;
-        data.volume_type = obj ? obj.volume_type : refs.type.state.value;
-        data.size = Number(refs.capacity_size.state.value);
-        if (obj) {
-          data.snapshot_id = obj.id;
+  var props = {
+    parent: parent,
+    config: copyConfig,
+    onInitialize: function(refs) {
+      request.getOverview().then((overview) => {
+        if (!HALO.volume_types) {
+          HALO.volume_types = copyObj(overview.volume_types);
         }
-
-        request.createVolume(data).then((res) => {
-          callback && callback(res);
-          cb(true);
+        HALO.volume_types.forEach((type) => {
+          typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
+          if (typeCapacity[type].total < 0) {
+            typeCapacity[type].total = overview.overview_usage.gigabytes.total;
+          }
         });
-      },
-      onAction: function(field, state, refs) {
-        switch(field) {
-          case 'type':
-            var type = refs.type.state.value;
-            var capacity = typeCapacity[type];
 
-            var min = obj ? obj.size : 1;
-            refs.capacity_size.setState({
-              min: min,
-              max: capacity.total - capacity.used
-            });
-            break;
-          default:
-            break;
-        }
+        refs.type.setState({
+          data: HALO.volume_types,
+          value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null
+        });
+        refs.btn.setState({
+          disabled: false
+        });
+      });
+    },
+    onConfirm: function(refs, cb) {
+      var data = {};
+      data.name = refs.name.state.value;
+      data.volume_type = obj ? obj.volume_type : refs.type.state.value;
+      data.size = Number(refs.capacity_size.state.value);
+      if (obj) {
+        data.snapshot_id = obj.id;
       }
-    };
 
-    commonModal(props);
+      request.createVolume(data).then((res) => {
+        callback && callback(res);
+        cb(true);
+      });
+    },
+    onAction: function(field, state, refs) {
+      switch (field) {
+        case 'type':
+          var type = refs.type.state.value;
+          var capacity = typeCapacity[type];
 
-  });
+          var min = obj ? obj.size : 1;
+          refs.capacity_size.setState({
+            min: min,
+            max: capacity.total - capacity.used
+          });
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  commonModal(props);
 }
 
 module.exports = pop;

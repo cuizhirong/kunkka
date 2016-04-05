@@ -8,9 +8,8 @@ function pop(obj, parent, callback) {
   var volumeData = {};
   var typeData = [];
   obj.types.forEach((type) => {
-    var name = type.name;
-    volumeData[name] = [];
-    typeData.push(name);
+    volumeData[type] = [];
+    typeData.push(type);
   });
   config.fields[1].data = typeData;
   config.fields[1].value = typeData[0];

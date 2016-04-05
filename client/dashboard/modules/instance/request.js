@@ -70,12 +70,14 @@ module.exports = {
       url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/vnc'
     });
   },
-  getVolumeList: function() {
+  getVolumeList: function(fetchVolumeTypes) {
     var deferredList = [];
     deferredList.push(storage.getList(['volume']));
-    deferredList.push(fetch.get({
-      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
-    }));
+    if (fetchVolumeTypes) {
+      deferredList.push(fetch.get({
+        url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
+      }));
+    }
     return RSVP.all(deferredList);
   },
   getSubnetList: function() {
