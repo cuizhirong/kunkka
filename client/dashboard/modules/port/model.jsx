@@ -70,8 +70,20 @@ class Model extends React.Component {
       switch (column.key) {
         case 'subnet':
           column.render = (col, item, i) => {
-            return item.subnet.id ?
-              <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substr(0, 8) + ')'}</a></div> : '';
+            var subnets = [];
+            item.subnets.map((_subnet, _i) => {
+              if(_subnet.id) {
+                _i && subnets.push(', ');
+                subnets.push(
+                  <span key={_subnet.id}>
+                    <i className="glyphicon icon-subnet"></i>
+                    <a data-type="router" href={'/project/subnet/' + _subnet.id}>
+                      {_subnet.name || '(' + _subnet.id.substr(0, 8) + ')'}
+                    </a>
+                  </span>);
+              }
+            });
+            return item.subnets.length ? <div>{subnets}</div> : '';
           };
           break;
         case 'related_resource':
@@ -392,8 +404,22 @@ class Model extends React.Component {
       content: item.mac_address
     }, {
       title: __.subnet,
-      content: item.subnet.id ?
-        <div><i className="glyphicon icon-subnet"></i><a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substr(0, 8) + ')'}</a></div> : ''
+      content: (function() {
+        var subnets = [];
+        item.subnets.map((_subnet, _i) => {
+          if(_subnet.id) {
+            _i && subnets.push(', ');
+            subnets.push(
+              <span key={_subnet.id}>
+                <i className="glyphicon icon-subnet"></i>
+                <a data-type="router" href={'/project/subnet/' + _subnet.id}>
+                  {_subnet.name || '(' + _subnet.id.substr(0, 8) + ')'}
+                </a>
+              </span>);
+          }
+        });
+        return item.subnets.length ? <div>{subnets}</div> : '-';
+      })()
     }, {
       title: __.floating_ip,
       content: item.floatingip.id ?
