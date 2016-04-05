@@ -536,7 +536,7 @@ class Model extends React.Component {
       }
 
       for (let item of items.addresses[key]) {
-        if (item['OS-EXT-IPS:type'] === 'fixed') {
+        if (item['OS-EXT-IPS:type'] === 'fixed' && item.port) {
           let securityGroups = [];
           for (let i in item.security_groups) {
             if (i > 0) {
