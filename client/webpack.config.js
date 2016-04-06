@@ -33,7 +33,7 @@ module.exports = {
       exclude: /node_modules|moment/,
       loader: 'babel',
       query: {
-        cacheDirectory: true
+        cacheDirectory: process.env.NODE_ENV !== 'production'
       }
     }, {
       test: /\.json$/,
