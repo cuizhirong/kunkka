@@ -1,6 +1,6 @@
 var React = require('react');
 var Tip = require('client/uskin/index').Tip;
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Error extends React.Component {
   constructor(props) {

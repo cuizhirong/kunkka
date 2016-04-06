@@ -11,7 +11,7 @@ var associateInstance = require('./pop/associate_instance/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
 
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 var request = require('./request');
 var router = require('client/applications/dashboard/cores/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');

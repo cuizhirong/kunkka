@@ -1,6 +1,6 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 
 class ModalBase extends React.Component {

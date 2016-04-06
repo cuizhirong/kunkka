@@ -11,7 +11,7 @@ var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 var deleteModal = require('client/components/modal_delete/index');
 
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 var router = require('client/applications/dashboard/cores/router');
 var createSubnet = require('./pop/create_subnet/index');
 var request = require('./request');

@@ -1,6 +1,6 @@
 var React = require('react');
 var {Modal, Button, Tip} = require('client/uskin/index');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 var createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
 var createKeypair = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
 var request = require('../../request');

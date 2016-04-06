@@ -3,7 +3,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button, ButtonGroup, Table, Tip} = require('client/uskin/index');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class BasicProps extends React.Component {
 

@@ -1,6 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 var request = require('../../request');
 
 var gatewayId = null;

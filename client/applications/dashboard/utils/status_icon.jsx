@@ -2,7 +2,7 @@
  * @func: get status icon in table and details
  */
 var React = require('react');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 module.exports = (str) => {
   var status = str.toLowerCase();

@@ -1,7 +1,7 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
 var UskinTip = require('client/uskin/index').Tip;
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 var Input = require('./subs/input/index');
 var Text = require('./subs/text/index');

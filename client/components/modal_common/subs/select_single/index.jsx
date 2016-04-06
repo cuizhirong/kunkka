@@ -1,5 +1,5 @@
 var React = require('react');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};

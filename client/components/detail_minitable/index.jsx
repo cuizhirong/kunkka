@@ -3,7 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class DetailMinitable extends React.Component {
 

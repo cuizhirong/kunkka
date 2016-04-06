@@ -1,6 +1,6 @@
 var React = require('react');
 var ShortTip = require('../short_tip/index');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Input extends React.Component {
   constructor(props) {

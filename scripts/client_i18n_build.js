@@ -9,21 +9,23 @@ if (!language) {
   language = 'zh-CN';
 }
 
-var app = process.env.npm_config_app || configs.applications[0];
-
+var appList = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || configs.applications;
 var rootDir = path.resolve(__dirname, '..');
-var appDir = rootDir + '/client/applications/'+ app;
 
-glob(appDir + '/modules/**/lang.json', {}, function(er, files) {
-  files.unshift(appDir + '/locale/lang.json');
-  var file = '';
-  try {
-    var output = {};
-    buildInvertedIndex(files, output);
-    writeFile(JSON.stringify(output));
-  } catch (e) {
-    console.log(chalk.white.bgRed.bold(' ERROR ') + ' i18n file ' + file + ' got something wrong!');
-  }
+appList.forEach(function(app) {
+  var appDir = rootDir + '/client/applications/' + app;
+
+  glob(appDir + '/modules/**/lang.json', {}, function(er, files) {
+    files.unshift(appDir + '/locale/lang.json');
+    var file = '';
+    try {
+      var output = {};
+      buildInvertedIndex(files, output);
+      writeFile(app + '.lang.json', JSON.stringify(output));
+    } catch (e) {
+      console.log(chalk.white.bgRed.bold(' ERROR ') + ' i18n file ' + file + ' got something wrong!');
+    }
+  });
 });
 
 function buildInvertedIndex(files, output) {
@@ -56,13 +58,13 @@ function buildInvertedIndex(files, output) {
   });
 }
 
-function writeFile(str) {
+function writeFile(fileName, str) {
   var dir = path.resolve(rootDir, 'i18n/client');
   try {
     fs.statSync(dir);
   } catch (e) {
     fs.mkdirSync(dir);
   }
-  fs.writeFileSync(path.join(dir, 'lang.json'), str, 'utf-8');
-  console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold(language) + ' i18n file has been generated!');
+  fs.writeFileSync(path.join(dir, fileName), str, 'utf-8');
+  console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold(language) + ' i18n file ' + chalk.bold(fileName) + ' has been generated!');
 }

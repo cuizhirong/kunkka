@@ -2,7 +2,7 @@ require('../../style/index.less');
 require('./style/index.less');
 
 var React = require('react');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
 

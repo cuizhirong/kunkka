@@ -1,5 +1,5 @@
 var React = require('react');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Text extends React.Component {
   constructor(props) {

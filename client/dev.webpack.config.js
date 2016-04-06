@@ -16,7 +16,7 @@ apps.forEach(function(m) {
   entry[m] = './applications/' + m + '/index.jsx';
 });
 
-module.entry = entry;
+config.entry = entry;
 
 config.watch = true;
 config.keepAlive = true;

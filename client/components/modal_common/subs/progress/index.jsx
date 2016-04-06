@@ -1,6 +1,6 @@
 var React = require('react');
 var Slider = require('client/uskin/index').Slider;
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Progress extends React.Component {
   constructor(props) {

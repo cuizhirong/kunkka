@@ -3,7 +3,7 @@ require('./style/index.less');
 var ReactDOM = require('react-dom');
 var React = require('react');
 var Model = require('./model');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/login.lang.json');
 
 var loginModel = React.createFactory(Model);
 

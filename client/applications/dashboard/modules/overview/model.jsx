@@ -6,7 +6,7 @@ var ResourceInfo = require('./info');
 var ResourceQuota = require('./quota');
 
 var request = require('./request');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
