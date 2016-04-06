@@ -12,7 +12,7 @@ var ReactDOMServer = require('react-dom/server');
 
 var loginModel = require('client/applications/login/model.jsx');
 var dashboardModel = require('client/applications/dashboard/model.jsx');
-var adminModel = require('client/admin/model.jsx');
+var adminModel = require('client/applications/admin/model.jsx');
 
 var config = require('config');
 
@@ -178,7 +178,7 @@ module.exports = function(app) {
         uskinFile: uskinFile[0],
         modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
           language: __('shared'),
-          username: username
+          HALO: HALO
         }))
       });
     } else {
