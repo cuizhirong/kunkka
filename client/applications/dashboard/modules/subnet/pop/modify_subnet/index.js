@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function getField(fieldName) {
   var res = null;
@@ -41,12 +42,14 @@ function pop(obj, parent, callback) {
       };
       if (!refs.enable_gw.state.checked) {
         data.gateway_ip = null;
-      } else if (refs.gw_address.state.value) {
+      } else {
         data.gateway_ip = refs.gw_address.state.value;
       }
       request.updateSubnet(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, status, refs) {
@@ -55,6 +58,17 @@ function pop(obj, parent, callback) {
           refs.gw_address.setState({
             disabled: !refs.enable_gw.state.checked
           });
+          break;
+        case 'gw_address':
+          if (refs.enable_gw.state.checked) {
+            refs.btn.setState({
+              disabled: !status.value
+            });
+          } else {
+            refs.btn.setState({
+              disabled: false
+            });
+          }
           break;
         default:
           break;

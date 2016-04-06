@@ -15,7 +15,8 @@
     "field": "gw_address",
     "tip_info": "change_info",
     "value": "",
-    "is_long_label": true
+    "is_long_label": true,
+    "required": true
   }, {
     "type": "checkbox",
     "field": "enable_dhcp",
