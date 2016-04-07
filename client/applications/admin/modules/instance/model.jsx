@@ -6,13 +6,11 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
-var ConsoleOutput = require('client/components/console_output/index');
-var VncConsole = require('client/components/vnc_console/index');
 
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/admin.lang.json');
 
 class Model extends React.Component {
 
@@ -360,12 +358,6 @@ class Model extends React.Component {
     var {rows} = data;
 
     switch(key) {
-      case 'vnc_console':
-        request.getVncConsole(rows[0]).then((res) => {
-          var url = res.console.url;
-          window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
-        });
-        break;
       case 'power_on':
         request.poweron(rows[0]).then(function(res) {});
         break;
@@ -500,37 +492,6 @@ class Model extends React.Component {
               loading: false
             });
           }, 1000);
-        }
-        break;
-      case 'console_output':
-        if (isAvailableView(rows)) {
-          var serverId = rows[0].id;
-          contents[tabKey] = (
-            <ConsoleOutput
-              refresh={true}
-              url={'/api/v1/' + HALO.user.projectId + '/servers/' + serverId + '/action/output'}
-              moduleID="instance"
-              tabKey="console_output"
-              data-id={serverId} />
-          );
-        }
-        break;
-      case 'vnc_console':
-        if (isAvailableView(rows)) {
-          syncUpdate = false;
-          request.getVncConsole(rows[0]).then((res) => {
-            contents[tabKey] = (
-              <VncConsole
-                src={res.console.url}
-                data-id={rows[0].id} />
-            );
-
-            detail.setState({
-              contents: contents
-            });
-          }, () => {
-            contents[tabKey] = (<div />);
-          });
         }
         break;
       default:

@@ -188,12 +188,6 @@
         "name": ["description"],
         "key": "description",
         "default": true
-      }, {
-        "name": ["console", "output"],
-        "key": "console_output"
-      }, {
-        "name": ["vnc_console"],
-        "key": "vnc_console"
       }]
     }
   }

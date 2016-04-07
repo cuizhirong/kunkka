@@ -33,7 +33,6 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
-    console.log('onChangeState', pathList);
     var _moduleName = pathList[1],
       modules = this.state.modules;
     if (modules.indexOf(_moduleName) === -1) {

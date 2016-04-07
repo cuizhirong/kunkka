@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button} = require('client/uskin/index');
-var __ = require('i18n/client/lang.json');
+var __ = require('i18n/client/admin.lang.json');
 var router = require('../../cores/router');
 
 class Detail extends React.Component {
