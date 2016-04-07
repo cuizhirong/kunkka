@@ -4,7 +4,6 @@ var React = require('react');
 var {InputSearch, Tab, Table} = require('client/uskin/index');
 var ButtonList = require('./button_list');
 var Detail = require('./detail');
-var __ = require('i18n/client/dashboard.lang.json');
 var converter = require('client/components/main/converter');
 var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 var moment = require('client/libs/moment');
@@ -39,7 +38,7 @@ class Main extends React.Component {
         };
       }
     });
-    converter.convertLang(__, config);
+    converter.convertLang(this.props.__, config);
     this.tableColRender(config.table.column);
   }
 
@@ -317,7 +316,8 @@ class Main extends React.Component {
       btns = _config.btns,
       search = _config.search,
       table = _config.table,
-      detail = _config.table.detail;
+      detail = _config.table.detail,
+      __ = this.props.__;
 
     return (
       <div className="halo-com-main">

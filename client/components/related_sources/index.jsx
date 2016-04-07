@@ -2,7 +2,6 @@ require('../../style/index.less');
 require('./style/index.less');
 
 var React = require('react');
-var __ = require('i18n/client/dashboard.lang.json');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
 
@@ -55,6 +54,7 @@ class RelatedSources extends React.Component {
   }
 
   getContent(item, i) {
+    var __ = this.props.__;
     switch(item.type) {
       case 'mini-table':
         item.content.column.push({

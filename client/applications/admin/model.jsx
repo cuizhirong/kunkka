@@ -103,7 +103,7 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar HALO={this.props.HALO} />
+          <NavBar HALO={this.props.HALO} __={__} />
         </div>
         <div id="main-wrapper">
           <SideMenu items={menus} />

@@ -9,6 +9,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/applications/dashboard/cores/router');
+var __ = require('i18n/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -189,7 +190,8 @@ class Model extends React.Component {
           onInitialize={this.onInitialize}
           onAction={this.onAction}
           config={this.state.config}
-          params={this.props.params} />
+          params={this.props.params}
+          __={__} />
       </div>
     );
   }

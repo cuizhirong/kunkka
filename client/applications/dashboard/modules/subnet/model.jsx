@@ -314,6 +314,7 @@ class Model extends React.Component {
                 onAction={this.onDetailAction.bind(this)}
                 items={basicPropsItem ? basicPropsItem : []}/>
               <DetailMinitable
+                __={__}
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
@@ -570,7 +571,8 @@ class Model extends React.Component {
           onAction={this.onAction}
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
-          params={this.props.params} />
+          params={this.props.params}
+          __={__} />
       </div>
     );
   }

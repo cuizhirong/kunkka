@@ -3,7 +3,6 @@ require('./style/index.less');
 var React = require('react');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
-var __ = require('i18n/client/dashboard.lang.json');
 
 class DetailMinitable extends React.Component {
 
@@ -49,7 +48,7 @@ class DetailMinitable extends React.Component {
                 dataKey={tableConfig.dataKey}
                 hover={tableConfig.hover} />
               {(this.props.tableConfig.data.length === 0) &&
-                <div className="no-data-info">{__.there_is_no + this.props.title}</div>
+                <div className="no-data-info">{this.props.__.there_is_no + this.props.title}</div>
               }
             </div>
           </div>

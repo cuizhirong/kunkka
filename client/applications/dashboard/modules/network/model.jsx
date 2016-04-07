@@ -257,6 +257,7 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 onAction={this.onDetailAction.bind(this)} />
               <DetailMinitable
+                __={__}
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
@@ -434,7 +435,8 @@ class Model extends React.Component {
           onAction={this.onAction}
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
-          params={this.props.params} />
+          params={this.props.params}
+          __={__} />
       </div>
     );
   }

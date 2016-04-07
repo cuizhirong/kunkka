@@ -3,7 +3,6 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button, ButtonGroup, Table, Tip} = require('client/uskin/index');
-var __ = require('i18n/client/dashboard.lang.json');
 
 class BasicProps extends React.Component {
 
@@ -63,7 +62,8 @@ class BasicProps extends React.Component {
       props = this.props,
       itemKeys = props.itemKeys,
       items = props.items,
-      selectedItem = items[selectedKey];
+      selectedItem = items[selectedKey],
+      __ = props.__;
 
     return (
       <div className="toggle">

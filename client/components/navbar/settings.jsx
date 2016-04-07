@@ -1,7 +1,5 @@
 var React = require('react');
 
-var __ = require('i18n/client/dashboard.lang.json');
-
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -43,6 +41,7 @@ class Settings extends React.Component {
 
   setTmpl() {
     var currtLang = HALO.configs.lang;
+    var __ = this.props.__;
 
     var config = [{
       title: __.setting,

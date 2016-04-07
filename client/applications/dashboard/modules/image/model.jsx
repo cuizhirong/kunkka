@@ -347,7 +347,8 @@ class Model extends React.Component {
           onInitialize={this.onInitialize}
           onAction={this.onAction}
           config={this.state.config}
-          params={this.props.params} />
+          params={this.props.params}
+          __={__} />
       </div>
     );
   }

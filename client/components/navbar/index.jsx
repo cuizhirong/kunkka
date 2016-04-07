@@ -34,7 +34,7 @@ class NavBar extends React.Component {
           <span className="user-name">{HALO.user.username}</span>
           <div ref="settingBtn" className="settings-btn"></div>
           <div className="settings">
-            <Settings />
+            <Settings __={this.props.__} />
           </div>
         </div>
       </div>

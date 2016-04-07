@@ -398,7 +398,8 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 items={relatedSourcesItem}
                 rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)} />
+                onAction={this.onDetailAction.bind(this)}
+                __={__} />
               <RelatedSnapshot
                 title={__.related_image}
                 btnConfig={{
@@ -751,6 +752,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          __={__}
         />
       </div>
     );
