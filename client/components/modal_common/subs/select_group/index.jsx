@@ -1,5 +1,4 @@
 var React = require('react');
-var __ = require('i18n/client/dashboard.lang.json');
 
 var copyObj = (obj) => {
   var newobj = obj.constructor === Array ? [] : {};
@@ -79,7 +78,8 @@ class SelectGroup extends React.Component {
 
   renderEmpty() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      __ = props.__;
     if (props.empty_text && (!state.data || state.data.length < 1)) {
       if (props.empty_text.link_info) {
         return (

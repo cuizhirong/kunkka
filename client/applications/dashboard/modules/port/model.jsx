@@ -183,6 +183,7 @@ class Model extends React.Component {
     switch (key) {
       case 'delete':
         deleteModal({
+          __: __,
           action: 'delete',
           type:'port',
           data: rows,

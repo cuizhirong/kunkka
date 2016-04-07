@@ -10,6 +10,6 @@
   }],
   "btn": {
     "value": "extd_capacity",
-    "disabled": false
+    "disabled": true
   }
 }

@@ -1,7 +1,6 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
 var UskinTip = require('client/uskin/index').Tip;
-var __ = require('i18n/client/dashboard.lang.json');
 
 var Input = require('./subs/input/index');
 var Text = require('./subs/text/index');
@@ -23,6 +22,8 @@ class ModalBase extends React.Component {
   constructor(props) {
     super(props);
 
+    this.__ = props.__;
+
     this.state = {
       disabled: this.props.config.btn.disabled
     };
@@ -39,8 +40,10 @@ class ModalBase extends React.Component {
 
   initialize() {
     var props = this.props;
+
     return props.config.fields.map((m) => {
-      m.label = __[m.field];
+      m.label = this.__[m.field];
+      m.__ = this.__;
 
       switch(m.type) {
         case 'text':
@@ -148,7 +151,8 @@ class ModalBase extends React.Component {
   render() {
     var props = this.props,
       state = this.state,
-      btn = props.config.btn;
+      btn = props.config.btn,
+      __ = this.__;
 
     var title = props.config.title.map(function(m) {
       return __[m];

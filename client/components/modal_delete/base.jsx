@@ -1,7 +1,5 @@
 var React = require('react');
 var {Modal, Button} = require('client/uskin/index');
-var __ = require('i18n/client/dashboard.lang.json');
-
 
 class ModalBase extends React.Component {
 
@@ -44,6 +42,7 @@ class ModalBase extends React.Component {
   render() {
     var props = this.props,
       state = this.state,
+      __ = props.__,
       action = __[props.action],
       type = __[props.type],
       num = props.data.length,

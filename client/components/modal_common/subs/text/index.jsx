@@ -1,5 +1,4 @@
 var React = require('react');
-var __ = require('i18n/client/dashboard.lang.json');
 
 class Text extends React.Component {
   constructor(props) {
@@ -22,9 +21,10 @@ class Text extends React.Component {
   }
 
   render() {
+    var props = this.props;
     var className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
 
-    return <div className={className}>{__[this.props.info] || this.props.info}</div>;
+    return <div className={className}>{props.__[props.info] || props.info}</div>;
   }
 }
 

@@ -167,6 +167,7 @@ class Model extends React.Component {
         break;
       case 'delete':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'volume',
           data: rows,
@@ -466,6 +467,7 @@ class Model extends React.Component {
         break;
       case 'delete_related_snapshot':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'snapshot',
           data: [data.childItem],

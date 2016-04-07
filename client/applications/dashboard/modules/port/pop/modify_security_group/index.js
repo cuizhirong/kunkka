@@ -2,11 +2,13 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('client/applications/dashboard/modules/port/request');
 var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
+var __ = require('i18n/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
 
   var props = {
+    __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {

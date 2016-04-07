@@ -222,6 +222,7 @@ function pop(item, direction, securityGroups, callback) {
   }
 
   var props = {
+    __: __,
     config: config,
     onInitialize: function(refs) {
       refs.rules.setState({

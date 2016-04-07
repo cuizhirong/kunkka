@@ -1,6 +1,5 @@
 var React = require('react');
 var Tip = require('client/uskin/index').Tip;
-var __ = require('i18n/client/dashboard.lang.json');
 
 class Error extends React.Component {
   constructor(props) {
@@ -32,7 +31,7 @@ class Error extends React.Component {
 
     return (
       <div className={className}>
-        <Tip type={type} title={__[props.title]} content={state.value === null ? props.label : state.value} showIcon={true} width={466} />
+        <Tip type={type} title={props.__[props.title]} content={state.value === null ? props.label : state.value} showIcon={true} width={466} />
       </div>
     );
   }

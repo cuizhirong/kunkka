@@ -159,6 +159,7 @@ class Model extends React.Component {
         break;
       case 'del_img':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'image',
           data: rows,

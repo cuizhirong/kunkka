@@ -99,6 +99,7 @@ class Model extends React.Component {
         break;
       case 'delete':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'security_group',
           data: rows,

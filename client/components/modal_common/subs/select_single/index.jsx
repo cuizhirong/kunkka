@@ -1,5 +1,4 @@
 var React = require('react');
-var __ = require('i18n/client/dashboard.lang.json');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
@@ -14,6 +13,7 @@ var copyObj = function(obj) {
 class SelectSingle extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       value: props.value,
       disabled: props.disabled,
@@ -73,7 +73,7 @@ class SelectSingle extends React.Component {
                 style={{width: width}}
                 className={value === state.value ? 'selected' : ''}
                 onClick={value === state.value ? null : that.onChange.bind(that, value)}>
-                {__[value] || value}
+                {props.__[value] || value}
               </a>
             );
           }

@@ -8,6 +8,7 @@ var gatewayId = null;
 function pop(obj, parent, callback) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
   var props = {
+    __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {

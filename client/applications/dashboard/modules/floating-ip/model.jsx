@@ -141,6 +141,7 @@ class Model extends React.Component {
     switch (key) {
       case 'delete':
         deleteModal({
+          __: __,
           action: 'release',
           type: 'floating_ip',
           data: rows,

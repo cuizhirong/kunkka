@@ -1,5 +1,4 @@
 var React = require('react');
-var __ = require('i18n/client/dashboard.lang.json');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
@@ -69,7 +68,8 @@ class Select extends React.Component {
 
   renderData() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      __ = props.__;
     if (state.data && state.data.length > 0) {
       return (
         <select value={state.value} disabled={state.disabled || (state.checkedField && state.checkedField !== props.field)} onChange={this.onChange}>

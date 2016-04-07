@@ -1,10 +1,10 @@
 var React = require('react');
 var ShortTip = require('../short_tip/index');
-var __ = require('i18n/client/dashboard.lang.json');
 
 class Input extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       value: props.value ? props.value : '',
       disabled: !!props.disabled,
@@ -57,7 +57,7 @@ class Input extends React.Component {
         <div>
           <input className={this.state.error ? 'error' : ''} type={props.input_type} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />
           {
-            props.tip_info && <ShortTip label={__[props.tip_info]} />
+            props.tip_info && <ShortTip label={props.__[props.tip_info]} />
           }
         </div>
       </div>

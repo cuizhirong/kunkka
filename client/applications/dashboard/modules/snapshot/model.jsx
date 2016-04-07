@@ -140,6 +140,7 @@ class Model extends React.Component {
         break;
       case 'del_snapshot':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'snapshot',
           data: rows,

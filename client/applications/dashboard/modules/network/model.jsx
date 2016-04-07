@@ -156,6 +156,7 @@ class Model extends React.Component {
         break;
       case 'delete':
         deleteModal({
+          __: __,
           action: 'delete',
           type: 'prv_network',
           data: rows,
@@ -307,6 +308,7 @@ class Model extends React.Component {
         break;
       case 'rmv_subnet':
         deleteModal({
+          __: __,
           action: 'terminate',
           type: 'subnet',
           data: [data.childItem],

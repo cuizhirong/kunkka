@@ -1,6 +1,5 @@
 var React = require('react');
 var Slider = require('client/uskin/index').Slider;
-var __ = require('i18n/client/dashboard.lang.json');
 
 class Progress extends React.Component {
   constructor(props) {
@@ -31,7 +30,7 @@ class Progress extends React.Component {
     return (
       <div className={className}>
         <div>
-          <div>{__[props.field] + props.min + ' - ' + props.max + props.unit}</div>
+          <div>{props.__[props.field] + props.min + ' - ' + props.max + props.unit}</div>
           <Slider min={props.min} max={props.max} value={state.value} hideThumb={true} />
         </div>
         <div>{state.value + ' ' + props.unit}</div>
