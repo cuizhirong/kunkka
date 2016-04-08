@@ -87,57 +87,9 @@
     "key": "refresh",
     "icon": "refresh"
   }],
-  "filter": [{
-    "group_key": "server_id",
-    "items": [{
-      "type": "input",
-      "key": "server_id",
-      "placeholder": ["pls_enter", "server", "id"]
-    }]
-  }, {
-    "group_key": "all_tenant",
-    "items": [{
-      "type": "select",
-      "key": "status",
-      "default": ["all", "status"],
-      "param": "status"
-    }, {
-      "type": "select",
-      "key": "image",
-      "default": ["all", "image"],
-      "param": "image"
-    }, {
-      "type": "select",
-      "key": "flavor",
-      "default": ["all", "flavor"],
-      "param": "flavor"
-    }, {
-      "type": "input",
-      "key": "host_name",
-      "placeholder": ["pls_enter", "host", "name"],
-      "param": "host"
-    }, {
-      "type": "input",
-      "key": "server_name",
-      "placeholder": ["pls_enter", "server", "name"],
-      "param": "name"
-    }, {
-      "type": "input",
-      "key": "ip_address",
-      "placeholder": ["pls_enter", "ip", "address"],
-      "param": "ip"
-    }, {
-      "type": "input",
-      "key": "project_id",
-      "placeholder": ["pls_enter", "project", "id"],
-      "param": "tenant_id"
-    }, {
-      "type": "input",
-      "key": "user_id",
-      "placeholder": ["pls_enter", "user", "id"],
-      "param": "user_id"
-    }]
-  }],
+  "search": {
+    "placeholder": ["pls_enter", "server", "id"]
+  },
   "table": {
     "checkbox": true,
     "dataKey": "id",

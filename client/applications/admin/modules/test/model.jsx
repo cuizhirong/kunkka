@@ -150,19 +150,16 @@ class Model extends React.Component {
 //initialize table data
   onInitialize(params) {
     var _config = this.state.config,
-      filter = _config.filter,
       table = _config.table;
 
     if (params[2]) {
       request.getServerByIDInitialize(params[2]).then((res) => {
-        this.initializeFilter(filter, res[1]);
         table.data = [res[0].server];
         this.updateTableData(table, res[0]._url);
       });
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        this.initializeFilter(filter, res[1]);
         var newTable = this.processTableData(table, res[0]);
         this.updateTableData(newTable, res[0]._url);
       });
@@ -182,6 +179,7 @@ class Model extends React.Component {
   getInitialListData() {
     var pageLimit = this.state.config.table.limit;
     request.getList(pageLimit).then((res) => {
+
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
     });
@@ -196,26 +194,38 @@ class Model extends React.Component {
   }
 
 //request: filter request
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
+  // onFilterSearch(actionType, refs, data) {
+  //   if (actionType === 'search') {
+  //     this.loadingTable();
+
+  //     var serverID = data.server_id,
+  //       allTenant = data.all_tenant;
+
+  //     if (serverID) {
+  //       request.getServerByID(serverID.host).then((res) => {
+  //         var table = this.state.table;
+  //         table.data = [res.server];
+  //         this.updateTableData(table, res._url);
+  //       });
+  //     } else if (allTenant){
+  //       request.filterFromAll(allTenant).then((res) => {
+  //         var table = this.state.table;
+  //         table.data = res.servers;
+  //         this.updateTableData(table, res._url);
+  //       });
+  //     }
+  //   }
+  // }
+
+//request: search request
+  onClickSearch(actionType, refs, data) {
+    if (actionType === 'click') {
       this.loadingTable();
-
-      var serverID = data.server_id,
-        allTenant = data.all_tenant;
-
-      if (serverID) {
-        request.getServerByID(serverID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.server];
-          this.updateTableData(table, res._url);
-        });
-      } else if (allTenant){
-        request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.config.table;
-          table.data = res.servers;
-          this.updateTableData(table, res._url);
-        });
-      }
+      request.getServerByID(data.text).then((res) => {
+        var table = this.state.config.table;
+        table.data = [res.server];
+        this.updateTableData(table, res._url);
+      });
     }
   }
 
@@ -325,9 +335,12 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
         break;
+      // case 'filter':
+      //   this.onFilterSearch(actionType, refs, data);
+      //   break;
       case 'table':
         this.onClickTable(actionType, refs, data);
         break;

@@ -31,6 +31,11 @@ module.exports = {
         }
       });
     }
+    if (config.search) {
+      if (config.search.placeholder) {
+        config.search.placeholder = this.getLangValue(lang, config.search.placeholder);
+      }
+    }
     if (config.filter) {
       config.filter.forEach((elements) => {
         elements.items.forEach((ele) => {
