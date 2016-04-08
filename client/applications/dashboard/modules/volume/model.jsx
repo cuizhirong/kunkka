@@ -17,7 +17,7 @@ var resizeVolume = require('./pop/resize/index');
 var notify = require('../../utils/notify');
 
 var config = require('./config.json');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 var moment = require('client/libs/moment');
 var request = require('./request');
 var router = require('client/applications/dashboard/cores/router');

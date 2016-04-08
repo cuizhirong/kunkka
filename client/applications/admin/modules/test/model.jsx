@@ -10,7 +10,7 @@ var BasicProps = require('client/components/basic_props/index');
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
-var __ = require('i18n/client/admin.lang.json');
+var __ = require('locale/client/admin.lang.json');
 
 class Model extends React.Component {
 

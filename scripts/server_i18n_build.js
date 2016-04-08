@@ -1,95 +1,109 @@
-var fs = require('fs');
-var path = require('path');
-var config = require('../configs/server.js');
+'use strict';
 
-var i18n = {
+const fs = require('fs');
+const path = require('path');
+
+const config = require('../configs/server');
+let extType = config.extension && config.extension.type;
+
+const i18n = {
   api: {},
   views: {}
 };
-var extensions = {};
-var client = {};
+const extensions = {};
+const client = {};
 
-function generateLangObject (dirPath, obj, moduleName, extraIgnore) {
+function loadI18nFile (dirPath, i18n) {
   fs.readdirSync(dirPath)
-    .filter(function(fileName) {
-      return fileName !== 'index.js' && fileName !== extraIgnore && fileName !== '.DS_Store';
+    .filter(_module => {
+      return fs.statSync(path.join(dirPath, _module)).isDirectory();
     })
-    .forEach(function (dir) {
+    .forEach(_m => {
       try {
-        fs.accessSync(path.join(dirPath, dir, 'lang.json'), fs.F_OK);
-        obj[dir] = require(path.join(dirPath, dir, 'lang.json'));
+        let langPath = path.join(dirPath, _m, 'lang.json');
+        fs.accessSync(langPath, fs.R_OK);
+        i18n[_m] = require(langPath);
       } catch (e) {
-        console.log(dir + ' ' + moduleName + ' has no lang.json');
+        console.log(`${_m} has no lang.json file.`);
       }
     });
 }
 
-function generateApiLangObject(dirPath, obj, moduleName, extraIgnore) {
+function generateServerLangObject (dirPath, apiI18N, extensionsI18N, viewsI18N) {
   fs.readdirSync(dirPath)
-    .filter(function (dir) {
-      return fs.statSync(dirPath + '/' + dir).isDirectory();
+    .filter(dir => {
+      return fs.statSync(path.join(dirPath, dir)).isDirectory();
     })
-    .forEach(function (dir) {
-      generateLangObject(dirPath + '/' + dir, obj, moduleName, extraIgnore);
+    .forEach(app => {
+      // generate api i18n object
+      let appApiPath = path.join(dirPath, app, 'api');
+      loadI18nFile(appApiPath, apiI18N);
+        // generate extension i18n object if exist
+      if (extType) {
+        let extensionsPath = path.join(dirPath, app, 'extensions', extType);
+        loadI18nFile(extensionsPath, extensionsI18N);
+      }
+      // generate views i18n object
+      let viewsPath = path.join(dirPath, app, 'views');
+      loadI18nFile(viewsPath, viewsI18N);
     });
 }
 
-var apiDirPath = path.join(__dirname, '..', config.backend.dirname, 'api');
-generateApiLangObject(apiDirPath, i18n.api, 'api', 'extensions');
+// generate server side i18n object
+const apiDirPath = path.join(__dirname, '../server/api');
+generateServerLangObject(apiDirPath, i18n.api, extensions, i18n.views);
 
-var viewsDirPath = path.join(__dirname, '../server/views');
-generateLangObject(viewsDirPath, i18n.views, 'views');
 
-var extensionsDirPath = path.join(__dirname, '../server/api/extensions');
-generateApiLangObject(extensionsDirPath, extensions, 'extension');
-
-Object.keys(extensions).forEach(function (ex) {
-  Object.keys(extensions[ex]).forEach(function (lang) {
-    Object.assign(i18n.api[ex][lang], extensions[ex][lang]);
-  });
+Object.keys(extensions).forEach(ex => {
+  Object.assign(i18n.api[ex], extensions[ex]);
 });
 
-var clientModules = {};
-var clientDirPath = path.join(__dirname, '../client/applications/dashboard/modules');
-generateLangObject(clientDirPath, clientModules, 'client module');
+// generate client side i18n object
+const clientAppDirPath = path.join(__dirname, '../client/applications');
+const i18nClientObj = {};
+fs.readdirSync(clientAppDirPath)
+  .forEach(app => {
+    try {
+      let appLangPath = path.join(clientAppDirPath, app, 'locale', 'lang.json');
+      fs.accessSync(appLangPath, fs.R_OK);
+      i18nClientObj[app] = require(appLangPath);
+    } catch (e) {
+      console.log(`${app} has no locale file.`);
+    }
+  });
 
-
-var shared = require(path.join(__dirname, '../i18n/shared/lang.json'));
-
-var locales = {};
-var _module = Object.keys(i18n);
-var _component = Object.keys(i18n[_module[0]]);
-var _locales = Object.keys(i18n.api[_component[0]]);
-_locales.forEach(function (locale) {
-  var localeLowerCase = locale.toLowerCase();
+// combine i18n objects
+const locales = {};
+const _module = Object.keys(i18n);
+const _locales = ['en', 'zh-CN'];
+_locales.forEach(locale => {
+  let localeLowerCase = locale.toLowerCase();
   locales[localeLowerCase] = {};
   client[localeLowerCase] = {};
-  _module.forEach(function(m) {
+  _module.forEach(m => {
     locales[localeLowerCase][m] = {};
   });
 });
 
-
-
-_locales.forEach(function (lang) {
+_locales.forEach(lang => {
   var langLowerCase = lang.toLowerCase();
-  Object.keys(i18n).forEach(function (module) {
-    Object.keys(i18n[module]).forEach(function (component) {
+  Object.keys(i18n).forEach(module => {
+    Object.keys(i18n[module]).forEach(component => {
       locales[langLowerCase][module][component] = i18n[module][component][lang];
     })
   });
-  Object.keys(clientModules).forEach(function (m) {
-    Object.assign(client[langLowerCase], clientModules[m][lang]);
+  Object.keys(i18nClientObj).forEach(m => {
+    client[langLowerCase][m] = i18nClientObj[m][lang];
   });
-  Object.assign(shared[lang], client[langLowerCase]);
-  locales[langLowerCase]['shared'] = shared[lang];
+  locales[langLowerCase]['shared'] = client[langLowerCase];
 });
 
 function generateLocales() {
-  _locales.forEach(function(locale) {
-    var localeLowerCase = locale.toLowerCase();
-    (function(loc) {
-      fs.writeFile(path.join(__dirname, '../i18n/server', localeLowerCase + '.js'), JSON.stringify(locales[localeLowerCase]), function(err) {
+  _locales.forEach(locale => {
+    let localeLowerCase = locale.toLowerCase();
+    (loc => {
+      let i18nDirPath = path.join(__dirname, '../locale/');
+      fs.writeFile(path.join(__dirname, '../locale/server', localeLowerCase + '.js'), JSON.stringify(locales[localeLowerCase]), (err) => {
         if (err) {
           console.log('fail to build %s locale file', loc);
         } else {
@@ -100,11 +114,19 @@ function generateLocales() {
   });
 }
 
-fs.access(path.join(__dirname, '../i18n/server'), fs.F_OK, function(err) {
+fs.access(path.join(__dirname, '../locale'), fs.F_OK, (err) => {
   if (err) {
-    fs.mkdirSync(path.join(__dirname, '../i18n/server'));
+    fs.mkdirSync(path.join(__dirname, '../locale'));
+    fs.mkdirSync(path.join(__dirname, '../locale/server'));
     generateLocales();
   } else {
-    generateLocales();
+    fs.access(path.join(__dirname, '../locale/server'), fs.F_OK, (err) =>{
+      if (err) {
+        fs.mkdirSync(path.join(__dirname, '../locale/server'));
+        generateLocales();
+      } else {
+        generateLocales();
+      }
+    });
   }
 });

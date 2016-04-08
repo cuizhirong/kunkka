@@ -48,8 +48,8 @@ dump.rdb
 benchmark/*
 
 # generated i18n files
-i18n/server/*
-i18n/client/*
+i18n/*
+locale/*
 
 #client test files
 tests/static_tests/*

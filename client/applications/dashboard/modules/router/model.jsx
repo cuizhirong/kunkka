@@ -15,7 +15,7 @@ var relatedSubnet = require('./pop/related_subnet/index');
 var detachSubnet = require('./pop/detach_subnet/index');
 
 var config = require('./config.json');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
 var router = require('client/applications/dashboard/cores/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');

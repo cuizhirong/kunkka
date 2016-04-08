@@ -1,7 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 
 function pop(parent, callback) {
   var props = {

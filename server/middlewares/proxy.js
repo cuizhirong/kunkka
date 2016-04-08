@@ -16,7 +16,7 @@ router.all('/*', function (req, res, next) {
   }
   var region = req.headers.region;
   var service = req.path.split('/')[1];
-  var target = remote[service][region] + '/' + req.path.split('/').slice(2).join('/');
+  var target = (service === 'keystone' ? remote[service] : remote[service][region]) + '/' + req.path.split('/').slice(2).join('/');
   var method = req.method.toLowerCase();
   if (noBodyMethodList.indexOf(method) !== -1) {
     request[method](target + getQueryString(req.query))

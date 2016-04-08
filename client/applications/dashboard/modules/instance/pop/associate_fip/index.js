@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createFloatingIp = require('client/applications/dashboard/modules/floating-ip/pop/apply_ip/index');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
 

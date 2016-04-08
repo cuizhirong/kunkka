@@ -59,12 +59,24 @@ function buildInvertedIndex(files, output) {
 }
 
 function writeFile(fileName, str) {
-  var dir = path.resolve(rootDir, 'i18n/client');
+  var localePath = path.resolve(rootDir, 'locale');
   try {
-    fs.statSync(dir);
+    fs.accessSync(localePath, fs.F_OK)
   } catch (e) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(localePath);
+    fs.mkdirSync(path.join(localePath, 'client'));
   }
-  fs.writeFileSync(path.join(dir, fileName), str, 'utf-8');
-  console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold(language) + ' i18n file ' + chalk.bold(fileName) + ' has been generated!');
+  var clientPath = path.join(localePath, 'client');
+  try {
+    fs.accessSync(localePath, fs.F_OK)
+  } catch (e) {
+    fs.mkdirSync(clientPath);
+  }
+  try {
+    fs.writeFileSync(path.join(clientPath, fileName), str, 'utf-8');
+    console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold(language) + ' i18n file ' + chalk.bold(fileName) + ' has been generated!');
+  } catch (e) {
+    console.log(chalk.white.bgRed.bold('ERROR') + ' Fail to write i18n file ' + chalk.bold(fileName));
+  }
+
 }

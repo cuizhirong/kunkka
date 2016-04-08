@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var createSubnet = require('client/applications/dashboard/modules/subnet/pop/create_subnet/index');
 var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};

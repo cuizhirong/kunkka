@@ -12,7 +12,7 @@ var createNetwork = require('./pop/create_network/index');
 var createSubnet = require('../subnet/pop/create_subnet/index');
 
 var config = require('./config.json');
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 var router = require('client/applications/dashboard/cores/router');
 var request = require('./request');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');

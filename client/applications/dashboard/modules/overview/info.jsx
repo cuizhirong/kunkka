@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 
 class ResourceInfo extends React.Component {
 

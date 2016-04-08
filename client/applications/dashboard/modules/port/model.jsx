@@ -11,7 +11,7 @@ var associateInstance = require('./pop/associate_instance/index');
 var detachInstance = require('./pop/detach_instance/index');
 var modifySecurityGroup = require('./pop/modify_security_group/index');
 
-var __ = require('i18n/client/dashboard.lang.json');
+var __ = require('locale/client/dashboard.lang.json');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/applications/dashboard/cores/router');
