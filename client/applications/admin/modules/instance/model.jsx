@@ -34,7 +34,6 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
-    this.initializeFilter(this.state.config.filter);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -47,7 +46,7 @@ class Model extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
-      this.getInitialListData();
+      this.onInitialize(nextProps.params);
     }
   }
 
@@ -64,8 +63,8 @@ class Model extends React.Component {
             //   </span>
             //   : '';
             return (
-              <a data-type="router" href={'/admin/test/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
-                跳转到Test ee
+              <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
+                跳转到Test ddd
               </a>
             );
           };
@@ -108,7 +107,8 @@ class Model extends React.Component {
     });
   }
 
-  initializeFilter(filters) {
+//**************************************************//
+  initializeFilter(filters, res) {
     var setOption = function(key, data) {
       filters.forEach((filter) => {
         filter.items.forEach((item) => {
@@ -119,56 +119,53 @@ class Model extends React.Component {
       });
     };
 
-    request.getFilterOptions().then((res) => {
-      res.forEach((ele) => {
-        // if (ele.hosts) {
-        //   var hostData = [];
-        //   ele.hosts.forEach((host) => {
-        //     if (host.service === 'compute') {
-        //       hostData.push({
-        //         id: host.host_name,
-        //         name: host.host_name
-        //       });
-        //     }
-        //   });
-        //   setOption('host', hostData);
-        // } else
-        if (ele.images) {
-          var imageData = [];
-          ele.images.forEach((image) => {
-            imageData.push({
-              id: image.id,
-              name: image.name
-            });
-          });
-          setOption('image', imageData);
-        } else if (ele.flavors) {
-          var flavorData = [];
-          ele.flavors.forEach((flavor) => {
-            flavorData.push({
-              id: flavor.id,
-              name: flavor.name
-            });
-          });
-          setOption('flavor', flavorData);
-        }
+    var imageTypes = [];
+    res.imageType.images.forEach((image) => {
+      imageTypes.push({
+        id: image.id,
+        name: image.name
       });
-
-      var statusData = [{
-        id: 'active',
-        name: __.active
-      }];
-      setOption('status', statusData);
     });
+    setOption('image', imageTypes);
+
+    var flavorTypes = [];
+    res.flavorType.flavors.forEach((flavor) => {
+      flavorTypes.push({
+        id: flavor.id,
+        name: flavor.name
+      });
+    });
+    setOption('flavor', flavorTypes);
+
+    var statusTypes = [{
+      id: 'active',
+      name: __.active
+    }, {
+      id: 'error',
+      name: __.error
+    }];
+    setOption('status', statusTypes);
   }
 
-//**************************************************//
 //initialize table data
   onInitialize(params) {
+    var _config = this.state.config,
+      filter = _config.filter,
+      table = _config.table;
+
     if (params[2]) {
-      this.getSingleData(params[2]);
+      request.getServerByIDInitialize(params[2]).then((res) => {
+        this.initializeFilter(filter, res[1]);
+        table.data = [res[0].server];
+        this.updateTableData(table, res[0]._url);
+      });
     } else {
-      this.getInitialListData();
+      var pageLimit = this.state.config.table.limit;
+      request.getListInitialize(pageLimit).then((res) => {
+        this.initializeFilter(filter, res[1]);
+        var newTable = this.processTableData(table, res[0]);
+        this.updateTableData(newTable, res[0]._url);
+      });
     }
   }
 
@@ -191,10 +188,10 @@ class Model extends React.Component {
   }
 
 //request: jump to next page according to the given url
-  getNextListData(url) {
+  getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url);
+      this.updateTableData(table, res._url, refreshDetail);
     });
   }
 
@@ -207,14 +204,14 @@ class Model extends React.Component {
         allTenant = data.all_tenant;
 
       if (serverID) {
-        request.getServerByID(serverID.host).then((res) => {
-          var table = this.state.table;
+        request.getServerByID(serverID.id).then((res) => {
+          var table = this.state.config.table;
           table.data = [res.server];
           this.updateTableData(table, res._url);
         });
       } else if (allTenant){
         request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.table;
+          var table = this.state.config.table;
           table.data = res.servers;
           this.updateTableData(table, res._url);
         });
@@ -223,7 +220,7 @@ class Model extends React.Component {
   }
 
 //rerender: update table data
-  updateTableData(table, currentUrl) {
+  updateTableData(table, currentUrl, refreshDetail) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -232,12 +229,22 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
+
+      var detail = this.refs.dashboard.refs.detail,
+        params = this.props.params;
+      if (detail && refreshDetail && params.length > 2) {
+        detail.refresh();
+      }
     });
   }
 
 //change table data structure: to record url history
   processTableData(table, res) {
-    table.data = res.servers;
+    if (res.server) {
+      table.data = [res.server];
+    } else if (res.servers) {
+      table.data = res.servers;
+    }
 
     var pagination = {},
       next = res.servers_links ? res.servers_links[0] : null;
@@ -260,6 +267,9 @@ class Model extends React.Component {
   refresh(data, params) {
     if (!data) {
       data = {};
+    }
+    if (!params) {
+      params = this.props.params;
     }
 
     if (data.initialList) {
@@ -284,7 +294,8 @@ class Model extends React.Component {
 
       var history = this.stores.urls,
         url = history.pop();
-      this.getNextListData(url);
+
+      this.getNextListData(url, data.refreshDetail);
     }
   }
 
@@ -367,6 +378,7 @@ class Model extends React.Component {
 
         if (params[2]) {
           refreshData.refreshList = true;
+          refreshData.refreshDetail = true;
           refreshData.loadingTable = true;
           refreshData.loadingDetail = true;
         } else {
@@ -574,8 +586,10 @@ class Model extends React.Component {
         var {rawItem, newName} = data;
         request.editServerName(rawItem, newName).then((res) => {
           this.refresh({
-            detailRefresh: true
-          }, true);
+            loadingDetail: true,
+            refreshList: true,
+            refreshDetail: true
+          });
         });
         break;
       default:

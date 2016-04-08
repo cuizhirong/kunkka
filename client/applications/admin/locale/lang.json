@@ -1,10 +1,14 @@
 {
   "en": {
+    "address": "Address",
+    "ip": "IP ",
+    "project_upper": "Project ",
+
     "account_placeholder": "Please enter username or email",
     "active": "Active",
     "add": "Add ",
     "add_": "Add ",
-    "all": "All",
+    "all": "All ",
     "associate": "Associate ",
     "cancel": "Cancel ",
     "change": "Change ",
@@ -85,6 +89,10 @@
     "yes": "Yes"
   },
   "zh-CN": {
+    "address": "地址",
+    "ip": "IP",
+    "project_upper": "项目",
+
     "account_placeholder": "请输入账号",
     "active": "运行中",
     "add": "挂载",

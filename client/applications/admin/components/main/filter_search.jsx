@@ -16,10 +16,6 @@ class Detail extends React.Component {
     ['reset', 'confirm'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
-
-    this.stores = {
-      filter: {}
-    };
   }
 
   collapseFilter(e) {
@@ -52,12 +48,15 @@ class Detail extends React.Component {
     var filters = this.props.items,
       refs = this.refs;
 
-    filters.forEach((item) => {
-      if(item.type === 'select') {
-        refs[item.key].value = 'default';
-      } else if(item.type === 'input') {
-        refs[item.key].value = '';
-      }
+    filters.forEach((filter) => {
+      filter.items.forEach((item) => {
+        var itemKey = filter.group_key + '_' + item.key;
+        if(item.type === 'select') {
+          refs[itemKey].value = 'default';
+        } else if(item.type === 'input') {
+          refs[itemKey].value = '';
+        }
+      });
     });
   }
 
@@ -84,7 +83,6 @@ class Detail extends React.Component {
       });
     });
 
-    this.stores.filter = fields;
     this.props.onConfirm && this.props.onConfirm(fields);
 
     var pathList = router.getPathList();

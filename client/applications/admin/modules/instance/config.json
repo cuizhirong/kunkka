@@ -92,7 +92,8 @@
     "items": [{
       "type": "input",
       "key": "server_id",
-      "placeholder": ["pls_enter", "server", "id"]
+      "placeholder": ["pls_enter", "server", "id"],
+      "param": "id"
     }]
   }, {
     "group_key": "all_tenant",
@@ -129,7 +130,7 @@
     }, {
       "type": "input",
       "key": "project_id",
-      "placeholder": ["pls_enter", "project", "id"],
+      "placeholder": ["pls_enter", "project_upper", "id"],
       "param": "tenant_id"
     }, {
       "type": "input",

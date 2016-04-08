@@ -1,7 +1,25 @@
+var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
+  getFilterOptions: function(forced) {
+    return storage.getList(['imageType', 'flavorType'], forced);
+  },
+  getListInitialize: function(pageLimit, forced) {
+    var req = [];
+    req.push(this.getList(pageLimit));
+    req.push(this.getFilterOptions(forced));
+
+    return RSVP.all(req);
+  },
+  getServerByIDInitialize: function(serverID, forced) {
+    var req = [];
+    req.push(this.getServerByID(serverID));
+    req.push(this.getFilterOptions(forced));
+
+    return RSVP.all(req);
+  },
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -50,29 +68,6 @@ module.exports = {
       res._url = url;
       return res;
     });
-  },
-  // getHostList: function() {
-  //   return fetch.get({
-  //     url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hosts'
-  //   });
-  // },
-  getImageList: function() {
-    return fetch.get({
-      url: '/proxy/glance/v2/images?visibility=public'
-    });
-  },
-  getFlavorList: function() {
-    return fetch.get({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors'
-    });
-  },
-  getFilterOptions: function() {
-    var options = [];
-    // options.push(this.getHostList());
-    options.push(this.getImageList());
-    options.push(this.getFlavorList());
-
-    return RSVP.all(options);
   },
   deleteItem: function(items) {
     var deferredList = [];
