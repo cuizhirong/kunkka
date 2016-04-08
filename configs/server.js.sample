@@ -31,7 +31,9 @@ var config = {
     'type': 'Session',                               // 'Redis' | 'Memcached' | 'Session' (do not use it in production)
     'remotes': ['127.0.0.1:11211'],
     'secret': 'keyboard cat',
-    'cookie_name': 'ustack',
+    'cookie_name': 'ustack'
+  },
+  'cookie': {
     'maxAge': ''
   },
   'log': {

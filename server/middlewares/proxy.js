@@ -3,7 +3,7 @@
 var express = require('express');
 var router = express.Router();
 var remote = require('config')('remote');
-var getQueryString = require('./getQueryString.js');
+var getQueryString = require('helpers/getQueryString.js');
 
 var request = require('superagent');
 var noBodyMethodList = ['get', 'head', 'delete'];
