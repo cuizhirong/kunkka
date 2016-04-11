@@ -19,41 +19,41 @@ module.exports = function(grunt) {
       dist: ['client/dist']
     },
 
-    less: {
-      compile: {
-        options: {
-          strictMath: true,
-          sourceMap: true,
-          outputSourceFiles: true,
-          sourceMapURL: '<%= pkg.name %>.css.map',
-          sourceMapFilename: 'client/dist/css/<%= pkg.name %>.css.map'
-        },
-        files: {
-          'client/dist/css/<%= pkg.name %>.css': 'client/style/login/index.less'
-        }
-      }
-    },
+    // less: {
+    //   compile: {
+    //     options: {
+    //       strictMath: true,
+    //       sourceMap: true,
+    //       outputSourceFiles: true,
+    //       sourceMapURL: '<%= pkg.name %>.css.map',
+    //       sourceMapFilename: 'client/dist/css/<%= pkg.name %>.css.map'
+    //     },
+    //     files: {
+    //       'client/dist/css/<%= pkg.name %>.css': 'client/style/login/index.less'
+    //     }
+    //   }
+    // },
 
-    postcss: {
-      options: {
-        map: {
-          prev: 'client/dist/css',
-          inline: false
-        },
-        processors: [
-          require('autoprefixer')({
-            browsers: ['> 1%', 'last 2 versions']
-          }),
-          require('postcss-class-prefix')(''),
-          require('cssnano')()
-        ]
-      },
-      dist: {
-        files: {
-          'client/dist/css/halo.min.css': 'client/dist/css/halo.css'
-        }
-      }
-    },
+    // postcss: {
+    //   options: {
+    //     map: {
+    //       prev: 'client/dist/css',
+    //       inline: false
+    //     },
+    //     processors: [
+    //       require('autoprefixer')({
+    //         browsers: ['> 1%', 'last 2 versions']
+    //       }),
+    //       require('postcss-class-prefix')(''),
+    //       require('cssnano')()
+    //     ]
+    //   },
+    //   dist: {
+    //     files: {
+    //       'client/dist/css/halo.min.css': 'client/dist/css/halo.css'
+    //     }
+    //   }
+    // },
 
     webpack: {
       options: webpackConfig,
