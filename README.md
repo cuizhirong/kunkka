@@ -21,8 +21,7 @@ sudo npm install pm2 -g
 
 Under the *configs* directory, generate the config file
 ```
-cp ./configs/server.js.sample ./config/server.js
-cp ./configs/index.json.sample ./config/index.json
+cp ./configs/server.js.sample ./configs/server.js
 ```
 and then customize your own js file
 

@@ -44,6 +44,8 @@ module.exports = function(app) {
     // var MemcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
     //   failover: true
     // });
+    var memjsLogger = {};
+    memjsLogger.log = logger.error;
     var MemcachedStore = require('connect-memjs')(session);
     app.use(session({
       secret: sessionEngine.secret,
@@ -51,7 +53,8 @@ module.exports = function(app) {
       saveUninitialized: true,
       store: new MemcachedStore({
         servers: sessionEngine.remotes,
-        failover: true
+        failover: true,
+        logger:memjsLogger
       })
     }));
     // handle lost connection to Memcached
