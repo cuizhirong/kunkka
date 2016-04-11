@@ -103,18 +103,7 @@ class Model extends React.Component {
           break;
         case 'ip_address':
           column.render = (col, item, i) => {
-            var arr = [];
-            if (item.addresses.private) {
-              item.addresses.private.forEach((_item, index) => {
-                if (_item.version === 4 && _item['OS-EXT-IPS:type'] === 'fixed') {
-                  if (_item.port) {
-                    index && arr.push(', ');
-                    arr.push(<a key={'port' + index} data-type="router" href={'/project/port/' + _item.port.id}>{_item.addr}</a>);
-                  }
-                }
-              });
-            }
-            return arr;
+            return (item.fixed_ips && item.fixed_ips.length > 0) ? item.fixed_ips.join(', ') : '';
           };
           break;
         case 'floating_ip':
@@ -239,7 +228,15 @@ class Model extends React.Component {
         break;
       case 'join_ntw':
         joinNetwork(rows[0], null, function() {
-          that.refresh(null, true);
+          that.refresh({
+            detailRefresh: true
+          }, true);
+          notify({
+            action: 'associate',
+            resource_id: rows[0].id,
+            resource_type: 'port',
+            stage: 'end'
+          });
         });
         break;
       case 'chg_security_grp':
@@ -695,7 +692,7 @@ class Model extends React.Component {
             detailRefresh: true
           }, true);
           notify({
-            action: 'create',
+            action: 'associate',
             resource_id: data.rawItem.id,
             resource_type: 'port',
             stage: 'end'
