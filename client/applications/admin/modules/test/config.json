@@ -94,7 +94,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 5,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",

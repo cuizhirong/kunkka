@@ -91,52 +91,43 @@
     "group_key": "server_id",
     "items": [{
       "type": "input",
-      "key": "server_id",
-      "placeholder": ["pls_enter", "server", "id"],
-      "param": "id"
+      "key": "id",
+      "placeholder": ["pls_enter", "server", "id"]
     }]
   }, {
     "group_key": "all_tenant",
     "items": [{
       "type": "select",
       "key": "status",
-      "default": ["all", "status"],
-      "param": "status"
+      "default": ["all", "status"]
     }, {
       "type": "select",
       "key": "image",
-      "default": ["all", "image"],
-      "param": "image"
+      "default": ["all", "image"]
     }, {
       "type": "select",
       "key": "flavor",
-      "default": ["all", "flavor"],
-      "param": "flavor"
+      "default": ["all", "flavor"]
     }, {
       "type": "input",
-      "key": "host_name",
-      "placeholder": ["pls_enter", "host", "name"],
-      "param": "host"
+      "key": "host",
+      "placeholder": ["pls_enter", "host", "name"]
     }, {
       "type": "input",
-      "key": "server_name",
-      "placeholder": ["pls_enter", "server", "name"],
-      "param": "name"
+      "key": "name",
+      "placeholder": ["pls_enter", "server", "name"]
     }, {
       "type": "input",
-      "key": "ip_address",
-      "placeholder": ["pls_enter", "ip", "address"],
-      "param": "ip"
+      "key": "ip",
+      "placeholder": ["pls_enter", "ip", "address"]
     }, {
       "type": "input",
-      "key": "project_id",
-      "placeholder": ["pls_enter", "project_upper", "id"],
-      "param": "tenant_id"
+      "key": "tenant_id",
+      "placeholder": ["pls_enter", "project_upper", "id"]
     }, {
       "type": "input",
       "key": "user_id",
-      "placeholder": ["pls_enter", "user", "id"],
-      "param": "user_id"
+      "placeholder": ["pls_enter", "user", "id"]
     }]
   }],
   "table": {

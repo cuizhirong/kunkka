@@ -62,11 +62,19 @@ class Model extends React.Component {
             //     <a data-type="router" href={'/project/image/' + item.image.id}>{' ' + item.image.name}</a>
             //   </span>
             //   : '';
-            return (
-              <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
-                跳转到Test ddd
-              </a>
-            );
+            if (i) {
+              return (
+                <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
+                  跳转到Test rename2
+                </a>
+              );
+            } else {
+              return (
+                <a data-type="router" href={'/admin/test/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
+                  跳转到Test ee
+                </a>
+              );
+            }
           };
           break;
         case 'ip_address':

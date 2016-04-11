@@ -62,11 +62,19 @@ class Model extends React.Component {
             //     <a data-type="router" href={'/project/image/' + item.image.id}>{' ' + item.image.name}</a>
             //   </span>
             //   : '';
-            return (
-              <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
-                跳转到Test ddd
-              </a>
-            );
+            if (i) {
+              return (
+                <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
+                  跳转到Test rename2
+                </a>
+              );
+            } else {
+              return (
+                <a data-type="router" href={'/admin/test/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
+                  跳转到Test ee
+                </a>
+              );
+            }
           };
           break;
         case 'ip_address':
@@ -462,7 +470,6 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
-    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -480,42 +487,30 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          syncUpdate = false;
-          detail.loading();
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
-          setTimeout(() => {
-            var basicPropsItem = this.getBasicPropsItems(rows[0]);
-
-            contents[tabKey] = (
-              <div>
-                <BasicProps
-                  title={__.basic + __.properties}
-                  defaultUnfold={true}
-                  tabKey={'description'}
-                  items={basicPropsItem}
-                  rawItem={rows[0]}
-                  onAction={this.onDetailAction.bind(this)}
-                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-              </div>
-            );
-
-            detail.setState({
-              contents: contents,
-              loading: false
-            });
-          }, 1000);
+          contents[tabKey] = (
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                tabKey={'description'}
+                items={basicPropsItem}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}
+                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+            </div>
+          );
         }
         break;
       default:
         break;
     }
 
-    if (syncUpdate) {
-      detail.setState({
-        contents: contents,
-        loading: false
-      });
-    }
+    detail.setState({
+      contents: contents,
+      loading: false
+    });
   }
 
   getBasicPropsItems(item) {
@@ -586,7 +581,6 @@ class Model extends React.Component {
         var {rawItem, newName} = data;
         request.editServerName(rawItem, newName).then((res) => {
           this.refresh({
-            loadingDetail: true,
             refreshList: true,
             refreshDetail: true
           });

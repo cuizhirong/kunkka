@@ -78,7 +78,7 @@ class Detail extends React.Component {
           if (!fields[filter.group_key]) {
             fields[filter.group_key] = {};
           }
-          fields[filter.group_key][item.param] = refs[itemKey].value.trim();
+          fields[filter.group_key][item.key] = refs[itemKey].value.trim();
         }
       });
     });
