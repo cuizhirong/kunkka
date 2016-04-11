@@ -2,13 +2,13 @@
   "title": ["create", "volume"],
   "fields": [{
     "type": "input",
-    "field": "name",
-    "required": true
+    "field": "name"
   }, {
     "type": "tab",
     "field": "type",
     "data": [],
-    "value": ""
+    "value": "",
+    "hide": true
   }, {
     "type": "slider",
     "field": "capacity_size",

@@ -32,9 +32,22 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: copyConfig,
     onInitialize: function(refs) {
+      if (HALO.volume_types) {
+        refs.type.setState({
+          data: HALO.volume_types,
+          value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null,
+          hide: false
+        });
+      }
+
       request.getOverview().then((overview) => {
         if (!HALO.volume_types) {
           HALO.volume_types = copyObj(overview.volume_types);
+          refs.type.setState({
+            data: HALO.volume_types,
+            value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null,
+            hide: false
+          });
         }
         HALO.volume_types.forEach((type) => {
           typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
@@ -42,10 +55,11 @@ function pop(obj, parent, callback) {
             typeCapacity[type].total = overview.overview_usage.gigabytes.total;
           }
         });
-
-        refs.type.setState({
-          data: HALO.volume_types,
-          value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null
+        var capacity = typeCapacity[HALO.volume_types[0]];
+        var min = obj ? obj.size : 1;
+        refs.capacity_size.setState({
+          min: min,
+          max: capacity.total - capacity.used
         });
         refs.btn.setState({
           disabled: false
@@ -71,12 +85,13 @@ function pop(obj, parent, callback) {
         case 'type':
           var type = refs.type.state.value;
           var capacity = typeCapacity[type];
-
-          var min = obj ? obj.size : 1;
-          refs.capacity_size.setState({
-            min: min,
-            max: capacity.total - capacity.used
-          });
+          if (capacity) {
+            var min = obj ? obj.size : 1;
+            refs.capacity_size.setState({
+              min: min,
+              max: capacity.total - capacity.used
+            });
+          }
           break;
         default:
           break;
