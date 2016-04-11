@@ -57,16 +57,19 @@ class RelatedSources extends React.Component {
     var __ = this.props.__;
     switch(item.type) {
       case 'mini-table':
-        item.content.column.push({
-          title: null,
-          key: 'delete',
-          dataIndex: 'deleteIcon',
-          width: 36
-        });
+        var columns = item.content.column;
+        if (!columns.some((column) => column.key === 'delete')) {
+          columns.push({
+            title: null,
+            key: 'delete',
+            dataIndex: 'deleteIcon',
+            width: 36
+          });
 
-        item.content.data.forEach((data) => {
-          data.deleteIcon = <i onClick={this.deleteAction.bind(this, item.key, data.childItem)} className="glyphicon icon-delete delete" />;
-        });
+          item.content.data.forEach((data) => {
+            data.deleteIcon = <i onClick={this.deleteAction.bind(this, item.key, data.childItem)} className="glyphicon icon-delete delete" />;
+          });
+        }
 
         return (
           <div key={i}>
