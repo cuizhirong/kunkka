@@ -258,13 +258,13 @@ class ModalBase extends React.Component {
 
   onCreateNetwork() {
     var that = this;
-    createNetwork(null, (res) => {
+    createNetwork(this.refs.modal, (res) => {
       that.setState({
         networkData: [res],
         selectedNetwork: res.id,
         portSecurityEnable: res.port_security_enable
       });
-    }, this.refs.modal);
+    });
     this.setState({
       prevPage: null
     });
@@ -272,12 +272,12 @@ class ModalBase extends React.Component {
 
   onCreateKeypair() {
     var that = this;
-    createKeypair((res) => {
+    createKeypair(this.refs.modal, (res) => {
       that.setState({
         keypairData: [res],
         selectedKeypair: res.name
       });
-    }, this.refs.modal);
+    });
     this.setState({
       prevPage: null
     });
