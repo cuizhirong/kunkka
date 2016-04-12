@@ -2,10 +2,18 @@
   "modules": [{
     "title": "overview",
     "items": [
-      "overview"
+      "overview",
+      "test",
+      "instance"
+    ]
+  }, {
+    "title": "storage_service",
+    "items": [
+      "volume",
+      "snapshot"
     ]
   }],
-  "default_module": "overview",
+  "default_module": "test",
   "languages": [
     "en",
     "zh-CN"

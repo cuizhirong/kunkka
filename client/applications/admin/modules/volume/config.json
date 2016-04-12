@@ -1,0 +1,106 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["dissociate", "related"],
+    "key": "dissociate",
+    "icon": "delete"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete"
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "volume_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "volume", "id"]
+    }]
+  }, {
+      "group_key": "all_tenant",
+      "items": [{
+        "type": "select",
+        "key": "status",
+        "default": ["all", "status"]
+      }, {
+        "type": "input",
+        "key": "name",
+        "placeholder": ["pls_enter", "volume", "name"]
+      }, {
+        "type": "input",
+        "key": "tenant_id",
+        "placeholder": ["pls_enter", "project_upper", "id"]
+      }]
+    }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 8,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "size"
+    }, {
+      "title": ["attached_instance"],
+      "dataIndex": "attached_instance",
+      "key": "attached_instance"
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "project_id",
+      "key": "project_id"
+    }, {
+      "title": ["user", "id"],
+      "dataIndex": "user_id",
+      "key": "user_id"
+    }, {
+      "title": ["shared"],
+      "dataIndex": "shared",
+      "key": "shared"
+    }, {
+      "title": ["attributes"],
+      "dataIndex": "attributes",
+      "key": "attributes"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["created_time"],
+      "dataIndex": "created_time",
+      "key": "created_time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -3,6 +3,7 @@
     "address": "Address",
     "ip": "IP ",
     "project_upper": "Project ",
+    "storage_service": "Storage Service",
 
     "account_placeholder": "Please enter username or email",
     "active": "Active",
@@ -92,6 +93,7 @@
     "address": "地址",
     "ip": "IP",
     "project_upper": "项目",
+    "storage_service": "存储服务",
 
     "account_placeholder": "请输入账号",
     "active": "运行中",

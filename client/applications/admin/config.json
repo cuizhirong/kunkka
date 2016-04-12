@@ -6,6 +6,12 @@
       "test",
       "instance"
     ]
+  }, {
+    "title": "storage_service",
+    "items": [
+      "volume",
+      "snapshot"
+    ]
   }],
   "default_module": "test",
   "languages": [
