@@ -103,7 +103,22 @@ class Model extends React.Component {
           break;
         case 'ip_address':
           column.render = (col, item, i) => {
-            return (item.fixed_ips && item.fixed_ips.length > 0) ? item.fixed_ips.join(', ') : '';
+            var arr = [],
+              count = 0;
+            for (var n in item.addresses) {
+              for (var addr of item.addresses[n]) {
+                if (addr.version === 4 && addr['OS-EXT-IPS:type'] === 'fixed') {
+                  if (addr.port) {
+                    if (count !== 0) {
+                      arr.push(', ');
+                    }
+                    arr.push(<a key={addr.port.id} data-type = "router" href={'/project/port/' + addr.port.id}>{addr.addr}</a>);
+                    count++;
+                  }
+                }
+              }
+            }
+            return <div>{arr}</div>;
           };
           break;
         case 'floating_ip':

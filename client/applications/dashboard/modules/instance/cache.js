@@ -12,7 +12,7 @@ module.exports = {
     return fetch.get({
       url: '/api/v1/' + HALO.user.projectId + '/flavors/detail'
     }).then(function(data) {
-      return data.servers;
+      return data.flavors;
     });
   }
 };
