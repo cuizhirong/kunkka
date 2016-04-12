@@ -1,5 +1,5 @@
 var React = require('react');
-var {Modal, Button, Tip} = require('client/uskin/index');
+var {Modal, Button, Tip, InputNumber} = require('client/uskin/index');
 var __ = require('i18n/client/dashboard.lang.json');
 var createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
 var createKeypair = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
@@ -55,8 +55,6 @@ class ModalBase extends React.Component {
     this.renderNetworkData = this.renderNetworkData.bind(this);
     this.renderKeypairData = this.renderKeypairData.bind(this);
     this.onSelectCredential = this.onSelectCredential.bind(this);
-    this.onUp = this.onUp.bind(this);
-    this.onDown = this.onDown.bind(this);
     this.onNumChange = this.onNumChange.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
     this.onCreateNetwork = this.onCreateNetwork.bind(this);
@@ -370,27 +368,10 @@ class ModalBase extends React.Component {
     });
   }
 
-  onUp() {
-    var instanceNum = this.state.instanceNum;
-    this.setState({
-      instanceNum: ++instanceNum
-    });
-  }
-
-  onDown() {
-    var instanceNum = this.state.instanceNum;
-    if (instanceNum > 1) {
+  onNumChange(status) {
+    if (status > 0) {
       this.setState({
-        instanceNum: --instanceNum
-      });
-    }
-  }
-
-  onNumChange(e) {
-    var value = e.target.value.replace(/[^\d]/g, '');
-    if (value > 0) {
-      this.setState({
-        instanceNum: value
+        instanceNum: status
       });
     }
   }
@@ -593,7 +574,7 @@ class ModalBase extends React.Component {
           </div>
           <div className={'page' + moveAction}>
             <div className="select-row">
-              <div className="modal-label long-label">
+              <div className="modal-label">
                 {__.network}
               </div>
               <div>
@@ -601,7 +582,7 @@ class ModalBase extends React.Component {
               </div>
             </div>
             <div className={'security-group-row' + (state.portSecurityEnable ? '' : ' hide')}>
-              <div className="modal-label long-label">
+              <div className="modal-label">
                 <span>{__.security_group}</span>
               </div>
               <div className="group-list">
@@ -613,7 +594,7 @@ class ModalBase extends React.Component {
               </div>
             </div>
             <div className="tab-row">
-              <div className="modal-label long-label">
+              <div className="modal-label">
                 {__.credentials}
               </div>
               <div>
@@ -639,19 +620,11 @@ class ModalBase extends React.Component {
               </div>
             </div>
             <div className="num-row">
-              <div className="modal-label long-label">
+              <div className="modal-label">
                 {__.number}
               </div>
               <div className="num-controller">
-                <input type="text" value={state.instanceNum} onChange={this.onNumChange} />
-                <div className="arrow">
-                  <div className="arrow-wrapper" onClick={this.onUp}>
-                    <span className="up"></span>
-                  </div>
-                  <div className="arrow-wrapper" onClick={this.onDown}>
-                    <span className="down"></span>
-                  </div>
-                </div>
+                <InputNumber onChange={this.onNumChange} min={1} value={state.instanceNum} width={265}/>
               </div>
             </div>
           </div>
