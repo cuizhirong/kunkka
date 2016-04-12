@@ -18,7 +18,7 @@ function pop(obj, parent, callback) {
           address: obj.floating_ip.floating_ip_address
         }
       };
-      request.create(obj.id, data).then((res) => {
+      request.dissociateFloatingIp(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);
       });

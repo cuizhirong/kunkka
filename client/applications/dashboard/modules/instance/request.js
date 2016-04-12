@@ -166,7 +166,13 @@ module.exports = {
       data: data
     });
   },
-  create: function(serverId, data) {
+  associateFloatingIp: function(serverId, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
+      data: data
+    });
+  },
+  dissociateFloatingIp: function(serverId, data) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
       data: data

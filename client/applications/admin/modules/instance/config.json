@@ -35,11 +35,11 @@
     "icon": "refresh"
   }],
   "filter": [{
-    "group_key": "server_id",
+    "group_key": "instance",
     "items": [{
       "type": "input",
       "key": "id",
-      "placeholder": ["pls_enter", "server", "id"]
+      "placeholder": ["pls_enter", "instance", "id"]
     }]
   }, {
     "group_key": "all_tenant",

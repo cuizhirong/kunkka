@@ -1,0 +1,12 @@
+{
+  "en": {
+    "allocation": "Allocation",
+    "router": "Router",
+    "line": "Line"
+  },
+  "zh-CN": {
+    "allocation": "分配",
+    "router": "路由器",
+    "line": "线路"
+  }
+}

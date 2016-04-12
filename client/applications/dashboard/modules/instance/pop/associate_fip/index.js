@@ -70,7 +70,7 @@ function pop(obj, parent, callback) {
           }
         });
       }
-      request.create(obj.id, data).then((res) => {
+      request.associateFloatingIp(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch((error) => {
