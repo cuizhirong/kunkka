@@ -11,6 +11,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var router = require('../../cores/router');
 
 class Model extends React.Component {
 
@@ -66,14 +67,14 @@ class Model extends React.Component {
             //   : '';
             if (i) {
               return (
-                <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
-                  跳转到Test rename2
+                <a data-type="router" href={'/admin/instance/0e011323-db09-4152-984d-7be99d7334a2'}>
+                  跳转到Instance rename2
                 </a>
               );
             } else {
               return (
-                <a data-type="router" href={'/admin/test/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
-                  跳转到Test ee
+                <a data-type="router" href={'/admin/instance/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
+                  跳转到Instance ee
                 </a>
               );
             }
@@ -165,7 +166,10 @@ class Model extends React.Component {
     if (params[2]) {
       request.getServerByIDInitialize(params[2]).then((res) => {
         table.data = [res[0].server];
-        this.updateTableData(table, res[0]._url);
+        this.updateTableData(table, res[0]._url, true, () => {
+          var pathList = router.getPathList();
+          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+        });
       });
     } else {
       var pageLimit = this.state.config.table.limit;
@@ -240,7 +244,7 @@ class Model extends React.Component {
   }
 
 //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -255,6 +259,8 @@ class Model extends React.Component {
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
       }
+
+      callback && callback();
     });
   }
 
@@ -322,6 +328,7 @@ class Model extends React.Component {
   loadingTable() {
     var _config = this.state.config;
     _config.table.loading = true;
+    _config.table.data = [];
 
     this.setState({
       config: _config

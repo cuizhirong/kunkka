@@ -20,8 +20,6 @@ class Main extends React.Component {
     this.stores = {
       rows: []
     };
-
-    this.initialized = false;
   }
 
   componentWillMount() {
@@ -93,20 +91,22 @@ class Main extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (!nextProps.visible) {
       this.clearState();
-    }
-    if (!this.initialized || (nextProps.visible && (this.props.params !== nextProps.params))) {
-      this.onChangeParams(nextProps.params);
+    } else {
+      if (nextProps.config.table.data.length > 0) {
+        if (this.props.params[1] === nextProps.params[1]) {
+          this.onChangeParams(nextProps.params);
+        }
+      }
     }
 
-    this.initialized = true;
     this.updateRows(nextProps.config.table.data);
   }
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.visible) {
-      return true;
+    if (!this.props.visible && !nextProps.visible) {
+      return false;
     }
-    return false;
+    return true;
   }
 
   updateRows(data) {
@@ -293,9 +293,18 @@ class Main extends React.Component {
       clickedRow: []
     });
 
+    this.closeDeatail();
     this.clearSearchState();
     this.clearFilterState();
     this.clearTableState();
+  }
+
+  closeDeatail() {
+    if (this.refs.detail) {
+      this.refs.detail.setState({
+        visible: false
+      });
+    }
   }
 
   clearSearchState() {
