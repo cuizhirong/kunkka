@@ -1,0 +1,85 @@
+{
+  "tabs": [{
+    "name": ["host"],
+    "key": "host",
+    "default": true
+  }, {
+    "name": ["overview_host"],
+    "key": "overview_host"
+  }],
+  "btns": [{
+    "value": ["enable"],
+    "key": "enable",
+    "type": "create",
+    "icon": "active",
+    "disabled": true
+  }, {
+    "value": ["disable"],
+    "key": "disable",
+    "icon": "remove",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["host", "name"],
+      "dataIndex": "host_name",
+      "key": "host_name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["ip"],
+      "dataIndex": "",
+      "key": "ip"
+    }, {
+      "title": ["vcpu"],
+      "dataIndex": "",
+      "key": "vcpu"
+    }, {
+      "title": ["memory"],
+      "dataIndex": "",
+      "key": "memory"
+    }, {
+      "title": ["volume"],
+      "dataIndex": "",
+      "key": "volume"
+    }, {
+      "title": ["virtual_machine", "counts"],
+      "dataIndex": "",
+      "key": "virtual_machine_counts"
+    }, {
+      "title": ["physical_host", "type"],
+      "dataIndex": "",
+      "key": "physical_host_type"
+    }, {
+      "title": ["status"],
+      "dataIndex": "host_name",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["state"],
+      "dataIndex": "",
+      "key": "state"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "en": {
+    "counts": "Counts",
+    "disable": "Disable",
+    "enable": "Enable",
+    "memory": "Memory",
+    "physical_host": "Host ",
+    "state": "State",
+    "vcpu": "vCPU",
+    "virtual_machine": "Virtual Machine "
+  },
+  "zh-CN": {
+    "counts": "数量",
+    "disable": "禁用",
+    "enable": "启用",
+    "memory": "内存",
+    "physical_host": "物理机",
+    "state": "State",
+    "vcpu": "vCPU",
+    "virtual_machine": "虚拟机"
+  }
+}

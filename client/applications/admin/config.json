@@ -1,10 +1,11 @@
 {
   "modules": [{
-    "title": "overview",
+    "title": "compute_service",
     "items": [
-      "overview",
-      "test",
-      "instance"
+      "host",
+      "overview_host",
+      "instance",
+      "test"
     ]
   }, {
     "title": "storage_service",
@@ -13,11 +14,14 @@
       "snapshot"
     ]
   }],
-  "default_module": "test",
+  "default_module": "instance",
   "languages": [
     "en",
     "zh-CN"
   ],
-  "routers": [],
+  "routers": [{
+    "key": "overview_host",
+    "link": "host"
+  }],
   "theme": "default"
 }

@@ -10,8 +10,8 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-overview" style={this.props.style}>
-        <div className="test">Overview is under construction.</div>
+      <div className="halo-module-overview-host" style={this.props.style}>
+        <div className="test">Overview(host) is under construction.</div>
       </div>
     );
   }

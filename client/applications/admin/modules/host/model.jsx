@@ -11,7 +11,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
-var router = require('../../cores/router');
+// var router = require('../../cores/router');
 
 class Model extends React.Component {
 
@@ -29,10 +29,7 @@ class Model extends React.Component {
     });
 
     this.stores = {
-      urls: [],
-      imageTypes: [],
-      flavorTypes: [],
-      hostTypes: []
+      urls: []
     };
   }
 
@@ -59,92 +56,28 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'image':
-          column.render = (col, item, i) => {
-            if (i) {
-              return (
-                <a data-type="router" href={'/admin/test/0e011323-db09-4152-984d-7be99d7334a2'}>
-                  跳转到Test rename2
-                </a>
-              );
-            } else {
-              return (
-                <a data-type="router" href={'/admin/test/a1f7e718-8748-4cee-b9ba-2a7f88ec5bce'}>
-                  跳转到Test ee
-                </a>
-              );
-            }
-          };
-          break;
-        case 'ip':
-          column.render = (col, item, i) => {
-            return '';
-          };
-          break;
         default:
           break;
       }
     });
   }
 
-  initializeFilter(filters, res) {
-    var setOption = function(key, data) {
-      filters.forEach((filter) => {
-        filter.items.forEach((item) => {
-          if (item.key === key) {
-            item.data = data;
-          }
-        });
-      });
-    };
-
-    var imageTypes = [];
-    res.imageType.images.forEach((image) => {
-      imageTypes.push({
-        id: image.id,
-        name: image.name
-      });
-    });
-    setOption('image', imageTypes);
-
-    var flavorTypes = [];
-    res.flavorType.flavors.forEach((flavor) => {
-      flavorTypes.push({
-        id: flavor.id,
-        name: flavor.name
-      });
-    });
-    setOption('flavor', flavorTypes);
-
-    var statusTypes = [{
-      id: 'active',
-      name: __.active
-    }, {
-      id: 'error',
-      name: __.error
-    }];
-    setOption('status', statusTypes);
-  }
-
 //initialize table data
   onInitialize(params) {
     var _config = this.state.config,
-      filter = _config.filter,
       table = _config.table;
 
     if (params[2]) {
-      request.getServerByIDInitialize(params[2]).then((res) => {
-        this.initializeFilter(filter, res[1]);
-        table.data = [res[0].server];
-        this.updateTableData(table, res[0]._url, true, () => {
-          var pathList = router.getPathList();
-          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-        });
-      });
+      // request.getServerByIDInitialize(params[2]).then((res) => {
+      //   table.data = [res[0].server];
+      //   this.updateTableData(table, res[0]._url, true, () => {
+      //     var pathList = router.getPathList();
+      //     router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      //   });
+      // });
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        this.initializeFilter(filter, res[1]);
         var newTable = this.processTableData(table, res[0]);
         this.updateTableData(newTable, res[0]._url);
       });
@@ -152,13 +85,13 @@ class Model extends React.Component {
   }
 
 //request: get single data(pathList[2] is server_id)
-  getSingleData(serverID) {
-    request.getServerByID(serverID).then((res) => {
-      var table = this.state.config.table;
-      table.data = [res.server];
-      this.updateTableData(table, res._url);
-    });
-  }
+  // getSingleData(serverID) {
+  //   request.getServerByID(serverID).then((res) => {
+  //     var table = this.state.config.table;
+  //     table.data = [res.server];
+  //     this.updateTableData(table, res._url);
+  //   });
+  // }
 
 //request: get list data(according to page limit)
   getInitialListData() {
@@ -167,38 +100,6 @@ class Model extends React.Component {
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
     });
-  }
-
-//request: jump to next page according to the given url
-  getNextListData(url, refreshDetail) {
-    request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
-    });
-  }
-
-//request: filter request
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
-      this.loadingTable();
-
-      var serverID = data.server_id,
-        allTenant = data.all_tenant;
-
-      if (serverID) {
-        request.getServerByID(serverID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.server];
-          this.updateTableData(table, res._url);
-        });
-      } else if (allTenant){
-        request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.config.table;
-          table.data = res.servers;
-          this.updateTableData(table, res._url);
-        });
-      }
-    }
   }
 
 //rerender: update table data
@@ -224,10 +125,11 @@ class Model extends React.Component {
 
 //change table data structure: to record url history
   processTableData(table, res) {
-    if (res.server) {
-      table.data = [res.server];
-    } else if (res.servers) {
-      table.data = res.servers;
+    // if (res.server) {
+      // table.data = [res.server];
+    // } else
+    if (res.hosts) {
+      table.data = res.hosts;
     }
 
     var pagination = {},
@@ -309,9 +211,6 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
-        break;
       case 'table':
         this.onClickTable(actionType, refs, data);
         break;
@@ -328,36 +227,31 @@ class Model extends React.Component {
       case 'check':
         this.onClickTableCheckbox(refs, data);
         break;
-      case 'pagination':
-        var url,
-          history = this.stores.urls;
+      // case 'pagination':
+      //   var url,
+      //     history = this.stores.urls;
 
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
-          history.pop();
-          if (history.length > 0) {
-            url = history.pop();
-          }
-        }
+      //   if (data.direction === 'next') {
+      //     url = data.url;
+      //   } else {
+      //     history.pop();
+      //     if (history.length > 0) {
+      //       url = history.pop();
+      //     }
+      //   }
 
-        this.loadingTable();
-        this.getNextListData(url);
-        break;
+      //   this.loadingTable();
+      //   this.getNextListData(url);
+      //   break;
       default:
         break;
     }
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    // var {rows} = data;
 
     switch(key) {
-      case 'power_off':
-        request.poweron(rows[0]).then(function(res) {});
-        break;
-      case 'reboot':
-        break;
       case 'refresh':
         var params = this.props.params,
           refreshData = {};
@@ -404,10 +298,6 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
-        case 'power_off':
-          break;
-        case 'reboot':
-          break;
         default:
           break;
       }
@@ -437,7 +327,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var basicPropsItem = [];
 
           contents[tabKey] = (
             <div>
@@ -463,58 +353,6 @@ class Model extends React.Component {
     });
   }
 
-  getBasicPropsItems(item) {
-    var label = item.image.image_label && item.image.image_label.toLowerCase();
-    var items = [{
-      title: __.name,
-      content: item.name || '(' + item.id.substring(0, 8) + ')',
-      type: 'editable'
-    }, {
-      title: __.id,
-      content: item.id
-    }, {
-      title: __.floating_ip,
-      content: item.floating_ip ?
-        <span>
-          <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
-            {item.floating_ip.floating_ip_address}
-          </a>
-        </span>
-      : '-'
-    }, {
-      title: __.image,
-      content:
-        <span>
-          <i className={'icon-image-default ' + label}/>
-          <a data-type="router" href={'/project/image/' + item.image.id}>
-            {' ' + item.image.name}
-          </a>
-        </span>
-    }, {
-      title: __.instance_type,
-      content: item.flavor ? item.flavor.vcpus + ' CPU / ' + item.flavor.ram / 1024 + ' GB' : '-'
-    }, {
-      title: __.keypair,
-      content: item.keypair ?
-        <span>
-          <i className="glyphicon icon-keypair" />
-          <a data-type="router" href="/project/keypair">{item.keypair.name}</a>
-        </span>
-        : '-'
-    }, {
-      title: __.status,
-      type: 'status',
-      status: item.status
-    }, {
-      title: __.create + __.time,
-      type: 'time',
-      content: item.created
-    }];
-
-    return items;
-  }
-
   onDetailAction(tabKey, actionType, data) {
     switch(tabKey) {
       case 'description':
@@ -527,15 +365,6 @@ class Model extends React.Component {
 
   onDescriptionAction(actionType, data) {
     switch(actionType) {
-      case 'edit_name':
-        var {rawItem, newName} = data;
-        request.editServerName(rawItem, newName).then((res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
       default:
         break;
     }
@@ -543,7 +372,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-test" style={this.props.style}>
+      <div className="halo-module-host" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

@@ -2,13 +2,13 @@
   "en": {
     "attached_instance": "Associated Instance",
     "shared": "Shared",
-    "attributes": "Attributes",
-    "created_time": "Created Time"
+    "size": "Size",
+    "attributes": "Attributes"
   },
   "zh-CN": {
     "attached_instance": "挂载的云主机",
     "shared": "共享盘",
-    "attributes": "属性",
-    "created_time": "创建时间"
+    "size": "容量",
+    "attributes": "属性"
   }
 }

@@ -37,7 +37,7 @@
       }, {
         "type": "input",
         "key": "tenant_id",
-        "placeholder": ["pls_enter", "project_upper", "id"]
+        "placeholder": ["pls_enter", "project", "id"]
       }]
     }],
   "table": {
@@ -90,7 +90,7 @@
         "filterBy": "ACTIVE"
       }]
     }, {
-      "title": ["created_time"],
+      "title": ["created", "time"],
       "dataIndex": "created_time",
       "key": "created_time"
     }],
