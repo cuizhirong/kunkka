@@ -51,7 +51,7 @@ function renderProjectTemplate (req, res, next) {
     let _applications = applications.filter(a => {
       return user.isAdmin ? (a !== 'login') : (a !== 'login' && a !== 'admin');
     }).map(_app => {
-      return __('shared')[_app].application_name;
+      return __(`shared.${_app}.application_name`);
     });
     let HALO = {
       configs: {
@@ -77,7 +77,7 @@ function renderProjectTemplate (req, res, next) {
       mainCssFile: staticFiles.dashboardCssFile,
       uskinFile: uskinFile[0],
       modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
-        language: __('shared'),
+        __: __('shared.dashboard'),
         HALO: HALO
       }))
     });

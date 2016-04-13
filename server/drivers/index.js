@@ -1,12 +1,13 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 
 let driver = {};
 
 fs.readdirSync(__dirname)
   .filter(c => {
-    return c.indexOf('.') === -1;
+    return fs.statSync(path.join(__dirname, c)).isDirectory();
   })
   .forEach(c => {
     let cloud = require(__dirname + '/' + c);

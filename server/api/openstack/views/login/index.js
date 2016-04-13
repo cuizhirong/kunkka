@@ -11,12 +11,20 @@ const upperCaseLocale = require('helpers/upper_case_locale');
 const tmplString = {};
 
 global.locales.availableLocales.forEach((lang) => {
-  let langDetail = JSON.parse(fs.readFileSync('locale/server/' + lang + '.js', 'utf-8'));
+  let langDetail = {};
+  try {
+    langDetail = JSON.parse(fs.readFileSync('locale/server/' + lang + '.js', 'utf-8')).shared.login;
+  } catch (e) {
+    console.log(`${lang} has no login locale file`);
+  }
+  let loginLang = {
+    accountPlaceholder: langDetail.account_placeholder,
+    pwdPlaceholder: langDetail.pwd_placeholder,
+    errorTip: langDetail.error_tip,
+    submit: langDetail.submit
+  };
   tmplString[lang] = ReactDOMServer.renderToString(loginModelFactory({
-    accountPlaceholder: langDetail.shared.account_placeholder,
-    pwdPlaceholder: langDetail.shared.pwd_placeholder,
-    errorTip: langDetail.shared.error_tip,
-    submit: langDetail.shared.submit
+    __: loginLang
   }));
 });
 

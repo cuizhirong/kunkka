@@ -51,7 +51,7 @@ function renderTemplate (req, res, next) {
     let _applications = applications.filter(a => {
       return a !== 'login';
     }).map(_app => {
-      return __('shared')[_app].application_name;
+      return __('shared.${_app}.application_name');
     });
     let HALO = {
       configs: {
@@ -78,7 +78,7 @@ function renderTemplate (req, res, next) {
       mainCssFile: staticFiles.adminCssFile,
       uskinFile: uskinFile[0],
       modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
-        language: __('shared'),
+        __: __('shared.admin'),
         HALO: HALO
       }))
     });

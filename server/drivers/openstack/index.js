@@ -8,16 +8,20 @@ const extPath = path.join(__dirname, 'extensions', extType);
 const driver = {};
 
 /* original driver. */
-fs.readdirSync(__dirname).forEach( m => {
-  if ( m.indexOf('.') === -1 ) { // cinder ...
+fs.readdirSync(__dirname)
+  .filter(m => {
+    return fs.statSync(path.join(__dirname, m)).isDirectory();
+  })
+  .forEach( m => {
     driver[m] = {};
-    fs.readdirSync(path.join(__dirname, m)).forEach( s => { // snapshot ...
-      if (s !== '.DS_Store') {
+    fs.readdirSync(path.join(__dirname, m))
+      .filter(s => {
+        return fs.statSync(path.join(__dirname, m, s)).isDirectory();
+      })
+      .forEach( s => { // snapshot ...
         driver[m][s] = require(path.join(__dirname, m, s));
-      }
-    });
-  }
-});
+      });
+  });
 
 /* driver with extensions. */
 let extPathList = [];
@@ -27,9 +31,8 @@ try {
   console.log();
 }
 extPathList.filter( m => { // cinder ...
-  return m.indexOf('.') === -1 && m !== 'extensions';
-})
-.forEach( m => {
+  return fs.statSync(path.join(extPath, m)).isDirectory();
+}).forEach( m => {
   if ( !driver[m] ) {
     driver[m] = {};
   }
