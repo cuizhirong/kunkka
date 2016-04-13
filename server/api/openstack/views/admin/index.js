@@ -51,7 +51,7 @@ function renderTemplate (req, res, next) {
     let applicationList = applications.filter(a => {
       return a !== 'login';
     }).map(_app => {
-      return {[_app]: __('shared.${_app}.application_name')};
+      return {[_app]: __(`shared.${_app}.application_name`)};
     });
     let _application = {
       application_list: applicationList,
@@ -74,7 +74,7 @@ function renderTemplate (req, res, next) {
       websocket: {
         url: websocketUrl
       },
-      'applications': _application
+      application: _application
     };
     res.render('admin', {
       HALO: JSON.stringify(HALO),

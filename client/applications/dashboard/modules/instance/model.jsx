@@ -65,7 +65,7 @@ class Model extends React.Component {
             }, false);
 
             if (data.action.indexOf('delete') > -1 && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-              router.replaceState('/project/instance');
+              router.replaceState('/dashboard/instance');
             }
             break;
           default:
@@ -97,7 +97,7 @@ class Model extends React.Component {
             return item.image ?
               <span>
                 <i className={'icon-image-default ' + label}/>
-                <a data-type="router" href={'/project/image/' + item.image.id}>{' ' + item.image.name}</a>
+                <a data-type="router" href={'/dashboard/image/' + item.image.id}>{' ' + item.image.name}</a>
               </span> : '';
           };
           break;
@@ -112,7 +112,7 @@ class Model extends React.Component {
                     if (count !== 0) {
                       arr.push(', ');
                     }
-                    arr.push(<a key={addr.port.id} data-type = "router" href={'/project/port/' + addr.port.id}>{addr.addr}</a>);
+                    arr.push(<a key={addr.port.id} data-type = "router" href={'/dashboard/port/' + addr.port.id}>{addr.addr}</a>);
                     count++;
                   }
                 }
@@ -126,7 +126,7 @@ class Model extends React.Component {
             return item.floating_ip ?
               <span>
                 <i className="glyphicon icon-floating-ip" />
-                <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
+                <a data-type="router" href={'/dashboard/floating-ip/' + item.floating_ip.id}>
                   {item.floating_ip.floating_ip_address}
                 </a>
               </span> : '';
@@ -490,7 +490,7 @@ class Model extends React.Component {
       content: item.floating_ip ?
         <span>
           <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/project/floating-ip/' + item.floating_ip.id}>
+          <a data-type="router" href={'/dashboard/floating-ip/' + item.floating_ip.id}>
             {item.floating_ip.floating_ip_address}
           </a>
         </span> : '-'
@@ -498,7 +498,7 @@ class Model extends React.Component {
       title: __.image,
       content: <span>
           <i className={'icon-image-default ' + label}/>
-          <a data-type="router" href={'/project/image/' + item.image.id}>
+          <a data-type="router" href={'/dashboard/image/' + item.image.id}>
             {' ' + item.image.name}
           </a>
         </span>
@@ -510,7 +510,7 @@ class Model extends React.Component {
       content: item.keypair ?
         <span>
           <i className="glyphicon icon-keypair" />
-          <a data-type="router" href="/project/keypair">{item.keypair.name}</a>
+          <a data-type="router" href="/dashboard/keypair">{item.keypair.name}</a>
         </span> : '-'
     }, {
       title: __.status,
@@ -530,7 +530,7 @@ class Model extends React.Component {
     items.volume.forEach((volume, i) => {
       attchVolumes.push({
         key: volume.name,
-        data: <a data-type="router" href={'/project/volume/' + volume.id}>
+        data: <a data-type="router" href={'/dashboard/volume/' + volume.id}>
             {volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
           </a>,
         childItem: volume
@@ -557,20 +557,20 @@ class Model extends React.Component {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
             securityGroups.push(
-              <a key={i} data-type="router" href={'/project/security-group/' + item.security_groups[i].id}>
+              <a key={i} data-type="router" href={'/dashboard/security-group/' + item.security_groups[i].id}>
                 {item.security_groups[i].name}
               </a>
             );
           }
 
           networks.push({
-            port: <a data-type="router" href={'/project/port/' + item.port.id}>
+            port: <a data-type="router" href={'/dashboard/port/' + item.port.id}>
                 {item.addr}
               </a>,
-            subnet: <a data-type="router" href={'/project/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
+            subnet: <a data-type="router" href={'/dashboard/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
             floating_ip: floatingIp ?
-              <a data-type="router" href={'/project/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
+              <a data-type="router" href={'/dashboard/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
             __renderKey: count,
             childItem: item
           });
@@ -619,7 +619,7 @@ class Model extends React.Component {
     items.forEach((item) => {
       data.push({
         title: moment(item.created_at).fromNow(),
-        name: <a data-type="router" href={'/project/image/' + item.id}>{item.name}</a>,
+        name: <a data-type="router" href={'/dashboard/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
         status: item.status,

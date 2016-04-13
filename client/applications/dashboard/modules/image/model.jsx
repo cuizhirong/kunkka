@@ -45,7 +45,7 @@ class Model extends React.Component {
           }, false);
 
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/image');
+            router.replaceState('/dashboard/image');
           }
         }
       }
@@ -154,7 +154,7 @@ class Model extends React.Component {
     switch (key) {
       case 'create':
         createInstance(rows[0], null, function() {
-          router.pushState('/project/instance');
+          router.pushState('/dashboard/instance');
         });
         break;
       case 'del_img':

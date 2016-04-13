@@ -30,7 +30,7 @@ class Model extends React.Component {
     if (pathList.length <= 1) {
       pathList[1] = configs.default_module;
     }
-    router.replaceState('/project/' + pathList.slice(1).join('/'), null, null, true);
+    router.replaceState('/dashboard/' + pathList.slice(1).join('/'), null, null, true);
   }
 
   onChangeState(pathList) {
@@ -73,13 +73,14 @@ class Model extends React.Component {
   }
 
   onClickSubmenu(e, m) {
-    router.pushState('/project/' + m.key);
+    router.pushState('/dashboard/' + m.key);
   }
 
   render() {
     var state = this.state,
       props = this.props,
       __ = props.__,
+      HALO = props.HALO,
       modules = loader.modules,
       menus = [];
 
@@ -104,10 +105,10 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar HALO={this.props.HALO} __={__} />
+          <NavBar HALO={HALO} __={__} />
         </div>
         <div id="main-wrapper">
-          <SideMenu items={menus} />
+          <SideMenu items={menus} application={HALO.application} />
           <div id="main">
             {
               state.modules.map((m, index) => {

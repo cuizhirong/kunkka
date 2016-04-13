@@ -48,7 +48,7 @@ class Model extends React.Component {
           }, false);
 
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/subnet');
+            router.replaceState('/dashboard/subnet');
           }
         }
       }
@@ -76,7 +76,7 @@ class Model extends React.Component {
             return item.network ?
               <span>
                 <i className="glyphicon icon-network" />
-                <a data-type="router" href={'/project/network/' + item.network.id}>
+                <a data-type="router" href={'/dashboard/network/' + item.network.id}>
                   {item.network.name || '(' + item.network.id.substr(0, 8) + ')'}
                 </a>
               </span> : '';
@@ -87,7 +87,7 @@ class Model extends React.Component {
             return item.router.id ?
               <span>
                 <i className="glyphicon icon-router" />
-                <a data-type="router" href={'/project/router/' + item.router.id}>
+                <a data-type="router" href={'/dashboard/router/' + item.router.id}>
                   {item.router.name || '(' + item.router.id.substr(0, 8) + ')'}
                 </a>
               </span> : '';
@@ -397,7 +397,7 @@ class Model extends React.Component {
       content: item.network ?
         <span>
           <i className="glyphicon icon-network" />
-          <a data-type="router" href={'/project/network/' + item.network.id}>
+          <a data-type="router" href={'/dashboard/network/' + item.network.id}>
             {item.network.name || '(' + item.network.id.substring(0, 8) + ')'}
           </a>
         </span> : null
@@ -406,7 +406,7 @@ class Model extends React.Component {
       content: item.router.id ?
         <span>
           <i className="glyphicon icon-router" />
-          <a data-type="router" href={'/project/router/' + item.router.id}>
+          <a data-type="router" href={'/dashboard/router/' + item.router.id}>
             {item.router.name || '(' + item.router.id.substring(0, 8) + ')'}
           </a>
         </span> : '-'
@@ -445,7 +445,7 @@ class Model extends React.Component {
     item.ports.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/dashboard/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
         instance: (function() {
@@ -460,7 +460,7 @@ class Model extends React.Component {
               return (
                 <div>
                   <i className="glyphicon icon-instance"></i>
-                  <a data-type="router" href={'/project/instance/' + element.device_id}>{element.server.name}</a>
+                  <a data-type="router" href={'/dashboard/instance/' + element.device_id}>{element.server.name}</a>
                 </div>
               );
             }
@@ -468,7 +468,7 @@ class Model extends React.Component {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
-                <a data-type="router" href={'/project/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
+                <a data-type="router" href={'/dashboard/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
           } else {

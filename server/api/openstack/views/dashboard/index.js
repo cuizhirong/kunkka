@@ -55,7 +55,7 @@ function renderProjectTemplate (req, res, next) {
     });
     let _application = {
       application_list: applicationList,
-      current_application: 'dashborad'
+      current_application: 'dashboard'
     };
     let HALO = {
       configs: {
@@ -94,6 +94,6 @@ module.exports = (app) => {
   let views = app.get('views');
   views.push(__dirname);
   applications = app.get('applications');
-  app.get(/(^\/project$)|(^\/project\/(.*))/, renderProjectTemplate);
-  app.get(/^\/project($|\/(.*))/, renderProjectTemplate);
+  app.get(/(^\/dashboard$)|(^\/dashboard\/(.*))/, renderProjectTemplate);
+  app.get(/^\/dashboard($|\/(.*))/, renderProjectTemplate);
 };

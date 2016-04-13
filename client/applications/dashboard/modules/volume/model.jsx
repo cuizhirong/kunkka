@@ -50,7 +50,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/volume');
+            router.replaceState('/dashboard/volume');
           }
         }
       }
@@ -87,7 +87,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + server.id}>
+                  <a data-type="router" href={'/dashboard/instance/' + server.id}>
                     {server.name}
                   </a>
                 </span>
@@ -348,7 +348,7 @@ class Model extends React.Component {
         return (
           <span>
             <i className="glyphicon icon-instance" />
-            <a data-type="router" href={'/project/instance/' + server.id}>
+            <a data-type="router" href={'/dashboard/instance/' + server.id}>
               {server.name}
             </a>
           </span>
@@ -397,7 +397,7 @@ class Model extends React.Component {
         name:
           <span>
             <i className="glyphicon icon-snapshot" />
-            <a data-type="router" href={'/project/snapshot/' + item.id}>{item.name}</a>
+            <a data-type="router" href={'/dashboard/snapshot/' + item.id}>{item.name}</a>
           </span>,
         size: item.size + 'GB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),

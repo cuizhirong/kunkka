@@ -43,7 +43,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/floating-ip');
+            router.replaceState('/dashboard/floating-ip');
           }
         }
       }
@@ -73,7 +73,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/project/instance/' + server.id}>
+                  <a data-type="router" href={'/dashboard/instance/' + server.id}>
                     {server.name}
                   </a>
                 </span>
@@ -269,7 +269,7 @@ class Model extends React.Component {
       content: (item.association && item.association.type === 'server') ?
         <span>
           <i className="glyphicon icon-instance" />
-          <a data-type="router" href={'/project/instance/' + item.association.device.id}>
+          <a data-type="router" href={'/dashboard/instance/' + item.association.device.id}>
             {item.association.device.name}
           </a>
         </span> : '-'

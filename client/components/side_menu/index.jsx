@@ -225,20 +225,32 @@ class SideMenu extends React.Component {
     this.sliderTop = this.maxScrollTop === 0 ? 0 : this.contentScrollTop * this.maxSliderTop / this.maxScrollTop;
   }
 
+  onSwitch(k) {
+    if (k === this.props.application.current_application) {
+      return false;
+    } else {
+      window.location = '/' + k;
+    }
+  }
+
   render() {
-    var props = this.props;
+    var props = this.props,
+      apps = props.application.application_list;
 
     return (
       <div ref="halo_com_menu" className="halo-com-menu">
         <ul className="top-menu">
-          <li>
-            <i className="glyphicon icon-g-project"></i>
-            <span>Project</span>
-          </li>
-          <li>
-            <i className="glyphicon icon-g-admin"></i>
-            <span>Admin</span>
-          </li>
+          {
+            apps.map((m) => {
+              var k = Object.keys(m)[0];
+              return (
+                <li key={k} onClick={this.onSwitch.bind(this, k)}>
+                  <i className={'glyphicon icon-g-' + k}></i>
+                  <span>{m[k]}</span>
+                </li>
+              );
+            })
+          }
         </ul>
         <Menu items={props.items} />
         <div ref="halo_scroll_pane" className="scroll-pane">

@@ -45,7 +45,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/network');
+            router.replaceState('/dashboard/network');
           }
         }
       }
@@ -71,7 +71,7 @@ class Model extends React.Component {
         case 'subnet':
           column.render = (col, item, i) => {
             var listener = (subnetID) => {
-              router.pushState('/project/subnet/' + subnetID);
+              router.pushState('/dashboard/subnet/' + subnetID);
             };
 
             var subnetRender = [];
@@ -355,12 +355,12 @@ class Model extends React.Component {
     item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/dashboard/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
         cidr: element.cidr,
         router: element.router ?
           <span>
             <i className="glyphicon icon-router"/>
-            <a data-type="router" href={'/project/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
+            <a data-type="router" href={'/dashboard/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
           </span> : '',
         operation: item.shared ? '-' : <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
           rawItem: item,

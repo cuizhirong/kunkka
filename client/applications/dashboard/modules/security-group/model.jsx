@@ -256,7 +256,7 @@ class Model extends React.Component {
         return (
           <span>
             <i className="glyphicon icon-security-group" />
-            <a data-type="router" href={'/project/security-group/' + source.id}>{source.name}</a>
+            <a data-type="router" href={'/dashboard/security-group/' + source.id}>{source.name}</a>
           </span>
         );
       }

@@ -61,7 +61,7 @@ function renderTemplate (req, res, next) {
       modelTmpl: tmplString[req.i18n.locale]
     });
   } else if (req.session && req.session.user){
-    res.redirect('/project/');
+    res.redirect('/dashboard/');
   }
 }
 

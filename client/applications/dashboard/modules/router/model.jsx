@@ -47,7 +47,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/router');
+            router.replaceState('/dashboard/router');
           }
         }
       }
@@ -335,7 +335,7 @@ class Model extends React.Component {
         id: index + 1,
         name: <div>
             <i className="glyphicon icon-subnet" />
-            <a data-type="router" href={'/project/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>
+            <a data-type="router" href={'/dashboard/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>
           </div>,
         cidr: element.cidr,
         gateway_ip: element.gateway_ip,

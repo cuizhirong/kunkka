@@ -41,7 +41,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/snapshot');
+            router.replaceState('/dashboard/snapshot');
           }
         }
       }
@@ -74,7 +74,7 @@ class Model extends React.Component {
             return (
               <span>
                 <i className="glyphicon icon-volume" />
-                <a data-type="router" href={'/project/volume/' + item.volume.id}>
+                <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
                   {item.volume.name}
                 </a>
               </span>
@@ -259,7 +259,7 @@ class Model extends React.Component {
       content: item.volume_id ?
         <span>
           <i className="glyphicon icon-volume" />
-          <a data-type="router" href={'/project/volume/' + item.volume.id}>{item.volume.name}</a>
+          <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>{item.volume.name}</a>
         </span>
         : null
     }, {

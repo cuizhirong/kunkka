@@ -64,11 +64,11 @@ class Model extends React.Component {
   }
 
   componentWillUpdate() {
-    console.time('dashboard');
+    console.time('admin');
   }
 
   componentDidUpdate() {
-    console.timeEnd('dashboard');
+    console.timeEnd('admin');
   }
 
   onClickSubmenu(e, m) {
@@ -79,6 +79,7 @@ class Model extends React.Component {
     var state = this.state,
       props = this.props,
       __ = props.__,
+      HALO = props.HALO,
       modules = loader.modules,
       menus = [];
 
@@ -103,10 +104,10 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar HALO={this.props.HALO} __={__} />
+          <NavBar HALO={HALO} __={__} />
         </div>
         <div id="main-wrapper">
-          <SideMenu items={menus} />
+          <SideMenu items={menus} application={HALO.application} />
           <div id="main">
             {
               state.modules.map((m, index) => {

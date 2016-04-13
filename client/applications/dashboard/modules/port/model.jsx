@@ -45,7 +45,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/project/port');
+            router.replaceState('/dashboard/port');
           }
         }
       }
@@ -77,7 +77,7 @@ class Model extends React.Component {
                 subnets.push(
                   <span key={_subnet.id}>
                     <i className="glyphicon icon-subnet"></i>
-                    <a data-type="router" href={'/project/subnet/' + _subnet.id}>
+                    <a data-type="router" href={'/dashboard/subnet/' + _subnet.id}>
                       {_subnet.name || '(' + _subnet.id.substr(0, 8) + ')'}
                     </a>
                   </span>);
@@ -92,10 +92,10 @@ class Model extends React.Component {
               if (item.server && item.server.status === 'SOFT_DELETED') {
                 return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
               } else if (item.server) {
-                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
               }
             } else if (item.device_owner === 'network:router_interface') {
-              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
             } else {
               return <div>{__[item.device_owner]}</div>;
             }
@@ -121,7 +121,7 @@ class Model extends React.Component {
             return item.floatingip.id ?
               <div>
                 <i className="glyphicon icon-floating-ip" />
-                <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
+                <a data-type="router" href={'/dashboard/floating-ip/' + item.floatingip.id}>
                   {item.floatingip.floating_ip_address}
                 </a>
               </div> : '';
@@ -385,10 +385,10 @@ class Model extends React.Component {
           if (item.server && item.server.status === 'SOFT_DELETED') {
             return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
           } else if (item.server) {
-            return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+            return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
           }
         } else if (item.device_owner === 'network:router_interface') {
-          return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+          return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
         } else {
           return <div>{__[item.device_owner]}</div>;
         }
@@ -413,7 +413,7 @@ class Model extends React.Component {
             subnets.push(
               <span key={_subnet.id}>
                 <i className="glyphicon icon-subnet"></i>
-                <a data-type="router" href={'/project/subnet/' + _subnet.id}>
+                <a data-type="router" href={'/dashboard/subnet/' + _subnet.id}>
                   {_subnet.name || '(' + _subnet.id.substr(0, 8) + ')'}
                 </a>
               </span>);
@@ -426,7 +426,7 @@ class Model extends React.Component {
       content: item.floatingip.id ?
         <div>
           <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/project/floating-ip/' + item.floatingip.id}>
+          <a data-type="router" href={'/dashboard/floating-ip/' + item.floatingip.id}>
             {item.floatingip.floating_ip_address}
           </a>
         </div> : '-'
@@ -437,7 +437,7 @@ class Model extends React.Component {
         {item.security_groups.length ? item.security_groups.map((ritem, i) =>
           <div key={i}>
             <i className="glyphicon icon-security-group" />
-            <a data-type="router" href={'/project/security-group/' + ritem.id}>
+            <a data-type="router" href={'/dashboard/security-group/' + ritem.id}>
               {ritem.name}
             </a>
           </div>
