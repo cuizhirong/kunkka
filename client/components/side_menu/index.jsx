@@ -232,8 +232,12 @@ class SideMenu extends React.Component {
       <div ref="halo_com_menu" className="halo-com-menu">
         <ul className="top-menu">
           <li>
-            <i className="glyphicon icon-monitor"></i>
+            <i className="glyphicon icon-g-project"></i>
             <span>Project</span>
+          </li>
+          <li>
+            <i className="glyphicon icon-g-admin"></i>
+            <span>Admin</span>
           </li>
         </ul>
         <Menu items={props.items} />
