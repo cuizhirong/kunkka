@@ -17,12 +17,10 @@ global.locales.availableLocales.forEach((lang) => {
   } catch (e) {
     console.log(`${lang} has no login locale file`);
   }
-  let loginLang = {
-    accountPlaceholder: langDetail.account_placeholder,
-    pwdPlaceholder: langDetail.pwd_placeholder,
-    errorTip: langDetail.error_tip,
-    submit: langDetail.submit
-  };
+  let loginLang = {};
+  ['account_placeholder', 'pwd_placeholder', 'error_tip', 'submit'].forEach((m) => {
+    loginLang[m] = langDetail[m];
+  });
   tmplString[lang] = ReactDOMServer.renderToString(loginModelFactory({
     __: loginLang
   }));

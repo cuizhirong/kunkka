@@ -48,11 +48,15 @@ function renderTemplate (req, res, next) {
     let __ = req.i18n.__.bind(req.i18n);
     let user = req.session.user;
     let username = user.username;
-    let _applications = applications.filter(a => {
+    let applicationList = applications.filter(a => {
       return a !== 'login';
     }).map(_app => {
-      return __('shared.${_app}.application_name');
+      return {[_app]: __('shared.${_app}.application_name')};
     });
+    let _application = {
+      application_list: applicationList,
+      current_application: 'admin'
+    };
     let HALO = {
       configs: {
         lang: locale
@@ -70,7 +74,7 @@ function renderTemplate (req, res, next) {
       websocket: {
         url: websocketUrl
       },
-      'applications': _applications
+      'applications': _application
     };
     res.render('admin', {
       HALO: JSON.stringify(HALO),

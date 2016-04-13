@@ -9,7 +9,7 @@ var dashboardModel = React.createFactory(Model);
 
 ReactDOM.render(
   dashboardModel({
-    language: __,
+    __: __,
     HALO: HALO
   }),
   document.getElementById('container')

@@ -78,7 +78,7 @@ class Model extends React.Component {
   render() {
     var state = this.state,
       props = this.props,
-      __ = props.language,
+      __ = props.__,
       modules = loader.modules,
       menus = [];
 

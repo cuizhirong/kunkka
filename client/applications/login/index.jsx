@@ -9,10 +9,7 @@ var loginModel = React.createFactory(Model);
 
 ReactDOM.render(
   loginModel({
-    accountPlaceholder: __.account_placeholder,
-    pwdPlaceholder: __.pwd_placeholder,
-    errorTip: __.error_tip,
-    submit: __.submit
+    __: __
   }),
   document.getElementsByClassName('input-wrapper')[0]
 );

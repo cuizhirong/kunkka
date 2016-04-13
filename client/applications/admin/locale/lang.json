@@ -1,10 +1,10 @@
 {
   "en": {
+    "application_name": "Admin",
     "address": "Address",
     "ip": "IP ",
     "project_upper": "Project ",
     "storage_service": "Storage Service",
-
     "account_placeholder": "Please enter username or email",
     "active": "Active",
     "add": "Add ",
@@ -90,11 +90,11 @@
     "yes": "Yes"
   },
   "zh-CN": {
+    "application_name": "管理",
     "address": "地址",
     "ip": "IP",
     "project_upper": "项目",
     "storage_service": "存储服务",
-
     "account_placeholder": "请输入账号",
     "active": "运行中",
     "add": "挂载",

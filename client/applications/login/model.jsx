@@ -73,18 +73,19 @@ class Model extends React.Component {
 
   render() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      __ = props.__;
 
     return (
       <form method="POST" onSubmit={this.onSubmit}>
-        <input type="text" ref="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={props.accountPlaceholder} autoFocus="autofocus" autoComplete="off" />
-        <input type="password" ref="pwd" className={state.pwdEmptyError ? 'error' : ''} placeholder={props.pwdPlaceholder} autoComplete="off" />
+        <input type="text" ref="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={__.account_placeholder} autoFocus="autofocus" autoComplete="off" />
+        <input type="password" ref="pwd" className={state.pwdEmptyError ? 'error' : ''} placeholder={__.pwd_placeholder} autoComplete="off" />
         <div className="tip-wrapper">
           <div className={'input-error' + (state.loginError ? '' : ' hide')}>
-            <i className="glyphicon icon-status-warning"></i><span>{props.errorTip}</span>
+            <i className="glyphicon icon-status-warning"></i><span>{__.error_tip}</span>
           </div>
         </div>
-        <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={props.submit} />
+        <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={__.submit} />
       </form>
     );
   }

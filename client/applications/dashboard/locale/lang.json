@@ -1,5 +1,6 @@
 {
   "en": {
+    "application_name": "Project",
     "account_placeholder": "Please enter username or email",
     "active": "Active",
     "add": "Add ",
@@ -85,6 +86,7 @@
     "yes": "Yes"
   },
   "zh-CN": {
+    "application_name": "项目",
     "account_placeholder": "请输入账号",
     "active": "运行中",
     "add": "挂载",
