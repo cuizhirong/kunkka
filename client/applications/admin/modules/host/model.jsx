@@ -78,7 +78,10 @@ class Model extends React.Component {
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
+        var hypervisors = res[0].hypervisors,
+          services = res[1].services;
+
+        var newTable = this.processTableData(table, hypervisors, services);
         this.updateTableData(newTable, res[0]._url);
       });
     }
@@ -124,28 +127,40 @@ class Model extends React.Component {
   }
 
 //change table data structure: to record url history
-  processTableData(table, res) {
-    // if (res.server) {
-      // table.data = [res.server];
-    // } else
-    if (res.hosts) {
-      table.data = res.hosts;
-    }
+  processTableData(table, hypervisors, services) {
+    var data = [];
 
-    var pagination = {},
-      next = res.servers_links ? res.servers_links[0] : null;
+    // function findServerByName(serverData, name) {
+    //   var findData;
+    //   serverData.some((server) => {
+    //     if (server.binary === 'nova-compute' && server.host === name) {
+    //       findData = server;
+    //       return true;
+    //     }
+    //   });
 
-    if (next && next.rel === 'next') {
-      pagination.nextUrl = next.href.split('/v2.1/')[1];
-    }
+    //   return findData;
+    // }
 
-    var history = this.stores.urls;
+    hypervisors.forEach((host) => {
+      // var name = host.hypervisor_hostname.split('.')[0];
+        // info = findServerByName(services, name);
 
-    if (history.length > 0) {
-      pagination.prevUrl = history[history.length - 1];
-    }
-    table.pagination = pagination;
+      data.push({
+        id: host.id,
+        name: host.hypervisor_hostname,
+        ip: host.host_ip,
+        vcpu: host.vcpus_used + ' / ' + host.vcpus,
+        memory: (host.memory_mb_used / 1024).toFixed(2) + ' / ' + (host.memory_mb / 1024).toFixed(2) + ' GB',
+        volume: '',
+        instanceCounts: host.running_vms,
+        hostType: host.hypervisor_type,
+        status: host.status,
+        state: host.state
+      });
+    });
 
+    table.data = data;
     return table;
   }
 
@@ -252,6 +267,10 @@ class Model extends React.Component {
     // var {rows} = data;
 
     switch(key) {
+      case 'enable':
+        break;
+      case 'disable':
+        break;
       case 'refresh':
         var params = this.props.params,
           refreshData = {};
@@ -298,6 +317,10 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
+        case 'enable':
+          break;
+        case 'disable':
+          break;
         default:
           break;
       }

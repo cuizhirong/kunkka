@@ -6,9 +6,14 @@
   }],
   "btns": [{
     "value": ["migrate"],
-    "key": "create",
+    "key": "migrate",
     "type": "create",
     "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["power_on"],
+    "key": "power_on",
+    "icon": "power-on",
     "disabled": true
   }, {
     "value": ["power_off"],
@@ -81,30 +86,25 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
       "key": "instance_name",
       "type": "captain",
-      "width": 130,
       "sort": true
     }, {
       "title": ["host"],
-      "dataIndex": "",
       "key": "host"
     }, {
       "title": ["flavor"],
-      "dataIndex": "",
       "key": "flavor"
     }, {
       "title": ["image"],
-      "dataIndex": "",
       "key": "image"
     }, {
-      "title": ["ip"],
-      "dataIndex": "",
-      "key": "ip"
+      "title": ["fixed_ip"],
+      "key": "fixed_ip"
     }, {
       "title": ["user", "id"],
       "dataIndex": "user_id",
@@ -125,7 +125,7 @@
       }]
     }, {
       "title": ["created", "time"],
-      "dataIndex": "created_time",
+      "dataIndex": "created",
       "key": "created",
       "type": "time"
     }],

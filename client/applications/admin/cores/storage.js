@@ -5,11 +5,7 @@
 var RSVP = require('rsvp');
 var Promise = RSVP.Promise;
 
-var {getImageType, getFlavorType} = require('../modules/instance/cache');
-var request = {
-  imageType: getImageType,
-  flavorType: getFlavorType
-};
+var instance = require('../modules/instance/cache');
 
 function Storage() {
   this.cache = {};
@@ -30,7 +26,7 @@ Storage.prototype = {
         }
       }
 
-      promises[type] = that[type]().then(function(data) {
+      promises[type] = that['get' + type[0].toUpperCase() + type.slice(1)]().then(function(data) {
         that.cache[type] = data;
         return data;
       });
@@ -42,6 +38,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, request);
+Object.assign(Storage.prototype, instance);
 
 module.exports = new Storage();

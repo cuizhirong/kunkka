@@ -29,38 +29,37 @@
     "limit": 2,
     "column": [{
       "title": ["host", "name"],
-      "dataIndex": "host_name",
+      "dataIndex": "name",
       "key": "host_name",
       "type": "captain",
-      "width": 130,
       "sort": true
     }, {
       "title": ["ip"],
-      "dataIndex": "",
+      "dataIndex": "ip",
       "key": "ip"
     }, {
       "title": ["vcpu"],
-      "dataIndex": "",
+      "dataIndex": "vcpu",
       "key": "vcpu"
     }, {
       "title": ["memory"],
-      "dataIndex": "",
+      "dataIndex": "memory",
       "key": "memory"
     }, {
       "title": ["volume"],
-      "dataIndex": "",
+      "dataIndex": "volume",
       "key": "volume"
     }, {
       "title": ["virtual_machine", "counts"],
-      "dataIndex": "",
+      "dataIndex": "instanceCounts",
       "key": "virtual_machine_counts"
     }, {
       "title": ["physical_host", "type"],
-      "dataIndex": "",
+      "dataIndex": "hostType",
       "key": "physical_host_type"
     }, {
       "title": ["status"],
-      "dataIndex": "host_name",
+      "dataIndex": "status",
       "type": "status",
       "key": "status",
       "filter": [{
@@ -70,7 +69,7 @@
       }]
     }, {
       "title": ["state"],
-      "dataIndex": "",
+      "dataIndex": "state",
       "key": "state"
     }],
     "data": [],

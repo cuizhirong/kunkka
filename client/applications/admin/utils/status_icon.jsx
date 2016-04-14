@@ -10,12 +10,17 @@ module.exports = (str) => {
 
   switch(status) {
     case 'active':
+    case 'enabled':
       type.icon = 'active';
       type.status = 'active';
       break;
     case 'available':
       type.icon = 'light';
       type.status = 'available';
+      break;
+    case 'disabled':
+      type.icon = 'deleted';
+      type.status = 'paused';
       break;
     case 'down':
       type.icon = 'active';

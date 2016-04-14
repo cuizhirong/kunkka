@@ -11,7 +11,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
-var router = require('../../cores/router');
+// var router = require('../../cores/router');
 
 class Model extends React.Component {
 
@@ -56,63 +56,9 @@ class Model extends React.Component {
     }
   }
 
-  findItemByID(items, id) {
-    var ret;
-    items.some((item) => {
-      if (item.id === id) {
-        ret = item;
-        return true;
-      }
-    });
-
-    return ret;
-  }
-
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'host':
-          column.render = (col, item, i) => {
-            // var hosts = this.stores.hostTypes;
-            return '';
-          };
-          break;
-        case 'flavor':
-          column.render = (col, item, i) => {
-            var flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id);
-            return (
-              <a data-type="router" href={'/admin/flavor/' + item.flavor.id}>
-                {flavor ? flavor.name : '(' + item.flavor.id.substr(0, 8) + ')'}
-              </a>
-            );
-          };
-          break;
-        case 'image':
-          column.render = (col, item, i) => {
-            var image = this.findItemByID(this.stores.imageTypes, item.image.id);
-            return (
-              <a data-type="router" href={'/admin/flavor/' + item.image.id}>
-                {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
-              </a>
-            );
-          };
-          break;
-        case 'fixed_ip':
-          column.render = (col, item, i) => {
-            var ips = item.addresses,
-              ret = [];
-
-            Object.keys(ips).forEach((key) => {
-              ips[key].forEach((ele) => {
-                if (ele['OS-EXT-IPS:type'] === 'fixed') {
-                  ret.push(ele.addr);
-                }
-              });
-            });
-
-            return ret.join(', ');
-          };
-          break;
         default:
           break;
       }
@@ -120,103 +66,59 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
-    var setOption = function(key, data) {
-      filters.forEach((filter) => {
-        filter.items.forEach((item) => {
-          if (item.key === key) {
-            item.data = data;
-          }
-        });
-      });
-    };
-
-    var imageTypes = [];
-    res.imageType.images.forEach((image) => {
-      imageTypes.push({
-        id: image.id,
-        name: image.name
-      });
-    });
-    setOption('image', imageTypes);
-
-    var flavorTypes = [];
-    res.flavorType.flavors.forEach((flavor) => {
-      flavorTypes.push({
-        id: flavor.id,
-        name: flavor.name
-      });
-    });
-    setOption('flavor', flavorTypes);
-
-    var statusTypes = [{
-      id: 'active',
-      name: __.active
-    }, {
-      id: 'error',
-      name: __.error
-    }];
-    setOption('status', statusTypes);
-  }
-
-  addTypesToStore(res) {
-    this.stores.imageTypes = res.imageType.images;
-    this.stores.flavorTypes = res.flavorType.flavors;
-    this.stores.hostTypes = res.hostType.hosts;
   }
 
 //initialize table data
   onInitialize(params) {
     var _config = this.state.config,
-      filter = _config.filter,
+      // filter = _config.filter,
       table = _config.table;
 
     if (params[2]) {
-      request.getServerByIDInitialize(params[2]).then((res) => {
-        this.addTypesToStore(res[1]);
-        this.initializeFilter(filter, res[1]);
+      // request.getServerByIDInitialize(params[2]).then((res) => {
+      //   this.initializeFilter(filter, res[1]);
 
-        table.data = [res[0].server];
-        this.updateTableData(table, res[0]._url, true, () => {
-          var pathList = router.getPathList();
-          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-        });
-      });
+      //   table.data = [res[0].server];
+      //   this.updateTableData(table, res[0]._url, true, () => {
+      //     var pathList = router.getPathList();
+      //     router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      //   });
+      // });
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        this.addTypesToStore(res[1]);
-        this.initializeFilter(filter, res[1]);
+        // this.initializeFilter(filter, res[1]);
 
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
+        table.data = res[0].flavors;
+        this.updateTableData(table, res[0]._url);
       });
     }
   }
 
 //request: get single data(pathList[2] is server_id)
   getSingleData(serverID) {
-    request.getServerByID(serverID).then((res) => {
-      var table = this.state.config.table;
-      table.data = [res.server];
-      this.updateTableData(table, res._url);
-    });
+    // request.getServerByID(serverID).then((res) => {
+    //   var table = this.state.config.table;
+    //   table.data = [res.server];
+    //   this.updateTableData(table, res._url);
+    // });
   }
 
 //request: get list data(according to page limit)
   getInitialListData() {
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url);
-    });
+    // var pageLimit = this.state.config.table.limit;
+    // request.getList(pageLimit).then((res) => {
+    //   var table = this.processTableData(this.state.config.table, res);
+    //   this.updateTableData(table, res._url);
+    // });
   }
 
 //request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
-    request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
-    });
+    // request.getNextList(url).then((res) => {
+    //   var table = this.processTableData(this.state.config.table, res);
+    //   this.updateTableData(table, res._url, refreshDetail);
+    // });
   }
 
 //request: filter request
@@ -397,7 +299,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    // var {rows} = data;
 
     var refreshCurrentList = {
       refreshList: true,
@@ -407,24 +309,7 @@ class Model extends React.Component {
     };
 
     switch(key) {
-      case 'migrate':
-        break;
-      case 'power_on':
-        request.poweron(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
-        });
-        break;
-      case 'power_off':
-        request.poweroff(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
-        });
-        break;
-      case 'reboot':
-        request.reboot(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
-        });
-        break;
-      case 'dissociate_floating_ip':
+      case 'create':
         break;
       case 'delete':
         break;
@@ -458,20 +343,11 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    // var sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
-        case 'migrate':
-          break;
-        case 'power_on':
-          btns[key].disabled = (sole && sole.status.toLowerCase() === 'shutoff') ? false : true;
-          break;
-        case 'power_off':
-        case 'reboot':
-          btns[key].disabled = (sole && sole.status.toLowerCase() === 'active') ? false : true;
-          break;
-        case 'dissociate_floating_ip':
+        case 'create':
           break;
         case 'delete':
           break;
@@ -531,21 +407,6 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id),
-      image = this.findItemByID(this.stores.imageTypes, item.image.id),
-      fixedIps = (function() {
-        var ips = item.addresses,
-          ret = [];
-        Object.keys(ips).forEach((key) => {
-          ips[key].forEach((ele, i) => {
-            if (ele['OS-EXT-IPS:type'] === 'fixed') {
-              ret.push(ele.addr);
-            }
-          });
-        });
-        return ret.join(', ');
-      })();
-
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
@@ -553,37 +414,17 @@ class Model extends React.Component {
       title: __.id,
       content: item.id
     }, {
-      title: __.host,
+      title: __.vcpu,
       content: ''
     }, {
-      title: __.flavor,
-      content:
-        <a data-type="router" href={'/admin/flavor/' + item.flavor.id}>
-          {flavor ? flavor.name : '(' + item.flavor.id.substr(0, 8) + ')'}
-        </a>
+      title: __.memory,
+      content: ''
     }, {
-      title: __.image,
-      content:
-        <a data-type="router" href={'/admin/flavor/' + item.image.id}>
-          {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
-        </a>
+      title: __.enable,
+      content: ''
     }, {
-      title: __.fixed_ip,
-      content: fixedIps
-    }, {
-      title: __.user + __.id,
-      content: item.user_id
-    }, {
-      title: __.project,
-      content: item.tenant_id
-    }, {
-      title: __.status,
-      type: 'status',
-      content: item.status
-    }, {
-      title: __.created + __.time,
-      type: 'time',
-      content: item.created
+      title: __.comment,
+      content: ''
     }];
 
     return items;
@@ -608,7 +449,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-instance" style={this.props.style}>
+      <div className="halo-module-flavor" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

@@ -4,7 +4,7 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getFilterOptions: function(forced) {
-    return storage.getList(['imageType', 'flavorType', 'hostType'], forced);
+    return storage.getList([], forced);
   },
   getListInitialize: function(pageLimit, forced) {
     var req = [];
@@ -25,7 +25,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit;
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -70,40 +70,5 @@ module.exports = {
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
-    items.forEach((item) => {
-      deferredList.push(fetch.delete({
-        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
-      }));
-    });
-    return RSVP.all(deferredList);
-  },
-  poweron: function(item) {
-    var data = {};
-    data['os-start'] = null;
-
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
-    });
-  },
-  poweroff: function(item) {
-    var data = {};
-    data['os-stop'] = null;
-
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
-    });
-  },
-  reboot: function(item) {
-    var data = {};
-    data.reboot = {};
-    data.reboot.type = 'SOFT';
-
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
-    });
   }
 };

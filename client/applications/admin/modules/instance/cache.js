@@ -10,5 +10,10 @@ module.exports = {
     return fetch.get({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors'
     });
+  },
+  getHostType: function() {
+    return fetch.get({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hosts'
+    });
   }
 };

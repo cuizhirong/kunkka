@@ -4,13 +4,13 @@ var RSVP = require('rsvp');
 module.exports = {
   getListInitialize: function(pageLimit) {
     var req = [];
-    req.push(this.getServiceList(pageLimit));
     req.push(this.getHypervisorList());
+    req.push(this.getServiceList(pageLimit));
 
     return RSVP.all(req);
   },
   getHypervisorList: function() {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors';
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/detail';
     return fetch.get({
       url: url
     }).then((res) => {

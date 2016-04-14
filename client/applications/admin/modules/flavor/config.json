@@ -1,0 +1,60 @@
+{
+  "tabs": [{
+    "name": ["flavor"],
+    "key": "flavor",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create"],
+    "key": "create",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["id"],
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["vcpu"],
+      "key": "vcpu"
+    }, {
+      "title": ["memory"],
+      "key": "memory"
+    }, {
+      "title": ["enable"],
+      "key": "enable"
+    }, {
+      "title": ["comment"],
+      "dataIndex": "",
+      "key": "comment"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

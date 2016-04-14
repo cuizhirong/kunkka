@@ -1,6 +1,6 @@
 {
   "en": {
-    "flavor": "Flavor",
+    "fixed_ip": "Fixed IP",
     "floating_ip": "Floating Ip",
     "image": "Image",
     "migrate": "Migrate",
@@ -8,10 +8,11 @@
     "reset": "Reset",
     "reboot": "Reboot",
     "server": "Server ",
-    "power_off": "Power Off"
+    "power_off": "Power Off",
+    "power_on": "Power On"
   },
   "zh-CN": {
-    "flavor": "配置",
+    "fixed_ip": "内网IP",
     "floating_ip": "公网IP",
     "image": "镜像",
     "name": "名称",
@@ -19,6 +20,7 @@
     "reset": "重置",
     "reboot": "重启",
     "server": "云主机",
-    "power_off": "关机"
+    "power_off": "关机",
+    "power_on": "开机"
   }
 }

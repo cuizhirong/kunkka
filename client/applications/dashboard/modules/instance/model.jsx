@@ -337,7 +337,7 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1 && status === 'shutoff') ? false : true;
           break;
         case 'reboot':
-          btns[key].disabled = (rows.length > 0 && allActive) ? false : true;
+          btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
           break;
         case 'instance_snapshot':
         case 'resize':
