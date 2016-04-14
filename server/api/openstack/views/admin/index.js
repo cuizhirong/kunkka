@@ -50,6 +50,14 @@ function renderTemplate (req, res, next) {
     let username = user.username;
     let applicationList = applications.filter(a => {
       return a !== 'login';
+    }).sort((a, b) => {
+      if (a === 'dashboard') {
+        return -1;
+      } else if (b === 'dashboard') {
+        return 1;
+      } else {
+        return 0;
+      }
     }).map(_app => {
       return {[_app]: __(`shared.${_app}.application_name`)};
     });
