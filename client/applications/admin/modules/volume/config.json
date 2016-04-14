@@ -7,12 +7,14 @@
   "btns": [{
     "value": ["dissociate", "related"],
     "key": "dissociate",
-    "icon": "delete"
+    "icon": "delete",
+    "disabled": true
   }, {
     "value": ["delete"],
     "key": "delete",
     "type": "delete",
-    "icon": "delete"
+    "icon": "delete",
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -92,6 +94,7 @@
     }, {
       "title": ["created", "time"],
       "dataIndex": "created_time",
+      "type": "time",
       "key": "created_time"
     }],
     "data": [],

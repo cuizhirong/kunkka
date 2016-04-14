@@ -6,6 +6,8 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+var deleteModal = require('client/components/modal_delete/index');
+var detachInstance = require('./pop/detach_instance/index');
 
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -53,6 +55,46 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'size':
+          column.render = (col, item, i) => {
+            return item.size + 'GB';
+          };
+          break;
+        case 'attached_instance':
+          column.render = (col, item, i) => {
+            return (item.attachments[0] ?
+              <span>
+                <i className="glyphicon icon-instance" />
+                <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
+                  {'(' + item.attachments[0].server_id.substr(0, 8) + ')'}
+                </a>
+              </span>
+              : '');
+          };
+          break;
+        case 'type':
+          column.render = (col, item, i) => {
+            return item.volume_type ?
+              <span>
+                <i className="glyphicon icon-performance" />
+                {item.volume_type === 'sata' ? __.performance : __.capacity}
+              </span> : '';
+          };
+          break;
+        case 'user_id':
+          column.render = (col, item, i) => {
+            return '(' + item.user_id.substr(0, 8) + ')';
+          };
+          break;
+        case 'attributes':
+          column.render = (col, item, i) => {
+            if (item.metadata.readonly) {
+              return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
+            } else {
+              return '';
+            }
+          };
+          break;
         default:
           break;
       }
@@ -203,7 +245,6 @@ class Model extends React.Component {
     this.refs.dashboard.clearState();
   }
 
-//*********************************************//
   onAction(field, actionType, refs, data) {
     switch (field) {
       case 'btnList':
@@ -221,7 +262,47 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows,
+      that = this;
 
+    switch (key) {
+      case 'dissociate':
+        detachInstance(rows[0]);
+        break;
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'volume',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteVolumes(rows).then((res) => {
+              that.refresh(null, true);
+              cb(true);
+            });
+          }
+        });
+        break;
+      case 'refresh':
+        var params = this.props.params,
+          refreshData = {};
+
+        if (params[2]) {
+          refreshData.refreshList = true;
+          refreshData.refreshDetail = true;
+          refreshData.loadingTable = true;
+          refreshData.loadingDetail = true;
+        } else {
+          refreshData.initialList = true;
+          refreshData.loadingTable = true;
+          refreshData.clearState = true;
+        }
+
+        this.refresh(refreshData, params);
+        break;
+      default:
+        break;
+    }
   }
 
   onClickTableCheckbox(refs, data) {
@@ -235,6 +316,21 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var len = rows.length;
+
+    for(let key in btns) {
+      switch (key) {
+        case 'dissociate':
+          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (len > 0) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
     return btns;
   }
 
@@ -316,6 +412,49 @@ class Model extends React.Component {
       title: __.name,
       content: item.name || '(' + item.id.substr(0, 8) + ')',
       type: 'editable'
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.size,
+      content: item.size + 'GB'
+    }, {
+      title: __.attached_instance,
+      content: item.attachments[0] ?
+        <span>
+          <i className="glyphicon icon-instance" />
+          <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
+            {'(' + item.attachments[0].server_id.substr(0, 8) + ')'}
+          </a>
+        </span>
+        : ''
+    }, {
+      title: __.type,
+      content: item.volume_type === 'sata' ? __.performance : __.capacity
+    }, {
+      title: __.project + __.id,
+      content: ''
+    }, {
+      title: __.user + __.id,
+      content: item.user_id
+    }, {
+      title: __.attributes,
+      content: (() => {
+        if (item.metadata.readonly) {
+          return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
+        } else {
+          return '';
+        }
+      })()
+    }, {
+      title: __.status,
+      type: 'status',
+      status: item.status,
+      content: item.status
+    }, {
+      title: __.created + __.time,
+      type: 'time',
+      content: item.created_at
     }];
 
     return items;
@@ -333,6 +472,15 @@ class Model extends React.Component {
 
   onDescriptionAction(actionType, data) {
     switch(actionType) {
+      case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editVolumeName(rawItem, newName).then((res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
       default:
         break;
     }

@@ -50,5 +50,29 @@ module.exports = {
       res._url = url;
       return res;
     });
+  },
+  editVolumeName: function(item, newName) {
+    var data = {};
+    data.volume = {};
+    data.volume.name = newName;
+
+    return fetch.put({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id,
+      data: data
+    });
+  },
+  deleteVolumes: function(items) {
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  detachInstance: function(data) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + data.serverId + '/os-volume_attachments/' + data.attachmentId
+    });
   }
 };
