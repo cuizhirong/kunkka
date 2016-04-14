@@ -336,8 +336,7 @@ class Model extends React.Component {
     }, {
       title: __.status,
       type: 'status',
-      status: item.status,
-      content: __[item.status.toLowerCase()]
+      content: item.status
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?

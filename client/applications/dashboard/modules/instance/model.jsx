@@ -515,7 +515,7 @@ class Model extends React.Component {
     }, {
       title: __.status,
       type: 'status',
-      status: item.status
+      content: item.status
     }, {
       title: __.create + __.time,
       type: 'time',

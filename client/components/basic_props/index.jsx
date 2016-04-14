@@ -42,7 +42,7 @@ class BasicProps extends React.Component {
       case 'editable':
         return <EditContent item={item} rawItem={rawItem} onAction={this.onAction.bind(this)} />;
       case 'status':
-        return getStatusIcon(item.status);
+        return getStatusIcon(item.content);
       case 'time':
         return moment(item.content).format('YYYY-MM-DD hh:mm:ss');
       default:
