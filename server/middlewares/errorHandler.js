@@ -12,6 +12,6 @@ module.exports = function (err, req, res, next) {
     if ((err.code && err.code === 'ECONNREFUSED' && err.port && err.port === sessionEnginePort) || (sessionEnginePort && err.message.indexOf(sessionEnginePort) > -1)) {
       err.message = sessionEngineType + ' out of service';
     }
-    res.status(500).json({error: err.message});
+    res.status(500).json({error: err.message || err});
   }
 };

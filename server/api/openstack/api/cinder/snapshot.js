@@ -18,9 +18,7 @@ Snapshot.prototype = {
     });
   },
   getSnapshotList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     async.parallel([
       this.__snapshots.bind(this),
       this.__volumes.bind(this)],
@@ -42,10 +40,7 @@ Snapshot.prototype = {
     );
   },
   getSnapshotDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.snapshotId = req.params.snapshotId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req, ['projectId', 'snapshotId']);
     async.parallel([
       this.__snapshotDetail.bind(this),
       this.__volumes.bind(this)],
@@ -63,48 +58,10 @@ Snapshot.prototype = {
       }
     );
   },
-  getInstanceSnapshotList: function (req, res, next) {
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
-    async.parallel([
-      this.__images.bind(this)],
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
-          var images = results[0].images;
-          var re = [];
-          images.forEach( image => {
-            if ( image.image_type === 'snapshot' ) {
-              re.push(image);
-            }
-          });
-          res.json({images: re});
-        }
-      }
-    );
-  },
-  getInstanceSnapshotDetails: function (req, res, next) {
-    this.imageId = req.params.snapshotId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
-    async.parallel([
-      this.__imageDetail.bind(this)],
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
-          res.json({image: results[0]});
-        }
-      }
-    );
-  },
   initRoutes: function () {
     return this.__initRoutes( () => {
       this.app.get('/api/v1/:projectId/snapshots/detail', this.getSnapshotList.bind(this));
       this.app.get('/api/v1/:projectId/snapshots/:snapshotId', this.getSnapshotDetails.bind(this));
-      this.app.get('/api/v1/instanceSnapshots', this.getInstanceSnapshotList.bind(this));
-      this.app.get('/api/v1/instanceSnapshots/:snapshotId', this.getInstanceSnapshotDetails.bind(this));
     });
   }
 };

@@ -14,13 +14,11 @@ fs.readdirSync(__dirname)
   })
   .forEach( m => {
     driver[m] = {};
-    fs.readdirSync(path.join(__dirname, m))
-      .filter(s => {
-        return fs.statSync(path.join(__dirname, m, s)).isDirectory();
-      })
-      .forEach( s => { // snapshot ...
-        driver[m][s] = require(path.join(__dirname, m, s));
-      });
+    fs.readdirSync(path.join(__dirname, m)).forEach( s => { // snapshot ...
+      if (s !== '.DS_Store') {
+        driver[m][path.basename(s, '.js')] = require(path.join(__dirname, m, s));
+      }
+    });
   });
 
 /* driver with extensions. */
@@ -38,7 +36,7 @@ extPathList.filter( m => { // cinder ...
   }
   fs.readdirSync(extPath + '/' + m).forEach( s => { // snapshot ...
     if (s !== '.DS_Store') {
-      driver[m][s] = require(extPath + '/' + m + '/' + s);
+      driver[m][path.basename(s, '.js')] = require(extPath + '/' + m + '/' + s);
     }
   });
 });

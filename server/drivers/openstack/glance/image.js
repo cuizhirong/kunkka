@@ -1,7 +1,7 @@
 'use strict';
 
 var glanceRemote = require('config')('remote').glance;
-var Base = require('../../base.js');
+var Base = require('../base.js');
 var driverImage = new Base('image');
 
 driverImage.listImages = function (token, region, callback, query) {
@@ -12,11 +12,12 @@ driverImage.listImages = function (token, region, callback, query) {
     query
   );
 };
-driverImage.showImageDetails = function (imageId, token, region, callback) {
+driverImage.showImageDetails = function (imageId, token, region, callback, query) {
   return driverImage.getMethod(
     glanceRemote[region] + '/v2/images/' + imageId,
     token,
-    callback
+    callback,
+    query
   );
 };
 

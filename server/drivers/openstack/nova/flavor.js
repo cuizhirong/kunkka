@@ -1,7 +1,7 @@
 'use strict';
 
 var novaRemote = require('config')('remote').nova;
-var Base = require('../../base.js');
+var Base = require('../base.js');
 var driverFlavor = new Base('flavor');
 
 driverFlavor.listFlavors = function (projectId, token, region, callback, query) {
@@ -12,11 +12,12 @@ driverFlavor.listFlavors = function (projectId, token, region, callback, query) 
     query
   );
 };
-driverFlavor.showFlavorDetails = function (projectId, flavorId, token, region, callback) {
+driverFlavor.showFlavorDetails = function (projectId, flavorId, token, region, callback, query) {
   return driverFlavor.getMethod(
     novaRemote[region] + '/v2.1/' + projectId + '/flavors/' + flavorId,
     token,
-    callback
+    callback,
+    query
   );
 };
 module.exports = driverFlavor;

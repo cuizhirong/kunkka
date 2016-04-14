@@ -48,9 +48,7 @@ Port.prototype = {
     });
   },
   getPortList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     async.parallel(
       [this.__ports.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -79,10 +77,7 @@ Port.prototype = {
     );
   },
   getPortDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.portId = req.params.portId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req, ['projectId', 'portId']);
     async.parallel(
       [this.__portDetail.bind(this)].concat(this.arrAsync),
       (err, results) => {

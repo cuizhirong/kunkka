@@ -12,9 +12,7 @@ function Security (app, neutron) {
 
 Security.prototype = {
   getSecurityList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     this.__security_groups( (err, payload) => {
       if (err) {
         res.status(err.status).json(err);
@@ -25,10 +23,7 @@ Security.prototype = {
     });
   },
   getSecurityDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.securityId = req.params.securityId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req, ['projectId', 'securityId']);
     this.__security_groupDetail( (err, payload) => {
       if (err) {
         res.status(err.status).json(err);

@@ -11,16 +11,17 @@ function Keypair (app) {
 
 Keypair.prototype = {
   getKeypairList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     this.__keypairs( (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        var keypairs = payload;
-        this.orderByCreatedTime(keypairs.keypairs);
-        res.json(keypairs);
+        var keypairs = [];
+        payload.keypairs.forEach(function (k) {
+          keypairs.push(k.keypair);
+        });
+        this.orderByCreatedTime(keypairs);
+        res.json({'keypairs': keypairs});
       }
     });
   },

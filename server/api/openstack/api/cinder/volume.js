@@ -34,9 +34,7 @@ Volume.prototype = {
     });
   },
   getVolumeList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     async.parallel([
       this.__volumes.bind(this),
       this.__snapshots.bind(this),
@@ -59,10 +57,7 @@ Volume.prototype = {
     );
   },
   getVolumeDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.volumeId = req.params.volumeId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req, ['projectId', 'volumeId']);
     async.parallel([
       this.__volumeDetail.bind(this),
       this.__snapshots.bind(this),

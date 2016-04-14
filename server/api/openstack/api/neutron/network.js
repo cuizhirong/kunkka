@@ -43,8 +43,7 @@ Network.prototype = {
     });
   },
   getNetworkList: function (req, res, next) {
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req);
     async.parallel(
       [this.__networks.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -65,9 +64,7 @@ Network.prototype = {
     );
   },
   getNetworkDetails: function (req, res, next) {
-    this.networkId = req.params.networkId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['networkId']);
     async.parallel(
       [this.__networkDetail.bind(this)].concat(this.arrAsync),
       (err, results) => {

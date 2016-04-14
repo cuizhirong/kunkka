@@ -25,7 +25,7 @@ if (extType) {
     apiExtension[m] = {};
     fs.readdirSync(extPath + '/' + m).forEach( s => { // snapshot ...
       if (s !== '.DS_Store') { // in mac env...
-        apiExtension[m][s] = require(extPath + '/' + m + '/' + s);
+        apiExtension[m][path.basename(s, '.js')] = require(extPath + '/' + m + '/' + s);
       }
     });
   });
@@ -46,6 +46,7 @@ module.exports = function(app) {
         .forEach( s => {
           let apiModule = require(path.join(apiPath, m, s));
           /* add extensions */
+          s = path.basename(s, '.js');
           let extension = (apiExtension && apiExtension[m] && apiExtension[m][s]) ? apiExtension[m][s] : undefined;
           apiModule(app, extension);
         });

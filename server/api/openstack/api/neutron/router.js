@@ -36,8 +36,7 @@ Router.prototype = {
     });
   },
   getRouterList: function (req, res, next) {
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req);
     async.parallel(
       [this.__routers.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -58,9 +57,7 @@ Router.prototype = {
     );
   },
   getRouterDetails: function (req, res, next) {
-    this.routerId = req.params.routerId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['routerId']);
     async.parallel(
       [this.__routerDetail.bind(this)].concat(this.arrAsync),
       (err, results) => {

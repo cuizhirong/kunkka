@@ -40,9 +40,7 @@ Subnet.prototype = {
     });
   },
   getSubnetList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
+    this.getVars(req, ['projectId']);
     async.parallel(
       [this.__subnets.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -69,10 +67,7 @@ Subnet.prototype = {
     );
   },
   getSubnetDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.subnetId = req.params.subnetId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId', 'subnetId']);
     async.parallel(
       [this.__subnetDetail.bind(this)]
       .concat(this.arrAsync, [this.__servers.bind(this)]),

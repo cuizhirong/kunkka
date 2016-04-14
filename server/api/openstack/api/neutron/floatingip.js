@@ -30,9 +30,7 @@ Floatingip.prototype = {
     }
   },
   getFloatingipList: function (req, res, next) {
-    this.token = req.session.user.token;
-    this.region = req.headers.region;
-    this.projectId = req.params.projectId;
+    this.getVars(req, ['projectId']);
     async.parallel(
       [this.__floatingips.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -53,10 +51,7 @@ Floatingip.prototype = {
     );
   },
   getFloatingipDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.floatingipId = req.params.floatingipId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['floatingipId']);
     async.parallel(
       [this.__floatingipDetail.bind(this)].concat(this.arrAsync),
       (err, results) => {

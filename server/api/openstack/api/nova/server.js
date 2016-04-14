@@ -88,9 +88,7 @@ Instance.prototype = {
     this.makeNetwork(server, obj);
   },
   getInstanceList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     async.parallel(
       [this.__servers.bind(this)].concat(this.arrAsync),
       (err, results) => {
@@ -113,9 +111,7 @@ Instance.prototype = {
     );
   },
   getFlavorList: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId']);
     async.parallel(
       [this.__flavors.bind(this)],
       (err, results) => {
@@ -131,10 +127,7 @@ Instance.prototype = {
       });
   },
   getInstanceDetails: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.serverId = req.params.serverId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
+    this.getVars(req, ['projectId', 'serverId']);
     async.parallel(
       [this.__serverDetail.bind(this)].concat(this.arrAsync),
       (err, results) => {
