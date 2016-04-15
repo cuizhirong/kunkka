@@ -56,3 +56,4 @@ tests/static_tests/*
 
 #temp file
 client/libs/charts/output.js
+client/libs/charts/output.js.map

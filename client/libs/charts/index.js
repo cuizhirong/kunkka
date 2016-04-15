@@ -8,15 +8,16 @@ class Chart {
     this.opts = opts;
     this.ticks = Math.round(opts.period / 16);
     this.count = 0;
-    this.value = opts.value;
     this.onInitialize();
   }
 
   onInitialize() {
     var canvas = this.canvas = document.createElement('canvas'),
-      bCanvas = this.bCanvas = document.createElement('canvas');
-
+      bCanvas = this.bCanvas = document.createElement('canvas'),
+      textDiv = this.textDiv = document.createElement('div');
+    this.setTextStyle(textDiv);
     this.container.appendChild(bCanvas);
+    this.container.appendChild(textDiv);
     this.container.appendChild(canvas);
 
     autoscale([canvas, bCanvas], {
@@ -28,35 +29,56 @@ class Chart {
     this.draw();
   }
 
+  setTextStyle(dom) {
+    dom.style.position = 'absolute';
+    dom.style.textAlign = 'center';
+    dom.style.width = this.opts.width + 'px';
+    dom.style.height = this.opts.height + 'px';
+    dom.style.lineHeight = this.opts.height + 'px';
+    dom.style.fontSize = this.opts.text.fontSize;
+    dom.style.color = this.opts.text.color;
+    dom.innerHTML = '-';
+  }
+
   init() {}
 
   drawBg() {
     var ctx = this.bCanvas.getContext('2d'),
-      originX = this.opts.width / 2,
-      originY = this.opts.height / 2;
+      opt = this.opts,
+      bgColor = opt.bgColor,
+      coordinate = [opt.width / 2, opt.height / 2],
+      lineWidth = opt.lineWidth,
+      radius = opt.width / 2 - lineWidth / 2;
 
-    ctx.strokeStyle = '#f2f3f4';
-    ctx.lineWidth = 10;
+    ctx.strokeStyle = bgColor;
+    ctx.lineWidth = lineWidth;
     ctx.beginPath();
-    ctx.arc(originX, originY, 60, 0, Math.PI * 2, false);
+    ctx.arc(coordinate[0], coordinate[1], radius, 0, Math.PI * 2, false);
     ctx.stroke();
   }
 
   draw() {
     var ctx = this.canvas.getContext('2d'),
-      originX = this.opts.width / 2,
-      originY = this.opts.height / 2;
+      opt = this.opts,
+      values = opt.values,
+      coordinate = [opt.width / 2, opt.height / 2],
+      lineWidth = opt.lineWidth,
+      radius = opt.width / 2 - lineWidth / 2;
 
-    ctx.strokeStyle = '#ff5a67';
-    ctx.lineWidth = 10;
+    ctx.strokeStyle = values[0].color;
+    ctx.lineWidth = lineWidth;
 
     ++this.count;
+    var percent = this.count / this.ticks * values[0].value;
 
-    var arc = this.count / this.ticks * Math.PI * 2 * this.value - Math.PI / 2;
-
+    var arc = percent * Math.PI * 2 - Math.PI / 2;
+    ctx.clearRect(0, 0, opt.width, opt.height);
     ctx.beginPath();
-    ctx.arc(originX, originY, 60, -Math.PI / 2, arc, false);
+    ctx.arc(coordinate[0], coordinate[1], radius, -Math.PI / 2, arc, false);
     ctx.stroke();
+
+    // draw text
+    this.textDiv.innerHTML = Math.round(percent * 100) + '%';
 
     if (this.count === this.ticks) {
       return;
