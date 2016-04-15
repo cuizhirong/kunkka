@@ -63,5 +63,65 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/groups/' + groupID + '/users'
     });
+  },
+  createGroup: function(data) {
+    return fetch.post({
+      url: '/proxy/keystone/v3/groups',
+      data: {
+        group: data
+      }
+    });
+  },
+  editGroup: function(groupID, data) {
+    return fetch.patch({
+      url: '/proxy/keystone/v3/groups/' + groupID,
+      data: {
+        group: data
+      }
+    });
+  },
+  getRoles: function(group) {
+    var deferredList = [];
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/roles'
+    }));
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/domains/' + group.domain_id + '/groups/' + group.id + '/roles'
+    }));
+    return RSVP.all(deferredList);
+  },
+  addRole: function(group, roleID) {
+    return fetch.put({
+      url: '/proxy/keystone/v3/domains/' + group.domain_id + '/groups/' + group.id + '/roles/' + roleID
+    });
+  },
+  removeRole: function(group, roleID) {
+    return fetch.delete({
+      url: '/proxy/keystone/v3/domains/' + group.domain_id + '/groups/' + group.id + '/roles/' + roleID
+    });
+  },
+  getAllUsers: function(groupID) {
+    var deferredList = [];
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/groups/' + groupID + '/users'
+    }));
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/users'
+    }));
+    return RSVP.all(deferredList);
+  },
+  addUser: function(groupID, users) {
+    var deferredList = [];
+    users.forEach((user) => {
+      deferredList.push(fetch.put({
+        url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + user.id
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  removeUser: function(groupID, userID) {
+    return fetch.delete({
+      url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
+    });
   }
 };

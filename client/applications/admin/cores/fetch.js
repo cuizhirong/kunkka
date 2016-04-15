@@ -9,7 +9,7 @@ function errHandler(err) {
 
 var fetch = {};
 
-['get', 'post', 'put', 'delete'].forEach((m) => {
+['get', 'post', 'put', 'delete', 'patch'].forEach((m) => {
   fetch[m] = function(options) {
     return request[m]({
       url: options.url,

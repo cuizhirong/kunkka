@@ -1,0 +1,20 @@
+{
+  "title": ["add", "role"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user-group",
+    "icon_type": "user-group",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "role",
+    "empty_text": {
+      "info": "no_role"
+    },
+    "hide": true
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

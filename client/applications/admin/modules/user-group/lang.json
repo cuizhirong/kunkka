@@ -1,6 +1,10 @@
 {
   "en": {
+    "no_role": "No available role",
+    "no_user": "No available user"
   },
   "zh-CN": {
+    "no_role": "没有可用角色",
+    "no_user": "没有可用用户"
   }
 }

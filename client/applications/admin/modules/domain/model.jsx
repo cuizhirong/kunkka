@@ -6,6 +6,9 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+var modifyDomain = require('./pop/modify_domain/index');
+//var deactivateDomain = require('./pop/deactivate/index');
+var activateDomain = require('./pop/activate/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -123,7 +126,7 @@ class Model extends React.Component {
   }
 
 //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -138,12 +141,16 @@ class Model extends React.Component {
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
       }
+
+      callback && callback();
     });
   }
 
 //change table data structure: to record url history
   processTableData(table, res) {
-    if (res.domains) {
+    if (res.domain) {
+      table.data = [res.domain];
+    } else if (res.domains) {
       table.data = res.domains;
     }
 
@@ -267,12 +274,33 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var {rows} = data;
+
+    var that = this;
     switch(key) {
       case 'modify_domain':
+        modifyDomain(rows[0], null, function(_data) {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'activate_domain':
+        activateDomain(rows[0], null, function(_data) {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'deactivate_domain':
+        /*deactivateDomain(rows[0], null, function(_data) {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });*/
         break;
       case 'refresh':
         var params = this.props.params,
@@ -319,7 +347,8 @@ class Model extends React.Component {
           btns[key].disabled = !singleRow || status;
           break;
         case 'deactivate_domain':
-          btns[key].disabled = !singleRow || !status;
+          //btns[key].disabled = !singleRow || !status;
+          btns[key].disabled = true;
           break;
         default:
           break;
@@ -407,9 +436,10 @@ class Model extends React.Component {
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editDomainName(rawItem, newName).then((res) => {
+        request.editDomain(rawItem.id, {
+          name: newName
+        }).then((res) => {
           this.refresh({
-            loadingDetail: true,
             refreshList: true,
             refreshDetail: true
           });

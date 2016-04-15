@@ -75,7 +75,7 @@ class Select extends React.Component {
         <select value={state.value} disabled={state.disabled || (state.checkedField && state.checkedField !== props.field)} onChange={this.onChange}>
           {
             state.data.map(function(v) {
-              return <option key={v.id} value={v.id}>{v.name || '(' + v.id.substr(0, 8) + ')'}</option>;
+              return <option key={v.id} disabled={v.disabled} value={v.id}>{v.name || '(' + v.id.substr(0, 8) + ')'}</option>;
             })
           }
         </select>

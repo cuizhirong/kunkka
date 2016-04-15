@@ -19,7 +19,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/domains?limit=' + pageLimit;
+    var url = '/proxy/keystone/v3/domains';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -54,7 +54,12 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  editDomainName: function() {
-
+  editDomain: function(domainID, data) {
+    return fetch.patch({
+      url: '/proxy/keystone/v3/domains/' + domainID,
+      data: {
+        domain: data
+      }
+    });
   }
 };

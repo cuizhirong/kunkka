@@ -9,6 +9,9 @@ var {Button} = require('client/uskin/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var deleteModal = require('client/components/modal_delete/index');
+var createUserGroup = require('./pop/create/index');
+var addRole = require('./pop/add_role/index');
+var addUser = require('./pop/add_user/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -274,8 +277,20 @@ class Model extends React.Component {
     var that = this;
     switch(key) {
       case 'create':
+        createUserGroup(null, null, function(_data) {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'modify_group':
+        createUserGroup(rows[0], null, function(_data) {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'delete':
         deleteModal({
@@ -287,8 +302,7 @@ class Model extends React.Component {
             request.deleteItem(rows).then((res) => {
               cb(true);
               that.refresh({
-                refreshList: true,
-                loadingTable: true
+                refreshList: true
               });
             });
           }
@@ -434,6 +448,10 @@ class Model extends React.Component {
         contents: contents,
         loading: false
       });
+    } else {
+      detail.setState({
+        loading: true
+      });
     }
   }
 
@@ -545,6 +563,7 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
@@ -557,8 +576,36 @@ class Model extends React.Component {
         });
         break;
       case 'add_role':
+        addRole(data.rawItem, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'rmv_role':
+        request.removeRole(data.rawItem, data.childItem.id).then(() => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'add_user':
+        addUser(data.rawItem, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'rmv_user':
+        request.removeUser(data.rawItem.id, data.childItem.id).then(() => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       default:
         break;
