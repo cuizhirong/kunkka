@@ -4,7 +4,8 @@
  * Easing Functions - inspired from http://gizma.com/easing/
  * only considering the t value for the range [0, 1] => [0, 1]
  */
-const easingFunctions = {
+
+module.exports = {
   // no easing, no acceleration
   linear: function(t) {
     return t;
@@ -58,5 +59,3 @@ const easingFunctions = {
     return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
   }
 };
-
-module.exports = easingFunctions;

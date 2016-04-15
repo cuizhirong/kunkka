@@ -27,5 +27,10 @@ module.exports = {
   resolve: {
     extensions: ['', '.jsx', '.js'],
     root: path.resolve('./')
-  }
+  },
+
+  watch: true,
+  keepAlive: true,
+  devtool: 'source-map',
+  debug: true
 };
