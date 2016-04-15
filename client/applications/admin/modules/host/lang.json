@@ -1,8 +1,11 @@
 {
   "en": {
+    "capacity": "Capacity",
     "counts": "Counts",
     "disable": "Disable",
+    "disk": "Disk ",
     "enable": "Enable",
+    "gb": "(GB)",
     "memory": "Memory",
     "physical_host": "Host ",
     "state": "State",
@@ -10,9 +13,12 @@
     "virtual_machine": "Virtual Machine "
   },
   "zh-CN": {
+    "capacity": "容量",
     "counts": "数量",
     "disable": "禁用",
+    "disk": "硬盘",
     "enable": "启用",
+    "gb": "(GB)",
     "memory": "内存",
     "physical_host": "物理机",
     "state": "State",

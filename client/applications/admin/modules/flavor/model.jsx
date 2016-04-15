@@ -7,6 +7,10 @@ var Main = require('../../components/main/index');
 //detail components
 var BasicProps = require('client/components/basic_props/index');
 
+//pop
+var createFlavor = require('./pop/createFlavor/index');
+var deleteModal = require('client/components/modal_delete/index');
+
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -59,96 +63,70 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'memory':
+          column.render = (col, item, i) => {
+            return (item.ram / 1024) + ' GB';
+          };
+          break;
+        case 'enable':
+          column.render = (col, item, i) => {
+            return __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable;
+          };
+          break;
         default:
           break;
       }
     });
   }
 
-  initializeFilter(filters, res) {
-  }
-
 //initialize table data
   onInitialize(params) {
-    var _config = this.state.config,
-      // filter = _config.filter,
-      table = _config.table;
-
     if (params[2]) {
-      // request.getServerByIDInitialize(params[2]).then((res) => {
-      //   this.initializeFilter(filter, res[1]);
-
-      //   table.data = [res[0].server];
-      //   this.updateTableData(table, res[0]._url, true, () => {
-      //     var pathList = router.getPathList();
-      //     router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-      //   });
-      // });
+      this.getFlavorById(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        // this.initializeFilter(filter, res[1]);
-
-        table.data = res[0].flavors;
-        this.updateTableData(table, res[0]._url);
-      });
+      this.getInitialListData();
     }
   }
 
-//request: get single data(pathList[2] is server_id)
-  getSingleData(serverID) {
-    // request.getServerByID(serverID).then((res) => {
-    //   var table = this.state.config.table;
-    //   table.data = [res.server];
-    //   this.updateTableData(table, res._url);
-    // });
+  getList() {
+    var table = this.state.config.table;
+    request.getList().then((res) => {
+      table.data = res.flavors;
+      this.updateTableData(table, res._url);
+    });
   }
 
-//request: get list data(according to page limit)
+  getFlavorById(id) {
+    var table = this.state.config.table;
+    request.getFlavorById(id).then((res) => {
+      table.data = [res.flavor];
+      this.updateTableData(table, res._url);
+    });
+  }
+
   getInitialListData() {
-    // var pageLimit = this.state.config.table.limit;
-    // request.getList(pageLimit).then((res) => {
-    //   var table = this.processTableData(this.state.config.table, res);
-    //   this.updateTableData(table, res._url);
-    // });
+    this.getList();
   }
-
 //request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
-    // request.getNextList(url).then((res) => {
-    //   var table = this.processTableData(this.state.config.table, res);
-    //   this.updateTableData(table, res._url, refreshDetail);
-    // });
+    var table = this.state.config.table;
+    request.getNextList(url).then((res) => {
+      if (res.flavor) {
+        table.data = [res.flavor];
+      } else if (res.flavors) {
+        table.data = res.flavors;
+      } else {
+        table.data = [];
+      }
+      this.updateTableData(table, res._url, refreshDetail);
+    });
   }
 
-//request: filter request
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
+//request: search request
+  onClickSearch(actionType, refs, data) {
+    if (actionType === 'click') {
       this.loadingTable();
-
-      var serverID = data.server_id,
-        allTenant = data.all_tenant;
-
-      if (serverID) {
-        request.getServerByID(serverID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.server];
-          this.updateTableData(table, res._url);
-        });
-      } else if (allTenant){
-        request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.config.table;
-          table.data = res.servers;
-          this.updateTableData(table, res._url);
-        });
-      } else {
-        var refreshData = {};
-        refreshData.initialList = true;
-        refreshData.loadingTable = true;
-        refreshData.clearState = true;
-
-        this.refresh(refreshData);
-      }
+      this.getFlavorById(data.text);
     }
   }
 
@@ -171,31 +149,6 @@ class Model extends React.Component {
 
       callback && callback();
     });
-  }
-
-//change table data structure: to record url history
-  processTableData(table, res) {
-    if (res.server) {
-      table.data = [res.server];
-    } else if (res.servers) {
-      table.data = res.servers;
-    }
-
-    var pagination = {},
-      next = res.servers_links ? res.servers_links[0] : null;
-
-    if (next && next.rel === 'next') {
-      pagination.nextUrl = next.href.split('/v2.1/')[1];
-    }
-
-    var history = this.stores.urls;
-
-    if (history.length > 0) {
-      pagination.prevUrl = history[history.length - 1];
-    }
-    table.pagination = pagination;
-
-    return table;
   }
 
 //refresh: according to the given data rules
@@ -258,8 +211,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -299,7 +252,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    // var {rows} = data;
+    var {rows} = data;
 
     var refreshCurrentList = {
       refreshList: true,
@@ -310,8 +263,23 @@ class Model extends React.Component {
 
     switch(key) {
       case 'create':
+        createFlavor(null, null, (res) => {
+          this.refresh(refreshCurrentList);
+        });
         break;
       case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: '',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteItem(rows[0].id).then((res) => {
+              cb(true);
+              this.refresh(refreshCurrentList);
+            });
+          }
+        });
         break;
       case 'refresh':
         var params = this.props.params,
@@ -347,9 +315,8 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
-        case 'create':
-          break;
         case 'delete':
+          btns[key].disabled = rows.length === 1 ? false : true;
           break;
         default:
           break;
@@ -415,13 +382,13 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.vcpu,
-      content: ''
+      content: item.vcpus
     }, {
       title: __.memory,
-      content: ''
+      content: (item.ram / 1024) + ' GB'
     }, {
       title: __.enable,
-      content: ''
+      content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable
     }, {
       title: __.comment,
       content: ''

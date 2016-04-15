@@ -69,14 +69,10 @@ module.exports = {
       return res;
     });
   },
-  deleteItem: function(items) {
-    var deferredList = [];
-    items.forEach((item) => {
-      deferredList.push(fetch.delete({
-        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
-      }));
+  deleteItem: function(item) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
     });
-    return RSVP.all(deferredList);
   },
   poweron: function(item) {
     var data = {};
@@ -103,6 +99,12 @@ module.exports = {
 
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
+    });
+  },
+  dissociateFloatingIp: function(serverId, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
       data: data
     });
   }

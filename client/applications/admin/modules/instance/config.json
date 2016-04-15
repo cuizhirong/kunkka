@@ -34,6 +34,7 @@
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",
+    "type": "delete",
     "disabled": true
   }, {
     "key": "refresh",
@@ -95,6 +96,7 @@
       "sort": true
     }, {
       "title": ["host"],
+      "dataIndex": "OS-EXT-SRV-ATTR:host",
       "key": "host"
     }, {
       "title": ["flavor"],

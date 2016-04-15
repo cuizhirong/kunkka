@@ -1,0 +1,33 @@
+{
+  "title": ["dissociate", "floating_ip"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "tip_info": "flavor_name_tip"
+  }, {
+    "type": "input",
+    "field": "vcpu",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "memory",
+    "required": true
+  },{
+    "type": "input",
+    "field": "capacity",
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "set_enable",
+    "has_label": true,
+    "checked": true
+  }, {
+    "type": "input",
+    "field": "comment"
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}

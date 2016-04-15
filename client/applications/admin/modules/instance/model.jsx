@@ -7,6 +7,11 @@ var Main = require('../../components/main/index');
 //detail components
 var BasicProps = require('client/components/basic_props/index');
 
+//pop
+var deleteModal = require('client/components/modal_delete/index');
+var dissociateFIP = require('./pop/dissociate_fip/index');
+var migratePop = require('./pop/migrate/index');
+
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -71,12 +76,6 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'host':
-          column.render = (col, item, i) => {
-            // var hosts = this.stores.hostTypes;
-            return '';
-          };
-          break;
         case 'flavor':
           column.render = (col, item, i) => {
             var flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id);
@@ -161,7 +160,7 @@ class Model extends React.Component {
   addTypesToStore(res) {
     this.stores.imageTypes = res.imageType.images;
     this.stores.flavorTypes = res.flavorType.flavors;
-    this.stores.hostTypes = res.hostType.hosts;
+    this.stores.hostTypes = res.hostType.hypervisors;
   }
 
 //initialize table data
@@ -271,14 +270,7 @@ class Model extends React.Component {
     });
   }
 
-//change table data structure: to record url history
-  processTableData(table, res) {
-    if (res.server) {
-      table.data = [res.server];
-    } else if (res.servers) {
-      table.data = res.servers;
-    }
-
+  setPaginationData(table, res) {
     var pagination = {},
       next = res.servers_links ? res.servers_links[0] : null;
 
@@ -292,6 +284,37 @@ class Model extends React.Component {
       pagination.prevUrl = history[history.length - 1];
     }
     table.pagination = pagination;
+
+    return table;
+  }
+
+  setFloatingIP(table) {
+    table.data.forEach((data) => {
+      var floatingIP = [];
+      Object.keys(data.addresses).forEach((key) =>
+        data.addresses[key].forEach((element) => {
+          if (element['OS-EXT-IPS:type'] === 'floating') {
+            floatingIP.push(element.addr);
+          }
+        })
+      );
+
+      data._floatingIP = floatingIP;
+    });
+
+    return table;
+  }
+
+//change table data structure: to record url history
+  processTableData(table, res) {
+    if (res.server) {
+      table.data = [res.server];
+    } else if (res.servers) {
+      table.data = res.servers;
+    }
+
+    table = this.setPaginationData(table, res);
+    table = this.setFloatingIP(table);
 
     return table;
   }
@@ -401,22 +424,27 @@ class Model extends React.Component {
 
     var refreshCurrentList = {
       refreshList: true,
-      refreshDetail: true,
-      loadingTable: true,
-      loadingDetail: true
+      refreshDetail: true
+      // loadingTable: true,
+      // loadingDetail: true
     };
 
+    var that = this;
     switch(key) {
       case 'migrate':
+        migratePop({
+          row: rows[0],
+          hostTypes: this.stores.hostTypes
+        });
         break;
       case 'power_on':
         request.poweron(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
+          // this.refresh(refreshCurrentList);
         });
         break;
       case 'power_off':
         request.poweroff(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
+          // this.refresh(refreshCurrentList);
         });
         break;
       case 'reboot':
@@ -425,8 +453,23 @@ class Model extends React.Component {
         });
         break;
       case 'dissociate_floating_ip':
+        dissociateFIP(rows[0], null, (res) => {
+          this.refresh(refreshCurrentList);
+        });
         break;
       case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'instance',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteItem(rows[0]).then((res) => {
+              cb(true);
+              that.refresh(refreshCurrentList);
+            });
+          }
+        });
         break;
       case 'refresh':
         var params = this.props.params,
@@ -458,22 +501,25 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
-
+    var single = rows.length === 1 ? rows[0] : null;
+// console.log(single['_floatingIP'])
     for(let key in btns) {
       switch (key) {
         case 'migrate':
+          btns[key].disabled = single ? false : true;
           break;
         case 'power_on':
-          btns[key].disabled = (sole && sole.status.toLowerCase() === 'shutoff') ? false : true;
+          btns[key].disabled = (single && single.status.toLowerCase() === 'shutoff') ? false : true;
           break;
         case 'power_off':
         case 'reboot':
-          btns[key].disabled = (sole && sole.status.toLowerCase() === 'active') ? false : true;
+          btns[key].disabled = (single && single.status.toLowerCase() === 'active') ? false : true;
           break;
         case 'dissociate_floating_ip':
+          btns[key].disabled = (single && single._floatingIP.length > 0) ? false : true;
           break;
         case 'delete':
+          btns[key].disabled = single ? false : true;
           break;
         default:
           break;
@@ -554,7 +600,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.host,
-      content: ''
+      content: item['OS-EXT-SRV-ATTR:host']
     }, {
       title: __.flavor,
       content:

@@ -8,17 +8,20 @@
     "value": ["create"],
     "key": "create",
     "type": "create",
-    "icon": "create",
-    "disabled": true
+    "icon": "create"
   }, {
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",
+    "type": "delete",
     "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
   }],
+  "search": {
+    "placeholder": ["pls_enter", "flavor", "id"]
+  },
   "table": {
     "checkbox": true,
     "dataKey": "id",
@@ -36,6 +39,7 @@
       "key": "id"
     }, {
       "title": ["vcpu"],
+      "dataIndex": "vcpus",
       "key": "vcpu"
     }, {
       "title": ["memory"],

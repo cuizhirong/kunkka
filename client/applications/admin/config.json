@@ -5,8 +5,7 @@
       "host",
       "overview_host",
       "instance",
-      "flavor",
-      "test"
+      "flavor"
     ]
   }, {
     "title": "storage_service",

@@ -144,7 +144,7 @@ class Main extends React.Component {
 
   onChangeParams(params) {
     if (params.length === 3) {
-      var row = this.props.config.table.data.filter((data) => data.id === params[2])[0];
+      var row = this.props.config.table.data.filter((data) => '' + data.id === params[2])[0];
       /* no row data means invalid path list */
       if (!row) {
         router.replaceState('/' + params.slice(0, 2).join('/'));

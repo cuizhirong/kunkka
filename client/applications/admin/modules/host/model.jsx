@@ -11,7 +11,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
-// var router = require('../../cores/router');
+var router = require('../../cores/router');
 
 class Model extends React.Component {
 
@@ -56,6 +56,21 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'vcpu':
+          column.render = (col, item, i) => {
+            return item.vcpus_used + ' / ' + item.vcpus;
+          };
+          break;
+        case 'memory':
+          column.render = (col, item, i) => {
+            return (item.memory_mb_used / 1024).toFixed(2) + ' / ' + (item.memory_mb / 1024).toFixed(2);
+          };
+          break;
+        case 'disk_capacity':
+          column.render = (col, item, i) => {
+            return item.local_gb_used + ' / ' + item.local_gb;
+          };
+          break;
         default:
           break;
       }
@@ -64,43 +79,30 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
-    var _config = this.state.config,
-      table = _config.table;
-
     if (params[2]) {
-      // request.getServerByIDInitialize(params[2]).then((res) => {
-      //   table.data = [res[0].server];
-      //   this.updateTableData(table, res[0]._url, true, () => {
-      //     var pathList = router.getPathList();
-      //     router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-      //   });
-      // });
+      this.getHypervisorByIdOrName(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        var hypervisors = res[0].hypervisors,
-          services = res[1].services;
-
-        var newTable = this.processTableData(table, hypervisors, services);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getHypervisorList();
     }
   }
 
-//request: get single data(pathList[2] is server_id)
-  // getSingleData(serverID) {
-  //   request.getServerByID(serverID).then((res) => {
-  //     var table = this.state.config.table;
-  //     table.data = [res.server];
-  //     this.updateTableData(table, res._url);
-  //   });
-  // }
+//request: get Hypervisor By Id
+  getHypervisorByIdOrName(id) {
+    var table = this.state.config.table;
+    request.getHypervisorByIdOrName(id).then((res) => {
+      table.data = [res.hypervisor];
+      this.updateTableData(table, res._url, true, () => {
+        var pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
+    });
+  }
 
-//request: get list data(according to page limit)
-  getInitialListData() {
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+//request: get Hypervisor List
+  getHypervisorList() {
+    var table = this.state.config.table;
+    request.getHypervisorList().then((res) => {
+      table.data = res.hypervisors;
       this.updateTableData(table, res._url);
     });
   }
@@ -126,42 +128,22 @@ class Model extends React.Component {
     });
   }
 
-//change table data structure: to record url history
-  processTableData(table, hypervisors, services) {
-    var data = [];
+  getInitialListData() {
+    this.getHypervisorList();
+  }
 
-    // function findServerByName(serverData, name) {
-    //   var findData;
-    //   serverData.some((server) => {
-    //     if (server.binary === 'nova-compute' && server.host === name) {
-    //       findData = server;
-    //       return true;
-    //     }
-    //   });
-
-    //   return findData;
-    // }
-
-    hypervisors.forEach((host) => {
-      // var name = host.hypervisor_hostname.split('.')[0];
-        // info = findServerByName(services, name);
-
-      data.push({
-        id: host.id,
-        name: host.hypervisor_hostname,
-        ip: host.host_ip,
-        vcpu: host.vcpus_used + ' / ' + host.vcpus,
-        memory: (host.memory_mb_used / 1024).toFixed(2) + ' / ' + (host.memory_mb / 1024).toFixed(2) + ' GB',
-        volume: '',
-        instanceCounts: host.running_vms,
-        hostType: host.hypervisor_type,
-        status: host.status,
-        state: host.state
-      });
+  getNextListData(url, refreshDetail) {
+    request.getNextList(url).then((res) => {
+      var table = this.state.config.table;
+      if (res.hypervisor) {
+        table.data = [res.hypervisor];
+      } else if (res.hypervisors) {
+        table.data = res.hypervisors;
+      } else {
+        table.data = [];
+      }
+      this.updateTableData(table, res._url, refreshDetail);
     });
-
-    table.data = data;
-    return table;
   }
 
 //refresh: according to the given data rules
@@ -226,6 +208,9 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
+        break;
       case 'table':
         this.onClickTable(actionType, refs, data);
         break;
@@ -243,20 +228,6 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       // case 'pagination':
-      //   var url,
-      //     history = this.stores.urls;
-
-      //   if (data.direction === 'next') {
-      //     url = data.url;
-      //   } else {
-      //     history.pop();
-      //     if (history.length > 0) {
-      //       url = history.pop();
-      //     }
-      //   }
-
-      //   this.loadingTable();
-      //   this.getNextListData(url);
       //   break;
       default:
         break;
@@ -264,32 +235,56 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    // var {rows} = data;
+    var {rows} = data,
+      requestData;
 
+    var that = this;
+    function refresh() {
+      var r = {
+        refreshList: true,
+        refreshDetail: true,
+        loadingTable: true,
+        loadingDetail: true
+      };
+
+      that.refresh(r);
+    }
+
+    if (rows.length === 1) {
+      requestData = {
+        binary: 'nova-compute',
+        host: rows[0].service.host
+      };
+    }
     switch(key) {
       case 'enable':
+        this.loadingTable();
+        request.enableHost(requestData).then((res) => {
+          refresh();
+        });
         break;
       case 'disable':
+        this.loadingTable();
+        request.disableHost(requestData).then((res) => {
+          refresh();
+        });
         break;
       case 'refresh':
-        var params = this.props.params,
-          refreshData = {};
-
-        if (params[2]) {
-          refreshData.refreshList = true;
-          refreshData.refreshDetail = true;
-          refreshData.loadingTable = true;
-          refreshData.loadingDetail = true;
-        } else {
-          refreshData.initialList = true;
-          refreshData.loadingTable = true;
-          refreshData.clearState = true;
-        }
-
-        this.refresh(refreshData, params);
+        refresh();
         break;
       default:
         break;
+    }
+  }
+
+  onClickSearch(actionType, refs, data) {
+    if (actionType === 'click') {
+      this.loadingTable();
+      request.getHypervisorByIdOrName(data.text).then((res) => {
+        var table = this.state.config.table;
+        table.data = [res.hypervisor];
+        this.updateTableData(table, res._url);
+      });
     }
   }
 
@@ -304,22 +299,15 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var allActive = true;
-    rows.forEach((ele, i) => {
-      var thisState = ele.status.toLowerCase() === 'active' ? true : false;
-      allActive = allActive && thisState;
-    });
-
-    // var status;
-    // if (rows.length > 0) {
-    //   status = rows[0].status.toLowerCase();
-    // }
+    var sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
         case 'enable':
+          btns[key].disabled = (sole && sole.status === 'disabled') ? false : true;
           break;
         case 'disable':
+          btns[key].disabled = (sole && sole.status === 'enabled') ? false : true;
           break;
         default:
           break;
@@ -350,7 +338,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = [];
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -374,6 +362,40 @@ class Model extends React.Component {
       contents: contents,
       loading: false
     });
+  }
+
+  getBasicPropsItems(item) {
+    var items = [{
+      title: __.name,
+      content: item.hypervisor_hostname
+    }, {
+      title: __.ip,
+      content: item.host_ip
+    }, {
+      title: __.vcpu,
+      content: item.vcpus_used + ' / ' + item.vcpus
+    }, {
+      title: __.memory + __.gb,
+      content: (item.memory_mb_used / 1024).toFixed(2) + ' / ' + (item.memory_mb / 1024).toFixed(2)
+    }, {
+      title: __.disk + __.capacity + __.gb,
+      content: item.local_gb_used + ' / ' + item.local_gb
+    }, {
+      title: __.virtual_machine + __.counts,
+      content: item.running_vms
+    }, {
+      title: __.physical_host + __.type,
+      content: item.hypervisor_type
+    }, {
+      title: __.status,
+      type: 'status',
+      content: item.status
+    }, {
+      title: __.state,
+      content: item.state
+    }];
+
+    return items;
   }
 
   onDetailAction(tabKey, actionType, data) {

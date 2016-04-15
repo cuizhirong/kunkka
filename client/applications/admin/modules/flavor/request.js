@@ -1,31 +1,17 @@
-var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
 
 module.exports = {
-  getFilterOptions: function(forced) {
-    return storage.getList([], forced);
+  getList: function() {
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/detail';
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
   },
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
-  getServerByIDInitialize: function(serverID, forced) {
-    var req = [];
-    req.push(this.getServerByID(serverID));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
-  getList: function(pageLimit) {
-    if(isNaN(Number(pageLimit))) {
-      pageLimit = 10;
-    }
-
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors';
+  getFlavorById: function(id) {
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -42,33 +28,15 @@ module.exports = {
       return res;
     });
   },
-  filterFromAll: function(data) {
-    function requestParams(obj) {
-      var str = '';
-      for(let key in obj) {
-        str += ('&' + key + '=' + obj[key]);
-      }
-
-      return str;
-    }
-
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1' + requestParams(data);
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
+  createFlavor: function(data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors',
+      data: data
     });
   },
-  getServerByID: function(serverID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
+  deleteItem: function(flavorID) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID
     });
-  },
-  deleteItem: function(items) {
   }
 };
