@@ -1,5 +1,6 @@
 {
   "en": {
+    "graphic": "Graphic",
     "application_name": "Project",
     "account_placeholder": "Please enter username or email",
     "active": "Active",
@@ -90,6 +91,7 @@
     "yes": "Yes"
   },
   "zh-CN": {
+    "graphic": "图表",
     "application_name": "项目",
     "account_placeholder": "请输入账号",
     "active": "运行中",

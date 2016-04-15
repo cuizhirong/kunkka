@@ -1,5 +1,9 @@
 {
   "modules": [{
+    "items": [
+      "graphic"
+    ]
+  }, {
     "title": "compute",
     "items": [
       "instance",

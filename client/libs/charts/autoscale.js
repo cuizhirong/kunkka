@@ -8,15 +8,15 @@
  * @api public
  */
 
-module.exports = function(canvas) {
+module.exports = function(canvas, opt) {
   var ctx = canvas.getContext('2d');
   var ratio = window.devicePixelRatio || 1;
-  if (ratio !== 1) {
-    canvas.style.width = canvas.width + 'px';
-    canvas.style.height = canvas.height + 'px';
-    canvas.width *= ratio;
-    canvas.height *= ratio;
-    ctx.scale(ratio, ratio);
-  }
+
+  canvas.style.width = opt.width + 'px';
+  canvas.style.height = opt.height + 'px';
+  canvas.width = opt.width * ratio;
+  canvas.height = opt.height * ratio;
+  ctx.scale(ratio, ratio);
+
   return canvas;
 };
