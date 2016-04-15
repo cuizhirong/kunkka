@@ -1,0 +1,12 @@
+{
+  "en": {
+    "email": "Email",
+    "user_name": "User Name",
+    "password": "Password"
+  },
+  "zh-CN": {
+    "email": "邮箱",
+    "user_name": "用户名",
+    "password": "密码"
+  }
+}

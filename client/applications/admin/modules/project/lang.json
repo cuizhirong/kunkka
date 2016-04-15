@@ -1,0 +1,12 @@
+{
+  "en": {
+    "quota": "Quota",
+    "add": "Add ",
+    "remove": "Remove "
+  },
+  "zh-CN": {
+    "quota": "配额",
+    "add": "添加",
+    "remove": "移除"
+  }
+}

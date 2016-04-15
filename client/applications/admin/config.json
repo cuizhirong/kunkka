@@ -20,6 +20,15 @@
       "floating-ip",
       "port"
     ]
+  }, {
+    "title": "keystone",
+    "items": [
+      "domain",
+      "project",
+      "user",
+      "user-group",
+      "role"
+    ]
   }],
   "default_module": "instance",
   "languages": [

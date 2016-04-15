@@ -1,0 +1,66 @@
+{
+  "tabs": [{
+    "name": ["role"],
+    "key": "role",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "role"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "role"],
+    "key": "modify_role",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["assign", "role"],
+          "key": "assign_role",
+          "disabled": true
+        }, {
+          "title": ["revoke", "role"],
+          "key": "revoke_role",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "role", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["id"],
+      "dataIndex": "id",
+      "key": "id"
+    }],
+    "data": []
+  }
+}
