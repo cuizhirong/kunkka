@@ -2,7 +2,7 @@ require('./animation');
 var easing = require('./easing');
 var autoscale = require('./autoscale');
 
-class BarChart {
+class LineChart {
   constructor(container) {
     this.container = container;
     this.initDOM();
@@ -104,4 +104,4 @@ class BarChart {
 
 }
 
-module.exports = BarChart;
+module.exports = LineChart;

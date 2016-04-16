@@ -13,7 +13,7 @@ c.setOption({
     color: '#ff5a67',
     fontSize: '30px'
   },
-  period: 500
+  period: 600
 });
 
 var c2 = new Chart.PieChart(document.getElementById('container2'));
@@ -29,7 +29,7 @@ c2.setOption({
     color: '#42b9e5',
     fontSize: '30px'
   },
-  period: 500,
+  period: 600,
   easing: 'easeInOutQuart'
 });
 
@@ -46,5 +46,22 @@ c3.setOption({
     color: '#42b9e5',
     fontSize: '30px'
   },
-  period: 500
+  period: 600
+});
+
+var c4 = new Chart.GaugeChart(document.getElementById('container4'));
+
+c4.setOption({
+  lineWidth: 0.4,
+  bgColor: '#f2f3f4',
+  tickColor: '#bbbfc5',
+  series: [{
+    color: '#42b9e5',
+    value: 0.8
+  }],
+  pointer: {
+    radius: 10,
+    color: '#252f3d'
+  },
+  period: 600
 });
