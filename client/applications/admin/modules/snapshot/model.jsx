@@ -6,6 +6,7 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+var deleteModal = require('client/components/modal_delete/index');
 
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -58,14 +59,6 @@ class Model extends React.Component {
             return item.size + 'GB';
           };
           break;
-        case 'volume':
-          column.render = (col, item, i) => {
-            return (
-              <a data-type="router" href={'/admin/volume/' + item.volume_id}>
-                {'(' + item.volume_id.slice(0, 8) + ')'}
-              </a>);
-          };
-          break;
         default:
           break;
       }
@@ -73,7 +66,30 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
+    var setOption = function(key, data) {
+      filters.forEach((filter) => {
+        filter.items.forEach((item) => {
+          if(item.key === key) {
+            item.data = data;
+          }
+        });
+      });
+    };
 
+    var statusTypes = [{
+      id: 'available',
+      name: __.available
+    }, {
+      id: 'error',
+      name: __.error
+    }, {
+      id: 'deleting',
+      name: __.deleting
+    }, {
+      id: 'error_deleting',
+      name: __.error_deleting
+    }];
+    setOption('status', statusTypes);
   }
 
 //initialize table data
@@ -113,6 +129,30 @@ class Model extends React.Component {
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
+  }
+
+//request: filter request
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
+      this.loadingTable();
+
+      var snapshotID = data.snapshot_id,
+        allTenant = data.all_tenant;
+
+      if (snapshotID) {
+        request.getSnapshotByID(snapshotID.id).then((res) => {
+          var table = this.state.config.table;
+          table.data = [res.snapshot];
+          this.updateTableData(table, res._url);
+        });
+      } else if (allTenant){
+        request.filterFromAll(allTenant).then((res) => {
+          var table = this.state.config.table;
+          table.data = res.snapshots;
+          this.updateTableData(table, res._url);
+        });
+      }
+    }
   }
 
 //rerender: update table data
@@ -217,6 +257,9 @@ class Model extends React.Component {
 
   onAction(field, actionType, refs, data) {
     switch (field) {
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
+        break;
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
@@ -224,7 +267,9 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+        request.getVolumeById(data.rows[0].volume_id).then((res) => {
+          this.onClickDetailTabs(actionType, refs, data, res.volume);
+        });
         break;
       default:
         break;
@@ -232,7 +277,42 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
+    var rows = data.rows;
 
+    switch(key) {
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'snapshot',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteSnapshots(rows).then((res) => {
+              cb(true);
+            });
+          }
+        });
+        break;
+      case 'refresh':
+        var params = this.props.params,
+          refreshData = {};
+
+        if (params[2]) {
+          refreshData.refreshList = true;
+          refreshData.refreshDetail = true;
+          refreshData.loadingTable = true;
+          refreshData.loadingDetail = true;
+        } else {
+          refreshData.initialList = true;
+          refreshData.loadingTable = true;
+          refreshData.clearState = true;
+        }
+
+        this.refresh(refreshData, params);
+        break;
+      default:
+        break;
+    }
   }
 
   onClickTableCheckbox(refs, data) {
@@ -246,6 +326,16 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    for(let key in btns) {
+      switch (key) {
+        case 'delete':
+          btns[key].disabled = rows.length > 0 ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
     return btns;
   }
 
@@ -275,7 +365,7 @@ class Model extends React.Component {
     }
   }
 
-  onClickDetailTabs(tabKey, refs, data) {
+  onClickDetailTabs(tabKey, refs, data, volume) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
@@ -296,7 +386,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var basicPropsItem = this.getBasicPropsItems(rows[0], volume);
 
           contents[tabKey] = (
             <div>
@@ -322,7 +412,7 @@ class Model extends React.Component {
     });
   }
 
-  getBasicPropsItems(item) {
+  getBasicPropsItems(item, volume) {
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substr(0, 8) + ')',
@@ -334,21 +424,29 @@ class Model extends React.Component {
       title: __.size,
       content: item.size + 'GB'
     }, {
+      title: __.volume,
+      content: <span>
+        <i className="glyphicon icon-volume" />
+        <a data-type="router" href={'/dashboard/volume/' + item.volume_id}>
+          {volume.name || '(' + item.volume_id.substr(0, 8) + ')'}
+        </a>
+      </span>
+    }, {
       title: __.type,
-      content: ''
+      content: volume.volume_type === 'sata' ? __.performance_type : __.capacity_type
     }, {
-      title: __.project_id,
-      content: ''
+      title: __.project + __.id,
+      content: item['os-extended-snapshot-attributes:project_id']
     }, {
-      title: __.user_id,
-      content: ''
+      title: __.user + __.id,
+      content: volume.user_id
     }, {
       title: __.status,
       type: 'status',
       status: item.status,
       content: item.status
     }, {
-      title: __.created_time,
+      title: __.created + __.time,
       type: 'time',
       content: item.created_at
     }];
@@ -368,6 +466,15 @@ class Model extends React.Component {
 
   onDescriptionAction(actionType, data) {
     switch(actionType) {
+      case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editSnapshotName(rawItem, newName).then((res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
       default:
         break;
     }

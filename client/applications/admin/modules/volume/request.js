@@ -51,6 +51,30 @@ module.exports = {
       return res;
     });
   },
+  getServerById: function(serverID) {
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
+    return fetch.get({
+      url: url
+    });
+  },
+  filterFromAll: function(data) {
+    function requestParams(obj) {
+      var str = '';
+      for(let key in obj) {
+        str += ('&' + key + '=' + obj[key]);
+      }
+
+      return str;
+    }
+
+    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + requestParams(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   editVolumeName: function(item, newName) {
     var data = {};
     data.volume = {};

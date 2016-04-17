@@ -55,19 +55,13 @@
       "sort": true
     }, {
       "title": ["size"],
-      "dataIndex": "size",
       "key": "size"
     }, {
-      "title": ["attached_instance"],
-      "dataIndex": "attached_instance",
-      "key": "attached_instance"
-    }, {
       "title": ["type"],
-      "dataIndex": "type",
       "key": "type"
     }, {
       "title": ["project", "id"],
-      "dataIndex": "project_id",
+      "dataIndex": "os-vol-tenant-attr:tenant_id",
       "key": "project_id"
     }, {
       "title": ["user", "id"],
@@ -75,11 +69,9 @@
       "key": "user_id"
     }, {
       "title": ["shared"],
-      "dataIndex": "shared",
       "key": "shared"
     }, {
       "title": ["attributes"],
-      "dataIndex": "attributes",
       "key": "attributes"
     }, {
       "title": ["status"],

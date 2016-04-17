@@ -8,7 +8,8 @@
     "value": ["delete"],
     "key": "delete",
     "type": "delete",
-    "icon": "delete"
+    "icon": "delete",
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -36,7 +37,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 8,
+    "limit": 3,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
@@ -45,24 +46,11 @@
       "sort": true
     }, {
       "title": ["size"],
-      "dataIndex": "size",
       "key": "size"
     }, {
-      "title": ["volume"],
-      "dataIndex": "volume",
-      "key": "volume"
-    }, {
-      "title": ["type"],
-      "dataIndex": "type",
-      "key": "type"
-    }, {
       "title": ["project", "id"],
-      "dataIndex": "project_id",
+      "dataIndex": "os-extended-snapshot-attributes:project_id",
       "key": "project_id"
-    }, {
-      "title": ["user", "id"],
-      "dataIndex": "user_id",
-      "key": "user_id"
     }, {
       "title": ["status"],
       "dataIndex": "status",
@@ -74,7 +62,7 @@
         "filterBy": "ACTIVE"
       }]
     }, {
-      "title": ["created_time"],
+      "title": ["created", "time"],
       "dataIndex": "created_time",
       "type": "time",
       "key": "created_time"

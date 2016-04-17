@@ -1,5 +1,7 @@
 'use strict';
 
+const qs = require('querystring');
+
 module.exports = function (query) {
   var str = '';
   if (query) {
@@ -7,9 +9,10 @@ module.exports = function (query) {
       if (str) {
         str += '&';
       }
-      str += k + '=' + query[k];
+      str += k + '=' + qs.escape(query[k]);
     });
   }
   str = str ? ('?' + str) : '';
+
   return str;
 };

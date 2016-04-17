@@ -60,30 +60,18 @@ class Model extends React.Component {
             return item.size + 'GB';
           };
           break;
-        case 'attached_instance':
-          column.render = (col, item, i) => {
-            return (item.attachments[0] ?
-              <span>
-                <i className="glyphicon icon-instance" />
-                <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
-                  {'(' + item.attachments[0].server_id.substr(0, 8) + ')'}
-                </a>
-              </span>
-              : '');
-          };
-          break;
         case 'type':
           column.render = (col, item, i) => {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {item.volume_type === 'sata' ? __.performance : __.capacity}
+                {item.volume_type === 'sata' ? __.performance_type : __.capacity_type}
               </span> : '';
           };
           break;
-        case 'user_id':
+        case 'shared':
           column.render = (col, item, i) => {
-            return '(' + item.user_id.substr(0, 8) + ')';
+            return item.multiattach ? __.yes : __.no;
           };
           break;
         case 'attributes':
@@ -102,7 +90,33 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
+    var setOption = function(key, data) {
+      filters.forEach((filter) => {
+        filter.items.forEach((item) => {
+          if(item.key === key) {
+            item.data = data;
+          }
+        });
+      });
+    };
 
+    var statusTypes = [{
+      id: 'available',
+      name: __.available
+    }, {
+      id: 'in-use',
+      name: __['in-use']
+    }, {
+      id: 'error',
+      name: __.error
+    }, {
+      id: 'error_deleting',
+      name: __.error_deleting
+    }, {
+      id: 'detaching',
+      name: __.detaching
+    }];
+    setOption('status', statusTypes);
   }
 
 //initialize table data
@@ -142,6 +156,30 @@ class Model extends React.Component {
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
+  }
+
+//request: filter request
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
+      this.loadingTable();
+
+      var volumeID = data.volume_id,
+        allTenant = data.all_tenant;
+
+      if (volumeID) {
+        request.getVolumeByID(volumeID.id).then((res) => {
+          var table = this.state.config.table;
+          table.data = [res.volume];
+          this.updateTableData(table, res._url);
+        });
+      } else if (allTenant){
+        request.filterFromAll(allTenant).then((res) => {
+          var table = this.state.config.table;
+          table.data = res.volumes;
+          this.updateTableData(table, res._url);
+        });
+      }
+    }
   }
 
 //rerender: update table data
@@ -247,6 +285,9 @@ class Model extends React.Component {
 
   onAction(field, actionType, refs, data) {
     switch (field) {
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
+        break;
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
@@ -254,7 +295,13 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+        if(data.rows[0].attachments[0]) {
+          request.getServerById(data.rows[0].attachments[0].server_id).then((res) => {
+            this.onClickDetailTabs(actionType, refs, data, res.server);
+          });
+        } else {
+          this.onClickDetailTabs(actionType, refs, data);
+        }
         break;
       default:
         break;
@@ -360,7 +407,7 @@ class Model extends React.Component {
     }
   }
 
-  onClickDetailTabs(tabKey, refs, data) {
+  onClickDetailTabs(tabKey, refs, data, server) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
@@ -381,7 +428,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var basicPropsItem = this.getBasicPropsItems(rows[0], server);
 
           contents[tabKey] = (
             <div>
@@ -407,7 +454,7 @@ class Model extends React.Component {
     });
   }
 
-  getBasicPropsItems(item) {
+  getBasicPropsItems(item, server) {
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substr(0, 8) + ')',
@@ -421,19 +468,18 @@ class Model extends React.Component {
     }, {
       title: __.attached_instance,
       content: item.attachments[0] ?
-        <span>
-          <i className="glyphicon icon-instance" />
-          <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
-            {'(' + item.attachments[0].server_id.substr(0, 8) + ')'}
-          </a>
-        </span>
-        : ''
+          <span>
+            <i className="glyphicon icon-instance" />
+            <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
+              {server ? server.name : '(' + item.attachments[0].server_id.substr(0, 8) + ')'}
+            </a>
+          </span> : '-'
     }, {
       title: __.type,
-      content: item.volume_type === 'sata' ? __.performance : __.capacity
+      content: item.volume_type === 'sata' ? __.performance_type : __.capacity_type
     }, {
       title: __.project + __.id,
-      content: ''
+      content: item['os-vol-tenant-attr:tenant_id']
     }, {
       title: __.user + __.id,
       content: item.user_id
@@ -443,7 +489,7 @@ class Model extends React.Component {
         if (item.metadata.readonly) {
           return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
         } else {
-          return '';
+          return '-';
         }
       })()
     }, {
