@@ -92,11 +92,7 @@ Subnet.prototype = {
     });
   }
 };
-module.exports = function (app, extension) {
-  Object.assign(Subnet.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Subnet.prototype, extension);
-  }
-  var subnet = new Subnet(app);
-  subnet.initRoutes();
-};
+
+Object.assign(Subnet.prototype, Base.prototype);
+
+module.exports = Subnet;

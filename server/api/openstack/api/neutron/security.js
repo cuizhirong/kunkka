@@ -40,11 +40,6 @@ Security.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Security.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Security.prototype, extension);
-  }
-  var security = new Security(app);
-  security.initRoutes();
-};
+Object.assign(Security.prototype, Base.prototype);
+
+module.exports = Security;

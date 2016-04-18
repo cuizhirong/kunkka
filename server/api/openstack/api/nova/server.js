@@ -154,11 +154,6 @@ Instance.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Instance.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Instance.prototype, extension);
-  }
-  var instance = new Instance(app);
-  instance.initRoutes();
-};
+Object.assign(Instance.prototype, Base.prototype);
+
+module.exports = Instance;

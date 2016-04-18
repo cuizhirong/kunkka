@@ -32,11 +32,6 @@ Keypair.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Keypair.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Keypair.prototype, extension);
-  }
-  var instance = new Keypair(app);
-  instance.initRoutes();
-};
+Object.assign(Keypair.prototype, Base.prototype);
+
+module.exports = Keypair;

@@ -82,12 +82,13 @@
     "grunt-webpack": "^1.0.11",
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
-    "jest-cli": "^0.8.1",
+    "jest-cli": "^11.0.2",
     "json-loader": "^0.5.4",
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
     "load-grunt-tasks": "^3.3.0",
     "postcss-loader": "^0.8.2",
+    "proxyquire": "^1.7.4",
     "react-addons-test-utils": "^15.0.1",
     "rewire": "^2.5.1",
     "rsvp": "^3.1.0",
@@ -117,6 +118,7 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/"
     ],
-    "collectCoverage": true
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage/client"
   }
 }

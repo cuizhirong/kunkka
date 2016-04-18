@@ -18,6 +18,7 @@ var prototype = {
     this.projectId = req.params.projectId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
+    this.query = req.query;
     async.parallel(
       that.arrAsync,
       (err, results) => {
@@ -101,11 +102,6 @@ var prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Overview.prototype, prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Overview.prototype, extension);
-  }
-  var overview = new Overview(app);
-  overview.initRoutes();
-};
+Object.assign(Overview.prototype, prototype, Base.prototype);
+
+module.exports = Overview;

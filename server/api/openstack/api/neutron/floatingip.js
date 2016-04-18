@@ -75,11 +75,7 @@ Floatingip.prototype = {
     });
   }
 };
-module.exports = function (app, extension) {
-  Object.assign(Floatingip.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Floatingip.prototype, extension);
-  }
-  var instance = new Floatingip(app);
-  instance.initRoutes();
-};
+
+Object.assign(Floatingip.prototype, Base.prototype);
+
+module.exports = Floatingip;

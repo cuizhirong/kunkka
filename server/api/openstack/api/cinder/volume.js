@@ -84,11 +84,6 @@ Volume.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Volume.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Volume.prototype, extension);
-  }
-  var volume = new Volume(app);
-  volume.initRoutes();
-};
+Object.assign(Volume.prototype, Base.prototype);
+
+module.exports = Volume;

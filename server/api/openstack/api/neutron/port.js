@@ -103,11 +103,7 @@ Port.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Port.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Port.prototype, extension);
-  }
-  var security = new Port(app);
-  security.initRoutes();
-};
+
+Object.assign(Port.prototype, Base.prototype);
+
+module.exports = Port;

@@ -1,5 +1,5 @@
 {
-  "spec_dir": "tests/server_tests",
+  "spec_dir": "server/api/openstack/test",
   "spec_files": [
     "**/*.js"
   ],

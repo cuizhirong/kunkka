@@ -5,9 +5,13 @@ const Driver = require('server/drivers');
 function API (arrService, arrServiceObject) {
   this.arrAsync = [];
   /* get services. */
-  arrService.forEach( s => this[s] = Driver[s] );
+  if (arrService) {
+    arrService.forEach( s => this[s] = Driver[s] );
+  }
   /* get methods of show serviceObject list. */
-  arrServiceObject.forEach( s => this.arrAsync.push(this['__' + s].bind(this)) );
+  if (arrServiceObject) {
+    arrServiceObject.forEach( s => this.arrAsync.push(this['__' + s].bind(this)) );
+  }
 }
 
 API.prototype = {

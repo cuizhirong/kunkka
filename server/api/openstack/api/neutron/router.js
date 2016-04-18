@@ -81,11 +81,7 @@ Router.prototype = {
     });
   }
 };
-module.exports = function (app, extension) {
-  Object.assign(Router.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Router.prototype, extension);
-  }
-  var instance = new Router(app);
-  instance.initRoutes();
-};
+
+Object.assign(Router.prototype, Base.prototype);
+
+module.exports = Router;

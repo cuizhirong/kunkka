@@ -66,12 +66,6 @@ Snapshot.prototype = {
   }
 };
 
+Object.assign(Snapshot.prototype, Base.prototype);
 
-module.exports = function (app, extension) {
-  Object.assign(Snapshot.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Snapshot.prototype, extension);
-  }
-  var snapshot = new Snapshot(app);
-  snapshot.initRoutes();
-};
+module.exports = Snapshot;

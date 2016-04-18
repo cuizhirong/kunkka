@@ -1,17 +1,17 @@
 'use strict';
 
 var async = require('async');
-var Driver = require('server/drivers');
-var Keystone = Driver.keystone;
 var Base = require('../base.js');
 var config = require('config');
 
-function Auth (app, keystone) {
+function Auth (app) {
   this.app = app;
-  this.keystone = keystone;
+  this.arrService = ['keystone'];
+  this.arrServiceObject = [];
+  Base.call(this, this.arrService, this.arrServiceObject);
 }
 
-var prototype = {
+Auth.prototype = {
   authentication: function (req, res, next) {
     var username = req.body.username;
     var password = req.body.password;
@@ -139,19 +139,15 @@ var prototype = {
     res.redirect('/');
   },
   initRoutes: function() {
-    this.app.post('/auth/login', this.authentication.bind(this));
-    this.app.put('/auth/switch_region', this.swtichRegion.bind(this));
-    this.app.put('/auth/switch_project', this.swtichPorject.bind(this));
-    this.app.get('/auth/logout', this.logout.bind(this));
+    return this.__initRoutes( () => {
+      this.app.post('/auth/login', this.authentication.bind(this));
+      this.app.put('/auth/switch_region', this.swtichRegion.bind(this));
+      this.app.put('/auth/switch_project', this.swtichPorject.bind(this));
+      this.app.get('/auth/logout', this.logout.bind(this));
+    });
   }
 };
 
-module.exports = function(app, extension) {
-  Object.assign(Auth.prototype, Base.prototype);
-  Object.assign(Auth.prototype, prototype);
-  if (extension) {
-    Object.assign(Auth.prototype, extension);
-  }
-  var auth = new Auth(app, Keystone);
-  auth.initRoutes();
-};
+Object.assign(Auth.prototype, Base.prototype);
+
+module.exports = Auth;

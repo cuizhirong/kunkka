@@ -77,11 +77,6 @@ Image.prototype = {
   }
 };
 
-module.exports = function (app, extension) {
-  Object.assign(Image.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Image.prototype, extension);
-  }
-  var image = new Image(app);
-  image.initRoutes();
-};
+Object.assign(Image.prototype, Base.prototype);
+
+module.exports = Image;

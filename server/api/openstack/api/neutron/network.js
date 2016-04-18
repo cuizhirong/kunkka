@@ -88,11 +88,7 @@ Network.prototype = {
     });
   }
 };
-module.exports = function (app, extension) {
-  Object.assign(Network.prototype, Base.prototype);
-  if (extension) {
-    Object.assign(Network.prototype, extension);
-  }
-  var network = new Network(app);
-  network.initRoutes();
-};
+
+Object.assign(Network.prototype, Base.prototype);
+
+module.exports = Network;

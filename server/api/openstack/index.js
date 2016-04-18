@@ -44,11 +44,17 @@ module.exports = function(app) {
           return s !== 'lang.json'; // exclude lang.json
         })
         .forEach( s => {
-          let apiModule = require(path.join(apiPath, m, s));
+          let ApiModule = require(path.join(apiPath, m, s));
           /* add extensions */
           s = path.basename(s, '.js');
           let extension = (apiExtension && apiExtension[m] && apiExtension[m][s]) ? apiExtension[m][s] : undefined;
-          apiModule(app, extension);
+          if (extension) {
+            Object.assign(ApiModule.prototype, extension);
+          }
+          let apiModule = new ApiModule(app);
+          if (apiModule.initRoutes) {
+            apiModule.initRoutes();
+          }
         });
     });
   return app;
