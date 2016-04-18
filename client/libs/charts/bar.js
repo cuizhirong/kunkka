@@ -29,58 +29,90 @@ class BarChart {
     this.count = 0;
     this.easingFunc = easing[option.easing || 'linear'];
 
-    // Render background
-    this.renderPieBackground();
+    // Calc yAxis
+    this.calcYAxis(option);
 
-    // Render Pie
-    this.setStrokeStyle();
-    this.renderPie();
+    // Render background
+    this.renderBarBackground();
+
+    // Render Bar
+    this.canvas.getContext('2d').translate(0.5, -0.5);
+    this.renderBar();
   }
 
-  renderPieBackground() {
+  renderBarBackground() {
     var ctx = this.bCanvas.getContext('2d'),
       option = this.option,
-      bgColor = option.bgColor,
-      coordinate = [this.width / 2, this.height / 2],
-      lineWidth = option.lineWidth,
-      radius = this.width / 2 - lineWidth / 2;
+      yAxis = option.yAxis,
+      marginLeft = this.marginLeft,
+      height = this.height;
 
-    ctx.strokeStyle = bgColor;
-    ctx.lineWidth = lineWidth;
+    ctx.translate(0.5, -0.5);
+    ctx.strokeStyle = yAxis.color;
+    ctx.lineWidth = 1;
+
+    // Draw axis
     ctx.beginPath();
-    ctx.arc(coordinate[0], coordinate[1], radius, 0, Math.PI * 2, false);
+    ctx.moveTo(marginLeft, 0);
+    ctx.lineTo(marginLeft, height);
+    ctx.lineTo(height, this.width);
     ctx.stroke();
+
+    var strList = [];
+    for (let i = 0, len = this.realMax / yAxis.tickPeriod; i <= len; i++) {
+      strList.push('' + yAxis.tickPeriod * i);
+
+      ctx.fillText('' + yAxis.tickPeriod * i, 0, height - this.ratio * yAxis.tickPeriod * i);
+    }
   }
 
-  setStrokeStyle() {
-    var ctx = this.canvas.getContext('2d');
-    ctx.strokeStyle = this.option.series[0].color;
-    ctx.lineWidth = this.option.lineWidth;
+  calcYAxis(option) {
+    var tickPeriod = option.yAxis.tickPeriod || 10;
+    var data = option.series.map(function(m) {
+      return m.value;
+    });
+    var max = Math.max.apply(null, data);
+    var realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
+
+    // var height = this.height;
+
+    this.ratio = this.height / realMax;
+
+    // Calc each bar height respectively
+    this.heightList = data.map(n => {
+      return Math.floor(this.ratio * n);
+    });
+
+    this.marginLeft = 20;
   }
 
-  renderPie() {
+  renderBar() {
     var ctx = this.canvas.getContext('2d'),
       option = this.option,
       series = option.series,
-      coordinate = [this.width / 2, this.height / 2],
-      lineWidth = option.lineWidth,
-      radius = this.width / 2 - lineWidth / 2;
+      height = this.height,
+      heightList = this.heightList,
+      barWidth = option.xAxis.barWidth,
+      tickWidth = option.xAxis.tickWidth,
+      gap = tickWidth - barWidth;
 
     ++this.count;
     var t = this.easingFunc(this.count / this.ticks);
-    var percent = t * series[0].value;
-    var arc = percent * Math.PI * 2 - Math.PI / 2;
 
-    ctx.clearRect(0, 0, this.width, this.height);
-    ctx.beginPath();
-    ctx.arc(coordinate[0], coordinate[1], radius, -Math.PI / 2, arc, false);
-    ctx.stroke();
+    ctx.clearRect(0, 0, this.width, height);
+
+    series.forEach((m, i) => {
+      ctx.fillStyle = m.color;
+      var h = heightList[i] * t;
+      ctx.fillRect(this.marginLeft + tickWidth * i + gap - 0.5, height - h + 0.5, barWidth, h);
+
+    });
 
     if (this.count === this.ticks) {
       this.count = 0;
       return;
     }
-    this.animationId = requestAnimationFrame(this.renderPie.bind(this));
+    this.animationId = requestAnimationFrame(this.renderBar.bind(this));
   }
 
 }

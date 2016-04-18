@@ -72,13 +72,24 @@ var c5 = new Chart.BarChart(document.getElementById('container5'));
 
 c5.setOption({
   unit: 'TB',
-  tickColor: 'f2f3f4',
+  xAxis: {
+    tickWidth: 50,
+    barWidth: 30
+  },
+  yAxis: {
+    color: '#f2f3f4',
+    tickPeriod: 10,
+    tickColor: '#939ba3'
+  },
   series: [{
-    color: '#939ba3',
-    value: 100
+    color: '#1797c6',
+    value: 105
   }, {
     color: '#42b9e5',
     value: 25
+  }, {
+    color: '#42b9e5',
+    value: 75
   }],
   period: 600,
   easing: 'easeOutCubic'
