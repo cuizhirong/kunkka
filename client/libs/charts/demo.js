@@ -63,5 +63,23 @@ c4.setOption({
     radius: 10,
     color: '#252f3d'
   },
-  period: 600
+  period: 600,
+  easing: 'easeOutCubic'
+});
+
+
+var c5 = new Chart.BarChart(document.getElementById('container5'));
+
+c5.setOption({
+  unit: 'TB',
+  tickColor: 'f2f3f4',
+  series: [{
+    color: '#939ba3',
+    value: 100
+  }, {
+    color: '#42b9e5',
+    value: 25
+  }],
+  period: 600,
+  easing: 'easeOutCubic'
 });

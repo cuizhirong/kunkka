@@ -1,4 +1,3 @@
-require('./animation');
 var easing = require('./easing');
 var autoscale = require('./autoscale');
 
@@ -10,14 +9,12 @@ class BarChart {
 
   initDOM() {
     var canvas = this.canvas = document.createElement('canvas'),
-      bCanvas = this.bCanvas = document.createElement('canvas'),
-      textDiv = this.textDiv = document.createElement('div');
+      bCanvas = this.bCanvas = document.createElement('canvas');
 
     this.width = this.container.clientWidth;
     this.height = this.container.clientHeight;
 
     this.container.appendChild(bCanvas);
-    this.container.appendChild(textDiv);
     this.container.appendChild(canvas);
 
     autoscale([canvas, bCanvas], {
@@ -26,25 +23,11 @@ class BarChart {
     });
   }
 
-  setTextStyle(DOM) {
-    DOM.style.position = 'absolute';
-    DOM.style.textAlign = 'center';
-    DOM.style.width = this.width + 'px';
-    DOM.style.height = this.height + 'px';
-    DOM.style.lineHeight = this.height + 'px';
-    DOM.style.fontSize = this.option.text.fontSize;
-    DOM.style.color = this.option.text.color;
-    DOM.innerHTML = '-';
-  }
-
   setOption(option) {
     this.option = option;
     this.ticks = Math.round(option.period / 16);
     this.count = 0;
     this.easingFunc = easing[option.easing || 'linear'];
-
-    // Set text style
-    this.setTextStyle(this.textDiv);
 
     // Render background
     this.renderPieBackground();
@@ -93,10 +76,8 @@ class BarChart {
     ctx.arc(coordinate[0], coordinate[1], radius, -Math.PI / 2, arc, false);
     ctx.stroke();
 
-    // draw text
-    this.textDiv.innerHTML = Math.round(percent * 100) + '%';
-
     if (this.count === this.ticks) {
+      this.count = 0;
       return;
     }
     this.animationId = requestAnimationFrame(this.renderPie.bind(this));

@@ -1,4 +1,3 @@
-require('./animation');
 var easing = require('./easing');
 var autoscale = require('./autoscale');
 

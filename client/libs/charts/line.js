@@ -1,4 +1,3 @@
-require('./animation');
 var easing = require('./easing');
 var autoscale = require('./autoscale');
 
@@ -97,6 +96,7 @@ class LineChart {
     this.textDiv.innerHTML = Math.round(percent * 100) + '%';
 
     if (this.count === this.ticks) {
+      this.count = 0;
       return;
     }
     this.animationId = requestAnimationFrame(this.renderPie.bind(this));
