@@ -1,0 +1,10 @@
+{
+  "en": {
+    "deleted": "Deleted ",
+    "restore": "Restore"
+  },
+  "zh-CN": {
+    "deleted": "删除",
+    "restore": "还原"
+  }
+}

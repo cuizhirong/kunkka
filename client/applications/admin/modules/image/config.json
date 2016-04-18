@@ -1,0 +1,67 @@
+{
+  "tabs": [{
+    "name": ["image"],
+    "key": "image",
+    "default": true
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter"],
+    "width": 200
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "size"
+    }, {
+      "title": ["type"],
+      "key": "type",
+      "dataIndex": "image_type",
+      "filter": [{
+        "name": ["snapshot"],
+        "key": "snapshot",
+        "filterBy": "snapshot"
+      }, {
+        "name": ["image"],
+        "key": "image"
+      }]
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "active"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

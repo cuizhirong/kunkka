@@ -5,7 +5,9 @@
       "host",
       "overview_host",
       "instance",
-      "flavor"
+      "instance_restore",
+      "flavor",
+      "image"
     ]
   }, {
     "title": "storage_service",
@@ -37,6 +39,9 @@
   "routers": [{
     "key": "overview_host",
     "link": "host"
+  }, {
+    "key": "instance_restore",
+    "link": "instance"
   }],
   "theme": "default"
 }
