@@ -73,21 +73,6 @@ class Model extends React.Component {
             });
           };
           break;
-        case 'sources':
-          column.render = (col, item, i) => {
-            if (item.device_owner && item.device_owner.indexOf('network') > -1) {
-              if (item.server && item.server.status === 'SOFT_DELETED') {
-                return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
-              } else if (item.server) {
-                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
-              }
-            } else if (item.device_owner === 'network:router_interface') {
-              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
-            } else {
-              return <div>{__[item.device_owner]}</div>;
-            }
-          };
-          break;
         case 'project':
           column.render = (col, item, i) => {
             return item.tenant_id ?
@@ -100,41 +85,17 @@ class Model extends React.Component {
     });
   }
 
-  initializeFilter(filters, res) {
-    var setOption = function(key, data) {
-      filters.forEach((filter) => {
-        filter.items.forEach((item) => {
-          if(item.key === key) {
-            item.data = data;
-          }
-        });
-      });
-    };
-
-    var statusTypes = [{
-      id: 'active',
-      name: __.active
-    }, {
-      id: 'error',
-      name: __.error
-    }];
-    setOption('status', statusTypes);
-  }
-
   onInitialize(params) {
     var _config = this.state.config,
-      filter = _config.filter,
       table = _config.table;
     if(params[2]) {
       request.getPortByIDInitialize(params[2]).then((res) => {
-        this.initializeFilter(filter, res[1]);
         table.data = [res[0].port];
         this.updateTableData(table, res[0]._url);
       });
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        this.initializeFilter(filter, res[1]);
         var newTable = this.processTableData(table, res[0]);
         this.updateTableData(newTable, res[0]._url);
       });
@@ -156,6 +117,22 @@ class Model extends React.Component {
     });
   }
 
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
+      this.loadingTable();
+
+      var portId = data.port_id;
+
+      if (portId) {
+        request.getPortByID(portId.id).then((res) => {
+          var table = this.state.config.table;
+          table.data = [res.port];
+          this.updateTableData(table, res._url);
+        });
+      }
+    }
+  }
+
   updateTableData(table, currentUrl, refreshDetail) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -175,15 +152,14 @@ class Model extends React.Component {
   }
 
   processTableData(table, res) {
-    var pageLimit = this.state.config.table.limit;
     if(res.port) {
       table.data = [res.port];
     } else if(res.ports) {
-      table.data = res.ports.slice(0, pageLimit);
+      table.data = res.ports;
     }
 
     var pagination = {},
-      next = res.port_links ? res.port_links[0] : null;
+      next = res.ports_links ? res.ports_links[0] : null;
 
     if(next && next.rel === 'next') {
       pagination.nextUrl = next.href.split('/v2.0/')[1];
@@ -259,11 +235,23 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
+        break;
       case 'table':
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+        var item = data.rows[0];
+        request.getSubnetsById(item.fixed_ips).then(() => {
+          if(item.device_id.indexOf('dhcp') === 0 || !item.device_id) {
+            this.onClickDetailTabs(actionType, refs, data);
+          } else {
+            request.getDeviceById(item).then(() => {
+              this.onClickDetailTabs(actionType, refs, data);
+            });
+          }
+        });
         break;
       default:
         break;
@@ -318,6 +306,28 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var device = item.device_owner,
+      getSourceInfo = () => {
+        switch(0) {
+          case device.indexOf('network:dhcp'):
+            return 'DHCP';
+          case device.indexOf('network:router'):
+            return (<span>
+                <i className="glyphicon icon-router" />
+                <span>{item.device_name || '(' + item.device_id.substr(0, 8) + ')'}</span>
+              </span>);
+          case device.indexOf('compute'):
+            return (<span>
+              <i className="glyphicon icon-instance" />
+              <a data-type="router" href={'/admin/instance/' + item.device_id}>
+                {item.device_name || '(' + item.device_id.substr(0, 8) + ')'}
+              </a>
+            </span>);
+          default:
+            return '-';
+        }
+      };
+
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
@@ -327,26 +337,48 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.subnet,
-      content: 'subnet'
+      content: <span>
+        <i className="glyphicon icon-subnet" />
+        <span>
+          {item.fixed_ips[0].subnet_name || '(' + item.fixed_ips[0].subnet_id.substr(0, 8) + ')'}
+        </span>
+        <span>{' / ' + item.fixed_ips[0].ip_address}</span>
+      </span>
     }, {
       title: __.floating_ip,
-      content: 'floating_ip'
+      content: ''
     }, {
       title: __.related + __.sources,
-      content: 'related'
+      content: getSourceInfo()
     }, {
       title: __.project + __.id,
       content: item.tenant_id
     }, {
       title: __.status,
+      type: 'status',
       content: getStatusIcon(item.status)
     }, {
-      title: __.ip_address,
-      content: 'ip_address'
+      title: __.ip + __.address,
+      content: item.fixed_ips[0].ip_address
     }, {
       title: __.mac + __.address,
       content: item.mac_address
     }];
+
+    item.fixed_ips.forEach((subnet, i) => {
+      if(i > 0) {
+        var obj = {
+          content: <span>
+            <i className="glyphicon icon-subnet" />
+            <span>
+              {subnet.subnet_name || '(' + subnet.subnet_id.substr(0, 8) + ')'}
+            </span>
+            <span>{' / ' + subnet.ip_address}</span>
+          </span>
+        };
+        items.splice(2 + i, 0, obj);
+      }
+    });
 
     return items;
   }
@@ -459,7 +491,7 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch(key) {
-        case 'terminate':
+        case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;
           break;
         default:

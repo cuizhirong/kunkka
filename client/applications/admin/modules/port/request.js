@@ -25,24 +25,24 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/' + HALO.user.projectId + '/ports?all_tenants=1&limit=' + pageLimit;
+    var url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
       res._url = url;
-      /*res.subnet = [];
-      res.ports.forEach((_res) => {
-        _res.fixed_ips.forEach((ips) => {
-          _res.subnet.push(this.getSubnetByID(ips.subnet_id)._result.subnet);
-        })
-        res.ports = _res;
-      });
-      console.log(res);*/
+      return res;
+    });
+  },
+  getSubnet: function() {
+    var url = '/proxy/neutron/v2.0/subnets';
+    return fetch.get({
+      url: url
+    }).then((res) => {
       return res;
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/api/v1/' + nextUrl;
+    var url = '/proxy/neutron/v2.0/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -77,5 +77,35 @@ module.exports = {
       url: '/proxy/neutron/v2.0/ports/' + item.id,
       data: data
     });
+  },
+  getDeviceById: function(item) {
+    var device = item.device_owner;
+    switch(0) {
+      case device.indexOf('network:router'):
+        return fetch.get({
+          url: '/proxy/neutron/v2.0/routers/' + item.device_id
+        }).then((res) => {
+          item.device_name = res.router.name;
+        });
+      case device.indexOf('compute'):
+        return fetch.get({
+          url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.device_id
+        }).then((res) => {
+          item.device_name = res.server.name;
+        });
+      default:
+        break;
+    }
+  },
+  getSubnetsById: function(subnets) {
+    var deferredList = [];
+    subnets.forEach((subnet) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/neutron/v2.0/subnets/' + subnet.subnet_id
+      }).then((res) => {
+        subnet.subnet_name = res.subnet.name;
+      }));
+    });
+    return RSVP.all(deferredList);
   }
 };

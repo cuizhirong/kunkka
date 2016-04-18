@@ -8,56 +8,39 @@
     "value": ["dissociate", "floating_ip"],
     "key": "dissociate",
     "icon": "floating-ip",
-    "disabled": false
+    "disabled": true
   }, {
-    "value": ["allocation", "floating_ip"],
-    "key": "allocation",
+    "value": ["allocate", "floating_ip"],
+    "key": "allocate",
     "icon": "floating-ip",
-    "disabled": false
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
   }],
-  "filter": [{
-    "group_key": "server_id",
-    "items": [{
-      "type": "input",
-      "key": "id",
-      "placeholder": ["pls_enter", "server", "id"]
-    }]
-  }],
+  "search": {
+    "placeholder": ["pls_enter", "floating_ip", "id"]
+  },
   "table": {
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 5,
     "column": [{
       "title": ["floating_ip", "address"],
-      "dataIndex": "floating_ip",
+      "dataIndex": "floating_ip_address",
       "key": "floating_ip",
       "type": "captain",
       "width": 130,
       "sort": true
     }, {
       "title": ["project", "id"],
-      "dataIndex": "",
+      "dataIndex": "tenant_id",
       "key": "project"
     }, {
-      "title": ["ip_address"],
-      "dataIndex": "",
+      "title": ["ip", "address"],
+      "dataIndex": "fixed_ip_address",
       "key": "ip_address"
-    }, {
-      "title": ["associate", "instance"],
-      "dataIndex": "",
-      "key": "instance"
-    }, {
-      "title": ["associate", "router"],
-      "dataIndex": "",
-      "key": "router"
-    }, {
-      "title": ["line"],
-      "dataIndex": "",
-      "key": "line"
     }, {
       "title": ["status"],
       "dataIndex": "status",

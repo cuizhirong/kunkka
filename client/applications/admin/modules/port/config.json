@@ -5,8 +5,8 @@
     "default": true
   }],
   "btns": [{
-    "title": ["terminate"],
-    "key": "terminate",
+    "value": ["delete"],
+    "key": "delete",
     "disabled": true,
     "type": "delete",
     "icon": "delete"
@@ -14,14 +14,9 @@
     "key": "refresh",
     "icon": "refresh"
   }],
-  "filter": [{
-    "group_key": "port",
-    "items": [{
-      "type": "input",
-      "key": "id",
-      "placeholder": ["pls_enter", "port", "id"]
-    }]
-  }],
+  "search": {
+    "placeholder": ["pls_enter", "port", "id"]
+  },
   "table": {
     "checkbox": true,
     "dataKey": "id",
@@ -35,21 +30,13 @@
       "width": 130,
       "sort": true
     }, {
-      "title": ["ip_address"],
+      "title": ["ip", "address"],
       "dataIndex": "",
       "key": "ip_address"
-    }, {
-      "title": ["subnet"],
-      "dataIndex": "",
-      "key": "subnet"
     }, {
       "title": ["floating_ip"],
       "dataIndex": "",
       "key": "floating_ip"
-    }, {
-      "title": ["related", "sources"],
-      "dataIndex": "",
-      "key": "sources"
     }, {
       "title": ["status"],
       "dataIndex": "status",
