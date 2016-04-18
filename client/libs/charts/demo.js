@@ -72,6 +72,7 @@ var c5 = new Chart.BarChart(document.getElementById('container5'));
 
 c5.setOption({
   unit: 'TB',
+  title: '容量／TB',
   xAxis: {
     tickWidth: 50,
     barWidth: 30

@@ -49,32 +49,38 @@ class BarChart {
 
     ctx.translate(0.5, -0.5);
     ctx.strokeStyle = yAxis.color;
+    ctx.fillStyle = yAxis.tickColor;
     ctx.lineWidth = 1;
 
     // Draw axis
     ctx.beginPath();
-    ctx.moveTo(marginLeft, 0);
-    ctx.lineTo(marginLeft, height);
-    ctx.lineTo(height, this.width);
+    ctx.moveTo(marginLeft + 5, 0);
+    ctx.lineTo(marginLeft + 5, height - 2);
+    ctx.lineTo(height - 3, this.width);
     ctx.stroke();
 
-    var strList = [];
-    for (let i = 0, len = this.realMax / yAxis.tickPeriod; i <= len; i++) {
-      strList.push('' + yAxis.tickPeriod * i);
-
-      ctx.fillText('' + yAxis.tickPeriod * i, 0, height - this.ratio * yAxis.tickPeriod * i);
+    ctx.textAlign = 'right';
+    for (let i = 0, len = this.realMax / this.tickPeriod; i <= len; i++) {
+      let y = height - this.ratio * this.tickPeriod * i;
+      ctx.beginPath();
+      ctx.moveTo(marginLeft + 5, y - 3);
+      ctx.lineTo(marginLeft + 2, y - 3);
+      ctx.stroke();
+      ctx.fillText('' + this.tickPeriod * i, this.marginLeft, y);
     }
+    // draw title
+    ctx.textAlign = 'left';
+    ctx.font = '14px "Helvetica Neue"';
+    ctx.fillText(option.title, this.marginLeft + 20, 20);
   }
 
   calcYAxis(option) {
-    var tickPeriod = option.yAxis.tickPeriod || 10;
+    var tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
     var data = option.series.map(function(m) {
       return m.value;
     });
     var max = Math.max.apply(null, data);
     var realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
-
-    // var height = this.height;
 
     this.ratio = this.height / realMax;
 
@@ -83,7 +89,9 @@ class BarChart {
       return Math.floor(this.ratio * n);
     });
 
-    this.marginLeft = 20;
+    // calc the width of y-text
+    var ctx = this.canvas.getContext('2d');
+    this.marginLeft = ctx.measureText('' + realMax).width;
   }
 
   renderBar() {
@@ -100,11 +108,13 @@ class BarChart {
     var t = this.easingFunc(this.count / this.ticks);
 
     ctx.clearRect(0, 0, this.width, height);
+    ctx.textAlign = 'center';
 
     series.forEach((m, i) => {
       ctx.fillStyle = m.color;
       var h = heightList[i] * t;
-      ctx.fillRect(this.marginLeft + tickWidth * i + gap - 0.5, height - h + 0.5, barWidth, h);
+      ctx.fillRect(this.marginLeft + tickWidth * i + gap + 5, height - h + 0.5 - 3, barWidth, h);
+      ctx.fillText(m.value + option.unit, this.marginLeft + tickWidth * i + gap + 5 + barWidth / 2, height - h + 0.5 - 3 - 2);
 
     });
 
