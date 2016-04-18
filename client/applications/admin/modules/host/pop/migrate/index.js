@@ -6,9 +6,8 @@ var __ = require('locale/client/admin.lang.json');
 function pop(obj, parent, callback) {
   var {row, hostTypes} = obj;
 
-  config.fields[0].text = row.name;
-  config.fields[1].text = row.tenant_id;
-  config.fields[2].text = row.user_id;
+  var currentHost = row.service.host;
+  config.fields[0].text = currentHost;
 
   var hosts = [];
   hosts.push({
@@ -19,7 +18,7 @@ function pop(obj, parent, callback) {
   hostTypes.forEach((host) => {
     var name = host.service.host;
 
-    if (row['OS-EXT-SRV-ATTR:host'] !== name) {
+    if (currentHost !== name) {
       hosts.push({
         id: name,
         name: name
@@ -38,15 +37,13 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var hostID = refs.migrate_to.state.value;
-      if (hostID === 'auto') {
-        hostID = null;
+      var dest = refs.migrate_to.state.value;
+      if (dest === 'auto') {
+        dest = null;
       }
 
-      request.migrate(row.id, hostID).then((res) => {
-        callback && callback(res);
-        cb(true);
-      });
+      cb(true);
+      request.migrate(currentHost, dest);
     },
     onAction: function(field, state, refs) {
     },

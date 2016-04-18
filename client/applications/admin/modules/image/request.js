@@ -1,12 +1,21 @@
 var fetch = require('../../cores/fetch');
 
+function requestParams(obj) {
+  var str = '';
+  for(let key in obj) {
+    str += ('&' + key + '=' + obj[key]);
+  }
+
+  return str;
+}
+
 module.exports = {
-  getHypervisorList: function(pageLimit) {
+  getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
 
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/images/detail?all_tenants=1&limit=' + pageLimit;
+    var url = '/proxy/glance/v2/images?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -14,8 +23,8 @@ module.exports = {
       return res;
     });
   },
-  getHypervisorByIdOrName: function(str) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + str;
+  getSingle: function(id) {
+    var url = '/proxy/glance/v2/images/' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -24,7 +33,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/nova/v2.1/' + nextUrl;
+    var url = '/proxy/glance/v2/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -32,16 +41,22 @@ module.exports = {
       return res;
     });
   },
-  disableHost: function(data) {
-    return fetch.put({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-services/disable',
-      data: data
+  filter: function(data, pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    var url = '/proxy/glance/v2/images?limit=' + pageLimit + '&' + requestParams(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
     });
   },
-  enableHost: function(data) {
-    return fetch.put({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-services/enable',
-      data: data
+  delete: function(id) {
+    return fetch.delete({
+      url: '/proxy/glance/v2/images/' + id
     });
   }
 };

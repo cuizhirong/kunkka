@@ -2,6 +2,7 @@
   "en": {
     "capacity": "Capacity",
     "counts": "Counts",
+    "current_host": "Current Host",
     "disable": "Disable",
     "disk": "Disk ",
     "enable": "Enable",
@@ -15,6 +16,7 @@
   "zh-CN": {
     "capacity": "容量",
     "counts": "数量",
+    "current_host": "当前宿主机",
     "disable": "禁用",
     "disk": "硬盘",
     "enable": "启用",

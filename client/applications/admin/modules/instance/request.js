@@ -69,9 +69,18 @@ module.exports = {
       return res;
     });
   },
-  deleteItem: function(item) {
-    return fetch.delete({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
+  migrate: function(id, hostID) {
+    var data = {
+      'os-migrateLive': {
+        'host': hostID,
+        'block_migration': false,
+        'disk_over_commit': false
+      }
+    };
+
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+      data: data
     });
   },
   poweron: function(item) {
@@ -106,6 +115,11 @@ module.exports = {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
       data: data
+    });
+  },
+  deleteItem: function(item) {
+    return fetch.delete({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
     });
   }
 };

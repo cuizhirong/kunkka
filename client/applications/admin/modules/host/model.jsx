@@ -7,6 +7,8 @@ var Main = require('../../components/main/index');
 //detail components
 var BasicProps = require('client/components/basic_props/index');
 
+var migratePop = require('./pop/migrate/index');
+
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -29,7 +31,8 @@ class Model extends React.Component {
     });
 
     this.stores = {
-      urls: []
+      urls: [],
+      hosts: []
     };
   }
 
@@ -103,6 +106,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
     request.getHypervisorList().then((res) => {
       table.data = res.hypervisors;
+      this.stores.hosts = res.hypervisors;
       this.updateTableData(table, res._url);
     });
   }
@@ -235,8 +239,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
-      requestData;
+    var {rows} = data;
 
     var that = this;
     function refresh() {
@@ -250,23 +253,11 @@ class Model extends React.Component {
       that.refresh(r);
     }
 
-    if (rows.length === 1) {
-      requestData = {
-        binary: 'nova-compute',
-        host: rows[0].service.host
-      };
-    }
     switch(key) {
-      case 'enable':
-        this.loadingTable();
-        request.enableHost(requestData).then((res) => {
-          refresh();
-        });
-        break;
-      case 'disable':
-        this.loadingTable();
-        request.disableHost(requestData).then((res) => {
-          refresh();
+      case 'migrate':
+        migratePop({
+          row: rows[0],
+          hostTypes: this.stores.hosts
         });
         break;
       case 'refresh':
@@ -303,11 +294,8 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
-        case 'enable':
-          btns[key].disabled = (sole && sole.status === 'disabled') ? false : true;
-          break;
-        case 'disable':
-          btns[key].disabled = (sole && sole.status === 'enabled') ? false : true;
+        case 'migrate':
+          btns[key].disabled = sole ? false : true;
           break;
         default:
           break;

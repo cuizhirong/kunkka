@@ -16,6 +16,9 @@
     "key": "refresh",
     "icon": "refresh"
   }],
+  "search": {
+    "placeholder": ["pls_enter", "instance", "id"]
+  },
   "table": {
     "checkbox": true,
     "dataKey": "id",

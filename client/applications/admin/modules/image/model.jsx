@@ -6,12 +6,14 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+var deleteModal = require('client/components/modal_delete/index');
 
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('../../cores/router');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -34,7 +36,10 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    this.tableColRender(this.state.config.table.column);
+    var column = this.state.config.table.column;
+    this.setTableFilter(column);
+    this.tableColRender(column);
+    this.initializeFilter(this.state.config.filter);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -53,22 +58,37 @@ class Model extends React.Component {
     }
   }
 
+  setTableFilter(columns) {
+    var filters = columns.filter((col) => col.key === 'type')[0].filter;
+    var imageFilter = filters.filter((fil) => fil.key === 'image')[0],
+      snapshotFilter = filters.filter((fil) => fil.key === 'snapshot')[0];
+
+    imageFilter.filterBy = function(item) {
+      return item.image_type === 'distribution' ? false : true;
+    };
+    snapshotFilter.filterBy = function(item) {
+      return item.image_type === 'snapshot' ? false : true;
+    };
+  }
+
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'vcpu':
+        case 'size':
           column.render = (col, item, i) => {
-            return item.vcpus_used + ' / ' + item.vcpus;
+            let size = item.size / 1024 / 1024;
+            if (size >= 1024) {
+              size = (Math.round(size / 1024) + ' GB');
+            } else {
+              size = Math.round(size) + ' MB';
+            }
+
+            return size;
           };
           break;
-        case 'memory':
+        case 'type':
           column.render = (col, item, i) => {
-            return (item.memory_mb_used / 1024).toFixed(2) + ' / ' + (item.memory_mb / 1024).toFixed(2);
-          };
-          break;
-        case 'disk_capacity':
-          column.render = (col, item, i) => {
-            return item.local_gb_used + ' / ' + item.local_gb;
+            return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
           };
           break;
         default:
@@ -77,20 +97,42 @@ class Model extends React.Component {
     });
   }
 
+  initializeFilter(filters, res) {
+    var setOption = function(key, data) {
+      filters.forEach((filter) => {
+        filter.items.forEach((item) => {
+          if (item.key === key) {
+            item.data = data;
+          }
+        });
+      });
+    };
+
+    var statusTypes = [{
+      id: 'snapshot',
+      name: __.snapshot_type
+    }, {
+      id: 'image',
+      name: __.image
+    }];
+    setOption('type', statusTypes);
+  }
+
 //initialize table data
   onInitialize(params) {
     if (params[2]) {
-      this.getHypervisorByIdOrName(params[2]);
+      this.getSingle(params[2]);
     } else {
-      this.getHypervisorList();
+      this.getList();
     }
   }
 
-//request: get Hypervisor By Id
-  getHypervisorByIdOrName(id) {
+//request: get single data by ID
+  getSingle(id) {
     var table = this.state.config.table;
-    request.getHypervisorByIdOrName(id).then((res) => {
-      table.data = [res.hypervisor];
+
+    request.getSingle(id).then((res) => {
+      table.data = [res];
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
@@ -98,12 +140,32 @@ class Model extends React.Component {
     });
   }
 
-//request: get Hypervisor List
-  getHypervisorList() {
-    var table = this.state.config.table;
-    request.getHypervisorList().then((res) => {
-      table.data = res.hypervisors;
+//request: get list
+  getList() {
+    var table = this.state.config.table,
+      pageLimit = table.limit;
+
+    request.getList(pageLimit).then((res) => {
+      table.data = res.images;
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
+    });
+  }
+
+//request: get next list
+  getNextList(url, refreshDetail) {
+    request.getNextList(url).then((res) => {
+      var table = this.state.config.table;
+      if (res.images) {
+        table.data = res.images;
+      } else if (res.id) {
+        table.data = [res];
+      } else {
+        table.data = [];
+      }
+
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, refreshDetail);
     });
   }
 
@@ -116,7 +178,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
+      this.stores.urls.push(currentUrl.split('/v2/')[1]);
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
@@ -128,22 +190,31 @@ class Model extends React.Component {
     });
   }
 
+//set pagination
+  setPagination(table, res) {
+    var pagination = {},
+      next = res.next ? res.next : null;
+
+    if (next && next.rel === 'next') {
+      pagination.nextUrl = next.href.split('/v2.1/')[1];
+    }
+
+    var history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
+    table.pagination = pagination;
+
+    return table;
+  }
+
   getInitialListData() {
-    this.getHypervisorList();
+    this.getList();
   }
 
   getNextListData(url, refreshDetail) {
-    request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
-      if (res.hypervisor) {
-        table.data = [res.hypervisor];
-      } else if (res.hypervisors) {
-        table.data = res.hypervisors;
-      } else {
-        table.data = [];
-      }
-      this.updateTableData(table, res._url, refreshDetail);
-    });
+    this.getNextList(url, refreshDetail);
   }
 
 //refresh: according to the given data rules
@@ -208,8 +279,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'search':
-        this.onClickSearch(actionType, refs, data);
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -227,16 +298,29 @@ class Model extends React.Component {
       case 'check':
         this.onClickTableCheckbox(refs, data);
         break;
-      // case 'pagination':
-      //   break;
+      case 'pagination':
+        var url,
+          history = this.stores.urls;
+
+        if (data.direction === 'next') {
+          url = data.url;
+        } else {
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        }
+
+        this.loadingTable();
+        this.getNextListData(url);
+        break;
       default:
         break;
     }
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
-      requestData;
+    var {rows} = data;
 
     var that = this;
     function refresh() {
@@ -250,23 +334,19 @@ class Model extends React.Component {
       that.refresh(r);
     }
 
-    if (rows.length === 1) {
-      requestData = {
-        binary: 'nova-compute',
-        host: rows[0].service.host
-      };
-    }
     switch(key) {
-      case 'enable':
-        this.loadingTable();
-        request.enableHost(requestData).then((res) => {
-          refresh();
-        });
-        break;
-      case 'disable':
-        this.loadingTable();
-        request.disableHost(requestData).then((res) => {
-          refresh();
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'image',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.delete(rows[0].id).then((res) => {
+              cb(true);
+              refresh();
+            });
+          }
         });
         break;
       case 'refresh':
@@ -277,14 +357,34 @@ class Model extends React.Component {
     }
   }
 
-  onClickSearch(actionType, refs, data) {
-    if (actionType === 'click') {
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
       this.loadingTable();
-      request.getHypervisorByIdOrName(data.text).then((res) => {
-        var table = this.state.config.table;
-        table.data = [res.hypervisor];
-        this.updateTableData(table, res._url);
-      });
+
+      var idData = data.filter_id,
+        typeData = data.filter_type;
+
+      if (idData) {
+        this.getSingle(idData.id);
+      } else if (typeData){
+        let requestData = {
+          visibility: typeData.type === 'snapshot' ? 'private' : 'public'
+        };
+        let pageLimit = this.state.config.table.limit;
+
+        request.filter(requestData, pageLimit).then((res) => {
+          var table = this.state.config.table;
+          table.data = res.images;
+          this.updateTableData(table, res._url);
+        });
+      } else {
+        var r = {};
+        r.initialList = true;
+        r.loadingTable = true;
+        r.clearState = true;
+
+        this.refresh(r);
+      }
     }
   }
 
@@ -303,11 +403,8 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
-        case 'enable':
-          btns[key].disabled = (sole && sole.status === 'disabled') ? false : true;
-          break;
-        case 'disable':
-          btns[key].disabled = (sole && sole.status === 'enabled') ? false : true;
+        case 'delete':
+          btns[key].disabled = (sole && sole.image_type === 'snapshot') ? false : true;
           break;
         default:
           break;
@@ -365,34 +462,31 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var size = item.size / 1024 / 1024;
+    if (size >= 1024) {
+      size = (Math.round(size / 1024) + ' GB');
+    } else {
+      size = Math.round(size) + ' MB';
+    }
+
     var items = [{
       title: __.name,
-      content: item.hypervisor_hostname
+      content: item.name
     }, {
-      title: __.ip,
-      content: item.host_ip
+      title: __.id,
+      content: item.id
     }, {
-      title: __.vcpu,
-      content: item.vcpus_used + ' / ' + item.vcpus
+      title: __.size,
+      content: size
     }, {
-      title: __.memory + __.gb,
-      content: (item.memory_mb_used / 1024).toFixed(2) + ' / ' + (item.memory_mb / 1024).toFixed(2)
-    }, {
-      title: __.disk + __.capacity + __.gb,
-      content: item.local_gb_used + ' / ' + item.local_gb
-    }, {
-      title: __.virtual_machine + __.counts,
-      content: item.running_vms
-    }, {
-      title: __.physical_host + __.type,
-      content: item.hypervisor_type
+      title: __.type,
+      content: item.image_type === 'snapshot' ? __.snapshot_type : __.image
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }, {
-      title: __.state,
-      content: item.state
+      title: __.created + __.time,
+      content: item.created
     }];
 
     return items;
@@ -417,7 +511,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-host" style={this.props.style}>
+      <div className="halo-module-image" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

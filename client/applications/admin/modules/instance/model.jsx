@@ -223,7 +223,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var serverID = data.server_id,
+      var serverID = data.instance,
         allTenant = data.all_tenant;
 
       if (serverID) {

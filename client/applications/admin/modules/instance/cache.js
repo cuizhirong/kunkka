@@ -13,7 +13,7 @@ module.exports = {
   },
   getHostType: function() {
     return fetch.get({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors'
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/detail'
     });
   }
 };

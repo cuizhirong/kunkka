@@ -5,18 +5,35 @@
     "default": true
   }],
   "btns": [{
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],
-  "search": {
-    "placeholder": ["pls_enter"],
-    "width": 200
-  },
+  "filter": [{
+    "group_key": "filter_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "image", "id"]
+    }]
+  }, {
+    "group_key": "filter_type",
+    "items": [{
+      "type": "select",
+      "key": "type",
+      "default": ["all", "type"]
+    }]
+  }],
   "table": {
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
@@ -25,16 +42,13 @@
       "sort": true
     }, {
       "title": ["size"],
-      "dataIndex": "size",
       "key": "size"
     }, {
       "title": ["type"],
       "key": "type",
-      "dataIndex": "image_type",
       "filter": [{
-        "name": ["snapshot"],
-        "key": "snapshot",
-        "filterBy": "snapshot"
+        "name": ["snapshot_type"],
+        "key": "snapshot"
       }, {
         "name": ["image"],
         "key": "image"
@@ -47,7 +61,7 @@
       "filter": [{
         "name": ["active"],
         "key": "active",
-        "filterBy": "active"
+        "filterBy": "ACTIVE"
       }]
     }, {
       "title": ["create", "time"],
