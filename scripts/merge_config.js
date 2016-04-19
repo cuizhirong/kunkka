@@ -11,7 +11,7 @@ const configList = [];
 
 [apiPath, driverPath].forEach( p => {
   fs.readdirSync(p)
-    .filter( => {
+    .filter( m => {
       return fs.statSync(path.join(p, m)).isDirectory();
     })
     .forEach( f => {
@@ -101,7 +101,7 @@ const generateFile = function (arr) {
 }
 
 const _arr = [
-  {_path: path.join(__dirname, '../configs/server.js'), _str: baseConfig},
+  {_path: path.join(__dirname, '../configs/server.json'), _str: baseConfig},
   {_path: path.join(__dirname, '../package.json'), _str: basePackage}
 ];
 

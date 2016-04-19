@@ -32,6 +32,7 @@ node_modules
 
 # config file.
 configs/server.js
+configs/server.json
 configs/index.json
 
 # Mac file
