@@ -9,17 +9,17 @@ var DetailMinitable = require('client/components/detail_minitable/index');
 var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
 var deleteModal = require('client/components/modal_delete/index');
-
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var router = require('client/applications/dashboard/cores/router');
 var createSubnet = require('./pop/create_subnet/index');
-var request = require('./request');
 var connectRouter = require('./pop/connect_router/index');
 var disconnectRouter = require('./pop/disconnect_router/index');
 var addInstance = require('./pop/add_instance/index');
 var modifySubnet = require('./pop/modify_subnet/index');
 var createPort = require('../port/pop/create_port/index');
+
+var config = require('./config.json');
+var __ = require('locale/client/dashboard.lang.json');
+var router = require('client/utils/router');
+var request = require('./request');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
 
@@ -572,6 +572,7 @@ class Model extends React.Component {
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
           __={__} />
       </div>
     );

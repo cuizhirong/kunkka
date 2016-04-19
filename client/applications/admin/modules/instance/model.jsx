@@ -16,7 +16,8 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
-var router = require('../../cores/router');
+var router = require('client/utils/router');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -624,8 +625,7 @@ class Model extends React.Component {
       content: item.tenant_id
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }, {
       title: __.created + __.time,
       type: 'time',
@@ -662,6 +662,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

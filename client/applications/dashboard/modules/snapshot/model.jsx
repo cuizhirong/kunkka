@@ -11,8 +11,9 @@ var createVolume = require('../volume/pop/create/index');
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -264,8 +265,7 @@ class Model extends React.Component {
         : null
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }, {
       title: __.create + __.time,
       type: 'time',
@@ -340,6 +340,7 @@ class Model extends React.Component {
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
           __={__} />
       </div>
     );

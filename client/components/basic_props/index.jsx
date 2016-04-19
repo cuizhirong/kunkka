@@ -4,7 +4,6 @@ require('./style/index.less');
 var React = require('react');
 var EditContent = require('./edit_content');
 var moment = require('client/libs/moment');
-var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
 class BasicProps extends React.Component {
 
@@ -41,8 +40,6 @@ class BasicProps extends React.Component {
     switch(item.type) {
       case 'editable':
         return <EditContent item={item} rawItem={rawItem} onAction={this.onAction.bind(this)} />;
-      case 'status':
-        return getStatusIcon(item.content);
       case 'time':
         return moment(item.content).format('YYYY-MM-DD hh:mm:ss');
       default:

@@ -2,7 +2,6 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button} = require('client/uskin/index');
-var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
 class RelatedSnapshot extends React.Component {
 
@@ -55,15 +54,6 @@ class RelatedSnapshot extends React.Component {
     this.props.onAction && this.props.onAction(tabKey, actionType, data);
   }
 
-  getStatusIcon(item) {
-    switch(item.status.toLowerCase()) {
-      case 'active':
-        return <i className="glyphicon icon-status-active active"/>;
-      default:
-        return null;
-    }
-  }
-
   render() {
     var btnConfig = this.props.btnConfig,
       items = this.props.items;
@@ -90,7 +80,7 @@ class RelatedSnapshot extends React.Component {
                       <div className="name">{item.name}</div>
                       <div className="size">{item.size}</div>
                       <div className="time">{item.time}</div>
-                      <div className="status">{getStatusIcon(item.status)}</div>
+                      <div className="status">{item.status}</div>
                       {item.childItem.status === 'queued' ?
                         <div className="icon-set">-</div>
                       : <div className="icon-set">

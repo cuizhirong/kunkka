@@ -15,7 +15,6 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
-// var router = require('../../cores/router');
 
 class Model extends React.Component {
 

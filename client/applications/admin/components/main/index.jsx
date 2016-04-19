@@ -7,9 +7,8 @@ var FilterSearch = require('./filter_search');
 var Detail = require('./detail');
 var __ = require('locale/client/admin.lang.json');
 var converter = require('./converter');
-var getStatusIcon = require('../../utils/status_icon');
 var moment = require('client/libs/moment');
-var router = require('../../cores/router');
+var router = require('client/utils/router');
 
 class Main extends React.Component {
   constructor(props) {
@@ -61,7 +60,7 @@ class Main extends React.Component {
           break;
         case 'status':
           column.render = (col, item, i) => {
-            return getStatusIcon(item[col.dataIndex]);
+            return this.props.getStatusIcon(item[col.dataIndex]);
           };
           break;
         case 'time':
@@ -232,12 +231,12 @@ class Main extends React.Component {
   checkboxListener(e, status, clickedRow, arr) {
     var path = this.props.params;
     if (arr.length <= 0) {
-      router.pushState('/project/' + path[1]);
+      router.pushState('/admin/' + path[1]);
     } else if (arr.length <= 1) {
       if (path[2] === arr[0].id) {
-        router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
+        router.replaceState('/admin/' + path[1] + '/' + arr[0].id, null, null, true);
       } else {
-        router.pushState('/project/' + path[1] + '/' + arr[0].id);
+        router.pushState('/admin/' + path[1] + '/' + arr[0].id);
       }
     } else {
       // this.refs.detail.updateContent(this.stores.rows);

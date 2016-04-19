@@ -12,7 +12,7 @@ var createRule = require('./pop/create_rule/index');
 
 var config = require('./config.json');
 var request = require('./request');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 var __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {

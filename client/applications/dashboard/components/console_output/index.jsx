@@ -2,8 +2,8 @@ require('./style/index.less');
 
 var React = require('react');
 var fetch = require('client/applications/dashboard/cores/fetch');
-var router = require('client/applications/dashboard/cores/router');
-var mainEvent = require('../main/event');
+var router = require('client/utils/router');
+var mainEvent = require('client/components/main/event');
 
 class VncConsole extends React.Component {
   constructor(props) {

@@ -20,8 +20,9 @@ var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var moment = require('client/libs/moment');
 var request = require('./request');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -377,8 +378,7 @@ class Model extends React.Component {
       content: item.metadata.readonly === 'False' ? __.read_write : __.read_only
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }, {
       title: __.create + __.time,
       type: 'time',
@@ -400,7 +400,7 @@ class Model extends React.Component {
           </span>,
         size: item.size + 'GB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
-        status: item.status,
+        status: getStatusIcon(item.status),
         createIcon: 'volume',
         childItem: item
       });
@@ -492,6 +492,7 @@ class Model extends React.Component {
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
           __={__} />
       </div>
     );

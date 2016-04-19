@@ -9,6 +9,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -78,10 +79,10 @@ class Model extends React.Component {
               if (item.server && item.server.status === 'SOFT_DELETED') {
                 return <div><i className="glyphicon icon-instance"></i>{'(' + item.device_id.substr(0, 8) + ')'}</div>;
               } else if (item.server) {
-                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/project/instance/' + item.device_id}>{item.server.name}</a></div>;
+                return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
               }
             } else if (item.device_owner === 'network:router_interface') {
-              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/project/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
             } else {
               return <div>{__[item.device_owner]}</div>;
             }
@@ -338,8 +339,7 @@ class Model extends React.Component {
       content: item.tenant_id
     }, {
       title: __.status,
-      type: 'status',
-      status: item.status
+      content: getStatusIcon(item.status)
     }, {
       title: __.ip_address,
       content: 'ip_address'
@@ -480,6 +480,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

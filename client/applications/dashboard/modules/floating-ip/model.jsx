@@ -13,8 +13,9 @@ var dissociateRelated = require('./pop/dissociate_related/index');
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -275,8 +276,7 @@ class Model extends React.Component {
         </span> : '-'
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }];
 
     return items;
@@ -322,6 +322,7 @@ class Model extends React.Component {
           onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
           __={__} />
       </div>
     );

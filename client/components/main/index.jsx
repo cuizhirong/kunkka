@@ -5,9 +5,8 @@ var {InputSearch, Tab, Table} = require('client/uskin/index');
 var ButtonList = require('./button_list');
 var Detail = require('./detail');
 var converter = require('client/components/main/converter');
-var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 var moment = require('client/libs/moment');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 
 class Main extends React.Component {
   constructor(props) {
@@ -60,7 +59,7 @@ class Main extends React.Component {
           break;
         case 'status':
           column.render = (col, item, i) => {
-            return getStatusIcon(item[col.dataIndex]);
+            return this.props.getStatusIcon(item[col.dataIndex]);
           };
           break;
         case 'time':
@@ -226,9 +225,9 @@ class Main extends React.Component {
 
     var path = router.getPathList();
     if (shouldClose) {
-      router.pushState('/project/' + path[1]);
+      router.pushState('/' + path[0] + '/' + path[1]);
     } else {
-      router.pushState('/project/' + path[1] + '/' + item.id);
+      router.pushState('/' + path[0] + '/' + path[1] + '/' + item.id);
     }
   }
 
@@ -248,12 +247,12 @@ class Main extends React.Component {
   checkboxListener(e, status, clickedRow, arr) {
     var path = this.props.params;
     if (arr.length <= 0) {
-      router.pushState('/project/' + path[1]);
+      router.pushState('/' + path[0] + '/' + path[1]);
     } else if (arr.length <= 1) {
       if (path[2] === arr[0].id) {
-        router.replaceState('/project/' + path[1] + '/' + arr[0].id, null, null, true);
+        router.replaceState('/' + path[0] + '/' + path[1] + '/' + arr[0].id, null, null, true);
       } else {
-        router.pushState('/project/' + path[1] + '/' + arr[0].id);
+        router.pushState('/' + path[0] + '/' + path[1] + '/' + arr[0].id);
       }
     } else {
       // this.refs.detail.updateContent(this.stores.rows);

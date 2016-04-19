@@ -8,7 +8,7 @@ var Main = require('client/components/main/index');
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
-var ConsoleOutput = require('client/components/console_output/index');
+var ConsoleOutput = require('../../components/console_output/index');
 var VncConsole = require('client/components/vnc_console/index');
 
 //pop modals
@@ -29,9 +29,10 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/dashboard.lang.json');
-var router = require('client/applications/dashboard/cores/router');
+var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -514,8 +515,7 @@ class Model extends React.Component {
         </span> : '-'
     }, {
       title: __.status,
-      type: 'status',
-      content: item.status
+      content: getStatusIcon(item.status)
     }, {
       title: __.create + __.time,
       type: 'time',
@@ -622,7 +622,7 @@ class Model extends React.Component {
         name: <a data-type="router" href={'/dashboard/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
-        status: item.status,
+        status: getStatusIcon(item.status),
         createIcon: 'instance',
         childItem: item
       });
@@ -764,6 +764,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
           __={__}
         />
       </div>
