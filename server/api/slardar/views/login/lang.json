@@ -1,0 +1,14 @@
+{
+  "en": {
+    "unitedstack": "UnitedStack",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "forgotPass": "Forgot your password"
+  },
+  "zh-CN": {
+    "forgotPass": "忘记密码",
+    "login": "登录",
+    "signup": "注册账号",
+    "unitedstack": "有云"
+  }
+}
