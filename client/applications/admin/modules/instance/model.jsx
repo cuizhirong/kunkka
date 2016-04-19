@@ -506,7 +506,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'migrate':
-          btns[key].disabled = single ? false : true;
+          btns[key].disabled = (single && single.status.toLowerCase() === 'active') ? false : true;
           break;
         case 'power_on':
           btns[key].disabled = (single && single.status.toLowerCase() === 'shutoff') ? false : true;

@@ -322,18 +322,6 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     var {rows} = data;
 
-    var that = this;
-    function refresh() {
-      var r = {
-        refreshList: true,
-        refreshDetail: true,
-        loadingTable: true,
-        loadingDetail: true
-      };
-
-      that.refresh(r);
-    }
-
     switch(key) {
       case 'delete':
         deleteModal({
@@ -344,13 +332,21 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.delete(rows[0].id).then((res) => {
               cb(true);
-              refresh();
+              this.refresh({
+                refreshList: true,
+                refreshDetail: true
+              });
             });
           }
         });
         break;
       case 'refresh':
-        refresh();
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;

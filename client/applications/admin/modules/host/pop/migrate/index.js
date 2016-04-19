@@ -41,9 +41,10 @@ function pop(obj, parent, callback) {
       if (dest === 'auto') {
         dest = null;
       }
+      var randomly = refs.migrate_host_tip.state.checked;
 
       cb(true);
-      request.migrate(currentHost, dest);
+      request.migrate(currentHost, dest, randomly);
     },
     onAction: function(field, state, refs) {
     },

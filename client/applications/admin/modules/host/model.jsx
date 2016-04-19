@@ -239,21 +239,36 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    var {rows} = data,
+      requestData;
 
     var that = this;
     function refresh() {
       var r = {
         refreshList: true,
-        refreshDetail: true,
-        loadingTable: true,
-        loadingDetail: true
+        refreshDetail: true
       };
 
       that.refresh(r);
     }
 
+    if (rows.length === 1) {
+      requestData = {
+        binary: 'nova-compute',
+        host: rows[0].service.host
+      };
+    }
     switch(key) {
+      case 'enable':
+        request.enableHost(requestData).then((res) => {
+          refresh();
+        });
+        break;
+      case 'disable':
+        request.disableHost(requestData).then((res) => {
+          refresh();
+        });
+        break;
       case 'migrate':
         migratePop({
           row: rows[0],
@@ -261,7 +276,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        refresh();
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;
@@ -296,6 +316,12 @@ class Model extends React.Component {
       switch (key) {
         case 'migrate':
           btns[key].disabled = sole ? false : true;
+          break;
+        case 'enable':
+          btns[key].disabled = (sole && sole.status === 'disabled') ? false : true;
+          break;
+        case 'disable':
+          btns[key].disabled = (sole && sole.status === 'enabled') ? false : true;
           break;
         default:
           break;

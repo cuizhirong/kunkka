@@ -28,7 +28,7 @@
     "icon": "refresh"
   }],
   "search": {
-    "placeholder": ["pls_enter", "host", "name", "or", "id"],
+    "placeholder": ["pls_enter", "host", "id"],
     "width": 200
   },
   "table": {

@@ -195,27 +195,6 @@ class Main extends React.Component {
 
   }
 
-  // searchInTable(text) {
-  //   if (this.refs.table) {
-  //     var search = this.props.config.search;
-
-  //     if (search && search.column) {
-  //       var filterCol = search.column;
-  //       this.refs.table.setState({
-  //         filterCol: filterCol,
-  //         filterBy: function(item, _column) {
-  //           return _column.some((col) => {
-  //             if (filterCol[col.key] && item[col.dataIndex]) {
-  //               var td = item[col.dataIndex].toLowerCase();
-  //               return td.indexOf(text.toLowerCase()) > -1 ? true : false;
-  //             }
-  //           });
-  //         }
-  //       });
-  //     }
-  //   }
-  // }
-
   onClickCaptain(item, e) {
     e.preventDefault();
 
@@ -237,11 +216,13 @@ class Main extends React.Component {
   }
 
   onConfirmFilter(data) {
+    this.closeDeatail();
     this.onAction('filter', 'search', data);
   }
 
   changeSearchInput(str, status) {
     if (status) {
+      this.closeDeatail();
       this.onAction('search', 'click', {
         text: str
       });

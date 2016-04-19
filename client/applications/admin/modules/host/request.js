@@ -1,11 +1,11 @@
 var fetch = require('../../cores/fetch');
 
-function migrateServer(id, hostID) {
+function migrateLiveServer(id, hostID) {
   var data = {
     'os-migrateLive': {
-      'host': hostID,
-      'block_migration': false,
-      'disk_over_commit': false
+      host: hostID,
+      block_migration: false,
+      disk_over_commit: false
     }
   };
 
@@ -15,16 +15,16 @@ function migrateServer(id, hostID) {
   });
 }
 
-// function migrateInactivateServer(id, hostID) {
-//   var data = {
-//     'migrate': null
-//   };
+function migrateInactivateServer(id, hostID) {
+  var data = {
+    migrate: null
+  };
 
-//   return fetch.post({
-//     url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
-//     data: data
-//   });
-// }
+  return fetch.post({
+    url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+    data: data
+  });
+}
 
 module.exports = {
   getHypervisorList: function() {
@@ -66,12 +66,17 @@ module.exports = {
       data: data
     });
   },
-  migrate: function(source, dest) {
+  migrate: function(source, dest, randomly) {
     return fetch.get({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&host=' + source
     }).then((res) => {
       res.servers.forEach((server) => {
-        migrateServer(server.id, dest);
+        var status = server.status.toLowerCase();
+        if (status === 'active') {
+          migrateLiveServer(server.id, dest);
+        } else if (status === 'shutoff' && randomly) {
+          migrateInactivateServer(server.id, dest);
+        }
       });
     });
   }
