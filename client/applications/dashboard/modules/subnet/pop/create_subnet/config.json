@@ -1,0 +1,49 @@
+{
+  "title": ["create", "subnet"],
+  "fields": [{
+    "type": "input",
+    "field": "subnet_name",
+    "is_long_label": true
+  }, {
+    "type": "select",
+    "field": "select_network",
+    "data": [],
+    "empty_text": {
+      "info": "no_network",
+      "link_info": ["create", "network"]
+    },
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "net_address",
+    "is_long_label": true,
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "show_more",
+    "has_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_gw",
+    "checked": true,
+    "hide": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "gw_address",
+    "tip_info": "gw_tip",
+    "hide": true,
+    "is_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_dhcp",
+    "checked": true,
+    "hide": true,
+    "has_long_label": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

@@ -1,0 +1,175 @@
+var commonModal = require('client/components/modal_common/index');
+var config = require('./config.json');
+var request = require('../../request');
+var __ = require('locale/client/dashboard.lang.json');
+
+var copyObj = function(obj) {
+  var newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return newobj;
+  } else {
+    newobj = JSON.parse(JSON.stringify(obj));
+  }
+  return newobj;
+};
+
+function pop(obj, parent, callback) {
+  function getSubnetGroup(subnetArray) {
+    var subnets = copyObj(subnetArray),
+      joinedSubnet = [],
+      subnetGroup = [],
+      hasAvailableSubnet = false;
+    for (let key in obj.addresses) {
+      for (let item of obj.addresses[key]) {
+        if (item['OS-EXT-IPS:type'] === 'fixed') {
+          joinedSubnet.push(item.subnet);
+        }
+      }
+    }
+
+    if (joinedSubnet.length === 0 && subnets.length > 0) {
+      hasAvailableSubnet = true;
+    }
+
+    joinedSubnet.forEach((item) => {
+      subnets.some((subnet) => {
+        if (subnet.id === item.id) {
+          subnet.disabled = true;
+          return true;
+        }
+        hasAvailableSubnet = true;
+        return false;
+      });
+    });
+
+    if (hasAvailableSubnet) {
+      subnets.forEach((subnet) => {
+        var hasGroup = subnetGroup.some((group) => {
+          if (group.id === subnet.network_id && !subnet.disabled) {
+            group.data.push(subnet);
+            return true;
+          }
+          return false;
+        });
+        if (!hasGroup && !subnet.disabled) {
+          subnetGroup.push({
+            id: subnet.network_id,
+            name: subnet.network.name || '(' + subnet.network.id.substring(0, 8) + ')',
+            port_security_enabled: subnet.network.port_security_enabled,
+            shared: subnet.network.shared,
+            data: [subnet]
+          });
+        }
+      });
+    }
+    return subnetGroup;
+  }
+
+  config.fields[0].text = obj.name;
+
+  var props = {
+    __: __,
+    parent: parent,
+    config: config,
+    onInitialize: function(refs) {
+      request.getSubnetList().then((data) => {
+        if (data.length > 0) {
+          var subnetGroup = getSubnetGroup(data);
+          refs.select_subnet.setState({
+            data: subnetGroup,
+            value: (subnetGroup.length > 0) ? subnetGroup[0].data[0].id : ''
+          });
+        }
+      });
+      request.getPortList().then((data) => {
+        if (data.length > 0) {
+          var ports = copyObj(data);
+          var filteredData = ports.filter((port) => {
+            if (!port.device_owner) {
+              var ip = '';
+              if (port.fixed_ips && port.fixed_ips.length > 0) {
+                ip = port.fixed_ips[0].ip_address;
+              }
+              port.name = ip + ' / ' + (port.name ? port.name : '(' + port.id.substring(0, 8) + ')');
+            }
+            return !port.device_owner;
+          });
+          refs.select_interface.setState({
+            data: filteredData,
+            value: filteredData[0].id
+          });
+        }
+      });
+    },
+    onConfirm: function(refs, cb) {
+      if (refs.select_subnet.state.checkedField === 'select_subnet') {
+        var networkId = '',
+          portSecurityEnabled = true,
+          shared = false;
+        refs.select_subnet.state.data.some((group) => {
+          return group.data.some((s) => {
+            if (s.id === refs.select_subnet.state.value) {
+              networkId = group.id;
+              portSecurityEnabled = group.port_security_enabled;
+              shared = group.shared;
+              return true;
+            }
+            return false;
+          });
+        });
+
+        if (shared) {
+          request.joinNetwork(obj, {
+            net_id: networkId
+          }).then((res) => {
+            callback && callback(res);
+            cb(true);
+          });
+        } else {
+          var port = {
+            network_id: networkId,
+            fixed_ips: [{
+              subnet_id: refs.select_subnet.state.value
+            }],
+            port_security_enabled: portSecurityEnabled
+          };
+          request.createPort(port).then((p) => {
+            request.joinNetwork(obj, {
+              port_id: p.port.id
+            }).then((res) => {
+              callback && callback(res);
+              cb(true);
+            });
+          });
+        }
+      } else {
+        request.joinNetwork(obj, {
+          port_id: refs.select_interface.state.value
+        }).then((res) => {
+          callback && callback(res);
+          cb(true);
+        });
+      }
+    },
+    onAction: function(field, state, refs) {
+      switch (field) {
+        case 'select_subnet':
+          refs.select_interface.setState({
+            checkedField: state.checkedField
+          });
+          break;
+        case 'select_interface':
+          refs.select_subnet.setState({
+            checkedField: state.checkedField
+          });
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  commonModal(props);
+}
+
+module.exports = pop;

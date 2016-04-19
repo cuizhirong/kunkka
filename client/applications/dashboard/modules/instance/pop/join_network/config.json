@@ -1,0 +1,35 @@
+{
+  "title": ["join", "networks"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": "",
+    "is_long_label": true
+  }, {
+    "type": "group_select",
+    "field": "select_subnet",
+    "empty_text": {
+      "info": "no_subnet"
+    },
+    "data": [],
+    "checkedField": "select_subnet",
+    "is_long_label": true
+  }, {
+    "type": "select",
+    "field": "select_interface",
+    "empty_text": {
+      "info": "no_interface"
+    },
+    "checkedField": "select_subnet",
+    "is_long_label": true,
+    "data": []
+  }, {
+    "type": "warning",
+    "field": "join_network_tip"
+  }],
+  "btn": {
+    "value": "join",
+    "disabled": false
+  }
+}

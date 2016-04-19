@@ -1,0 +1,10 @@
+{
+  "en": {
+    "checksum": "Checksum",
+    "saving": "Saving"
+  },
+  "zh-CN": {
+    "checksum": "校验和",
+    "saving": "保存中"
+  }
+}

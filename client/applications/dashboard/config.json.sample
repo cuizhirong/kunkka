@@ -1,0 +1,40 @@
+{
+  "modules": [{
+    "items": [
+      "graphic"
+    ]
+  }, {
+    "title": "compute",
+    "items": [
+      "instance",
+      "image",
+      "keypair"
+    ]
+  }, {
+    "title": "network",
+    "items": [
+      "network",
+      "subnet",
+      "floating-ip",
+      "router",
+      "port",
+      "security-group"
+    ]
+  }, {
+    "title": "storage",
+    "items": [
+      "volume",
+      "snapshot"
+    ]
+  }],
+  "default_module": "instance",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "subnet",
+    "link": "network"
+  }],
+  "theme": "default"
+}

@@ -1,0 +1,312 @@
+@import "../../../../../style/theme.less";
+
+@strong_color: @color_delete;
+@empty_text_label_color: @color_grey_800;
+
+@tab_bg_color: @color_grey;
+@tab_hover_bg_color: @color_info_100;
+@tab_selected_bg_color: @color_info_200;
+@tab_font_color: @color_font_800;
+
+@num_row_arrow_bg_color: @color_grey;
+@num_row_arrow_hover_bg_color: @color_grey_800;
+@num_row_arrow_color: @color_font_800;
+@input_hover_border_color: @color_info;
+
+@keyframes moveToSecondPage {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes moveToFirstPage {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.halo-com-modal-create-instance {
+  padding: 0 !important;
+  height: 464px;
+  width: 1452px;
+  overflow: hidden;
+  line-height: 18px;
+
+  .page {
+    width: 690px;
+    padding: 30px 36px 30px 0px;
+    min-height: 18px;
+    display: inline-block;
+    float: left;
+
+    &.second-page {
+      transform: translateX(-100%);
+    }
+
+    >div {
+      display: flex;
+      align-items: center;
+
+      &:not(:first-child) {
+        margin-top: 24px;
+      }
+
+      .modal-label {
+        .fixed-width(100px);
+        text-align: right;
+        margin-right: 15px;
+        >strong {
+          color: @strong_color;
+        }
+
+        &.long-label {
+          .fixed-width(134px);
+        }
+      }
+
+      >div:last-child {
+        flex: 1;
+      }
+    }
+  }
+
+  .move-in {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: moveToSecondPage;
+  }
+
+  .move-out {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: moveToFirstPage;
+  }
+
+  .name-input-row {
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      height: 32px;
+      line-height: 32px;
+    }
+  }
+
+  .select-row {
+    select {
+      background-color: white;
+      outline: none;
+      width: 553px;
+    }
+    .empty-text-label {
+      color: @empty_text_label_color;
+    }
+  }
+
+  .flavor-cpu-row,
+  .flavor-ram-row {
+    padding-left: 115px;
+    margin-top: 10px !important;
+    a {
+      display: inline-block;
+      width: 70px;
+      height: 34px;
+      background-color: @tab_bg_color;
+      line-height: 34px;
+      text-align: center;
+      border-radius: 2px;
+      color: @tab_font_color;
+
+      &:hover {
+        background-color: @tab_hover_bg_color;
+      }
+      &.selected {
+        background-color: @tab_selected_bg_color;
+      }
+
+      &:not(:first-child) {
+        margin-left: 14px;
+      }
+    }
+  }
+
+  .tab-row {
+    a {
+      display: inline-block;
+      width: 137px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      background-color: @tab_bg_color;
+      color: @tab_font_color;
+
+      &:hover {
+        background-color: @tab_hover_bg_color;
+      }
+      &.selected {
+        background-color: @tab_selected_bg_color;
+      }
+
+      &:first-child {
+        border-bottom-left-radius: 2px;
+        border-top-left-radius: 2px;
+        margin-right: 1px;
+      }
+
+      &:last-child {
+        border-bottom-right-radius: 2px;
+        border-top-right-radius: 2px;
+      }
+      &.hide {
+        display: none;
+      }
+    }
+  }
+
+  .image-list-row {
+    padding-left: 115px;
+    margin-top: 10px !important;
+    height: 158px;
+    overflow-y: auto;
+    display: block !important;
+    line-height: 0;
+    &.hide {
+      display: none !important;
+    }
+    >a {
+      display: inline-block;
+      width: 245px;
+      height: 36px;
+      line-height: 36px;
+      margin-bottom: 10px;
+      text-align: left;
+      background-color: @tab_bg_color;
+      color: @tab_font_color;
+      padding: 0 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      .icon-image-default {
+        margin-right: 10px;
+      }
+      &:nth-child(even) {
+        margin-left: 14px;
+      }
+      &:hover {
+        background-color: @tab_hover_bg_color;
+      }
+      &.selected {
+        background-color: @tab_selected_bg_color;
+      }
+    }
+  }
+
+  .security-group-row {
+    max-height: 122px;
+    overflow-y: auto;
+    align-items: flex-start !important;
+    &.hide {
+      display: none;
+    }
+
+    .group-list {
+      line-height: 0;
+      overflow: hidden;
+
+      a {
+        display: inline-block;
+        width: 104px;
+        height: 34px;
+        line-height: 34px;
+        margin-top: 10px;
+        padding: 0 10px;
+        text-align: center;
+        background-color: @tab_bg_color;
+        color: @tab_font_color;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+          background-color: @tab_hover_bg_color;
+        }
+        &.selected {
+          background-color: @tab_selected_bg_color;
+        }
+
+        &:nth-child(1),
+        &:nth-child(2),
+        &:nth-child(3),
+        &:nth-child(4) {
+          margin-top: 0;
+        }
+
+        &:not(:nth-child(4n+1)) {
+          margin-left: 9px;
+        }
+      }
+    }
+
+    .modal-label {
+      span {
+        display: inline-block;
+        margin-top: 6px;
+      }
+    }
+  }
+
+  .credential-row {
+    display: block !important;
+    padding-left: 115px;
+    margin-top: 10px !important;
+
+    label {
+      margin-right: 16px;
+    }
+
+    .user-name {
+      display: inline-block;
+      &.hide {
+        display: none;
+      }
+      >input {
+        margin-right: 9px;
+        width: 157px;
+      }
+    }
+    .password {
+      display: inline-block;
+      &.hide {
+        display: none;
+      }
+      >input {
+        width: 165px;
+      }
+    }
+    .keypair {
+      display: inline-block;
+      vertical-align: top;
+      &.hide {
+        display: none;
+      }
+      >select {
+        width: 187px;
+        background-color: white;
+        outline: none;
+      }
+      .empty-text-label {
+        color: @empty_text_label_color;
+      }
+    }
+    .credential-tip {
+      margin-top: 10px;
+    }
+  }
+
+  .num-row {
+  }
+}

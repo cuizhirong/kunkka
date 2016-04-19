@@ -1,0 +1,25 @@
+{
+  "title": ["add", "volume"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": ""
+  }, {
+    "type": "tab",
+    "field": "type",
+    "data": []
+  }, {
+    "type": "select_group",
+    "field": "volume",
+    "empty_text": {
+      "info": "no_volume"
+    },
+    "single": true,
+    "data": []
+    }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

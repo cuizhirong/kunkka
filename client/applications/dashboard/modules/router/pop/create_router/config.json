@@ -1,0 +1,17 @@
+{
+  "title": ["create", "router"],
+  "fields": [{
+      "type": "input",
+      "field": "name"
+  }, {
+      "type": "checkbox",
+      "field": "enable_public_gateway",
+      "has_label": true,
+      "checked": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

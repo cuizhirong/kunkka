@@ -1,0 +1,119 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "volume"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["create", "snapshot"],
+    "key": "create_snapshot",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["attach_to", "instance"],
+    "key": "attach_to_instance",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["dtch_volume"],
+          "key": "dtch_instance",
+          "disabled": true
+        }, {
+          "title": ["extd_capacity"],
+          "key": "extd_capacity",
+          "disabled": true
+        }, {
+          "title": ["set", "read_only"],
+          "key": "set_rd_only",
+          "disabled": true
+        }, {
+          "title": ["set", "read_write"],
+          "key": "set_rd_wrt",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "size"
+    }, {
+      "title": ["attach_to", "instance"],
+      "dataIndex": "",
+      "key": "attch_instance"
+    }, {
+      "title": ["type"],
+      "dataIndex": "volume_type",
+      "key": "type"
+    }, {
+      "title": ["attributes"],
+      "dataIndex": "",
+      "key": "attributes"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["in-use"],
+        "key": "in_use",
+        "filterBy": "in-use"
+      }, {
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

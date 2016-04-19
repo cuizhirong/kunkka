@@ -1,0 +1,73 @@
+{
+  "tabs": [{
+    "name": ["snapshot"],
+    "key": "snapshot",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "volume"],
+    "key": "create",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["delete", "snapshot"],
+    "key": "del_snapshot",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "table_column": {
+      "ip_adrs": true,
+      "assc_resource": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "",
+      "key": "size"
+    }, {
+      "title": ["volume"],
+      "dataIndex": "",
+      "key": "volume"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filterAll": ["all"],
+      "filter": [{
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

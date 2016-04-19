@@ -1,0 +1,153 @@
+{
+  "tabs": [{
+    "name": ["instance"],
+    "key": "instance",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "instance"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["vnc_console"],
+    "key": "vnc_console",
+    "icon": "volume",
+    "disabled": true
+  }, {
+    "value": ["power_on"],
+    "key": "power_on",
+    "icon": "power-on",
+    "disabled": true
+  }, {
+    "value": ["power_off"],
+    "key": "power_off",
+    "icon": "power-off",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["reboot"],
+          "key": "reboot",
+          "disabled": true
+        }, {
+          "title": ["take_instance", "snapshot"],
+          "key": "instance_snapshot",
+          "disabled": true
+        }, {
+          "title": ["resize"],
+          "key": "resize",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["associate", "floating_ip"],
+          "key": "assc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["dissociate", "floating_ip"],
+          "key": "dssc_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["join", "networks"],
+          "key": "join_ntw",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["modify","security", "group"],
+          "key": "chg_security_grp",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["add", "volume"],
+          "key": "add_volume",
+          "disabled": true
+        }, {
+          "title": ["detach", "volume"],
+          "key": "rmv_volume",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["terminate"],
+          "key": "terminate",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["image"],
+      "dataIndex": "",
+      "key": "image"
+    }, {
+      "title": ["ip_address"],
+      "dataIndex": "",
+      "key": "ip_address"
+    }, {
+      "title": ["floating_ip"],
+      "dataIndex": "",
+      "key": "floating_ip"
+    }, {
+      "title": ["flavor"],
+      "dataIndex": "",
+      "key": "flavor"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["console", "output"],
+        "key": "console_output"
+      }, {
+        "name": ["vnc_console"],
+        "key": "vnc_console"
+      }]
+    }
+  }
+}

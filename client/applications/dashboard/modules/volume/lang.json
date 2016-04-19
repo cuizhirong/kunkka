@@ -1,0 +1,38 @@
+{
+  "en": {
+    "attach": "Attach",
+    "attach_to": "Attach to ",
+    "attributes": "Attributes",
+    "capacity_size": "Capacity",
+    "dtch_volume": "Detach",
+    "error_deleting": "Error Deleting",
+    "extd_capacity": "Extend Capacity",
+    "no_volume": "No Available Volume",
+    "read_only": "Read Only",
+    "read_write": "Read Write",
+    "read_write_all": "Set volume {0} to read write?",
+    "set_read": "Set Read Only",
+    "set_read_write": "Set Read Write",
+    "set_read_only": "Set volume {0} to read only?",
+    "snapshot_name": "Snapshot Name",
+    "tip_volume_snapshot": "Create snapshot for volumes. The performance volume can only create performance snap. So is capacity volume."
+  },
+  "zh-CN": {
+    "attach": "挂载",
+    "attach_to": "挂载到",
+    "attributes": "属性",
+    "capacity_size": "容量",
+    "dtch_volume": "从云主机卸载",
+    "error_deleting": "删除错误",
+    "extd_capacity": "扩容",
+    "no_volume": "没有可用的云硬盘",
+    "read_only": "只读盘",
+    "read_write": "读写盘",
+    "read_write_all": "将云硬盘{0}设置为可读写吗？",
+    "set_read": "设置只读",
+    "set_read_write": "设置读写",
+    "set_read_only": "将云硬盘{0}设置为只读吗？",
+    "snapshot_name": "快照名称",
+    "tip_volume_snapshot": "为云硬盘创建快照。性能型云硬盘只能创建性能型云硬盘快照，容量型云硬盘只能创建容量型快照。"
+  }
+}

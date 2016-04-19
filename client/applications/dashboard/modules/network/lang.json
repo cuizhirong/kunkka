@@ -1,0 +1,30 @@
+{
+  "en": {
+    "create_subnet": "Create Subnet",
+    "enable_security": "Enable security restrict(Once be set, it can not be changed)",
+    "net_address": "CIDR",
+    "network_name": "Network Name",
+    "no_network": "No available Virtual Network",
+    "prv_network": "Network",
+    "prv_info": "Network is an isolate layer 2 network brocadcast domain. User can create layer 3 network called Subnet in this network. In VDC, network is used as the container of subnets.",
+    "show_more": "Show More Options",
+    "subnet": "Subnet",
+    "subnet_name": "Subnet Name",
+    "shared": "Shared",
+    "unmanaged": "Unmanaged "
+  },
+  "zh-CN": {
+    "create_subnet": "创建子网",
+    "enable_security": "开启安全限制（设置后不能更改）",
+    "net_address": "网络地址",
+    "network_name": "私有网络名称",
+    "no_network": "没有可用的虚拟网络",
+    "prv_network": "私有网络",
+    "prv_info": "私有网络是一个隔离的二层网络广播域，在这个二层网络中，可以创建多个三层网络，即子网。在VDC中，私有网络主要作用作为子网容器。",
+    "show_more": "显示高级选项",
+    "subnet": "子网",
+    "subnet_name": "子网名称",
+    "shared": "共享网络",
+    "unmanaged": "受管"
+  }
+}

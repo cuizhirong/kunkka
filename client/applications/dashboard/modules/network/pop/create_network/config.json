@@ -1,0 +1,35 @@
+{
+  "title": ["create", "prv_network"],
+  "fields": [{
+    "type": "info",
+    "field": "prv_info"
+  }, {
+    "type": "input",
+    "field": "network_name",
+    "is_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_security",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "create_subnet",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_name",
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "net_address",
+    "is_long_label": true,
+    "required": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": false
+  }
+}

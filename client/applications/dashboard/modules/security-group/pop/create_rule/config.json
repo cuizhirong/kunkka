@@ -1,0 +1,47 @@
+{
+  "title": ["create", "security_group"],
+  "fields": [{
+    "type": "select_single",
+    "columnNum": 3,
+    "field": "rules"
+  }, {
+    "type": "select",
+    "field": "protocol"
+  }, {
+    "type": "select",
+    "field": "icmp_type",
+    "hide": true
+  }, {
+    "type": "select",
+    "field": "icmp_code",
+    "hide": true
+  }, {
+    "type": "input",
+    "field": "port_range",
+    "required": true,
+    "hide": true,
+    "tip_info": "port_range_tip"
+  }, {
+    "type": "select",
+    "field": "target"
+  }, {
+    "type": "input",
+    "field": "cidr",
+    "value": "0.0.0.0/0",
+    "required": true,
+    "hide": true
+  }, {
+    "type": "select",
+    "field": "security_group",
+    "hide": true
+  }, {
+    "type": "error",
+    "field": "error_msg",
+    "hide": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": false
+  }
+}

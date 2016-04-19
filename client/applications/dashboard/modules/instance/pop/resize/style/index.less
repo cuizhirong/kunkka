@@ -1,0 +1,75 @@
+@import "../../../../../style/theme.less";
+
+@strong_color: @color_delete;
+
+@tab_bg_color: @color_grey;
+@tab_hover_bg_color: @color_info_100;
+@tab_selected_bg_color: @color_info_200;
+@tab_font_color: @color_font_800;
+
+.halo-com-modal-resize-instance {
+  padding-left: 0 !important;
+
+  >div {
+    display: flex;
+    align-items: center;
+
+    &:not(:first-child) {
+      margin-top: 24px;
+    }
+
+    .modal-label {
+      .fixed-width(100px);
+      text-align: right;
+      margin-right: 15px;
+      >strong {
+        color: @strong_color;
+      }
+    }
+
+    >div:last-child {
+      flex: 1;
+    }
+  }
+
+  .name-row {
+    .glyphicon {
+      margin-right: 8px;
+    }
+  }
+
+  .select-row {
+    select {
+      background-color: white;
+      outline: none;
+      width: 541px;
+    }
+  }
+
+  .flavor-cpu-row,
+  .flavor-ram-row {
+    padding-left: 115px;
+    margin-top: 10px !important;
+    a {
+      display: inline-block;
+      width: 70px;
+      height: 34px;
+      background-color: @tab_bg_color;
+      line-height: 34px;
+      text-align: center;
+      border-radius: 2px;
+      color: @tab_font_color;
+
+      &:hover {
+        background-color: @tab_hover_bg_color;
+      }
+      &.selected {
+        background-color: @tab_selected_bg_color;
+      }
+
+      &:not(:first-child) {
+        margin-left: 14px;
+      }
+    }
+  }
+}

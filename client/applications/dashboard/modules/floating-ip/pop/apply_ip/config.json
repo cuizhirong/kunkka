@@ -1,0 +1,13 @@
+{
+  "title": ["allocate", "floating_ip"],
+  "fields": [{
+    "type": "text",
+    "field": "apply_ip_tip",
+    "info": "apply_ip_tip"
+  }],
+  "btn": {
+    "value": "allocate",
+    "type": "create",
+    "disabled": false
+  }
+}

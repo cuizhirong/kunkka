@@ -1,0 +1,38 @@
+{
+  "en": {
+    "allocation": "Allocation ",
+    "change_info": "The address will be used as the instance which in the subnet's default gateway.",
+    "cidr": "CIDR",
+    "dhcp": "DHCP",
+    "dis_router": "Do you want to disconnect this subnet from the router?",
+    "enable_dhcp": "Enable DHCP",
+    "enable_gw": "Enable Gateway",
+    "gateway": "Gateway ",
+    "gw_address": "Gateway Address",
+    "gw_tip": "Optional. System will generate automaticlly. The address will be used as the instance which in the subnet's default gateway.",
+    "ip": "IP",
+    "msg_disconnect_inst": "Do you want to disconnect server ?",
+    "no_subnet": "No subnet",
+    "pool": "Pool",
+    "select_network": "Select NetWork",
+    "version": "version"
+  },
+  "zh-CN": {
+    "allocation": "分配",
+    "change_info": "这个地址可以被用于该私有网络内其他主机的缺省网关。",
+    "cidr": "CIDR网段",
+    "dhcp": "DHCP",
+    "dis_router": "是否断开子网与路由器之间的连接？",
+    "enable_dhcp": "开启DHCP",
+    "enable_gw": "开启网关",
+    "gateway": "网关",
+    "gw_address": "网关地址",
+    "gw_tip": "如不填，系统将自动生成。这个地址可以被用于该私有网络内其他主机的缺省网关。",
+    "ip": "IP",
+    "msg_disconnect_inst": "是否断开云主机?",
+    "no_subnet": "没有可用子网",
+    "pool": "池",
+    "select_network": "选择私有网络",
+    "version": "版本"
+  }
+}

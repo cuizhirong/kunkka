@@ -1,0 +1,22 @@
+{
+  "title": ["associate", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "port",
+    "icon_type": "port",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance"
+    }
+  }, {
+    "type": "warning",
+    "field": "join_network_tip"
+  }],
+  "btn": {
+    "value": "associate",
+    "disabled": true
+  }
+}

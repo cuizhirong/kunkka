@@ -1,0 +1,99 @@
+{
+  "tabs": [{
+    "name": ["network"],
+    "key": "network"
+  }, {
+    "name": ["subnet"],
+    "key": "subnet",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "subnet"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["connect", "router"],
+    "key": "cnt_rter",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["disconnect", "router"],
+    "key": "discnt_rter",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["add_", "instance"],
+          "key": "add_inst",
+          "disabled": true
+        }, {
+          "title": ["modify", "subnet"],
+          "key": "mdfy_subnet",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["prv_network"],
+      "key": "prv_network"
+    }, {
+      "title": ["associate", "router"],
+      "key": "assc_router"
+    }, {
+      "title": ["ip", "version"],
+      "key": "ip_ver"
+    }, {
+      "title": ["cidr"],
+      "dataIndex": "cidr",
+      "key": "cidr"
+    }, {
+      "title": ["enable", "dhcp"],
+      "key": "enable_dhcp"
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}
