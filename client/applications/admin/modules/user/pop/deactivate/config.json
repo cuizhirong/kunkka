@@ -1,8 +1,8 @@
 {
-  "title": ["activate", "domain"],
+  "title": ["deactivate", "user"],
   "fields": [{
     "type": "text",
-    "field": "en_domain_info",
+    "field": "de_user_info",
     "info": ""
   }],
   "btn": {

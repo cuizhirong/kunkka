@@ -3,15 +3,25 @@ require('./style/index.less');
 //react components
 var React = require('react');
 var Main = require('../../components/main/index');
+var {Button} = require('client/uskin/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
+var createUser = require('./pop/create/index');
+var activateUser = require('./pop/activate/index');
+var deactivateUser = require('./pop/deactivate/index');
+var addRole = require('./pop/add_role/index');
+var removeRole = require('./pop/remove_role/index');
+var modifyProject = require('./pop/modify_project/index');
+var resetPassword = require('./pop/reset_password/index');
 
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -107,7 +117,7 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+      this.updateTableData(table, res._url);
     });
   }
 
@@ -146,6 +156,8 @@ class Model extends React.Component {
   processTableData(table, res) {
     if (res.users) {
       table.data = res.users;
+    } else if (res.user) {
+      table.data = [res.user];
     }
 
     var pagination = {},
@@ -273,14 +285,52 @@ class Model extends React.Component {
     var that = this;
     switch(key) {
       case 'create':
+        createUser(null, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'activate_user':
+        activateUser(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'deactivate_user':
+        deactivateUser(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'modify_project':
+        modifyProject(rows[0], null, function() {
+          /*that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });*/
+        });
         break;
       case 'reset_password':
+        resetPassword(rows[0], null, function() {
+          /*that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });*/
+        });
         break;
       case 'modify_user':
+        createUser(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'delete':
         deleteModal({
@@ -337,6 +387,7 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
+        case 'modify_project':
         case 'reset_password':
         case 'modify_user':
           btns[key].disabled = !singleRow;
@@ -403,6 +454,43 @@ class Model extends React.Component {
           });
         }
         break;
+      case 'role':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          request.getRoleAssignments(rows[0]).then((assignments) => {
+            request.getUserRoles(assignments).then((res) => {
+              var domainRoleConfig = this.getDomainRoleConfig(rows[0], res.domainRoles);
+              var projectRoleConfig = this.getProjectRoleConfig(rows[0], res.projectRoles);
+              contents[tabKey] = (
+                <div>
+                  <DetailMinitable
+                    __={__}
+                    title={__.domain + __.role}
+                    defaultUnfold={true}
+                    tableConfig={domainRoleConfig ? domainRoleConfig : []}>
+                    <Button value={__.add + __.role} onClick={this.onDetailAction.bind(this, 'description', 'add_domain_role', {
+                      rawItem: rows[0]
+                    })}/>
+                  </DetailMinitable>
+                  <DetailMinitable
+                    __={__}
+                    title={__.project + __.role}
+                    defaultUnfold={true}
+                    tableConfig={projectRoleConfig ? projectRoleConfig : []}>
+                    <Button value={__.add + __.role} onClick={this.onDetailAction.bind(this, 'description', 'add_project_role', {
+                      rawItem: rows[0]
+                    })}/>
+                  </DetailMinitable>
+                </div>
+              );
+              detail.setState({
+                contents: contents,
+                loading: false
+              });
+            });
+          });
+        }
+        break;
       default:
         break;
     }
@@ -411,7 +499,109 @@ class Model extends React.Component {
         contents: contents,
         loading: false
       });
+    } else {
+      detail.setState({
+        loading: true
+      });
     }
+  }
+
+  getDomainRoleConfig(item, dRoles) {
+    var dataContent = [];
+    var getRoles = function(element) {
+      var roles = [];
+      element.forEach((r, index) => {
+        if (index > 0) {
+          roles.push(', ');
+        }
+        roles.push(<a data-type="router" key={r.id} href={'/admin/role/' + r.id}>{r.name}</a>);
+      });
+      return roles;
+    };
+    for (var key in dRoles) {
+      var element = dRoles[key];
+      var dataObj = {
+        id: key,
+        name: <a data-type="router" href={'/admin/domain/' + key}>{'(' + key.substring(0, 8) + ')'}</a>,
+        role: <div>{getRoles(element)}</div>,
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_domain_role', {
+          rawItem: item,
+          childItem: element,
+          domain_id: key
+        })} />
+      };
+      dataContent.push(dataObj);
+    }
+
+    var tableConfig = {
+      column: [{
+        title: __.domain,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.role,
+        key: 'role',
+        dataIndex: 'role'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
+  }
+
+  getProjectRoleConfig(item, pRoles) {
+    var dataContent = [];
+    var getRoles = function(element) {
+      var roles = [];
+      element.forEach((r, index) => {
+        if (index > 0) {
+          roles.push(', ');
+        }
+        roles.push(<a data-type="router" key={r.id} href={'/admin/role/' + r.id}>{r.name}</a>);
+      });
+      return roles;
+    };
+    for (var key in pRoles) {
+      var element = pRoles[key];
+      var dataObj = {
+        id: key,
+        name: <a data-type="router" href={'/admin/project/' + key}>{'(' + key.substring(0, 8) + ')'}</a>,
+        role: <div>{getRoles(element)}</div>,
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_project_role', {
+          rawItem: item,
+          childItem: element,
+          project_id: key
+        })} />
+      };
+      dataContent.push(dataObj);
+    }
+
+    var tableConfig = {
+      column: [{
+        title: __.project,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.role,
+        key: 'role',
+        dataIndex: 'role'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getBasicPropsItems(item, originGroups, originProjects) {
@@ -472,12 +662,47 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editUserName(rawItem, newName).then((res) => {
+        request.editUser(rawItem.id, {
+          name: newName
+        }).then((res) => {
           this.refresh({
             loadingDetail: true,
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'add_domain_role':
+        addRole('domain', data.rawItem, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'rmv_domain_role':
+        removeRole('domain', data, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'rmv_project_role':
+        removeRole('project', data, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'add_project_role':
+        addRole('project', data.rawItem, null, function() {
+          that.refresh({
             refreshList: true,
             refreshDetail: true
           });
@@ -498,6 +723,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

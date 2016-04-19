@@ -32,10 +32,6 @@
       "width": 160,
       "items": [{
         "items": [{
-          "title": ["modify", "domain"],
-          "key": "modify_domain",
-          "disabled": true
-        }, {
           "title": ["modify", "quota"],
           "key": "modify_quota",
           "disabled": true

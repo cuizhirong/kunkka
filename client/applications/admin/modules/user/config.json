@@ -35,6 +35,10 @@
           "title": ["reset", "password"],
           "key": "reset_password",
           "disabled": true
+        }, {
+          "title": ["modify", "main", "project"],
+          "key": "modify_project",
+          "disabled": true
         }]
       }, {
         "items": [{
@@ -78,6 +82,9 @@
         "name": ["description"],
         "key": "description",
         "default": true
+      }, {
+        "name": ["role"],
+        "key": "role"
       }]
     }
   }

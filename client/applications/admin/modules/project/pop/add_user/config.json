@@ -1,0 +1,24 @@
+{
+  "title": ["add", "user"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "project",
+    "icon_type": "project",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "user",
+    "empty_text": {
+      "info": "no_user"
+    },
+    "hide": true
+  }, {
+    "type": "select_group",
+    "field": "role",
+    "hide": true
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

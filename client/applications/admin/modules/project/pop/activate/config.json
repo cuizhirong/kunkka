@@ -1,12 +1,12 @@
 {
-  "title": ["activate", "domain"],
+  "title": ["activate", "project"],
   "fields": [{
     "type": "text",
-    "field": "en_domain_info",
+    "field": "en_project_info",
     "info": ""
   }],
   "btn": {
-    "value": "disable",
+    "value": "activate",
     "disabled": false
   }
 }

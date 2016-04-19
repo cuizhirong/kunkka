@@ -53,5 +53,21 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  createRole: function(data) {
+    return fetch.post({
+      url: '/proxy/keystone/v3/roles',
+      data: {
+        role: data
+      }
+    });
+  },
+  editRole: function(roleID, data) {
+    return fetch.patch({
+      url: '/proxy/keystone/v3/roles/' + roleID,
+      data: {
+        role: data
+      }
+    });
   }
 };

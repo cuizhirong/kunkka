@@ -14,6 +14,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -109,7 +110,7 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+      this.updateTableData(table, res._url);
     });
   }
 
@@ -460,6 +461,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

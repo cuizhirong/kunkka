@@ -3,26 +3,24 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
-function pop(type, obj, parent, callback) {
+function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
-  if (type === 'domain') {
-    config.fields[1].hide = false;
-    config.fields[2].hide = true;
-  } else {
-    config.fields[1].hide = true;
-    config.fields[2].hide = false;
-  }
 
   var props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getRoles().then((res) => {
-        if (res.roles.length > 0) {
+      request.getAllUsers().then((res) => {
+        var users = res[0].users,
+          roles = res[1].roles;
+        if (users.length > 0 && roles.length > 0) {
+          refs.user.setState({
+            data: users,
+            hide: false
+          });
           refs.role.setState({
-            data: res.roles,
-            value: res.roles[0].id,
+            data: roles,
             hide: false
           });
           refs.btn.setState({
@@ -32,7 +30,13 @@ function pop(type, obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      request.addRole(type, obj, refs.role.state.value, refs[type].state.value).then(() => {
+      var roles = [];
+      refs.role.state.data.forEach(function(ele) {
+        if (ele.selected) {
+          roles.push(ele.id);
+        }
+      });
+      request.addUser(obj.id, refs.user.state.value, roles).then(() => {
         callback && callback();
         cb(true);
       });

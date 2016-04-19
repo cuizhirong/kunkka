@@ -9,11 +9,17 @@ var {Button} = require('client/uskin/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var deleteModal = require('client/components/modal_delete/index');
+var createProject = require('./pop/create/index');
+var activateProject = require('./pop/activate/index');
+var deactivateProject = require('./pop/deactivate/index');
+var addUser = require('./pop/add_user/index');
+var removeUser = require('./pop/remove_user/index');
 
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -109,7 +115,7 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+      this.updateTableData(table, res._url);
     });
   }
 
@@ -148,6 +154,8 @@ class Model extends React.Component {
   processTableData(table, res) {
     if (res.projects) {
       table.data = res.projects;
+    } else if (res.project) {
+      table.data = [res.project];
     }
 
     var pagination = {},
@@ -275,14 +283,36 @@ class Model extends React.Component {
     var that = this;
     switch(key) {
       case 'create':
+        createProject(null, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'modify_project':
+        createProject(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'activate_project':
+        activateProject(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'deactivate_project':
-        break;
-      case 'modify_domain':
+        deactivateProject(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'modify_quota':
         break;
@@ -342,7 +372,6 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'modify_project':
-        case 'modify_domain':
         case 'modify_quota':
           btns[key].disabled = !singleRow;
           break;
@@ -403,14 +432,18 @@ class Model extends React.Component {
       case 'user':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          request.getUserIds(rows[0].id).then((userIds) => {
-            request.getUsers(userIds).then((res) => {
-              var users = [];
-              res.forEach((item) => {
-                users.push(item.user);
-              });
-
-              var userConfig = this.getUserTableConfig(rows[0], users);
+          request.getUserIds(rows[0].id).then((roles) => {
+            var userIds = [],
+              assignments = {};
+            roles.forEach((role) => {
+              if (!assignments[role.user.id]) {
+                assignments[role.user.id] = [];
+                userIds.push(role.user.id);
+              }
+              assignments[role.user.id].push(role.role.id);
+            });
+            request.getUsers(userIds, assignments).then((res) => {
+              var userConfig = this.getUserTableConfig(rows[0], res);
               contents[tabKey] = (
                 <div>
                   <DetailMinitable
@@ -465,21 +498,34 @@ class Model extends React.Component {
         contents: contents,
         loading: false
       });
+    } else {
+      detail.setState({
+        loading: true
+      });
     }
   }
 
   getUserTableConfig(item, users) {
     var dataContent = [];
+    var role;
     users.forEach((element, index) => {
+      role = [];
+      element.role.forEach((r, i) => {
+        if (i > 0) {
+          role.push(', ');
+        }
+        role.push(<a data-type="router" key={r.id} href={'/admin/role'}>{r.name}</a>);
+      });
       var dataObj = {
         id: element.id,
-        name: <a data-type="router" href={'/admin/user/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/admin/user/' + element.id}>{element.name}</a>,
         email: element.email,
         status: element.enabled ? __.activated : __.inactive,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_user', {
           rawItem: item,
           childItem: element
-        })} />
+        })} />,
+        role: <div>{role}</div>
       };
       dataContent.push(dataObj);
     });
@@ -497,6 +543,10 @@ class Model extends React.Component {
         title: __.email,
         key: 'email',
         dataIndex: 'email'
+      }, {
+        title: __.role,
+        key: 'role',
+        dataIndex: 'role'
       }, {
         title: __.status,
         key: 'status',
@@ -529,6 +579,9 @@ class Model extends React.Component {
       title: __.id,
       content: item.id
     }, {
+      title: __.domain,
+      content: <a data-type="router" key={item.domain_id} href={'/admin/domain/' + item.domain_id}>{item.domain_id}</a>
+    }, {
       title: __.describe,
       content: item.description
     }, {
@@ -550,10 +603,13 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
+    var that = this;
     switch(actionType) {
       case 'edit_name':
         var {rawItem, newName} = data;
-        request.editUserName(rawItem, newName).then((res) => {
+        request.editProject(rawItem.id, {
+          name: newName
+        }).then((res) => {
           this.refresh({
             loadingDetail: true,
             refreshList: true,
@@ -562,8 +618,24 @@ class Model extends React.Component {
         });
         break;
       case 'add_user':
+        addUser(data.rawItem, null, function() {
+          that.refresh({
+            loadingDetail: true,
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       case 'rmv_user':
+        removeUser({
+          project: data.rawItem,
+          user: data.childItem
+        }, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
         break;
       default:
         break;
@@ -580,6 +652,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );
