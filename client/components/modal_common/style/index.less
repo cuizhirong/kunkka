@@ -172,31 +172,30 @@
           margin-bottom: 10px;
         }
 
+        .icon-active-yes {
+          color: @select_group_row_bg_color;
+        }
+
         &:hover,
         &.selected {
-          &:before {
-            font-family: icons;
-            content: "\f103";
-            display: inline-block;
-            width: 14px;
-            height: 14px;
+          .icon-active-yes {
             float: right;
-            margin-right: 9px;
+            margin: 9px 9px 0 0;
           }
         }
 
         &:hover {
           background-color: @select_group_row_hover_bg_color;
 
-          &:before {
-            color: white;
+          .icon-active-yes {
+            color: #fff;
           }
         }
 
         &.selected {
           background-color: @select_group_row_selected_bg_color;
 
-          &:before {
+          .icon-active-yes {
             color: @select_group_row_selected_icon_color;
           }
         }
@@ -211,7 +210,7 @@
             background-color: @select_group_row_warning_selected_bg_color;
             color: #fff;
 
-            &:before {
+            .icon-active-yes {
               color: #fff;
             }
           }
