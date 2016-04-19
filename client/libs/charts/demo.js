@@ -79,7 +79,7 @@ c5.setOption({
   },
   yAxis: {
     color: '#f2f3f4',
-    tickPeriod: 10,
+    tickPeriod: 15,
     tickColor: '#939ba3'
   },
   series: [{
@@ -91,6 +91,35 @@ c5.setOption({
   }, {
     color: '#42b9e5',
     value: 75
+  }],
+  period: 600,
+  easing: 'easeOutCubic'
+});
+
+var c6 = new Chart.LineChart(document.getElementById('container6'));
+
+c6.setOption({
+  unit: 'TB',
+  title: '容量／TB',
+  xAxis: {
+    tickWidth: 50,
+    barWidth: 30
+  },
+  yAxis: {
+    color: '#f2f3f4',
+    tickPeriod: 10,
+    tickColor: '#939ba3',
+    data: ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15']
+  },
+  series: [{
+    color: '#1797c6',
+    data: [31, 9, 41, 21, 26, 49, 23, 25, 30, 32]
+  }, {
+    color: '#42b9e5',
+    data: [9, 40, 18, 10, 32, 47, 8, 14, 21, 16]
+  }, {
+    color: '#ff5a67',
+    data: [42, 5, 26, 22, 17, 38, 18, 12, 3, 16]
   }],
   period: 600,
   easing: 'easeOutCubic'
