@@ -30,10 +30,6 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
-# config file.
-configs/server.js
-configs/index.json
-
 # Mac file
 .DS_Store
 

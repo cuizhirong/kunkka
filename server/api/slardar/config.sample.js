@@ -5,9 +5,9 @@ module.exports = {
     'async': '^1.5.0'
   },
   'config': {
-    'domain': '',
+    'domain': 'default',
     'cookie': {
-      'maxAge': ''
+      'maxAge': 1000 * 60 * 60 * 24 * 7
     },
     'extension': {
       'type': 'example_qiniu'
