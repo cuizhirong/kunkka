@@ -44,47 +44,4 @@ router.all('/*', function (req, res, next) {
   }
 });
 
-// var httpProxy = require('http-proxy');
-// var proxy = httpProxy.createProxyServer({});
-
-// var restreamer = function (prev, next, req, res) {
-//   req.removeAllListeners('data');
-//   req.removeAllListeners('end');
-//   prev(req, res);
-//   process.nextTick(function () {
-//     if(req.body) {
-//       req.emit('data', JSON.stringify(req.body));
-//     }
-//     req.emit('end');
-//   });
-// };
-
-// var filter = function (req, res) {
-//   if (req.body) {
-//     if (req.body.forceDelete !== undefined) {
-//       return res.status(403).json('Request is not allowwed!');
-//     }
-//   }
-//   proxyEmit(req, res);
-// };
-
-// var proxyEmit = function(req, res) {
-//   var region = req.headers.region;
-//   var service = req.path.split('/')[1]; console.log(req.body);
-//   proxy.web(req, res, {
-//     target: remote[service][region]
-//   });
-// };
-
-// proxy.on('proxyReq', function (proxyReq, req, res, options) {
-//   proxyReq.setHeader('X-Auth-Token', req.session.user.token);
-//   proxyReq.path = '/' + proxyReq.path.split('/').slice(2).join('/');
-// });
-
-// proxy.on('error', function (e) {
-//   console.log(e);
-// });
-
-// router.all('/*', restreamer.bind(null, filter, proxyEmit));
-
 module.exports = router;

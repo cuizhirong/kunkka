@@ -45,9 +45,6 @@ function setup() {
   }));
   app.use(bodyParser.json());
 
-  var proxy = require('../middlewares/proxy');
-  app.use('/proxy', proxy);
-
   var i18n = require('../middlewares/i18n');
   i18n(app);
 

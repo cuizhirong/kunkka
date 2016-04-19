@@ -33,6 +33,9 @@ if (extType) {
 
 
 module.exports = function(app) {
+  // load proxy module
+  require('./proxy')(app);
+  // load api module
   let apiPath = path.join(__dirname, 'api');
   fs.readdirSync(apiPath)
     .filter( m => { // cinder ...

@@ -4,16 +4,19 @@ const fs = require('fs');
 const path = require('path');
 const apiPath = path.join(__dirname, '../server/api');
 const driverPath = path.join(__dirname, '../server/drivers');
-const baseConfig = require('../configs/server');
-const basePackage = require('../package.json');
+const baseConfig = require('../configs/server.sample.js');
+const basePackage = require('../package.sample.json');
 
 const configList = [];
 
 [apiPath, driverPath].forEach( p => {
   fs.readdirSync(p)
+    .filter( => {
+      return fs.statSync(path.join(p, m)).isDirectory();
+    })
     .forEach( f => {
       try {
-        configList.push(require(path.join(p, f, 'config.js')));
+        configList.push(require(path.join(p, f, 'config.sample.js')));
       } catch (err) {
         if (err.code !== 'MODULE_NOT_FOUND') {
           console.log(err);
@@ -98,8 +101,8 @@ const generateFile = function (arr) {
 }
 
 const _arr = [
-  {_path: path.join(__dirname, '../configs/server.new.js'), _str: baseConfig},
-  {_path: path.join(__dirname, '../package.new.json'), _str: basePackage}
+  {_path: path.join(__dirname, '../configs/server.js'), _str: baseConfig},
+  {_path: path.join(__dirname, '../package.json'), _str: basePackage}
 ];
 
 generateFile(_arr);

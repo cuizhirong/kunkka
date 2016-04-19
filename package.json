@@ -15,7 +15,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "./scripts/client_build.sh",
+    "build": "./scripts/halo_build.sh",
     "start": "./scripts/start.sh",
     "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
@@ -99,7 +99,7 @@
     "webpack-dev-server": "^1.14.0"
   },
   "engines": {
-    "node": ">= 4.1.0"
+    "node": ">= 5.0.0"
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest/index.js",
