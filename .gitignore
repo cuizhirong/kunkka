@@ -57,3 +57,10 @@ tests/static_tests/*
 #temp file
 client/libs/charts/output.js
 client/libs/charts/output.js.map
+
+# external modules
+client/applications/*
+server/api/slardar
+server/drivers/huskar
+
+package.json
