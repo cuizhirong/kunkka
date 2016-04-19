@@ -1,0 +1,115 @@
+body {
+  width: 100%;
+  height: 100%;
+  background: url(/static/assets/login_bg.jpg) center center no-repeat;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  .header {
+    flex: 1;
+  }
+  .content {
+    margin: 0 auto;
+    flex: 1;
+    width: 400px;
+    .fixed-height(540px);
+    background-color: #fff;
+    border-radius: 10px;
+  }
+  .footer {
+    flex: 3;
+    min-height: 80px;
+  }
+}
+
+.content {
+  .img-wrapper {
+    margin-top: 30px;
+    text-align: center;
+    img {
+      width: 135px;
+      height: 91px;
+    }
+  }
+
+  .input-wrapper {
+    margin-top: 54px;
+    padding: 0 24px;
+    input {
+      display: block;
+      padding: 0 16px;
+      width: 352px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      &:hover {
+        border-color: #4391d9;
+      }
+      &.error {
+        border: 1px solid #ef5665;
+      }
+    }
+    input[type="password"] {
+      margin-top: 14px;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      background-color: #4391d9;
+      border-color: #4391d9;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: 1px;
+      &:hover {
+        background-color: #3283cd;
+      }
+      &.disabled {
+        color: #a8b3be;
+        background-color: #d9e3e5;
+        border-color: #d9e3e5;
+        cursor: not-allowed;
+      }
+    }
+    .tip-wrapper {
+      height: 40px;
+      font-size: 14px;
+      color: #ef5665;
+      overflow: hidden;
+      .input-error {
+        margin-top: 15px;
+      }
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .link {
+    margin-top: 90px;
+    text-align: center;
+    color: #a1a1a1;
+    a {
+      color: #a1a1a1;
+    }
+    span {
+      padding: 0 8px;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+  text-align: center;
+  justify-content: center;
+  .footer-wrapper {
+    margin-bottom: 20px;
+  }
+}
