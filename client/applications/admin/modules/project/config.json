@@ -1,0 +1,86 @@
+{
+  "tabs": [{
+    "name": ["project"],
+    "key": "project",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "project"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "project"],
+    "key": "modify_project",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["activate", "project"],
+    "key": "activate_project",
+    "icon": "enable",
+    "disabled": true
+  }, {
+    "value": ["deactivate", "project"],
+    "key": "deactivate_project",
+    "icon": "disable",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["modify", "quota"],
+          "key": "modify_quota",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "project", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["status"],
+      "dataIndex": "",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["user"],
+        "key": "user"
+      }, {
+        "name": ["quota"],
+        "key": "quota"
+      }]
+    }
+  }
+}

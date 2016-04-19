@@ -1,0 +1,21 @@
+{
+  "title": ["migrate"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "current_host",
+    "icon_type": "host"
+  }, {
+    "type": "select",
+    "data": [],
+    "field": "migrate_to"
+  }, {
+    "type": "checkbox",
+    "field": "migrate_host_tip",
+    "checked": true,
+    "has_label": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": false
+  }
+}

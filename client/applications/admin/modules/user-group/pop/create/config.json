@@ -1,0 +1,18 @@
+{
+  "title": ["create", "user-group"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

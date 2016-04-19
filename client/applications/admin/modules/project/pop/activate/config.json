@@ -1,0 +1,12 @@
+{
+  "title": ["activate", "project"],
+  "fields": [{
+    "type": "text",
+    "field": "en_project_info",
+    "info": ""
+  }],
+  "btn": {
+    "value": "activate",
+    "disabled": false
+  }
+}

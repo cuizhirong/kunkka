@@ -1,0 +1,14 @@
+{
+  "en": {
+    "no_role": "No available role",
+    "no_user": "No available user",
+    "enter_domain_tip": "Please enter domain UUID",
+    "enter_project_tip": "Please enter project UUID"
+  },
+  "zh-CN": {
+    "no_role": "没有可用角色",
+    "no_user": "没有可用用户",
+    "enter_domain_tip": "请输入域UUID",
+    "enter_project_tip": "请输入项目UUID"
+  }
+}

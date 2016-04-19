@@ -1,0 +1,20 @@
+{
+  "title": ["create", "user"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "email"
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

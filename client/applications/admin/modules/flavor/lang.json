@@ -1,0 +1,12 @@
+{
+  "en": {
+    "comment": "Comment",
+    "flavor_name_tip": "Only in letter, number and underscore",
+    "set_enable": "Set Enable"
+  },
+  "zh-CN": {
+    "comment": "备注",
+    "flavor_name_tip": "仅限字母数字和下划线",
+    "set_enable": "设置为启用"
+  }
+}

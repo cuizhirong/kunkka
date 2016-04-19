@@ -1,0 +1,146 @@
+{
+  "tabs": [{
+    "name": ["instance"],
+    "key": "instance",
+    "default": true
+  }, {
+    "name": ["instance_restore"],
+    "key": "instance_restore"
+  }],
+  "btns": [{
+    "value": ["migrate"],
+    "key": "migrate",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["power_on"],
+    "key": "power_on",
+    "icon": "power-on",
+    "disabled": true
+  }, {
+    "value": ["power_off"],
+    "key": "power_off",
+    "icon": "power-off",
+    "disabled": true
+  }, {
+    "value": ["reboot"],
+    "key": "reboot",
+    "icon": "restart",
+    "disabled": true
+  }, {
+    "value": ["dissociate", "floating_ip"],
+    "key": "dissociate_floating_ip",
+    "icon": "dissociate",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "instance",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "instance", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "select",
+      "key": "status",
+      "default": ["all", "status"]
+    }, {
+      "type": "select",
+      "key": "image",
+      "default": ["all", "image"]
+    }, {
+      "type": "select",
+      "key": "flavor",
+      "default": ["all", "flavor"]
+    }, {
+      "type": "input",
+      "key": "host",
+      "placeholder": ["pls_enter", "host", "name"]
+    }, {
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "server", "name"]
+    }, {
+      "type": "input",
+      "key": "ip",
+      "placeholder": ["pls_enter", "ip", "address"]
+    }, {
+      "type": "input",
+      "key": "tenant_id",
+      "placeholder": ["pls_enter", "project", "id"]
+    }, {
+      "type": "input",
+      "key": "user_id",
+      "placeholder": ["pls_enter", "user", "id"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "instance_name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["host"],
+      "dataIndex": "OS-EXT-SRV-ATTR:host",
+      "key": "host"
+    }, {
+      "title": ["flavor"],
+      "key": "flavor"
+    }, {
+      "title": ["image"],
+      "key": "image"
+    }, {
+      "title": ["fixed_ip"],
+      "key": "fixed_ip"
+    }, {
+      "title": ["user", "id"],
+      "dataIndex": "user_id",
+      "key": "user_id"
+    }, {
+      "title": ["project"],
+      "dataIndex": "tenant_id",
+      "key": "project_id"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["created", "time"],
+      "dataIndex": "created",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

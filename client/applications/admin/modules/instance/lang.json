@@ -1,0 +1,32 @@
+{
+  "en": {
+    "auto": "Auto",
+    "fixed_ip": "Fixed IP",
+    "floating_ip": "Floating Ip",
+    "migrate_to": "Migrate To",
+    "migrate": "Migrate",
+    "name": "Name",
+    "reset": "Reset",
+    "reboot": "Reboot",
+    "server": "Server ",
+    "power_off": "Power Off",
+    "power_on": "Power On",
+    "project_id": "Project ID",
+    "user_id": "User ID"
+  },
+  "zh-CN": {
+    "auto": "自动",
+    "fixed_ip": "内网IP",
+    "floating_ip": "公网IP",
+    "migrate_to": "迁移到",
+    "name": "名称",
+    "migrate": "迁移",
+    "reset": "重置",
+    "reboot": "重启",
+    "server": "云主机",
+    "power_off": "关机",
+    "power_on": "开机",
+    "project_id": "项目ID",
+    "user_id": "用户ID"
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["dissociate", "related"],
+    "key": "dissociate",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "volume_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "volume", "id"]
+    }]
+  }, {
+      "group_key": "all_tenant",
+      "items": [{
+        "type": "select",
+        "key": "status",
+        "default": ["all", "status"]
+      }, {
+        "type": "input",
+        "key": "name",
+        "placeholder": ["pls_enter", "volume", "name"]
+      }, {
+        "type": "input",
+        "key": "tenant_id",
+        "placeholder": ["pls_enter", "project", "id"]
+      }]
+    }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 8,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "key": "size"
+    }, {
+      "title": ["type"],
+      "key": "type"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "os-vol-tenant-attr:tenant_id",
+      "key": "project_id"
+    }, {
+      "title": ["user", "id"],
+      "dataIndex": "user_id",
+      "key": "user_id"
+    }, {
+      "title": ["shared"],
+      "key": "shared"
+    }, {
+      "title": ["attributes"],
+      "key": "attributes"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["created", "time"],
+      "dataIndex": "created_time",
+      "type": "time",
+      "key": "created_time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

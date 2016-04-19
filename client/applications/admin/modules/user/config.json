@@ -1,0 +1,91 @@
+{
+  "tabs": [{
+    "name": ["user"],
+    "key": "user",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "user"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "user"],
+    "key": "modify_user",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["activate", "user"],
+    "key": "activate_user",
+    "icon": "enable",
+    "disabled": true
+  }, {
+    "value": ["deactivate", "user"],
+    "key": "deactivate_user",
+    "icon": "disable",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["reset", "password"],
+          "key": "reset_password",
+          "disabled": true
+        }, {
+          "title": ["modify", "main", "project"],
+          "key": "modify_project",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "user", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["user_name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["email"],
+      "dataIndex": "email",
+      "key": "email"
+    }, {
+      "title": ["status"],
+      "dataIndex": "",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["role"],
+        "key": "role"
+      }]
+    }
+  }
+}

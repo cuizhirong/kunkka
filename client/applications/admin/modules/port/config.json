@@ -1,0 +1,64 @@
+{
+  "tabs": [{
+    "name": ["port"],
+    "key": "port",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["delete"],
+    "key": "delete",
+    "disabled": true,
+    "type": "delete",
+    "icon": "delete"
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "port", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["ip", "address"],
+      "dataIndex": "",
+      "key": "ip_address"
+    }, {
+      "title": ["floating_ip"],
+      "dataIndex": "",
+      "key": "floating_ip"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "",
+      "key": "project"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

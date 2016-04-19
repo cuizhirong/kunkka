@@ -1,0 +1,12 @@
+{
+  "title": ["activate", "user"],
+  "fields": [{
+    "type": "text",
+    "field": "en_user_info",
+    "info": ""
+  }],
+  "btn": {
+    "value": "disable",
+    "disabled": false
+  }
+}

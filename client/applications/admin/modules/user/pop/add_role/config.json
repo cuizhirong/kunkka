@@ -1,0 +1,32 @@
+{
+  "title": ["add", "role"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user-group",
+    "icon_type": "user-group",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "domain",
+    "tip_info": "enter_domain_tip",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "project",
+    "tip_info": "enter_project_tip",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "role",
+    "empty_text": {
+      "info": "no_role"
+    },
+    "hide": true
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

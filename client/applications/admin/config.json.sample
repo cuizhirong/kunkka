@@ -1,0 +1,27 @@
+{
+  "modules": [{
+    "title": "compute_service",
+    "items": [
+      "host",
+      "overview_host",
+      "instance",
+      "flavor"
+    ]
+  }, {
+    "title": "storage_service",
+    "items": [
+      "volume",
+      "snapshot"
+    ]
+  }],
+  "default_module": "instance",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "overview_host",
+    "link": "host"
+  }],
+  "theme": "default"
+}

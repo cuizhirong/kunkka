@@ -1,0 +1,64 @@
+{
+  "tabs": [{
+    "name": ["flavor"],
+    "key": "flavor",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "flavor", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["id"],
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["vcpu"],
+      "dataIndex": "vcpus",
+      "key": "vcpu"
+    }, {
+      "title": ["memory"],
+      "key": "memory"
+    }, {
+      "title": ["enable"],
+      "key": "enable"
+    }, {
+      "title": ["comment"],
+      "dataIndex": "",
+      "key": "comment"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "en": {
+    "quota": "Quota",
+    "add": "Add ",
+    "remove": "Remove ",
+    "en_project_info": "Are you sure to activate project {0}?",
+    "de_project_info": "Are you sure to deactivate project {0}?",
+    "de_project_tip": "This operation will cause all resources in the project disabled."
+  },
+  "zh-CN": {
+    "quota": "配额",
+    "add": "添加",
+    "remove": "移除",
+    "en_project_info": "确定激活项目“{0}”吗？",
+    "de_project_info": "确定禁用项目“{0}”吗？",
+    "de_project_tip": "我了解该操作可能导致该项目的所有资源不可用。"
+  }
+}

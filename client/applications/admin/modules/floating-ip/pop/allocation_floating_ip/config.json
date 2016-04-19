@@ -1,0 +1,21 @@
+{
+  "title": ["allocate", "floating_ip"],
+  "fields": [{
+    "type": "input",
+    "field": "floating_ip",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "project_info",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "info",
+    "field": "tip_info_floating_ip"
+  }],
+  "btn": {
+    "value": "allocate",
+    "disabled": false
+  }
+}

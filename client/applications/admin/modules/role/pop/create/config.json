@@ -1,0 +1,14 @@
+{
+  "title": ["create", "role"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "value": ""
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

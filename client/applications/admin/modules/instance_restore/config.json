@@ -1,0 +1,60 @@
+{
+  "tabs": [{
+    "name": ["instance"],
+    "key": "instance"
+  }, {
+    "name": ["instance_restore"],
+    "key": "instance_restore",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["restore"],
+    "icon": "restart",
+    "key": "restore",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "instance", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["id"],
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["user", "id"],
+      "dataIndex": "user_id",
+      "key": "user"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "tenant_id",
+      "key": "project"
+    }, {
+      "title": ["deleted", "time"],
+      "dataIndex": "updated",
+      "key": "deleted_time",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

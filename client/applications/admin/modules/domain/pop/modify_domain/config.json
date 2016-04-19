@@ -1,0 +1,17 @@
+{
+  "title": ["modify", "domain"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

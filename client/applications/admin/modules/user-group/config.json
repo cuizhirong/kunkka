@@ -1,0 +1,62 @@
+{
+  "tabs": [{
+    "name": ["user-group"],
+    "key": "user_group",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "user-group"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "user-group"],
+    "key": "modify_group",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "user-group", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["domain"],
+      "dataIndex": "",
+      "key": "domain"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["user"],
+        "key": "user"
+      }, {
+        "name": ["role"],
+        "key": "role"
+      }]
+    }
+  }
+}

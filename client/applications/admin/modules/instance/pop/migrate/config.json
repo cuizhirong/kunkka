@@ -1,0 +1,22 @@
+{
+  "title": ["migrate"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance"
+  },{
+    "type": "icon_label",
+    "field": "project_id"
+  },{
+    "type": "icon_label",
+    "field": "user_id"
+  }, {
+    "type": "select",
+    "data": [],
+    "field": "migrate_to"
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}

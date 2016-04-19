@@ -1,0 +1,20 @@
+{
+  "en": {
+    "email": "Email",
+    "user_name": "User Name",
+    "password": "Password",
+    "confirm_password": "Confirm",
+    "en_user_info": "Are you sure to activate user {0}?",
+    "de_user_info": "Are you sure to deactivate user{0}?",
+    "main": "Main"
+  },
+  "zh-CN": {
+    "email": "邮箱",
+    "user_name": "用户名",
+    "password": "密码",
+    "confirm_password": "确认密码",
+    "en_user_info": "确定激活用户“{0}”吗？",
+    "de_user_info": "确定禁用用户“{0}”吗？",
+    "main": "主"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": ["create", "project"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "select",
+    "field": "domain"
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

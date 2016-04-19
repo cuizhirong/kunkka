@@ -1,0 +1,90 @@
+{
+  "tabs": [{
+    "name": ["host"],
+    "key": "host",
+    "default": true
+  }, {
+    "name": ["overview_host"],
+    "key": "overview_host"
+  }],
+  "btns": [{
+    "value": ["migrate"],
+    "key": "migrate",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["enable"],
+    "key": "enable",
+    "icon": "active",
+    "disabled": true
+  }, {
+    "value": ["disable"],
+    "key": "disable",
+    "icon": "remove",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "host", "id"],
+    "width": 200
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["host", "name"],
+      "dataIndex": "hypervisor_hostname",
+      "key": "host_name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["ip"],
+      "dataIndex": "host_ip",
+      "key": "ip"
+    }, {
+      "title": ["vcpu"],
+      "key": "vcpu"
+    }, {
+      "title": ["memory", "gb"],
+      "key": "memory"
+    }, {
+      "title": ["disk", "capacity", "gb"],
+      "key": "disk_capacity"
+    }, {
+      "title": ["virtual_machine", "counts"],
+      "dataIndex": "running_vms",
+      "key": "running_vms"
+    }, {
+      "title": ["physical_host", "type"],
+      "dataIndex": "hypervisor_type",
+      "key": "physical_host_type"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["state"],
+      "dataIndex": "state",
+      "key": "state"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

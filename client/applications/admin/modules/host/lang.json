@@ -1,0 +1,32 @@
+{
+  "en": {
+    "capacity": "Capacity",
+    "counts": "Counts",
+    "current_host": "Current Host",
+    "disable": "Disable",
+    "disk": "Disk ",
+    "enable": "Enable",
+    "gb": "(GB)",
+    "memory": "Memory",
+    "migrate_host_tip": "Migrate shuted instance(migrate randomly)",
+    "physical_host": "Host ",
+    "state": "State",
+    "vcpu": "vCPU",
+    "virtual_machine": "Virtual Machine "
+  },
+  "zh-CN": {
+    "capacity": "容量",
+    "counts": "数量",
+    "current_host": "当前宿主机",
+    "disable": "禁用",
+    "disk": "硬盘",
+    "enable": "启用",
+    "gb": "(GB)",
+    "memory": "内存",
+    "migrate_host_tip": "迁移关机状态的云主机（随机指定）",
+    "physical_host": "物理机",
+    "state": "State",
+    "vcpu": "vCPU",
+    "virtual_machine": "虚拟机"
+  }
+}

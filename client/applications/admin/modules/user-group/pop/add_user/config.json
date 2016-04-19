@@ -1,0 +1,19 @@
+{
+  "title": ["add", "user"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user-group",
+    "icon-type": "user-group"
+  }, {
+    "type": "select_group",
+    "field": "user",
+    "empty_text": {
+      "info": "no_user"
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

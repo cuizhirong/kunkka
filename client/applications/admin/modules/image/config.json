@@ -1,0 +1,81 @@
+{
+  "tabs": [{
+    "name": ["image"],
+    "key": "image",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "filter_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "image", "id"]
+    }]
+  }, {
+    "group_key": "filter_type",
+    "items": [{
+      "type": "select",
+      "key": "type",
+      "default": ["all", "type"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "key": "size"
+    }, {
+      "title": ["type"],
+      "key": "type",
+      "filter": [{
+        "name": ["snapshot_type"],
+        "key": "snapshot"
+      }, {
+        "name": ["image"],
+        "key": "image"
+      }]
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}
