@@ -56,7 +56,7 @@ class BarChart {
     ctx.beginPath();
     ctx.moveTo(marginLeft + 5, 0);
     ctx.lineTo(marginLeft + 5, height - 2);
-    ctx.lineTo(height - 3, this.width);
+    ctx.lineTo(this.width, height - 2);
     ctx.stroke();
 
     ctx.textAlign = 'right';
