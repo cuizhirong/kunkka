@@ -37,7 +37,7 @@ API.prototype = {
     this.neutron.floatingip.listFloatingips(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __networks: function (callback) {
-    this.neutron.network.listNetworks(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query, this.reqQuery);
+    this.neutron.network.listNetworks(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __ports: function (callback) {
     this.neutron.port.listPorts(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
@@ -92,6 +92,15 @@ API.prototype = {
   },
   __subnetDetail: function (callback) {
     this.neutron.subnet.showSubnetDetails(this.subnetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  },
+  __novaQuotaPut: function (callback) {
+    this.nova.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.novaBody});
+  },
+  __cinderQuotaPut: function (callback) {
+    this.cinder.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.cinderBody});
+  },
+  __neutronQuotaPut: function (callback) {
+    this.neutron.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota': this.neutronBody});
   }
 };
 API.prototype.handleError = function (err, req, res, next) {

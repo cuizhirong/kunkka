@@ -14,11 +14,7 @@ function Overview(app) {
 
 var prototype = {
   getQuota: function (req, res, next) {
-    this.projectId = req.params.projectId;
-    this.targetId = req.params.targetId;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
-    this.query = req.query;
+    this.getVars(req, ['projectId', 'targetId']);
     async.parallel(
       this.arrAsync.slice(0, 3),
       (err, results) => {
@@ -52,11 +48,11 @@ var prototype = {
     );
   },
   getOverview: function (req, res, next) {
-    this.projectId = req.params.projectId;
+    this.getVars(req, ['projectId']);
     this.targetId = undefined;
-    this.region = req.headers.region;
-    this.token = req.session.user.token;
-    this.query = req.query;
+    this.query = {
+      tenant_id: this.projectId
+    };
     async.parallel(
       this.arrAsync,
       (err, results) => {
@@ -70,14 +66,14 @@ var prototype = {
             obj[e] = results[index][Object.keys(results[index])[0]];
           });
           /* case when is admin, here will only return its belongings.*/
-          this.arrListObject.forEach( e => {
-            let service = obj[e];
-            if (service[0] && service[0].tenant_id) {
-              obj[e] = service.filter( s => {
-                return s.tenant_id === this.projectId;
-              });
-            }
-          });
+          // this.arrListObject.forEach( e => {
+          //   let service = obj[e];
+          //   if (service[0] && service[0].tenant_id) {
+          //     obj[e] = service.filter( s => {
+          //       return s.tenant_id === this.projectId;
+          //     });
+          //   }
+          // });
           obj.overview_usage = {
             ram            : { total: obj.novaQuota.ram, used: 0 },
             cores          : { total: obj.novaQuota.cores, used: 0 },
@@ -144,9 +140,44 @@ var prototype = {
       }
     );
   },
+  putQuota: function (req, res, next) {
+    this.getVars(req, ['projectId', 'targetId']);
+    let novaItems = ['ram', 'cores', 'instances', 'key_pairs'];
+    let cinderItems = ['volumes', 'gigabytes', 'snapshots'];
+    let neutronItems = ['port', 'subnet', 'router', 'network', 'floatingip', 'security_group'];
+    let body = req.body;
+    let tasks = [];
+    let setBody = (s, k) => {
+      if (!this[s + 'Body']) {
+        this[s + 'Body'] = {};
+        tasks.push(this['__' + s + 'QuotaPut'].bind(this));
+      }
+      this[s + 'Body'][k] = body[k];
+    };
+    Object.keys(body).forEach( k => {
+      if (novaItems.indexOf(k) !== -1) {
+        setBody('nova', k);
+      } else if (cinderItems.indexOf(k) !== -1) {
+        setBody('cinder', k);
+      } else if (neutronItems.indexOf(k) !== -1) {
+        setBody('neutron', k);
+      }
+    });
+    async.parallel(
+      tasks,
+      (err, results) => {
+        if (err) {
+          this.handleError(err, req, res, next);
+        } else {
+          res.status(204);
+        }
+      }
+    );
+  },
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/overview', this.getOverview.bind(this));
     this.app.get('/api/v1/:projectId/quota/:targetId', this.getQuota.bind(this));
+    this.app.put('/api/v1/:projectId/quota/:targetId', this.putQuota.bind(this));
   }
 };
 
