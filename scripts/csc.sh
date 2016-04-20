@@ -4,7 +4,7 @@
 FILE="pre-commit"
 
 cd $(dirname $0)
-cd ../.git/hooks
+cd ../../.git/modules/halo/hooks
 
 if [ ! -e $FILE ]
   then

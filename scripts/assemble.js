@@ -19,15 +19,15 @@ try {
 
 Object.keys(config).forEach(key => {
   config[key].applications.forEach(a => {
-    let appDir = path.join(__dirname, a.directory, a.project);
+    let appDir = path.join(__dirname, a.directory, a.name);
     let rootDir = path.join(__dirname, '..');
     try {
       try {
-        fs.accessSync(path.join(__dirname, a.directory, a.project), fs.F_OK);
+        fs.accessSync(path.join(__dirname, a.directory, a.name), fs.F_OK);
         console.log(`project ${a.project} already exists.`);
       } catch (e) {
         let checkoutCmd = a.branch[env] === 'master' ? 'git checkout master' : `git checkout tags/${a.branch[env]} -b ${a.branch[env]}`;
-        execSync(`git clone ${a.git} && ${checkoutCmd}`, {'cwd': path.join(__dirname, a.directory)});
+        execSync(`git clone ${a.git} ${a.name} && ${checkoutCmd}`, {'cwd': path.join(__dirname, a.directory)});
         execFileSync(path.join(__dirname, 'pre_commit_hook.sh'), [rootDir], {
           'cwd': appDir
         });
@@ -38,5 +38,11 @@ Object.keys(config).forEach(key => {
     }
   });
 });
+
+try {
+  execFileSync(path.join(__dirname, 'csc.sh'));
+} catch (e) {
+  console.log(e);
+}
 
 console.log('Assembled all applications!');

@@ -68,7 +68,7 @@ function writeFile(fileName, str) {
   }
   var clientPath = path.join(localePath, 'client');
   try {
-    fs.accessSync(localePath, fs.F_OK)
+    fs.accessSync(clientPath, fs.F_OK)
   } catch (e) {
     fs.mkdirSync(clientPath);
   }

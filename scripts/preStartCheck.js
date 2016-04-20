@@ -1,7 +1,7 @@
 var fs = require('fs');
 var Path = require('path');
 var ChildProcess = require('child_process');
-var Config = require('../configs/server.js');
+var Config = require('../configs/server.json');
 
 function color(str, c) {
   // 0: black; 1: red; 2: green; 3: yellow; 4: blue; 5: purple; 6: cyan; 7: white;
