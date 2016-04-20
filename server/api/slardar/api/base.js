@@ -55,13 +55,13 @@ API.prototype = {
     this.glance.image.listImages(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __novaQuota: function (callback) {
-    this.nova.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+    this.nova.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __cinderQuota: function (callback) {
-    this.cinder.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+    this.cinder.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __neutronQuota: function (callback) {
-    this.neutron.quota.getQuota(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+    this.neutron.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
   __serverDetail: function (callback) {
     this.nova.server.showServerDetails(this.projectId, this.serverId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);

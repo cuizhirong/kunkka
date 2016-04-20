@@ -13,14 +13,52 @@ function Overview(app) {
 }
 
 var prototype = {
-  getOverview: function (req, res, next) {
-    var that = this;
+  getQuota: function (req, res, next) {
     this.projectId = req.params.projectId;
+    this.targetId = req.params.targetId;
     this.region = req.headers.region;
     this.token = req.session.user.token;
     this.query = req.query;
     async.parallel(
-      that.arrAsync,
+      this.arrAsync.slice(0, 3),
+      (err, results) => {
+        if (err) {
+          this.handleError(err, req, res, next);
+        } else {
+          let obj = {};
+          this.arrQuotaObject.forEach( (e, index) => {
+            obj[e] = results[index][Object.keys(results[index])[0]];
+          });
+          obj.quota = {
+            ram            : { total: obj.novaQuota.ram },
+            cores          : { total: obj.novaQuota.cores },
+            instances      : { total: obj.novaQuota.instances },
+            key_pairs      : { total: obj.novaQuota.key_pairs },
+
+            port           : { total: obj.neutronQuota.port },
+            subnet         : { total: obj.neutronQuota.subnet },
+            router         : { total: obj.neutronQuota.router },
+            network        : { total: obj.neutronQuota.network },
+            floatingip     : { total: obj.neutronQuota.floatingip },
+            security_group : { total: obj.neutronQuota.security_group },
+
+            volumes        : { total: obj.cinderQuota.volumes },
+            gigabytes      : { total: obj.cinderQuota.gigabytes },
+            snapshots      : { total: obj.cinderQuota.snapshots }
+          };
+          res.json({'quota': obj.quota});
+        }
+      }
+    );
+  },
+  getOverview: function (req, res, next) {
+    this.projectId = req.params.projectId;
+    this.targetId = undefined;
+    this.region = req.headers.region;
+    this.token = req.session.user.token;
+    this.query = req.query;
+    async.parallel(
+      this.arrAsync,
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
@@ -30,6 +68,15 @@ var prototype = {
           /* make up obj with serverObjects returned. */
           this.arrServiceObject.forEach( (e, index) => {
             obj[e] = results[index][Object.keys(results[index])[0]];
+          });
+          /* case when is admin, here will only return its belongings.*/
+          this.arrListObject.forEach( e => {
+            let service = obj[e];
+            if (service[0] && service[0].tenant_id) {
+              obj[e] = service.filter( s => {
+                return s.tenant_id === this.projectId;
+              });
+            }
           });
           obj.overview_usage = {
             ram            : { total: obj.novaQuota.ram, used: 0 },
@@ -99,6 +146,7 @@ var prototype = {
   },
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/overview', this.getOverview.bind(this));
+    this.app.get('/api/v1/:projectId/quota/:targetId', this.getQuota.bind(this));
   }
 };
 
