@@ -14,4 +14,12 @@ Driver.prototype.getMethod = function (url, token, callback, query) {
     .end(callback);
 };
 
+Driver.prototype.putMethod = function (url, token, callback, theBody) {
+  request
+    .put(url)
+    .send(theBody)
+    .set('X-Auth-Token', token)
+    .end(callback);
+};
+
 module.exports = Driver;

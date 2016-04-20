@@ -14,4 +14,13 @@ driverQuota.getQuota = function (projectId, targetId, token, region, callback, q
   );
 };
 
+driverQuota.putQuota = function (projectId, targetId, token, region, callback, theBody) {
+  return driverQuota.putMethod(
+    novaRemote[region] + '/v2.1/' + projectId + '/os-quota-sets/' + targetId,
+    token,
+    callback,
+    theBody
+  );
+};
+
 module.exports = driverQuota;

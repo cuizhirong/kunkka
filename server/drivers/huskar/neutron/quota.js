@@ -14,4 +14,13 @@ driverQuota.getQuota = function (projectId, targetId, token, region, callback, q
   );
 };
 
+driverQuota.putQuota = function (projectId, targetId, token, region, callback, theBody) {
+  return driverQuota.putMethod(
+    neutronRemote[region] + '/v2.0/quotas/' + targetId,
+    token,
+    callback,
+    theBody
+  );
+};
+
 module.exports = driverQuota;
