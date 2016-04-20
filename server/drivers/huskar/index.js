@@ -10,7 +10,7 @@ const driver = {};
 /* original driver. */
 fs.readdirSync(__dirname)
   .filter(m => {
-    return fs.statSync(path.join(__dirname, m)).isDirectory();
+    return fs.statSync(path.join(__dirname, m)).isDirectory() && m !== '.git';
   })
   .forEach( m => {
     driver[m] = {};
