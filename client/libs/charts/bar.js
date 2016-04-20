@@ -77,7 +77,7 @@ class BarChart {
   calcYAxis(option) {
     var tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
     var data = option.series.map(function(m) {
-      return m.value;
+      return m.data;
     });
     var max = Math.max.apply(null, data);
     var realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
@@ -114,7 +114,7 @@ class BarChart {
       ctx.fillStyle = m.color;
       var h = heightList[i] * t;
       ctx.fillRect(this.marginLeft + tickWidth * i + gap + 5, height - h + 0.5 - 3, barWidth, h);
-      ctx.fillText(m.value + option.unit, this.marginLeft + tickWidth * i + gap + 5 + barWidth / 2, height - h + 0.5 - 3 - 6);
+      ctx.fillText(m.data + option.unit, this.marginLeft + tickWidth * i + gap + 5 + barWidth / 2, height - h + 0.5 - 3 - 6);
 
     });
 

@@ -69,7 +69,7 @@ class GaugeChart {
 
     ++this.count;
     var t = this.easingFunc(this.count / this.ticks);
-    var percent = t * series[0].value;
+    var percent = t * series[0].data;
     var arc = percent * Math.PI + Math.PI;
 
     ctx.clearRect(0, 0, this.width, this.height);

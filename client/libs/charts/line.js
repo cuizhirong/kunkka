@@ -72,11 +72,13 @@ class LineChart {
     } else {
       realMin = this.realMin = Math.floor(min * 1.2 / tickPeriod) * tickPeriod;
     }
-    console.log(max, realMax, min, realMin);
 
-    this.marginLeft = 10;
-    this.marginBottom = 10;
+    this.marginLeft = 20;
+    this.marginBottom = 20;
 
+    this.ratio = (this.height - this.marginBottom) / (realMax - realMin);
+    // console.log(this.height-this.marginBottom,this.ratio)
+    // console.log(max, realMax, min, realMin);
   }
 
   renderLineBackground(option) {
@@ -100,10 +102,27 @@ class LineChart {
 
     // Draw xAxis
     ctx.beginPath();
-    ctx.moveTo(marginLeft, height - marginBottom);
-    ctx.lineTo(width, height - marginBottom);
+
+    var t = height - marginBottom - this.ratio * this.tickPeriod * (-this.realMin) / this.tickPeriod;
+    ctx.moveTo(marginLeft, t);
+    ctx.lineTo(width, t);
     ctx.stroke();
 
+    // draw axis ticks
+    ctx.textAlign = 'right';
+    //console.log((this.realMax-this.realMin) / this.tickPeriod)
+    for (let i = 0, len = (this.realMax - this.realMin) / this.tickPeriod; i < len; i++) {
+      let y = height - this.ratio * this.tickPeriod * i;
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, y - marginBottom);
+      ctx.lineTo(marginLeft - 3, y - marginBottom);
+      ctx.stroke();
+      ctx.fillText(this.tickPeriod * i + this.realMin, this.marginLeft - 5, y - marginBottom + 3);
+    }
+    // draw title
+    ctx.textAlign = 'left';
+    ctx.font = '13px "Helvetica Neue"';
+    ctx.fillText(option.title, this.marginLeft + 20, 20);
 
     // var ctx = this.bCanvas.getContext('2d'),
     //   option = this.option,

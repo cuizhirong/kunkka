@@ -7,7 +7,7 @@ var Chart = require('./index');
 //   bgColor: '#f2f3f4',
 //   series: [{
 //     color: '#ff5a67',
-//     value: 0.8
+//     data: 0.8
 //   }],
 //   text: {
 //     color: '#ff5a67',
@@ -23,7 +23,7 @@ var Chart = require('./index');
 //   bgColor: '#f2f3f4',
 //   series: [{
 //     color: '#42b9e5',
-//     value: 0.4
+//     data: 0.4
 //   }],
 //   text: {
 //     color: '#42b9e5',
@@ -40,7 +40,7 @@ var Chart = require('./index');
 //   bgColor: '#f2f3f4',
 //   series: [{
 //     color: '#42b9e5',
-//     value: 0.4
+//     data: 0.4
 //   }],
 //   text: {
 //     color: '#42b9e5',
@@ -57,7 +57,7 @@ var Chart = require('./index');
 //   tickColor: '#bbbfc5',
 //   series: [{
 //     color: '#42b9e5',
-//     value: 0.8
+//     data: 0.8
 //   }],
 //   pointer: {
 //     radius: 10,
@@ -84,13 +84,13 @@ var Chart = require('./index');
 //   },
 //   series: [{
 //     color: '#1797c6',
-//     value: 105
+//     data: 105
 //   }, {
 //     color: '#42b9e5',
-//     value: 25
+//     data: 25
 //   }, {
 //     color: '#42b9e5',
-//     value: 75
+//     data: 75
 //   }],
 //   period: 600,
 //   easing: 'easeOutCubic'
