@@ -4,8 +4,8 @@
     "key": "host",
     "default": true
   }, {
-    "name": ["overview_host"],
-    "key": "overview_host"
+    "name": ["host-overview"],
+    "key": "host-overview"
   }],
   "btns": [{
     "value": ["migrate"],

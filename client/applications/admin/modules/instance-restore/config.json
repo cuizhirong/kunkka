@@ -3,8 +3,8 @@
     "name": ["instance"],
     "key": "instance"
   }, {
-    "name": ["instance_restore"],
-    "key": "instance_restore",
+    "name": ["instance-restore"],
+    "key": "instance-restore",
     "default": true
   }],
   "btns": [{

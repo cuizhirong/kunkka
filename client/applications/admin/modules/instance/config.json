@@ -4,8 +4,8 @@
     "key": "instance",
     "default": true
   }, {
-    "name": ["instance_restore"],
-    "key": "instance_restore"
+    "name": ["instance-restore"],
+    "key": "instance-restore"
   }],
   "btns": [{
     "value": ["migrate"],

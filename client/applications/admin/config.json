@@ -3,9 +3,9 @@
     "title": "compute_service",
     "items": [
       "host",
-      "overview_host",
+      "host-overview",
       "instance",
-      "instance_restore",
+      "instance-restore",
       "flavor",
       "image"
     ]
@@ -37,10 +37,10 @@
     "zh-CN"
   ],
   "routers": [{
-    "key": "overview_host",
+    "key": "host-overview",
     "link": "host"
   }, {
-    "key": "instance_restore",
+    "key": "instance-restore",
     "link": "instance"
   }],
   "theme": "default"

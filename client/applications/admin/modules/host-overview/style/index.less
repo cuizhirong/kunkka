@@ -1,0 +1,257 @@
+@import "../../../style/theme.less";
+
+@block-head-bg-color: @color_grey;
+@block-border-color: @color_grey;
+@block-inner-line-color: @color_grey;
+@allocate-free-color: @color_grey_400;
+@allocate-info-color: @color_info;
+@allocate-info-700-color: @color_info_700;
+@allocate-warning-color: @color_warning;
+@allocate-danger-color: @color_delete;
+@reuse-rate-bg-color: @color_info_100;
+@reuse-rate-hd-color: @color_grey_700;
+@reuse-rate-body-color: @color_info;
+@loading-color: @color_font_800;
+
+.halo-module-host-overview {
+  flex: 1;
+  flex-direction: column;
+  display: flex;
+  overflow: auto;
+  padding: 0 20px;
+  .submenu-tabs {
+    margin-bottom: 20px;
+  }
+  .charts{
+    display: flex;
+    .col {
+      &:first-child {
+        margin-right: 20px;
+      }
+    }
+    .col-4 {
+      flex: 4;
+    }
+    .col-6 {
+      flex: 6;
+    }
+    .col-8 {
+      flex: 8;
+    }
+    .block {
+      margin-bottom: 20px;
+      .title {
+        height: 42px;
+        line-height: 42px;
+        font-size: 14px;
+        background-color: @block-head-bg-color;
+        border-radius: 2px;
+        padding: 0 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        user-select: none
+      }
+      .content {
+        padding: 16px;
+        border: 1px solid @block-border-color;
+        .allocate {
+          position: relative;
+          margin-bottom: 4px;
+          &::before{
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: -16px;
+            margin-right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background-color: @allocate-info-color;
+          }
+          &.allocate-free {
+            &::before{
+              background-color: @allocate-free-color;
+            }
+          }
+          &.allocate-info {
+            &::before{
+              background-color: @allocate-info-color;
+            }
+          }
+          &.allocate-info-700 {
+            &::before{
+              background-color: @allocate-info-700-color;
+            }
+          }
+          &.allocate-warning {
+            &::before{
+              background-color: @allocate-warning-color;
+            }
+          }
+          &.allocate-danger {
+            &::before{
+              background-color: @allocate-danger-color;
+            }
+          }
+          > span {
+            color: @allocate-info-color;
+            margin-left: 10px;
+            margin-right: 4px;
+          }
+        }
+        & > *.hidden {
+          display: none;
+        }
+        .loading-data {
+          width: 36px;
+          height: 100%;
+          margin: 0 auto;
+          position: relative;
+          i.icon-loading {
+            position: absolute;
+            top: 50%;
+            margin-top: -18px;
+            width: 36px;
+            color: @loading-color;
+            animation: spin 1.28s linear .28s infinite;
+            font-size: 36px !important;
+          }
+        }
+      }
+      &.block-host {
+        .content {
+          height: 52px;
+          ul {
+            overflow: auto;
+            margin: 0 auto;
+            width: 164px;
+            li {
+              float: left;
+              width: 70px;
+              text-align: center;
+              margin-right: 24px;
+              &:last-child {
+                margin-right: 0;
+              }
+              .number {
+                font-size: 18px;
+                font-weight: 600;
+                border-bottom: 2px solid @block-inner-line-color;
+                padding-bottom: 6px;
+              }
+              .desc {
+                padding-top: 6px;
+              }
+            }
+          }
+        }
+      }
+      &.block-disk {
+        .content {
+          height: 269px;
+          padding-top: 40px;
+          padding-bottom: 40px;
+          .chart-disk-usage {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            margin: 38px auto 0;
+          }
+          .description {
+            .total {
+              width: 100px;
+              margin: 0 auto;
+              border-bottom: 2px solid @block-inner-line-color;
+              padding: 12px 0;
+              margin-bottom: 12px;
+              & > * {
+                text-align: center;
+                display: block;
+              }
+              > strong {
+                font-size: 24px;
+                margin-bottom: 6px;
+              }
+              > span {
+                font-size: 16px;
+              }
+            }
+            .allocate-box {
+              width: 118px;
+              margin: 0 auto;
+              padding-left: 12px;
+            }
+          }
+        }
+      }
+      &.block-cpu {
+        .content {
+          display: flex;
+          height: 200px;
+          .chart-cpu-usage {
+            flex: 1;
+            margin-right: 20px;
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            height: 200px;
+            position: relative;
+          }
+          .description {
+            flex: 1;
+            padding-top: 50px;
+            .allocate-box {
+              padding-left: 20px;
+              margin-bottom: 10px;
+            }
+            .reuse-rate {
+              padding: 16px;
+              background-color: @reuse-rate-bg-color;
+              color: @reuse-rate-hd-color;
+              > span {
+                display: block;
+                color: @reuse-rate-body-color;
+                margin-top: 6px;
+              }
+            }
+          }
+        }
+      }
+      &.block-memory {
+        .content {
+          display: flex;
+          height: 120px;
+          padding-top: 40px;
+          padding-bottom: 40px;
+          .chart-memory-usage {
+            flex: 1;
+            margin-right: 20px;
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            height: 120px;
+            position: relative;
+          }
+          .description {
+            flex: 1;
+            .allocate-box {
+              padding-left: 20px;
+              margin-bottom: 10px;
+            }
+            .reuse-rate {
+              padding: 16px;
+              background-color: @reuse-rate-bg-color;
+              color: @reuse-rate-hd-color;
+              > span {
+                display: block;
+                color: @reuse-rate-body-color;
+                margin-top: 6px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
