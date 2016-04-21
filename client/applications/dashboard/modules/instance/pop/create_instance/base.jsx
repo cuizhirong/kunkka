@@ -1,5 +1,5 @@
 var React = require('react');
-var {Modal, Button, Tip, InputNumber} = require('client/uskin/index');
+var {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
 var createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
 var createKeypair = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
@@ -68,6 +68,8 @@ class ModalBase extends React.Component {
     this.onImageTypeChange = this.onImageTypeChange.bind(this);
     this.onImageChange = this.onImageChange.bind(this);
     this.onSelectSecurity = this.onSelectSecurity.bind(this);
+    this.onPasswordFocus = this.onPasswordFocus.bind(this);
+    this.onPasswordBlur = this.onPasswordBlur.bind(this);
   }
 
   componentWillMount() {
@@ -465,8 +467,32 @@ class ModalBase extends React.Component {
   }
 
   onPasswordChange(e) {
+    var pwd = e.target.value;
+    var pwdError = this.state.credentialType === 'password' && (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
+    if (this.state.pwdError && !pwdError) {
+      this.setState({
+        pwdError: false,
+        password: pwd
+      });
+    } else {
+      this.setState({
+        password: pwd
+      });
+    }
+  }
+
+  onPasswordFocus(e) {
     this.setState({
-      password: e.target.value
+      showPwdTip: true
+    });
+  }
+
+  onPasswordBlur(e) {
+    var pwd = e.target.value;
+    var pwdError = this.state.credentialType === 'password' && (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
+    this.setState({
+      pwdError: pwdError,
+      showPwdTip: pwdError
     });
   }
 
@@ -613,8 +639,9 @@ class ModalBase extends React.Component {
               </div>
               <div className={'password' + (state.credentialType === 'keypair' ? ' hide' : '')}>
                 <label>{__.password}</label>
-                <input value={state.password} onChange={this.onPasswordChange} type="password" />
+                <input className={state.pwdError ? ' error' : ''} value={state.password} onChange={this.onPasswordChange} onFocus={this.onPasswordFocus} onBlur={this.onPasswordBlur} type="password" />
               </div>
+              <Tooltip content={__.pwd_tip} width={228} shape="top-left" type={state.pwdError ? 'error' : ''} hide={!state.showPwdTip} />
               <div className="credential-tip">
                 <Tip type="warning" content={__.instance_credential_tip} showIcon={true} />
               </div>
