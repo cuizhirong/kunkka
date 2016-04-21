@@ -19,7 +19,7 @@ var Chart = require('./index');
 // var c2 = new Chart.PieChart(document.getElementById('container2'));
 
 // c2.setOption({
-//   lineWidth: 10,
+//   lineWidth: 0.2,
 //   bgColor: '#f2f3f4',
 //   series: [{
 //     color: '#42b9e5',
@@ -102,12 +102,13 @@ c6.setOption({
   unit: 'TB',
   title: '单位(%), 时间间隔900s',
   xAxis: {
+    color: '#f2f3f4',
+    data: ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15']
   },
   yAxis: {
     color: '#f2f3f4',
     tickPeriod: 10,
-    tickColor: '#939ba3',
-    data: ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15']
+    tickColor: '#939ba3'
   },
   series: [{
     color: '#1797c6',
@@ -129,6 +130,8 @@ c7.setOption({
   unit: 'TB',
   title: '单位(GB), 时间间隔300s',
   xAxis: {
+    color: '#f2f3f4',
+    data: ['12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15']
   },
   yAxis: {
     color: '#f2f3f4',

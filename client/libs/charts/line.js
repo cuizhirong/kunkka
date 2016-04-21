@@ -42,22 +42,11 @@ class LineChart {
 
   calcAxis(option) {
     var tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
-    // var data = option.series.map(function(m) {
-    //   return m.value;
-    // });
-    // var max = Math.max.apply(null, data);
-    // var realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
-
-    // this.ratio = this.height / realMax;
-
-    // // Calc each bar height respectively
-    // this.heightList = data.map(n => {
-    //   return Math.floor(this.ratio * n);
-    // });
 
     // // calc the width of y-text
     // var ctx = this.canvas.getContext('2d');
     // this.marginLeft = ctx.measureText('' + realMax).width;
+
     var max, min, data = [],
       realMax, realMin;
     option.series.forEach(function(m) {
@@ -76,9 +65,16 @@ class LineChart {
     this.marginLeft = 20;
     this.marginBottom = 20;
 
-    this.ratio = (this.height - this.marginBottom) / (realMax - realMin);
-    // console.log(this.height-this.marginBottom,this.ratio)
+    this.ratioY = (this.height - this.marginBottom) / (realMax - realMin);
+    // console.log(this.height-this.marginBottom,this.ratioY)
     // console.log(max, realMax, min, realMin);
+
+    var xData = option.xAxis.data;
+    this.interval = Math.ceil(xData.length / 6);
+    this.ratioX = (this.width - this.marginLeft) / xData.length;
+    // console.log(interval, this.ratioX);
+
+
   }
 
   renderLineBackground(option) {
@@ -87,7 +83,8 @@ class LineChart {
       marginLeft = this.marginLeft,
       marginBottom = this.marginBottom,
       height = this.height,
-      width = this.width;
+      width = this.width,
+      xData = option.xAxis.data;
 
     ctx.translate(0.5, -0.5);
     ctx.strokeStyle = yAxis.color;
@@ -103,58 +100,38 @@ class LineChart {
     // Draw xAxis
     ctx.beginPath();
 
-    var t = height - marginBottom - this.ratio * this.tickPeriod * (-this.realMin) / this.tickPeriod;
+    var t = height - marginBottom - this.ratioY * this.tickPeriod * (-this.realMin) / this.tickPeriod;
     ctx.moveTo(marginLeft, t);
     ctx.lineTo(width, t);
     ctx.stroke();
 
-    // draw axis ticks
+    // draw yAxis
     ctx.textAlign = 'right';
     //console.log((this.realMax-this.realMin) / this.tickPeriod)
     for (let i = 0, len = (this.realMax - this.realMin) / this.tickPeriod; i < len; i++) {
-      let y = height - this.ratio * this.tickPeriod * i;
+      let y = height - this.ratioY * this.tickPeriod * i;
       ctx.beginPath();
       ctx.moveTo(marginLeft, y - marginBottom);
       ctx.lineTo(marginLeft - 3, y - marginBottom);
       ctx.stroke();
       ctx.fillText(this.tickPeriod * i + this.realMin, this.marginLeft - 5, y - marginBottom + 3);
     }
+
+    // draw xAxis
+    ctx.textAlign = 'center';
+    for (let i = 1, len = Math.ceil(xData.length / this.interval); i < len; i++) {
+      let x = marginLeft + i * this.ratioX * this.interval;
+      ctx.beginPath();
+      ctx.moveTo(x, t);
+      ctx.lineTo(x, t + 3);
+      ctx.stroke();
+      ctx.fillText(xData[i * this.interval], x, t + 15);
+    }
+
     // draw title
     ctx.textAlign = 'left';
     ctx.font = '13px "Helvetica Neue"';
     ctx.fillText(option.title, this.marginLeft + 20, 20);
-
-    // var ctx = this.bCanvas.getContext('2d'),
-    //   option = this.option,
-    //   yAxis = option.yAxis,
-    //   marginLeft = this.marginLeft,
-    //   height = this.height;
-
-    // ctx.translate(0.5, -0.5);
-    // ctx.strokeStyle = yAxis.color;
-    // ctx.fillStyle = yAxis.tickColor;
-    // ctx.lineWidth = 1;
-
-    // // Draw axis
-    // ctx.beginPath();
-    // ctx.moveTo(marginLeft + 5, 0);
-    // ctx.lineTo(marginLeft + 5, height - 2);
-    // ctx.lineTo(height - 3, this.width);
-    // ctx.stroke();
-
-    // ctx.textAlign = 'right';
-    // for (let i = 0, len = this.realMax / this.tickPeriod; i <= len; i++) {
-    //   let y = height - this.ratio * this.tickPeriod * i;
-    //   ctx.beginPath();
-    //   ctx.moveTo(marginLeft + 5, y - 3);
-    //   ctx.lineTo(marginLeft + 2, y - 3);
-    //   ctx.stroke();
-    //   ctx.fillText('' + this.tickPeriod * i, this.marginLeft, y);
-    // }
-    // // draw title
-    // ctx.textAlign = 'left';
-    // ctx.font = '14px "Helvetica Neue"';
-    // ctx.fillText(option.title, this.marginLeft + 20, 20);
   }
 
   renderLine() {

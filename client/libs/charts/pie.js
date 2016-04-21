@@ -41,6 +41,7 @@ class PieChart {
     this.ticks = Math.round(option.period / 16);
     this.count = 0;
     this.easingFunc = easing[option.easing || 'linear'];
+    option.lineWidth = option.lineWidth < 1 ? this.width / 2 * option.lineWidth : option.lineWidth;
 
     // Set text style
     this.setTextStyle(this.textDiv);
