@@ -1,5 +1,6 @@
 var easing = require('./easing');
 var autoscale = require('./autoscale');
+var utils = require('./utils');
 
 class LineChart {
   constructor(container) {
@@ -31,6 +32,9 @@ class LineChart {
 
     // Calc Axis
     this.calcAxis(option);
+
+    // Calc positions
+    this.calcPostions(option);
 
     // Render background
     this.renderLineBackground(option);
@@ -71,10 +75,8 @@ class LineChart {
 
     var xData = option.xAxis.data;
     this.interval = Math.ceil(xData.length / 6);
-    this.ratioX = (this.width - this.marginLeft) / xData.length;
+    this.ratioX = (this.width - this.marginLeft) / (xData.length - 1);
     // console.log(interval, this.ratioX);
-
-
   }
 
   renderLineBackground(option) {
@@ -134,7 +136,77 @@ class LineChart {
     ctx.fillText(option.title, this.marginLeft + 20, 20);
   }
 
-  renderLine() {
+  // Calc the data points and the control-points
+  calcPostions(option) {
+    var series = option.series,
+      ratioX = this.ratioX,
+      ratioY = this.ratioY,
+      height = this.height,
+      marginLeft = this.marginLeft,
+      marginBottom = this.marginBottom,
+      realMin = this.realMin;
+
+    this.positions = [];
+    this.ctPositions = [];
+
+    series.forEach((s, i) => {
+      var p = this.positions[i] = [];
+      var cp = this.ctPositions[i] = [];
+      s.data.forEach((data, j) => {
+        p.push({
+          x: marginLeft + j * ratioX,
+          y: height - marginBottom - ratioY * (data - realMin)
+        });
+        cp.push({
+          x: 1,
+          y: 2
+        });
+      });
+    });
+
+
+  }
+
+  renderLine(option) {
+    var ctx = this.canvas.getContext('2d'),
+      series = option.series,
+      height = this.height,
+      marginLeft = this.marginLeft,
+      marginBottom = this.marginBottom,
+      ratioX = this.ratioX,
+      ratioY = this.ratioY,
+      realMin = this.realMin,
+      zeroY = height - marginBottom + ratioY * realMin,
+      positions = this.positions,
+      ctPositions = this.ctPositions;
+
+    console.log(ctPositions);
+
+    series.forEach((s, j) => {
+      var data = s.data,
+        color = s.color,
+        opacity = s.opacity,
+        position = positions[j];
+
+      ctx.beginPath();
+      ctx.fillStyle = utils.toRGB(color, opacity);
+      ctx.moveTo(marginLeft, zeroY);
+      data.forEach((m, i) => {
+        ctx.lineTo(position[i].x, position[i].y);
+      });
+      ctx.lineTo(marginLeft + (data.length - 1) * ratioX, zeroY);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      data.forEach((m, i) => {
+        ctx.lineTo(position[i].x, position[i].y);
+      });
+      ctx.lineTo(marginLeft + (data.length - 1) * ratioX, zeroY);
+      ctx.stroke();
+    });
+
+
     // var ctx = this.canvas.getContext('2d'),
     //   option = this.option,
     //   series = option.series,
@@ -162,7 +234,7 @@ class LineChart {
       this.count = 0;
       return;
     }
-    this.animationId = requestAnimationFrame(this.renderLine.bind(this));
+    //this.animationId = requestAnimationFrame(this.renderLine.bind(this));
   }
 
 }
