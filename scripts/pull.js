@@ -38,13 +38,13 @@ function pullCode (apps) {
     cwd: appDir
   });
   console.log(gsOutput.toString());
-  rl.question(`${warn} ${chalk.yellow.bold('Are you sure to do a git pull in')} ${project}. Enter ${chalk.green.bold('yes')} to do a git pull (make sure the work space is clean!), press ${chalk.green.bold('Enter')} to skip this action: `, (answer) => {
+  rl.question(`${warn} ${chalk.yellow.bold('Are you sure to do a git fetch & rebase in')} ${project}. Enter ${chalk.green.bold('yes')} to do a git fetch & rebase (make sure the work directory is clean!), press ${chalk.green.bold('Enter')} to skip this action: `, (answer) => {
     if (answer === 'yes') {
-      let gp = execSync('git pull', {
+      let gp = execSync('git fetch origin && git rebase origin/master', {
         cwd: appDir
       });
       console.log(gp.toString());
-      console.log(success(`git pull in ${a.name} is done!\n`));
+      console.log(success(`git fetch & rebase in ${a.name} is done!\n`));
     } else {
       console.log(chalk.cyan.bold(`Skip the project ${a.name}.\n`));
     }
