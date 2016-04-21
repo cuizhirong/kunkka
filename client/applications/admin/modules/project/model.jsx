@@ -469,8 +469,8 @@ class Model extends React.Component {
       case 'quota':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          request.getOverview(rows[0].id).then((res) => {
-            var quotaItems = this.getQuotaItems(rows[0]);
+          request.getQuotas(rows[0].id).then((res) => {
+            var quotaItems = this.getQuotaItems(rows[0], res.quota);
             contents[tabKey] = (
               <div>
                 <BasicProps
@@ -564,8 +564,63 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  getQuotaItems(item) {
-    var items = [];
+  getQuotaItems(item, quotas) {
+    var items = [{
+      title: __.instance,
+      content: quotas.instances.total,
+      type: 'editable',
+      field: 'instances'
+    }, {
+      title: __.ram + '(GB)',
+      content: quotas.ram.total / 1024,
+      type: 'editable',
+      field: 'ram'
+    }, {
+      title: __.cpu,
+      content: quotas.cores.total,
+      type: 'editable',
+      field: 'cores'
+    }, {
+      title: __.volume + __.size + '(GB)',
+      content: quotas.gigabytes.total,
+      type: 'editable',
+      field: 'gigabytes'
+    }, {
+      title: __.snapshot,
+      content: quotas.snapshots.total,
+      type: 'editable',
+      field: 'snapshots'
+    }, {
+      title: __.floatingip,
+      content: quotas.floatingip.total,
+      type: 'editable',
+      field: 'floatingip'
+    }, {
+      title: __.network,
+      content: quotas.network.total,
+      type: 'editable',
+      field: 'network'
+    }, {
+      title: __.subnet,
+      content: quotas.subnet.total,
+      type: 'editable',
+      field: 'subnet'
+    }, {
+      title: __.router,
+      content: quotas.router.total,
+      type: 'editable',
+      field: 'router'
+    }, {
+      title: __.security_group,
+      content: quotas.security_group.total,
+      type: 'editable',
+      field: 'security_group'
+    }, {
+      title: __.keypair,
+      content: quotas.key_pairs.total,
+      type: 'editable',
+      field: 'key_pairs'
+    }];
 
     return items;
   }
@@ -606,16 +661,30 @@ class Model extends React.Component {
     var that = this;
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
-        request.editProject(rawItem.id, {
-          name: newName
-        }).then((res) => {
-          this.refresh({
-            loadingDetail: true,
-            refreshList: true,
-            refreshDetail: true
+        var {item, rawItem, newName} = data;
+        var quotaType = item.field;
+        if (quotaType) {
+          if (quotaType === 'ram') {
+            newName *= 1024;
+          }
+          request.modifyQuota(quotaType, rawItem.id, newName).then((res) => {
+            this.refresh({
+              loadingDetail: true,
+              refreshList: true,
+              refreshDetail: true
+            });
           });
-        });
+        } else {
+          request.editProject(rawItem.id, {
+            name: newName
+          }).then((res) => {
+            this.refresh({
+              loadingDetail: true,
+              refreshList: true,
+              refreshDetail: true
+            });
+          });
+        }
         break;
       case 'add_user':
         addUser(data.rawItem, null, function() {

@@ -5,7 +5,13 @@
     "remove": "Remove ",
     "en_project_info": "Are you sure to activate project {0}?",
     "de_project_info": "Are you sure to deactivate project {0}?",
-    "de_project_tip": "This operation will cause all resources in the project disabled."
+    "de_project_tip": "This operation will cause all resources in the project disabled.",
+    "ram": "RAM",
+    "cpu": "CPU",
+    "network": "Network",
+    "floatingip": "Floating IP",
+    "keypair": "Keypair",
+    "security_group": "Security Group"
   },
   "zh-CN": {
     "quota": "配额",
@@ -13,6 +19,12 @@
     "remove": "移除",
     "en_project_info": "确定激活项目“{0}”吗？",
     "de_project_info": "确定禁用项目“{0}”吗？",
-    "de_project_tip": "我了解该操作可能导致该项目的所有资源不可用。"
+    "de_project_tip": "我了解该操作可能导致该项目的所有资源不可用。",
+    "ram": "内存",
+    "cpu": "CPU",
+    "network": "网络",
+    "floatingip": "公网IP",
+    "keypair": "密钥",
+    "security_group": "安全组"
   }
 }

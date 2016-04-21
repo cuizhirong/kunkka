@@ -100,9 +100,17 @@ module.exports = {
       return users;
     });
   },
-  getOverview: function(projectID) {
+  getQuotas: function(projectID) {
     return fetch.get({
-      url: '/api/v1/' + projectID + '/overview'
+      url: '/api/v1/' + HALO.user.projectId + '/quota/' + projectID
+    });
+  },
+  modifyQuota: function(type, projectID, quota) {
+    var data = {};
+    data[type] = quota;
+    return fetch.put({
+      url: '/api/v1/' + HALO.user.projectId + '/quota/' + projectID,
+      data: data
     });
   },
   createProject: function(data) {
