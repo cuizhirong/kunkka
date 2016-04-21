@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getSubnetList: {
       path: '/api/v1/:projectId/subnets',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'subnets': [
           {
             'name': 'shared-subnet',
@@ -465,8 +465,8 @@ module.exports = {
     },
     getSubnetDetails: {
       path: '/api/v1/:projectId/subnets/:subnetId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'subnet': {
           'name': '龙鹏-public-network-subnet',
           'enable_dhcp': true,

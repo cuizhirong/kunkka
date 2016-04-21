@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getSecurityList: {
       path: '/api/v1/:projectId/security',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'security_groups': [
           {
             'tenant_id': 'b484b27774144a8d8d1c2d49bf85370d',
@@ -68,8 +68,8 @@ module.exports = {
     },
     getSecurityDetails: {
       path: '/api/v1/:projectId/security/:securityId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'security_group': {
           'tenant_id': 'b484b27774144a8d8d1c2d49bf85370d',
           'description': 'Default security group',

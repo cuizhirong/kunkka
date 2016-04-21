@@ -1,8 +1,151 @@
 'use strict';
 
+const putList = {
+};
+
+putList.nova = {
+  __novaQuotaUpdate: {
+  }
+};
+
+putList.cinder = {
+  __cinderQuotaUpdate: {
+  }
+};
+
+putList.neutron = {
+  __neutronQuotaUpdate: {
+  }
+};
+
+
 const list = {};
 
+/* keystone. */
+
+list.__projects = {
+  'projects': [
+    {
+      'is_domain': false,
+      'description': '123',
+      'links': {
+        'self': 'http://lb.0.example242.ustack.in:5000/v3/projects/2205da28eb1e4e7aa4c1d20a0750c17c'
+      },
+      'enabled': true,
+      'id': '2205da28eb1e4e7aa4c1d20a0750c17c',
+      'parent_id': null,
+      'domain_id': 'default',
+      'name': 'cuizhirong'
+    },
+    {
+      'is_domain': false,
+      'description': '',
+      'links': {
+        'self': 'http://lb.0.example242.ustack.in:5000/v3/projects/2b8990b7c7ff470483e0569f4892862a'
+      },
+      'enabled': true,
+      'id': '2b8990b7c7ff470483e0569f4892862a',
+      'parent_id': null,
+      'domain_id': 'default',
+      'name': 'changyiqun'
+    }
+  ]
+};
+
+list.__users = {
+  'users': [
+    {
+      'name': 'cinder',
+      'links': {
+        'self': 'http://lb.0.example242.ustack.in:5000/v3/users/02c6e11fc4a2457bbd1f026935f008be'
+      },
+      'domain_id': 'default',
+      'enabled': true,
+      'email': 'cinder@localhost',
+      'id': '02c6e11fc4a2457bbd1f026935f008be'
+    },
+    {
+      'name': 'nova',
+      'links': {
+        'self': 'http://lb.0.example242.ustack.in:5000/v3/users/11287d2b5b634d76b43c05744df81972'
+      },
+      'domain_id': 'default',
+      'enabled': true,
+      'email': 'nova@localhost',
+      'id': '11287d2b5b634d76b43c05744df81972'
+    },
+    {
+      'name': 'admin',
+      'links': {
+        'self': 'http://lb.0.example242.ustack.in:5000/v3/users/31aa9fca5b4f41409fdea43687d0f08b'
+      },
+      'domain_id': 'default',
+      'enabled': true,
+      'email': 'admin@unitedstack.com',
+      'id': '31aa9fca5b4f41409fdea43687d0f08b'
+    }
+  ]
+};
+
+
 /* nova. */
+list.__hosts = {
+  'hypervisors': [
+    {
+      'status': 'enabled',
+      'service': {
+        'host': 'server-68',
+        'disabled_reason': null,
+        'id': 51
+      },
+      'vcpus_used': 0,
+      'hypervisor_type': 'QEMU',
+      'local_gb_used': 0,
+      'vcpus': 4,
+      'hypervisor_hostname': 'server-68.0.example242.ustack.in',
+      'memory_mb_used': 512,
+      'memory_mb': 7823,
+      'current_workload': 0,
+      'state': 'up',
+      'host_ip': '10.242.0.68',
+      'cpu_info': '{\'vendor\': \'Intel\', \'model\': \'IvyBridge\', \'arch\': \'x86_64\', \'features\': [\'pge\', \'avx\', \'clflush\', \'sep\', \'syscall\', \'tsc-deadline\', \'msr\', \'fsgsbase\', \'xsave\', \'erms\', \'cmov\', \'smep\', \'pcid\', \'pat\', \'lm\', \'tsc\', \'nx\', \'fxsr\', \'sse4.1\', \'pae\', \'sse4.2\', \'pclmuldq\', \'vme\', \'mmx\', \'osxsave\', \'cx8\', \'mce\', \'de\', \'rdtscp\', \'mca\', \'pse\', \'lahf_lm\', \'popcnt\', \'pdpe1gb\', \'apic\', \'sse\', \'f16c\', \'pni\', \'aes\', \'sse2\', \'ss\', \'hypervisor\', \'ssse3\', \'fpu\', \'cx16\', \'pse36\', \'mtrr\', \'rdrand\', \'x2apic\'], \'topology\': {\'cores\': 1, \'cells\': 1, \'threads\': 1, \'sockets\': 4}}',
+      'running_vms': 0,
+      'free_disk_gb': 272,
+      'hypervisor_version': 1005003,
+      'disk_available_least': 98,
+      'local_gb': 272,
+      'free_ram_mb': 7311,
+      'id': 6
+    },
+    {
+      'status': 'enabled',
+      'service': {
+        'host': 'server-69',
+        'disabled_reason': null,
+        'id': 45
+      },
+      'vcpus_used': 2,
+      'hypervisor_type': 'QEMU',
+      'local_gb_used': 21,
+      'vcpus': 4,
+      'hypervisor_hostname': 'server-69.0.example242.ustack.in',
+      'memory_mb_used': 3072,
+      'memory_mb': 7823,
+      'current_workload': 0,
+      'state': 'up',
+      'host_ip': '10.242.0.69',
+      'cpu_info': '{\'vendor\': \'Intel\', \'model\': \'IvyBridge\', \'arch\': \'x86_64\', \'features\': [\'pge\', \'avx\', \'clflush\', \'sep\', \'syscall\', \'tsc-deadline\', \'msr\', \'fsgsbase\', \'xsave\', \'erms\', \'cmov\', \'smep\', \'pcid\', \'pat\', \'lm\', \'tsc\', \'nx\', \'fxsr\', \'sse4.1\', \'pae\', \'sse4.2\', \'pclmuldq\', \'vme\', \'mmx\', \'osxsave\', \'cx8\', \'mce\', \'de\', \'rdtscp\', \'mca\', \'pse\', \'lahf_lm\', \'popcnt\', \'pdpe1gb\', \'apic\', \'sse\', \'f16c\', \'pni\', \'aes\', \'sse2\', \'ss\', \'hypervisor\', \'ssse3\', \'fpu\', \'cx16\', \'pse36\', \'mtrr\', \'rdrand\', \'x2apic\'], \'topology\': {\'cores\': 1, \'cells\': 1, \'threads\': 1, \'sockets\': 4}}',
+      'running_vms': 2,
+      'free_disk_gb': 251,
+      'hypervisor_version': 1005003,
+      'disk_available_least': 98,
+      'local_gb': 272,
+      'free_ram_mb': 4751,
+      'id': 3
+    }
+  ]
+};
+
 list.__flavors = {
   'flavors': [
     {
@@ -1575,4 +1718,7 @@ list.__subnetDetail = {
   }
 };
 
-module.exports = list;
+module.exports = {
+  'list': list,
+  'putList': putList
+};

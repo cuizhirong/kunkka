@@ -18,6 +18,12 @@ API.prototype = {
   __users: function (callback) {
     this.keystone.user.listUsers(this.token, this.asyncHandler.bind(undefined, callback), this.query);
   },
+  __projects: function (callback) {
+    this.keystone.project.listProjects(this.token, this.asyncHandler.bind(undefined, callback), this.query);
+  },
+  __hosts: function (callback) {
+    this.nova.host.listHosts(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  },
   __servers: function (callback) {
     this.nova.server.listServers(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },

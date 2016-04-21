@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getImageList: {
       path: '/api/v1/images',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'images': [
           {
             'expected_size': '10',
@@ -351,8 +351,8 @@ module.exports = {
     },
     getImageDetails: {
       path: '/api/v1/images/:imageId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'image': {
           'expected_size': '10',
           'image_state': 'available',
@@ -396,8 +396,8 @@ module.exports = {
     },
     getInstanceSnapshotList: {
       path: '/api/v1/instanceSnapshots',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'images': [
           {
             'expected_size': '10',
@@ -443,8 +443,8 @@ module.exports = {
     },
     getInstanceSnapshotDetails: {
       path: '/api/v1/instanceSnapshots/:imageId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'image': {
           'expected_size': '10',
           'image_state': 'available',

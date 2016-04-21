@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getRouterList: {
       path: '/api/v1/routers',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'routers': [
           {
             'status': 'ACTIVE',
@@ -63,8 +63,8 @@ module.exports = {
     },
     getRouterDetails: {
       path: '/api/v1/routers/:routerId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'routers': {
           'status': 'ACTIVE',
           'external_gateway_info': {

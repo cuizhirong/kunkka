@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getNetworkList: {
       path: '/api/v1/networks',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'networks': [
           {
             'status': 'ACTIVE',
@@ -113,8 +113,8 @@ module.exports = {
     },
     getNetworkDetails: {
       path: '/api/v1/networks/:networkId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'network': {
           'status': 'ACTIVE',
           'subnets': [

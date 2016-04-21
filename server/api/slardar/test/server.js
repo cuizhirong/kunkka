@@ -4,7 +4,8 @@ module.exports = {
   test: {
     getInstanceList: {
       path: '/api/v1/:projectId/servers/detail',
-      out: {
+      input: {},
+      output: {
         'servers': [
           {
             'status': 'ACTIVE',
@@ -433,7 +434,8 @@ module.exports = {
     },
     getInstanceDetails: {
       path: '/api/v1/:projectId/servers/:serverId',
-      out: {
+      input: {},
+      output: {
         'server': {
           'status': 'ACTIVE',
           'updated': '2016-04-18T03:58:39Z',
@@ -860,7 +862,8 @@ module.exports = {
     },
     getFlavorList: {
       path: '/api/v1/:projectId/flavors/detail',
-      out: {
+      input: {},
+      output: {
         'flavors': [
           {
             'name': 'm1.tiny',

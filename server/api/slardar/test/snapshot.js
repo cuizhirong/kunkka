@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getSnapshotList: {
       path: '/api/v1/:projectId/snapshots/detail',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'snapshots': [
           {
             'status': 'available',
@@ -59,8 +59,8 @@ module.exports = {
     },
     getSnapshotDetails: {
       path: '/api/v1/:projectId/snapshots/:snapshotId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'snapshot': {
           'status': 'available',
           'metadata': {},

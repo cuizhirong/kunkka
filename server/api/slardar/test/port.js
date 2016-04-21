@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getPortList: {
       path: '/api/v1/:projectId/ports',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'ports': [
           {
             'status': 'ACTIVE',
@@ -644,8 +644,8 @@ module.exports = {
     },
     getPortDetails: {
       path: '/api/v1/:projectId/ports/:portId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'port': {
           'status': 'ACTIVE',
           'name': '',

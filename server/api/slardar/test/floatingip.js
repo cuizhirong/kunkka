@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getFloatingipList: {
       path: '/api/v1/:projectId/floatingips',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'floatingips': [
           {
             'floating_network_id': 'e6e3d527-301f-4596-ad4b-cc29d99ca567',
@@ -144,8 +144,8 @@ module.exports = {
     },
     getFloatingipDetails: {
       path: '/api/v1/:projectId/floatingips/:floatingipId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'floatingip': {
           'floating_network_id': 'e6e3d527-301f-4596-ad4b-cc29d99ca567',
           'router_id': '9a635f3e-c721-4cce-86a1-8035bbda8541',

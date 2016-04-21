@@ -4,8 +4,8 @@ module.exports = {
   test: {
     getVolumeList: {
       path: '/api/v1/:projectId/volumes/detail',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'volumes': [
           {
             'attachments': [
@@ -160,8 +160,8 @@ module.exports = {
     },
     getVolumeDetails: {
       path: '/api/v1/:projectId/volumes/:volumeId',
-      in: '',
-      out: {
+      input: {},
+      output: {
         'volume': {
           'attachments': [
             {
