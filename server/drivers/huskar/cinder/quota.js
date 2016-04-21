@@ -14,7 +14,7 @@ driverQuota.getQuota = function (projectId, targetId, token, region, callback, q
   );
 };
 
-driverQuota.putQuota = function (projectId, targetId, token, region, callback, theBody) {
+driverQuota.updateQuota = function (projectId, targetId, token, region, callback, theBody) {
   return driverQuota.putMethod(
     cinderRemote[region] + '/v2/' + projectId + '/os-quota-sets/' + targetId,
     token,
