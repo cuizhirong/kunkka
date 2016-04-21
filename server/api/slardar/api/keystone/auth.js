@@ -18,14 +18,6 @@ Auth.prototype = {
     var domain = req.body.domain || config('domain') || 'Default';
     var projects;
     var cookies;
-    if (!req.cookies[username]) {
-      cookies = {
-        region: '',
-        project: ''
-      };
-    } else {
-      cookies = req.cookies[username];
-    }
     // FIXME: need to do verification
     var that = this;
     async.waterfall([
@@ -36,6 +28,14 @@ Auth.prototype = {
           } else {
             var userId = response.body.token.user.id;
             var token = response.header['x-subject-token'];
+            if (!req.cookies[userId]) {
+              cookies = {
+                region: '',
+                project: ''
+              };
+            } else {
+              cookies = req.cookies[userId];
+            }
             cb(null, userId, token);
           }
         });
@@ -85,7 +85,7 @@ Auth.prototype = {
           maxAge: config('cookie').maxAge ? config('cookie').maxAge : 1000 * 3600 * 24 * 7,
           httpOnly: true
         };
-        res.cookie(_username, Object.assign(cookies, {
+        res.cookie(userId, Object.assign(cookies, {
           region: regionId,
           project: projectId
         }), opt);
@@ -119,8 +119,8 @@ Auth.prototype = {
         req.session.user.isAdmin = response.body.token.roles.some(role => {
           return role.name === 'admin';
         });
-        var username = req.session.user.username;
-        res.cookie(username, Object.assign(req.cookies[username], {
+        var userId = req.session.user.userId;
+        res.cookie(userId, Object.assign(req.cookies[userId], {
           project: projectId
         }));
         res.json({success: 'switch project successfully'});
@@ -128,8 +128,8 @@ Auth.prototype = {
     });
   },
   swtichRegion: function (req, res) {
-    var username = req.session.user.username;
-    res.cookie(username, Object.assign(req.cookies[username], {
+    var userId = req.session.user.userId;
+    res.cookie(userId, Object.assign(req.cookies[userId], {
       region: (req.session.user.regionId = req.body.region ? req.body.region : req.params.region)
     }));
     res.status(200).json({success: 'switch region successfully'});

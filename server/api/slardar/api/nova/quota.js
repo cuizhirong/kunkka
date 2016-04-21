@@ -150,7 +150,7 @@ var prototype = {
     let setBody = (s, k) => {
       if (!this[s + 'Body']) {
         this[s + 'Body'] = {};
-        tasks.push(this['__' + s + 'QuotaPut'].bind(this));
+        tasks.push(this['__' + s + 'QuotaUpdate'].bind(this));
       }
       this[s + 'Body'][k] = body[k];
     };

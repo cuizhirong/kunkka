@@ -15,6 +15,9 @@ function API (arrService, arrServiceObject) {
 }
 
 API.prototype = {
+  __users: function (callback) {
+    this.keystone.user.listUsers(this.token, this.asyncHandler.bind(undefined, callback), this.query);
+  },
   __servers: function (callback) {
     this.nova.server.listServers(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
@@ -93,14 +96,14 @@ API.prototype = {
   __subnetDetail: function (callback) {
     this.neutron.subnet.showSubnetDetails(this.subnetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
   },
-  __novaQuotaPut: function (callback) {
-    this.nova.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.novaBody});
+  __novaQuotaUpdate: function (callback) {
+    this.nova.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.novaBody});
   },
-  __cinderQuotaPut: function (callback) {
-    this.cinder.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.cinderBody});
+  __cinderQuotaUpdate: function (callback) {
+    this.cinder.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.cinderBody});
   },
-  __neutronQuotaPut: function (callback) {
-    this.neutron.quota.putQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota': this.neutronBody});
+  __neutronQuotaUpdate: function (callback) {
+    this.neutron.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota': this.neutronBody});
   }
 };
 API.prototype.handleError = function (err, req, res, next) {
