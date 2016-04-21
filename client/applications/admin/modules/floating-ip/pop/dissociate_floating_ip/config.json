@@ -1,5 +1,5 @@
 {
-  "title": ["dissociate"],
+  "title": ["dissociate", "floating_ip"],
   "fields": [{
     "type": "text",
     "field": "dissociate_info",
@@ -7,13 +7,9 @@
   }, {
     "type": "icon_label",
     "field": "floating_ip",
-    "icon_type": "floating_ip",
-    "text": ""
+    "icon_type": "floating_ip"
   }, {
-    "type": "icon_label",
-    "field": "instance",
-    "icon_type": "instance",
-    "text": ""
+    "type": "icon_label"
   }, {
     "type": "info",
     "field": "tip_dissociate_into"

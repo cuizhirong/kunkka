@@ -4,8 +4,18 @@ var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
-  console.log(obj);
   config.fields[1].text = obj.floating_ip_address;
+
+  var device = config.fields[2];
+  if(obj.router_id) {
+    device.field = 'router';
+    device.icon_type = 'router';
+    device.text = obj.router_name || '(' + obj.router_id.substr(0, 8) + ')';
+  } else if(obj.server_id) {
+    device.field = 'server';
+    device.icon_type = 'server';
+    device.text = obj.server_name || '(' + obj.server_id.substr(0, 8) + ')';
+  }
 
   var props = {
     __: __,
@@ -16,7 +26,6 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       var data = {
-        server_id: obj.instance_id,
         removeFloatingIp: {
           address: obj.floating_ip_address
         }

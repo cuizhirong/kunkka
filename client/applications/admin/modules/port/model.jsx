@@ -235,8 +235,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -255,6 +255,17 @@ class Model extends React.Component {
         break;
       default:
         break;
+    }
+  }
+
+  onClickSearch(actionType, refs, data) {
+    var table = this.state.config.table;
+    if (actionType === 'click') {
+      this.loadingTable();
+      request.getPortByID(data.text).then((res) => {
+        table.data = [res.port];
+        this.updateTableData(table, res._url);
+      });
     }
   }
 
@@ -436,10 +447,13 @@ class Model extends React.Component {
   }
 
   onClickBtnList(actionType, refs, data) {
-    var rows = data.rows;
+    var rows = data.rows,
+      params = this.props.params,
+      table = this.state.config.table,
+      that = this;
 
     switch(actionType) {
-      case 'terminate':
+      case 'delete':
         deleteModal({
           __: __,
           action: 'delete',
@@ -448,17 +462,13 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deletePorts(rows).then((res) => {
               cb(true);
-              this.refresh({
-                refreshList: true,
-                refreshDetail: true
-              });
+              that.refresh(table.data, params);
             });
           }
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          refreshData = {};
+        var refreshData = {};
 
         if(params[2]) {
           refreshData.refreshList = true;

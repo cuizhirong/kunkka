@@ -7,13 +7,12 @@
   "btns": [{
     "value": ["dissociate", "floating_ip"],
     "key": "dissociate",
-    "icon": "floating-ip",
+    "icon": "dissociate",
     "disabled": true
   }, {
     "value": ["allocate", "floating_ip"],
     "key": "allocate",
-    "icon": "floating-ip",
-    "disabled": true
+    "icon": "associate"
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -25,7 +24,6 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 5,
     "column": [{
       "title": ["floating_ip", "address"],
       "dataIndex": "floating_ip_address",

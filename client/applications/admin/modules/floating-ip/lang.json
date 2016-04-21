@@ -4,7 +4,7 @@
     "associate": "Associate ",
     "dissociate_info": "This will dissociate the floating IP from this resource.",
     "router": "Router",
-    "project_info": "Floating Ip's project",
+    "target_project_id": "Target Project ID",
     "line": "Line",
     "tip_info_floating_ip": "Accidentally deleted floating IP can be recovered. In the case that the floating IP that have been applied by other users, it cannot be recovered.",
     "tip_dissociate_into": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT"
@@ -13,7 +13,7 @@
     "allocate": "分配",
     "associate": "绑定",
     "dissociate_info": "解绑资源上的公网IP",
-    "project_info": "公网IP的目标项目",
+    "target_project_id": "目标项目ID",
     "router": "路由器",
     "line": "线路",
     "tip_info_floating_ip": "可帮助用户恢复误删的公网IP；若该IP地址已经被其他用户申请了，则无法恢复。",

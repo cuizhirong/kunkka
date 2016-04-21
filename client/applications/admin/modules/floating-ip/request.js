@@ -51,9 +51,12 @@ module.exports = {
     });
   },
   getFloatingIPByID: function(floatingipID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-floating-ips/' + floatingipID;
+    var url = '/proxy/neutron/v2.0/floatingips/' + floatingipID;
     return fetch.get({
       url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
     });
   },
   dissociateFloatingIp: function(serverId, data) {
@@ -89,7 +92,24 @@ module.exports = {
         }
       }));
     }
-
     return RSVP.all(deferredList);
+  },
+  allocateFloatingIP: function(floatingIP, floatingNetworkID, tenantID) {
+    var data = {
+      'floatingip': {
+        'floating_network_id': floatingNetworkID,
+        'tenant_id': tenantID,
+        'floating_ip_address': floatingIP
+      }
+    };
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/floatingips',
+      data: data
+    });
+  },
+  getExternalNetwork: function(projectId) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/networks?router:external=true'
+    });
   }
 };

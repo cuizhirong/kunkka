@@ -93,22 +93,6 @@ class Model extends React.Component {
     });
   }
 
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
-      this.loadingTable();
-
-      var floatingIpID = data.floatingip_id;
-
-      if (floatingIpID) {
-        request.getFloatingIPByID(floatingIpID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.floating_ip];
-          this.updateTableData(table, res._url);
-        });
-      }
-    }
-  }
-
   updateTableData(table, currentUrl, refreshDetail) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -211,8 +195,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -230,6 +214,17 @@ class Model extends React.Component {
         break;
       default:
         break;
+    }
+  }
+
+  onClickSearch(actionType, refs, data) {
+    var table = this.state.config.table;
+    if (actionType === 'click') {
+      this.loadingTable();
+      request.getFloatingIPByID(data.text).then((res) => {
+        table.data = [res.floatingip];
+        this.updateTableData(table, res._url);
+      });
     }
   }
 
@@ -370,7 +365,9 @@ class Model extends React.Component {
         allocateModal();
         break;
       case 'dissociate':
-        dissociateModal(rows[0]);
+        request.getRelatedSourcesById(rows[0]).then(() => {
+          dissociateModal(rows[0]);
+        });
         break;
       case 'refresh':
         var params = this.props.params,
@@ -407,11 +404,8 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch(key) {
-        case 'allocate':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
         case 'dissociate':
-          btns[key].disabled = (rows.length === 1 && rows.instance_id) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].router_id && rows[0].port_id) ? false : true;
           break;
         default:
           break;
