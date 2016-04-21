@@ -1,10 +1,14 @@
 var request = require('client/libs/ajax');
+var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
 
 function errHandler(err) {
   if (err.status === 401) {
     window.location = '/auth/logout';
   }
-  return err;
+  return new Promise(function(resolve, reject) {
+    reject(err);
+  });
 }
 
 var fetch = {};

@@ -25,25 +25,11 @@
     "icon": "disable",
     "disabled": true
   }, {
-    "value": ["more"],
-    "key": "more",
-    "iconClass": "more",
-    "dropdown": {
-      "width": 160,
-      "items": [{
-        "items": [{
-          "title": ["modify", "quota"],
-          "key": "modify_quota",
-          "disabled": true
-        }]
-      }, {
-        "items": [{
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true
-        }]
-      }]
-    }
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"

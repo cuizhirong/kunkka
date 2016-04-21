@@ -22,11 +22,24 @@ function pop(obj, parent, callback) {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      request.getDomains().then((res) => {
+        refs.domain.setState({
+          data: res,
+          value: (obj && obj.domain_id) || res[0].id
+        });
+        if (refs.name.state.value || obj) {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
+      });
+    },
     onConfirm: function(refs, cb) {
       var data = {
         name: refs.name.state.value,
-        description: refs.describe.state.value
+        description: refs.describe.state.value,
+        domain_id: refs.domain.state.value
       };
       if (obj) {
         request.editGroup(obj.id, data).then((res) => {

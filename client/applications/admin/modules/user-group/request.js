@@ -202,5 +202,20 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
     });
+  },
+  getDomains: function() {
+    return fetch.get({
+      url: '/proxy/keystone/v3/domains'
+    }).then((res) => {
+      var domains = [];
+      res.domains.forEach((domain) => {
+        if (domain.id === 'defult') {
+          domain.unshift(domain);
+        } else {
+          domains.push(domain);
+        }
+      });
+      return domains;
+    });
   }
 };

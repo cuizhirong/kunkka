@@ -16,6 +16,7 @@ var addRole = require('./pop/add_role/index');
 var removeRole = require('./pop/remove_role/index');
 var modifyProject = require('./pop/modify_project/index');
 var resetPassword = require('./pop/reset_password/index');
+var joinGroup = require('./pop/join_group/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -58,6 +59,8 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
+    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
+      this.clearState();
     }
   }
 
@@ -68,6 +71,13 @@ class Model extends React.Component {
           column.render = (col, item, i) => {
             return item.enabled ?
               <span className="label-active">{__.activated}</span> : <span className="label-down">{__.inactive}</span>;
+          };
+          break;
+        case 'project':
+          column.render = (col, item, i) => {
+            var projectId = item.default_project_id;
+            return projectId ?
+              <a data-type="router" key={projectId} href={'/admin/project/' + projectId}>{'(' + projectId.substring(0, 8) + ')'}</a> : '';
           };
           break;
         default:
@@ -433,7 +443,8 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           syncUpdate = false;
           request.getRelatedResource(rows[0].id).then((res) => {
-            var basicPropsItem = this.getBasicPropsItems(rows[0], res[0].groups, res[1].projects);
+            var basicPropsItem = this.getBasicPropsItems(rows[0], res[1].projects);
+            var groupConfig = this.getGroupConfig(rows[0], res[0].groups);
             contents[tabKey] = (
               <div>
                 <BasicProps
@@ -444,6 +455,15 @@ class Model extends React.Component {
                   rawItem={rows[0]}
                   onAction={this.onDetailAction.bind(this)}
                   dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                <DetailMinitable
+                  __={__}
+                  title={__['user-group']}
+                  defaultUnfold={true}
+                  tableConfig={groupConfig ? groupConfig : []}>
+                  <Button value={__.join + __['user-group']} onClick={this.onDetailAction.bind(this, 'description', 'join_group', {
+                    rawItem: rows[0]
+                  })}/>
+                </DetailMinitable>
               </div>
             );
 
@@ -514,7 +534,7 @@ class Model extends React.Component {
         if (index > 0) {
           roles.push(', ');
         }
-        roles.push(<a data-type="router" key={r.id} href={'/admin/role/' + r.id}>{r.name}</a>);
+        roles.push(<a data-type="router" key={r.id} href={'/admin/role'}>{r.name}</a>);
       });
       return roles;
     };
@@ -563,7 +583,7 @@ class Model extends React.Component {
         if (index > 0) {
           roles.push(', ');
         }
-        roles.push(<a data-type="router" key={r.id} href={'/admin/role/' + r.id}>{r.name}</a>);
+        roles.push(<a data-type="router" key={r.id} href={'/admin/role'}>{r.name}</a>);
       });
       return roles;
     };
@@ -604,17 +624,44 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  getBasicPropsItems(item, originGroups, originProjects) {
-    var groups = [],
-      projects = [];
-    if (originGroups && originGroups.length > 0) {
-      originGroups.forEach((group, index) => {
-        if (index > 0) {
-          groups.push(', ');
-        }
-        groups.push(<a key={group.id} data-type="router" href={'/admin/user-group/' + group.id}>{group.name}</a>);
-      });
-    }
+  getGroupConfig(item, groups) {
+    var dataContent = [];
+    groups.forEach((element, index) => {
+      var dataObj = {
+        id: element.id,
+        name: <a data-type="router" href={'/admin/user-group/' + element.id}>{element.name}</a>,
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'leave_group', {
+          rawItem: item,
+          childItem: element
+        })} />
+      };
+      dataContent.push(dataObj);
+    });
+
+    var tableConfig = {
+      column: [{
+        title: __['user-group'] + __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.id,
+        key: 'id',
+        dataIndex: 'id'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
+  }
+
+  getBasicPropsItems(item, originProjects) {
+    var projects = [];
     if (originProjects && originProjects.length > 0) {
       originProjects.forEach((project, index) => {
         if (index > 0) {
@@ -640,9 +687,6 @@ class Model extends React.Component {
     }, {
       title: __.status,
       content: item.enabled ? __.activated : __.inactive
-    }, {
-      title: __['user-group'],
-      content: groups.length > 0 ? <span>{groups}</span> : '-'
     }, {
       title: __.project,
       content: projects.length > 0 ? <span>{projects}</span> : '-'
@@ -703,6 +747,22 @@ class Model extends React.Component {
       case 'add_project_role':
         addRole('project', data.rawItem, null, function() {
           that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'join_group':
+        joinGroup(data.rawItem, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'leave_group':
+        request.leaveGroup(data.rawItem.id, data.childItem.id).then(() => {
+          this.refresh({
             refreshList: true,
             refreshDetail: true
           });

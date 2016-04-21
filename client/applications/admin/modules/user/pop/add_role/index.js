@@ -35,6 +35,11 @@ function pop(type, obj, parent, callback) {
       request.addRole(type, obj, refs.role.state.value, refs[type].state.value).then(() => {
         callback && callback();
         cb(true);
+      }).catch(() => {
+        cb(false);
+        refs[type].setState({
+          error: true
+        });
       });
     },
     onAction: function(field, status, refs) {}

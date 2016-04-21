@@ -6,6 +6,9 @@
     "required": true,
     "value": ""
   }, {
+    "type": "select",
+    "field": "domain"
+  }, {
     "type": "textarea",
     "field": "describe",
     "value": ""

@@ -24,7 +24,7 @@ function pop(obj, parent, callback) {
       request.getDomains().then((res) => {
         refs.domain.setState({
           data: res,
-          value: res[0].id
+          value: (obj && obj.domain_id) || res[0].id
         });
         if (refs.name.state.value || obj) {
           refs.btn.setState({

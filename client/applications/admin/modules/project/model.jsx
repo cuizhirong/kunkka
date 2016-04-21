@@ -56,6 +56,8 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
+    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
+      this.clearState();
     }
   }
 
@@ -123,10 +125,13 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
+      var table = this.state.config.table;
       request.getProjectByID(data.text).then((res) => {
-        var table = this.state.config.table;
         table.data = [res.project];
         this.updateTableData(table, res._url);
+      }).catch(() => {
+        table.data = [];
+        this.updateTableData(table);
       });
     }
   }
@@ -140,12 +145,14 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v3/')[1]);
+      if (currentUrl) {
+        this.stores.urls.push(currentUrl.split('/v3/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
-        params = this.props.params;
-      if (detail && refreshDetail && params.length > 2) {
-        detail.refresh();
+        var detail = this.refs.dashboard.refs.detail,
+          params = this.props.params;
+        if (detail && refreshDetail && params.length > 2) {
+          detail.refresh();
+        }
       }
     });
   }

@@ -44,6 +44,7 @@
         "items": [{
           "title": ["delete"],
           "key": "delete",
+          "danger": true,
           "disabled": true
         }]
       }]
@@ -71,6 +72,10 @@
       "title": ["email"],
       "dataIndex": "email",
       "key": "email"
+    }, {
+      "title": ["main", "project"],
+      "dataIndex": "",
+      "key": "project"
     }, {
       "title": ["status"],
       "dataIndex": "",

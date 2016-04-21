@@ -183,5 +183,38 @@ module.exports = {
       });
     }
     return RSVP.all(deferredList);
+  },
+  getGroups: function(userID) {
+    var deferredList = [];
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/groups'
+    }));
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/users/' + userID + '/groups'
+    }));
+    return RSVP.all(deferredList).then((res) => {
+      var allGroups = res[0].groups,
+        joinedGroups = res[1].groups;
+      joinedGroups.forEach((i) => {
+        allGroups.some((j) => {
+          if (i.id === j.id) {
+            j.disabled = true;
+            return true;
+          }
+          return false;
+        });
+      });
+      return allGroups;
+    });
+  },
+  joinGroup: function(userID, groupID) {
+    return fetch.put({
+      url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
+    });
+  },
+  leaveGroup: function(userID, groupID) {
+    return fetch.delete({
+      url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
+    });
   }
 };
