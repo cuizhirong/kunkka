@@ -1,24 +1,23 @@
 'use strict';
 
-var cinderRemote = require('config')('remote').cinder;
 var Base = require('../base.js');
-var driverSnapshot = new Base('snapshot');
+var driver = new Base('cinder');
 
-driverSnapshot.listSnapshots = function (projectId, token, region, callback, query) {
-  return driverSnapshot.getMethod(
-    cinderRemote[region] + '/v2/' + projectId + '/snapshots/detail',
+driver.listSnapshots = function (projectId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2/' + projectId + '/snapshots/detail',
     token,
     callback,
     query
   );
 };
-driverSnapshot.showSnapshotDetails = function (projectId, snapshotId, token, region, callback, query) {
-  return driverSnapshot.getMethod(
-    cinderRemote[region] + '/v2/' + projectId + '/snapshots/' + snapshotId,
+driver.showSnapshotDetails = function (projectId, snapshotId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2/' + projectId + '/snapshots/' + snapshotId,
     token,
     callback,
     query
   );
 };
 
-module.exports = driverSnapshot;
+module.exports = driver;

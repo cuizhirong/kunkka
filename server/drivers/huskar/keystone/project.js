@@ -1,13 +1,24 @@
 'use strict';
 
-var request = require('superagent');
-var keystoneRemote = require('config')('remote').keystone;
+var Base = require('../base.js');
+var driver = new Base('keystone');
 
-module.exports = {
-  getUserProjects: function(userId, token, callback) {
-    request
-      .get(keystoneRemote + '/v3/users/' + userId + '/projects')
-      .set('X-Auth-Token', token)
-      .end(callback);
-  }
+driver.getUserProjects = function (userId, token, callback, query) {
+  return driver.getMethod(
+    driver.remote + '/v3/users/' + userId + '/projects',
+    token,
+    callback,
+    query
+  );
 };
+
+driver.listProjects = function (token, callback, query) {
+  return driver.getMethod(
+    driver.remote + '/v3/projects',
+    token,
+    callback,
+    query
+  );
+};
+
+module.exports = driver;

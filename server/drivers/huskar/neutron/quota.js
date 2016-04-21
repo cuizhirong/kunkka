@@ -1,26 +1,25 @@
 'use strict';
 
-var neutronRemote = require('config')('remote').neutron;
 var Base = require('../base.js');
-var driverQuota = new Base('cinderQuota');
+var driver = new Base('neutron');
 
-driverQuota.getQuota = function (projectId, targetId, token, region, callback, query) {
+driver.getQuota = function (projectId, targetId, token, region, callback, query) {
   let pid = targetId ? ('/' + targetId) : ('/' + projectId);
-  return driverQuota.getMethod(
-    neutronRemote[region] + '/v2.0/quotas' + pid,
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/quotas' + pid,
     token,
     callback,
     query
   );
 };
 
-driverQuota.updateQuota = function (projectId, targetId, token, region, callback, theBody) {
-  return driverQuota.putMethod(
-    neutronRemote[region] + '/v2.0/quotas/' + targetId,
+driver.updateQuota = function (projectId, targetId, token, region, callback, theBody) {
+  return driver.putMethod(
+    driver.remote[region] + '/v2.0/quotas/' + targetId,
     token,
     callback,
     theBody
   );
 };
 
-module.exports = driverQuota;
+module.exports = driver;

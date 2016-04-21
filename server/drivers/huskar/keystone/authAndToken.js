@@ -1,7 +1,8 @@
 'use strict';
 
 var request = require('superagent');
-var keystoneRemote = require('config')('remote').keystone;
+var Base = require('../base.js');
+var driver = new Base('keystone');
 
 module.exports = {
   /*
@@ -10,7 +11,7 @@ module.exports = {
    */
   unscopedAuth: function (username, password, domain, callback) {
     request
-      .post(keystoneRemote + '/v3/auth/tokens')
+      .post(driver.remote + '/v3/auth/tokens')
       .send({
         'auth': {
           'scope': {
@@ -36,7 +37,7 @@ module.exports = {
   },
   scopedAuth: function (projectId, token, callback) {
     request
-      .post(keystoneRemote + '/v3/auth/tokens')
+      .post(driver.remote + '/v3/auth/tokens')
       .set('X-Auth-Token', token)
       .send({
         'auth': {

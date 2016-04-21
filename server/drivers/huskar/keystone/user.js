@@ -1,16 +1,15 @@
 'use strict';
 
-var keystoneRemote = require('config')('remote').keystone;
 var Base = require('../base.js');
-var driverUser = new Base('user');
+var driver = new Base('keystone');
 
-driverUser.listUsers = function (token, callback, query) {
-  return driverUser.getMethod(
-    keystoneRemote + '/v3/users',
+driver.listUsers = function (token, callback, query) {
+  return driver.getMethod(
+    driver.remote + '/v3/users',
     token,
     callback,
     query
   );
 };
 
-module.exports = driverUser;
+module.exports = driver;

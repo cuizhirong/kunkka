@@ -2,8 +2,10 @@
 
 const request = require('superagent');
 const getQueryString = require('helpers/getQueryString.js');
+const remote = require('config')('remote');
 
 function Driver(service) {
+  this.remote = remote[service];
 }
 
 Driver.prototype.getMethod = function (url, token, callback, query) {

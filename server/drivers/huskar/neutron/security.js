@@ -1,23 +1,22 @@
 'use strict';
 
-var neutronRemote = require('config')('remote').neutron;
 var Base = require('../base.js');
-var driverSecurity = new Base('security');
+var driver = new Base('neutron');
 
-driverSecurity.listSecurity = function (projectId, token, region, callback, query) {
-  return driverSecurity.getMethod(
-    neutronRemote[region] + '/v2.0/security-groups',
+driver.listSecurity = function (projectId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/security-groups',
     token,
     callback,
     query
   );
 };
-driverSecurity.showSecurityDetails = function (projectId, securityId, token, region, callback, query) {
-  return driverSecurity.getMethod(
-    neutronRemote[region] + '/v2.0/security-groups/' + securityId,
+driver.showSecurityDetails = function (projectId, securityId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/security-groups/' + securityId,
     token,
     callback,
     query
   );
 };
-module.exports = driverSecurity;
+module.exports = driver;

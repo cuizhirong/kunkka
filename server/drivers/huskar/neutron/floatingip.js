@@ -1,24 +1,23 @@
 'use strict';
 
-var neutronRemote = require('config')('remote').neutron;
 var Base = require('../base.js');
-var driverFloatingip = new Base('floatingip');
+var driver = new Base('neutron');
 
-driverFloatingip.listFloatingips = function (token, region, callback, query) {
-  return driverFloatingip.getMethod(
-    neutronRemote[region] + '/v2.0/floatingips',
+driver.listFloatingips = function (token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/floatingips',
     token,
     callback,
     query
   );
 };
-driverFloatingip.showFloatingipDetails = function (id, token, region, callback, query) {
-  return driverFloatingip.getMethod(
-    neutronRemote[region] + '/v2.0/floatingips/' + id,
+driver.showFloatingipDetails = function (id, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/floatingips/' + id,
     token,
     callback,
     query
   );
 };
 
-module.exports = driverFloatingip;
+module.exports = driver;

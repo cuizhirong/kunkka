@@ -1,32 +1,31 @@
 'use strict';
 
-var cinderRemote = require('config')('remote').cinder;
 var Base = require('../base.js');
-var driverVolume = new Base('volume');
+var driver = new Base('cinder');
 
-driverVolume.listVolumes = function (projectId, token, region, callback, query) {
-  return driverVolume.getMethod(
-    cinderRemote[region] + '/v2/' + projectId + '/volumes/detail',
+driver.listVolumes = function (projectId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2/' + projectId + '/volumes/detail',
     token,
     callback,
     query
   );
 };
-driverVolume.listVolumeTypes = function (projectId, token, region, callback, query) {
-  return driverVolume.getMethod(
-    cinderRemote[region] + '/v2/' + projectId + '/types',
+driver.listVolumeTypes = function (projectId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2/' + projectId + '/types',
     token,
     callback,
     query
   );
 };
-driverVolume.showVolumeDetails = function (projectId, volumeId, token, region, callback, query) {
-  return driverVolume.getMethod(
-    cinderRemote[region] + '/v2/' + projectId + '/volumes/' + volumeId,
+driver.showVolumeDetails = function (projectId, volumeId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2/' + projectId + '/volumes/' + volumeId,
     token,
     callback,
     query
   );
 };
 
-module.exports = driverVolume;
+module.exports = driver;

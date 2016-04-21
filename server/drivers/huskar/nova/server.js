@@ -1,24 +1,23 @@
 'use strict';
 
-var novaRemote = require('config')('remote').nova;
 var Base = require('../base.js');
-var driverServer = new Base('server');
+var driver = new Base('nova');
 
-driverServer.listServers = function (projectId, token, region, callback, query) { // get servers list.
-  return driverServer.getMethod(
-    novaRemote[region] + '/v2.1/' + projectId + '/servers/detail',
+driver.listServers = function (projectId, token, region, callback, query) { // get servers list.
+  return driver.getMethod(
+    driver.remote[region] + '/v2.1/' + projectId + '/servers/detail',
     token,
     callback,
     query
   );
 };
-driverServer.showServerDetails = function (projectId, serverId, token, region, callback, query) { // get single server.
-  return driverServer.getMethod(
-    novaRemote[region] + '/v2.1/' + projectId + '/servers/' + serverId,
+driver.showServerDetails = function (projectId, serverId, token, region, callback, query) { // get single server.
+  return driver.getMethod(
+    driver.remote[region] + '/v2.1/' + projectId + '/servers/' + serverId,
     token,
     callback,
     query
   );
 };
 
-module.exports = driverServer;
+module.exports = driver;

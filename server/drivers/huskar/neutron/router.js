@@ -1,24 +1,23 @@
 'use strict';
 
-var neutronRemote = require('config')('remote').neutron;
 var Base = require('../base.js');
-var driverRouter = new Base('router');
+var driver = new Base('neutron');
 
-driverRouter.listRouters = function (token, region, callback, query) {
-  return driverRouter.getMethod(
-    neutronRemote[region] + '/v2.0/routers',
+driver.listRouters = function (token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/routers',
     token,
     callback,
     query
   );
 };
-driverRouter.showRouterDetails = function (routerId, token, region, callback, query) {
-  return driverRouter.getMethod(
-    neutronRemote[region] + '/v2.0/routers/' + routerId,
+driver.showRouterDetails = function (routerId, token, region, callback, query) {
+  return driver.getMethod(
+    driver.remote[region] + '/v2.0/routers/' + routerId,
     token,
     callback,
     query
   );
 };
 
-module.exports = driverRouter;
+module.exports = driver;
