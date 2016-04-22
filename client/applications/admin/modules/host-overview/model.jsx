@@ -40,6 +40,7 @@ class Model extends React.Component {
   }
 
   componentDidMount() {
+    this.setChartCanvas();
     this.getOverview();
   }
 
@@ -54,6 +55,12 @@ class Model extends React.Component {
     this.setState({
       loading: true
     });
+  }
+
+  setChartCanvas() {
+    this.diskChart = new Chart.PieChart(document.getElementById('chart-disk-usage'));
+    this.cpuChart = new Chart.BarChart(document.getElementById('chart-cpu-usage'));
+    this.memoryChart = new Chart.GaugeChart(document.getElementById('chart-memory-usage'));
   }
 
   getOverview() {
@@ -92,12 +99,10 @@ class Model extends React.Component {
   }
 
   displayDisk(data) {
-    var diskChart = new Chart.PieChart(document.getElementById('chart-disk-usage'));
-
     var rate = data.local_gb_used / data.free_disk_gb,
       rateColor = this.getChartColor(rate);
 
-    diskChart.setOption({
+    this.diskChart.setOption({
       lineWidth: 8,
       bgColor: basicGrey,
       series: [{
@@ -113,9 +118,7 @@ class Model extends React.Component {
   }
 
   displayCPU(data) {
-    var cpuChart = new Chart.BarChart(document.getElementById('chart-cpu-usage'));
-
-    cpuChart.setOption({
+    this.cpuChart.setOption({
       unit: '',
       title: '',
       xAxis: {
@@ -140,11 +143,10 @@ class Model extends React.Component {
   }
 
   displayMemory(data) {
-    var memoryChart = new Chart.GaugeChart(document.getElementById('chart-memory-usage'));
-
     var rate = data.memory_mb_used / data.memory_mb,
       rateColor = this.getChartColor(rate);
-    memoryChart.setOption({
+
+    this.memoryChart.setOption({
       lineWidth: 0.4,
       bgColor: basicGrey,
       tickColor: fontDarker,

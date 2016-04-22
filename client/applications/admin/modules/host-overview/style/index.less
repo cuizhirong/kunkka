@@ -55,6 +55,7 @@
       .content {
         padding: 16px;
         border: 1px solid @block-border-color;
+        overflow: hidden;
         .allocate {
           position: relative;
           margin-bottom: 4px;
@@ -101,7 +102,7 @@
           }
         }
         & > *.hidden {
-          display: none;
+          visibility: hidden;
         }
         .loading-data {
           width: 36px;
@@ -189,6 +190,10 @@
         .content {
           display: flex;
           height: 200px;
+          .loading-data {
+            left: 50%;
+            margin-left: -18px;
+          }
           .chart-cpu-usage {
             flex: 1;
             margin-right: 20px;
@@ -224,6 +229,10 @@
           height: 120px;
           padding-top: 40px;
           padding-bottom: 40px;
+          .loading-data {
+            left: 50%;
+            margin-left: -18px;
+          }
           .chart-memory-usage {
             flex: 1;
             margin-right: 20px;
