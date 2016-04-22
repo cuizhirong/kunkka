@@ -152,15 +152,46 @@ class LineChart {
     series.forEach((s, i) => {
       var p = this.positions[i] = [];
       var cp = this.ctPositions[i] = [];
+      var len = s.data.length;
+
       s.data.forEach((data, j) => {
         p.push({
           x: marginLeft + j * ratioX,
           y: height - marginBottom - ratioY * (data - realMin)
         });
-        cp.push({
-          x: 1,
-          y: 2
-        });
+      });
+
+      s.data.forEach((data, j) => {
+        // calc control point for bezierCurveTo func
+        if (j === 0) {
+          cp.push({
+            x: (p[0].x + p[1].x) / 2,
+            y: (p[0].y + p[1].y) / 2
+          });
+        } else if (j === (len - 1)) {
+          cp.push({
+            x: (p[j].x + p[j - 1].x) / 2,
+            y: (p[j].y + p[j - 1].y) / 2
+          });
+        } else {
+          let middle = {
+            x: (p[j - 1].x + p[j + 1].x) / 2,
+            y: (p[j - 1].y + p[j + 1].y) / 2
+          };
+
+          var diffY = p[j].y - middle.y;
+
+          var pre = {
+            x: (p[j - 1].x + middle.x) / 2,
+            y: (p[j - 1].y + middle.y) / 2 + diffY
+          };
+
+          var post = {
+            x: (p[j + 1].x + middle.x) / 2,
+            y: (p[j + 1].y + middle.y) / 2 + diffY
+          };
+          cp.push(pre, post);
+        }
       });
     });
 
@@ -180,55 +211,58 @@ class LineChart {
       positions = this.positions,
       ctPositions = this.ctPositions;
 
-    console.log(ctPositions);
+    //console.log(ctPositions);
 
     series.forEach((s, j) => {
       var data = s.data,
         color = s.color,
+        type = s.type,
         opacity = s.opacity,
-        position = positions[j];
+        position = positions[j],
+        ctPosition = ctPositions[j];
 
+      // draw area
       ctx.beginPath();
       ctx.fillStyle = utils.toRGB(color, opacity);
       ctx.moveTo(marginLeft, zeroY);
       data.forEach((m, i) => {
-        ctx.lineTo(position[i].x, position[i].y);
+        if (i === 0) {
+          ctx.lineTo(position[i].x, position[i].y);
+        } else {
+          // ctx.lineTo(position[i].x, position[i].y);
+          if (type === 'sharp') { //curve, sharp, curve by default
+            ctx.lineTo(position[i].x, position[i].y);
+          } else {
+            ctx.bezierCurveTo(ctPosition[i * 2 - 2].x, ctPosition[i * 2 - 2].y,
+              ctPosition[i * 2 - 1].x, ctPosition[i * 2 - 1].y,
+              position[i].x, position[i].y);
+          }
+
+        }
       });
       ctx.lineTo(marginLeft + (data.length - 1) * ratioX, zeroY);
       ctx.fill();
 
+      // draw outline
       ctx.beginPath();
       ctx.strokeStyle = color;
       data.forEach((m, i) => {
-        ctx.lineTo(position[i].x, position[i].y);
+        if (i === 0) {
+          ctx.lineTo(position[i].x, position[i].y);
+        } else {
+          if (type === 'sharp') { //curve, sharp, curve by default
+            ctx.lineTo(position[i].x, position[i].y);
+          } else {
+            ctx.bezierCurveTo(ctPosition[i * 2 - 2].x, ctPosition[i * 2 - 2].y,
+              ctPosition[i * 2 - 1].x, ctPosition[i * 2 - 1].y,
+              position[i].x, position[i].y);
+          }
+
+        }
       });
       ctx.lineTo(marginLeft + (data.length - 1) * ratioX, zeroY);
       ctx.stroke();
     });
-
-
-    // var ctx = this.canvas.getContext('2d'),
-    //   option = this.option,
-    //   series = option.series,
-    //   height = this.height,
-    //   heightList = this.heightList,
-    //   barWidth = option.xAxis.barWidth,
-    //   tickWidth = option.xAxis.tickWidth,
-    //   gap = tickWidth - barWidth;
-
-    // ++this.count;
-    // var t = this.easingFunc(this.count / this.ticks);
-
-    // ctx.clearRect(0, 0, this.width, height);
-    // ctx.textAlign = 'center';
-
-    // series.forEach((m, i) => {
-    //   ctx.fillStyle = m.color;
-    //   var h = heightList[i] * t;
-    //   ctx.fillRect(this.marginLeft + tickWidth * i + gap + 5, height - h + 0.5 - 3, barWidth, h);
-    //   ctx.fillText(m.value + option.unit, this.marginLeft + tickWidth * i + gap + 5 + barWidth / 2, height - h + 0.5 - 3 - 2);
-
-    // });
 
     if (this.count === this.ticks) {
       this.count = 0;
