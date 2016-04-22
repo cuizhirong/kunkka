@@ -160,7 +160,8 @@ c6.setOption({
     type: 'sharp' // sharp, curve, curve by default
   }],
   alert: {
-    data: 30,
+    data: 70,
+    lineWidth: 1,
     color: '#000'
   },
   period: 600,
@@ -195,5 +196,6 @@ c7.setOption({
     data: [32, 15, -13, -21, -12, 47, -7, 24, -2, -27],
     opacity: 0.05
   }],
-  period: 600
+  period: 1600,
+  easing: 'easeOutCubic'
 });

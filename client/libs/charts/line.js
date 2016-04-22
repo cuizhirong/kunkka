@@ -10,7 +10,8 @@ class LineChart {
 
   initDOM() {
     var canvas = this.canvas = document.createElement('canvas'),
-      bCanvas = this.bCanvas = document.createElement('canvas');
+      bCanvas = this.bCanvas = document.createElement('canvas'),
+      vCanvas = this.vCanvas = document.createElement('canvas');
 
     this.width = this.container.clientWidth;
     this.height = this.container.clientHeight;
@@ -18,7 +19,7 @@ class LineChart {
     this.container.appendChild(bCanvas);
     this.container.appendChild(canvas);
 
-    autoscale([canvas, bCanvas], {
+    autoscale([canvas, bCanvas, vCanvas], {
       width: this.width,
       height: this.height
     });
@@ -39,9 +40,13 @@ class LineChart {
     // Render background
     this.renderLineBackground(option);
 
+    // Render cacheable Line
+    var vCtx = this.vCanvas.getContext('2d');
+    vCtx.translate(0.5, -0.5);
+    this.renderVLine(option);
+
     // Render Line
-    this.canvas.getContext('2d').translate(0.5, -0.5);
-    this.renderLine(option);
+    this.renderLine();
   }
 
   calcAxis(option) {
@@ -56,6 +61,10 @@ class LineChart {
     option.series.forEach(function(m) {
       data = data.concat(m.data);
     });
+    if (option.alert) {
+      data.push(option.alert.data);
+    }
+
     max = Math.max.apply(null, data);
     realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
 
@@ -194,13 +203,12 @@ class LineChart {
         }
       });
     });
-
-
   }
 
-  renderLine(option) {
-    var ctx = this.canvas.getContext('2d'),
+  renderVLine(option) {
+    var ctx = this.vCanvas.getContext('2d'),
       series = option.series,
+      alert = option.alert,
       height = this.height,
       marginLeft = this.marginLeft,
       marginBottom = this.marginBottom,
@@ -210,8 +218,6 @@ class LineChart {
       zeroY = height - marginBottom + ratioY * realMin,
       positions = this.positions,
       ctPositions = this.ctPositions;
-
-    //console.log(ctPositions);
 
     series.forEach((s, j) => {
       var data = s.data,
@@ -264,11 +270,37 @@ class LineChart {
       ctx.stroke();
     });
 
+    // draw alert line
+    if (alert) {
+      let _y = Math.round(height - marginBottom - ratioY * (alert.data - realMin));
+
+      ctx.beginPath();
+      ctx.strokeStyle = alert.color;
+      ctx.lineWidth = alert.lineWidth;
+      ctx.moveTo(marginLeft, _y);
+      ctx.lineTo(this.width, _y);
+      ctx.stroke();
+    }
+
+  }
+
+  renderLine() {
+    var ctx = this.canvas.getContext('2d'),
+      vCtx = this.vCanvas.getContext('2d'),
+      w = this.width,
+      h = this.height,
+      ratio = window.devicePixelRatio || 1;
+
+    ++this.count;
+    var t = this.easingFunc(this.count / this.ticks);
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(vCtx.canvas, 0, 0, t * w * ratio, h * ratio, 0, 0, t * w, h);
+
     if (this.count === this.ticks) {
       this.count = 0;
       return;
     }
-    //this.animationId = requestAnimationFrame(this.renderLine.bind(this));
+    this.animationId = requestAnimationFrame(this.renderLine.bind(this));
   }
 
 }
