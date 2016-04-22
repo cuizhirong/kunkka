@@ -278,7 +278,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    var rows = data.rows,
+      that = this;
 
     switch(key) {
       case 'delete':
@@ -289,6 +290,9 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteSnapshots(rows).then((res) => {
+              that.refresh({
+                refreshList: true
+              });
               cb(true);
             });
           }
@@ -428,7 +432,7 @@ class Model extends React.Component {
       title: __.volume,
       content: <span>
         <i className="glyphicon icon-volume" />
-        <a data-type="router" href={'/dashboard/volume/' + item.volume_id}>
+        <a data-type="router" href={'/admin/volume/' + item.volume_id}>
           {volume.name || '(' + item.volume_id.substr(0, 8) + ')'}
         </a>
       </span>

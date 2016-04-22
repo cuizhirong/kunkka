@@ -66,13 +66,6 @@ class Model extends React.Component {
             return arr;
           };
           break;
-        case 'subnet':
-          column.render = (col, item, i) => {
-            item.fixed_ips.forEach((_item, index) => {
-
-            });
-          };
-          break;
         case 'project':
           column.render = (col, item, i) => {
             return item.tenant_id ?
@@ -243,6 +236,7 @@ class Model extends React.Component {
         break;
       case 'detail':
         var item = data.rows[0];
+        this.loadingDetail();
         request.getSubnetsById(item.fixed_ips).then(() => {
           if(item.device_id.indexOf('dhcp') === 0 || !item.device_id) {
             this.onClickDetailTabs(actionType, refs, data);
@@ -337,6 +331,18 @@ class Model extends React.Component {
           default:
             return '-';
         }
+      },
+      getFloatingIP = () => {
+        switch(0) {
+          case device.indexOf('network:floatingip'):
+            return (<span>
+                <a data-type="router" href={'/admin/floating-ip/' + item.device_id}>
+                  {item.floating_ip_address}
+                </a>
+              </span>);
+          default:
+            return '-';
+        }
       };
 
     var items = [{
@@ -357,13 +363,13 @@ class Model extends React.Component {
       </span>
     }, {
       title: __.floating_ip,
-      content: ''
+      content: getFloatingIP()
     }, {
       title: __.related + __.sources,
       content: getSourceInfo()
     }, {
       title: __.project + __.id,
-      content: item.tenant_id
+      content: item.tenant_id ? item.tenant_id : '-'
     }, {
       title: __.status,
       type: 'status',

@@ -93,6 +93,12 @@ module.exports = {
         }).then((res) => {
           item.device_name = res.server.name;
         });
+      case device.indexOf('network:floatingip'):
+        return fetch.get({
+          url: '/proxy/neutron/v2.0/floatingips/' + item.device_id
+        }).then((res) => {
+          item.floating_ip_address = res.floatingip.floating_ip_address;
+        });
       default:
         break;
     }

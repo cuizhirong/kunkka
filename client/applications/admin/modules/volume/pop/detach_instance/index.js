@@ -3,7 +3,7 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
-function pop(obj, parent, callback) {
+function pop(obj, parent, callback, server) {
   config.fields[0].text = obj.name;
 
   var props = {
@@ -17,12 +17,12 @@ function pop(obj, parent, callback) {
         data.push({
           id: ele.server_id,
           attachmentId: ele.id,
-          name: '(' + ele.server_id.substr(0, 8) + ')'
+          name: server.name || '(' + ele.server_id.substr(0, 8) + ')'
         });
-      });
 
-      refs.instance.setState({
-        data: data
+        refs.instance.setState({
+          data: data
+        });
       });
     },
 

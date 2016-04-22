@@ -78,9 +78,25 @@
       "type": "status",
       "key": "status",
       "filter": [{
-        "name": ["active"],
-        "key": "active",
-        "filterBy": "ACTIVE"
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }, {
+        "name": ["in-use"],
+        "key": "in-use",
+        "filterBy": "in-use"
+      }, {
+        "name": ["error"],
+        "key": "error",
+        "filterBy": "error"
+      }, {
+        "name": ["error_deleting"],
+        "key": "error_deleting",
+        "filterBy": "error_deleting"
+      }, {
+        "name": ["detaching"],
+        "key": "detaching",
+        "filterBy": "detaching"
       }]
     }, {
       "title": ["created", "time"],

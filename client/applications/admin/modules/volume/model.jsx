@@ -285,6 +285,8 @@ class Model extends React.Component {
   }
 
   onAction(field, actionType, refs, data) {
+    var volume = data.rows[0];
+
     switch (field) {
       case 'filter':
         this.onFilterSearch(actionType, refs, data);
@@ -296,9 +298,13 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        if(data.rows[0].attachments[0]) {
-          request.getServerById(data.rows[0].attachments[0].server_id).then((res) => {
+        if(volume.attachments[0]) {
+          this.loadingDetail();
+          request.getServerById(volume.attachments[0].server_id).then((res) => {
             this.onClickDetailTabs(actionType, refs, data, res.server);
+          }).catch(() => {
+            volume.attachments[0].disabled = true;
+            this.onClickDetailTabs(actionType, refs, data);
           });
         } else {
           this.onClickDetailTabs(actionType, refs, data);
@@ -315,7 +321,15 @@ class Model extends React.Component {
 
     switch (key) {
       case 'dissociate':
-        detachInstance(rows[0]);
+        request.getServerById(rows[0].attachments[0].server_id).then((res) => {
+          var server = res.server;
+          detachInstance(rows[0], null, function() {
+            that.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
+          }, server);
+        });
         break;
       case 'delete':
         deleteModal({
@@ -325,7 +339,9 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteVolumes(rows).then((res) => {
-              that.refresh(null, true);
+              that.refresh({
+                refreshList: true
+              });
               cb(true);
             });
           }
@@ -471,9 +487,12 @@ class Model extends React.Component {
       content: item.attachments[0] ?
           <span>
             <i className="glyphicon icon-instance" />
-            <a data-type="router" href={'/dashboard/instance/' + item.attachments[0].server_id}>
-              {server ? server.name : '(' + item.attachments[0].server_id.substr(0, 8) + ')'}
-            </a>
+            {item.attachments[0].disabled ?
+              <span>{'(' + item.attachments[0].server_id.substr(0, 8) + ')'}</span> :
+              <a data-type="router" href={'/admin/instance/' + item.attachments[0].server_id}>
+                {server ? server.name : '(' + item.attachments[0].server_id.substr(0, 8) + ')'}
+              </a>
+            }
           </span> : '-'
     }, {
       title: __.type,

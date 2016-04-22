@@ -30,12 +30,7 @@
       "sort": true
     }, {
       "title": ["ip", "address"],
-      "dataIndex": "",
       "key": "ip_address"
-    }, {
-      "title": ["floating_ip"],
-      "dataIndex": "",
-      "key": "floating_ip"
     }, {
       "title": ["status"],
       "dataIndex": "status",
@@ -48,7 +43,6 @@
       }]
     }, {
       "title": ["project", "id"],
-      "dataIndex": "",
       "key": "project"
     }],
     "data": [],

@@ -64,6 +64,7 @@ class Model extends React.Component {
   onInitialize(params) {
     var _config = this.state.config,
       table = _config.table;
+
     if(params[2]) {
       request.getFloatingIPByIDInitialize(params[2]).then((res) => {
         table.data = [res[0].floatingip];
@@ -203,8 +204,8 @@ class Model extends React.Component {
         break;
       case 'detail':
         var item = data.rows[0];
+        this.loadingDetail();
         if(item.router_id || item.port_id) {
-          this.loadingDetail();
           request.getRelatedSourcesById(item).then(() => {
             this.onClickDetailTabs(actionType, refs, data);
           });
@@ -362,7 +363,11 @@ class Model extends React.Component {
 
     switch(actionType) {
       case 'allocate':
-        allocateModal();
+        allocateModal(null, () => {
+          this.refresh({
+            refreshList: true
+          });
+        });
         break;
       case 'dissociate':
         request.getRelatedSourcesById(rows[0]).then(() => {

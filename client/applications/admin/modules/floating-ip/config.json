@@ -45,6 +45,10 @@
       "type": "status",
       "key": "status",
       "filter": [{
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
+      }, {
         "name": ["active"],
         "key": "active",
         "filterBy": "ACTIVE"

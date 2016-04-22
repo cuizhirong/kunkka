@@ -45,6 +45,10 @@ module.exports = (str) => {
       type.icon = 'shutdown';
       type.status = 'shutoff';
       break;
+    case 'n/a':
+      type.icon = 'warning';
+      type.status = 'error';
+      break;
     default:
       type.status = 'loading';
       break;
