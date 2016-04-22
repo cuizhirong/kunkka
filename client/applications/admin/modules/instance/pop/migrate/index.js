@@ -44,8 +44,12 @@ function pop(obj, parent, callback) {
       }
 
       request.migrate(row.id, hostID).then((res) => {
-        callback && callback(res);
-        cb(true);
+        if (res.status >= 400) {
+          cb(false);
+        } else {
+          callback && callback(res);
+          cb(true);
+        }
       });
     },
     onAction: function(field, state, refs) {

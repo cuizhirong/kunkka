@@ -91,10 +91,15 @@ class Model extends React.Component {
           column.render = (col, item, i) => {
             var image = this.findItemByID(this.stores.imageTypes, item.image.id);
             return (
-              <a data-type="router" href={'/admin/flavor/' + item.image.id}>
+              <a data-type="router" href={'/admin/image/' + item.image.id}>
                 {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
               </a>
             );
+          };
+          break;
+        case 'floating_ip':
+          column.render = (col, item, i) => {
+            return item._floatingIP.join(', ');
           };
           break;
         case 'fixed_ip':
@@ -149,10 +154,13 @@ class Model extends React.Component {
     setOption('flavor', flavorTypes);
 
     var statusTypes = [{
-      id: 'active',
+      id: 'ACTIVE',
       name: __.active
     }, {
-      id: 'error',
+      id: 'SHUTOFF',
+      name: __.shutoff
+    }, {
+      id: 'ERROR',
       name: __.error
     }];
     setOption('status', statusTypes);
@@ -173,10 +181,11 @@ class Model extends React.Component {
     if (params[2]) {
       request.getServerByIDInitialize(params[2]).then((res) => {
         this.addTypesToStore(res[1]);
+        table.data = [res[0].server];
         this.initializeFilter(filter, res[1]);
 
-        table.data = [res[0].server];
-        this.updateTableData(table, res[0]._url, true, () => {
+        var newTable = this.processTableData(table, res[0]);
+        this.updateTableData(newTable, res[0]._url, true, () => {
           var pathList = router.getPathList();
           router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
         });
@@ -195,9 +204,10 @@ class Model extends React.Component {
 
 //request: get single data(pathList[2] is server_id)
   getSingleData(serverID) {
+    var table = this.state.config.table;
     request.getServerByID(serverID).then((res) => {
-      var table = this.state.config.table;
       table.data = [res.server];
+      table = this.processTableData(table, res);
       this.updateTableData(table, res._url);
     });
   }
@@ -228,15 +238,12 @@ class Model extends React.Component {
         allTenant = data.all_tenant;
 
       if (serverID) {
-        request.getServerByID(serverID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.server];
-          this.updateTableData(table, res._url);
-        });
+        this.getSingleData(serverID.id);
       } else if (allTenant){
         request.filterFromAll(allTenant).then((res) => {
           var table = this.state.config.table;
           table.data = res.servers;
+          table = this.processTableData(table, res);
           this.updateTableData(table, res._url);
         });
       } else {
@@ -423,39 +430,40 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     var {rows} = data;
 
-    var refreshCurrentList = {
-      refreshList: true,
-      refreshDetail: true
-      // loadingTable: true,
-      // loadingDetail: true
+    var refresh = () => {
+      this.refresh({
+        refreshList: true,
+        refreshDetail: true
+      });
     };
 
-    var that = this;
     switch(key) {
       case 'migrate':
         migratePop({
           row: rows[0],
           hostTypes: this.stores.hostTypes
+        }, null, function(res) {
+          refresh();
         });
         break;
       case 'power_on':
-        request.poweron(rows[0]).then((res) => {
-          // this.refresh(refreshCurrentList);
+        request.poweron(rows[0]).then(function(res) {
+          refresh();
         });
         break;
       case 'power_off':
-        request.poweroff(rows[0]).then((res) => {
-          // this.refresh(refreshCurrentList);
+        request.poweroff(rows[0]).then(function(res) {
+          refresh();
         });
         break;
       case 'reboot':
-        request.reboot(rows[0]).then((res) => {
-          this.refresh(refreshCurrentList);
+        request.reboot(rows[0]).then(function(res) {
+          refresh();
         });
         break;
       case 'dissociate_floating_ip':
-        dissociateFIP(rows[0], null, (res) => {
-          this.refresh(refreshCurrentList);
+        dissociateFIP(rows[0], null, function(res) {
+          refresh();
         });
         break;
       case 'delete':
@@ -467,24 +475,25 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteItem(rows[0]).then((res) => {
               cb(true);
-              that.refresh(refreshCurrentList);
+              refresh();
             });
           }
         });
         break;
       case 'refresh':
         var params = this.props.params,
-          refreshData = {};
-
+          r = {};
         if (params[2]) {
-          refreshData = refreshCurrentList;
+          r.refreshList = true;
+          r.refreshDetail = true;
+          r.loadingDetail = true;
         } else {
-          refreshData.initialList = true;
-          refreshData.loadingTable = true;
-          refreshData.clearState = true;
+          r.initialList = true;
+          r.loadingTable = true;
+          r.clearState = true;
         }
 
-        this.refresh(refreshData, params);
+        this.refresh(r, params);
         break;
       default:
         break;
@@ -503,7 +512,7 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     var single = rows.length === 1 ? rows[0] : null;
-// console.log(single['_floatingIP'])
+
     for(let key in btns) {
       switch (key) {
         case 'migrate':
@@ -601,7 +610,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.host,
-      content: item['OS-EXT-SRV-ATTR:host']
+      content: item['OS-EXT-SRV-ATTR:host'] ? item['OS-EXT-SRV-ATTR:host'] : '-'
     }, {
       title: __.flavor,
       content:
@@ -616,7 +625,10 @@ class Model extends React.Component {
         </a>
     }, {
       title: __.fixed_ip,
-      content: fixedIps
+      content: fixedIps !== '' ? fixedIps : '-'
+    }, {
+      title: __.floating_ip,
+      content: item._floatingIP.length ? item._floatingIP.join(', ') : '-'
     }, {
       title: __.user + __.id,
       content: item.user_id

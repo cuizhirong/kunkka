@@ -1,5 +1,5 @@
 {
-  "title": ["dissociate", "floating_ip"],
+  "title": ["create", "flavor"],
   "fields": [{
     "type": "input",
     "field": "name",
@@ -22,12 +22,9 @@
     "field": "set_enable",
     "has_label": true,
     "checked": true
-  }, {
-    "type": "input",
-    "field": "comment"
   }],
   "btn": {
-    "value": "dissociate",
+    "value": "confirm",
     "disabled": false
   }
 }

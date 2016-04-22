@@ -47,10 +47,6 @@
     }, {
       "title": ["enable"],
       "key": "enable"
-    }, {
-      "title": ["comment"],
-      "dataIndex": "",
-      "key": "comment"
     }],
     "data": [],
     "detail": {

@@ -99,6 +99,9 @@ class Model extends React.Component {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table);
     });
   }
 
@@ -292,10 +295,14 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
+      var table = this.state.config.table;
+
       request.getHypervisorByIdOrName(data.text).then((res) => {
-        var table = this.state.config.table;
         table.data = [res.hypervisor];
         this.updateTableData(table, res._url);
+      }).catch((res) => {
+        table.data = [];
+        this.updateTableData(table);
       });
     }
   }
@@ -383,6 +390,9 @@ class Model extends React.Component {
     var items = [{
       title: __.name,
       content: item.hypervisor_hostname
+    }, {
+      title: __.id,
+      content: item.id
     }, {
       title: __.ip,
       content: item.host_ip

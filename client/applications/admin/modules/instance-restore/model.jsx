@@ -297,10 +297,14 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
+      var table = this.state.config.table;
+
       request.getSingle(data.text).then((res) => {
-        var table = this.state.config.table;
         table.data = [res.server];
         this.updateTableData(table, res._url);
+      }).catch((res) => {
+        table.data = [];
+        this.updateTableData(table);
       });
     }
   }

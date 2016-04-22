@@ -19,12 +19,33 @@ function pop(obj, parent, callback) {
         }
       };
       request.createFlavor(data).then((res) => {
-        callback && callback(res);
         cb(true);
+        callback && callback(res);
       });
     },
     onAction: function(field, state, refs) {
-
+      switch(field) {
+        case 'name':
+          var regex = /^[a-zA-Z0-9_]{1,}$/;
+          if(regex.exec(state.value)) {
+            refs.name.setState({
+              error: false
+            });
+            refs.btn.setState({
+              disabled: false
+            });
+          } else {
+            refs.name.setState({
+              error: true
+            });
+            refs.btn.setState({
+              disabled: true
+            });
+          }
+          break;
+        default:
+          break;
+      }
     },
     onLinkClick: function() {
 

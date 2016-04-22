@@ -24,6 +24,10 @@
   }, {
     "group_key": "filter_type",
     "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "image", "name"]
+    }, {
       "type": "select",
       "key": "type",
       "default": ["all", "type"]
@@ -45,13 +49,16 @@
       "key": "size"
     }, {
       "title": ["type"],
-      "key": "type",
+      "key": "image_type",
+      "dataIndex": "image_type",
       "filter": [{
         "name": ["snapshot_type"],
-        "key": "snapshot"
+        "key": "snapshot",
+        "filterBy": "snapshot"
       }, {
         "name": ["image"],
-        "key": "image"
+        "key": "distribution",
+        "filterBy": "distribution"
       }]
     }, {
       "title": ["status"],

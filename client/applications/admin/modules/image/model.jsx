@@ -37,7 +37,6 @@ class Model extends React.Component {
 
   componentWillMount() {
     var column = this.state.config.table.column;
-    this.setTableFilter(column);
     this.tableColRender(column);
     this.initializeFilter(this.state.config.filter);
   }
@@ -58,19 +57,6 @@ class Model extends React.Component {
     }
   }
 
-  setTableFilter(columns) {
-    var filters = columns.filter((col) => col.key === 'type')[0].filter;
-    var imageFilter = filters.filter((fil) => fil.key === 'image')[0],
-      snapshotFilter = filters.filter((fil) => fil.key === 'snapshot')[0];
-
-    imageFilter.filterBy = function(item) {
-      return item.image_type === 'distribution' ? false : true;
-    };
-    snapshotFilter.filterBy = function(item) {
-      return item.image_type === 'snapshot' ? false : true;
-    };
-  }
-
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
@@ -86,7 +72,7 @@ class Model extends React.Component {
             return size;
           };
           break;
-        case 'type':
+        case 'image_type':
           column.render = (col, item, i) => {
             return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
           };
@@ -322,6 +308,7 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     var {rows} = data;
 
+    var that = this;
     switch(key) {
       case 'delete':
         deleteModal({
@@ -332,7 +319,7 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.delete(rows[0].id).then((res) => {
               cb(true);
-              this.refresh({
+              that.refresh({
                 refreshList: true,
                 refreshDetail: true
               });
@@ -341,12 +328,19 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        this.refresh({
-          refreshList: true,
-          refreshDetail: true,
-          loadingTable: true,
-          loadingDetail: true
-        });
+        var params = this.props.params,
+          r = {};
+        if (params[2]) {
+          r.refreshList = true;
+          r.refreshDetail = true;
+          r.loadingDetail = true;
+        } else {
+          r.initialList = true;
+          r.loadingTable = true;
+          r.clearState = true;
+        }
+
+        this.refresh(r, params);
         break;
       default:
         break;
@@ -363,12 +357,15 @@ class Model extends React.Component {
       if (idData) {
         this.getSingle(idData.id);
       } else if (typeData){
-        let requestData = {
-          visibility: typeData.type === 'snapshot' ? 'private' : 'public'
-        };
-        let pageLimit = this.state.config.table.limit;
+        if (typeData.type) {
+          let type = typeData.type;
+          delete typeData.type;
 
-        request.filter(requestData, pageLimit).then((res) => {
+          typeData.visibility = (type === 'snapshot') ? 'private' : 'public';
+        }
+
+        let pageLimit = this.state.config.table.limit;
+        request.filter(typeData, pageLimit).then((res) => {
           var table = this.state.config.table;
           table.data = res.images;
           this.updateTableData(table, res._url);
@@ -482,6 +479,7 @@ class Model extends React.Component {
       content: getStatusIcon(item.status)
     }, {
       title: __.created + __.time,
+      type: 'time',
       content: item.created
     }];
 

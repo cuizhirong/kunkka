@@ -15,6 +15,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
+var unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -64,7 +65,8 @@ class Model extends React.Component {
       switch (column.key) {
         case 'memory':
           column.render = (col, item, i) => {
-            return (item.ram / 1024) + ' GB';
+            var ram = unitConverter(item.ram, 'MB');
+            return ram.num + ' ' + ram.unit;
           };
           break;
         case 'enable':
@@ -253,46 +255,47 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     var {rows} = data;
 
-    var refreshCurrentList = {
-      refreshList: true,
-      refreshDetail: true,
-      loadingTable: true,
-      loadingDetail: true
+    var refresh = () => {
+      this.refresh({
+        refreshList: true,
+        refreshDetail: true
+      });
     };
 
     switch(key) {
       case 'create':
         createFlavor(null, null, (res) => {
-          this.refresh(refreshCurrentList);
+          refresh();
         });
         break;
       case 'delete':
         deleteModal({
           __: __,
           action: 'delete',
-          type: '',
+          type: 'flavor',
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteItem(rows[0].id).then((res) => {
               cb(true);
-              this.refresh(refreshCurrentList);
+              refresh();
             });
           }
         });
         break;
       case 'refresh':
         var params = this.props.params,
-          refreshData = {};
-
+          r = {};
         if (params[2]) {
-          refreshData = refreshCurrentList;
+          r.refreshList = true;
+          r.refreshDetail = true;
+          r.loadingTable = true;
+          r.loadingDetail = true;
         } else {
-          refreshData.initialList = true;
-          refreshData.loadingTable = true;
-          refreshData.clearState = true;
+          r.initialList = true;
+          r.loadingTable = true;
+          r.clearState = true;
         }
-
-        this.refresh(refreshData, params);
+        this.refresh(r, params);
         break;
       default:
         break;

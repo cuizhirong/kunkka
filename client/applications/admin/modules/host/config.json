@@ -69,9 +69,13 @@
       "type": "status",
       "key": "status",
       "filter": [{
-        "name": ["active"],
-        "key": "active",
-        "filterBy": "ACTIVE"
+        "name": ["enabled"],
+        "key": "enabled",
+        "filterBy": "enabled"
+      }, {
+        "name": ["disabled"],
+        "key": "disabled",
+        "filterBy": "disabled"
       }]
     }, {
       "title": ["state"],
