@@ -23,6 +23,9 @@ class LineChart {
       width: this.width,
       height: this.height
     });
+
+    vCanvas.getContext('2d').translate(0.5, -0.5);
+    bCanvas.getContext('2d').translate(0.5, -0.5);
   }
 
   setOption(option) {
@@ -41,8 +44,6 @@ class LineChart {
     this.renderLineBackground(option);
 
     // Render cacheable Line
-    var vCtx = this.vCanvas.getContext('2d');
-    vCtx.translate(0.5, -0.5);
     this.renderVLine(option);
 
     // Render Line
@@ -97,10 +98,11 @@ class LineChart {
       width = this.width,
       xData = option.xAxis.data;
 
-    ctx.translate(0.5, -0.5);
     ctx.strokeStyle = yAxis.color;
     ctx.fillStyle = yAxis.tickColor;
     ctx.lineWidth = 1;
+
+    ctx.clearRect(0, 0, width, height);
 
     // Draw yAxis
     ctx.beginPath();
@@ -117,6 +119,7 @@ class LineChart {
     ctx.stroke();
 
     // draw yAxis
+    ctx.font = '10px "Helvetica Neue"';
     ctx.textAlign = 'right';
     //console.log((this.realMax-this.realMin) / this.tickPeriod)
     for (let i = 0, len = (this.realMax - this.realMin) / this.tickPeriod; i < len; i++) {
@@ -129,6 +132,7 @@ class LineChart {
     }
 
     // draw xAxis
+    ctx.font = '10px "Helvetica Neue"';
     ctx.textAlign = 'center';
     for (let i = 1, len = Math.ceil(xData.length / this.interval); i < len; i++) {
       let x = marginLeft + i * this.ratioX * this.interval;
@@ -210,6 +214,7 @@ class LineChart {
       series = option.series,
       alert = option.alert,
       height = this.height,
+      width = this.width,
       marginLeft = this.marginLeft,
       marginBottom = this.marginBottom,
       ratioX = this.ratioX,
@@ -218,6 +223,8 @@ class LineChart {
       zeroY = height - marginBottom + ratioY * realMin,
       positions = this.positions,
       ctPositions = this.ctPositions;
+
+    ctx.clearRect(0, 0, width, height);
 
     series.forEach((s, j) => {
       var data = s.data,

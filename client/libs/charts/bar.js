@@ -21,6 +21,11 @@ class BarChart {
       width: this.width,
       height: this.height
     });
+
+    canvas.getContext('2d').translate(0.5, -0.5);
+    bCanvas.getContext('2d').translate(0.5, -0.5);
+
+
   }
 
   setOption(option) {
@@ -36,7 +41,6 @@ class BarChart {
     this.renderBarBackground();
 
     // Render Bar
-    this.canvas.getContext('2d').translate(0.5, -0.5);
     this.renderBar();
   }
 
@@ -45,21 +49,23 @@ class BarChart {
       option = this.option,
       yAxis = option.yAxis,
       marginLeft = this.marginLeft,
-      height = this.height;
+      height = this.height,
+      width = this.height;
 
-    ctx.translate(0.5, -0.5);
     ctx.strokeStyle = yAxis.color;
     ctx.fillStyle = yAxis.tickColor;
     ctx.lineWidth = 1;
 
+    ctx.clearRect(0, 0, width, height);
     // Draw axis
     ctx.beginPath();
     ctx.moveTo(marginLeft + 5, 0);
     ctx.lineTo(marginLeft + 5, height - 2);
-    ctx.lineTo(this.width, height - 2);
+    ctx.lineTo(width, height - 2);
     ctx.stroke();
 
     ctx.textAlign = 'right';
+    ctx.font = '10px "Helvetica Neue"';
     for (let i = 0, len = this.realMax / this.tickPeriod; i <= len; i++) {
       let y = height - this.ratio * this.tickPeriod * i;
       ctx.beginPath();
@@ -91,7 +97,7 @@ class BarChart {
 
     // calc the width of y-text
     var ctx = this.canvas.getContext('2d');
-    this.marginLeft = ctx.measureText('' + realMax).width;
+    this.marginLeft = Math.ceil(ctx.measureText('' + realMax).width);
   }
 
   renderBar() {

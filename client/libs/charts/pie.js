@@ -58,9 +58,13 @@ class PieChart {
     var ctx = this.bCanvas.getContext('2d'),
       option = this.option,
       bgColor = option.bgColor,
-      coordinate = [this.width / 2, this.height / 2],
+      height = this.height,
+      width = this.width,
+      coordinate = [width / 2, height / 2],
       lineWidth = option.lineWidth,
-      radius = this.width / 2 - lineWidth / 2;
+      radius = width / 2 - lineWidth / 2;
+
+    ctx.clearRect(0, 0, width, height);
 
     ctx.strokeStyle = bgColor;
     ctx.lineWidth = lineWidth;

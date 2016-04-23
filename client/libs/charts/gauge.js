@@ -39,10 +39,13 @@ class GaugeChart {
   renderGaugeBackground() {
     var ctx = this.bCanvas.getContext('2d'),
       option = this.option,
-      coordinate = [this.width / 2, this.width / 2],
-      lineWidth = option.lineWidth * this.width / 2,
+      width = this.width,
+      height = this.height,
+      coordinate = [width / 2, width / 2],
+      lineWidth = option.lineWidth * width / 2,
       radius = this.width / 2 - lineWidth / 2;
 
+    ctx.clearRect(0, 0, width, height);
     ctx.strokeStyle = option.bgColor;
     ctx.lineWidth = lineWidth;
     ctx.beginPath();
