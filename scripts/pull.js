@@ -27,7 +27,7 @@ applications.push({
     'dev': 'master'
   },
   'directory': '../../'
-})
+});
 
 function pullCode (apps) {
   let a = apps.pop();
@@ -57,5 +57,3 @@ function pullCode (apps) {
 }
 
 pullCode(applications);
-
-

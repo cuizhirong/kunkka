@@ -34,7 +34,7 @@ Object.keys(config).forEach(key => {
         console.log(`add eslint pre-commit hook in project ${a.project}`);
       }
     } catch (e) {
-      console.error(e);
+      console.error(e.toString());
     }
   });
 });
@@ -42,7 +42,7 @@ Object.keys(config).forEach(key => {
 try {
   execFileSync(path.join(__dirname, 'csc.sh'));
 } catch (e) {
-  console.log(e);
+  console.log(e.toString());
 }
 
 console.log('Assembled all applications!');
