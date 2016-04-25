@@ -40,3 +40,6 @@ dev-start.sh
 
 # Redis's dataset snapshot on disk
 dump.rdb
+
+# Config file
+config.json
