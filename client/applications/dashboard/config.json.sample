@@ -1,7 +1,7 @@
 {
   "modules": [{
     "items": [
-      "graphic"
+      "overview"
     ]
   }, {
     "title": "compute",
@@ -27,7 +27,7 @@
       "snapshot"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "overview",
   "languages": [
     "en",
     "zh-CN"

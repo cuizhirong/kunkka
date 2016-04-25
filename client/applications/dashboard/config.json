@@ -1,5 +1,9 @@
 {
   "modules": [{
+    "items": [
+      "overview"
+    ]
+  }, {
     "title": "compute",
     "items": [
       "instance",
@@ -23,7 +27,7 @@
       "snapshot"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "overview",
   "languages": [
     "en",
     "zh-CN"
