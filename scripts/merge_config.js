@@ -11,9 +11,7 @@ const configList = [];
 
 [apiPath, driverPath].forEach( p => {
   fs.readdirSync(p)
-    .filter( m => {
-      return fs.statSync(path.join(p, m)).isDirectory();
-    })
+    .filter( m => fs.statSync(path.join(p, m)).isDirectory())
     .forEach( f => {
       try {
         configList.push(require(path.join(p, f, 'config.sample.js')));
@@ -24,6 +22,20 @@ const configList = [];
       }
     });
 });
+
+// generate the client side config file
+const exec = require('child_process').exec;
+const clientAppsPath = path.join(__dirname, '..', 'client', 'applications');
+fs.readdirSync(clientAppsPath)
+  .filter( m => fs.statSync(path.join(clientAppsPath, m)).isDirectory())
+  .forEach( a => {
+    let appPath = path.join(clientAppsPath, a);
+    exec('cp config.json.sample config.json', {cwd: appPath}, (err, stdout, stderr) => {
+      if (err) {
+        console.log(`${appPath} has no config.json.sample file.`);
+      }
+    });
+  });
 
 /* remove other useless characters which don`t cover seperator of version string. */
 const removeOtherChar = function (str, cut) {
@@ -43,7 +55,7 @@ const removeOtherChar = function (str, cut) {
     }
   }
   return str;
-}
+};
 
 /* get the newset (or oldest) version. */
 const compareVersion = function (a, b, cut, isNew) {
@@ -56,7 +68,7 @@ const compareVersion = function (a, b, cut, isNew) {
     return (arr_1[i] != arr_2[i]) && (flag = (arr_1[i] > arr_2[i]) ? true : false);
   });
   return (isNew === flag) ? a : b;
-}
+};
 
 /* travel every attribute of json. */
 const travel = function (newConfig, oldConfig, isVersion) {
@@ -98,7 +110,7 @@ const generateFile = function (arr) {
       console.log('All done!');
     }
   });
-}
+};
 
 const _arr = [
   {_path: path.join(__dirname, '../configs/server.json'), _str: baseConfig},

@@ -25,7 +25,8 @@
     "prepublish": "cd client/uskin && npm install",
     "transpile": "node ./scripts/client_i18n_build.js",
     "assemble": "node ./scripts/assemble.js",
-    "pull": "node ./scripts/pull.js && node ./scripts/merge_config.js"
+    "pull": "node ./scripts/pull.js && node ./scripts/merge_config.js",
+    "merge": "node ./scripts/merge_config.js"
   },
   "dependencies": {
     "amqplib": "^0.4.0",
