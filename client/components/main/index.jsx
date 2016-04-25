@@ -87,15 +87,13 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.visible) {
-      this.clearState();
-    }
     if (!this.initialized || (nextProps.visible && (this.props.params !== nextProps.params))) {
+      this.clearState();
       this.onChangeParams(nextProps.params);
+      this.updateRows(nextProps.config.table.data);
     }
 
     this.initialized = true;
-    this.updateRows(nextProps.config.table.data);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -197,21 +195,30 @@ class Main extends React.Component {
 
   searchInTable(text) {
     if (this.refs.table) {
-      var search = this.props.config.search;
+      var search = this.props.config.search,
+        filterCol = search.column;
 
       if (search && search.column) {
-        var filterCol = search.column;
-        this.refs.table.setState({
-          filterCol: filterCol,
-          filterBy: function(item, _column) {
-            return _column.some((col) => {
-              if (filterCol[col.key] && item[col.dataIndex]) {
-                var td = item[col.dataIndex].toLowerCase();
-                return td.indexOf(text.toLowerCase()) > -1 ? true : false;
-              }
-            });
-          }
-        });
+        if (text) {
+          this.refs.table.setState({
+            filterCol: filterCol,
+            filterBy: function(item, _column) {
+              var ret = _column.some((col) => {
+                if (filterCol[col.key] && item[col.dataIndex]) {
+                  var td = item[col.dataIndex].toLowerCase();
+                  return td.indexOf(text.toLowerCase()) > -1 ? true : false;
+                }
+              });
+
+              return ret;
+            }
+          });
+        } else {
+          this.refs.table.setState({
+            filterCol: filterCol,
+            filterBy: undefined
+          });
+        }
       }
     }
   }
@@ -298,7 +305,7 @@ class Main extends React.Component {
   clearSearchState() {
     if (this.refs.search) {
       this.refs.search.clearState();
-      this.searchInTable('');
+      this.searchInTable(undefined);
     }
   }
 
