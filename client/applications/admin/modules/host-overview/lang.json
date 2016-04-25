@@ -5,6 +5,7 @@
     "amount": "Amount",
     "rate": "Rate",
     "reuse": "Reuse ",
+    "total": "Total ",
     "unallocated": "Unallocated ",
     "usage": "Usage",
     "vcpu_used": "vCPU Used"
@@ -15,6 +16,7 @@
     "amount": "总数",
     "rate": "比例",
     "reuse": "复用",
+    "total": "总",
     "unallocated": "未分配的",
     "usage": "使用率",
     "vcpu_used": "已使用vCPU"

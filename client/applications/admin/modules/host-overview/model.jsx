@@ -187,6 +187,7 @@ class Model extends React.Component {
     var memory = {
       sum: unitConverter(data.memory_mb, 'MB'),
       used: unitConverter(data.memory_mb_used, 'MB'),
+      free: unitConverter(data.memory_mb - data.memory_mb_used, 'MB'),
       rate: Math.round((data.memory_mb_used / data.memory_mb) * 100),
       rateClass: this.getChartClass(data.memory_mb_used / data.memory_mb)
     };
@@ -272,7 +273,11 @@ class Model extends React.Component {
                       <span>{memory.used.num}</span>{memory.used.unit}
                     </div>
                     <div className="allocate allocate-free">
-                      {__.memory + __.capacity}
+                      {__.unallocated + __.memory}
+                      <span>{memory.free.num}</span>{memory.free.unit}
+                    </div>
+                    <div className="allocate allocate-empty">
+                      {__.total + __.memory}
                       <span>{memory.sum.num}</span>{memory.sum.unit}
                     </div>
                   </div>

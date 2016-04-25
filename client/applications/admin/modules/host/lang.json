@@ -7,11 +7,11 @@
     "disk": "Disk ",
     "enable": "Enable",
     "gb": "(GB)",
-    "memory": "Memory",
+    "memory": "Memory ",
     "migrate_host_tip": "Migrate shuted instance(migrate randomly)",
     "physical_host": "Host ",
     "state": "State",
-    "vcpu": "vCPU",
+    "vcpu": "vCPU ",
     "virtual_machine": "Virtual Machine "
   },
   "zh-CN": {
