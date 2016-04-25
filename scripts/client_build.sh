@@ -2,6 +2,8 @@
 
 cd $(dirname $0)
 
+node ./build_client_config.js
+
 cd ../client/uskin && npm run release
 
 cd ..
