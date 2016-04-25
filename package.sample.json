@@ -31,7 +31,6 @@
   "dependencies": {
     "amqplib": "^0.4.0",
     "async": "^1.5.0",
-    "babel-core": "^6.0.12",
     "body-parser": "~1.14.1",
     "bufferutil": "^1.2.1",
     "connect-memjs": "0.1.0",
@@ -59,6 +58,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
+    "babel-core": "^6.0.12",
     "babel-eslint": "^4.1.6",
     "babel-jest": "^6.0.1",
     "babel-loader": "^6.0.0",
