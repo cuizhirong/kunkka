@@ -6,18 +6,18 @@ module.exports = {
   },
   'config': {
     'remote': {
-      'keystone': 'http://42.62.101.6:5000',
+      'keystone': 'http://42.62.93.98:5000',
       'nova': {
-        'RegionOne': 'http://42.62.101.6:8774'
+        'RegionOne': 'http://42.62.93.98:8774'
       },
       'cinder': {
-        'RegionOne': 'http://42.62.101.6:8776'
+        'RegionOne': 'http://42.62.93.98:8776'
       },
       'neutron': {
-        'RegionOne': 'http://42.62.101.6:9696'
+        'RegionOne': 'http://42.62.93.98:9696'
       },
       'glance': {
-        'RegionOne': 'http://42.62.101.6:9292'
+        'RegionOne': 'http://42.62.93.98:9292'
       }
     },
     'extension': {
