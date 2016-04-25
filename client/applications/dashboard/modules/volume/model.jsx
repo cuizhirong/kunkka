@@ -59,7 +59,7 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.style.display === 'none') {
+    if (this.props.style.display === 'none' && !nextState.config.table.loading) {
       return false;
     }
     return true;
@@ -67,7 +67,11 @@ class Model extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
-      this.getTableData(false);
+      if (this.state.config.table.loading) {
+        this.loadingTable();
+      } else {
+        this.getTableData(false);
+      }
     }
   }
 
