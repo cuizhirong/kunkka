@@ -79,6 +79,10 @@ c4.setOption({
     radius: 10,
     color: '#252f3d'
   },
+  tick: {
+    tickWidth: 10,
+    color: '#bbbfc5'
+  },
   period: 600,
   easing: 'easeOutCubic'
 });
@@ -96,6 +100,10 @@ setTimeout(function() {
     pointer: {
       radius: 10,
       color: '#252f3d'
+    },
+    tick: {
+      tickWidth: 10,
+      color: '#bbbfc5'
     },
     period: 600,
     easing: 'easeOutCubic'

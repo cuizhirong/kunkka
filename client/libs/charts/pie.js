@@ -1,10 +1,13 @@
 var easing = require('./easing');
 var autoscale = require('./autoscale');
+var utils = require('./utils');
 
 class PieChart {
   constructor(container) {
     this.container = container;
     this.initDOM();
+
+    utils.bind(window, 'resize', this.resize.bind(this));
   }
 
   initDOM() {
@@ -12,8 +15,9 @@ class PieChart {
       bCanvas = this.bCanvas = document.createElement('canvas'),
       textDiv = this.textDiv = document.createElement('div');
 
-    this.width = this.container.clientWidth;
-    this.height = this.container.clientHeight;
+    var min = Math.min(this.container.clientWidth, this.container.clientHeight);
+    this.width = min;
+    this.height = min;
 
     this.container.appendChild(bCanvas);
     this.container.appendChild(textDiv);
@@ -23,6 +27,22 @@ class PieChart {
       width: this.width,
       height: this.height
     });
+  }
+
+  resize() {
+    var min = Math.min(this.container.clientWidth, this.container.clientHeight);
+    if (this.width === min && this.height === min) {
+      return;
+    }
+    this.width = min;
+    this.height = min;
+
+    autoscale([this.canvas, this.bCanvas], {
+      width: this.width,
+      height: this.height
+    });
+
+    this.setOption(this.option);
   }
 
   setTextStyle(DOM) {

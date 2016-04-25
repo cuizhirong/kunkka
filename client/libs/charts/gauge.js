@@ -9,15 +9,18 @@ class GaugeChart {
 
   initDOM() {
     var canvas = this.canvas = document.createElement('canvas'),
-      bCanvas = this.bCanvas = document.createElement('canvas');
+      bCanvas = this.bCanvas = document.createElement('canvas'),
+      tCanvas = this.tCanvas = document.createElement('canvas');
 
-    this.width = this.container.clientWidth;
-    this.height = this.container.clientHeight;
+    this.maxRadius = Math.min(this.container.clientWidth / 2, this.container.clientHeight - 6);
+    this.width = 2 * this.maxRadius;
+    this.height = this.maxRadius + 6;
 
     this.container.appendChild(bCanvas);
     this.container.appendChild(canvas);
+    this.container.appendChild(tCanvas);
 
-    autoscale([canvas, bCanvas], {
+    autoscale([canvas, bCanvas, tCanvas], {
       width: this.width,
       height: this.height
     });
@@ -34,6 +37,41 @@ class GaugeChart {
 
     // Render gauge
     this.renderGauge();
+
+    // Render gauge
+    this.renderGaugeTick();
+  }
+
+  renderGaugeTick() {
+    var ctx = this.tCanvas.getContext('2d'),
+      option = this.option,
+      tick = this.option.tick,
+      coordinate = [this.maxRadius, this.maxRadius],
+      lineWidth = option.lineWidth * this.maxRadius,
+      outerRadius = this.maxRadius,
+      innerRadius = outerRadius - tick.tickWidth,
+      highlightRadius = outerRadius - tick.tickWidth * 1.5,
+      textRadius = Math.min(outerRadius - tick.tickWidth * 3, this.maxRadius - lineWidth + 10),
+      tickNum = 25;
+
+    ctx.strokeStyle = tick.color;
+    ctx.font = '10px "Helvetica Neue"';
+
+    for (let i = 0; i <= tickNum; i++) {
+      let arc = i / tickNum * Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(coordinate[0] - Math.cos(arc) * outerRadius, coordinate[1] - Math.sin(arc) * outerRadius);
+      if (i % 5 === 0) {
+        ctx.lineWidth = 2;
+        ctx.lineTo(coordinate[0] - Math.cos(arc) * highlightRadius, coordinate[1] - Math.sin(arc) * highlightRadius);
+        let tickText = '' + i * 4;
+        ctx.fillText(tickText, coordinate[0] - Math.cos(arc) * textRadius - 6, coordinate[1] - Math.sin(arc) * textRadius + 4);
+      } else {
+        ctx.lineWidth = 1;
+        ctx.lineTo(coordinate[0] - Math.cos(arc) * innerRadius, coordinate[1] - Math.sin(arc) * innerRadius);
+      }
+      ctx.stroke();
+    }
   }
 
   renderGaugeBackground() {
@@ -51,9 +89,6 @@ class GaugeChart {
     ctx.beginPath();
     ctx.arc(coordinate[0], coordinate[1], radius, 0, Math.PI, true);
     ctx.stroke();
-
-    // TODO: draw ticks
-    ctx.strokeStyle = option.tickColor;
   }
 
   renderGauge() {
