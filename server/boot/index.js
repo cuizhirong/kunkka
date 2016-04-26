@@ -51,10 +51,6 @@ function setup() {
   var views = require('views');
   views(app);
 
-  //verify the token exist or not
-  var tokenVerifyHandler = require('../middlewares/tokenVerifyHandler');
-  tokenVerifyHandler(app);
-
   var api = require('api');
   api(app);
 

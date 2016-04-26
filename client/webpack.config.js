@@ -1,8 +1,8 @@
 var path = require('path');
+var fs = require('fs');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
-var configs = require('../configs/config.json');
 
 var language = process.env.language;
 
@@ -12,9 +12,13 @@ if (!language) {
 }
 
 var entry = {};
-configs.applications.forEach(function(m) {
-  entry[m] = './applications/' + m + '/index.jsx';
-});
+fs.readdirSync('./applications')
+  .filter(function(m) {
+    return fs.statSync(path.join('./applications', m)).isDirectory();
+  })
+  .forEach(function(m) {
+    entry[m] = './applications/' + m + '/index.jsx';
+  });
 
 module.exports = {
   context: __dirname,

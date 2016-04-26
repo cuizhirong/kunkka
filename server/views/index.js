@@ -26,6 +26,10 @@ backendApps.forEach((a) => {
     });
 });
 
+// mock browser global variables: window and document
+global.window = {};
+global.document = {};
+
 module.exports = (app) => {
   app.set('views', []);
   app.set('applications', frontendApps);

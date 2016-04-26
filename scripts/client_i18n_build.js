@@ -2,15 +2,18 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var chalk = require('chalk');
-var configs = require('../configs/config.json');
 
 var language = process.env.npm_config_lang || process.env.language;
 if (!language) {
   language = 'zh-CN';
 }
 
-var appList = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || configs.applications;
 var rootDir = path.resolve(__dirname, '..');
+var appsDir = path.join(rootDir, 'client', 'applications')
+var applications =fs.readdirSync(appsDir).filter(function(m) {
+  return fs.statSync(path.join(appsDir, m)).isDirectory();
+});
+var appList = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
 
 appList.forEach(function(app) {
   var appDir = rootDir + '/client/applications/' + app;
