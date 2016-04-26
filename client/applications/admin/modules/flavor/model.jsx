@@ -8,7 +8,7 @@ var Main = require('../../components/main/index');
 var BasicProps = require('client/components/basic_props/index');
 
 //pop
-var createFlavor = require('./pop/createFlavor/index');
+var createFlavor = require('./pop/create/index');
 var deleteModal = require('client/components/modal_delete/index');
 
 var request = require('./request');
@@ -376,6 +376,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var memory = unitConverter(item.ram, 'MB');
+
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
@@ -387,7 +389,7 @@ class Model extends React.Component {
       content: item.vcpus
     }, {
       title: __.memory,
-      content: (item.ram / 1024) + ' GB'
+      content: memory.num + ' ' + memory.unit
     }, {
       title: __.enable,
       content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable

@@ -13,20 +13,34 @@ function pop(obj, parent, callback) {
         flavor: {
           name: refs.name.state.value,
           ram: Number(refs.memory.state.value),
-          vcpus: Number(refs.vcpu.state.value),
-          disk: Number(refs.capacity.state.value),
-          'OS-FLV-DISABLED:disabled': refs.set_enable.state.value
+          vcpus: Number(refs.vcpu_mb.state.value),
+          disk: Number(refs.capacity.state.value)
         }
       };
+
+      var id = refs.id.state.value;
+      if (id) {
+        data.flavor.id = id;
+      }
+
       request.createFlavor(data).then((res) => {
         cb(true);
         callback && callback(res);
+      }).catch((err) => {
+        var reg = new RegExp('"message":"(.*)","');
+        var tip = reg.exec(err.response)[1];
+
+        refs.error.setState({
+          value: tip,
+          hide: false
+        });
+        cb(false);
       });
     },
     onAction: function(field, state, refs) {
       switch(field) {
         case 'name':
-          var regex = /^[a-zA-Z0-9_]{1,}$/;
+          var regex = /^[a-zA-Z0-9_.]{1,}$/;
           if(regex.exec(state.value)) {
             refs.name.setState({
               error: false

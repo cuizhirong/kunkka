@@ -60,6 +60,12 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'name':
+          column.formatter = (col, item, i) => {
+            var label = item.image_label && item.image_label.toLowerCase();
+            return <div><i className={'icon-image-default ' + label}/> {item.name}</div>;
+          };
+          break;
         case 'size':
           column.render = (col, item, i) => {
             let size = item.size / 1024 / 1024;
