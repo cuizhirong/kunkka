@@ -43,7 +43,7 @@ class Model extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.style.display === 'none' && this.props.style.display === 'none') {
+    if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
     } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
@@ -81,6 +81,7 @@ class Model extends React.Component {
   onInitialize(params) {
     var _config = this.state.config,
       table = _config.table;
+
     if(params[2]) {
       request.getPortByIDInitialize(params[2]).then((res) => {
         table.data = [res[0].port];
@@ -108,22 +109,6 @@ class Model extends React.Component {
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
-  }
-
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
-      this.loadingTable();
-
-      var portId = data.port_id;
-
-      if (portId) {
-        request.getPortByID(portId.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.port];
-          this.updateTableData(table, res._url);
-        });
-      }
-    }
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
@@ -259,6 +244,9 @@ class Model extends React.Component {
       request.getPortByID(data.text).then((res) => {
         table.data = [res.port];
         this.updateTableData(table, res._url);
+      }).catch((res) => {
+        table.data = [];
+        this.updateTableData(table);
       });
     }
   }

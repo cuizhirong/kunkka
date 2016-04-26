@@ -145,6 +145,10 @@ class Model extends React.Component {
           var table = this.state.config.table;
           table.data = [res.snapshot];
           this.updateTableData(table, res._url);
+        }).catch((res) => {
+          var table = this.state.config.table;
+          table.data = [];
+          this.updateTableData(table);
         });
       } else if (allTenant){
         request.filterFromAll(allTenant).then((res) => {

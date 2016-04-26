@@ -40,6 +40,14 @@
         "name": ["active"],
         "key": "active",
         "filterBy": "ACTIVE"
+      }, {
+        "name": ["n/a"],
+        "key": "n/a",
+        "filterBy": "N/A"
+      }, {
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
       }]
     }, {
       "title": ["project", "id"],

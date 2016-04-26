@@ -44,7 +44,7 @@ class Model extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.style.display === 'none' && this.props.style.display === 'none') {
+    if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
     } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
@@ -225,6 +225,9 @@ class Model extends React.Component {
       request.getFloatingIPByID(data.text).then((res) => {
         table.data = [res.floatingip];
         this.updateTableData(table, res._url);
+      }).catch((res) => {
+        table.data = [];
+        this.updateTableData(table);
       });
     }
   }
