@@ -33,6 +33,14 @@ if (extType) {
 
 
 module.exports = function(app) {
+  // check session
+  app.use(['/api/v1/', '/proxy/'], function (req, res, next) {
+    if (req.session.user) {
+      next();
+    } else {
+      return res.status(401).json({error: req.i18n.__('api.auth.unauthorized')});
+    }
+  });
   // load proxy module
   require('./proxy')(app);
   // load api module
