@@ -8,9 +8,72 @@ const isEqual = require('./isEqual.js');
 const apiPath = '../../api';
 const testPath = path.join(__dirname, '../');
 
-const ExchangeApp = mocks.app;
-const ExchangeBase = mocks.base;
-const ExchangeAsync = mocks.async;
+const MockedApp = mocks.app;
+const MockedBase = mocks.base;
+const MockedAsync = mocks.async;
+
+let resetThis = function (testUnit) {
+  /* Reset the request object (app.req) about user input (beyond 'cookies', 'session' etc.). */
+  ['body', 'query', 'params', 'novaBody', 'cinderBody', 'neutronBody'].forEach( s => {
+    testUnit[s] = undefined;
+  });
+};
+
+let doTheTest = function (apiName, testUnit, thePath, theMethod, singleTest) {
+
+  it('Normal test for ' + apiName, function (done) {
+    resetThis(testUnit);
+    /* Set input of request. */
+    Object.keys(singleTest.input).forEach( s => {
+      if (testUnit.app.req[s]) {
+        Object.assign(testUnit.app.req[s], singleTest.input[s]);
+      } else {
+        testUnit.app.req[s] = singleTest.input[s];
+      }
+    });
+
+    /* Set false of error trigger. */
+    testUnit.triggerError = false;
+
+    /* Send request. */
+    testUnit.app[theMethod].emit(thePath);
+
+    // fs.writeFileSync(__dirname + '/' + apiName + '.tmp.js', JSON.stringify(testUnit.app.res.testResult, null, 2));
+
+    /* Test result locates at app.res.testsResult. */
+    let testResult = testUnit.app.res.testResult;
+
+    /* Verify api output. */
+    if (testResult.output) {
+      let output = isEqual(testResult.output, singleTest.output);
+      expect(output).toBe(true);
+    }
+
+    /* Verify status code, if retruned! */
+    if (testResult.status) {
+      let status = isEqual(testResult.status, singleTest.status);
+      expect(status).toBe(true);
+    }
+
+    done();
+  });
+
+  /* Default is true.
+   * The error test has no relation with input.
+   * It is just a test of coverage of codes.
+   */
+  if (!singleTest.noError) {
+    it('Error test for ' + apiName, function (done) {
+      resetThis(testUnit);
+      testUnit.triggerError = true;
+      testUnit.app[theMethod].emit(thePath);
+      let status = isEqual(testUnit.app.res.testResult.status, 500);
+      expect(status).toBe(true);
+      done();
+    });
+  }
+
+};
 
 fs.readdirSync(testPath)
   .filter(f => {
@@ -18,51 +81,36 @@ fs.readdirSync(testPath)
   })
   .forEach(m => {
     describe('Test for ' + m, function () {
+      /* Get test options. */
       let testService = require(path.join(testPath, m)); // keypair.js ...
       let test = testService.test;
       let exchange = {
-        '../base.js': ExchangeBase,
-        'async': ExchangeAsync
+        '../base.js': MockedBase,
+        'async': MockedAsync
       };
+
+      /* Mock the tested file. */
       let TestUnit = proxyquire(path.join(apiPath, testService.path), exchange);
-      let testApp = new ExchangeApp();
+      let testApp = new MockedApp();
       let testUnit = new TestUnit(testApp);
-      Object.keys(test).forEach(p => {
-        let method = test[p].method ? (test[p].method + 'Event') : 'getEvent';
-        /* set input of request. */
-        Object.keys(test[p].input).forEach( s => {
-          if (testUnit.app.req[s]) {
-            Object.assign(testUnit.app.req[s], test[p].input[s]);
-          } else {
-            testUnit.app.req[s] = test[p].input[s];
-          }
-        });
-        it('Normal test for ' + p, function (done) {
-          /* set false of error trigger. */
-          testUnit.triggerError = false;
-          /* send request. */
-          testUnit.app[method].emit(test[p].path);
-          /* compare res.send / res.json etc. */
-          // fs.writeFileSync(__dirname + '/' + p + '.tmp.js', JSON.stringify(testUnit.app.res.testResult, null, 2));
-          if (testUnit.app.res.testResult.output) {
-            let output = isEqual(testUnit.app.res.testResult.output, test[p].output);
-            expect(output).toBe(true);
-          }
-          /* compare status code, if retruned! */
-          if (testUnit.app.res.testResult.status) {
-            let status = isEqual(testUnit.app.res.testResult.status, test[p].status);
-            expect(status).toBe(true);
-          }
-          done();
-        });
-        it('Error test for ' + p, function (done) {
-          /* temporarily, error test has no relation with input, which is just a test of coverage of codes. */
-          testUnit.triggerError = true;
-          testUnit.app[method].emit(test[p].path);
-          let status = isEqual(testUnit.app.res.testResult.status, 500);
-          expect(status).toBe(true);
-          done();
-        });
+
+      /* Travel each unit for test. */
+      Object.keys(test).forEach(apiName => {
+        let theTest = test[apiName];
+        let thePath = theTest.path;
+        let theMethod = theTest.method ? (theTest.method + 'Event') : 'getEvent';
+
+         /* A fix for several times tests. */
+        if (theTest.tasks && theTest.tasks.length) {
+          theTest.tasks.forEach( (singleTest, index) => {
+            doTheTest(apiName, testUnit, thePath, theMethod, singleTest);
+          });
+        } else {
+          /* Only once test. */
+          doTheTest(apiName, testUnit, thePath, theMethod, theTest);
+        }
+
       });
+
     });
   });

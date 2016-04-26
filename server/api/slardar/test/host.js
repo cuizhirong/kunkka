@@ -3,7 +3,7 @@ module.exports = {
   path: 'nova/host.js',
   test: {
     getHostList: {
-      path: '/api/v1/:projectId/hypervisors/detail',
+      path: '/api/v1/:projectId/os-hypervisors/detail',
       input: {
         query: {
           limit: 1
@@ -40,7 +40,7 @@ module.exports = {
         ],
         'hypervisors_links': [
           {
-            'href': '/api/v1/hypervisors?page=2&limit=1',
+            'href': '/api/v1/os-hypervisors?page=2&limit=1',
             'rel': 'next'
           }
         ]

@@ -19,10 +19,9 @@ Auth.prototype = {
     var projects;
     var cookies;
     // FIXME: need to do verification
-    var that = this;
     async.waterfall([
-      function (cb) {
-        that.keystone.authAndToken.unscopedAuth(username, password, domain, function(err, response) {
+      (cb) => {
+        this.keystone.authAndToken.unscopedAuth.call(this, username, password, domain, (err, response) => {
           if (err) {
             cb(err);
           } else {
@@ -40,8 +39,8 @@ Auth.prototype = {
           }
         });
       },
-      function (userId, token, cb) {
-        that.keystone.project.getUserProjects(userId, token, function(err, response) {
+      (userId, token, cb) => {
+        this.keystone.project.getUserProjects.call(this, userId, token, (err, response) => {
           if (err) {
             cb(err);
           } else {
@@ -51,7 +50,7 @@ Auth.prototype = {
             } else {
               var projectId = projects[0].id;
               if (cookies.project) {
-                Object.keys(projects).some( p => {
+                projects.some( p => {
                   return (p.id === cookies.project) && (projectId = cookies.project);
                 });
               }
@@ -60,8 +59,8 @@ Auth.prototype = {
           }
         });
       },
-      function (projectId, token, cb) {
-        that.keystone.authAndToken.scopedAuth(projectId, token, function(err, response) {
+      (projectId, token, cb) => {
+        this.keystone.authAndToken.scopedAuth.call(this, projectId, token, (err, response) => {
           if (err) {
             cb(err);
           } else {
@@ -71,9 +70,9 @@ Auth.prototype = {
         });
       }
     ],
-    function (err, token, payload) {
+    (err, token, payload) => {
       if (err) {
-        next(err);
+        this.handleError(err, req, res, next);
       } else {
         var expireDate = new Date(payload.token.expires_at),
           projectId = payload.token.project.id,
@@ -109,7 +108,7 @@ Auth.prototype = {
   swtichPorject: function (req, res, next) {
     var projectId = req.body.projectId ? req.body.projectId : req.params.projectId;
     var token = req.session.user.token;
-    this.keystone.authAndToken.scopedAuth(projectId, token, function (err, response) {
+    this.keystone.authAndToken.scopedAuth.call(this, projectId, token, (err, response) => {
       if (err) {
         next(err);
       } else {

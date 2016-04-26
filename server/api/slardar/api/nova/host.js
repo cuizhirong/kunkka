@@ -18,7 +18,7 @@ Host.prototype = {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let obj = paginate('hypervisors', payload.hypervisors, '/api/v1/hypervisors', this.query.page, this.query.limit);
+        let obj = paginate('hypervisors', payload.hypervisors, '/api/v1/os-hypervisors', this.query.page, this.query.limit);
         res.json({
           hypervisors: obj.hypervisors,
           hypervisors_links: obj.hypervisors_links
@@ -29,7 +29,7 @@ Host.prototype = {
   },
   initRoutes: function () {
     return this.__initRoutes( () => {
-      this.app.get('/api/v1/:projectId/hypervisors/detail', this.getHostList.bind(this));
+      this.app.get('/api/v1/:projectId/os-hypervisors/detail', this.getHostList.bind(this));
     });
   }
 };

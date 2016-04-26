@@ -1,5 +1,21 @@
 'use strict';
 
+const metaData = {
+  'aUserInTest' : {
+    pass: 'pass-123',
+    userId: 'user-id-test-123',
+    projects: [
+      {
+        name: 'project1',
+        id: 'project-001'
+      }, {
+        name: 'project2',
+        id: 'project-002'
+      }
+    ]
+  }
+};
+
 const putList = {
 };
 
@@ -1719,6 +1735,7 @@ list.__subnetDetail = {
 };
 
 module.exports = {
+  'metaData': metaData,
   'list': list,
   'putList': putList
 };

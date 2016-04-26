@@ -3,9 +3,10 @@
 // const ApiBase = require('../../api/base.js');
 const EventEmitter = require('events');
 const apiList = require('./apilist.js');
+const metaData = apiList.metaData;
 
 const __ = function (output, callback) {
-  return callback(this.triggerError ? {status: 500} : null, output);
+  return callback(this.triggerError ? {status: 500, output: 'Error test.'} : null, output);
 };
 
 /*
@@ -88,7 +89,20 @@ async.waterfall = function (tasks, callback) {
 */
 function App(apiPath) {
   this.apiPath = apiPath;
-  this.req = {};
+  let session;
+  let destroy = () => {
+    this.req.session = session;
+  };
+  session = {
+    cookie: {
+    },
+    destroy: destroy
+  };
+  this.req = {
+    cookies: {
+    },
+    session: session
+  };
   this.res = {
     testResult: {},
     status: (s) => {
@@ -105,6 +119,12 @@ function App(apiPath) {
     },
     json: (s) => {
       return this.res.send.call(this, s);
+    },
+    cookie: (name, val, opt) => {
+      this.req.cookies[name] = val;
+    },
+    redirect: (s) => {
+      console.log(`Redirection ${s} is being called!`);
     }
   };
 }
@@ -186,6 +206,86 @@ Base.prototype.__initRoutes = function (callback) {
   callback();
   if (this.addRoutes) {
     this.addRoutes(this.app);
+  }
+};
+
+Base.prototype.keystone = {
+  authAndToken: {
+    unscopedAuth: function (name, pass, domain, callback) {
+      if (metaData[name] === undefined) {
+        return callback('Error user!');
+      } else if (metaData[name].pass !== pass) {
+        return callback('Error password!');
+      }
+      this.userName = name;
+      this.userToken = `user-token-${name}-${Math.random().toFixed(5).substr(2)}`;
+      this.userId = metaData[name].userId;
+      let response = {
+        header: {
+          'x-subject-token': this.userToken
+        },
+        body: {
+          token: {
+            user: {
+              id: this.userId
+            }
+          }
+        }
+      };
+      return callback(null, response);
+    },
+    scopedAuth: function (projectId, token, callback) {
+      let response = {};
+      let error = null;
+      if (this.userToken === token || this.projectToken === token) {
+        this.projectToken = `project-token-${projectId}-${Math.random().toFixed(5).substr(2)}`;
+        response = {
+          header: {
+            'x-subject-token': this.projectToken
+          },
+          body: {
+            token: {
+              expires_at: '2016-04-23T05:14:21.664Z',
+              project: {
+                id: projectId
+              },
+              user: {
+                name: this.userName,
+                id: this.userId
+              },
+              roles: [
+                {
+                  name: 'admin'
+                }, {
+                  name: 'member'
+                }
+              ]
+            }
+          }
+        };
+        error = null;
+      } else {
+        error = 'Error token!';
+      }
+      return callback(error, response);
+    }
+  },
+  project: {
+    getUserProjects: function (userId, token, callback) {
+      let response = {};
+      let error = null;
+      if (this.userToken === token && this.userId === userId) {
+        response = {
+          body: {
+            projects: metaData[this.userName].projects
+          }
+        };
+        error = null;
+      } else {
+        error = 'Error token!';
+      }
+      return callback(error, response);
+    }
   }
 };
 

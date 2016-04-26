@@ -154,9 +154,6 @@ var prototype = {
       }
       this[s + 'Body'][k] = body[k];
     };
-    this.novaBody = null;
-    this.cinderBody = null;
-    this.neutronBody = null;
     Object.keys(body).forEach( k => {
       if (novaItems.indexOf(k) !== -1) {
         setBody('nova', k);
