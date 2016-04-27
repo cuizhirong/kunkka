@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const extType = require('config')('extension').type;
-const extPath = path.join(__dirname, 'extensions', extType);
 
 const driver = {};
 
@@ -22,23 +21,26 @@ fs.readdirSync(__dirname)
   });
 
 /* driver with extensions. */
-let extPathList = [];
-try {
-  extPathList = fs.readdirSync(extPath);
-} catch (err) {
-  console.log();
-}
-extPathList.filter( m => { // cinder ...
-  return fs.statSync(path.join(extPath, m)).isDirectory();
-}).forEach( m => {
-  if ( !driver[m] ) {
-    driver[m] = {};
+if (extType) {
+  const extPath = path.join(__dirname, 'extensions', extType);
+  let extPathList = [];
+  try {
+    extPathList = fs.readdirSync(extPath);
+  } catch (err) {
+    console.log();
   }
-  fs.readdirSync(extPath + '/' + m).forEach( s => { // snapshot ...
-    if (s !== '.DS_Store') {
-      driver[m][path.basename(s, '.js')] = require(extPath + '/' + m + '/' + s);
+  extPathList.filter( m => { // cinder ...
+    return fs.statSync(path.join(extPath, m)).isDirectory();
+  }).forEach( m => {
+    if ( !driver[m] ) {
+      driver[m] = {};
     }
+    fs.readdirSync(extPath + '/' + m).forEach( s => { // snapshot ...
+      if (s !== '.DS_Store') {
+        driver[m][path.basename(s, '.js')] = require(extPath + '/' + m + '/' + s);
+      }
+    });
   });
-});
+}
 
 module.exports = driver;

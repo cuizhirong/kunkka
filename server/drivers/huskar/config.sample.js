@@ -21,7 +21,7 @@ module.exports = {
       }
     },
     'extension': {
-      'type': 'example_qiniu'
+      'type': ''
     }
   }
 };
