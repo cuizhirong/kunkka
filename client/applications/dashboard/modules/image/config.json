@@ -11,7 +11,7 @@
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["delete", "image"],
+    "value": ["delete"],
     "key": "del_img",
     "type": "delete",
     "icon": "delete",

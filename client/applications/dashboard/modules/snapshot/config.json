@@ -11,7 +11,7 @@
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["delete", "snapshot"],
+    "value": ["delete"],
     "key": "del_snapshot",
     "type": "delete",
     "icon": "delete",
