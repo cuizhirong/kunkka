@@ -42,4 +42,4 @@ dev-start.sh
 dump.rdb
 
 # Config file
-config.json
+/config.json
