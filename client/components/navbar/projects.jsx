@@ -2,7 +2,7 @@ var React = require('react');
 
 var fetch = require('client/applications/dashboard/cores/fetch');
 
-class Regions extends React.Component{
+class Projects extends React.Component{
   constructor(props) {
     super(props);
 
@@ -22,23 +22,23 @@ class Regions extends React.Component{
   }
 
   onClick(id, e) {
-    if (id === HALO.current_region) {
+    if (id === HALO.user.projectId) {
       return;
     }
     fetch.put({
-      url: '/auth/switch_region',
+      url: '/auth/switch_project',
       data: {
-        'region': id
+        'projectId': id
       }
     }).then((res) => {
       window.location.reload();
     });
   }
 
-  renderRegion() {
-    var regions = HALO.region_list;
+  renderProject() {
+    var projects = HALO.user.projects;
 
-    return regions.map((item, index) => {
+    return projects.map((item, index) => {
       return (
         <li key={index} onClick={this.onClick.bind(null, item.id)}><a>{item.name}</a></li>
       );
@@ -48,10 +48,10 @@ class Regions extends React.Component{
   render() {
     return (
       <ul className="region-dropdown">
-        { this.state.initialize ? this.renderRegion() : null}
+        { this.state.initialize ? this.renderProject() : null}
       </ul>
     );
   }
 }
 
-module.exports = Regions;
+module.exports = Projects;
