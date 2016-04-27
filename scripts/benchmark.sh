@@ -1,5 +1,5 @@
 #!/bin/bash
-# benchmark script
+#benchmark script
 cd $(dirname $0)
 cd ..
 

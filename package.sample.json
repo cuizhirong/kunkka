@@ -19,7 +19,7 @@
     "start": "./scripts/start.sh",
     "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
-    "eslint": "eslint *.js server/**/ client/**/ tests/__tests__/ --ext .js,.jsx",
+    "eslint": "eslint *.js server/**/ configs/ scripts/ client/**/ tests/__tests__/ --ext .js,.jsx",
     "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && node ../scripts/client_i18n_build.js && webpack --config dev.webpack.config.js",
     "benchmark": "./scripts/benchmark.sh",
     "prepublish": "cd client/uskin && npm install",
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "amqplib": "^0.4.0",
-    "async": "^1.5.0",
     "body-parser": "~1.14.1",
     "bufferutil": "^1.2.1",
     "connect-memjs": "0.1.0",
@@ -51,7 +50,6 @@
     "react-dom": "^15.0.1",
     "redis": "^2.4.2",
     "request": "~2.65.0",
-    "superagent": "^1.4.0",
     "utf-8-validate": "^1.2.1",
     "winston": "^2.1.1",
     "ws": "^1.0.1"

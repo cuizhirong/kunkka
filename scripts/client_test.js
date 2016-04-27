@@ -5,7 +5,7 @@ function clearDir(dir) {
   try {
     fs.mkdirSync(dir);
   } catch (e) {
-
+    console.log(e);
   }
 
   fs.readdirSync(dir).map(function(file) {

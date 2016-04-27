@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -47,11 +47,11 @@ const removeOtherChar = function (str, cut) {
 const compareVersion = function (a, b, cut, isNew) {
   cut = (cut === undefined) ? '.' : cut;
   isNew = (isNew === undefined) ? true : isNew;
-  let arr_1 = a.substr('1').split(cut);
-  let arr_2 = b.substr('1').split(cut);
+  let arr1 = a.substr('1').split(cut);
+  let arr2 = b.substr('1').split(cut);
   let flag; // true: a > b
-  arr_1.some( (e, i) => {
-    return (arr_1[i] != arr_2[i]) && (flag = (arr_1[i] > arr_2[i]) ? true : false);
+  arr1.some( (e, i) => {
+    return (arr1[i] !== arr2[i]) && (flag = (arr1[i] > arr2[i]) ? true : false);
   });
   return (isNew === flag) ? a : b;
 };
@@ -67,7 +67,11 @@ const travel = function (newConfig, oldConfig, isVersion) {
       travel(newConfig[k], oldConfig[k]);
     } else {
       if (isVersion) { // is version.
-        oldConfig[k] = compareVersion(oldConfig[k], newConfig[k]);
+        if (oldConfig[k] === undefined) {
+          oldConfig[k] = newConfig[k];
+        } else {
+          oldConfig[k] = compareVersion(oldConfig[k], newConfig[k]);
+        }
       } else {
         oldConfig[k] = newConfig[k];
       }
@@ -87,7 +91,7 @@ const generateFile = function (arr) {
     if (err) {
       console.log(err);
     } else {
-      console.log('Generate file successfully!');
+      console.log(`Generate ${arr[0]._path} file successfully!`);
     }
     arr.shift();
     if (arr[0] !== undefined) {

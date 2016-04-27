@@ -1,7 +1,6 @@
 'use strict';
 
 const chalk = require('chalk');
-const error = chalk.bgRed.white.bold;
 const success = chalk.green.bold;
 const warn = chalk.bgYellow.white.bold(' WARNING ');
 const config = require('../../config.js');
@@ -12,7 +11,6 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-const env = process.argv[2] || 'dev';
 
 const applications = [];
 Object.keys(config).forEach(c => {

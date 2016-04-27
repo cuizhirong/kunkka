@@ -13,7 +13,7 @@ const i18n = {
 const extensions = {};
 const client = {};
 
-function loadI18nFile (dirPath, i18n) {
+function loadI18nFile (dirPath, _i18n) {
   fs.readdirSync(dirPath)
     .filter(_module => {
       return fs.statSync(path.join(dirPath, _module)).isDirectory();
@@ -22,7 +22,7 @@ function loadI18nFile (dirPath, i18n) {
       try {
         let langPath = path.join(dirPath, _m, 'lang.json');
         fs.accessSync(langPath, fs.R_OK);
-        i18n[_m] = require(langPath);
+        _i18n[_m] = require(langPath);
       } catch (e) {
         console.log(`${_m} has no lang.json file.`);
       }
@@ -90,26 +90,25 @@ _locales.forEach(lang => {
   Object.keys(i18n).forEach(module => {
     Object.keys(i18n[module]).forEach(component => {
       locales[langLowerCase][module][component] = i18n[module][component][lang];
-    })
+    });
   });
   Object.keys(i18nClientObj).forEach(m => {
     client[langLowerCase][m] = i18nClientObj[m][lang];
   });
-  locales[langLowerCase]['shared'] = client[langLowerCase];
+  locales[langLowerCase].shared = client[langLowerCase];
 });
 
 function generateLocales() {
   _locales.forEach(locale => {
     let localeLowerCase = locale.toLowerCase();
     (loc => {
-      let i18nDirPath = path.join(__dirname, '../locale/');
       fs.writeFile(path.join(__dirname, '../locale/server', localeLowerCase + '.js'), JSON.stringify(locales[localeLowerCase]), (err) => {
         if (err) {
           console.log('fail to build %s locale file', loc);
         } else {
           console.log('successfully build %s locale file', loc);
         }
-      })
+      });
     })(locale);
   });
 }
@@ -120,8 +119,8 @@ fs.access(path.join(__dirname, '../locale'), fs.F_OK, (err) => {
     fs.mkdirSync(path.join(__dirname, '../locale/server'));
     generateLocales();
   } else {
-    fs.access(path.join(__dirname, '../locale/server'), fs.F_OK, (err) =>{
-      if (err) {
+    fs.access(path.join(__dirname, '../locale/server'), fs.F_OK, (e) =>{
+      if (e) {
         fs.mkdirSync(path.join(__dirname, '../locale/server'));
         generateLocales();
       } else {
