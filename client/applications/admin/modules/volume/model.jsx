@@ -50,6 +50,8 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
+    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
+      this.clearState();
     }
   }
 
@@ -385,11 +387,22 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     var len = rows.length;
+    var setBtnState = (key) => {
+      request.getServerById(rows[0].attachments[0].server_id).then(() => {
+        btns[key].disabled = false;
+      }).catch(() => {
+        btns[key].disabled = true;
+      });
+    };
 
     for(let key in btns) {
       switch (key) {
         case 'dissociate':
-          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
+          if((len === 1 && rows[0].status === 'in-use') && rows[0].attachments.length > 0) {
+            setBtnState(key);
+          } else {
+            btns[key].disabled = true;
+          }
           break;
         case 'delete':
           btns[key].disabled = (len > 0) ? false : true;

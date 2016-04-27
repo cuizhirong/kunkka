@@ -36,10 +36,6 @@
         "type": "input",
         "key": "name",
         "placeholder": ["pls_enter", "volume", "name"]
-      }, {
-        "type": "input",
-        "key": "tenant_id",
-        "placeholder": ["pls_enter", "project", "id"]
       }]
     }],
   "table": {
