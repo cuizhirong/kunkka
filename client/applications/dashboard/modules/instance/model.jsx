@@ -33,6 +33,7 @@ var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
+var unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -139,7 +140,15 @@ class Model extends React.Component {
           break;
         case 'flavor':
           column.render = (col, item, i) => {
-            return item.flavor ? item.flavor.vcpus + 'CPU / ' + item.flavor.ram / 1024 + 'GB' : '';
+            var ret = '';
+            if (item.flavor.name) {
+              let ram = unitConverter(item.flavor.ram, 'MB');
+              ret = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit;
+            } else {
+              ret = '(' + item.flavor.id.substr(0, 8) + ')';
+            }
+
+            return ret;
           };
           break;
         default:
@@ -149,8 +158,6 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    // 初始化时，如果params长度为2，就不管
-    // 如果初始化时，params长度为3就render detail
     this.getTableData(false);
   }
 
@@ -483,6 +490,15 @@ class Model extends React.Component {
 
   getBasicPropsItems(item) {
     var label = item.image.image_label && item.image.image_label.toLowerCase();
+
+    var flavor = '';
+    if (item.flavor.name) {
+      let ram = unitConverter(item.flavor.ram, 'MB');
+      flavor = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit;
+    } else {
+      flavor = '(' + item.flavor.id.substr(0, 8) + ')';
+    }
+
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
@@ -509,7 +525,7 @@ class Model extends React.Component {
         </span>
     }, {
       title: __.flavor,
-      content: item.flavor ? item.flavor.vcpus + 'CPU / ' + item.flavor.ram / 1024 + 'GB' : '-'
+      content: flavor
     }, {
       title: __.keypair,
       content: item.keypair ?
