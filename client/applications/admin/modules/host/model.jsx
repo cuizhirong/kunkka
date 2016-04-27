@@ -84,16 +84,16 @@ class Model extends React.Component {
 //initialize table data
   onInitialize(params) {
     if (params[2]) {
-      this.getHypervisorByIdOrName(params[2]);
+      this.getHypervisorById(params[2]);
     } else {
       this.getHypervisorList();
     }
   }
 
 //request: get Hypervisor By Id
-  getHypervisorByIdOrName(id) {
+  getHypervisorById(id) {
     var table = this.state.config.table;
-    request.getHypervisorByIdOrName(id).then((res) => {
+    request.getHypervisorById(id).then((res) => {
       table.data = [res.hypervisor];
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
@@ -295,15 +295,12 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
-      var table = this.state.config.table;
 
-      request.getHypervisorByIdOrName(data.text).then((res) => {
-        table.data = [res.hypervisor];
-        this.updateTableData(table, res._url);
-      }).catch((res) => {
-        table.data = [];
-        this.updateTableData(table);
-      });
+      if (data.text) {
+        this.getHypervisorById(data.text);
+      } else {
+        this.getHypervisorList();
+      }
     }
   }
 

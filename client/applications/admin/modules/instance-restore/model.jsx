@@ -76,7 +76,13 @@ class Model extends React.Component {
     var table = this.state.config.table;
 
     request.getSingle(id).then((res) => {
-      table.data = [res.server];
+
+
+      if (res.server.status.toLowerCase() === 'soft_deleted') {
+        table.data = [res.server];
+      } else {
+        table.data = [];
+      }
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
@@ -297,15 +303,11 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
-      var table = this.state.config.table;
-
-      request.getSingle(data.text).then((res) => {
-        table.data = [res.server];
-        this.updateTableData(table, res._url);
-      }).catch((res) => {
-        table.data = [];
-        this.updateTableData(table);
-      });
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 

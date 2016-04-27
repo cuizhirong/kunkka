@@ -16,7 +16,7 @@
     "field": "migrate_to"
   }],
   "btn": {
-    "value": "dissociate",
+    "value": "confirm",
     "disabled": false
   }
 }

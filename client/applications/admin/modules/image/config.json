@@ -68,7 +68,7 @@
       "filter": [{
         "name": ["active"],
         "key": "active",
-        "filterBy": "ACTIVE"
+        "filterBy": "active"
       }]
     }, {
       "title": ["create", "time"],

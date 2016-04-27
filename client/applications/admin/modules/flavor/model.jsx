@@ -102,6 +102,9 @@ class Model extends React.Component {
     request.getFlavorById(id).then((res) => {
       table.data = [res.flavor];
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table);
     });
   }
 

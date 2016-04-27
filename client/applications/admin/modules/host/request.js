@@ -36,7 +36,7 @@ module.exports = {
       return res;
     });
   },
-  getHypervisorByIdOrName: function(str) {
+  getHypervisorById: function(str) {
     var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + str;
     return fetch.get({
       url: url

@@ -129,6 +129,9 @@ class Model extends React.Component {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table);
     });
   }
 

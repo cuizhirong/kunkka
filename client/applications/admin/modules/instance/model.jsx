@@ -209,6 +209,9 @@ class Model extends React.Component {
       table.data = [res.server];
       table = this.processTableData(table, res);
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table);
     });
   }
 
