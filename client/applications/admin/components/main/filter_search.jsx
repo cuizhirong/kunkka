@@ -126,11 +126,12 @@ class Detail extends React.Component {
   }
 
   render() {
-    var expand = this.state.expand,
-      filters = this.props.items;
+    var props = this.props,
+      expand = this.state.expand,
+      filters = props.items;
 
     return (
-      <div className="filter-search">
+      <div className={'filter-search' + (props.visible ? '' : ' hidden')}>
         {expand ?
             <Button iconClass="filter-collapse" initial={true} onClick={this.collapseFilter.bind(this)}/>
           : <Button iconClass="filter-expand" initial={true} onClick={this.expandFilter.bind(this)}/>

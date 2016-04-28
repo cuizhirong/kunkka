@@ -54,6 +54,9 @@
       width: 100%;
       position: absolute;
       top: 15px;
+      &.hidden {
+        visibility: hidden;
+      }
       > button {
         position: absolute;
         right: 0;
@@ -149,6 +152,13 @@
       min-height: 30px;
       margin-bottom: 20px;
       text-align: right;
+      > div {
+        margin-right: 10px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      .default-page,
       .prev,
       .next {
         display: inline-block;
@@ -166,9 +176,6 @@
           color: @pagination-border-color;
           cursor: not-allowed!important;
         }
-      }
-      .prev {
-        margin-right: 10px;
       }
     }
   }

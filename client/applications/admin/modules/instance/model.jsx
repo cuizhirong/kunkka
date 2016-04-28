@@ -47,6 +47,7 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    //do not trigger render when component stays invisible
     if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
       return false;
     }
@@ -54,6 +55,7 @@ class Model extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    //when component is from the invisible to the visible, update data, otherwise clear state
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
@@ -62,16 +64,13 @@ class Model extends React.Component {
     }
   }
 
-  findItemByID(items, id) {
-    var ret;
-    items.some((item) => {
+  //helper
+  findItemByID(arr, id) {
+    arr.some((item) => {
       if (item.id === id) {
-        ret = item;
-        return true;
+        return item;
       }
     });
-
-    return ret;
   }
 
   tableColRender(columns) {
@@ -174,36 +173,17 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
-    var _config = this.state.config,
-      filter = _config.filter,
-      table = _config.table;
-
     if (params[2]) {
-      request.getServerByIDInitialize(params[2]).then((res) => {
-        this.addTypesToStore(res[1]);
-        table.data = [res[0].server];
-        this.initializeFilter(filter, res[1]);
-
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url, true, () => {
-          var pathList = router.getPathList();
-          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-        });
-      });
+      this.getServerByIDInitialize(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        this.addTypesToStore(res[1]);
-        this.initializeFilter(filter, res[1]);
-
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getListInitialize();
     }
   }
 
-//request: get single data(pathList[2] is server_id)
-  getSingleData(serverID) {
+//request: get server by ID
+  getServerByID(serverID) {
+    this.clearUrls();
+
     var table = this.state.config.table;
     request.getServerByID(serverID).then((res) => {
       table.data = [res.server];
@@ -211,12 +191,36 @@ class Model extends React.Component {
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
-      this.updateTableData(table);
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
-//request: get list data(according to page limit)
+//request: get server by ID and filter data
+  getServerByIDInitialize(serverID) {
+    this.clearUrls();
+
+    var _config = this.state.config,
+      filter = _config.filter,
+      table = _config.table;
+
+    request.getServerByIDInitialize(serverID).then((res) => {
+      this.addTypesToStore(res[1]);
+      table.data = [res[0].server];
+      this.initializeFilter(filter, res[1]);
+
+      var newTable = this.processTableData(table, res[0]);
+      this.updateTableData(newTable, res[0]._url, true, () => {
+        var pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
+    });
+  }
+
+//request: get server list
   getInitialListData() {
+    this.clearUrls();
+
     var pageLimit = this.state.config.table.limit;
     request.getList(pageLimit).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
@@ -224,11 +228,50 @@ class Model extends React.Component {
     });
   }
 
-//request: jump to next page according to the given url
+//request: get server list and filter data
+  getListInitialize() {
+    this.clearUrls();
+
+    var _config = this.state.config,
+      filter = _config.filter,
+      table = _config.table;
+
+    var pageLimit = this.state.config.table.limit;
+    request.getListInitialize(pageLimit).then((res) => {
+      this.addTypesToStore(res[1]);
+      this.initializeFilter(filter, res[1]);
+
+      var newTable = this.processTableData(table, res[0]);
+      this.updateTableData(newTable, res[0]._url);
+    });
+  }
+
+//request: get next list according to given url
   getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      table = this.processTableData(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, String(res.responseURL));
+    });
+  }
+
+//request: get filtered list
+  getFilterList(filterData) {
+    this.clearUrls();
+
+    var table = this.state.config.table;
+    filterData.limit = this.state.config.table.limit;
+    request.filterFromAll(filterData).then((res) => {
+      table.data = res.servers;
+      table = this.processTableData(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
@@ -241,21 +284,14 @@ class Model extends React.Component {
         allTenant = data.all_tenant;
 
       if (serverID) {
-        this.getSingleData(serverID.id);
+        this.getServerByID(serverID.id);
       } else if (allTenant){
-        request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.config.table;
-          table.data = res.servers;
-          table = this.processTableData(table, res);
-          this.updateTableData(table, res._url);
-        });
+        this.getFilterList(allTenant);
       } else {
-        var refreshData = {};
-        refreshData.initialList = true;
-        refreshData.loadingTable = true;
-        refreshData.clearState = true;
-
-        this.refresh(refreshData);
+        this.refresh({
+          initialList: true,
+          clearState: true
+        });
       }
     }
   }
@@ -380,8 +416,12 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
-  clearState() {
+  clearUrls() {
     this.stores.urls = [];
+  }
+
+  clearState() {
+    this.clearUrls();
     this.refs.dashboard.clearState();
   }
 
@@ -413,13 +453,16 @@ class Model extends React.Component {
         var url,
           history = this.stores.urls;
 
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
+        if (data.direction === 'prev'){
           history.pop();
           if (history.length > 0) {
             url = history.pop();
           }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearUrls();
         }
 
         this.loadingTable();
@@ -484,19 +527,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          r = {};
-        if (params[2]) {
-          r.refreshList = true;
-          r.refreshDetail = true;
-          r.loadingDetail = true;
-        } else {
-          r.initialList = true;
-          r.loadingTable = true;
-          r.clearState = true;
-        }
-
-        this.refresh(r, params);
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;

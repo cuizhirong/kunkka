@@ -357,7 +357,8 @@ class Main extends React.Component {
             <FilterSearch
               ref="filter_search"
               items={filter}
-              onConfirm={this.onConfirmFilter.bind(this)} />
+              onConfirm={this.onConfirmFilter.bind(this)}
+              visible={!table.loading} />
             : null
           }
         </div>
@@ -383,8 +384,15 @@ class Main extends React.Component {
               hover={table.hover}
               striped={this.striped} />
           }
-          {!table.loading ?
+          {!table.loading && (prevUrl || nextUrl) ?
             <div className="pagination">
+              {prevUrl ?
+                <div className="default-page"
+                  onClick={this.onNextPage.bind(this, null, 'default')}>
+                  <i className="glyphicon icon-refresh" />
+                </div>
+              : null
+              }
               <div className={'prev ' + (prevUrl ? '' : 'disabled')}
                 onClick={prevUrl ? this.onNextPage.bind(this, prevUrl, 'prev') : null}>
                 <i className="glyphicon icon-arrow-left" />
