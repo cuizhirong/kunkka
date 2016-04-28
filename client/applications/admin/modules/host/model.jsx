@@ -94,8 +94,8 @@ class Model extends React.Component {
   getHypervisorById(id) {
     var table = this.state.config.table;
     request.getHypervisorById(id).then((res) => {
-      table.data = [res.hypervisor];
-      this.updateTableData(table, res._url, true, () => {
+      var newTable = this.processTableData(table, res);
+      this.updateTableData(newTable, res._url, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
@@ -107,10 +107,9 @@ class Model extends React.Component {
 
 //request: get Hypervisor List
   getHypervisorList() {
-    var table = this.state.config.table;
-    request.getHypervisorList().then((res) => {
-      table.data = res.hypervisors;
-      this.stores.hosts = res.hypervisors;
+    var pageLimit = this.state.config.table.limit;
+    request.getHypervisorList(pageLimit).then((res) => {
+      var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
     });
   }
@@ -124,32 +123,49 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
+      if (currentUrl) {
+        this.stores.urls.push(currentUrl);
 
-      var detail = this.refs.dashboard.refs.detail,
-        params = this.props.params;
-      if (detail && refreshDetail && params.length > 2) {
-        detail.refresh();
+        var detail = this.refs.dashboard.refs.detail,
+          params = this.props.params;
+        if (detail && refreshDetail && params.length > 2) {
+          detail.refresh();
+        }
+        callback && callback();
       }
-
-      callback && callback();
     });
+  }
+
+  //change table data structure: to record url history
+  processTableData(table, res) {
+    if (res.hypervisors) {
+      table.data = res.hypervisors;
+    } else if (res.hypervisor) {
+      table.data = [res.hypervisor];
+    }
+
+    var pagination = {};
+
+    res.hypervisors_links && res.hypervisors_links.forEach((link) => {
+      if (link.rel === 'prev') {
+        pagination.prevUrl = link.href;
+      } else if (link.rel === 'next') {
+        pagination.nextUrl = link.href;
+      }
+    });
+    table.pagination = pagination;
+
+    return table;
   }
 
   getInitialListData() {
     this.getHypervisorList();
   }
 
+//request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
-      if (res.hypervisor) {
-        table.data = [res.hypervisor];
-      } else if (res.hypervisors) {
-        table.data = res.hypervisors;
-      } else {
-        table.data = [];
-      }
+      var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
   }
@@ -235,8 +251,10 @@ class Model extends React.Component {
       case 'check':
         this.onClickTableCheckbox(refs, data);
         break;
-      // case 'pagination':
-      //   break;
+      case 'pagination':
+        this.loadingTable();
+        this.getNextListData(data.url);
+        break;
       default:
         break;
     }

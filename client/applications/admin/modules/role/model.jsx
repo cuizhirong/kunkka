@@ -13,6 +13,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
+var router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -77,13 +78,16 @@ class Model extends React.Component {
     if (params[2]) {
       request.getRoleByIDInitialize(params[2]).then((res) => {
         table.data = [res[0].role];
-        this.updateTableData(table, res[0]._url);
+        this.updateTableData(table, res[0]._url, true, () => {
+          var pathList = router.getPathList();
+          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+        });
       });
     } else {
       var pageLimit = this.state.config.table.limit;
       request.getListInitialize(pageLimit).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
+        table.data = res[0].roles;
+        this.updateTableData(table, res[0]._url);
       });
     }
   }
@@ -99,9 +103,10 @@ class Model extends React.Component {
 
 //request: get list data(according to page limit)
   getInitialListData() {
-    var pageLimit = this.state.config.table.limit;
+    var table = this.state.config.table;
+    var pageLimit = table.limit;
     request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      table.data = res.roles;
       this.updateTableData(table, res._url);
     });
   }
@@ -109,7 +114,8 @@ class Model extends React.Component {
 //request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      var table = this.state.config.table;
+      table.data = res.roles || [res.role];
       this.updateTableData(table, res._url, refreshDetail);
     });
   }
@@ -118,16 +124,12 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
-      request.getRoleByID(data.text).then((res) => {
-        var table = this.state.config.table;
-        table.data = [res.role];
-        this.updateTableData(table, res._url);
-      });
+      this.getSingleData(data.text);
     }
   }
 
 //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -135,39 +137,18 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v3/')[1]);
+      if (currentUrl) {
+        this.stores.urls.push(currentUrl.split('/v3/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
-        params = this.props.params;
-      if (detail && refreshDetail && params.length > 2) {
-        detail.refresh();
+        var detail = this.refs.dashboard.refs.detail,
+          params = this.props.params;
+        if (detail && refreshDetail && params.length > 2) {
+          detail.refresh();
+        }
+
+        callback && callback();
       }
     });
-  }
-
-//change table data structure: to record url history
-  processTableData(table, res) {
-    if (res.roles) {
-      table.data = res.roles;
-    } else if (res.role) {
-      table.data = res.role;
-    }
-
-    var pagination = {},
-      next = res.links ? res.links.next : null;
-
-    if (next) {
-      pagination.nextUrl = next.href.split('/v3/')[1];
-    }
-
-    var history = this.stores.urls;
-
-    if (history.length > 0) {
-      pagination.prevUrl = history[history.length - 1];
-    }
-    table.pagination = pagination;
-
-    return table;
   }
 
 //refresh: according to the given data rules
@@ -248,22 +229,6 @@ class Model extends React.Component {
       case 'check':
         this.onClickTableCheckbox(refs, data);
         break;
-      case 'pagination':
-        var url,
-          history = this.stores.urls;
-
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
-          history.pop();
-          if (history.length > 0) {
-            url = history.pop();
-          }
-        }
-
-        this.loadingTable();
-        this.getNextListData(url);
-        break;
       default:
         break;
     }
@@ -310,19 +275,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          refreshData = {};
-
-        if (params[2]) {
-          refreshData.refreshList = true;
-          refreshData.loadingTable = true;
-        } else {
-          refreshData.initialList = true;
-          refreshData.loadingTable = true;
-          refreshData.clearState = true;
-        }
-
-        this.refresh(refreshData, params);
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;

@@ -19,7 +19,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/projects';
+    var url = '/api/v1/projects?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -28,11 +28,10 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/keystone/v3/' + nextUrl;
     return fetch.get({
-      url: url
+      url: nextUrl
     }).then((res) => {
-      res._url = url;
+      res._url = nextUrl;
       return res;
     });
   },

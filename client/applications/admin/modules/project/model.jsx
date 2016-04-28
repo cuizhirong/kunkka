@@ -20,6 +20,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
+var router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -83,11 +84,14 @@ class Model extends React.Component {
 
     if (params[2]) {
       request.getProjectByIDInitialize(params[2]).then((res) => {
-        table.data = [res[0].project];
-        this.updateTableData(table, res[0]._url);
+        var newTable = this.processTableData(table, res[0]);
+        this.updateTableData(newTable, res[0]._url, true, () => {
+          var pathList = router.getPathList();
+          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+        });
       });
     } else {
-      var pageLimit = this.state.config.table.limit;
+      var pageLimit = table.limit;
       request.getListInitialize(pageLimit).then((res) => {
         var newTable = this.processTableData(table, res[0]);
         this.updateTableData(newTable, res[0]._url);
@@ -97,9 +101,8 @@ class Model extends React.Component {
 
 //request: get single data(pathList[2] is server_id)
   getSingleData(projectID) {
-    request.getServerByID(projectID).then((res) => {
-      var table = this.state.config.table;
-      table.data = [res.project];
+    request.getProjectByID(projectID).then((res) => {
+      var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
     });
   }
@@ -117,7 +120,7 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url);
+      this.updateTableData(table, res._url, refreshDetail);
     });
   }
 
@@ -125,19 +128,12 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
-      var table = this.state.config.table;
-      request.getProjectByID(data.text).then((res) => {
-        table.data = [res.project];
-        this.updateTableData(table, res._url);
-      }).catch(() => {
-        table.data = [];
-        this.updateTableData(table);
-      });
+      this.getSingleData(data.text);
     }
   }
 
 //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -146,13 +142,14 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       if (currentUrl) {
-        this.stores.urls.push(currentUrl.split('/v3/')[1]);
+        this.stores.urls.push(currentUrl);
 
         var detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && refreshDetail && params.length > 2) {
           detail.refresh();
         }
+        callback && callback();
       }
     });
   }
@@ -165,18 +162,15 @@ class Model extends React.Component {
       table.data = [res.project];
     }
 
-    var pagination = {},
-      next = res.links ? res.links.next : null;
+    var pagination = {};
 
-    if (next) {
-      pagination.nextUrl = next.href.split('/v3/')[1];
-    }
-
-    var history = this.stores.urls;
-
-    if (history.length > 0) {
-      pagination.prevUrl = history[history.length - 1];
-    }
+    res.projects_links && res.projects_links.forEach((link) => {
+      if (link.rel === 'prev') {
+        pagination.prevUrl = link.href;
+      } else if (link.rel === 'next') {
+        pagination.nextUrl = link.href;
+      }
+    });
     table.pagination = pagination;
 
     return table;
@@ -264,20 +258,8 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
-          history = this.stores.urls;
-
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
-          history.pop();
-          if (history.length > 0) {
-            url = history.pop();
-          }
-        }
-
         this.loadingTable();
-        this.getNextListData(url);
+        this.getNextListData(data.url);
         break;
       default:
         break;
@@ -341,21 +323,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          refreshData = {};
-
-        if (params[2]) {
-          refreshData.refreshList = true;
-          refreshData.refreshDetail = true;
-          refreshData.loadingTable = true;
-          refreshData.loadingDetail = true;
-        } else {
-          refreshData.initialList = true;
-          refreshData.loadingTable = true;
-          refreshData.clearState = true;
-        }
-
-        this.refresh(refreshData, params);
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;

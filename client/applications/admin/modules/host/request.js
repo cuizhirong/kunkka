@@ -27,8 +27,12 @@ function migrateInactivateServer(id, hostID) {
 }
 
 module.exports = {
-  getHypervisorList: function() {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/detail';
+  getHypervisorList: function(pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -46,11 +50,11 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/nova/v2.1/' + nextUrl;
+    //var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail' + nextUrl;
     return fetch.get({
-      url: url
+      url: nextUrl
     }).then((res) => {
-      res._url = url;
+      res._url = nextUrl;
       return res;
     });
   },

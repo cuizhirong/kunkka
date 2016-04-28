@@ -41,7 +41,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",

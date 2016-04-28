@@ -35,7 +35,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 10,
     "column": [{
       "title": ["host", "name"],
       "dataIndex": "hypervisor_hostname",
