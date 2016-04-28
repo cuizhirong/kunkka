@@ -13,17 +13,46 @@ function Host (app) {
 
 Host.prototype = {
   getHostList: function (req, res, next) {
+    /* set if use cache. */
+    let useCache = false;
     this.getVars(req, ['projectId']);
-    this.__hosts( (err, payload) => {
-      if (err) {
-        this.handleError(err, req, res, next);
+    this.__cacheItem = (item, callback) => {
+      if (useCache) {
+        this.app.get('CacheClient').get(item, callback);
       } else {
-        let obj = paginate('hypervisors', payload.hypervisors, '/api/v1/os-hypervisors', this.query.page, this.query.limit);
+        /* no cache, no error. */
+        callback(null, null);
+      }
+    };
+    this.__cacheItem('halo-os-hypervisors', (error, cache) => {
+      if (error) {
+        /* nothing currently. */
+      } else if (cache) {
+        let obj = paginate('hypervisors', JSON.parse(cache.toString()), '/api/v1/' + this.projectId + '/os-hypervisors/detail', this.query.page, this.query.limit);
         res.json({
           hypervisors: obj.hypervisors,
           hypervisors_links: obj.hypervisors_links
         });
-        payload = null;
+        cache = null;
+      } else {
+        this.__hosts( (err, payload) => {
+          if (err) {
+            this.handleError(err, req, res, next);
+          } else {
+            let obj = paginate('hypervisors', payload.hypervisors, '/api/v1/' + this.projectId + '/os-hypervisors/detail', this.query.page, this.query.limit);
+
+            if (useCache) {
+              this.app.get('CacheClient').set('halo-os-hypervisors', JSON.stringify(obj.hypervisors), function () {
+              }, 3600 * 24);
+            }
+
+            res.json({
+              hypervisors: obj.hypervisors,
+              hypervisors_links: obj.hypervisors_links
+            });
+            payload = null;
+          }
+        });
       }
     });
   },

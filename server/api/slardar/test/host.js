@@ -7,6 +7,9 @@ module.exports = {
       input: {
         query: {
           limit: 1
+        },
+        params: {
+          projectId: '123'
         }
       },
       output: {
@@ -40,7 +43,7 @@ module.exports = {
         ],
         'hypervisors_links': [
           {
-            'href': '/api/v1/os-hypervisors?page=2&limit=1',
+            'href': '/api/v1/123/os-hypervisors/detail?page=2&limit=1',
             'rel': 'next'
           }
         ]

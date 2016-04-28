@@ -164,6 +164,9 @@ function Base(arrService, arrServiceObject) {
 
 Base.prototype.getVars = function (req, arr) {
   this.query = req.query;
+  if (req.params && req.params.projectId) {
+    this.projectId = req.params.projectId;
+  }
 };
 
 /* mock 'error handler' by printing the errors. */
