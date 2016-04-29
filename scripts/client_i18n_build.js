@@ -41,6 +41,7 @@ function buildInvertedIndex(files, output) {
     if (dupCount > 1) {
       console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(word) + ' is duplicate in ' + chalk.bold(dupCount) + ' files: ');
       invertedIndex.docIndex[word].forEach(function(_path) {
+        console.log(_path);
       });
     }
   });
