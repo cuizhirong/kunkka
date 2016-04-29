@@ -1,13 +1,12 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Floatingip (app) {
   this.app = app;
-  this.arrService = ['nova', 'neutron'];
   this.arrServiceObject = ['routers', 'ports', 'servers'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Floatingip.prototype = {
@@ -30,14 +29,14 @@ Floatingip.prototype = {
     }
   },
   getFloatingipList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel(
-      [this.__floatingips.bind(this)].concat(this.arrAsync),
+      [this.__floatingips.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['floatingips'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
@@ -51,14 +50,14 @@ Floatingip.prototype = {
     );
   },
   getFloatingipDetails: function (req, res, next) {
-    this.getVars(req, ['floatingipId']);
+    let objVar = this.getVars(req, ['floatingipId']);
     async.parallel(
-      [this.__floatingipDetail.bind(this)].concat(this.arrAsync),
+      [this.__floatingipDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['floatingip'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

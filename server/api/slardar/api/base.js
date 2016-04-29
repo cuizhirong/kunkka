@@ -1,117 +1,177 @@
 'use strict';
 
-const Driver = require('server/drivers');
+const driver = require('server/drivers');
+const keystoneRemote = require('config')('keystone');
 
-function API (arrService, arrServiceObject) {
-  this.arrAsync = [];
-  /* get services. */
-  if (arrService) {
-    arrService.forEach( s => this[s] = Driver[s] );
+function asyncHandler(callback, err, payload) {
+  if (err) {
+    callback(err);
+  } else {
+    callback(null, payload.body);
   }
+}
+
+function asyncHandlerOrigin(callback, err, payload) {
+  if (err) {
+    callback(err);
+  } else {
+    callback(null, payload);
+  }
+}
+
+function API (arrServiceObject) {
   /* get methods of show serviceObject list. */
   if (arrServiceObject) {
-    arrServiceObject.forEach( s => this.arrAsync.push(this['__' + s].bind(this)) );
+    this.arrAsync = (objVar) => {
+      let list = [];
+      arrServiceObject.forEach( s => list.push(this['__' + s].bind(this, objVar)) );
+      return list;
+    };
   }
 }
 
 API.prototype = {
-  __users: function (callback) {
-    this.keystone.user.listUsers(this.token, this.asyncHandler.bind(undefined, callback), this.query);
+  __unscopedAuth: function (objVar, callback) {
+    driver.keystone.authAndToken.unscopedAuth(objVar.username, objVar.password, objVar.domain, keystoneRemote, asyncHandlerOrigin.bind(undefined, callback));
   },
-  __projects: function (callback) {
-    this.keystone.project.listProjects(this.token, this.asyncHandler.bind(undefined, callback), this.query);
+  __scopedAuth: function (objVar, callback) {
+    driver.keystone.authAndToken.scopedAuth(objVar.projectId, objVar.token, keystoneRemote, asyncHandlerOrigin.bind(undefined, callback));
   },
-  __hosts: function (callback) {
-    this.nova.host.listHosts(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __userProjects: function (objVar, callback) {
+    driver.keystone.project.getUserProjects(objVar.userId, objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback));
   },
-  __servers: function (callback) {
-    this.nova.server.listServers(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __projects: function (objVar, callback) {
+    driver.keystone.project.listProjects(objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __flavors: function (callback) {
-    this.nova.flavor.listFlavors(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __users: function (objVar, callback) {
+    driver.keystone.user.listUsers(objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __keypairs: function (callback) {
-    this.nova.keypair.listKeypairs(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+
+  __hosts: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.host.listHosts(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __volumes: function (callback) {
-    this.cinder.volume.listVolumes(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __servers: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.server.listServers(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __volumeTypes: function (callback) {
-    this.cinder.volume.listVolumeTypes(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __flavors: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.flavor.listFlavors(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __snapshots: function (callback) {
-    this.cinder.snapshot.listSnapshots(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __keypairs: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.keypair.listKeypairs(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __floatingips: function (callback) {
-    this.neutron.floatingip.listFloatingips(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __novaQuota: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __networks: function (callback) {
-    this.neutron.network.listNetworks(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __serverDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.server.showServerDetails(objVar.projectId, objVar.serverId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __ports: function (callback) {
-    this.neutron.port.listPorts(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __novaQuotaUpdate: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota_set': objVar.novaBody});
   },
-  __routers: function (callback) {
-    this.neutron.router.listRouters(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+
+  __volumes: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.volume.listVolumes(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __security_groups: function (callback) {
-    this.neutron.security.listSecurity(this.projectId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __volumeTypes: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.volume.listVolumeTypes(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __subnets: function (callback) {
-    this.neutron.subnet.listSubnets(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __snapshots: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.snapshot.listSnapshots(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __images: function (callback) {
-    this.glance.image.listImages(this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __cinderQuota: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __novaQuota: function (callback) {
-    this.nova.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __volumeDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.volume.showVolumeDetails(objVar.projectId, objVar.volumeId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __cinderQuota: function (callback) {
-    this.cinder.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __snapshotDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.snapshot.showSnapshotDetails(objVar.projectId, objVar.snapshotId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __neutronQuota: function (callback) {
-    this.neutron.quota.getQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __cinderQuotaUpdate: function (objVar, callback) {
+    let remote = objVar.endpoint.cinder[objVar.region];
+    driver.cinder.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota_set': objVar.cinderBody});
   },
-  __serverDetail: function (callback) {
-    this.nova.server.showServerDetails(this.projectId, this.serverId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+
+  __images: function (objVar, callback) {
+    let remote = objVar.endpoint.glance[objVar.region];
+    driver.glance.image.listImages(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __volumeDetail: function (callback) {
-    this.cinder.volume.showVolumeDetails(this.projectId, this.volumeId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __imageDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.glance[objVar.region];
+    driver.glance.image.showImageDetails(objVar.imageId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __snapshotDetail: function (callback) {
-    this.cinder.snapshot.showSnapshotDetails(this.projectId, this.snapshotId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+
+  __floatingips: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.floatingip.listFloatingips(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __imageDetail: function (callback) {
-    this.glance.image.showImageDetails(this.imageId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __networks: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.network.listNetworks(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __floatingipDetail: function (callback) {
-    this.neutron.floatingip.showFloatingipDetails(this.floatingipId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __ports: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.port.listPorts(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __networkDetail: function (callback) {
-    this.neutron.network.showNetworkDetails(this.networkId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __routers: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.router.listRouters(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __portDetail: function (callback) {
-    this.neutron.port.showPortDetails(this.portId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __security_groups: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.security.listSecurity(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __routerDetail: function (callback) {
-    this.neutron.router.showRouterDetails(this.routerId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __subnets: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.subnet.listSubnets(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __security_groupDetail: function (callback) {
-    this.neutron.security.showSecurityDetails(this.projectId, this.securityId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __neutronQuota: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __subnetDetail: function (callback) {
-    this.neutron.subnet.showSubnetDetails(this.subnetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), this.query);
+  __floatingipDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.floatingip.showFloatingipDetails(objVar.floatingipId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __novaQuotaUpdate: function (callback) {
-    this.nova.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.novaBody});
+  __networkDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.network.showNetworkDetails(objVar.networkId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __cinderQuotaUpdate: function (callback) {
-    this.cinder.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota_set': this.cinderBody});
+  __portDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.port.showPortDetails(objVar.portId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
-  __neutronQuotaUpdate: function (callback) {
-    this.neutron.quota.updateQuota(this.projectId, this.targetId, this.token, this.region, this.asyncHandler.bind(undefined, callback), {'quota': this.neutronBody});
+  __routerDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.router.showRouterDetails(objVar.routerId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __security_groupDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.security.showSecurityDetails(objVar.projectId, objVar.securityId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __subnetDetail: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.subnet.showSubnetDetails(objVar.subnetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __neutronQuotaUpdate: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota': objVar.neutronBody});
   }
 };
+
 API.prototype.handleError = function (err, req, res, next) {
   if (err.status) {
     next(err);
@@ -143,13 +203,7 @@ API.prototype.handleError = function (err, req, res, next) {
     }
   }
 };
-API.prototype.asyncHandler = function (callback, err, payload) {
-  if (err) {
-    callback(err);
-  } else {
-    callback(null, payload.body);
-  }
-};
+
 API.prototype.orderByCreatedTime = function (arr, flag) {
   // default is DESC.
   if (!arr.length) {
@@ -178,20 +232,27 @@ API.prototype.orderByCreatedTime = function (arr, flag) {
     }
   }
 };
+
 API.prototype.__initRoutes = function (callback) {
   callback();
   if (this.addRoutes) {
     this.addRoutes(this.app);
   }
 };
-API.prototype.getVars = function (req, arr) {
-  this.token = req.session.user.token;
-  this.region = req.headers.region;
-  this.query = req.query;
-  if (arr) {
-    arr.forEach( e => {
-      this[e] = req.params[e];
+
+API.prototype.getVars = function (req, extra) {
+  let objVar = {
+    token: req.session.user.token,
+    endpoint: req.session.endpoint,
+    region: req.headers.region,
+    query: req.query
+  };
+  if (extra) {
+    extra.forEach( e => {
+      objVar[e] = req.params[e];
     });
   }
+  return objVar;
 };
+
 module.exports = API;

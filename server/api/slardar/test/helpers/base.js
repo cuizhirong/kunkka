@@ -44,15 +44,21 @@ let doTheTest = function (apiName, testUnit, thePath, theMethod, singleTest) {
     let testResult = testUnit.app.res.testResult;
 
     /* Verify api output. */
-    if (testResult.output) {
+    if (singleTest.output) {
       let output = isEqual(testResult.output, singleTest.output);
       expect(output).toBe(true);
     }
 
     /* Verify status code, if retruned! */
-    if (testResult.status) {
+    if (singleTest.status) {
       let status = isEqual(testResult.status, singleTest.status);
       expect(status).toBe(true);
+    }
+
+    /* verify processed request. */
+    if (singleTest.processedRequest) {
+      let processedRequest = isEqual(testUnit.app.req.session.cookie.expires, singleTest.processedRequest.session.cookie.expires);
+      expect(processedRequest).toBe(true);
     }
 
     done();

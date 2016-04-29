@@ -1,22 +1,20 @@
 'use strict';
 
-var Base = require('../base.js');
+const Base = require('../base.js');
 
 function Keypair (app) {
   this.app = app;
-  this.arrService = ['nova'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Keypair.prototype = {
   getKeypairList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
-    this.__keypairs( (err, payload) => {
+    let objVar = this.getVars(req, ['projectId']);
+    this.__keypairs(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        var keypairs = [];
+        let keypairs = [];
         payload.keypairs.forEach(function (k) {
           keypairs.push(k.keypair);
         });

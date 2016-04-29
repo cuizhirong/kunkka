@@ -1,32 +1,30 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 // due to Image is reserved word
 function Image (app) {
   this.app = app;
-  this.arrService = ['glance'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Image.prototype = {
   getImageList: function (req, res, next) {
-    this.getVars(req);
-    this.__images( (err, payload) => {
+    let objVar = this.getVars(req);
+    this.__images(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        var images = payload.images;
+        let images = payload.images;
         this.orderByCreatedTime(images);
         res.json({images: images});
       }
     });
   },
   getImageDetails: function (req, res, next) {
-    this.getVars(req, ['imageId']);
-    this.__imageDetail( (err, payload) => {
+    let objVar = this.getVars(req, ['imageId']);
+    this.__imageDetail(objVar, (err, payload) => {
       if (err) {
         res.status(err.status).json(err);
       } else {
@@ -35,15 +33,15 @@ Image.prototype = {
     });
   },
   getInstanceSnapshotList: function (req, res, next) {
-    this.getVars(req);
+    let objVar = this.getVars(req);
     async.parallel([
-      this.__images.bind(this)],
+      this.__images.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var images = results[0].images;
-          var re = [];
+          let images = results[0].images;
+          let re = [];
           images.forEach( image => {
             if ( image.image_type === 'snapshot' ) {
               re.push(image);
@@ -55,9 +53,9 @@ Image.prototype = {
     );
   },
   getInstanceSnapshotDetails: function (req, res, next) {
-    this.getVars(req, ['imageId']);
+    let objVar = this.getVars(req, ['imageId']);
     async.parallel([
-      this.__imageDetail.bind(this)],
+      this.__imageDetail.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);

@@ -1,22 +1,21 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Overview(app) {
   this.app = app;
-  this.arrService = ['nova', 'cinder', 'neutron'];
   this.arrQuotaObject = ['novaQuota', 'cinderQuota', 'neutronQuota'];
   this.arrListObject = ['servers', 'flavors', 'volumes', 'volumeTypes', 'security_groups', 'routers', 'subnets', 'floatingips', 'snapshots', 'keypairs', 'networks', 'ports'];
   this.arrServiceObject = this.arrQuotaObject.concat(this.arrListObject);
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
-var prototype = {
+Overview.prototype = {
   getQuota: function (req, res, next) {
-    this.getVars(req, ['projectId', 'targetId']);
+    let objVar = this.getVars(req, ['projectId', 'targetId']);
     async.parallel(
-      this.arrAsync.slice(0, 3),
+      this.arrAsync(objVar).slice(0, 3),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
@@ -48,18 +47,18 @@ var prototype = {
     );
   },
   getOverview: function (req, res, next) {
-    this.getVars(req, ['projectId']);
-    this.targetId = undefined;
-    this.query = {
-      tenant_id: this.projectId
+    let objVar = this.getVars(req, ['projectId']);
+    objVar.targetId = undefined;
+    objVar.query = {
+      tenant_id: objVar.projectId
     };
     async.parallel(
-      this.arrAsync,
+      this.arrAsync(objVar),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           obj.arrVolumeTypes = [];
           /* make up obj with serverObjects returned. */
           this.arrServiceObject.forEach( (e, index) => {
@@ -98,13 +97,13 @@ var prototype = {
             obj.arrVolumeTypes.push(a.name);
           });
           /* deal with nova. */
-          var flavor = {};
+          let flavor = {};
           obj.servers.forEach( s => {
             flavor[s.flavor.id] ? flavor[s.flavor.id]++ : flavor[s.flavor.id] = 1;
           });
           obj.flavors.forEach( f => {
             if (flavor[f.id]) {
-              var num = flavor[f.id];
+              let num = flavor[f.id];
               obj.overview_usage.cores.used += num * f.vcpus;
               obj.overview_usage.ram.used += num * f.ram;
               obj.overview_usage.instances.used += num;
@@ -113,7 +112,7 @@ var prototype = {
             }
           });
           /* deal with cinder. */
-          var snapshot = {};
+          let snapshot = {};
           obj.snapshots.forEach( s => {
             obj.overview_usage.snapshots.used += 1;
             snapshot[s.volume_id] ? snapshot[s.volume_id]++ : snapshot[s.volume_id] = 1;
@@ -121,7 +120,7 @@ var prototype = {
           obj.volumes.forEach( v => {
             obj.overview_usage.volumes.used += 1;
             obj.overview_usage.gigabytes.used += v.size;
-            var type = v.volume_type;
+            let type = v.volume_type;
             if (obj.arrVolumeTypes.indexOf(type) !== -1) {
               obj.overview_usage['volumes_' + type].used += 1;
               obj.overview_usage['gigabytes_' + type].used += v.size;
@@ -141,18 +140,18 @@ var prototype = {
     );
   },
   putQuota: function (req, res, next) {
-    this.getVars(req, ['projectId', 'targetId']);
+    let objVar = this.getVars(req, ['projectId', 'targetId']);
     let novaItems = ['ram', 'cores', 'instances', 'key_pairs'];
     let cinderItems = ['volumes', 'gigabytes', 'snapshots'];
     let neutronItems = ['port', 'subnet', 'router', 'network', 'floatingip', 'security_group'];
     let body = req.body;
     let tasks = [];
     let setBody = (s, k) => {
-      if (!this[s + 'Body']) {
-        this[s + 'Body'] = {};
-        tasks.push(this['__' + s + 'QuotaUpdate'].bind(this));
+      if (!objVar[s + 'Body']) {
+        objVar[s + 'Body'] = {};
+        tasks.push(this['__' + s + 'QuotaUpdate'].bind(this, objVar));
       }
-      this[s + 'Body'][k] = body[k];
+      objVar[s + 'Body'][k] = body[k];
     };
     Object.keys(body).forEach( k => {
       if (novaItems.indexOf(k) !== -1) {
@@ -181,6 +180,6 @@ var prototype = {
   }
 };
 
-Object.assign(Overview.prototype, prototype, Base.prototype);
+Object.assign(Overview.prototype, Base.prototype);
 
 module.exports = Overview;

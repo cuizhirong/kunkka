@@ -1,14 +1,13 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 // due to Port is reserved word
 function Port (app) {
   this.app = app;
-  this.arrService = ['nova', 'neutron'];
   this.arrServiceObject = ['subnets', 'floatingips', 'servers', 'security_groups'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Port.prototype = {
@@ -48,21 +47,21 @@ Port.prototype = {
     });
   },
   getPortList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel(
-      [this.__ports.bind(this)].concat(this.arrAsync),
+      [this.__ports.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['ports'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
           this.orderByCreatedTime(obj.ports);
           obj.port = [];
           obj.ports.forEach( (port, index) => {
-            var flag = true;
+            let flag = true;
             // flag = Boolean(port.device_owner === 'compute:nova' || port.device_owner === 'compute:None' || port.device_owner === '');
             if (flag) {
               obj.port.push(port);
@@ -77,14 +76,14 @@ Port.prototype = {
     );
   },
   getPortDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'portId']);
+    let objVar = this.getVars(req, ['projectId', 'portId']);
     async.parallel(
-      [this.__portDetail.bind(this)].concat(this.arrAsync),
+      [this.__portDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['port'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

@@ -9,6 +9,8 @@ const __ = function (output, callback) {
   return callback(this.triggerError ? {status: 500, output: 'Error test.'} : null, output);
 };
 
+const store = {};
+
 /*
   mock async.js.
 */
@@ -152,10 +154,13 @@ App.prototype.method = function (type, apiPath, callback) {
 /*
   mock base.js.
 */
-function Base(arrService, arrServiceObject) {
-  this.arrAsync = [];
+function Base(arrServiceObject) {
   if (arrServiceObject) {
-    arrServiceObject.forEach( s => this.arrAsync.push(this['__' + s].bind(this)) );
+    this.arrAsync = (objVar) => {
+      let list = [];
+      arrServiceObject.forEach( s => list.push(this['__' + s].bind(this, objVar)) );
+      return list;
+    };
   }
   if (this.initRoutes) {
     this.initRoutes();
@@ -163,10 +168,12 @@ function Base(arrService, arrServiceObject) {
 }
 
 Base.prototype.getVars = function (req, arr) {
-  this.query = req.query;
+  let objVar = {};
+  objVar.query = req.query;
   if (req.params && req.params.projectId) {
-    this.projectId = req.params.projectId;
+    objVar.projectId = req.params.projectId;
   }
+  return objVar;
 };
 
 /* mock 'error handler' by printing the errors. */
@@ -212,84 +219,85 @@ Base.prototype.__initRoutes = function (callback) {
   }
 };
 
-Base.prototype.keystone = {
-  authAndToken: {
-    unscopedAuth: function (name, pass, domain, callback) {
-      if (metaData[name] === undefined) {
-        return callback('Error user!');
-      } else if (metaData[name].pass !== pass) {
-        return callback('Error password!');
-      }
-      this.userName = name;
-      this.userToken = `user-token-${name}-${Math.random().toFixed(5).substr(2)}`;
-      this.userId = metaData[name].userId;
-      let response = {
-        header: {
-          'x-subject-token': this.userToken
-        },
-        body: {
-          token: {
-            user: {
-              id: this.userId
-            }
-          }
-        }
-      };
-      return callback(null, response);
-    },
-    scopedAuth: function (projectId, token, callback) {
-      let response = {};
-      let error = null;
-      if (this.userToken === token || this.projectToken === token) {
-        this.projectToken = `project-token-${projectId}-${Math.random().toFixed(5).substr(2)}`;
-        response = {
-          header: {
-            'x-subject-token': this.projectToken
-          },
-          body: {
-            token: {
-              expires_at: '2016-04-23T05:14:21.664Z',
-              project: {
-                id: projectId
-              },
-              user: {
-                name: this.userName,
-                id: this.userId
-              },
-              roles: [
-                {
-                  name: 'admin'
-                }, {
-                  name: 'member'
-                }
-              ]
-            }
-          }
-        };
-        error = null;
-      } else {
-        error = 'Error token!';
-      }
-      return callback(error, response);
-    }
-  },
-  project: {
-    getUserProjects: function (userId, token, callback) {
-      let response = {};
-      let error = null;
-      if (this.userToken === token && this.userId === userId) {
-        response = {
-          body: {
-            projects: metaData[this.userName].projects
-          }
-        };
-        error = null;
-      } else {
-        error = 'Error token!';
-      }
-      return callback(error, response);
-    }
+Base.prototype.__unscopedAuth = function (objVar, callback) {
+  let name = objVar.username;
+  let pass = objVar.password;
+  if (metaData[name] === undefined) {
+    return callback('Error user!');
+  } else if (metaData[name].pass !== pass) {
+    return callback('Error password!');
   }
+  store._userName = name;
+  store._userToken = `user-token-${name}-123`;
+  store._userId = metaData[name].userId;
+  let response = {
+    header: {
+      'x-subject-token': store._userToken
+    },
+    body: {
+      token: {
+        user: {
+          id: store._userId
+        }
+      }
+    }
+  };
+  return callback(null, response);
+};
+
+Base.prototype.__scopedAuth = function (objVar, callback) {
+  let projectId = objVar.projectId;
+  let token = objVar.token;
+  let response = {};
+  let error = null;
+  if (store._userToken === token || store._projectToken === token) {
+    store._projectToken = `project-token-${projectId}-123`;
+    response = {
+      header: {
+        'x-subject-token': store._projectToken
+      },
+      body: {
+        token: {
+          expires_at: '2016-04-23T05:14:21.664Z',
+          project: {
+            id: projectId
+          },
+          user: {
+            name: store._userName,
+            id: store._userId
+          },
+          roles: [
+            {
+              name: 'admin'
+            }, {
+              name: 'member'
+            }
+          ],
+          catalog: metaData.catalog
+        }
+      }
+    };
+    error = null;
+  } else {
+    error = 'Error token!';
+  }
+  return callback(error, response);
+};
+
+Base.prototype.__userProjects = function (objVar, callback) {
+  let userId = objVar.userId;
+  let token = objVar.token;
+  let response = {};
+  let error = null;
+  if (store._userToken === token && store._userId === userId) {
+    response = {
+      projects: metaData[store._userName].projects
+    };
+    error = null;
+  } else {
+    error = 'Error token!';
+  }
+  return callback(error, response);
 };
 
 /* mock drivers' response.
@@ -298,7 +306,7 @@ Base.prototype.keystone = {
  * case 'post', response with processed request data.
  */
 Object.keys(apiList.list).forEach( s => {
-  Base.prototype[s] = function(callback) {
+  Base.prototype[s] = function(objVar, callback) {
     let response = JSON.parse(JSON.stringify(apiList.list[s]));
     return __.call(this, response, callback);
   };
@@ -306,9 +314,9 @@ Object.keys(apiList.list).forEach( s => {
 
 Object.keys(apiList.putList).forEach( m => {
   Object.keys(apiList.putList[m]).forEach( s => {
-    Base.prototype[s] = function(callback) {
+    Base.prototype[s] = function(objVar, callback) {
       let response = apiList.putList[m][s];
-      let body = this[m + 'Body'];
+      let body = objVar[m + 'Body'];
 
       /* Not support deep copy temporarily, since which is not necessary for present test. */
       Object.assign(response, body);

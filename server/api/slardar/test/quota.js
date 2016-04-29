@@ -148,9 +148,7 @@ module.exports = {
         }
       },
       status: 204,
-      output: {
-
-      }
+      output: undefined
     }
   }
 };

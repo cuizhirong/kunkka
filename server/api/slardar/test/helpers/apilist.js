@@ -1,6 +1,36 @@
 'use strict';
 
 const metaData = {
+  catalog: [
+    {
+      'endpoints': [
+        {
+          'region_id': 'RegionOne',
+          'url': 'http://23.253.248.171:9292',
+          'region': 'RegionOne',
+          'interface': 'admin',
+          'id': 'b2605da9b25943beb49b2bd86aca2202'
+        },
+        {
+          'region_id': 'RegionOne',
+          'url': 'http://23.253.248.171:9292',
+          'region': 'RegionOne',
+          'interface': 'public',
+          'id': 'c4d1184caf8c4351bff4bf502a09684e'
+        },
+        {
+          'region_id': 'RegionOne',
+          'url': 'http://23.253.248.171:9292',
+          'region': 'RegionOne',
+          'interface': 'internal',
+          'id': 'cd73bda89e3948738c2721a8c3acac54'
+        }
+      ],
+      'type': 'image',
+      'id': '495df2483dc145dbb6b34bfbdd787aae',
+      'name': 'glance'
+    }
+  ],
   'aUserInTest' : {
     pass: 'pass-123',
     userId: 'user-id-test-123',

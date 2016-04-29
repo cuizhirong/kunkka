@@ -1,21 +1,20 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Instance(app) {
   this.app = app;
-  this.arrService = ['nova', 'glance', 'cinder', 'neutron'];
   this.arrServiceObject = ['images', 'floatingips', 'subnets', 'ports', 'flavors', 'volumes', 'keypairs', 'security_groups'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Instance.prototype = {
   makeNetwork: function (server, obj) { /* floatingips, ports, subnets */
-    var addresses = server.addresses;
-    var _floatingip;
-    var _fixedIps = [];
-    var ipv6 = [];
+    let addresses = server.addresses;
+    let _floatingip;
+    let _fixedIps = [];
+    let ipv6 = [];
     Object.keys(addresses).forEach(function (el) {
       ipv6 = [];
       addresses[el].forEach(function (e, index) {
@@ -88,14 +87,14 @@ Instance.prototype = {
     this.makeNetwork(server, obj);
   },
   getInstanceList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel(
-      [this.__servers.bind(this)].concat(this.arrAsync),
+      [this.__servers.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['servers'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
@@ -111,14 +110,14 @@ Instance.prototype = {
     );
   },
   getFlavorList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel(
-      [this.__flavors.bind(this)],
+      [this.__flavors.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           obj.flavors = results[0].flavors;
           res.json({
             flavors: obj.flavors
@@ -127,14 +126,14 @@ Instance.prototype = {
       });
   },
   getInstanceDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'serverId']);
+    let objVar = this.getVars(req, ['projectId', 'serverId']);
     async.parallel(
-      [this.__serverDetail.bind(this)].concat(this.arrAsync),
+      [this.__serverDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['server'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

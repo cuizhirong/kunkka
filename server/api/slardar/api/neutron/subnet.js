@@ -1,13 +1,12 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Subnet (app) {
   this.app = app;
-  this.arrService = ['neutron', 'nova'];
   this.arrServiceObject = ['servers', 'networks', 'routers', 'ports'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Subnet.prototype = {
@@ -40,14 +39,14 @@ Subnet.prototype = {
     });
   },
   getSubnetList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel(
-      [this.__subnets.bind(this)].concat(this.arrAsync),
+      [this.__subnets.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['subnets'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
@@ -67,15 +66,15 @@ Subnet.prototype = {
     );
   },
   getSubnetDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'subnetId']);
+    let objVar = this.getVars(req, ['projectId', 'subnetId']);
     async.parallel(
-      [this.__subnetDetail.bind(this)]
-      .concat(this.arrAsync, [this.__servers.bind(this)]),
+      [this.__subnetDetail.bind(this, objVar)]
+      .concat(this.arrAsync(objVar), [this.__servers.bind(this, objVar)]),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['subnet'].concat(this.arrServiceObject, ['servers']).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

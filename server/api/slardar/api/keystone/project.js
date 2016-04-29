@@ -6,19 +6,17 @@ const paginate = require('helpers/paginate.js');
 // due to Project is reserved word
 function Project (app) {
   this.app = app;
-  this.arrService = ['keystone'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Project.prototype = {
   getProjectList: function (req, res, next) {
-    this.getVars(req);
-    this.__projects( (err, payload) => {
+    let objVar = this.getVars(req);
+    this.__projects(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let obj = paginate('projects', payload.projects, '/api/v1/projects', this.query.page, this.query.limit);
+        let obj = paginate('projects', payload.projects, '/api/v1/projects', objVar.query.page, objVar.query.limit);
         res.json({
           projects: obj.projects,
           projects_links: obj.projects_links

@@ -1,13 +1,11 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Snapshot (app) {
   this.app = app;
-  this.arrService = ['cinder', 'glance'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Snapshot.prototype = {
@@ -18,15 +16,15 @@ Snapshot.prototype = {
     });
   },
   getSnapshotList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel([
-      this.__snapshots.bind(this),
-      this.__volumes.bind(this)],
+      this.__snapshots.bind(this, objVar),
+      this.__volumes.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['snapshots', 'volumes'].forEach(function (e, index) {
             obj[e] = results[index][e];
           });
@@ -40,15 +38,15 @@ Snapshot.prototype = {
     );
   },
   getSnapshotDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'snapshotId']);
+    let objVar = this.getVars(req, ['projectId', 'snapshotId']);
     async.parallel([
-      this.__snapshotDetail.bind(this),
-      this.__volumes.bind(this)],
+      this.__snapshotDetail.bind(this, objVar),
+      this.__volumes.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['snapshot', 'volumes'].forEach((e, index) => {
             obj[e] = results[index][e];
           });

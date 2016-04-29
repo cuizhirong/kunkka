@@ -43,6 +43,46 @@ module.exports = {
           },
           output: {
             success: 'login sucess'
+          },
+          processedRequest: {
+            'cookies': {
+              'user-id-test-123': {
+                'project': 'project-002',
+                'region': 'RegionOne'
+              }
+            },
+            'session': {
+              'cookie': {
+                'expires': new Date('2016-04-23T05:14:21.664Z')
+              },
+              'user': {
+                'regionId': 'RegionOne',
+                'projectId': 'project-002',
+                'userId': 'user-id-test-123',
+                'token': 'project-token-project-002-123',
+                'username': 'aUserInTest',
+                'projects': [
+                  {
+                    'name': 'project1',
+                    'id': 'project-001'
+                  },
+                  {
+                    'name': 'project2',
+                    'id': 'project-002'
+                  }
+                ],
+                'isAdmin': true
+              },
+              'endpoint': {
+                'glance': {
+                  'RegionOne': 'http://23.253.248.171:9292'
+                }
+              }
+            },
+            'body': {
+              'username': 'aUserInTest',
+              'password': 'pass-123'
+            }
           }
         }
       ]
@@ -65,7 +105,7 @@ module.exports = {
         }
       ]
     },
-    swtichPorject: {
+    swtichProject: {
       path: '/auth/switch_project',
       method: 'put',
       tasks: [
@@ -92,9 +132,7 @@ module.exports = {
             body: {
             }
           },
-          output: {
-            success: 'logout sucess'
-          }
+          output: undefined
         }
       ]
     }

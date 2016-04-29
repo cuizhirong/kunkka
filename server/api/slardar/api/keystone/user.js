@@ -6,19 +6,17 @@ const paginate = require('helpers/paginate.js');
 // due to User is reserved word
 function User (app) {
   this.app = app;
-  this.arrService = ['keystone'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 User.prototype = {
   getUserList: function (req, res, next) {
-    this.getVars(req);
-    this.__users( (err, payload) => {
+    let objVar = this.getVars(req);
+    this.__users(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let obj = paginate('users', payload.users, '/api/v1/users', this.query.page, this.query.limit);
+        let obj = paginate('users', payload.users, '/api/v1/users', objVar.query.page, objVar.query.limit);
         res.json({
           users: obj.users,
           users_links: obj.users_links

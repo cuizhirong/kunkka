@@ -1,13 +1,12 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Network (app) {
   this.app = app;
-  this.arrService = ['neutron'];
   this.arrServiceObject = ['subnets', 'ports', 'routers'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Network.prototype = {
@@ -43,14 +42,14 @@ Network.prototype = {
     });
   },
   getNetworkList: function (req, res, next) {
-    this.getVars(req);
+    let objVar = this.getVars(req);
     async.parallel(
-      [this.__networks.bind(this)].concat(this.arrAsync),
+      [this.__networks.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['networks'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
@@ -64,14 +63,14 @@ Network.prototype = {
     );
   },
   getNetworkDetails: function (req, res, next) {
-    this.getVars(req, ['networkId']);
+    let objVar = this.getVars(req, ['networkId']);
     async.parallel(
-      [this.__networkDetail.bind(this)].concat(this.arrAsync),
+      [this.__networkDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['network'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

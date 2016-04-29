@@ -1,13 +1,12 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Router (app, neutron) {
   this.app = app;
-  this.arrService = ['neutron'];
   this.arrServiceObject = ['floatingips', 'subnets', 'ports'];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this, this.arrServiceObject);
 }
 
 Router.prototype = {
@@ -36,14 +35,14 @@ Router.prototype = {
     });
   },
   getRouterList: function (req, res, next) {
-    this.getVars(req);
+    let objVar = this.getVars(req);
     async.parallel(
-      [this.__routers.bind(this)].concat(this.arrAsync),
+      [this.__routers.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['routers'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
@@ -57,14 +56,14 @@ Router.prototype = {
     );
   },
   getRouterDetails: function (req, res, next) {
-    this.getVars(req, ['routerId']);
+    let objVar = this.getVars(req, ['routerId']);
     async.parallel(
-      [this.__routerDetail.bind(this)].concat(this.arrAsync),
+      [this.__routerDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['router'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });

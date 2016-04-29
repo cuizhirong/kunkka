@@ -1,13 +1,11 @@
 'use strict';
 
-var async = require('async');
-var Base = require('../base.js');
+const async = require('async');
+const Base = require('../base.js');
 
 function Volume (app) {
   this.app = app;
-  this.arrService = ['cinder', 'nova'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Volume.prototype = {
@@ -34,16 +32,16 @@ Volume.prototype = {
     });
   },
   getVolumeList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
+    let objVar = this.getVars(req, ['projectId']);
     async.parallel([
-      this.__volumes.bind(this),
-      this.__snapshots.bind(this),
-      this.__servers.bind(this)],
+      this.__volumes.bind(this, objVar),
+      this.__snapshots.bind(this, objVar),
+      this.__servers.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['volumes', 'snapshots', 'servers'].forEach((e, index) => {
             obj[e] = results[index][e];
           });
@@ -57,16 +55,16 @@ Volume.prototype = {
     );
   },
   getVolumeDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'volumeId']);
+    let objVar = this.getVars(req, ['projectId', 'volumeId']);
     async.parallel([
-      this.__volumeDetail.bind(this),
-      this.__snapshots.bind(this),
-      this.__servers.bind(this)],
+      this.__volumeDetail.bind(this, objVar),
+      this.__snapshots.bind(this, objVar),
+      this.__servers.bind(this, objVar)],
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
-          var obj = {};
+          let obj = {};
           ['volume', 'snapshots', 'servers'].forEach( (e, index) => {
             obj[e] = results[index][e];
           });

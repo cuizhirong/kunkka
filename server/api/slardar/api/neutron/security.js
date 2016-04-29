@@ -1,19 +1,17 @@
 'use strict';
 
-var Base = require('../base.js');
+const Base = require('../base.js');
 
 // due to Security is reserved word
 function Security (app, neutron) {
   this.app = app;
-  this.arrService = ['neutron'];
-  this.arrServiceObject = [];
-  Base.call(this, this.arrService, this.arrServiceObject);
+  Base.call(this);
 }
 
 Security.prototype = {
   getSecurityList: function (req, res, next) {
-    this.getVars(req, ['projectId']);
-    this.__security_groups( (err, payload) => {
+    let objVar = this.getVars(req, ['projectId']);
+    this.__security_groups(objVar, (err, payload) => {
       if (err) {
         res.status(err.status).json(err);
       } else {
@@ -23,8 +21,8 @@ Security.prototype = {
     });
   },
   getSecurityDetails: function (req, res, next) {
-    this.getVars(req, ['projectId', 'securityId']);
-    this.__security_groupDetail( (err, payload) => {
+    let objVar = this.getVars(req, ['projectId', 'securityId']);
+    this.__security_groupDetail(objVar, (err, payload) => {
       if (err) {
         res.status(err.status).json(err);
       } else {
