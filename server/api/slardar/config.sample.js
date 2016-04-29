@@ -22,9 +22,6 @@ module.exports = {
     'cookie': {
       'maxAge': 1000 * 60 * 60 * 24 * 7
     },
-    'port': 5678,
-    'extension': {
-      'type': ''
-    }
+    'port': 5678
   }
 };
