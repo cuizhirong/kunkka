@@ -1,0 +1,257 @@
+@import "../../../style/theme.less";
+
+@block_header_bg_color: @color_grey;
+@block_header_refresh_color: @color_font_400;
+@block_border_color: @color_grey;
+@info_bg_color: @color_info_100;
+@bg_font_color: @color_grey;
+@info_font_color: @color_info;
+@warning_font_color: @color_warning;
+@danger_font_color: @color_delete;
+
+@bar_chart_bg_color: @color_info;
+@bar_chart_bg_darker_color: @color_info_700;
+@bar_chart_ratio_font_folor: @color_font_400;
+
+@time_tab_bg_color: @color_grey;
+@time_tab_select_bg_color: @color_info;
+@time_tab_hover_bg_color: @color_info_100;
+
+@loading_color: @color_font_800;
+
+.halo-module-overview-storage {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+
+  .overview {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 20px;
+
+    .submenu-tabs {
+      .fixed-height(48px);
+    }
+
+    .chart-container {
+      padding-top: 10px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .horizon {
+        display: flex;
+        flex: 1;
+        margin-bottom: 16px;
+        min-height: 350px;
+
+        .block {
+          position: relative;
+          min-width: 400px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          border: 1px solid @block_border_color;
+          &:first-child {
+            margin-right: 20px;
+          }
+
+          .header {
+            .fixed-height(36px);
+            line-height: 36px;
+            padding: 0 20px;
+            background-color: @block_header_bg_color;
+            font-size: 14px;
+
+            >i {
+              float: right;
+              margin-top: 11px;
+              color: @block_header_refresh_color;
+              cursor: pointer;
+            }
+          }
+
+          .loading-data {
+            position: relative;
+            flex: 1;
+            margin: 0 auto;
+            i.icon-loading {
+              position: absolute;
+              top: 50%;
+              margin-top: -18px;
+              margin-left: -18px;
+              width: 36px;
+              height: 36px;
+              color: @loading_color;
+              animation: spin 1.28s linear .28s infinite;
+              font-size: 36px !important;
+            }
+          }
+        }
+      }
+    }
+    .body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 18px 18px 14px;
+      .tab-label {
+        .fixed-height(14px);
+        >label {
+          cursor: pointer;
+          margin-left: 0;
+        }
+      }
+      .pie-chart-container {
+        flex: 1;
+        display: flex;
+        margin-bottom: 30px;
+        .pie-chart-info {
+          margin: 48px 50px;
+          .fixed-width(150px);
+          >p {
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            &:first-child {
+              display: block;
+              font-size: 14px;
+              border-bottom: 1px solid @block_border_color;
+              height: 29px;
+              margin-bottom: 14px;
+            }
+          }
+        }
+        .physical-disk-chart {
+          flex: 1;
+        }
+      }
+      .physical-disk-info {
+        .fixed-height(56px);
+        background-color: @info_bg_color;
+        padding: 22px 20px;
+
+        >p {
+          margin: 0;
+        }
+      }
+      label {
+        margin-left: 5px;
+        &.info {
+          color: @info_font_color;
+        }
+        &.warning {
+          color: @warning_font_color;
+        }
+        &.danger {
+          color: @danger_font_color;
+        }
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        margin-right: 10px;
+        display: inline-block;
+        background-color: @bg_font_color;
+        border-radius: 2px;
+        &.info {
+          background-color: @info_font_color;
+        }
+        &.warning {
+          background-color: @warning_font_color;
+        }
+        &.danger {
+          background-color: @danger_font_color;
+        }
+      }
+      .bar-chart-container {
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        .oversale-chart {
+          flex: 1;
+        }
+        .bar-chart-info {
+          margin-top: 98px;
+          margin-left: 20px;
+          .fixed-width(262px);
+          .bar1,
+          .bar2 {
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .bar1 {
+            .dot {
+              background-color: @bar_chart_bg_color;
+            }
+          }
+          .bar2 {
+            .dot {
+              background-color: @bar_chart_bg_darker_color;
+            }
+          }
+          .oversale-info {
+            padding: 20px 30px;
+            margin-top: 30px;
+            background-color: @info_bg_color;
+            .ratio {
+              width: 200px;
+              height: 20px;
+              line-height: 20px;
+              font-size: 18px;
+              color: @bar_chart_ratio_font_folor;
+              >span {
+                display: inline-block;
+                max-width: 50px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: bottom;
+              }
+            }
+          }
+        }
+      }
+      .time-tab {
+        .fixed-height(30px);
+        >span {
+          display: inline-block;
+          width: 80px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          margin-right: 1px;
+          float: right;
+          background-color: @time_tab_bg_color;
+          cursor: pointer;
+
+          &:first-child {
+            border-top-right-radius: 2px;
+            border-bottom-right-radius: 2px;
+          }
+          &:last-child {
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+            margin-right: 0;
+          }
+
+          &:hover {
+            background-color: @time_tab_hover_bg_color;
+          }
+
+          &.selected {
+            background-color: @time_tab_select_bg_color;
+          }
+        }
+      }
+      .increment-chart,
+      .utilization-rate-chart {
+        flex: 1;
+      }
+    }
+  }
+}
