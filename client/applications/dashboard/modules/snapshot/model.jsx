@@ -273,7 +273,7 @@ class Model extends React.Component {
     }, {
       title: __.create + __.time,
       type: 'time',
-      content: item.created
+      content: item.created_at
     }];
 
     return data;

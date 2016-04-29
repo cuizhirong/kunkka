@@ -455,10 +455,6 @@ class Model extends React.Component {
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
-    }, {
-      title: __.create + __.time,
-      type: 'time',
-      content: item.created_at
     }];
 
     return items;
