@@ -1,19 +1,19 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('neutron');
+var driver = new Base();
 
-driver.listPorts = function (token, region, callback, query) {
+driver.listPorts = function (token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.0/ports',
+    remote + '/v2.0/ports',
     token,
     callback,
     query
   );
 };
-driver.showPortDetails = function (portId, token, region, callback, query) {
+driver.showPortDetails = function (portId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.0/ports/' + portId,
+    remote + '/v2.0/ports/' + portId,
     token,
     callback,
     query

@@ -1,61 +1,60 @@
 'use strict';
 
-var request = require('superagent');
 var Base = require('../base.js');
-var driver = new Base('keystone');
+var driver = new Base();
 
-module.exports = {
-  /*
-   * Password authentication with unscoped authorization
-   * /v3/auth/tokens
-   */
-  unscopedAuth: function (username, password, domain, callback) {
-    request
-      .post(driver.remote + '/v3/auth/tokens')
-      .send({
-        'auth': {
-          'scope': {
-            'unscoped': {}
-          },
-          'identity': {
-            'methods': [
-              'password'
-            ],
-            'password': {
-              'user': {
-                'name': username,
-                'domain': {
-                  'name': domain
-                },
-                'password': password
-              }
+driver.unscopedAuth = function (username, password, domain, remote, callback) {
+  return driver.postMethod(
+    remote + '/v3/auth/tokens',
+    null,
+    callback,
+    {
+      'auth': {
+        'scope': {
+          'unscoped': {}
+        },
+        'identity': {
+          'methods': [
+            'password'
+          ],
+          'password': {
+            'user': {
+              'name': username,
+              'domain': {
+                'name': domain
+              },
+              'password': password
             }
           }
         }
-      })
-      .end(callback);
-  },
-  scopedAuth: function (projectId, token, callback) {
-    request
-      .post(driver.remote + '/v3/auth/tokens')
-      .set('X-Auth-Token', token)
-      .send({
-        'auth': {
-          'scope': {
-            'project': {
-              'id': projectId
-            }
-          },
-          'identity': {
-            'token': {
-              'id': token
-            },
-            'methods': [
-              'token'
-            ]
-          }
-        }
-      })
-      .end(callback);
-  }
+      }
+    }
+  );
 };
+
+driver.scopedAuth = function (projectId, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v3/auth/tokens',
+    token,
+    callback,
+    {
+      'auth': {
+        'scope': {
+          'project': {
+            'id': projectId
+          }
+        },
+        'identity': {
+          'token': {
+            'id': token
+          },
+          'methods': [
+            'token'
+          ]
+        }
+      }
+    }
+  );
+};
+
+module.exports = driver;

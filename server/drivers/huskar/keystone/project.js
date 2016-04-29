@@ -1,20 +1,20 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('keystone');
+var driver = new Base();
 
-driver.getUserProjects = function (userId, token, callback, query) {
+driver.getUserProjects = function (userId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote + '/v3/users/' + userId + '/projects',
+    remote + '/v3/users/' + userId + '/projects',
     token,
     callback,
     query
   );
 };
 
-driver.listProjects = function (token, callback, query) {
+driver.listProjects = function (token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote + '/v3/projects',
+    remote + '/v3/projects',
     token,
     callback,
     query

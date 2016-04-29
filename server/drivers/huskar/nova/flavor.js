@@ -1,19 +1,19 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('nova');
+var driver = new Base();
 
-driver.listFlavors = function (projectId, token, region, callback, query) {
+driver.listFlavors = function (projectId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.1/' + projectId + '/flavors/detail',
+    remote + '/v2.1/' + projectId + '/flavors/detail',
     token,
     callback,
     query
   );
 };
-driver.showFlavorDetails = function (projectId, flavorId, token, region, callback, query) {
+driver.showFlavorDetails = function (projectId, flavorId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.1/' + projectId + '/flavors/' + flavorId,
+    remote + '/v2.1/' + projectId + '/flavors/' + flavorId,
     token,
     callback,
     query

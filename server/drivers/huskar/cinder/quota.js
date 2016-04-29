@@ -1,21 +1,21 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('cinder');
+var driver = new Base();
 
-driver.getQuota = function (projectId, targetId, token, region, callback, query) {
+driver.getQuota = function (projectId, targetId, token, remote, callback, query) {
   let pid = targetId ? targetId : projectId;
   return driver.getMethod(
-    driver.remote[region] + '/v2/' + projectId + '/os-quota-sets/' + pid,
+    remote + '/v2/' + projectId + '/os-quota-sets/' + pid,
     token,
     callback,
     query
   );
 };
 
-driver.updateQuota = function (projectId, targetId, token, region, callback, theBody) {
+driver.updateQuota = function (projectId, targetId, token, remote, callback, theBody) {
   return driver.putMethod(
-    driver.remote[region] + '/v2/' + projectId + '/os-quota-sets/' + targetId,
+    remote + '/v2/' + projectId + '/os-quota-sets/' + targetId,
     token,
     callback,
     theBody

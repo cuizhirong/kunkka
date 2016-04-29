@@ -1,19 +1,19 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('nova');
+var driver = new Base();
 
-driver.listServers = function (projectId, token, region, callback, query) { // get servers list.
+driver.listServers = function (projectId, token, remote, callback, query) { // get servers list.
   return driver.getMethod(
-    driver.remote[region] + '/v2.1/' + projectId + '/servers/detail',
+    remote + '/v2.1/' + projectId + '/servers/detail',
     token,
     callback,
     query
   );
 };
-driver.showServerDetails = function (projectId, serverId, token, region, callback, query) { // get single server.
+driver.showServerDetails = function (projectId, serverId, token, remote, callback, query) { // get single server.
   return driver.getMethod(
-    driver.remote[region] + '/v2.1/' + projectId + '/servers/' + serverId,
+    remote + '/v2.1/' + projectId + '/servers/' + serverId,
     token,
     callback,
     query

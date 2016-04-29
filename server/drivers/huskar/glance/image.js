@@ -1,19 +1,19 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('glance');
+var driver = new Base();
 
-driver.listImages = function (token, region, callback, query) {
+driver.listImages = function (token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2/images',
+    remote + '/v2/images',
     token,
     callback,
     query
   );
 };
-driver.showImageDetails = function (imageId, token, region, callback, query) {
+driver.showImageDetails = function (imageId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2/images/' + imageId,
+    remote + '/v2/images/' + imageId,
     token,
     callback,
     query

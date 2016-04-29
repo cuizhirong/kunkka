@@ -1,19 +1,19 @@
 'use strict';
 
 var Base = require('../base.js');
-var driver = new Base('neutron');
+var driver = new Base();
 
-driver.listSubnets = function (token, region, callback, query) {
+driver.listSubnets = function (token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.0/subnets',
+    remote + '/v2.0/subnets',
     token,
     callback,
     query
   );
 };
-driver.showSubnetDetails = function (subnetId, token, region, callback, query) {
+driver.showSubnetDetails = function (subnetId, token, remote, callback, query) {
   return driver.getMethod(
-    driver.remote[region] + '/v2.0/subnets/' + subnetId,
+    remote + '/v2.0/subnets/' + subnetId,
     token,
     callback,
     query
