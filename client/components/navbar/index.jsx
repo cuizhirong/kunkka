@@ -42,8 +42,10 @@ class NavBar extends React.Component {
         <div className="logo"></div>
         <div className="region-wp">
           <div className="region-name">
-            <i className="glyphicon icon-region"></i>
-            <span ref="name">{currentRegionName}</span>
+            <div className="name-label">
+              <i className="glyphicon icon-region"></i>
+              <span ref="name">{currentRegionName}</span>
+            </div>
             <div ref="settingBtn" className="settings-btn"></div>
           </div>
           <div className="region">
@@ -52,8 +54,10 @@ class NavBar extends React.Component {
         </div>
         <div className="project-wp">
           <div className="region-name">
-            <i className="glyphicon icon-project"></i>
-            <span ref="name">{currentProjectName}</span>
+            <div className="name-label">
+              <i className="glyphicon icon-project"></i>
+              <span ref="name">{currentProjectName}</span>
+            </div>
             <div ref="settingBtn" className="settings-btn"></div>
           </div>
           <div className="region">
