@@ -96,7 +96,7 @@
       }]
     }, {
       "title": ["created", "time"],
-      "dataIndex": "created_time",
+      "dataIndex": "created_at",
       "type": "time",
       "key": "created_time"
     }],
