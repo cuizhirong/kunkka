@@ -19,9 +19,6 @@ module.exports = {
       'glance': {
         'RegionOne': 'http://42.62.93.98:9292'
       }
-    },
-    'extension': {
-      'type': ''
     }
   }
 };

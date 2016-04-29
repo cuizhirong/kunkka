@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const extType = require('config')('extension').type;
+const extType = require('config')('extension');
 
 const driver = {};
 
