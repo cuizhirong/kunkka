@@ -8,6 +8,7 @@ const baseConfig = require('../configs/server.sample.js');
 const basePackage = require('../package.sample.json');
 
 const configList = [];
+const addressList = [];
 
 [apiPath, driverPath].forEach( p => {
   fs.readdirSync(p)
@@ -15,6 +16,7 @@ const configList = [];
     .forEach( f => {
       try {
         configList.push(require(path.join(p, f, 'config.sample.js')));
+        addressList.push(path.join(p, f, 'config.sample.js'));
       } catch (err) {
         if (err.code !== 'MODULE_NOT_FOUND') {
           console.log(err);
@@ -78,6 +80,60 @@ const travel = function (newConfig, oldConfig, isVersion) {
     }
   }
 };
+
+const smap = new Map();
+
+const connect = function(pre, k){
+  return pre.concat('.', k);
+};
+
+const checkRepeatConfig = function(config, CRpath, pre){
+  for(let k in config){
+    if(config[k].constructor === Object){
+      if(pre === undefined){
+        checkRepeatConfig(config[k], CRpath, k);
+      } else {
+        checkRepeatConfig(config[k], CRpath, connect(pre, k));
+      }
+    }
+    if(config[k].constructor !== Object) {
+      if (pre === undefined) {
+        if (!smap.has(k)) {
+          let lpath = [];
+          lpath.push(path);
+          smap.set(k, lpath);
+        } else {
+          smap.get(k).push(path);
+        }
+      } else {
+        if (!smap.has(connect(pre, k))) {
+          let lpath = [];
+          lpath.push(path);
+          smap.set(connect(pre, k), lpath);
+        } else {
+          smap.get(connect(pre, k)).push(path);
+        }
+      }
+    }
+  }
+};
+
+for(let i = 0; i < configList.length; i++){
+  checkRepeatConfig(configList[i].config, addressList[i]);
+}
+
+const baseConfigPath = path.join(__dirname, '../configs/server.sample.js');
+checkRepeatConfig(baseConfig, baseConfigPath);
+
+for (let item of smap.entries()) {
+  if(item[1].length !== 1){
+    console.log('warning! ' + item[0] + ' is duplicate in those files:');
+    for(let dir of item[1]){
+      console.log(dir);
+    }
+  }
+}
+
 
 configList.forEach( con => {
   travel(con.config, baseConfig);
