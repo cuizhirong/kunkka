@@ -66,11 +66,16 @@ class Model extends React.Component {
 
   //helper
   findItemByID(arr, id) {
+    var ret;
+
     arr.some((item) => {
       if (item.id === id) {
-        return item;
+        ret = item;
+        return true;
       }
     });
+
+    return ret;
   }
 
   tableColRender(columns) {
