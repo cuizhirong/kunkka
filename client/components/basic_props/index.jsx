@@ -4,6 +4,7 @@ require('./style/index.less');
 var React = require('react');
 var EditContent = require('./edit_content');
 var moment = require('client/libs/moment');
+var getTime = require('client/utils/time_unification');
 
 class BasicProps extends React.Component {
 
@@ -41,7 +42,7 @@ class BasicProps extends React.Component {
       case 'editable':
         return <EditContent item={item} rawItem={rawItem} onAction={this.onAction.bind(this)} />;
       case 'time':
-        return moment(item.content).format('YYYY-MM-DD hh:mm:ss');
+        return getTime(item.content);
       default:
         return item.content;
     }
