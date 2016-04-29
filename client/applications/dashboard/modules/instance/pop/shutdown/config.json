@@ -4,6 +4,10 @@
     "type": "text",
     "field": "ensure_shutdown",
     "info": "ensure_shutdown"
+  }, {
+    "type": "error",
+    "field": "error",
+    "hide": true
   }],
   "btn": {
     "value": "ok",

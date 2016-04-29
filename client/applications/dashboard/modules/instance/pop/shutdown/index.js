@@ -13,8 +13,17 @@ function pop(obj, parent, callback) {
     config: config,
     onConfirm: function(refs, cb) {
       request.poweroff(obj).then((res) => {
-        callback && callback(res);
         cb(true);
+        callback && callback(res);
+      }).catch((err) => {
+        var reg = new RegExp('"message":"(.*)","');
+        var tip = reg.exec(err.response)[1];
+
+        refs.error.setState({
+          value: tip,
+          hide: false
+        });
+        cb(false);
       });
     },
     onAction: function(field, state, refs) {

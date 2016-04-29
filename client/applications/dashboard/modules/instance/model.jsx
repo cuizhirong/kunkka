@@ -225,10 +225,28 @@ class Model extends React.Component {
         });
         break;
       case 'power_on':
-        request.poweron(rows[0]).then(function(res) {});
+        request.poweron(rows[0]).then((res) => {
+          rows[0].status = 'powering_on';
+
+          //change status of current data
+          this.setState({
+            config: this.state.config
+          });
+
+          //change button status
+          this.onClickTableCheckbox(this.refs.dashboard.refs, { rows: rows });
+        });
         break;
       case 'power_off':
-        shutdownInstance(rows[0]);
+        shutdownInstance(rows[0], null, (res) => {
+          rows[0].status = 'powering_off';
+
+          this.setState({
+            config: this.state.config
+          });
+
+          this.onClickTableCheckbox(this.refs.dashboard.refs, { rows: rows });
+        });
         break;
       case 'refresh':
         this.refresh({
@@ -239,7 +257,15 @@ class Model extends React.Component {
         }, true);
         break;
       case 'reboot':
-        request.reboot(rows[0]).then(function(res) {});
+        request.reboot(rows[0]).then((res) => {
+          rows[0].status = 'rebooting';
+
+          this.setState({
+            config: this.state.config
+          });
+
+          this.onClickTableCheckbox(this.refs.dashboard.refs, { rows: rows });
+        });
         break;
       case 'instance_snapshot':
         instSnapshot(rows[0]);
