@@ -14,7 +14,8 @@ var d = null,
   basicColor = '#59cbdb',
   textColor = '#000',
   imageList = [],
-  positions = [];
+  networkPos = [],
+  routerPos = [];
 
 class Topology {
   constructor(wp, data) {
@@ -33,52 +34,66 @@ class Topology {
     ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
     shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
 
-    positions.forEach((network, i) => {
-      var _color = colorMap[i % 8];
+    // draw routers
 
+    for (let len = networkPos.length, i = len - 1; i >= 0; i--) {
+      var _color = colorMap[i % 8],
+        network = networkPos[i];
+
+      // 1. draw network
       shape.roundRect(ctx, network.x, network.y, network.w, network.h, 5, _color.color);
       shape.text(ctx, network.name, network.x + 10, network.y + 16, textColor);
 
+      // 2. draw instance link
+
+      // 3. draw router link
+
+      // 4. draw subnets
       network.subnets.forEach((subnet, j) => {
         shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
         shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
       });
-    });
+
+      // 5. draw instnaces
+
+      // 6. draw link dots
+
+    }
 
   }
 
   calcPos() {
-    console.log(d);
     var x = 0,
       y = 243;
 
-    d.forEach((data, i) => {
-      positions[i] = {
+    // calc network positions
+    d.network.forEach((data, i) => {
+      networkPos[i] = {
         x: x,
         w: w,
-        name: data.name
+        name: data.name || ('(' + data.id.slice(0, 8) + ')')
       };
 
       if (i === 0) {
-        positions[i].y = y;
+        networkPos[i].y = y;
       } else {
-        positions[i].y = positions[i - 1].y + positions[i - 1].h + 160;
+        networkPos[i].y = networkPos[i - 1].y + networkPos[i - 1].h + 160;
       }
 
       var subnets = data.subnets,
         len = subnets.length;
 
       if (len === 0) {
-        positions[i].h = 60;
+        networkPos[i].h = 60;
       } else {
-        positions[i].h = 20 * len + (len - 1) * 12 + 40;
+        networkPos[i].h = 20 * len + (len - 1) * 12 + 40;
       }
 
-      var _sub = positions[i].subnets = [];
+      var _sub = networkPos[i].subnets = [];
       subnets.forEach((subnet, j) => {
         _sub.push({
           x: 10,
-          y: positions[i].y + j * 30 + 30,
+          y: networkPos[i].y + j * 30 + 30,
           w: w - 20,
           h: 20,
           name: subnet.name + '(' + subnet.cidr + ')'
@@ -86,8 +101,13 @@ class Topology {
       });
     });
 
+    // calc router positions
+    console.log(routerPos);
+
+    // calc instance positions
+
     // The last network
-    var p = positions[positions.length - 1];
+    var p = networkPos[networkPos.length - 1];
     return p.h + p.y + 260;
   }
 
