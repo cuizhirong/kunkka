@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('../configs/server');
-let extType = config.extension && config.extension.type;
+let extType = config.extension;
 
 const i18n = {
   api: {},
