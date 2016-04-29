@@ -87,12 +87,26 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.initialized || (nextProps.visible && (this.props.params !== nextProps.params))) {
-      this.clearState();
+    if (!this.initialized) {
+      //when first render the module, open the detail
       this.onChangeParams(nextProps.params);
-      this.updateRows(nextProps.config.table.data);
+    } else {
+      if (nextProps.visible) {
+        if (!this.props.visible) {
+          //if module is from invisible to visible, clear all the state
+          this.clearState();
+        }
+        if (this.props.params !== nextProps.params) {
+          //if params(usally third params) are different, trigger this function
+          this.onChangeParams(nextProps.params);
+        }
+      }
     }
 
+    //update data in stores
+    this.updateRows(nextProps.config.table.data);
+
+    //after initialized module, set true
     this.initialized = true;
   }
 
