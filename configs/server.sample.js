@@ -5,9 +5,6 @@ var config = {
     'secret': 'keyboard cat',
     'cookie_name': 'ustack'
   },
-  'cookie': {
-    'maxAge': 1000 * 60 * 60 * 24 * 7
-  },
   'log': {
     'accessLogPath': '/var/log/halo/access.log',
     'errorLogPath': '/var/log/halo/error.log',

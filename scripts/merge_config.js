@@ -100,18 +100,18 @@ const checkRepeatConfig = function(config, CRpath, pre){
       if (pre === undefined) {
         if (!smap.has(k)) {
           let lpath = [];
-          lpath.push(path);
+          lpath.push(CRpath);
           smap.set(k, lpath);
         } else {
-          smap.get(k).push(path);
+          smap.get(k).push(CRpath);
         }
       } else {
         if (!smap.has(connect(pre, k))) {
           let lpath = [];
-          lpath.push(path);
+          lpath.push(CRpath);
           smap.set(connect(pre, k), lpath);
         } else {
-          smap.get(connect(pre, k)).push(path);
+          smap.get(connect(pre, k)).push(CRpath);
         }
       }
     }
