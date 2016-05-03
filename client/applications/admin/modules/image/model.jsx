@@ -121,8 +121,9 @@ class Model extends React.Component {
 
 //request: get single data by ID
   getSingle(id) {
-    var table = this.state.config.table;
+    this.clearState();
 
+    var table = this.state.config.table;
     request.getSingle(id).then((res) => {
       table.data = [res];
       this.updateTableData(table, res._url, true, () => {
@@ -131,12 +132,15 @@ class Model extends React.Component {
       });
     }).catch((res) => {
       table.data = [];
+      this.setPagination(table, res);
       this.updateTableData(table);
     });
   }
 
 //request: get list
   getList() {
+    this.clearState();
+
     var table = this.state.config.table,
       pageLimit = table.limit;
 
@@ -190,8 +194,8 @@ class Model extends React.Component {
     var pagination = {},
       next = res.next ? res.next : null;
 
-    if (next && next.rel === 'next') {
-      pagination.nextUrl = next.href.split('/v2.1/')[1];
+    if (next) {
+      pagination.nextUrl = next.split('/v2/')[1];
     }
 
     var history = this.stores.urls;
@@ -262,11 +266,17 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
+  clearUrls() {
+    this.stores.urls.length = 0;
+  }
+
   clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -297,13 +307,16 @@ class Model extends React.Component {
         var url,
           history = this.stores.urls;
 
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
+        if (data.direction === 'prev'){
           history.pop();
           if (history.length > 0) {
             url = history.pop();
           }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearState();
         }
 
         this.loadingTable();
@@ -337,19 +350,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          r = {};
-        if (params[2]) {
-          r.refreshList = true;
-          r.refreshDetail = true;
-          r.loadingDetail = true;
-        } else {
-          r.initialList = true;
-          r.loadingTable = true;
-          r.clearState = true;
-        }
-
-        this.refresh(r, params);
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;
@@ -366,6 +372,8 @@ class Model extends React.Component {
       if (idData) {
         this.getSingle(idData.id);
       } else if (typeData){
+        this.clearState();
+
         if (typeData.type) {
           let type = typeData.type;
           delete typeData.type;
@@ -377,6 +385,7 @@ class Model extends React.Component {
         request.filter(typeData, pageLimit).then((res) => {
           var table = this.state.config.table;
           table.data = res.images;
+          this.setPagination(table, res);
           this.updateTableData(table, res._url);
         });
       } else {
@@ -421,22 +430,9 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
     switch(tabKey) {
       case 'description':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (

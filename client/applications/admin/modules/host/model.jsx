@@ -85,6 +85,7 @@ class Model extends React.Component {
   onInitialize(params) {
     if (params[2]) {
       this.getHypervisorById(params[2]);
+      this.getHypervisorListToStore();
     } else {
       this.getHypervisorList();
     }
@@ -92,6 +93,8 @@ class Model extends React.Component {
 
 //request: get Hypervisor By Id
   getHypervisorById(id) {
+    this.clearState();
+
     var table = this.state.config.table;
     request.getHypervisorById(id).then((res) => {
       var newTable = this.processTableData(table, res);
@@ -105,11 +108,21 @@ class Model extends React.Component {
     });
   }
 
+  getHypervisorListToStore() {
+    var pageLimit = this.state.config.table.limit;
+    request.getHypervisorList(pageLimit).then((res) => {
+      this.stores.hosts = res.hypervisors;
+    });
+  }
+
 //request: get Hypervisor List
   getHypervisorList() {
+    this.clearState();
+
     var pageLimit = this.state.config.table.limit;
     request.getHypervisorList(pageLimit).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
+      this.stores.hosts = res.hypervisors;
       this.updateTableData(table, res._url);
     });
   }
@@ -220,11 +233,17 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
   clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -252,8 +271,23 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
+        var url,
+          history = this.stores.urls;
+
+        if (data.direction === 'prev'){
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearState();
+        }
+
         this.loadingTable();
-        this.getNextListData(data.url);
+        this.getNextListData(url);
         break;
       default:
         break;
@@ -359,22 +393,9 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
     switch(tabKey) {
       case 'description':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (

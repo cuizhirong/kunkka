@@ -89,7 +89,7 @@ class Main extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.visible) {
-      this.clearState();
+      this.clearAllState();
     } else {
       if (nextProps.config.table.data.length > 0) {
         if (this.props.params[1] === nextProps.params[1]) {
@@ -98,6 +98,7 @@ class Main extends React.Component {
       }
     }
 
+    this.setRefreshBtn(nextProps.config.table.loading);
     this.updateRows(nextProps.config.table.data);
   }
 
@@ -106,6 +107,23 @@ class Main extends React.Component {
       return false;
     }
     return true;
+  }
+
+  setRefreshBtn(loading) {
+    //set refresh btn as disabled when table loading, vise versa
+    let btnList = this.refs.btnList,
+      btns = btnList.state.btns;
+
+    for(let key in btns) {
+      if (key === 'refresh') {
+        btns[key].disabled = loading ? true : false;
+        break;
+      }
+    }
+
+    btnList.setState({
+      btns: btns
+    });
   }
 
   updateRows(data) {
@@ -229,7 +247,7 @@ class Main extends React.Component {
     if (arr.length <= 0) {
       router.pushState('/admin/' + path[1]);
     } else if (arr.length <= 1) {
-      if (path[2] === arr[0].id) {
+      if (path[2] === ('' + arr[0].id)) {
         router.replaceState('/admin/' + path[1] + '/' + arr[0].id, null, null, true);
       } else {
         router.pushState('/admin/' + path[1] + '/' + arr[0].id);
@@ -249,7 +267,11 @@ class Main extends React.Component {
 
     if (!this.refs.detail || (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1))) {
       if (this.refs.detail && this.refs.detail.state.visible) {
-        this.onClickDetailTabs();
+        if (rows.length > 1) {
+          this.displayDetail();
+        } else {
+          this.onClickDetailTabs();
+        }
       }
       this.onAction('table', 'check', {
         status: status,
@@ -258,8 +280,34 @@ class Main extends React.Component {
     }
   }
 
+  displayDetail() {
+    var detail = this.refs.detail,
+      tabKey = detail.findDefaultTab().key,
+      contents = detail.state.contents;
+
+    contents[tabKey] = (
+      <div className="no-data-desc">
+        <p>{__.view_is_unavailable}</p>
+      </div>
+    );
+
+    detail.setState({
+      contents: contents,
+      loading: false
+    });
+  }
+
   onClickDetailTabs(tab) {
     this.onAction('detail', tab ? tab.key : this.refs.detail.findDefaultTab().key, {});
+  }
+
+  clearAllState() {
+    //clear search bar or filter box
+    this.clearSearchState();
+    this.clearFilterState();
+
+    //clear other state
+    this.clearState();
   }
 
   clearState() {
@@ -270,8 +318,6 @@ class Main extends React.Component {
     });
 
     this.closeDeatail();
-    this.clearSearchState();
-    this.clearFilterState();
     this.clearTableState();
   }
 

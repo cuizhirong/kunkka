@@ -51,7 +51,8 @@
     }
   }, {
     "key": "refresh",
-    "icon": "refresh"
+    "icon": "refresh",
+    "disabled": true
   }],
   "search": {
     "placeholder": ["pls_enter", "user", "id"]

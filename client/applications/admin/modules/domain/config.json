@@ -21,7 +21,8 @@
     "disabled": true
   }, {
     "key": "refresh",
-    "icon": "refresh"
+    "icon": "refresh",
+    "disabled": true
   }],
   "search": {
     "placeholder": ["pls_enter", "domain", "id"]
@@ -30,7 +31,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 2,
+    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",

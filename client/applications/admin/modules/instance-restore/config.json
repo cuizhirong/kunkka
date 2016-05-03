@@ -14,7 +14,8 @@
     "disabled": true
   }, {
     "key": "refresh",
-    "icon": "refresh"
+    "icon": "refresh",
+    "disabled": true
   }],
   "search": {
     "placeholder": ["pls_enter", "instance", "id"]

@@ -19,7 +19,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/domains';
+    var url = '/proxy/keystone/v3/domains?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {

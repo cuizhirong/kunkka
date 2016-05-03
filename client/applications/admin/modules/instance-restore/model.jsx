@@ -73,11 +73,9 @@ class Model extends React.Component {
 
 //request: get single data by ID
   getSingle(id) {
+    this.clearUrls();
     var table = this.state.config.table;
-
     request.getSingle(id).then((res) => {
-
-
       if (res.server.status.toLowerCase() === 'soft_deleted') {
         table.data = [res.server];
       } else {
@@ -88,11 +86,16 @@ class Model extends React.Component {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
 //request: get list
   getList() {
+    this.clearUrls();
     var table = this.state.config.table,
       pageLimit = table.limit;
 
@@ -105,8 +108,8 @@ class Model extends React.Component {
 
 //request: get next list
   getNextList(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
       if (res.server) {
         table.data = [res.server];
       } else if (res.servers) {
@@ -117,6 +120,10 @@ class Model extends React.Component {
 
       this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
@@ -218,10 +225,12 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
   clearState() {
-    this.stores = {
-      urls: []
-    };
+    this.clearUrls();
     this.refs.dashboard.clearState();
   }
 
@@ -342,22 +351,9 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
     switch(tabKey) {
       case 'description':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (

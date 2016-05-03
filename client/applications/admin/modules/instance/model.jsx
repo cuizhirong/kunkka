@@ -187,7 +187,7 @@ class Model extends React.Component {
 
 //request: get server by ID
   getServerByID(serverID) {
-    this.clearUrls();
+    this.clearState();
 
     var table = this.state.config.table;
     request.getServerByID(serverID).then((res) => {
@@ -203,7 +203,7 @@ class Model extends React.Component {
 
 //request: get server by ID and filter data
   getServerByIDInitialize(serverID) {
-    this.clearUrls();
+    this.clearState();
 
     var _config = this.state.config,
       filter = _config.filter,
@@ -224,7 +224,7 @@ class Model extends React.Component {
 
 //request: get server list
   getInitialListData() {
-    this.clearUrls();
+    this.clearState();
 
     var pageLimit = this.state.config.table.limit;
     request.getList(pageLimit).then((res) => {
@@ -235,7 +235,7 @@ class Model extends React.Component {
 
 //request: get server list and filter data
   getListInitialize() {
-    this.clearUrls();
+    this.clearState();
 
     var _config = this.state.config,
       filter = _config.filter,
@@ -265,7 +265,7 @@ class Model extends React.Component {
 
 //request: get filtered list
   getFilterList(filterData) {
-    this.clearUrls();
+    this.clearState();
 
     var table = this.state.config.table;
     filterData.limit = this.state.config.table.limit;
@@ -427,7 +427,11 @@ class Model extends React.Component {
 
   clearState() {
     this.clearUrls();
-    this.refs.dashboard.clearState();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -467,7 +471,7 @@ class Model extends React.Component {
           url = data.url;
         } else {//default
           url = this.stores.urls[0];
-          this.clearUrls();
+          this.clearState();
         }
 
         this.loadingTable();
@@ -588,22 +592,9 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
     switch(tabKey) {
       case 'description':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
@@ -664,7 +655,7 @@ class Model extends React.Component {
     }, {
       title: __.image,
       content:
-        <a data-type="router" href={'/admin/flavor/' + item.image.id}>
+        <a data-type="router" href={'/admin/image/' + item.image.id}>
           {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
         </a>
     }, {

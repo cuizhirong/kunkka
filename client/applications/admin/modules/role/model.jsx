@@ -72,6 +72,8 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
+    this.clearState();
+
     var _config = this.state.config,
       table = _config.table;
 
@@ -94,6 +96,8 @@ class Model extends React.Component {
 
 //request: get single data(pathList[2] is role_id)
   getSingleData(roleID) {
+    this.clearState();
+
     request.getRoleByID(roleID).then((res) => {
       var table = this.state.config.table;
       table.data = [res.role];
@@ -109,6 +113,8 @@ class Model extends React.Component {
 
 //request: get list data(according to page limit)
   getInitialListData() {
+    this.clearState();
+
     var table = this.state.config.table;
     var pageLimit = table.limit;
     request.getList(pageLimit).then((res) => {
@@ -206,14 +212,19 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
-  clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+  clearUrls() {
+    this.stores.urls = [];
   }
 
-//*********************************************//
+  clearState() {
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
   onAction(field, actionType, refs, data) {
     switch (field) {
       case 'btnList':
@@ -234,6 +245,25 @@ class Model extends React.Component {
     switch (actionType) {
       case 'check':
         this.onClickTableCheckbox(refs, data);
+        break;
+      case 'pagination':
+        var url,
+          history = this.stores.urls;
+
+        if (data.direction === 'prev'){
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearState();
+        }
+
+        this.loadingTable();
+        this.getNextListData(url);
         break;
       default:
         break;

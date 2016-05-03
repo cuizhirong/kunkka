@@ -41,7 +41,8 @@
     "disabled": true
   }, {
     "key": "refresh",
-    "icon": "refresh"
+    "icon": "refresh",
+    "disabled": true
   }],
   "filter": [{
     "group_key": "instance",

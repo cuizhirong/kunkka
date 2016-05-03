@@ -70,6 +70,7 @@
     "type": "Type",
     "user": "User ",
     "user-group": "User Group",
+    "view_is_unavailable": "The view is unavailable.",
     "volume": "Volume",
     "yes": "Yes"
   },
@@ -146,6 +147,7 @@
     "type": "类型",
     "user": "用户",
     "user-group": "用户组",
+    "view_is_unavailable": "没有数据可以显示",
     "volume": "云硬盘",
     "yes": "是"
   }

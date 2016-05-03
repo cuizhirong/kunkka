@@ -77,6 +77,8 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
+    this.clearState();
+
     var _config = this.state.config,
       table = _config.table;
 
@@ -99,6 +101,8 @@ class Model extends React.Component {
 
 //request: get single data(pathList[2] is server_id)
   getSingleData(groupID) {
+    this.clearState();
+
     request.getGroupByID(groupID).then((res) => {
       var table = this.state.config.table;
       table.data = [res.group];
@@ -114,6 +118,8 @@ class Model extends React.Component {
 
 //request: get list data(according to page limit)
   getInitialListData() {
+    this.clearState();
+
     var table = this.state.config.table;
     var pageLimit = table.limit;
     request.getList(pageLimit).then((res) => {
@@ -211,14 +217,19 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
-  clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+  clearUrls() {
+    this.stores.urls = [];
   }
 
-//*********************************************//
+  clearState() {
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
   onAction(field, actionType, refs, data) {
     switch (field) {
       case 'btnList':
@@ -242,6 +253,25 @@ class Model extends React.Component {
     switch (actionType) {
       case 'check':
         this.onClickTableCheckbox(refs, data);
+        break;
+      case 'pagination':
+        var url,
+          history = this.stores.urls;
+
+        if (data.direction === 'prev'){
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearState();
+        }
+
+        this.loadingTable();
+        this.getNextListData(url);
         break;
       default:
         break;
@@ -333,22 +363,9 @@ class Model extends React.Component {
     var contents = detail.state.contents;
     var syncUpdate = true;
 
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
     switch(tabKey) {
       case 'description':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
@@ -365,7 +382,7 @@ class Model extends React.Component {
         }
         break;
       case 'user':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           syncUpdate = false;
           request.getUsers(rows[0].id).then((res) => {
             var userConfig = this.getUserConfig(rows[0], res.users);
@@ -391,7 +408,7 @@ class Model extends React.Component {
         }
         break;
       case 'role':
-        if (isAvailableView(rows)) {
+        if (rows.length === 1) {
           syncUpdate = false;
           request.getRoleAssignments(rows[0]).then((assignments) => {
             request.getGroupRoles(assignments).then((res) => {

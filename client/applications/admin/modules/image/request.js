@@ -21,6 +21,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getSingle: function(id) {
@@ -30,6 +33,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getNextList: function(nextUrl) {
@@ -37,6 +43,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });
@@ -50,6 +59,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });
