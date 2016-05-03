@@ -11,12 +11,6 @@ module.exports = {
         'zh-CN': '一区'
       },
       'id': 'RegionOne'
-    }, {
-      'name': {
-        'en': 'RegionTwo',
-        'zh-CN': '二区'
-      },
-      'id': 'RegionOne'
     }],
     'domain': 'default',
     'cookie': {
