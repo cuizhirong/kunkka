@@ -225,9 +225,11 @@ class Model extends React.Component {
       request.getFloatingIPByID(data.text).then((res) => {
         table.data = [res.floatingip];
         this.updateTableData(table, res._url);
-      }).catch((res) => {
-        table.data = [];
-        this.updateTableData(table);
+      }).catch(e => {
+        if(e.status === 404) {
+          table.data = [];
+          this.updateTableData(table);
+        }
       });
     }
   }

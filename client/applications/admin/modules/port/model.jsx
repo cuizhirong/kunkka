@@ -244,9 +244,11 @@ class Model extends React.Component {
       request.getPortByID(data.text).then((res) => {
         table.data = [res.port];
         this.updateTableData(table, res._url);
-      }).catch((res) => {
-        table.data = [];
-        this.updateTableData(table);
+      }).catch((e) => {
+        if(e.status === 404) {
+          table.data = [];
+          this.updateTableData(table);
+        }
       });
     }
   }

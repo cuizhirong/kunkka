@@ -103,6 +103,12 @@ class Model extends React.Component {
       var table = this.state.config.table;
       table.data = [res.group];
       this.updateTableData(table, res._url);
+    }).catch(e => {
+      if(e.status === 404) {
+        var table = this.state.config.table;
+        table.data = [];
+        this.updateTableData(table);
+      }
     });
   }
 

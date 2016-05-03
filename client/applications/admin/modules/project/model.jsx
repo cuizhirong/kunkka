@@ -104,6 +104,12 @@ class Model extends React.Component {
     request.getProjectByID(projectID).then((res) => {
       var table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
+    }).catch(e => {
+      if(e.status === 404) {
+        var table = this.state.config.table;
+        table.data = [];
+        this.updateTableData(table);
+      }
     });
   }
 
