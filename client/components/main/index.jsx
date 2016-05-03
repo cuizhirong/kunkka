@@ -138,10 +138,9 @@ class Main extends React.Component {
       checkedKey[item.id] = true;
     });
 
-    if (this.refs.table) {
-      this.refs.table.setState({
-        checkedKey: checkedKey
-      });
+    var table = this.refs.table;
+    if (table) {
+      table.check(checkedKey);
     }
 
     //update btn status
@@ -152,6 +151,9 @@ class Main extends React.Component {
   }
 
   onChangeParams(params) {
+    var table = this.refs.table,
+      detail = this.refs.detail;
+
     if (params.length === 3) {
       var row = this.props.config.table.data.filter((data) => data.id === params[2])[0];
       /* no row data means invalid path list */
@@ -164,21 +166,17 @@ class Main extends React.Component {
         rows: [row]
       };
 
-      if (this.refs.detail && !this.refs.detail.state.visible) {
-        this.refs.detail.setState({
+      if (detail && !detail.state.visible) {
+        detail.setState({
           visible: true
         });
       }
 
-      if (this.refs.table) {
-        this.refs.table.setState({
-          checkedKey: {
-            [params[2]]: true
-          }
-        });
+      if (table) {
+        table.check({ [params[2]]: true });
       }
 
-      this.refs.detail.setState({
+      detail.setState({
         contents: {}
       }, () => {
         this.onClickDetailTabs();
@@ -188,16 +186,14 @@ class Main extends React.Component {
         rows: []
       };
 
-      if (this.refs.detail && this.refs.detail.state.visible) {
-        this.refs.detail.setState({
+      if (detail && detail.state.visible) {
+        detail.setState({
           visible: false
         });
       }
 
-      if (this.refs.table) {
-        this.refs.table.setState({
-          checkedKey: {}
-        });
+      if (table) {
+        table.check({});
       }
     }
 
@@ -209,30 +205,33 @@ class Main extends React.Component {
   }
 
   searchInTable(text) {
-    if (this.refs.table) {
+    var table = this.refs.table;
+
+    if (table) {
       var search = this.props.config.search,
         filterCol = search.column;
 
       if (search && search.column) {
         if (text) {
-          this.refs.table.setState({
-            filterCol: filterCol,
-            filterBy: function(item, _column) {
-              var ret = _column.some((col) => {
-                if (filterCol[col.key] && item[col.dataIndex]) {
-                  var td = item[col.dataIndex].toLowerCase();
-                  return td.indexOf(text.toLowerCase()) > -1 ? true : false;
-                }
-              });
+          //close detail when search start
+          var params = this.props.params;
+          if (params.length > 2) {
+            router.pushState('/' + params.slice(0, 2).join('/'));
+          }
 
-              return ret;
-            }
+          //arguments: filter columns, filter function
+          table.filter(filterCol, function(item, column) {
+            var ret = column.some((col) => {
+              if (filterCol[col.key] && item[col.dataIndex]) {
+                var td = item[col.dataIndex].toLowerCase();
+                return td.indexOf(text.toLowerCase()) > -1 ? true : false;
+              }
+            });
+
+            return ret;
           });
         } else {
-          this.refs.table.setState({
-            filterCol: filterCol,
-            filterBy: undefined
-          });
+          table.filter(filterCol, undefined);
         }
       }
     }
@@ -261,12 +260,12 @@ class Main extends React.Component {
   changeSearchInput(str) {
     this.searchInTable(str);
 
-    this.onAction('serachInput', 'search', {
+    this.onAction('searchInput', 'search', {
       text: str
     });
   }
 
-  checkboxListener(e, status, clickedRow, arr) {
+  checkboxListener(status, clickedRow, arr) {
     var path = this.props.params;
     if (arr.length <= 0) {
       router.pushState('/' + path[0] + '/' + path[1]);
@@ -282,13 +281,13 @@ class Main extends React.Component {
 
   }
 
-  onChangeTableCheckbox(e, status, clickedRow, rows) {
+  onChangeTableCheckbox(status, clickedRow, rows) {
     this.stores = {
       rows: rows
     };
 
     if (this.refs.detail && this.refs.detail.state.visible) {
-      this.checkboxListener(e, status, clickedRow, rows);
+      this.checkboxListener(status, clickedRow, rows);
     }
 
     if (!this.refs.detail || (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1))) {
