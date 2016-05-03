@@ -27,7 +27,7 @@ Object.keys(config).forEach(key => {
         console.log(`project ${a.project} already exists.`);
       } catch (e) {
         let checkoutCmd = env === 'dev' ? `git checkout ${a.branch[env]}` : `git checkout -b ${a.branch[env]} ${a.branch[env]}`;
-        execSync(`git clone ${a.git} ${a.name} && ${checkoutCmd}`, {'cwd': path.join(__dirname, a.directory)});
+        execSync(`git clone ${a.git} ${a.name} && cd ${a.name} && ${checkoutCmd}`, {'cwd': path.join(__dirname, a.directory)});
         execFileSync(path.join(__dirname, 'pre_commit_hook.sh'), [rootDir], {
           'cwd': appDir
         });
