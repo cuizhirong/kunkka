@@ -5,6 +5,15 @@ var colorMap = require('./utils/color');
 var loader = require('./utils/loader');
 var shape = require('./utils/shape');
 
+
+var resources = [
+  '/static/assets/icon-public-network.png',
+  '/static/assets/icon-network.png',
+  '/static/assets/icon-floatingip.png',
+  '/static/assets/icon-routers.png',
+  '/static/assets/icon-status-active.png'
+];
+
 var d = null,
   container = null,
   canvas = null,
@@ -15,12 +24,13 @@ var d = null,
   textColor = '#000',
   imageList = [],
   networkPos = [],
-  routerPos = [];
+  routerPos = [],
+  instancePos = [];
 
 class Topology {
   constructor(wp, data) {
     container = wp;
-    d = data;
+    d = this.processData(data);
 
 
     w = wp.clientWidth;
@@ -36,13 +46,15 @@ class Topology {
 
     // draw routers
 
+
     for (let len = networkPos.length, i = len - 1; i >= 0; i--) {
       var _color = colorMap[i % 8],
         network = networkPos[i];
 
       // 1. draw network
       shape.roundRect(ctx, network.x, network.y, network.w, network.h, 5, _color.color);
-      shape.text(ctx, network.name, network.x + 10, network.y + 16, textColor);
+      ctx.drawImage(imageList[1], network.x + 10, network.y + 11, 16, 11);
+      shape.text(ctx, network.name, network.x + 30, network.y + 16, textColor);
 
       // 2. draw instance link
 
@@ -60,6 +72,45 @@ class Topology {
 
     }
 
+  }
+
+  processData(data) {
+    console.log(data);
+    var networks = data.network;
+
+    // process router
+    data.router.forEach((r, i) => {
+      routerPos[i] = {
+        name: r.name,
+        id: r.id,
+        status: r.status,
+        subnets: []
+      };
+
+      r.subnets.forEach((subnet) => {
+        networks.some((network, j) => {
+          return network.subnets.some((s, m) => {
+            if (s.id === subnet.id) {
+              routerPos[i].subnets.push({
+                networkLayer: j,
+                subnetLayer: m
+              });
+              return true;
+            }
+            return false;
+          });
+        });
+      });
+    });
+
+    // process instance
+    data.router.forEach((r, i) => {
+
+    });
+
+    console.log(routerPos);
+    console.log(instancePos);
+    return data;
   }
 
   calcPos() {
@@ -102,7 +153,7 @@ class Topology {
     });
 
     // calc router positions
-    console.log(routerPos);
+    // console.log(routerPos);
 
     // calc instance positions
 
@@ -122,7 +173,7 @@ class Topology {
     });
 
     // Loder resources
-    loader(['/static/assets/icon-public-network.png']).then(data => {
+    loader(resources).then(data => {
       imageList = data;
       this.draw();
     });

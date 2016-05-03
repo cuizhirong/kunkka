@@ -10,28 +10,28 @@ module.exports = {
         return true;
       });
 
-      var instanceList = data.instance.map((m) => {
-        return {
-          name: m.name,
-          id: m.id,
-          addresses: m.addresses,
-          status: m.status
-        };
-      });
+      // var instanceList = data.instance.map((m) => {
+      //   return {
+      //     name: m.name,
+      //     id: m.id,
+      //     addresses: m.addresses,
+      //     status: m.status
+      //   };
+      // });
 
-      data.network.forEach((n) => {
-        n.subnets.forEach((s) => {
-          // console.log(s.addresses)
-          instanceList.some((instance) => {
-            var addrs = instance.addresses;
-            Object.keys(addrs).some((key) => {
-              // if (addrs[key]) {}
-            });
-          });
-        });
-      });
+      // data.network.forEach((n) => {
+      //   n.subnets.forEach((s) => {
+      //     // console.log(s.addresses)
+      //     instanceList.some((instance) => {
+      //       var addrs = instance.addresses;
+      //       Object.keys(addrs).some((key) => {
+      //         // if (addrs[key]) {}
+      //       });
+      //     });
+      //   });
+      // });
 
-      console.log(data);
+      // console.log(data);
       return data;
     });
   }
