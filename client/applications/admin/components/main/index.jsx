@@ -128,10 +128,9 @@ class Main extends React.Component {
       checkedKey[item.id] = true;
     });
 
-    if (this.refs.table) {
-      this.refs.table.setState({
-        checkedKey: checkedKey
-      });
+    var table = this.refs.table;
+    if (table) {
+      table.check(checkedKey);
     }
 
     //update btn status
@@ -142,6 +141,9 @@ class Main extends React.Component {
   }
 
   onChangeParams(params) {
+    var table = this.refs.table,
+      detail = this.refs.detail;
+
     if (params.length === 3) {
       var row = this.props.config.table.data.filter((data) => '' + data.id === params[2])[0];
       /* no row data means invalid path list */
@@ -152,21 +154,17 @@ class Main extends React.Component {
 
       this.stores.rows = [row];
 
-      if (this.refs.detail && !this.refs.detail.state.visible) {
-        this.refs.detail.setState({
+      if (detail && !detail.state.visible) {
+        detail.setState({
           visible: true
         });
       }
 
-      if (this.refs.table) {
-        this.refs.table.setState({
-          checkedKey: {
-            [params[2]]: true
-          }
-        });
+      if (table) {
+        table.check({ [params[2]]: true });
       }
 
-      this.refs.detail.setState({
+      detail.setState({
         contents: {}
       }, () => {
         this.onClickDetailTabs();
@@ -174,16 +172,14 @@ class Main extends React.Component {
     } else {
       this.stores.rows = [];
 
-      if (this.refs.detail && this.refs.detail.state.visible) {
-        this.refs.detail.setState({
+      if (detail && detail.state.visible) {
+        detail.setState({
           visible: false
         });
       }
 
-      if (this.refs.table) {
-        this.refs.table.setState({
-          checkedKey: {}
-        });
+      if (table) {
+        table.check({});
       }
     }
 
@@ -228,7 +224,7 @@ class Main extends React.Component {
     }
   }
 
-  checkboxListener(e, status, clickedRow, arr) {
+  checkboxListener(status, clickedRow, arr) {
     var path = this.props.params;
     if (arr.length <= 0) {
       router.pushState('/admin/' + path[1]);
@@ -244,11 +240,11 @@ class Main extends React.Component {
 
   }
 
-  onChangeTableCheckbox(e, status, clickedRow, rows) {
+  onChangeTableCheckbox(status, clickedRow, rows) {
     this.stores.rows = rows;
 
     if (this.refs.detail && this.refs.detail.state.visible) {
-      this.checkboxListener(e, status, clickedRow, rows);
+      this.checkboxListener(status, clickedRow, rows);
     }
 
     if (!this.refs.detail || (!this.refs.detail.state.visible || (this.refs.detail.state.visible && rows.length > 1))) {
