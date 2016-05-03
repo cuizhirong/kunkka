@@ -52,6 +52,13 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    function shouldRefresh(msg) {
+      if (msg.resource_type === 'instance' && (msg.action === 'power_on' || msg.action === 'power_off') && msg.stage === 'start') {
+        return false;
+      }
+      return true;
+    }
+
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
@@ -62,9 +69,11 @@ class Model extends React.Component {
           case 'floatingip':
           case 'port':
           case 'image':
-            this.refresh({
-              detailRefresh: true
-            }, false);
+            if (shouldRefresh(data)) {
+              this.refresh({
+                detailRefresh: true
+              }, false);
+            }
 
             if (data.action.indexOf('delete') > -1 && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
               router.replaceState('/dashboard/instance');
@@ -487,6 +496,13 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
+
+          var updateDetail = function(newContents) {
+            detail.setState({
+              contents: newContents
+            });
+          };
+
           request.getVncConsole(rows[0]).then((res) => {
             contents[tabKey] = (
               <VncConsole
@@ -494,11 +510,11 @@ class Model extends React.Component {
                 data-id={rows[0].id} />
             );
 
-            detail.setState({
-              contents: contents
-            });
+            updateDetail(contents);
           }, () => {
             contents[tabKey] = (<div />);
+
+            updateDetail(contents);
           });
         }
         break;

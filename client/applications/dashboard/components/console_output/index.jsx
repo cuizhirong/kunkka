@@ -71,7 +71,10 @@ class VncConsole extends React.Component {
         });
       }
     }, (err) => {
-      //console.log(err);
+      this.setState({
+        loading: false,
+        data: []
+      });
     });
   }
 
