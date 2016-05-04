@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>UnitedStack 有云</title>
+    <link rel="shortcut icon" href="/static/assets/favicon.ico" type="image/x-icon"/>
+  </head>
+  <body>
+    <p>Kunkka Services</p>
+    <table border="1" style="border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Version</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% applications.forEach(function (app) { %>
+        <tr>
+          <td><%= app.project %></td>
+          <td><%= app.branch.production %></td>
+        </tr>
+       <% }) %>
+       <tr>
+         <td>halo</td>
+         <td><%= halo %></td>
+       </tr>
+      </tbody>
+    </table>
+    <br>
+    <p>Openstack Services</p>
+    <table border="1" style="border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Version</th>
+          <th>API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% openstack.forEach(function (op) { %>
+        <tr>
+          <td><%= op.name %></td>
+          <td><%= op.version %></td>
+          <td><%= op.api %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </body>
+</html>

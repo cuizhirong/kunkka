@@ -31,7 +31,7 @@ global.window = {};
 global.document = {};
 
 module.exports = (app) => {
-  app.set('views', []);
+  app.set('views', [__dirname]);
   app.set('applications', frontendApps);
   frontendApps.forEach(a => {
     require(viewsPath[a])(app);

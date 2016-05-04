@@ -5,7 +5,7 @@ var http = require('http');
 var config = require('server/config');
 
 var start = Date.now();
-var port = process.env.PORT || config('port');
+var port = config('port') || 5678;
 var app = boot();
 
 console.log('%s booted in %dms - port: %s', pkg.name, (Date.now()) - start, port);

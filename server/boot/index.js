@@ -11,6 +11,12 @@ var config = require('../config'),
   cookieParser = require('cookie-parser'),
   path = require('path');
 
+let moduleConfig;
+try {
+  moduleConfig = require('../../../config');
+} catch (e) {
+  moduleConfig = undefined;
+}
 
 /**
  * Returns the server HTTP request handler "app".
@@ -53,6 +59,12 @@ function setup() {
 
   var api = require('api');
   api(app);
+
+  if (moduleConfig) {
+    app.get('/version', (req, res, next) => {
+      res.render('version', moduleConfig);
+    });
+  }
 
   //error handler
   if (logConfig.debug) {

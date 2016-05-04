@@ -12,12 +12,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const applications = [];
-Object.keys(config).forEach(c => {
-  config[c].applications.forEach(a => {
-    applications.push(a);
-  });
-});
+const applications = config.applications;
 applications.push({
   'project': 'halo',
   'name': 'halo',
@@ -36,8 +31,8 @@ function pullCode (apps) {
     cwd: appDir
   });
   console.log(gsOutput.toString());
-  rl.question(`${warn} ${chalk.yellow.bold('Are you sure to do a git fetch & rebase in')} ${project}. Enter ${chalk.green.bold('yes')} to do a git fetch & rebase (make sure the work directory is clean!), press ${chalk.green.bold('Enter')} to skip this action: `, (answer) => {
-    if (answer === 'yes') {
+  rl.question(`${warn} ${chalk.yellow.bold('Are you sure to do a git fetch & rebase in')} ${project}. Enter ${chalk.green.bold('y')} to do a git fetch & rebase (make sure the work directory is clean!), press ${chalk.green.bold('Enter')} to skip this action: `, (answer) => {
+    if (answer === 'y') {
       let gp = execSync('git fetch origin && git rebase origin/master', {
         cwd: appDir
       });
