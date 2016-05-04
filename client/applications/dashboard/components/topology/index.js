@@ -1,10 +1,11 @@
 var autoscale = require('client/libs/charts/autoscale');
 var utils = require('client/libs/charts/utils');
+var router = require('client/utils/router');
 
 var colorMap = require('./utils/color');
 var loader = require('./utils/loader');
 var shape = require('./utils/shape');
-
+var CanvasEvent = require('./utils/event');
 
 var resources = [
   '/static/assets/icon-public-network.png',
@@ -18,6 +19,7 @@ var d = null,
   container = null,
   canvas = null,
   ctx = null,
+  event = null,
   w = 0,
   h = 0,
   basicColor = '#59cbdb',
@@ -64,6 +66,14 @@ class Topology {
       network.subnets.forEach((subnet, j) => {
         shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
         shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
+        event.bind({
+          left: subnet.x,
+          top: subnet.y,
+          width: subnet.w,
+          height: subnet.h
+        }, 1, function() {
+          router.pushState('/dashboard/subnet/' + subnet.id);
+        });
       });
 
       // 5. draw instnaces
@@ -104,11 +114,68 @@ class Topology {
     });
 
     // process instance
-    data.router.forEach((r, i) => {
+    var tmpInstancePos = [];
+    data.instance.forEach((instance, i) => {
+      tmpInstancePos[i] = {
+        name: instance.name,
+        id: instance.id,
+        status: instance.status,
+        subnets: []
+      };
 
+      var addrs = instance.addresses;
+      Object.keys(addrs).forEach((key) => {
+        var _networks = addrs[key];
+        _networks.forEach((n) => {
+          var subnet = n.subnet;
+          networks.some((network, j) => {
+            return network.subnets.some((s, m) => {
+              if (s.id === subnet.id) {
+                tmpInstancePos[i].subnets.push({
+                  networkLayer: j,
+                  subnetLayer: m
+                });
+                return true;
+              }
+              return false;
+            });
+          });
+        });
+      });
     });
 
-    console.log(routerPos);
+    tmpInstancePos.forEach((instance, i) => {
+      var subnets = instance.subnets;
+      if (subnets.length === 0) {
+        instance.layer = -1;
+      } else {
+        instance.subnets = subnets.sort((a, b) => {
+          return a.networkLayer - b.networkLayer;
+        });
+        instance.layer = subnets[0].networkLayer;
+      }
+    });
+
+    tmpInstancePos.sort((a, b) => {
+      return a.layer - b.layer;
+    });
+
+    var cursor;
+    tmpInstancePos.forEach((instance) => {
+      var len = instancePos.length;
+      if (instance.layer === cursor) {
+        instancePos[len - 1].instances.push(instance);
+      } else {
+        cursor = instance.layer;
+        instancePos[len] = {
+          layer: cursor,
+          instances: [instance]
+        };
+      }
+    });
+
+    // console.log(tmpInstancePos);
+    // console.log(routerPos);
     console.log(instancePos);
     return data;
   }
@@ -122,7 +189,8 @@ class Topology {
       networkPos[i] = {
         x: x,
         w: w,
-        name: data.name || ('(' + data.id.slice(0, 8) + ')')
+        name: data.name || ('(' + data.id.slice(0, 8) + ')'),
+        id: data.id
       };
 
       if (i === 0) {
@@ -147,7 +215,8 @@ class Topology {
           y: networkPos[i].y + j * 30 + 30,
           w: w - 20,
           h: 20,
-          name: subnet.name + '(' + subnet.cidr + ')'
+          name: subnet.name + '(' + subnet.cidr + ')',
+          id: subnet.id
         });
       });
     });
@@ -165,6 +234,7 @@ class Topology {
   render() {
     canvas = document.createElement('canvas');
     container.appendChild(canvas);
+    event = new CanvasEvent(canvas);
     ctx = canvas.getContext('2d');
 
     autoscale([canvas], {
