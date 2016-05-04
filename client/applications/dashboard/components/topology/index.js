@@ -205,10 +205,10 @@ class Topology {
 
       var start = (router.w - 12 * len + 10) / 2 + router.x;
       router.subnets.forEach((subnet, j) => {
-        subnet.x = start + j * 12;
+        subnet.x = start + j * 12 - 0.5;
         subnet.y = router.y + router.h;
         // subnet.w = 2;
-        subnet.h = 100;
+        // subnet.h = 100;
       });
     });
     var _routerLen = routerPos.length;
@@ -266,9 +266,25 @@ class Topology {
       // 3. draw router link
 
       // 4. draw subnets
-      network.subnets.forEach((subnet, j) => {
+      var _subnets = network.subnets;
+      for (let sLen = _subnets.length, j = sLen - 1; j >= 0; j--) {
+        let subnet = _subnets[j];
+
         shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
         shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
+
+        // 画路由器和子网的连接线
+        routerPos.forEach((r) => {
+          r.subnets.some((s) => {
+            if (s.networkLayer === i && s.subnetLayer === j) {
+              ctx.fillStyle = _color.subnetColor[j % 4];
+              ctx.fillRect(s.x + offsetX, s.y, 2, subnet.y - s.y);
+              return true;
+            }
+            return false;
+          });
+        });
+
         event.bind({
           left: subnet.x,
           top: subnet.y,
@@ -277,7 +293,7 @@ class Topology {
         }, 1, function() {
           routerUtil.pushState('/dashboard/subnet/' + subnet.id);
         });
-      });
+      }
 
       // 5. draw instnaces
 
