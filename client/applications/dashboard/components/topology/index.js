@@ -1,6 +1,6 @@
 var autoscale = require('client/libs/charts/autoscale');
 var utils = require('client/libs/charts/utils');
-var router = require('client/utils/router');
+var routerUtil = require('client/utils/router');
 
 var colorMap = require('./utils/color');
 var loader = require('./utils/loader');
@@ -22,8 +22,10 @@ var d = null,
   event = null,
   w = 0,
   h = 0,
+  maxWidth = 0,
   basicColor = '#59cbdb',
   textColor = '#000',
+  borderColor = '#d5dee2',
   imageList = [],
   networkPos = [],
   routerPos = [],
@@ -31,6 +33,9 @@ var d = null,
 
 class Topology {
   constructor(wp, data) {
+    if (data.instance && data.instance.length > 50) {
+      return;
+    }
     container = wp;
     d = this.processData(data);
 
@@ -40,48 +45,6 @@ class Topology {
     h = this.calcPos();
 
     utils.bind(window, 'resize', this.onResize.bind(this));
-  }
-
-  draw() {
-    ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
-    shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
-
-    // draw routers
-
-
-    for (let len = networkPos.length, i = len - 1; i >= 0; i--) {
-      var _color = colorMap[i % 8],
-        network = networkPos[i];
-
-      // 1. draw network
-      shape.roundRect(ctx, network.x, network.y, network.w, network.h, 5, _color.color);
-      ctx.drawImage(imageList[1], network.x + 10, network.y + 11, 16, 11);
-      shape.text(ctx, network.name, network.x + 30, network.y + 16, textColor);
-
-      // 2. draw instance link
-
-      // 3. draw router link
-
-      // 4. draw subnets
-      network.subnets.forEach((subnet, j) => {
-        shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
-        shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
-        event.bind({
-          left: subnet.x,
-          top: subnet.y,
-          width: subnet.w,
-          height: subnet.h
-        }, 1, function() {
-          router.pushState('/dashboard/subnet/' + subnet.id);
-        });
-      });
-
-      // 5. draw instnaces
-
-      // 6. draw link dots
-
-    }
-
   }
 
   processData(data) {
@@ -94,7 +57,8 @@ class Topology {
         name: r.name,
         id: r.id,
         status: r.status,
-        subnets: []
+        subnets: [],
+        gateway: r.external_gateway_info
       };
 
       r.subnets.forEach((subnet) => {
@@ -176,7 +140,7 @@ class Topology {
 
     // console.log(tmpInstancePos);
     // console.log(routerPos);
-    console.log(instancePos);
+    // console.log(instancePos);
     return data;
   }
 
@@ -222,13 +186,105 @@ class Topology {
     });
 
     // calc router positions
-    // console.log(routerPos);
+    console.log(routerPos);
+    routerPos.forEach((router, i) => {
+      if (i === 0) {
+        router.x = 0.5;
+      } else {
+        router.x = routerPos[i - 1].x + routerPos[i - 1].w + 10;
+      }
+      router.y = 134.5; //83 + 51 + 0.5
+      router.h = 58;
+
+      var len = router.subnets.length;
+      if (len > 1) {
+        router.w = 78 + (len - 1) * 10;
+      } else {
+        router.w = 78;
+      }
+
+      var start = (router.w - 12 * len + 10) / 2 + router.x;
+      router.subnets.forEach((subnet, j) => {
+        subnet.x = start + j * 12;
+        subnet.y = router.y + router.h;
+        // subnet.w = 2;
+        subnet.h = 100;
+      });
+    });
+    var _routerLen = routerPos.length;
+    if (_routerLen === 0) {
+      maxWidth = 0;
+    } else {
+      let lastRouter = routerPos[_routerLen - 1];
+      maxWidth = lastRouter.w + lastRouter.x;
+    }
 
     // calc instance positions
 
     // The last network
     var p = networkPos[networkPos.length - 1];
     return p.h + p.y + 260;
+  }
+
+  draw() {
+    var offsetX = Math.round((w - maxWidth) / 2);
+
+    ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
+    shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
+
+    // draw routers
+    routerPos.forEach((router, i) => {
+      if (router.gateway) {
+        ctx.fillStyle = basicColor;
+        ctx.fillRect(router.x + offsetX + router.w / 2 - 0.5, router.y - 52, 2, 52);
+      }
+      shape.roundRect(ctx, router.x + offsetX, router.y, router.w, router.h, 2, borderColor, true);
+    });
+
+
+    for (let len = networkPos.length, i = len - 1; i >= 0; i--) {
+      var _color = colorMap[i % 8],
+        network = networkPos[i];
+
+      // 1. draw network
+      shape.roundRect(ctx, network.x, network.y, network.w, network.h, 5, _color.color);
+      ctx.drawImage(imageList[1], network.x + 10, network.y + 11, 16, 11);
+      shape.text(ctx, network.name, network.x + 30, network.y + 16, textColor);
+      (function(n) {
+        event.bind({
+          left: n.x,
+          top: n.y,
+          width: n.w,
+          height: n.h
+        }, 0, function() {
+          routerUtil.pushState('/dashboard/network/' + n.id);
+        });
+      })(network);
+
+      // 2. draw instance link
+
+      // 3. draw router link
+
+      // 4. draw subnets
+      network.subnets.forEach((subnet, j) => {
+        shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
+        shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
+        event.bind({
+          left: subnet.x,
+          top: subnet.y,
+          width: subnet.w,
+          height: subnet.h
+        }, 1, function() {
+          routerUtil.pushState('/dashboard/subnet/' + subnet.id);
+        });
+      });
+
+      // 5. draw instnaces
+
+      // 6. draw link dots
+
+    }
+
   }
 
   render() {
