@@ -1,25 +1,7 @@
-var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getFilterOptions: function(forced) {
-    return storage.getList([], forced);
-  },
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
-  getPortByIDInitialize: function(portID, forced) {
-    var req = [];
-    req.push(this.getPortByID(portID));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -29,6 +11,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });
@@ -48,6 +33,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getPortByID: function(portID) {
@@ -55,6 +43,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });

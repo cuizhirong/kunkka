@@ -62,35 +62,65 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    var _config = this.state.config,
-      table = _config.table;
-
     if(params[2]) {
-      request.getFloatingIPByIDInitialize(params[2]).then((res) => {
-        table.data = [res[0].floatingip];
-        this.updateTableData(table, res[0]._url);
-      });
+      this.getSingle(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getList();
     }
   }
 
   getInitializeListData() {
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+    this.getList();
+  }
+
+  getSingle(id) {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getFloatingIPByID(id).then((res) => {
+      if (res.floatingip) {
+        table.data = [res.floatingip];
+      } else {
+        table.data = [];
+      }
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getList(table.limit).then((res) => {
+      table.data = res.floatingips;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
     });
   }
 
   getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      if(res.floatingip) {
+        table.data = [res.floatingip];
+      } else if(res.floatingips) {
+        table.data = res.floatingips;
+      }
+      this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
     });
   }
 
@@ -112,13 +142,7 @@ class Model extends React.Component {
     });
   }
 
-  processTableData(table, res) {
-    if(res.floatingip) {
-      table.data = [res.floatingip];
-    } else if(res.floatingips) {
-      table.data = res.floatingips;
-    }
-
+  setPagination(table, res) {
     var pagination = {},
       next = res.floatingips_links ? res.floatingips_links[0] : null;
 
@@ -184,11 +208,17 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
   clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -219,18 +249,13 @@ class Model extends React.Component {
   }
 
   onClickSearch(actionType, refs, data) {
-    var table = this.state.config.table;
     if (actionType === 'click') {
       this.loadingTable();
-      request.getFloatingIPByID(data.text).then((res) => {
-        table.data = [res.floatingip];
-        this.updateTableData(table, res._url);
-      }).catch(e => {
-        if(e.status === 404) {
-          table.data = [];
-          this.updateTableData(table);
-        }
-      });
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 

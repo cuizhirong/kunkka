@@ -79,39 +79,68 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    var _config = this.state.config,
-      table = _config.table;
-
     if(params[2]) {
-      request.getPortByIDInitialize(params[2]).then((res) => {
-        table.data = [res[0].port];
-        this.updateTableData(table, res[0]._url);
-      });
+      this.getSingle(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getList();
     }
   }
 
   getInitializeListData() {
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+    this.getList();
+  }
+
+  getSingle(id) {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getPortByID(id).then((res) => {
+      if (res.port) {
+        table.data = [res.port];
+      } else {
+        table.data = [];
+      }
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getList(table.limit).then((res) => {
+      table.data = res.ports;
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
     });
   }
 
   getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      if (res.port) {
+        table.data = [res.port];
+      } else if (res.ports) {
+        table.data = res.ports;
+      } else {
+        table.data = [];
+      }
+
+      this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
+      this.updateTableData(table, res._url);
     });
   }
 
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -123,19 +152,16 @@ class Model extends React.Component {
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
-      if(detail && refreshDetail && params.length > 2) {
+
+      if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
       }
+
+      callback && callback();
     });
   }
 
-  processTableData(table, res) {
-    if(res.port) {
-      table.data = [res.port];
-    } else if(res.ports) {
-      table.data = res.ports;
-    }
-
+  setPagination(table, res) {
     var pagination = {},
       next = res.ports_links ? res.ports_links[0] : null;
 
@@ -148,6 +174,7 @@ class Model extends React.Component {
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
     }
+
     table.pagination = pagination;
 
     return table;
@@ -201,11 +228,17 @@ class Model extends React.Component {
     this.refs.dashboard.refs.detail.loading();
   }
 
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
   clearState() {
-    this.stores = {
-      urls: []
-    };
-    this.refs.dashboard.clearState();
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -238,18 +271,12 @@ class Model extends React.Component {
   }
 
   onClickSearch(actionType, refs, data) {
-    var table = this.state.config.table;
     if (actionType === 'click') {
-      this.loadingTable();
-      request.getPortByID(data.text).then((res) => {
-        table.data = [res.port];
-        this.updateTableData(table, res._url);
-      }).catch((e) => {
-        if(e.status === 404) {
-          table.data = [];
-          this.updateTableData(table);
-        }
-      });
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 

@@ -2,18 +2,6 @@ var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-
-    return RSVP.all(req);
-  },
-  getDomainByIDInitialize: function(domainID, forced) {
-    var req = [];
-    req.push(this.getDomainByID(domainID));
-
-    return RSVP.all(req);
-  },
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -34,6 +22,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getDomainByID: function(domainID) {
@@ -41,6 +32,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });

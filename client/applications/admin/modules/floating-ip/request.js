@@ -1,25 +1,7 @@
-var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getFilterOptions: function(forced) {
-    return storage.getList([], forced);
-  },
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
-  getFloatingIPByIDInitialize: function(floatingipID, forced) {
-    var req = [];
-    req.push(this.getFloatingIPByID(floatingipID));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -31,6 +13,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getServerByID: function(serverID) {
@@ -38,6 +23,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      return res;
+    }).catch((res) => {
+      res._url = url;
       return res;
     });
   },
@@ -48,6 +36,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getFloatingIPByID: function(floatingipID) {
@@ -55,6 +46,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });

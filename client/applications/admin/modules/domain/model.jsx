@@ -72,79 +72,81 @@ class Model extends React.Component {
     });
   }
 
-//initialize table data
   onInitialize(params) {
-    this.clearState();
-
-    var _config = this.state.config,
-      table = _config.table;
-
     if (params[2]) {
-      request.getDomainByIDInitialize(params[2]).then((res) => {
-        table.data = [res[0].domain];
-        this.updateTableData(table, res[0]._url, true, () => {
-          var pathList = router.getPathList();
-          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-        });
-      });
+      this.getSingle(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        table.data = res[0].domains;
-        this.updateTableData(table, res[0]._url);
-      });
+      this.getList();
     }
   }
 
-//request: get single data(pathList[2] is server_id)
-  getSingleData(domainID) {
-    this.clearState();
-
-    request.getDomainByID(domainID).then((res) => {
-      var table = this.state.config.table;
-      table.data = [res.domain];
-      this.updateTableData(table, res._url);
-    }).catch(e => {
-      if(e.status === 404) {
-        var table = this.state.config.table;
-        table.data = [];
-        this.updateTableData(table);
-      }
-    });
+  getInitialListData() {
+    this.getList();
   }
 
-//request: get list data(according to page limit)
-  getInitialListData() {
+  getSingle(id) {
     this.clearState();
 
     var table = this.state.config.table;
-    var pageLimit = table.limit;
-    request.getList(pageLimit).then((res) => {
+    request.getDomainByID(id).then((res) => {
+      if (res.port) {
+        table.data = [res.port];
+      } else {
+        table.data = [];
+      }
+      this.updateTableData(table, res._url, true, () => {
+        var pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
+      this.updateTableData(table, String(res.responseURL));
+    });
+  }
+
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getList(table.limit).then((res) => {
       table.data = res.domains;
       this.updateTableData(table, res._url);
     });
   }
 
-//request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
-      table.data = res.domains || [res.domain];
+      if (res.ports) {
+        table.data = res.ports;
+      } else if (res.port) {
+        table.data = [res.port];
+      } else {
+        table.data = [];
+      }
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
-//request: search request
   onClickSearch(actionType, refs, data) {
     this.clearState();
 
     if (actionType === 'click') {
       this.loadingTable();
-      this.getSingleData(data.text);
+
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 
-//rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -167,7 +169,6 @@ class Model extends React.Component {
     });
   }
 
-//refresh: according to the given data rules
   refresh(data, params) {
     if (!data) {
       data = {};

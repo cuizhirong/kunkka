@@ -2,18 +2,6 @@ var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-
-    return RSVP.all(req);
-  },
-  getRoleByIDInitialize: function(roleID, forced) {
-    var req = [];
-    req.push(this.getRoleByID(roleID));
-
-    return RSVP.all(req);
-  },
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -25,6 +13,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getNextList: function(nextUrl) {
@@ -34,6 +25,9 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
     });
   },
   getRoleByID: function(roleID) {
@@ -41,6 +35,9 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
       res._url = url;
       return res;
     });

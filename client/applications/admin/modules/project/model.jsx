@@ -77,74 +77,85 @@ class Model extends React.Component {
     });
   }
 
-//initialize table data
   onInitialize(params) {
-    this.clearState();
-
-    var _config = this.state.config,
-      table = _config.table;
-
     if (params[2]) {
-      request.getProjectByIDInitialize(params[2]).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url, true, () => {
-          var pathList = router.getPathList();
-          router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-        });
-      });
+      this.getSingle(params[2]);
     } else {
-      var pageLimit = table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getList();
     }
   }
 
-//request: get single data(pathList[2] is server_id)
-  getSingleData(projectID) {
-    this.clearState();
-
-    request.getProjectByID(projectID).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url);
-    }).catch(e => {
-      if(e.status === 404) {
-        var table = this.state.config.table;
-        table.data = [];
-        this.updateTableData(table);
-      }
-    });
-  }
-
-//request: get list data(according to page limit)
   getInitialListData() {
+    this.getList();
+  }
+
+  getSingle(id) {
     this.clearState();
 
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+    var table = this.state.config.table;
+    request.getProjectByID(id).then((res) => {
+      if (res.project) {
+        table.data = [res.project];
+      } else {
+        table.data = [];
+      }
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, true, () => {
+        var pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
       this.updateTableData(table, res._url);
     });
   }
 
-//request: jump to next page according to the given url
-  getNextListData(url, refreshDetail) {
-    request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getList(table.limit).then((res) => {
+      table.data = res.projects;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, () => {
+        var pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
     });
   }
 
-//request: search request
+  getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
+    request.getNextList(url).then((res) => {
+      if (res.projects) {
+        table.data = res.projects;
+      } else if (res.project) {
+        table.data = [res.project];
+      } else {
+        table.data = [];
+      }
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = {};
+      this.updateTableData(table, res._url);
+    });
+  }
+
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
-      this.getSingleData(data.text);
+
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 
-//rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -166,14 +177,7 @@ class Model extends React.Component {
     });
   }
 
-//change table data structure: to record url history
-  processTableData(table, res) {
-    if (res.projects) {
-      table.data = res.projects;
-    } else if (res.project) {
-      table.data = [res.project];
-    }
-
+  setPagination(table, res) {
     var pagination = {};
 
     res.projects_links && res.projects_links.forEach((link) => {
@@ -188,7 +192,6 @@ class Model extends React.Component {
     return table;
   }
 
-//refresh: according to the given data rules
   refresh(data, params) {
     if (!data) {
       data = {};
