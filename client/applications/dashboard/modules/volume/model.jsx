@@ -274,7 +274,10 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'False') ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (len > 0) ? false : true;
+          var hasAttach = rows.some((item) => {
+            return item.server ? true : false;
+          });
+          btns[key].disabled = (len > 0) && !hasAttach ? false : true;
           break;
         default:
           break;
