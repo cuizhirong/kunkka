@@ -92,11 +92,8 @@ class Model extends React.Component {
           break;
         case 'ext_gw':
           column.render = (col, item, i) => {
-            if(item.external_gateway_info) {
-              return __.on;
-            } else {
-              return __.off;
-            }
+            return item.external_gateway_info ?
+              <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>;
           };
           break;
         default:

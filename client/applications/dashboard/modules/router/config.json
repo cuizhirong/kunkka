@@ -61,7 +61,6 @@
       "key": "floating_ip"
     }, {
       "title": ["ext_gatway"],
-      "dataIndex": "external_gateway_info",
       "key": "ext_gw"
       }, {
       "title": ["status"],

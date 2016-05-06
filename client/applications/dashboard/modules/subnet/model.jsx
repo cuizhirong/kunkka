@@ -416,7 +416,7 @@ class Model extends React.Component {
         </span> : '-'
     }, {
       title: __.gateway + __.address,
-      content: item.gateway_ip
+      content: item.gateway_ip ? item.gateway_ip : '-'
     }, {
       title: __.ip + __.version,
       content: 'IP v' + item.ip_version
