@@ -111,7 +111,7 @@ class Model extends React.Component {
           break;
         case 'attributes':
           column.render = (col, item, i) => {
-            return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
+            return item.metadata.readonly === 'True' ? __.read_only : __.read_write;
           };
           break;
         default:
@@ -268,10 +268,10 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
           break;
         case 'set_rd_only':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'False') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'True') ? false : true;
           break;
         case 'set_rd_wrt':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'False') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'True') ? false : true;
           break;
         case 'delete':
           var hasAttach = rows.some((item) => {
