@@ -1,6 +1,5 @@
 'use strict';
 
-const remote = require('config')('remote');
 const getQueryString = require('helpers/getQueryString.js');
 
 const request = require('superagent');
@@ -13,9 +12,10 @@ module.exports = (app) => {
         return res.status(403).json({Error: 'Request is not allowwed!'});
       }
     }
+    let remote = req.session.endpoint;
     let region = req.headers.region;
     let service = req.path.split('/')[2];
-    let target = (service === 'keystone' ? remote[service] : remote[service][region]) + '/' + req.path.split('/').slice(3).join('/');
+    let target = remote[service][region] + '/' + req.path.split('/').slice(3).join('/');
     let method = req.method.toLowerCase();
     if (noBodyMethodList.indexOf(method) !== -1) {
       request[method](target + getQueryString(req.query))
