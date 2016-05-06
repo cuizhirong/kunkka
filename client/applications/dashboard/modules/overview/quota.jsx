@@ -112,7 +112,7 @@ class ResourceQuota extends React.Component {
                     if (overview[item.key].total > -1) {
                       total = overview[item.key].total;
                     } else {
-                      total = Infinity;
+                      total = __.infinity;
                     }
                     used = overview[item.key].used;
                   } else {
