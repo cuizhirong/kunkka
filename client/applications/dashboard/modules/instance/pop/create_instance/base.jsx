@@ -192,7 +192,8 @@ class ModalBase extends React.Component {
     var images = [],
       snapshots = [],
       selectedImage,
-      imageType = 'distribution';
+      imageType = 'distribution',
+      userName;
     resImages.forEach((item) => {
       if (item.image_type === 'snapshot') {
         snapshots.push(item);
@@ -205,6 +206,12 @@ class ModalBase extends React.Component {
       imageType = this.props.obj.image_type;
     } else {
       selectedImage = images[0];
+
+      if (!selectedImage.image_meta) {
+        selectedImage.image_meta = '{"os_username":"root"}';
+      }
+      let imageMeta = JSON.parse(selectedImage.image_meta);
+      userName = imageMeta.os_username;
     }
 
     var resSecurityGroups = [],
@@ -229,7 +236,7 @@ class ModalBase extends React.Component {
       snapshotList: snapshots,
       selectedImage: selectedImage,
       imageType: imageType,
-      userName: JSON.parse(selectedImage.image_meta).os_username,
+      userName: userName,
       credentialType: selectedImage.image_label === 'Windows' ? 'password' : 'keypair',
       networkData: resNetworks,
       selectedNetwork: resNetworks.length > 0 ? resNetworks[0].id : '',
@@ -403,9 +410,16 @@ class ModalBase extends React.Component {
     if (this.state.selectedImage.id === image.id) {
       return;
     }
+
+    if (!image.image_meta) {
+      image.image_meta = '{"os_username":"root"}';
+    }
+    var imageMeta = JSON.parse(image.image_meta);
+    var userName = imageMeta.os_username;
+
     this.setState({
       selectedImage: image,
-      userName: JSON.parse(image.image_meta).os_username,
+      userName: userName,
       credentialType: image.image_label === 'Windows' ? 'password' : 'keypair'
     });
   }
