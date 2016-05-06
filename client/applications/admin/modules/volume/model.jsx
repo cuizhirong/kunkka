@@ -343,14 +343,11 @@ class Model extends React.Component {
 
     switch (key) {
       case 'dissociate':
-        request.getServerById(rows[0].attachments[0].server_id).then((res) => {
-          var server = res.server;
-          detachInstance(rows[0], null, function() {
-            that.refresh({
-              refreshList: true,
-              refreshDetail: true
-            });
-          }, server);
+        detachInstance(rows[0], null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
         });
         break;
       case 'delete':
@@ -394,19 +391,20 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     var len = rows.length;
-    var setBtnState = (key) => {
-      request.getServerById(rows[0].attachments[0].server_id).then(() => {
-        btns[key].disabled = false;
-      }).catch(() => {
-        btns[key].disabled = true;
-      });
-    };
+    // var setBtnState = (key) => {
+    //   request.getServerById(rows[0].attachments[0].server_id).then(() => {
+    //     btns[key].disabled = false;
+    //   }).catch(() => {
+    //     btns[key].disabled = true;
+    //   });
+    // };
 
     for(let key in btns) {
       switch (key) {
         case 'dissociate':
           if((len === 1 && rows[0].status === 'in-use') && rows[0].attachments.length > 0) {
-            setBtnState(key);
+            // setBtnState(key);
+            btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
           }

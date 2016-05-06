@@ -291,9 +291,7 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        request.getVolumeById(data.rows[0].volume_id).then((res) => {
-          this.onClickDetailTabs(actionType, refs, data, res.volume);
-        });
+        this.onClickDetailTabs(actionType, refs, data);
         break;
       default:
         break;
@@ -387,38 +385,49 @@ class Model extends React.Component {
     }
   }
 
-  onClickDetailTabs(tabKey, refs, data, volume) {
+  onClickDetailTabs(tabKey, refs, data) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
+    var syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0], volume);
+          syncUpdate = false;
+          detail.setState({loading: true});
+          request.getVolumeById(rows[0].volume_id).then((res) => {
+            var basicPropsItem = this.getBasicPropsItems(rows[0], res.volume);
+            contents[tabKey] = (
+              <div>
+                <BasicProps
+                  title={__.basic + __.properties}
+                  defaultUnfold={true}
+                  tabKey={'description'}
+                  items={basicPropsItem}
+                  rawItem={rows[0]}
+                  onAction={this.onDetailAction.bind(this)}
+                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+              </div>
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
 
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                items={basicPropsItem}
-                rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)}
-                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-            </div>
-          );
         }
         break;
       default:
         break;
     }
 
-    detail.setState({
-      contents: contents,
-      loading: false
-    });
+    if(syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    }
   }
 
   getBasicPropsItems(item, volume) {

@@ -1,5 +1,6 @@
 {
   "en": {
+    "already_deleted": "has already been deleted.",
     "attached_instance": "Associated Instance",
     "attributes": "Attributes",
     "capacity_type": "Capacity",
@@ -11,6 +12,7 @@
     "size": "Size"
   },
   "zh-CN": {
+    "already_deleted": "已被删除",
     "attached_instance": "挂载的云主机",
     "attributes": "属性",
     "capacity_type": "容量型",
