@@ -4,6 +4,10 @@
     "type": "text",
     "field": "apply_ip_tip",
     "info": "apply_ip_tip"
+  }, {
+    "type": "error",
+    "field": "error",
+    "hide": true
   }],
   "btn": {
     "value": "allocate",

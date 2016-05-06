@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(parent, callback) {
   var props = {
@@ -11,15 +12,28 @@ function pop(parent, callback) {
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       request.getNetworks().then((networks) => {
-        var floatingNetworkId = networks.filter((item) => item['router:external'])[0].id;
-        var data = {};
-        data.floatingip = {};
-        data.floatingip.floating_network_id = floatingNetworkId;
+        var floatingNetwork = networks.filter((item) => item['router:external']);
 
-        request.createFloatingIp(data).then((res) => {
-          callback && callback(res.floatingip);
-          cb(true);
-        });
+        if (floatingNetwork.length > 0) {
+          let floatingNetworkId = [0].id;
+
+          let data = {};
+          data.floatingip = {};
+          data.floatingip.floating_network_id = floatingNetworkId;
+
+          request.createFloatingIp(data).then((res) => {
+            callback && callback(res.floatingip);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          refs.error.setState({
+            value: __.create_floatingip_error,
+            hide: false
+          });
+          cb(false);
+        }
       });
     },
     onAction: function(field, state, refs) {
