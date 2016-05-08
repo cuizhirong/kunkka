@@ -228,10 +228,8 @@ class Model extends React.Component {
         createInstance();
         break;
       case 'vnc_console':
-        request.getVncConsole(rows[0]).then((res) => {
-          var url = res.console.url;
-          window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
-        });
+        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?region=' + HALO.current_region;
+        window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
         request.poweron(rows[0]).then((res) => {
@@ -482,11 +480,18 @@ class Model extends React.Component {
         break;
       case 'console_output':
         if (isAvailableView(rows)) {
-          var serverId = rows[0].id;
+          var serverId = rows[0].id,
+            requestData = {
+              'os-getConsoleOutput': {
+                'length': -1
+              }
+            };
+
           contents[tabKey] = (
             <ConsoleOutput
               refresh={true}
-              url={'/api/v1/' + HALO.user.projectId + '/servers/' + serverId + '/action/output'}
+              url={'/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action'}
+              requestData={requestData}
               moduleID="instance"
               tabKey="console_output"
               data-id={serverId} />

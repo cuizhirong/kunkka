@@ -66,8 +66,15 @@ module.exports = {
     });
   },
   getVncConsole: function(item) {
+    var data = {
+      'os-getVNCConsole': {
+        'type': 'novnc'
+      }
+    };
+
     return fetch.post({
-      url: '/api/v1/' + HALO.user.projectId + '/servers/' + item.id + '/action/vnc'
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      data: data
     });
   },
   getVolumeList: function(fetchVolumeTypes) {

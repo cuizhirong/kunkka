@@ -61,8 +61,11 @@ class VncConsole extends React.Component {
   }
 
   getData() {
+    var props = this.props;
+
     fetch.post({
-      url: this.props.url
+      url: props.url,
+      data: props.requestData
     }).then((res) => {
       if (this.refresh) {
         this.setState({
