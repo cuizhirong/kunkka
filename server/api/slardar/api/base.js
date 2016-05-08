@@ -169,6 +169,10 @@ API.prototype = {
   __neutronQuotaUpdate: function (objVar, callback) {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota': objVar.neutronBody});
+  },
+  __getVNCConsole: function (objVar, callback) {
+    let remote = objVar.endpoint.nova[objVar.region];
+    driver.nova.server.getVNCConsole(objVar.projectId, objVar.serverId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'os-getVNCConsole': {'type': 'novnc'}});
   }
 };
 

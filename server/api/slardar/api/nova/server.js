@@ -144,11 +144,23 @@ Instance.prototype = {
         }
       });
   },
+  getVNCConsole: function (req, res, next) {
+    let objVar = this.getVars(req, ['projectId', 'serverId']);
+    this.__getVNCConsole(objVar, (err, payload) => {
+      if (err) {
+        this.handleError(err, req, res, next);
+      } else {
+        let url = payload.console.url;
+        res.redirect(url);
+      }
+    });
+  },
   initRoutes: function () {
     return this.__initRoutes( () => {
       this.app.get('/api/v1/:projectId/servers/detail', this.getInstanceList.bind(this));
       this.app.get('/api/v1/:projectId/flavors/detail', this.getFlavorList.bind(this));
       this.app.get('/api/v1/:projectId/servers/:serverId', this.getInstanceDetails.bind(this));
+      this.app.get('/api/v1/:projectId/servers/:serverId/vnc', this.getVNCConsole.bind(this));
     });
   }
 };
