@@ -118,6 +118,23 @@ class Model extends React.Component {
   }
 
   displayCPU(data) {
+    var sum = data.vcpus,
+      used = data.vcpus_used,
+      max = sum > used ? sum : used,
+      period;
+
+    if (max <= 20) {
+      period = Math.ceil(max / 10);
+    } else if (max <= 50) {
+      period = 5;
+    } else if (max <= 200) {
+      period = Math.ceil(max / 100) * 10;
+    } else if (max <= 1000) {
+      period = Math.ceil(max / 500) * 10;
+    } else {
+      period = Math.ceil(max / 1000) * 100;
+    }
+
     this.cpuChart.setOption({
       unit: '',
       title: '',
@@ -127,7 +144,7 @@ class Model extends React.Component {
       },
       yAxis: {
         color: basicGrey,
-        tickPeriod: 1,
+        tickPeriod: period,
         tickColor: fontDark
       },
       series: [{
