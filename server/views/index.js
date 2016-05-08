@@ -38,6 +38,8 @@ module.exports = (app) => {
   app.set('views', [__dirname]);
   app.set('applications', frontendApps);
   frontendApps.forEach(a => {
-    require(viewsPath[a])(app);
+    if (viewsPath[a]) {
+      require(viewsPath[a])(app);
+    }
   });
 };
