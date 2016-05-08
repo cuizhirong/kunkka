@@ -20,4 +20,13 @@ driver.showServerDetails = function (projectId, serverId, token, remote, callbac
   );
 };
 
+driver.getVNCConsole = function (projectId, serverId, token, remote, callback, theBody) {
+  return driver.postMethod(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
+    token,
+    callback,
+    theBody
+  );
+};
+
 module.exports = driver;
