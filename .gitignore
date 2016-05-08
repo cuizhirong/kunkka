@@ -62,6 +62,7 @@ client/libs/charts/output.js.map
 # external modules
 client/applications/*
 server/api/slardar
+server/api/magnus
 server/drivers/huskar
 
 package.json

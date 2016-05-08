@@ -17,13 +17,17 @@ const viewsPath = {};
 
 backendApps.forEach((a) => {
   let viewPath = path.join('server/api', a, 'views');
-  fs.readdirSync(viewPath)
-    .filter(file => {
-      return fs.statSync(path.join(viewPath, file)).isDirectory();
-    })
-    .forEach(p => {
-      viewsPath[p] = path.join(viewPath, p);
-    });
+  try {
+    fs.readdirSync(viewPath)
+      .filter(file => {
+        return fs.statSync(path.join(viewPath, file)).isDirectory();
+      })
+      .forEach(p => {
+        viewsPath[p] = path.join(viewPath, p);
+      });
+  } catch (e) {
+    console.log(`${a} has no views`);
+  }
 });
 
 // mock browser global variables: window and document
