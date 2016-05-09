@@ -9,6 +9,8 @@
 @filter-select-border-hover-color: @color_info;
 @pagination-border-color: @color_grey_600;
 @pagination-border-hover-color: @color_info;
+@table-active-color: @color_info_600;
+@table-down-color: @color_font_800;
 
 .admin-com-main {
   position: relative;
@@ -143,6 +145,12 @@
         min-height: 160px;
         height: 160px;
         max-height: 160px;
+      }
+      .label-active {
+        color: @table-active-color;
+      }
+      .label-down {
+        color: @table-down-color;
       }
     }
     > .pagination {
