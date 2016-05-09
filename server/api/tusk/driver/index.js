@@ -29,34 +29,33 @@ function sortCache(cache) {
   return objCache;
 }
 
-function handleData(refresh, dataHandle, callback) {
-
-  function toSql() {
-    if (driver.connection._losted) {
-      driver.reconnect(function (err, con) {
-        if (err) {
-          callback(err);
-        } else {
-          dataHandle(callback, null);
-        }
-      });
-    } else {
-      dataHandle(callback, null);
-    }
+function toHandle(datahandle, callback) {
+  if (driver.connection._losted) {
+    driver.reconnect(function (err, con) {
+      if (err) {
+        callback(err);
+      } else {
+        dataHandle(callback, null);
+      }
+    });
+  } else {
+    dataHandle(callback, null);
   }
+}
+
+function handleData(refresh, dataHandle, callback) {
   if (!refresh && driver.cacheClient) {
     driver.cacheClient.get('settings', function (err, cache) {
       if (err || cache === null) {
-        toSql();
+        toHandle(datahandle, callback);
       } else {
         dataHandle(callback, JSON.parse(cache));
       }
     });
   } else {
-    toSql();
+    toHandle(datahandle, callback);
   }
 }
-
 
 function findAll(next, cache) {
   if (cache) {
@@ -78,7 +77,11 @@ function findAll(next, cache) {
 
 function findAllByApp(name, next, cache) {
   if (cache) {
-    next(null, cache[name]);
+    if (cache[name]) {
+      next(null, cache[name]);
+    } else {
+      next(null, []);
+    }
   } else {
     let sql = `SELECT * FROM ${driver.table} WHERE app='${name}'`;
     driver.connection.query(sql, (err, result) => {
