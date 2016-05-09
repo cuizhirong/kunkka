@@ -9,7 +9,7 @@
     <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
     <link href="/static/dist/<%= loginCssFile %>" rel="stylesheet">
     <script>
-      window.HALO={configs:{lang:"<%= locale %>"}};
+      window.HALO={configs:{lang:"<%= locale %>"}, settings: <%- JSON.stringify(settings) %>};
     </script>
   </head>
   <body>
@@ -17,7 +17,7 @@
       <div class="header"></div>
       <div class="content">
         <div class="img-wrapper">
-          <img src="/static/assets/logo@2x.png" />
+          <img src="<%= logo %>" />
         </div>
         <div class="input-wrapper"><%- modelTmpl %></div>
         <div class="link">
@@ -39,10 +39,10 @@
             <span>English</span>
           <% } %>
           </div>
-          <p>©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号</p>
+          <p><%= company %></p>
         </div>
       </div>
     </div>
     <script src="/static/dist/<%= loginJsFile %>"></script>
   </body>
-</html> 
+</html>
