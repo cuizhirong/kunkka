@@ -29,7 +29,7 @@ function sortCache(cache) {
   return objCache;
 }
 
-function toHandle(datahandle, callback) {
+function toHandle(dataHandle, callback) {
   if (driver.connection._losted) {
     driver.reconnect(function (err, con) {
       if (err) {
@@ -47,13 +47,13 @@ function handleData(refresh, dataHandle, callback) {
   if (!refresh && driver.cacheClient) {
     driver.cacheClient.get('settings', function (err, cache) {
       if (err || cache === null) {
-        toHandle(datahandle, callback);
+        toHandle(dataHandle, callback);
       } else {
         dataHandle(callback, JSON.parse(cache));
       }
     });
   } else {
-    toHandle(datahandle, callback);
+    toHandle(dataHandle, callback);
   }
 }
 
