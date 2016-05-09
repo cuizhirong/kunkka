@@ -47,7 +47,7 @@ function renderProjectTemplate (req, res, next) {
   tusk.getSettingsByApp('dashboard', function (err, dashboardSettings) {
     let setting = {};
     dashboardSettings.forEach( s => {
-      setting[s.name] = s;
+      setting[s.name] = s.value;
     });
     if (req.session && req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());

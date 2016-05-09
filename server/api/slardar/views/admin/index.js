@@ -47,7 +47,7 @@ function renderTemplate (req, res, next) {
   tusk.getSettingsByApp('admin', function (err, adminSettings) {
     let setting = {};
     adminSettings.forEach( s => {
-      setting[s.name] = s;
+      setting[s.name] = s.value;
     });
     if (req.session && req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
