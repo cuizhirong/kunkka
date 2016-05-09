@@ -145,7 +145,12 @@ Instance.prototype = {
       });
   },
   getVNCConsole: function (req, res, next) {
-    let objVar = this.getVars(req, ['projectId', 'serverId']);
+    let objVar = {};
+    objVar.region = req.query.region;
+    objVar.endpoint = req.session.endpoint;
+    objVar.token = req.session.user.token;
+    objVar.projectId = req.params.projectId;
+    objVar.serverId = req.params.serverId;
     this.__getVNCConsole(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
