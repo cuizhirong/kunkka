@@ -234,11 +234,19 @@ class Topology {
 
     // draw routers
     routerPos.forEach((router, i) => {
+      var _x = router.x + offsetX;
       if (router.gateway) {
         ctx.fillStyle = basicColor;
-        ctx.fillRect(router.x + offsetX + router.w / 2 - 0.5, router.y - 52, 2, 52);
+        ctx.fillRect(_x + router.w / 2 - 0.5, router.y - 52, 2, 52);
       }
-      shape.roundRect(ctx, router.x + offsetX, router.y, router.w, router.h, 2, borderColor, true);
+      shape.roundRect(ctx, _x, router.y, router.w, router.h, 2, borderColor, true);
+      ctx.drawImage(imageList[3], _x + router.w / 2 - 13.5, router.y + 7.5, 26, 26);
+      shape.text(ctx, router.name, _x + router.w / 2, router.y + 45, textColor, 'center', router.w);
+      if (router.gateway) {
+        ctx.drawImage(imageList[2], _x + 3.5, router.y + 3.5, 16, 16);
+      }
+      // TODO: fix status icon
+      ctx.drawImage(imageList[4], _x + router.w - 18.5, router.y + 3.5, 15, 15);
     });
 
 

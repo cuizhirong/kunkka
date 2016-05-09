@@ -45,9 +45,10 @@ module.exports = {
       ctx.fill();
     }
   },
-  text: function(ctx, text, x, y, color, maxWidth) {
+  text: function(ctx, text, x, y, color, textAlign, maxWidth) {
     ctx.fillStyle = color;
     ctx.textBaseline = 'middle';
+    ctx.textAlign = textAlign ? textAlign : 'start';
     ctx.fillText(text, x, y, maxWidth);
   }
 };
