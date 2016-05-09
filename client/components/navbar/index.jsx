@@ -37,9 +37,13 @@ class NavBar extends React.Component {
       return false;
     });
 
+    var logo = {
+      backgroundImage: 'url(' + HALO.settings.logo_url + ')'
+    };
+
     return (
       <div className="halo-com-navbar">
-        <div className="logo"></div>
+        <div className="logo" style={logo}></div>
         <div className="region-wp">
           <div className="region-name">
             <div className="name-label">
