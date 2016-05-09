@@ -53,8 +53,8 @@ function renderTemplate (req, res, next) {
     loginSettings.forEach( s => {
       setting[s.name] = s.value;
     });
-    let logo = setting.logo ? setting.logo.value : '/static/assets/logo@2x.png';
-    let company = setting.company ? setting.company.value : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
+    let logo = setting.logo ? setting.logo : '/static/assets/logo@2x.png';
+    let company = setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
     if (!req.session || !req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
