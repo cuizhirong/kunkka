@@ -7,6 +7,7 @@ const fs = require('fs');
 const loginModel = require('client/applications/login/model.jsx');
 const loginModelFactory = React.createFactory(loginModel);
 const upperCaseLocale = require('helpers/upper_case_locale');
+const tusk = require('api/tusk/driver');
 
 const tmplString = {};
 
@@ -46,23 +47,35 @@ staticFiles.loginCssFile = files.find((el) => {
 });
 
 function renderTemplate (req, res, next) {
-  if (!req.session || !req.session.user) {
-    let locale = upperCaseLocale(req.i18n.getLocale());
-    let __ = req.i18n.__.bind(req.i18n);
-    res.render('login', {
-      locale: locale,
-      unitedstack: __('views.login.unitedstack'),
-      login: __('views.login.login'),
-      signup: __('views.login.signup'),
-      forgotPass: __('views.login.forgotPass'),
-      loginJsFile: staticFiles[locale].loginJsFile,
-      loginCssFile: staticFiles.loginCssFile,
-      uskinFile: uskinFile[0],
-      modelTmpl: tmplString[req.i18n.locale]
+
+  tusk.getSettingsByApp('login', function (err, loginSettings) {
+    let setting = {};
+    loginSettings.forEach( s => {
+      setting[s.name] = s;
     });
-  } else if (req.session && req.session.user){
-    res.redirect('/dashboard/');
-  }
+    let logo = setting.logo ? setting.logo.value : '/static/assets/logo@2x.png';
+    let company = setting.company ? setting.company.value : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
+    if (!req.session || !req.session.user) {
+      let locale = upperCaseLocale(req.i18n.getLocale());
+      let __ = req.i18n.__.bind(req.i18n);
+      res.render('login', {
+        locale: locale,
+        unitedstack: __('views.login.unitedstack'),
+        login: __('views.login.login'),
+        signup: __('views.login.signup'),
+        forgotPass: __('views.login.forgotPass'),
+        loginJsFile: staticFiles[locale].loginJsFile,
+        loginCssFile: staticFiles.loginCssFile,
+        uskinFile: uskinFile[0],
+        settings: setting,
+        logo: logo,
+        company: company,
+        modelTmpl: tmplString[req.i18n.locale]
+      });
+    } else if (req.session && req.session.user){
+      res.redirect('/dashboard/');
+    }
+  }, false);
 }
 
 module.exports = (app) => {

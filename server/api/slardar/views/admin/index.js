@@ -7,6 +7,7 @@ const adminModel = require('client/applications/admin/model.jsx');
 const adminModelFactory = React.createFactory(adminModel);
 const upperCaseLocale = require('helpers/upper_case_locale');
 const config = require('config');
+const tusk = require('api/tusk/driver');
 
 const websocketUrl = config('websocket').url;
 const regions = {};
@@ -43,62 +44,69 @@ staticFiles.adminCssFile = files.find((el) => {
 let applications;
 
 function renderTemplate (req, res, next) {
-  if (req.session && req.session.user) {
-    let locale = upperCaseLocale(req.i18n.getLocale());
-    let __ = req.i18n.__.bind(req.i18n);
-    let user = req.session.user;
-    let username = user.username;
-    let applicationList = applications.filter(a => {
-      return a !== 'login';
-    }).sort((a, b) => {
-      if (a === 'dashboard') {
-        return -1;
-      } else if (b === 'dashboard') {
-        return 1;
-      } else {
-        return 0;
-      }
-    }).map(_app => {
-      return {[_app]: __(`shared.${_app}.application_name`)};
+  tusk.getSettingsByApp('admin', function (err, adminSettings) {
+    let setting = {};
+    adminSettings.forEach( s => {
+      setting[s.name] = s;
     });
-    let _application = {
-      application_list: applicationList,
-      current_application: 'admin'
-    };
-    let HALO = {
-      configs: {
-        lang: locale
-      },
-      user: {
-        projectId: user.projectId,
-        projects: user.projects,
-        userId: user.userId,
-        username: username,
-        isAdmin: true
-      },
-      region_list: regions[locale],
-      current_region: user.regionId ? user.regionId : regions[locale][0].id,
-      // FIXME:
-      websocket: {
-        url: websocketUrl
-      },
-      application: _application
-    };
-    res.render('admin', {
-      HALO: JSON.stringify(HALO),
-      mainJsFile: staticFiles[locale].adminJsFile,
-      mainCssFile: staticFiles.adminCssFile,
-      uskinFile: uskinFile[0],
-      modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
-        __: __('shared.admin'),
-        HALO: HALO
-      }))
-    });
-  } else if (req.session && req.session.user){
-    res.redirect('/project');
-  } else {
-    res.redirect('/');
-  }
+    if (req.session && req.session.user) {
+      let locale = upperCaseLocale(req.i18n.getLocale());
+      let __ = req.i18n.__.bind(req.i18n);
+      let user = req.session.user;
+      let username = user.username;
+      let applicationList = applications.filter(a => {
+        return a !== 'login';
+      }).sort((a, b) => {
+        if (a === 'dashboard') {
+          return -1;
+        } else if (b === 'dashboard') {
+          return 1;
+        } else {
+          return 0;
+        }
+      }).map(_app => {
+        return {[_app]: __(`shared.${_app}.application_name`)};
+      });
+      let _application = {
+        application_list: applicationList,
+        current_application: 'admin'
+      };
+      let HALO = {
+        configs: {
+          lang: locale
+        },
+        user: {
+          projectId: user.projectId,
+          projects: user.projects,
+          userId: user.userId,
+          username: username,
+          isAdmin: true
+        },
+        region_list: regions[locale],
+        current_region: user.regionId ? user.regionId : regions[locale][0].id,
+        // FIXME:
+        websocket: {
+          url: websocketUrl
+        },
+        application: _application,
+        settings: setting
+      };
+      res.render('admin', {
+        HALO: JSON.stringify(HALO),
+        mainJsFile: staticFiles[locale].adminJsFile,
+        mainCssFile: staticFiles.adminCssFile,
+        uskinFile: uskinFile[0],
+        modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
+          __: __('shared.admin'),
+          HALO: HALO
+        }))
+      });
+    } else if (req.session && req.session.user){
+      res.redirect('/project');
+    } else {
+      res.redirect('/');
+    }
+  }, false);
 }
 
 module.exports = (app) => {
