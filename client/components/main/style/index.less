@@ -4,6 +4,8 @@
 @detail-border-color: @color_grey_600;
 @close-icon-hover-color: @color_info;
 @loading-color: @color_font_800;
+@table-active-color: @color_info_600;
+@table-down-color: @color_font_800;
 
 .halo-com-main {
   position: relative;
@@ -64,6 +66,12 @@
       }
       a.captain {
         cursor: pointer;
+      }
+      .label-active {
+        color: @table-active-color;
+      }
+      .label-down {
+        color: @table-down-color;
       }
     }
   }
