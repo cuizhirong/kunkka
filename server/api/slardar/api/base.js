@@ -90,7 +90,7 @@ API.prototype = {
   },
   __cinderQuota: function (objVar, callback) {
     let remote = objVar.endpoint.cinder[objVar.region];
-    driver.cinder.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+    driver.cinder.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'usage': 'True'});
   },
   __volumeDetail: function (objVar, callback) {
     let remote = objVar.endpoint.cinder[objVar.region];

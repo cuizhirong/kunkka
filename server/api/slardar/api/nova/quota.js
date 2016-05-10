@@ -6,7 +6,7 @@ const Base = require('../base.js');
 function Overview(app) {
   this.app = app;
   this.arrQuotaObject = ['novaQuota', 'cinderQuota', 'neutronQuota'];
-  this.arrListObject = ['servers', 'flavors', 'volumes', 'volumeTypes', 'security_groups', 'routers', 'subnets', 'floatingips', 'snapshots', 'keypairs', 'networks', 'ports'];
+  this.arrListObject = ['servers', 'flavors', 'volumeTypes', 'security_groups', 'routers', 'subnets', 'floatingips', 'snapshots', 'keypairs', 'networks', 'ports'];
   this.arrServiceObject = this.arrQuotaObject.concat(this.arrListObject);
   Base.call(this, this.arrServiceObject);
 }
@@ -15,7 +15,7 @@ Overview.prototype = {
   getQuota: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId', 'targetId']);
     async.parallel(
-      this.arrAsync(objVar).slice(0, 3),
+      this.arrAsync(objVar).slice(0, 3).concat(this.__volumeTypes.bind(this, objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
@@ -37,10 +37,15 @@ Overview.prototype = {
             floatingip     : { total: obj.neutronQuota.floatingip },
             security_group : { total: obj.neutronQuota.security_group },
 
-            volumes        : { total: obj.cinderQuota.volumes },
-            gigabytes      : { total: obj.cinderQuota.gigabytes },
-            snapshots      : { total: obj.cinderQuota.snapshots }
+            volumes        : { total: obj.cinderQuota.volumes.limit },
+            gigabytes      : { total: obj.cinderQuota.gigabytes.limit },
+            snapshots      : { total: obj.cinderQuota.snapshots.limit }
           };
+          results[3].volume_types.forEach((type) => {
+            obj.quota['volumes_' + type.name] = { total: obj.cinderQuota[ 'volumes_' + type.name].limit };
+            obj.quota['gigabytes_' + type.name] = { total: obj.cinderQuota[ 'gigabytes_' + type.name].limit };
+            obj.quota['snapshots_' + type.name] = { total: obj.cinderQuota[ 'snapshots_' + type.name].limit };
+          });
           res.json({'quota': obj.quota});
         }
       }
@@ -86,14 +91,14 @@ Overview.prototype = {
             floatingip     : { total: obj.neutronQuota.floatingip, used: Object.keys(obj.floatingips).length },
             security_group : { total: obj.neutronQuota.security_group, used: Object.keys(obj.security_groups).length },
 
-            volumes        : { total: obj.cinderQuota.volumes, used: 0 },
-            gigabytes      : { total: obj.cinderQuota.gigabytes, used: 0 },
-            snapshots      : { total: obj.cinderQuota.snapshots, used: 0 }
+            volumes        : { total: obj.cinderQuota.volumes.limit, used: obj.cinderQuota.volumes.in_use },
+            gigabytes      : { total: obj.cinderQuota.gigabytes.limit, used: obj.cinderQuota.gigabytes.in_use },
+            snapshots      : { total: obj.cinderQuota.snapshots.limit, used: obj.cinderQuota.snapshots.in_use }
           };
           obj.volumeTypes.forEach( a => {
-            obj.overview_usage['volumes_' + a.name] = { total: obj.cinderQuota[ 'volumes_' + a.name], used: 0};
-            obj.overview_usage['gigabytes_' + a.name] = { total: obj.cinderQuota[ 'gigabytes_' + a.name], used: 0};
-            obj.overview_usage['snapshots_' + a.name] = { total: obj.cinderQuota[ 'snapshots_' + a.name], used: 0};
+            obj.overview_usage['volumes_' + a.name] = { total: obj.cinderQuota[ 'volumes_' + a.name].limit, used: obj.cinderQuota[ 'volumes_' + a.name].in_use};
+            obj.overview_usage['gigabytes_' + a.name] = { total: obj.cinderQuota[ 'gigabytes_' + a.name].limit, used: obj.cinderQuota[ 'gigabytes_' + a.name].in_use};
+            obj.overview_usage['snapshots_' + a.name] = { total: obj.cinderQuota[ 'snapshots_' + a.name].limit, used: obj.cinderQuota[ 'snapshots_' + a.name].in_use};
             obj.arrVolumeTypes.push(a.name);
           });
           /* deal with nova. */
@@ -112,23 +117,23 @@ Overview.prototype = {
             }
           });
           /* deal with cinder. */
-          let snapshot = {};
-          obj.snapshots.forEach( s => {
-            obj.overview_usage.snapshots.used += 1;
-            snapshot[s.volume_id] ? snapshot[s.volume_id]++ : snapshot[s.volume_id] = 1;
-          });
-          obj.volumes.forEach( v => {
-            obj.overview_usage.volumes.used += 1;
-            obj.overview_usage.gigabytes.used += v.size;
-            let type = v.volume_type;
-            if (obj.arrVolumeTypes.indexOf(type) !== -1) {
-              obj.overview_usage['volumes_' + type].used += 1;
-              obj.overview_usage['gigabytes_' + type].used += v.size;
-              if (snapshot[v.id]) {
-                obj.overview_usage['snapshots_' + type].used += snapshot[v.id];
-              }
-            }
-          });
+          // let snapshot = {};
+          // obj.snapshots.forEach( s => {
+          //   obj.overview_usage.snapshots.used += 1;
+          //   snapshot[s.volume_id] ? snapshot[s.volume_id]++ : snapshot[s.volume_id] = 1;
+          // });
+          // obj.volumes.forEach( v => {
+          //   obj.overview_usage.volumes.used += 1;
+          //   obj.overview_usage.gigabytes.used += v.size;
+          //   let type = v.volume_type;
+          //   if (obj.arrVolumeTypes.indexOf(type) !== -1) {
+          //     obj.overview_usage['volumes_' + type].used += 1;
+          //     obj.overview_usage['gigabytes_' + type].used += v.size;
+          //     if (snapshot[v.id]) {
+          //       obj.overview_usage['snapshots_' + type].used += snapshot[v.id];
+          //     }
+          //   }
+          // });
           /* sort by first letter. */
 
           res.json({
@@ -146,32 +151,43 @@ Overview.prototype = {
     let neutronItems = ['port', 'subnet', 'router', 'network', 'floatingip', 'security_group'];
     let body = req.body;
     let tasks = [];
-    let setBody = (s, k) => {
-      if (!objVar[s + 'Body']) {
-        objVar[s + 'Body'] = {};
-        tasks.push(this['__' + s + 'QuotaUpdate'].bind(this, objVar));
-      }
-      objVar[s + 'Body'][k] = body[k];
-    };
-    Object.keys(body).forEach( k => {
-      if (novaItems.indexOf(k) !== -1) {
-        setBody('nova', k);
-      } else if (cinderItems.indexOf(k) !== -1) {
-        setBody('cinder', k);
-      } else if (neutronItems.indexOf(k) !== -1) {
-        setBody('neutron', k);
+    this.__volumeTypes(objVar, (err, types) => {
+      if (err) {
+        next(err);
+      } else {
+        types.volume_types.forEach((type) => {
+          cinderItems.push('volumes_' + type.name);
+          cinderItems.push('gigabytes_' + type.name);
+          cinderItems.push('snapshots_' + type.name);
+        });
+        let setBody = (s, k) => {
+          if (!objVar[s + 'Body']) {
+            objVar[s + 'Body'] = {};
+            tasks.push(this['__' + s + 'QuotaUpdate'].bind(this, objVar));
+          }
+          objVar[s + 'Body'][k] = body[k];
+        };
+        Object.keys(body).forEach( k => {
+          if (novaItems.indexOf(k) !== -1) {
+            setBody('nova', k);
+          } else if (cinderItems.indexOf(k) !== -1) {
+            setBody('cinder', k);
+          } else if (neutronItems.indexOf(k) !== -1) {
+            setBody('neutron', k);
+          }
+        });
+        async.parallel(
+          tasks,
+          (_err, results) => {
+            if (err) {
+              this.handleError(_err, req, res, next);
+            } else {
+              res.status(204).send();
+            }
+          }
+        );
       }
     });
-    async.parallel(
-      tasks,
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
-          res.status(204).send();
-        }
-      }
-    );
   },
   initRoutes: function () {
     this.app.get('/api/v1/:projectId/overview', this.getOverview.bind(this));
