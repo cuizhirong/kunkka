@@ -13,8 +13,6 @@ class Settings extends React.Component {
     switch (key) {
       case 'setting':
         break;
-      case 'help':
-        break;
       case 'en':
         window.location = '/?lang=en';
         break;
@@ -47,10 +45,6 @@ class Settings extends React.Component {
       title: __.setting,
       key: 'settings',
       icon: 'setting'
-    }, {
-      title: __.help,
-      key: 'help',
-      icon: 'help'
     }, {
       key: 'lang',
       icon: 'global'

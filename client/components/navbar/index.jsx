@@ -38,7 +38,7 @@ class NavBar extends React.Component {
     });
 
     var logo = {
-      backgroundImage: 'url(' + HALO.settings.logo_url + ')'
+      backgroundImage: 'url(' + (HALO.settings.logo_url || '/static/assets/nav_logo.png') + ')'
     };
 
     return (
