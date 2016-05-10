@@ -291,15 +291,15 @@ driver.connect = function connect(option, database, callback) {
 
 /* handle with data. */
 driver.getAllSettings = function (cb, refresh) {
-  return handleData(refresh, findAll, cb);
+  return handleData(true, findAll, cb);
 };
 
 driver.getSettingsByApp = function (name, cb, refresh) {
-  return handleData(refresh, findAllByApp.bind(undefined, name), cb);
+  return handleData(true, findAllByApp.bind(undefined, name), cb);
 };
 
 driver.getSettingById = function (id, cb, refresh) {
-  return handleData(refresh, findOneById.bind(undefined, id), cb);
+  return handleData(true, findOneById.bind(undefined, id), cb);
 };
 
 driver.createSetting = function (set, cb) {
