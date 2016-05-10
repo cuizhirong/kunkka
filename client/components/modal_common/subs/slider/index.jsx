@@ -5,23 +5,18 @@ class Slide extends React.Component {
   constructor(props) {
     super(props);
 
+    var initValue = props.value ? props.value : props.min;
     this.state = {
-      value: props.value ? props.value : props.min,
-      hide: !!props.hide,
+      value: initValue,
+      inputValue: initValue,
+      min: props.min,
       max: props.max,
-      min: props.min
+      hide: !!props.hide,
+      error: false
     };
 
     this.onInputChange = this.onInputChange.bind(this);
     this.onSliderChange = this.onSliderChange.bind(this);
-    this.onBlur = this.onBlur.bind(this);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.value === nextState.value && this.state.hide === nextState.hide && this.state.max === nextState.max && this.state.min === nextState.min) {
-      return false;
-    }
-    return true;
   }
 
   componentDidUpdate() {
@@ -29,44 +24,41 @@ class Slide extends React.Component {
   }
 
   onInputChange(e) {
-    var props = this.props,
-      state = this.state;
-    var value = e.target.value;
-    var v = parseFloat(value);
-    if (!isNaN(v)) {
-      if (props.initValue && props.increase && props.initValue > state.min && v < props.initValue) {
-        v = props.initValue;
-      } else if (v < state.min) {
-        v = state.min;
-      }
-      if (v > state.max) {
-        v = state.max;
-      }
+    var state = this.state,
+      min = state.min,
+      max = state.max;
+
+    var val = e.target.value,
+      floatVal = parseFloat(val);
+
+    if (floatVal >= min && floatVal <= max) {
       this.setState({
-        value: v
+        value: floatVal,
+        inputValue: floatVal,
+        error: false
+      });
+    } else {
+      this.setState({
+        inputValue: val,
+        error: true
       });
     }
   }
 
   onSliderChange(e, value) {
     this.setState({
-      value: value
+      value: value,
+      inputValue: value,
+      error: false
     });
-  }
-
-  onBlur(e) {
-    var value = e.target.value;
-    if (value.length < 1) {
-      value = this.state.min;
-      this.setState({
-        value: value
-      });
-    }
   }
 
   render() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      min = state.min,
+      max = state.max;
+
     var className = 'modal-row slider-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
@@ -84,11 +76,11 @@ class Slide extends React.Component {
         </div>
         <div>
           <div className="slidearea">
-            <Slider min={state.min} max={state.max} step={props.step} value={state.value} onChange={this.onSliderChange} />
-            <div className="range">{state.min + '-' + state.max + props.unit}</div>
+            <Slider min={min} max={max} step={props.step} value={state.value} onChange={this.onSliderChange} />
+            <div className="range">{min + '-' + max + props.unit}</div>
           </div>
           <div className="inputarea">
-            <input type="text" value={state.value} onBlur={this.onBlur} onChange={this.onInputChange} />
+            <input type="text" className={state.error ? 'error' : ''} value={state.inputValue} onChange={this.onInputChange} />
             <label className="unit">{props.unit}</label>
           </div>
         </div>
