@@ -102,7 +102,7 @@ function pop(obj, parent, callback) {
             var max = capacity.total - capacity.used;
             var value = parseFloat(refs.capacity_size.state.inputValue);
 
-            if (value < min) {
+            if (isNaN(value) || value < min) {
               value = min;
             } else if (value > max) {
               value = max;
