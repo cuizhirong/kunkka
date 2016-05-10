@@ -56,14 +56,17 @@ function pop(obj, parent, callback) {
           }
         });
         var capacity = typeCapacity[HALO.volume_types[0]];
-        var min = obj ? obj.size : 1;
-
-        if (capacity < 0) {
-          capacity = 1000;
+        if (capacity.total < 0) {
+          capacity.total = 1000;
         }
+
+        var min = 1;
+        var max = capacity.total - capacity.used;
+
         refs.capacity_size.setState({
           min: min,
-          max: capacity.total - capacity.used
+          max: max,
+          hide: false
         });
         refs.btn.setState({
           disabled: false
@@ -90,10 +93,31 @@ function pop(obj, parent, callback) {
           var type = refs.type.state.value;
           var capacity = typeCapacity[type];
           if (capacity) {
-            var min = obj ? obj.size : 1;
+            var min = 1;
+
+            if (capacity.total < 0) {
+              capacity.total = 1000;
+            }
+
+            var max = capacity.total - capacity.used;
+            var value = parseFloat(refs.capacity_size.state.inputValue);
+
+            if (value < min) {
+              value = min;
+            } else if (value > max) {
+              value = max;
+            }
+
             refs.capacity_size.setState({
               min: min,
-              max: capacity.total - capacity.used
+              max: max,
+              value: value,
+              inputValue: value,
+              hide: false,
+              error: false
+            });
+            refs.btn.setState({
+              disabled: false
             });
           }
           break;

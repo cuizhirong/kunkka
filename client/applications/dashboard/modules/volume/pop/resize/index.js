@@ -4,7 +4,10 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
-  config.fields[0].min = obj.size;
+  var slider = config.fields[0];
+  slider.min = obj.size;
+  slider.max = obj.size + 1;
+  slider.value = obj.size;
 
   var props = {
     __: __,
