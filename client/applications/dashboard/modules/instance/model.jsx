@@ -758,11 +758,17 @@ class Model extends React.Component {
         break;
       case 'create_volume':
         request.getVolumeList().then((res) => {
+          if (!HALO.volume_types) {
+            HALO.volume_types = [];
+            res[1].volume_types.forEach((type) => {
+              HALO.volume_types.push(type.name);
+            });
+          }
           attachVolume({
             rawItem: data.rawItem,
             volumes: res[0].volume,
-            types: res[1].volume_types
-          });
+            types: HALO.volume_types
+          }, null, function() {});
         });
         break;
       case 'delete_volume':
