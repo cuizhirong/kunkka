@@ -5,8 +5,6 @@
     "gigabyte": " Gigabyte",
     "quota": " Quota",
     "ram": "RAM",
-    "sata": "Performance ",
-    "ssd": "Capacity ",
     "unit_gb": "(GB)",
     "cpu": "CPU"
   },
@@ -16,8 +14,6 @@
     "information": "信息",
     "gigabyte": "容量",
     "ram": "内存",
-    "sata": "性能型",
-    "ssd": "容量型",
     "unit_gb": "(GB)",
     "cpu": "CPU"
   }

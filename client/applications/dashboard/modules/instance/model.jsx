@@ -9,7 +9,7 @@ var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('../../components/console_output/index');
-var VncConsole = require('client/components/vnc_console/index');
+var VncConsole = require('../../components/vnc_console/index');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
@@ -501,24 +501,29 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
+          var asyncTabKey = tabKey;
 
           var updateDetail = function(newContents) {
             detail.setState({
-              contents: newContents
+              contents: newContents,
+              loading: false
             });
           };
 
+          //open detail without delaying
+          contents[asyncTabKey] = <VncConsole />;
+          updateDetail(contents);
+
           request.getVncConsole(rows[0]).then((res) => {
-            contents[tabKey] = (
+            contents[asyncTabKey] = (
               <VncConsole
                 src={res.console.url}
-                data-id={rows[0].id} />
+                data-id={rows[0].id}
+                loading={false} />
             );
-
             updateDetail(contents);
           }, () => {
-            contents[tabKey] = (<div />);
-
+            contents[asyncTabKey] = (<div />);
             updateDetail(contents);
           });
         }

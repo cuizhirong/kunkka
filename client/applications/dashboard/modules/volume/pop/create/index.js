@@ -57,6 +57,10 @@ function pop(obj, parent, callback) {
         });
         var capacity = typeCapacity[HALO.volume_types[0]];
         var min = obj ? obj.size : 1;
+
+        if (capacity < 0) {
+          capacity = 1000;
+        }
         refs.capacity_size.setState({
           min: min,
           max: capacity.total - capacity.used
@@ -92,6 +96,11 @@ function pop(obj, parent, callback) {
               max: capacity.total - capacity.used
             });
           }
+          break;
+        case 'capacity_size':
+          refs.btn.setState({
+            disabled: state.error
+          });
           break;
         default:
           break;

@@ -105,7 +105,7 @@ class Model extends React.Component {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {item.volume_type === 'sata' ? __.performance : __.capacity}
+                {item.volume_type === 'sata' ? __.sata : __.ssd}
               </span> : '';
           };
           break;
@@ -376,7 +376,7 @@ class Model extends React.Component {
       content: item.size + ' GB'
     }, {
       title: __.type,
-      content: item.volume_type === 'sata' ? __.performance : __.capacity
+      content: item.volume_type === 'sata' ? __.sata : __.ssd
     }, {
       title: __.attach_to + __.instance,
       content: item.attachments.length > 0 ? getAttachments(item) : '-'

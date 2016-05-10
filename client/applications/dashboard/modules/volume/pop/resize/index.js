@@ -36,22 +36,10 @@ function pop(obj, parent, callback) {
     },
     onAction: function(field, state, refs) {
       switch (field) {
-        case 'performance_size':
-          if (state.value < 100) {
-            refs.iops.setState({
-              value: config.fields[3].min
-            });
-            refs.throughput.setState({
-              value: config.fields[4].min
-            });
-          } else {
-            refs.iops.setState({
-              value: config.fields[3].min + Math.floor((state.value - 100) / 10) * 50
-            });
-            refs.throughput.setState({
-              value: config.fields[4].min + Math.floor((state.value - 100) / 10)
-            });
-          }
+        case 'capacity_size':
+          refs.btn.setState({
+            disabled: state.error
+          });
           break;
         default:
           break;
