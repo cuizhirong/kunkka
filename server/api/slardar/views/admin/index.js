@@ -46,9 +46,12 @@ let applications;
 function renderTemplate (req, res, next) {
   tusk.getSettingsByApp('admin', function (err, adminSettings) {
     let setting = {};
-    adminSettings.forEach( s => {
-      setting[s.name] = s.value;
-    });
+    if (!err) {
+      adminSettings.forEach( s => {
+        setting[s.name] = s.value;
+      });
+    }
+    let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     if (req.session && req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
@@ -96,6 +99,7 @@ function renderTemplate (req, res, next) {
         mainJsFile: staticFiles[locale].adminJsFile,
         mainCssFile: staticFiles.adminCssFile,
         uskinFile: uskinFile[0],
+        favicon: favicon,
         modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
           __: __('shared.admin'),
           HALO: HALO

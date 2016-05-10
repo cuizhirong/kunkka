@@ -50,9 +50,12 @@ function renderTemplate (req, res, next) {
 
   tusk.getSettingsByApp('login', function (err, loginSettings) {
     let setting = {};
-    loginSettings.forEach( s => {
-      setting[s.name] = s.value;
-    });
+    if (!err) {
+      loginSettings.forEach( s => {
+        setting[s.name] = s.value;
+      });
+    }
+    let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let logo = setting.logo ? setting.logo : '/static/assets/logo@2x.png';
     let company = setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
     if (!req.session || !req.session.user) {
@@ -69,6 +72,7 @@ function renderTemplate (req, res, next) {
         uskinFile: uskinFile[0],
         settings: setting,
         logo: logo,
+        favicon: favicon,
         company: company,
         modelTmpl: tmplString[req.i18n.locale]
       });
