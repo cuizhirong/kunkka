@@ -1,13 +1,15 @@
-#!/usr/bin/env node
+/* init table of row name and default value. */
 
 'use strict';
+
+console.log('---------------------------');
 
 const path = require('path');
 const async = require('async');
 const mysql = require('mysql');
+const sessionEngine = require('config')('sessionEngine');
 
 const configMysql = require(path.join(__dirname, '../../../../configs/server.json')).mysql;
-// const tusk = require('../driver');
 
 const databaseName = configMysql.database;
 const tableName = configMysql.table;
@@ -66,6 +68,11 @@ const initSets = [
     name: 'favicon',
     value: '/static/assets/favicon.ico',
     type: 'string'
+  }, {
+    app: 'admin',
+    name: 'is_show_trash',
+    value: 'false',
+    type: 'boolean'
   }
 ];
 
@@ -102,7 +109,7 @@ sql.switchDatabase = function switchDatabase(con, database, next) {
     if (err) {
       next(err, con);
     } else {
-      console.log(`switch ${database} successfully.`);
+      console.log(`Connection as mysql switch to ${database} successfully.`);
       next(null, con);
     }
   });
@@ -114,7 +121,12 @@ sql.connect = function connect(option, database, callback) {
   /* connection flow. */
   async.waterfall([
     (cb) => {
-      sql.connectMysql(connection, cb);
+      sql.connectMysql(connection, function (err) {
+        if (!err) {
+          console.log('Connection as mysql connected at threadId: ' + connection.threadId);
+        }
+        cb(err, connection);
+      });
     },
     (con, cb) => {
       sql.createDatabse(con, database, cb);
@@ -176,15 +188,68 @@ sql.createTable = function createTable(con, table, sets, next) {
         next(err, con);
       }
     } else {
-      console.log(`Create table ${table} successfully.`);
+      console.log(`Create as table ${table} successfully.`);
       next(null, con);
     }
   });
 };
 
+function sortCache(cache) {
+  let objCache = {};
+  for (let i = 0, l = cache.length; i < l; i++) {
+    if ( !objCache[cache[i].app] ) {
+      objCache[cache[i].app] = [];
+    }
+    objCache[cache[i].app].push(cache[i]);
+  }
+  return objCache;
+}
+
 sql.createOne = function createOne(set, next) {
   let sentence = `INSERT INTO ${sql.table} SET ?`;
   sql.connection.query(sentence, set, next);
+};
+
+function updateMemcache(data, next) {
+  let count = 0;
+  let num = 0;
+  let Memcached = require('memjs');
+  sessionEngine.remotes.forEach( remote => {
+    num++;
+    let MemcachedClient = Memcached.Client.create(remote, {
+      failover: true,
+    });
+    MemcachedClient.set('settings', data, function(err) {
+      if (!err) {
+        console.log(`Cache updated at Memcache@${remote} successfully.`);
+      } else {
+        console.log(err.stack);
+      }
+      /* cut off connection to memcache. */
+      MemcachedClient.close();
+      count++;
+      if (count === num) {
+        next();
+      }
+    });
+  });
+}
+
+sql.updateCache = function findAll(next) {
+  let sentence = `SELECT * FROM ${tableName}`;
+  sql.connection.query(sentence, (err, result) => {
+    if (err) {
+      next(err);
+    } else {
+      if (sessionEngine) {
+        if (sessionEngine.type === 'Memcached') {
+          updateMemcache(JSON.stringify(sortCache(result)), next);
+        } else {
+
+        }
+      }
+    }
+  });
 };
 
 function initTable(sets, cb) {
@@ -192,27 +257,26 @@ function initTable(sets, cb) {
     sql.createOne(e, function(err, result) {
       if (err) {
         if (err.errno === 1062) {
-          console.log(`\{app:"${e.app}",name:"${e.name}"\} already exist.`);
+          console.log(`Row as \{app:"${e.app}",name:"${e.name}"\} already exist.  (not offer to update row, since the script intension)`);
         } else {
           console.log(err.message);
         }
       } else {
-        console.log(`insert ${JSON.stringify(e)} successfully.`);
+        console.log(`Row inserted ${JSON.stringify(e)} successfully.`);
       }
       count++;
       if (count === num) {
-        sql.connection.end(function (error) {
-          sql.connection.destroy();
-          /* update cache. */
-          // if (tusk.connection) {
-          //   tusk.getAllSettings(function(err) {
-          //     if(err) {
-          //       console.log(err);
-          //     }
-          //   }, true);
-          // } else {
-          //   console.log('tusk(halo) is not run, ');
-          // }
+        /* update cache. */
+        sql.updateCache(function() {
+          /* cut off connection to mysql. */
+          sql.connection.end(function (error) {
+            if (error){
+              console.log(error);
+              sql.connection.destroy();
+            } else {
+              console.log('All done...\nConnection as mysql cut off at threadId!', sql.connection.threadId, '\n---------------------------');
+            }
+          });
         });
       }
     });
@@ -226,7 +290,7 @@ if (num > 0) {
       if (err) {
         console.log(err);
       } else {
-        console.log('sql is ready.');
+        console.log(`Connection as mysql in ${databaseName} is ready.`);
         initTable(initSets, function () {});
       }
     });
