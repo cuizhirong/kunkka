@@ -117,5 +117,5 @@ module.exports = (app) => {
   let views = app.get('views');
   views.push(__dirname);
   applications = app.get('applications');
-  app.get(/admin(|\/(.*))/, renderTemplate);
+  app.get(/(^\/admin$)|(^\/admin\/(.*))/, renderTemplate);
 };
