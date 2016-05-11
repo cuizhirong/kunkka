@@ -211,13 +211,13 @@ sql.createOne = function createOne(set, next) {
 };
 
 function updateMemcache(data, next) {
-  let count = 0;
-  let num = 0;
+  let countClient = 0;
+  let numClient = 0;
   let Memcached = require('memjs');
   sessionEngine.remotes.forEach( remote => {
-    num++;
+    numClient++;
     let MemcachedClient = Memcached.Client.create(remote, {
-      failover: true,
+      failover: true
     });
     MemcachedClient.set('settings', data, function(err) {
       if (!err) {
@@ -227,8 +227,8 @@ function updateMemcache(data, next) {
       }
       /* cut off connection to memcache. */
       MemcachedClient.close();
-      count++;
-      if (count === num) {
+      countClient++;
+      if (countClient === numClient) {
         next();
       }
     });
@@ -245,7 +245,7 @@ sql.updateCache = function findAll(next) {
         if (sessionEngine.type === 'Memcached') {
           updateMemcache(JSON.stringify(sortCache(result)), next);
         } else {
-
+          console.log('redis is not supported yet.');
         }
       }
     }

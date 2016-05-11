@@ -29,6 +29,19 @@ function sortCache(cache) {
   return objCache;
 }
 
+function transformBoolean(result) {
+  if (result instanceof Array) {
+    result.forEach( s => {
+      if (s.type === 'boolean') {
+        s.value = (s.value === 'true' || s.value === '1') ? true : false;
+      }
+    });
+  } else if (result && result.value && result.type === 'boolean') {
+    result.value = (result.value === 'true' || result.value === '1') ? true : false;
+  }
+  return result;
+}
+
 function toHandle(dataHandle, callback) {
   if (driver.connection._losted) {
     driver.reconnect(function (err, con) {
@@ -66,6 +79,7 @@ function findAll(next, cache) {
       if (err) {
         next(err);
       } else {
+        result = transformBoolean(result);
         if (driver.cacheClient) {
           driver.cacheClient.set('settings', JSON.stringify(sortCache(result)));
         }
@@ -88,6 +102,7 @@ function findAllByApp(name, next, cache) {
       if (err) {
         next(err);
       } else {
+        result = transformBoolean(result);
         next(null, result);
       }
     });
@@ -99,7 +114,7 @@ function findOneById(id, next, cache) {
     let back = '';
     Object.keys(cache).some( s => {
       cache[s].some( t => {
-        return (t.id === id) && (back = t);
+        return (t.id === Number(id)) && (back = t);
       });
       return back;
     });
@@ -110,6 +125,7 @@ function findOneById(id, next, cache) {
       if (err) {
         next(err);
       } else {
+        result = transformBoolean(result);
         next(null, result[0]);
       }
     });
