@@ -410,7 +410,7 @@ class Model extends React.Component {
           }
           break;
         case 'delete':
-          btns[key].disabled = (len > 0) ? false : true;
+          btns[key].disabled = (len > 0 && rows[0].status === 'available') ? false : true;
           break;
         default:
           break;
