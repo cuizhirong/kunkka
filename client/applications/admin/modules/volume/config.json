@@ -7,7 +7,7 @@
   "btns": [{
     "value": ["dissociate", "related"],
     "key": "dissociate",
-    "icon": "delete",
+    "icon": "dissociate",
     "disabled": true
   }, {
     "value": ["delete"],

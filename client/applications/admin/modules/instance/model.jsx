@@ -26,6 +26,7 @@ class Model extends React.Component {
 
     moment.locale(HALO.configs.lang);
 
+    this.updateConfig();
     this.state = {
       config: config
     };
@@ -40,6 +41,12 @@ class Model extends React.Component {
       flavorTypes: [],
       hostTypes: []
     };
+  }
+
+  updateConfig() {
+    if (!HALO.settings.is_show_trash) {
+      config.tabs.splice(1, 1);
+    }
   }
 
   componentWillMount() {
@@ -59,7 +66,7 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
+    } else if (this.props.style.display !== 'none' && nextProps.style.display === 'none') {
       this.clearState();
     }
   }
@@ -176,7 +183,7 @@ class Model extends React.Component {
     this.stores.hostTypes = res.hostType.hypervisors;
   }
 
-//initialize table data
+  //initialize table data
   onInitialize(params) {
     if (params[2]) {
       this.getServerByIDInitialize(params[2]);
@@ -185,7 +192,7 @@ class Model extends React.Component {
     }
   }
 
-//request: get server by ID
+  //request: get server by ID
   getServerByID(serverID) {
     this.clearState();
 
@@ -201,7 +208,7 @@ class Model extends React.Component {
     });
   }
 
-//request: get server by ID and filter data
+  //request: get server by ID and filter data
   getServerByIDInitialize(serverID) {
     this.clearState();
 
@@ -222,7 +229,7 @@ class Model extends React.Component {
     });
   }
 
-//request: get server list
+  //request: get server list
   getInitialListData() {
     this.clearState();
 
@@ -233,7 +240,7 @@ class Model extends React.Component {
     });
   }
 
-//request: get server list and filter data
+  //request: get server list and filter data
   getListInitialize() {
     this.clearState();
 
@@ -251,7 +258,7 @@ class Model extends React.Component {
     });
   }
 
-//request: get next list according to given url
+  //request: get next list according to given url
   getNextListData(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
@@ -263,7 +270,7 @@ class Model extends React.Component {
     });
   }
 
-//request: get filtered list
+  //request: get filtered list
   getFilterList(filterData) {
     this.clearState();
 
@@ -280,7 +287,7 @@ class Model extends React.Component {
     });
   }
 
-//request: filter request
+  //request: filter request
   onFilterSearch(actionType, refs, data) {
     if (actionType === 'search') {
       this.loadingTable();
@@ -290,7 +297,7 @@ class Model extends React.Component {
 
       if (serverID) {
         this.getServerByID(serverID.id);
-      } else if (allTenant){
+      } else if (allTenant) {
         this.getFilterList(allTenant);
       } else {
         this.refresh({
@@ -301,7 +308,7 @@ class Model extends React.Component {
     }
   }
 
-//rerender: update table data
+  //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -357,7 +364,7 @@ class Model extends React.Component {
     return table;
   }
 
-//change table data structure: to record url history
+  //change table data structure: to record url history
   processTableData(table, res) {
     if (res.server) {
       table.data = [res.server];
@@ -371,7 +378,7 @@ class Model extends React.Component {
     return table;
   }
 
-//refresh: according to the given data rules
+  //refresh: according to the given data rules
   refresh(data, params) {
     if (!data) {
       data = {};
@@ -462,14 +469,14 @@ class Model extends React.Component {
         var url,
           history = this.stores.urls;
 
-        if (data.direction === 'prev'){
+        if (data.direction === 'prev') {
           history.pop();
           if (history.length > 0) {
             url = history.pop();
           }
         } else if (data.direction === 'next') {
           url = data.url;
-        } else {//default
+        } else { //default
           url = this.stores.urls[0];
           this.clearState();
         }
@@ -483,7 +490,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    var {
+      rows
+    } = data;
 
     var refresh = () => {
       this.refresh({
@@ -492,7 +501,7 @@ class Model extends React.Component {
       });
     };
 
-    switch(key) {
+    switch (key) {
       case 'migrate':
         migratePop({
           row: rows[0],
@@ -561,7 +570,7 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     var single = rows.length === 1 ? rows[0] : null;
 
-    for(let key in btns) {
+    for (let key in btns) {
       switch (key) {
         case 'migrate':
           btns[key].disabled = (single && single.status.toLowerCase() === 'active') ? false : true;
@@ -588,11 +597,13 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
+    var {
+      rows
+    } = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
 
-    switch(tabKey) {
+    switch (tabKey) {
       case 'description':
         if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
@@ -648,14 +659,12 @@ class Model extends React.Component {
       content: item['OS-EXT-SRV-ATTR:host'] ? item['OS-EXT-SRV-ATTR:host'] : '-'
     }, {
       title: __.flavor,
-      content:
-        <a data-type="router" href={'/admin/flavor/' + item.flavor.id}>
+      content: <a data-type="router" href={'/admin/flavor/' + item.flavor.id}>
           {flavor ? flavor.name : '(' + item.flavor.id.substr(0, 8) + ')'}
         </a>
     }, {
       title: __.image,
-      content:
-        <a data-type="router" href={'/admin/image/' + item.image.id}>
+      content: <a data-type="router" href={'/admin/image/' + item.image.id}>
           {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
         </a>
     }, {
@@ -683,7 +692,7 @@ class Model extends React.Component {
   }
 
   onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
+    switch (tabKey) {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
@@ -693,9 +702,8 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    switch(actionType) {
-      default:
-        break;
+    switch (actionType) {
+      default: break;
     }
   }
 
