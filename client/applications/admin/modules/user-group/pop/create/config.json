@@ -1,5 +1,5 @@
 {
-  "title": ["create", "user-group"],
+  "title": [],
   "fields": [{
     "type": "input",
     "field": "name",

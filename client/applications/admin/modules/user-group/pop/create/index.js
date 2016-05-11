@@ -5,12 +5,14 @@ var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   if (obj) {
+    config.title = ['modify', 'user-group'];
     config.fields[0].value = obj.name;
     config.fields[1].value = obj.description;
     config.btn.value = 'modify';
     config.btn.type = 'update';
     config.btn.disabled = false;
   } else {
+    config.title = ['create', 'user-group'];
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.btn.value = 'create';

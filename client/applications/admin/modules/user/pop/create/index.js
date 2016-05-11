@@ -5,6 +5,7 @@ var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   if (obj) {
+    config.title = ['modify', 'user'];
     config.fields[0].value = obj.name;
     config.fields[1].value = obj.email;
     config.fields[2].value = obj.description;
@@ -12,6 +13,7 @@ function pop(obj, parent, callback) {
     config.btn.type = 'update';
     config.btn.disabled = false;
   } else {
+    config.title = ['create', 'user'];
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.fields[2].value = '';

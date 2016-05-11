@@ -1,5 +1,5 @@
 {
-  "title": ["create", "project"],
+  "title": [],
   "fields": [{
     "type": "input",
     "field": "name",
