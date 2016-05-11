@@ -29,7 +29,7 @@ function sortCache(cache) {
   return objCache;
 }
 
-function transformBoolean(result) {
+function transformSqlBoolean(result) {
   if (result instanceof Array) {
     result.forEach( s => {
       if (s.type === 'boolean') {
@@ -40,6 +40,17 @@ function transformBoolean(result) {
     result.value = (result.value === 'true' || result.value === '1') ? true : false;
   }
   return result;
+}
+
+function transformCacheBoolean(cache) {
+  Object.keys(cache).forEach( c => {
+    cache[c].forEach( s => {
+      if (s.type === 'boolean') {
+        s.value = (s.value === 'true' || s.value === '1') ? true : false;
+      }
+    });
+  });
+  return cache;
 }
 
 function toHandle(dataHandle, callback) {
@@ -72,6 +83,7 @@ function handleData(refresh, dataHandle, callback) {
 
 function findAll(next, cache) {
   if (cache) {
+    cache = transformCacheBoolean(cache);
     next(null, cache);
   } else {
     let sql = `SELECT * FROM ${driver.table}`;
@@ -79,7 +91,7 @@ function findAll(next, cache) {
       if (err) {
         next(err);
       } else {
-        result = transformBoolean(result);
+        result = transformSqlBoolean(result);
         if (driver.cacheClient) {
           driver.cacheClient.set('settings', JSON.stringify(sortCache(result)));
         }
@@ -91,6 +103,7 @@ function findAll(next, cache) {
 
 function findAllByApp(name, next, cache) {
   if (cache) {
+    cache = transformCacheBoolean(cache);
     if (cache[name]) {
       next(null, cache[name]);
     } else {
@@ -102,7 +115,7 @@ function findAllByApp(name, next, cache) {
       if (err) {
         next(err);
       } else {
-        result = transformBoolean(result);
+        result = transformSqlBoolean(result);
         next(null, result);
       }
     });
@@ -111,6 +124,7 @@ function findAllByApp(name, next, cache) {
 
 function findOneById(id, next, cache) {
   if (cache) {
+    cache = transformCacheBoolean(cache);
     let back = '';
     Object.keys(cache).some( s => {
       cache[s].some( t => {
@@ -125,7 +139,7 @@ function findOneById(id, next, cache) {
       if (err) {
         next(err);
       } else {
-        result = transformBoolean(result);
+        result = transformSqlBoolean(result);
         next(null, result[0]);
       }
     });
