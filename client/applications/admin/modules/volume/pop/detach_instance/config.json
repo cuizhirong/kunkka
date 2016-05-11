@@ -8,6 +8,9 @@
   }, {
     "type": "select_group",
     "field": "instance",
+    "empty_text": {
+      "info": "server_infor_reqesting"
+    },
     "data": [],
     "is_warning": true,
     "single": true

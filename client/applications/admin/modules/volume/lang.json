@@ -8,6 +8,7 @@
     "performance_type": "Performance",
     "read_only": "Read-Only",
     "read_write": "Read-Write",
+    "server_infor_reqesting": "Instance info is requesting, please wait.",
     "shared": "Shared",
     "size": "Size"
   },
@@ -20,6 +21,7 @@
     "performance_type": "性能型",
     "read_only": "只读盘",
     "read_write": "读写盘",
+    "server_infor_reqesting": "云主机信息正在获取，请稍后。",
     "shared": "共享盘",
     "size": "容量"
   }
