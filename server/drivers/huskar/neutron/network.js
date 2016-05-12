@@ -20,4 +20,26 @@ driver.showNetworkDetails = function (networkId, token, remote, callback, query)
   );
 };
 
+driver.listExternalNetworks = function (token, remote, callback, query) {
+  return driver.getMethod(
+    remote + '/v2.0/networks',
+    token,
+    callback,
+    {
+      'router:external': true
+    }
+  );
+};
+
+driver.listSharedNetworks = function (token, remote, callback, query) {
+  return driver.getMethod(
+    remote + '/v2.0/networks',
+    token,
+    callback,
+    {
+      'shared': true
+    }
+  );
+};
+
 module.exports = driver;
