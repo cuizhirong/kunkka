@@ -388,7 +388,12 @@ class Model extends React.Component {
         break;
       case 'dissociate':
         request.getRelatedSourcesById(rows[0]).then(() => {
-          dissociateModal(rows[0]);
+          dissociateModal(rows[0], null, () => {
+            this.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
+          });
         });
         break;
       case 'refresh':

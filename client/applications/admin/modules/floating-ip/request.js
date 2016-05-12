@@ -53,9 +53,9 @@ module.exports = {
       return res;
     });
   },
-  dissociateFloatingIp: function(serverId, data) {
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action',
+  dissociateFloatingIp: function(fipID, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/floatingips/' + fipID,
       data: data
     });
   },
