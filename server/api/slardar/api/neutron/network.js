@@ -43,21 +43,39 @@ Network.prototype = {
   },
   getNetworkList: function (req, res, next) {
     let objVar = this.getVars(req);
+    let requestList;
+    if (objVar.query.tenant_id) {
+      requestList = [this.__networks.bind(this, objVar), this.__externalNetworks.bind(this, objVar), this.__sharedNetworks.bind(this, objVar)].concat(this.arrAsync(objVar));
+    } else {
+      requestList = [this.__networks.bind(this, objVar)].concat(this.arrAsync(objVar));
+    }
     async.parallel(
-      [this.__networks.bind(this, objVar)].concat(this.arrAsync(objVar)),
+      requestList,
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
           let obj = {};
-          ['networks'].concat(this.arrServiceObject).forEach( (e, index) => {
-            obj[e] = results[index][e];
-          });
-          this.orderByCreatedTime(obj.networks);
-          obj.networks.forEach( network => {
+          if (objVar.query.tenant_id) {
+            ['networks', 'externalNetworks', 'sharedNetworks'].concat(this.arrServiceObject).forEach( (e, index) => {
+              if (e === 'externalNetworks' || e === 'sharedNetworks') {
+                obj[e] = results[index].networks;
+              } else {
+                obj[e] = results[index][e];
+              }
+            });
+            obj.realNetworks = obj.networks.concat(obj.externalNetworks, obj.sharedNetworks);
+          } else {
+            ['networks'].concat(this.arrServiceObject).forEach( (e, index) => {
+              obj[e] = results[index][e];
+            });
+            obj.realNetworks = obj.networks;
+          }
+          this.orderByCreatedTime(obj.realNetworks);
+          obj.realNetworks.forEach( network => {
             this.makeNetwork(network, obj);
           });
-          res.json({networks: obj.networks});
+          res.json({networks: obj.realNetworks});
         }
       }
     );

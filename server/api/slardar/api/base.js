@@ -122,6 +122,14 @@ API.prototype = {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.network.listNetworks(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
+  __externalNetworks: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.network.listExternalNetworks(objVar.token, remote, asyncHandler.bind(undefined, callback));
+  },
+  __sharedNetworks: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.network.listSharedNetworks(objVar.token, remote, asyncHandler.bind(undefined, callback));
+  },
   __ports: function (objVar, callback) {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.port.listPorts(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
