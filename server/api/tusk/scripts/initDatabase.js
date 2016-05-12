@@ -15,6 +15,7 @@ const databaseName = configMysql.database;
 const tableName = configMysql.table;
 const sqlOption = {
   host : configMysql.host,
+  port : configMysql.port,
   user : configMysql.user,
   password : configMysql.password
 };
@@ -26,6 +27,7 @@ const tableSet = {
     name: 'char(100) not null',
     value: 'text',
     type: 'char(20) not null',
+    description: 'text',
     create_at: 'datetime',
     update_at: 'timestamp'
   },
