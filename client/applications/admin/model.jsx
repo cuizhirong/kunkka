@@ -75,6 +75,15 @@ class Model extends React.Component {
     router.pushState('/admin/' + m.key);
   }
 
+  getIcon(name) {
+    switch(name) {
+      case 'setting-mgmt':
+        return 'flavor-setting';
+      default:
+        return name;
+    }
+  }
+
   render() {
     var state = this.state,
       props = this.props,
@@ -90,7 +99,7 @@ class Model extends React.Component {
           subtitle: __[n],
           key: n,
           onClick: this.onClickSubmenu,
-          iconClass: 'glyphicon icon-' + n,
+          iconClass: 'glyphicon icon-' + this.getIcon(n),
           selected: n === state.selectedMenu ? true : false
         });
       });

@@ -30,6 +30,11 @@
       "user-group",
       "role"
     ]
+  }, {
+    "title": "setting-mgmt",
+    "items": [
+      "setting-mgmt"
+    ]
   }],
   "default_module": "instance",
   "languages": [

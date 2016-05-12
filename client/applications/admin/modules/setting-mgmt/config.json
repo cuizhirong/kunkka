@@ -1,0 +1,48 @@
+{
+  "tabs": [{
+    "name": ["setting-mgmt"],
+    "key": "setting-mgmt",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["modify", "configuration"],
+    "key": "modify",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "configuration", "name"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "key": "name",
+      "dataIndex": "name",
+      "sort": true
+    }, {
+      "title": ["application"],
+      "dataIndex": "app",
+      "key": "app"
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["value"],
+      "dataIndex": "value",
+      "key": "value"
+    }, {
+      "title": ["description"],
+      "dataIndex": "description",
+      "key": "desc"
+    }],
+    "data": []
+  }
+}

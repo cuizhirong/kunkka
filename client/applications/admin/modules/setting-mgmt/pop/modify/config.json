@@ -1,0 +1,21 @@
+{
+  "title": ["modify", "configuration"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "input",
+    "field": "value",
+    "value": ""
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

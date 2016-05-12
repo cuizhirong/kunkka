@@ -1,0 +1,12 @@
+{
+  "en": {
+    "application": "Application",
+    "configuration": "Configuration",
+    "value": "Value"
+  },
+  "zh-CN": {
+    "application": "应用",
+    "configuration": "配置",
+    "value": "值"
+  }
+}
