@@ -21,9 +21,8 @@
     "icon": "refresh"
   }],
   "search": {
-    "table_column": {
-      "ip_adrs": true,
-      "assc_resource": true
+    "column": {
+      "name": true
     }
   },
   "table": {
