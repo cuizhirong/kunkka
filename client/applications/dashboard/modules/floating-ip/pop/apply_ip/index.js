@@ -15,7 +15,7 @@ function pop(parent, callback) {
         var floatingNetwork = networks.filter((item) => item['router:external']);
 
         if (floatingNetwork.length > 0) {
-          let floatingNetworkId = [0].id;
+          let floatingNetworkId = floatingNetwork[0].id;
 
           let data = {};
           data.floatingip = {};

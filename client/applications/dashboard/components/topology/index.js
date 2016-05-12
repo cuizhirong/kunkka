@@ -29,7 +29,8 @@ var d = null,
   imageList = [],
   networkPos = [],
   routerPos = [],
-  instancePos = [];
+  instancePos = [],
+  placeholder = []; // Calc the used positions of instances
 
 class Topology {
   constructor(wp, data) {
@@ -48,6 +49,10 @@ class Topology {
   }
 
   processData(data) {
+    // Reset data
+    networkPos = [];
+    routerPos = [];
+    instancePos = [];
     console.log(data);
     var networks = data.network;
 
@@ -91,6 +96,9 @@ class Topology {
       Object.keys(addrs).forEach((key) => {
         var _networks = addrs[key];
         _networks.forEach((n) => {
+          if (n['OS-EXT-IPS:type'] === 'floating') {
+            return;
+          }
           var subnet = n.subnet;
           networks.some((network, j) => {
             return network.subnets.some((s, m) => {
@@ -186,7 +194,7 @@ class Topology {
     });
 
     // calc router positions
-    console.log(routerPos);
+    // console.log(routerPos);
     routerPos.forEach((router, i) => {
       if (i === 0) {
         router.x = 0.5;
@@ -220,6 +228,68 @@ class Topology {
     }
 
     // calc instance positions
+    placeholder = [];
+    var loop = 0;
+    routerPos.forEach((router) => {
+      router.subnets.forEach((s) => {
+        var _layer = s.networkLayer;
+
+        for (loop = 0; loop < _layer; loop++) {
+          if (!placeholder[loop]) {
+            placeholder[loop] = [];
+          }
+          placeholder[loop].push({
+            x: router.x,
+            w: router.w,
+            subnetLayer: s.subnetLayer,
+            networkLayer: s.networkLayer
+          });
+        }
+
+      });
+    });
+
+    instancePos.forEach((instance) => {
+      var layer = instance.layer;
+      // TODO: 需要处理游离态的云主机
+      if (layer === -1) {
+        return;
+      }
+      instance.instances.forEach((ins) => {
+
+        // 1.先计算每一个instance的实际宽度
+        let up = 0,
+          down = 0;
+        ins.subnets.forEach((s) => {
+          if (s.networkLayer === layer) {
+            ++up;
+          } else {
+            ++down;
+          }
+        });
+        let max = Math.max(up, down);
+        if (max === 0) {
+          ins.w = 78;
+        } else {
+          ins.w = 78 + (max - 1) * 10;
+        }
+
+        // 2.根据placehoder算出实际的x坐标
+        var p = placeholder[layer];
+        if (p) {
+          p.forEach((_p) => {
+
+          });
+        }
+
+        // 3.根据当前instance的子网，给placeholder重新赋值
+
+        console.log('placeholder: ', placeholder);
+        console.log('instancePos: ', instancePos);
+
+      });
+    });
+    // console.log(placeholder);
 
     // The last network
     var p = networkPos[networkPos.length - 1];
