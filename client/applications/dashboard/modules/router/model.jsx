@@ -160,11 +160,18 @@ class Model extends React.Component {
         }, true);
         break;
       case 'delete':
+        var hasSubnets = rows[0].subnets.length > 0 ? true : false;
         deleteModal({
           __: __,
           action: 'delete',
           type:'router',
           data: rows,
+          disabled: hasSubnets ? true : false,
+          tip: hasSubnets ? {
+            hide: false,
+            title: __.attention,
+            value: __.tip_router_has_subnet
+          } : null,
           onDelete: function(_data, cb) {
             request.deleteRouters(rows).then((res) => {
               cb(true);
