@@ -2,6 +2,8 @@ var easing = require('./easing');
 var autoscale = require('./autoscale');
 var utils = require('./utils');
 
+var resizeCanvas;
+
 class PieChart {
   constructor(container) {
     this.container = container;
@@ -42,7 +44,15 @@ class PieChart {
       height: this.height
     });
 
+    //draw canvas without animation
     this.setOption(this.option);
+    this.count = this.ticks - 1;
+
+    //draw canvas wait until resize end
+    clearTimeout(resizeCanvas);
+    resizeCanvas = setTimeout(() => {
+      this.setOption(this.option);
+    }, 200);
   }
 
   setTextStyle(DOM) {
@@ -77,8 +87,13 @@ class PieChart {
   renderPieBackground() {
     var ctx = this.bCanvas.getContext('2d'),
       option = this.option,
-      bgColor = option.bgColor,
-      height = this.height,
+      bgColor = option.bgColor;
+
+    var min = this.option.lineWidth * 2;
+    if (this.width <= min) {
+      this.width = this.height = min;
+    }
+    var height = this.height,
       width = this.width,
       coordinate = [width / 2, height / 2],
       lineWidth = option.lineWidth,
