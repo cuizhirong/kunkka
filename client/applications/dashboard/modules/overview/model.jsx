@@ -26,6 +26,13 @@ class Model extends React.Component {
     });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
   getProjectName() {
     var projectID = HALO.user.projectId,
       projects = HALO.user.projects;

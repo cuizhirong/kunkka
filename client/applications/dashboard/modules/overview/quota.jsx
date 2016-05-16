@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 
 var __ = require('locale/client/dashboard.lang.json');
+var unitConverter = require('client/utils/unit_converter');
 
 class ResourceQuota extends React.Component {
 
@@ -115,19 +116,24 @@ class ResourceQuota extends React.Component {
                       total = __.infinity;
                     }
                     used = overview[item.key].used;
+                    inUse = used / total * 100;
+
+                    if (isNaN(inUse)) {
+                      inUse = 0;
+                    }
                   } else {
                     total = 0;
                     used = 0;
-                  }
-                  inUse = used / total * 100;
-
-                  if (isNaN(inUse)) {
                     inUse = 0;
                   }
 
-                  if (item.key === 'ram') {
-                    total /= 1024;
-                    used /= 1024;
+                  if (item.key === 'ram' && overview[item.key]) {
+                    if (typeof total === 'number') {
+                      let _all = unitConverter(total, 'MB');
+                      total = _all.num + _all.unit[0];
+                    }
+                    let _used = unitConverter(used, 'MB');
+                    used = _used.num + _used.unit[0];
                   }
 
                   if (inUse >= 80) {
