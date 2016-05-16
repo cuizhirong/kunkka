@@ -6,6 +6,16 @@
     "required": true
   }, {
     "type": "input",
+    "field": "password",
+    "input_type": "password",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "confirm_password",
+    "input_type": "password",
+    "required": true
+  }, {
+    "type": "input",
     "field": "email"
   }, {
     "type": "textarea",

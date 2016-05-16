@@ -32,7 +32,7 @@ function pop(obj, parent, callback) {
         name: refs.name.state.value,
         description: refs.describe.state.value,
         email: refs.email.state.value,
-        password: '123'
+        password: refs.password.state.value
       };
       if (obj) {
         request.editUser(obj.id, data).then((res) => {
@@ -49,8 +49,15 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'name':
+        case 'password':
+        case 'confirm_password':
+          var name = refs.name.state.value;
+          var psw = refs.password.state.value;
+          var rePsw = refs.confirm_password.state.value;
+          var valid = name && psw && (psw === rePsw);
+
           refs.btn.setState({
-            disabled: !status.value
+            disabled: !valid
           });
           break;
         default:
