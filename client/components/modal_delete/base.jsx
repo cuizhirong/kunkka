@@ -1,13 +1,16 @@
 var React = require('react');
-var {Modal, Button} = require('client/uskin/index');
+var {Modal, Button, Tip} = require('client/uskin/index');
 
 class ModalBase extends React.Component {
 
   constructor(props) {
     super(props);
 
+    var tip = props.tip ? props.tip : { hide: true };
+
     this.state = {
-      disabled: false
+      disabled: props.disabled,
+      tip: tip
     };
 
     this.onDelete = this.onDelete.bind(this);
@@ -55,6 +58,7 @@ class ModalBase extends React.Component {
 
     var iconType = props.iconType || props.type.replace('_', '-');
 
+    var tip = state.tip;
     return (
       <Modal {..._props} visible={state.visible}>
         <div className="modal-bd halo-com-modal-delete">
@@ -65,6 +69,9 @@ class ModalBase extends React.Component {
                 return <span key={item.id || item.name}><i className={'glyphicon icon-' + iconType}></i>{item.name || '(' + item.id.substr(0, 8) + ')'}</span>;
               })
             }
+          </div>
+          <div className={'modal-row tip-row' + (tip.hide ? ' hide' : '')}>
+            <Tip type="danger" title={tip.title} content={tip.value} showIcon={true} />
           </div>
         </div>
         <div className="modal-ft">
