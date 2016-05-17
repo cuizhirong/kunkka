@@ -52,6 +52,11 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'value':
+          column.render = (col, item, i) => {
+            return item.value.toString();
+          };
+          break;
         default:
           break;
       }

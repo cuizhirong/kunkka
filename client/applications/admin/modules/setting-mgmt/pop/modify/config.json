@@ -1,10 +1,10 @@
 {
   "title": ["modify", "configuration"],
   "fields": [{
-    "type": "input",
+    "type": "icon_label",
     "field": "name",
-    "required": true,
-    "value": ""
+    "icon_type": "flavor-setting",
+    "text": ""
   }, {
     "type": "input",
     "field": "value",

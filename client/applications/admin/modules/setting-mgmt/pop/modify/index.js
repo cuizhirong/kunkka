@@ -4,9 +4,17 @@ var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
 function pop (obj, parent, callback) {
-  config.fields[0].value = obj.name;
-  config.fields[1].value = obj.value;
+  config.fields[0].text = obj.name;
   config.fields[2].value = obj.description;
+
+  var changeField = config.fields[1];
+  changeField.value = obj.value.toString();
+  if(obj.type === 'boolean') {
+    changeField.type = 'tab';
+    changeField.data = ['true', 'false'];
+  } else {
+    changeField.type = 'input';
+  }
 
   var props = {
     __: __,
@@ -15,7 +23,6 @@ function pop (obj, parent, callback) {
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       var newData = {
-        name: refs.name.state.value,
         value: refs.value.state.value,
         description: refs.describe.state.value
       };
