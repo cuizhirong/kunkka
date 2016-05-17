@@ -15,10 +15,6 @@ function pop(obj, parent, callback) {
         var users = res[0].users,
           roles = res[1].roles;
         if (users.length > 0 && roles.length > 0) {
-          refs.user.setState({
-            data: users,
-            hide: false
-          });
           refs.role.setState({
             data: roles,
             hide: false
@@ -36,12 +32,20 @@ function pop(obj, parent, callback) {
           roles.push(ele.id);
         }
       });
-      request.addUser(obj.id, refs.user.state.value, roles).then(() => {
-        callback && callback();
-        cb(true);
-      });
+      if(roles[0]) {
+        request.addUser(obj.id, refs.user_id.state.value, roles).then(() => {
+          callback && callback();
+          cb(true);
+        });
+      }
     },
-    onAction: function(field, status, refs) {}
+    onAction: function(field, status, refs) {
+      if(refs.role.state.value) {
+        refs.btn.setState({
+          disabled: false
+        });
+      }
+    }
   };
 
   commonModal(props);

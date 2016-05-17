@@ -6,12 +6,9 @@
     "icon_type": "project",
     "text": ""
   }, {
-    "type": "select",
-    "field": "user",
-    "empty_text": {
-      "info": "no_user"
-    },
-    "hide": true
+    "type": "input",
+    "field": "user_id",
+    "required": true
   }, {
     "type": "select_group",
     "field": "role",
