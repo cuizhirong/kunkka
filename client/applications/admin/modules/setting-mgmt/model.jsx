@@ -23,6 +23,10 @@ class Model extends React.Component {
     ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+
+    this.stores = {
+      urls: []
+    };
   }
 
   componentWillMount() {
@@ -66,13 +70,25 @@ class Model extends React.Component {
   }
 
   //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail) {
+  updateTableData(table, currentUrl, refreshDetail, callback) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
+    }, () => {
+      if (currentUrl) {
+        this.stores.urls.push(currentUrl);
+
+        var detail = this.refs.dashboard.refs.detail,
+          params = this.props.params;
+        if (detail && refreshDetail && params.length > 2) {
+          detail.refresh();
+        }
+
+        callback && callback();
+      }
     });
   }
 
