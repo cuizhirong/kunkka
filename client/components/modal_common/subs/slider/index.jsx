@@ -12,6 +12,7 @@ class Slide extends React.Component {
       min: props.min,
       max: props.max,
       hide: !!props.hide,
+      disabled: props.disabled ? props.disabled : false,
       error: false
     };
 
@@ -57,7 +58,8 @@ class Slide extends React.Component {
     var props = this.props,
       state = this.state,
       min = state.min,
-      max = state.max;
+      max = state.max,
+      disabled = state.disabled;
 
     var className = 'modal-row slider-row';
     if (props.is_long_label) {
@@ -76,11 +78,13 @@ class Slide extends React.Component {
         </div>
         <div>
           <div className="slidearea">
-            <Slider min={min} max={max} step={props.step} value={state.value} onChange={this.onSliderChange} />
+            <Slider min={min} max={max} step={props.step} disabled={disabled} value={state.value} onChange={this.onSliderChange} />
             <div className="range">{min + '-' + max + props.unit}</div>
           </div>
           <div className="inputarea">
-            <input type="text" className={state.error ? 'error' : ''} value={state.inputValue} onChange={this.onInputChange} />
+            <input type="text" className={state.error ? 'error' : ''} value={state.inputValue}
+              onChange={this.onInputChange}
+              disabled={disabled} />
             <label className="unit">{props.unit}</label>
           </div>
         </div>
