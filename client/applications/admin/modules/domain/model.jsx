@@ -89,8 +89,8 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getDomainByID(id).then((res) => {
-      if (res.port) {
-        table.data = [res.port];
+      if (res.domain) {
+        table.data = [res.domain];
       } else {
         table.data = [];
       }
@@ -118,10 +118,10 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.ports) {
-        table.data = res.ports;
-      } else if (res.port) {
-        table.data = [res.port];
+      if (res.domains) {
+        table.data = res.domains;
+      } else if (res.domain) {
+        table.data = [res.domain];
       } else {
         table.data = [];
       }
