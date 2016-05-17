@@ -34,6 +34,8 @@ function transformSqlBoolean(result) {
     result.forEach( s => {
       if (s.type === 'boolean') {
         s.value = (s.value === 'true' || s.value === '1') ? true : false;
+      } else if (s.type === 'number') {
+        s.value = Number(s.value);
       }
     });
   } else if (result && result.value && result.type === 'boolean') {
@@ -47,6 +49,8 @@ function transformCacheBoolean(cache) {
     cache[c].forEach( s => {
       if (s.type === 'boolean') {
         s.value = (s.value === 'true' || s.value === '1') ? true : false;
+      } else if (s.type === 'number') {
+        s.value = Number(s.value);
       }
     });
   });

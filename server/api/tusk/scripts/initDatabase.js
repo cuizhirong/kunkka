@@ -75,6 +75,16 @@ const initSets = [
     name: 'is_show_trash',
     value: 'false',
     type: 'boolean'
+  }, {
+    app: 'dashboard',
+    name: 'volume_quota',
+    value: 1000,
+    type: 'number'
+  }, {
+    app: 'dashboard',
+    name: 'max_volume',
+    value: 1000,
+    type: 'number'
   }
 ];
 
