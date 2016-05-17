@@ -17,6 +17,10 @@
     "value": 1,
     "unit": "GB",
     "hide": true
+  }, {
+    "type": "error",
+    "field": "error",
+    "hide": true
   }],
   "btn": {
     "value": "create",

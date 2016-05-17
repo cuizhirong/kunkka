@@ -32,40 +32,72 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: copyConfig,
     onInitialize: function(refs) {
-      if (HALO.volume_types) {
-        refs.type.setState({
-          data: HALO.volume_types,
-          value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null,
-          hide: false
-        });
-      }
-
       request.getOverview().then((overview) => {
-        if (!HALO.volume_types) {
-          HALO.volume_types = copyObj(overview.volume_types);
+        if (overview.volume_types) {
           refs.type.setState({
-            data: HALO.volume_types,
-            value: HALO.volume_types.length > 0 ? HALO.volume_types[0] : null,
+            data: overview.volume_types,
+            value: overview.volume_types.length > 0 ? overview.volume_types[0] : null,
             hide: false
           });
         }
-        HALO.volume_types.forEach((type) => {
-          typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
-          if (typeCapacity[type].total < 0) {
-            typeCapacity[type].total = overview.overview_usage.gigabytes.total;
-          }
-        });
-        var capacity = typeCapacity[HALO.volume_types[0]];
-        if (capacity.total < 0) {
-          capacity.total = 1000;
-        }
 
-        var min = 1;
-        var max = capacity.total - capacity.used;
+        //capacity of all the types
+        var allCapacity = overview.overview_usage.gigabytes;
+
+        //capacity set by user
+        var settings = HALO.settings;
+        var singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
+
+        //capacity set by front-end side
+        var defaultTotal = 1000;
+
+        overview.volume_types.forEach((type) => {
+          typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
+
+          var min = 1, max, total, used;
+
+          //capacity of the type
+          var capacity = overview.overview_usage['gigabytes_' + type];
+
+          if (capacity.total < 0) {
+            if (allCapacity.total < 0) {
+              if (settings.total_gigabytes) {
+                total = settings.total_gigabytes;
+              } else {
+                total = defaultTotal;
+              }
+            } else {
+              total = allCapacity.total;
+            }
+            used = allCapacity.used;
+          } else {
+            total = capacity.total;
+            used = capacity.used;
+          }
+
+          max = total - used;
+          if (max > singleMax) {
+            max = singleMax;
+          }
+          if (max <= 0) {
+            max = 0;
+            min = 0;
+          }
+
+          typeCapacity[type].max = max;
+          typeCapacity[type].min = min;
+        });
+
+        var selected = typeCapacity[overview.volume_types[0]];
+        var selectedMax = selected.max;
+        var selectedMin = selected.min;
 
         refs.capacity_size.setState({
-          min: min,
-          max: max,
+          min: selectedMin,
+          max: selectedMax,
+          value: selectedMin,
+          inputValue: selectedMin,
+          disabled: selectedMax === 0 ? true : false,
           hide: false
         });
         refs.btn.setState({
@@ -85,6 +117,15 @@ function pop(obj, parent, callback) {
       request.createVolume(data).then((res) => {
         callback && callback(res);
         cb(true);
+      }).catch((err) => {
+        var reg = new RegExp('"message":"(.*)","');
+        var tip = reg.exec(err.response)[1];
+
+        refs.error.setState({
+          value: tip,
+          hide: false
+        });
+        cb(false);
       });
     },
     onAction: function(field, state, refs) {
@@ -92,14 +133,10 @@ function pop(obj, parent, callback) {
         case 'type':
           var type = refs.type.state.value;
           var capacity = typeCapacity[type];
+
           if (capacity) {
-            var min = 1;
-
-            if (capacity.total < 0) {
-              capacity.total = 1000;
-            }
-
-            var max = capacity.total - capacity.used;
+            var min = capacity.min;
+            var max = capacity.max;
             var value = parseFloat(refs.capacity_size.state.inputValue);
 
             if (isNaN(value) || value < min) {
@@ -114,6 +151,7 @@ function pop(obj, parent, callback) {
               value: value,
               inputValue: value,
               hide: false,
+              disabled: max === 0 ? true : false,
               error: false
             });
             refs.btn.setState({

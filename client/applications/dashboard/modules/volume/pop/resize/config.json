@@ -6,7 +6,12 @@
     "min": 0,
     "max": 1,
     "unit": "GB",
-    "hide": false
+    "hide": false,
+    "disabled": true
+  }, {
+    "type": "error",
+    "field": "error",
+    "hide": true
   }],
   "btn": {
     "value": "extd_capacity",
