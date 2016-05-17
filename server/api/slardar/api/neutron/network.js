@@ -5,7 +5,7 @@ const Base = require('../base.js');
 
 function Network (app) {
   this.app = app;
-  this.arrServiceObject = ['subnets', 'ports', 'routers'];
+  this.arrServiceObject = ['ports', 'routers'];
   Base.call(this, this.arrServiceObject);
 }
 
@@ -43,53 +43,93 @@ Network.prototype = {
   },
   getNetworkList: function (req, res, next) {
     let objVar = this.getVars(req);
-    let requestList;
+
     if (objVar.query.tenant_id) {
-      requestList = [this.__networks.bind(this, objVar), this.__externalNetworks.bind(this, objVar), this.__sharedNetworks.bind(this, objVar)].concat(this.arrAsync(objVar));
-    } else {
-      requestList = [this.__networks.bind(this, objVar)].concat(this.arrAsync(objVar));
-    }
-    async.parallel(
-      requestList,
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
+      /* tenant_id is set.*/
+      async.parallel(
+        [
+          this.__externalNetworks.bind(this, objVar),
+          this.__sharedNetworks.bind(this, objVar),
+          this.__networks.bind(this, objVar)
+        ].concat(this.arrAsync(objVar)),
+        (error, theResults) => {
+          if (error) {
+            return this.handleError(error, req, res, next);
+          }
           let obj = {};
-          if (objVar.query.tenant_id) {
-            ['networks', 'externalNetworks', 'sharedNetworks'].concat(this.arrServiceObject).forEach( (e, index) => {
-              if (e === 'externalNetworks' || e === 'sharedNetworks') {
-                obj[e] = results[index].networks;
-              } else {
-                obj[e] = results[index][e];
+          let externalNetwork = theResults[0].networks[0];
+          let sharedNetwork = theResults[1].networks[0];
+          let networks = theResults[2].networks;
+          obj.networks = networks.concat([externalNetwork, sharedNetwork]);
+
+          this.arrServiceObject.forEach( (e, index) => {
+            obj[e] = theResults[index + 3][e];
+          });
+
+          let objVarExternal = JSON.parse(JSON.stringify(objVar));
+          delete objVarExternal.query.tenant_id;
+          objVarExternal.query.network_id = externalNetwork.id;
+
+          let objVarShared = JSON.parse(JSON.stringify(objVar));
+          delete objVarShared.query.tenant_id;
+          objVarShared.query.network_id = sharedNetwork.id;
+
+          async.parallel(
+            [
+              this.__subnets.bind(this, objVarExternal),
+              this.__subnets.bind(this, objVarShared),
+              this.__subnets.bind(this, objVar)
+            ],
+            (err, results) => {
+              if (err) {
+                return this.handleError(err, req, res, next);
               }
-            });
-            obj.realNetworks = obj.networks.concat(obj.externalNetworks, obj.sharedNetworks);
+              let externalSubnets = results[0].subnets;
+              let sharedSubnets = results[1].subnets;
+              let userSubnets = results[2].subnets;
+              obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
+
+              this.orderByCreatedTime(obj.networks);
+              obj.networks.forEach( network => {
+                this.makeNetwork(network, obj);
+              });
+              res.json({networks: obj.networks});
+            }
+          );
+        }
+      );
+    } else {
+
+      async.parallel(
+        [this.__networks.bind(this, objVar), this.__subnets.bind(this, objVar)].concat(this.arrAsync(objVar)),
+        (err, results) => {
+          if (err) {
+            this.handleError(err, req, res, next);
           } else {
-            ['networks'].concat(this.arrServiceObject).forEach( (e, index) => {
+            let obj = {};
+            ['networks', 'subnets'].concat(this.arrServiceObject).forEach( (e, index) => {
               obj[e] = results[index][e];
             });
-            obj.realNetworks = obj.networks;
+            this.orderByCreatedTime(obj.networks);
+            obj.networks.forEach( network => {
+              this.makeNetwork(network, obj);
+            });
+            res.json({networks: obj.networks});
           }
-          this.orderByCreatedTime(obj.realNetworks);
-          obj.realNetworks.forEach( network => {
-            this.makeNetwork(network, obj);
-          });
-          res.json({networks: obj.realNetworks});
         }
-      }
-    );
+      );
+    }
   },
   getNetworkDetails: function (req, res, next) {
     let objVar = this.getVars(req, ['networkId']);
     async.parallel(
-      [this.__networkDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
+      [this.__networkDetail.bind(this, objVar), this.__subnets.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
           let obj = {};
-          ['network'].concat(this.arrServiceObject).forEach( (e, index) => {
+          ['network', 'subnets'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
           this.makeNetwork(obj.network, obj);

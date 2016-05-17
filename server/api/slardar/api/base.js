@@ -259,6 +259,10 @@ API.prototype.getVars = function (req, extra) {
     region: req.headers.region,
     query: req.query
   };
+  /* general user to delete tenant_id. */
+  if (!req.session.user.isAdmin && objVar.query.tenant_id) {
+    delete objVar.query.tenant_id;
+  }
   if (extra) {
     extra.forEach( e => {
       objVar[e] = req.params[e];

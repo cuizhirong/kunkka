@@ -5,7 +5,7 @@ const Base = require('../base.js');
 
 function Instance(app) {
   this.app = app;
-  this.arrServiceObject = ['images', 'floatingips', 'subnets', 'ports', 'flavors', 'volumes', 'keypairs', 'security_groups'];
+  this.arrServiceObject = ['images', 'flavors', 'volumes', 'keypairs', 'security_groups'];
   Base.call(this, this.arrServiceObject);
 }
 
@@ -87,27 +87,96 @@ Instance.prototype = {
     this.makeNetwork(server, obj);
   },
   getInstanceList: function (req, res, next) {
+    req.query.tenant_id = req.params.projectId;
     let objVar = this.getVars(req, ['projectId']);
-    async.parallel(
-      [this.__servers.bind(this, objVar)].concat(this.arrAsync(objVar)),
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
+    let objVarSpec = JSON.parse(JSON.stringify(objVar));
+
+    delete objVar.query.tenant_id;
+
+    if (objVar.query.tenant_id) {
+      /* tenant_id is set.*/
+      async.parallel(
+        [
+          this.__externalNetworks.bind(this, objVarSpec),
+          this.__sharedNetworks.bind(this, objVarSpec),
+          this.__floatingips.bind(this, objVarSpec),
+          this.__ports.bind(this, objVarSpec),
+          this.__servers.bind(this, objVar)
+        ].concat(this.arrAsync(objVar)),
+        (error, theResults) => {
+          if (error) {
+            return this.handleError(error, req, res, next);
+          }
           let obj = {};
-          ['servers'].concat(this.arrServiceObject).forEach( (e, index) => {
-            obj[e] = results[index][e];
+          let externalNetwork = theResults[0].networks[0];
+          let sharedNetwork = theResults[1].networks[0];
+
+          ['floatingips', 'ports', 'servers'].concat(this.arrServiceObject).forEach( (e, index) => {
+            obj[e] = theResults[index + 2][e];
           });
-          this.orderByCreatedTime(obj.servers);
-          obj.servers.forEach( server => {
-            this.makeServer(server, obj);
-          });
-          res.json({
-            servers: obj.servers
-          });
+
+          let objVarExternal = JSON.parse(JSON.stringify(objVar));
+          delete objVarExternal.query.tenant_id;
+          objVarExternal.query.network_id = externalNetwork.id;
+
+          let objVarShared = JSON.parse(JSON.stringify(objVar));
+          delete objVarShared.query.tenant_id;
+          objVarShared.query.network_id = sharedNetwork.id;
+
+          async.parallel(
+            [
+              this.__subnets.bind(this, objVarExternal),
+              this.__subnets.bind(this, objVarShared),
+              this.__subnets.bind(this, objVarSpec)
+            ],
+            (err, results) => {
+              if (err) {
+                return this.handleError(err, req, res, next);
+              }
+              let externalSubnets = results[0].subnets;
+              let sharedSubnets = results[1].subnets;
+              let userSubnets = results[2].subnets;
+              obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
+
+              this.orderByCreatedTime(obj.servers);
+              obj.servers.forEach( server => {
+                this.makeServer(server, obj);
+              });
+              res.json({
+                servers: obj.servers
+              });
+            }
+          );
         }
-      }
-    );
+      );
+    } else {
+
+      async.parallel(
+        [
+          this.__servers.bind(this, objVar),
+          this.__subnets.bind(this, objVar),
+          this.__floatingips.bind(this, objVar),
+          this.__ports.bind(this, objVar)
+        ].concat(this.arrAsync(objVar)),
+        (err, results) => {
+          if (err) {
+            this.handleError(err, req, res, next);
+          } else {
+            let obj = {};
+            ['servers', 'subnets', 'floatingips', 'ports'].concat(this.arrServiceObject).forEach( (e, index) => {
+              obj[e] = results[index][e];
+            });
+            this.orderByCreatedTime(obj.servers);
+            obj.servers.forEach( server => {
+              this.makeServer(server, obj);
+            });
+            res.json({
+              servers: obj.servers
+            });
+          }
+        }
+      );
+    }
   },
   getFlavorList: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId']);
@@ -128,13 +197,18 @@ Instance.prototype = {
   getInstanceDetails: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId', 'serverId']);
     async.parallel(
-      [this.__serverDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
+      [
+        this.__serverDetail.bind(this, objVar),
+        this.__subnets.bind(this, objVar),
+        this.__floatingips.bind(this, objVar),
+        this.__ports.bind(this, objVar)
+      ].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
           let obj = {};
-          ['server'].concat(this.arrServiceObject).forEach( (e, index) => {
+          ['server', 'subnets', 'floatingips', 'ports'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
           this.makeServer(obj.server, obj);

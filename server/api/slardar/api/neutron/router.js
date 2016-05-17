@@ -5,7 +5,7 @@ const Base = require('../base.js');
 
 function Router (app, neutron) {
   this.app = app;
-  this.arrServiceObject = ['floatingips', 'subnets', 'ports'];
+  this.arrServiceObject = ['floatingips', 'ports'];
   Base.call(this, this.arrServiceObject);
 }
 
@@ -36,35 +36,90 @@ Router.prototype = {
   },
   getRouterList: function (req, res, next) {
     let objVar = this.getVars(req);
-    async.parallel(
-      [this.__routers.bind(this, objVar)].concat(this.arrAsync(objVar)),
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
+
+    if (objVar.query.tenant_id) {
+      /* tenant_id is set.*/
+      async.parallel(
+        [
+          this.__externalNetworks.bind(this, objVar),
+          this.__sharedNetworks.bind(this, objVar),
+          this.__routers.bind(this, objVar)
+        ].concat(this.arrAsync(objVar)),
+        (error, theResults) => {
+          if (error) {
+            return this.handleError(error, req, res, next);
+          }
           let obj = {};
+          let externalNetwork = theResults[0].networks[0];
+          let sharedNetwork = theResults[1].networks[0];
+
           ['routers'].concat(this.arrServiceObject).forEach( (e, index) => {
-            obj[e] = results[index][e];
+            obj[e] = theResults[index + 2][e];
           });
-          this.orderByCreatedTime(obj.routers);
-          obj.routers.forEach( (router) => {
-            this.makeRouter(router, obj);
-          });
-          res.json({routers: obj.routers});
+
+          let objVarExternal = JSON.parse(JSON.stringify(objVar));
+          delete objVarExternal.query.tenant_id;
+          objVarExternal.query.network_id = externalNetwork.id;
+
+          let objVarShared = JSON.parse(JSON.stringify(objVar));
+          delete objVarShared.query.tenant_id;
+          objVarShared.query.network_id = sharedNetwork.id;
+
+          async.parallel(
+            [
+              this.__subnets.bind(this, objVarExternal),
+              this.__subnets.bind(this, objVarShared),
+              this.__subnets.bind(this, objVar)
+            ],
+            (err, results) => {
+              if (err) {
+                return this.handleError(err, req, res, next);
+              }
+              let externalSubnets = results[0].subnets;
+              let sharedSubnets = results[1].subnets;
+              let userSubnets = results[2].subnets;
+              obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
+
+              this.orderByCreatedTime(obj.routers);
+              obj.routers.forEach( (router) => {
+                this.makeRouter(router, obj);
+              });
+              res.json({routers: obj.routers});
+            }
+          );
         }
-      }
-    );
+      );
+    } else {
+      async.parallel(
+        [this.__routers.bind(this, objVar), this.__subnets.bind(this, objVar)].concat(this.arrAsync(objVar)),
+        (err, results) => {
+          if (err) {
+            this.handleError(err, req, res, next);
+          } else {
+            let obj = {};
+            ['routers', 'subnets'].concat(this.arrServiceObject).forEach( (e, index) => {
+              obj[e] = results[index][e];
+            });
+            this.orderByCreatedTime(obj.routers);
+            obj.routers.forEach( (router) => {
+              this.makeRouter(router, obj);
+            });
+            res.json({routers: obj.routers});
+          }
+        }
+      );
+    }
   },
   getRouterDetails: function (req, res, next) {
     let objVar = this.getVars(req, ['routerId']);
     async.parallel(
-      [this.__routerDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
+      [this.__routerDetail.bind(this, objVar), this.__subnets.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
         if (err) {
           this.handleError(err, req, res, next);
         } else {
           let obj = {};
-          ['router'].concat(this.arrServiceObject).forEach( (e, index) => {
+          ['router', 'subnets'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = results[index][e];
           });
           this.makeRouter(obj.router, obj);

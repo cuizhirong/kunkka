@@ -52,7 +52,7 @@ module.exports = function(app) {
     .forEach( m => {
       fs.readdirSync(path.join(apiPath, m))
         .filter( s => {
-          return s !== 'lang.json'; // exclude lang.json
+          return s !== 'lang.json' && s !== '.DS_Store'; // exclude lang.json
         })
         .forEach( s => {
           let ApiModule = require(path.join(apiPath, m, s));
