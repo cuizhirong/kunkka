@@ -242,6 +242,17 @@ class Main extends React.Component {
     }
   }
 
+  keypressSearch(e) {
+    if (e.key === 'Enter') {
+      var value = this.refs.search.state.value;
+
+      this.closeDeatail();
+      this.onAction('search', 'click', {
+        text: value
+      });
+    }
+  }
+
   checkboxListener(status, clickedRow, arr) {
     var path = this.props.params;
     if (arr.length <= 0) {
@@ -392,6 +403,7 @@ class Main extends React.Component {
               type="light"
               width={search.width}
               placeholder={search.placeholder}
+              onKeyPress={this.keypressSearch.bind(this)}
               onChange={this.changeSearchInput.bind(this)} />
             : null
           }
