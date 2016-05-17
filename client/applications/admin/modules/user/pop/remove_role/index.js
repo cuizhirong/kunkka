@@ -16,6 +16,8 @@ function pop(type, obj, parent, callback) {
     config.fields[2].text = '(' + obj.project_id.substring(0, 8) + ')';
     config.fields[3].data = obj.childItem;
   }
+  config.fields[3].data[0].selected = true;
+  config.btn.disabled = false;
 
   var props = {
     __: __,
