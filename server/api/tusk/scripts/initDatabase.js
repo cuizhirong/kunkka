@@ -77,14 +77,19 @@ const initSets = [
     type: 'boolean'
   }, {
     app: 'dashboard',
-    name: 'volume_quota',
+    name: 'total_gigabytes',
+    value: 5000,
+    type: 'number'
+  }, {
+    app: 'dashboard',
+    name: 'max_single_gigabytes',
     value: 1000,
     type: 'number'
   }, {
     app: 'dashboard',
-    name: 'max_volume',
-    value: 1000,
-    type: 'number'
+    name: 'is_show_vlan',
+    value: 'true',
+    type: 'boolean'
   }
 ];
 
