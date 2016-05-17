@@ -37,17 +37,16 @@ class CanvasEvent {
    * @param {Function} cb - event listener
    */
   bind(metric, zIndex, cb) {
+    var func = null;
     if (zIndex === 0) {
-      eventList.push({
-        metric: metric,
-        cb: cb
-      });
+      func = eventList.push;
     } else {
-      eventList.unshift({
-        metric: metric,
-        cb: cb
-      });
+      func = eventList.unshift;
     }
+    func.call(eventList, {
+      metric: metric,
+      cb: cb
+    });
   }
 
   unBindAll() {

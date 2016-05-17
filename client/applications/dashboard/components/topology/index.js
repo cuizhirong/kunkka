@@ -8,12 +8,33 @@ var shape = require('./utils/shape');
 var CanvasEvent = require('./utils/event');
 
 var resources = [
-  '/static/assets/icon-public-network.png',
-  '/static/assets/icon-network.png',
-  '/static/assets/icon-floatingip.png',
-  '/static/assets/icon-routers.png',
-  '/static/assets/icon-status-active.png'
-];
+    '/static/assets/icon-public-network.png',
+    '/static/assets/icon-network.png',
+    '/static/assets/icon-floatingip.png',
+    '/static/assets/icon-routers.png',
+    '/static/assets/icon-status.png',
+    '/static/assets/icon_images.png'
+  ],
+  imageMap = {
+    'undefined': [0, 0],
+    centos: [0, 42],
+    opensuse: [0, 84],
+    fedora: [0, 126],
+    ubuntu: [0, 168],
+    windows: [0, 210],
+    debian: [0, 252],
+    arch: [0, 294],
+    coreos: [0, 336],
+    gentoo: [0, 378],
+    cirros: [0, 0]
+  },
+  statusMap = {
+    ACTIVE: [0, 0],
+    SHUTOFF: [0, 30],
+    PAUSED: [0, 60],
+    ERROR: [0, 90],
+    OTHER: [0, 120]
+  };
 
 var d = null,
   container = null,
@@ -89,7 +110,9 @@ class Topology {
         name: instance.name,
         id: instance.id,
         status: instance.status,
-        subnets: []
+        subnets: [],
+        image: (instance.image.image_label + '').toLowerCase(),
+        floating_ip: instance.floating_ip
       };
 
       var addrs = instance.addresses;
@@ -220,9 +243,7 @@ class Topology {
       });
     });
     var _routerLen = routerPos.length;
-    if (_routerLen === 0) {
-      maxWidth = 0;
-    } else {
+    if (_routerLen !== 0) {
       let lastRouter = routerPos[_routerLen - 1];
       maxWidth = lastRouter.w + lastRouter.x;
     }
@@ -250,13 +271,20 @@ class Topology {
     });
 
     instancePos.forEach((instance) => {
-      var layer = instance.layer;
-      // TODO: 需要处理游离态的云主机
+      var layer = instance.layer,
+        instances = instance.instances;
+
       if (layer === -1) {
+        instances.forEach((ins) => {
+          ins.x = maxWidth + 10;
+          ins.y = 134.5;
+          ins.h = 58;
+          ins.w = 78;
+          maxWidth = ins.x + 78;
+        });
         return;
       }
-      instance.instances.forEach((ins) => {
-
+      instances.forEach((ins) => {
         // 1.先计算每一个instance的实际宽度
         let up = 0,
           down = 0;
@@ -273,23 +301,51 @@ class Topology {
         } else {
           ins.w = 78 + (max - 1) * 10;
         }
+        var _l = networkPos[ins.layer];
+        ins.y = _l.h + _l.y + 51.5; // 51+0.5
+        ins.h = 58;
 
-        // 2.根据placehoder算出实际的x坐标
-        var p = placeholder[layer];
+        // 2.根据placehoder算出instance实际的x坐标
+        var cur = 0.5,
+          p = placeholder[layer];
         if (p) {
-          p.forEach((_p) => {
-
+          p.some((_p, i) => {
+            if (i === 0) {
+              cur = 0.5;
+            } else {
+              cur = p[i - 1].x + p[i - 1].w + 10;
+            }
+            let next = cur + ins.w + 10;
+            if (next <= _p.x) {
+              ins.x = cur;
+              p.splice(i, 0, {
+                x: cur,
+                w: ins.w
+              });
+              return true;
+            }
+            return false;
           });
+          if (ins.x === void(0)) { // last postion in the row
+            ins.x = p[p.length - 1].x + p[p.length - 1].w + 10;
+          }
+        } else {
+          ins.x = cur;
         }
 
         // 3.根据当前instance的子网，给placeholder重新赋值
 
-        console.log('placeholder: ', placeholder);
-        console.log('instancePos: ', instancePos);
 
       });
+
+      var lastEle = instances[instances.length - 1];
+      if (lastEle.x + lastEle.w > maxWidth) {
+        maxWidth = lastEle.x + lastEle.w;
+      }
     });
-    // console.log(placeholder);
+
+    console.log('placeholder: ', placeholder);
+    console.log('instancePos: ', instancePos);
 
     // The last network
     var p = networkPos[networkPos.length - 1];
@@ -315,8 +371,8 @@ class Topology {
       if (router.gateway) {
         ctx.drawImage(imageList[2], _x + 3.5, router.y + 3.5, 16, 16);
       }
-      // TODO: fix status icon
-      ctx.drawImage(imageList[4], _x + router.w - 18.5, router.y + 3.5, 15, 15);
+      ctx.drawImage(imageList[4], statusMap[router.status][0], statusMap[router.status][1],
+        30, 30, _x + router.w - 18.5, router.y + 3.5, 15, 15);
     });
 
 
@@ -373,11 +429,31 @@ class Topology {
         });
       }
 
-      // 5. draw instnaces
-
-      // 6. draw link dots
-
     }
+
+    // draw instnaces
+    instancePos.forEach((instances, i) => {
+      instances.instances.forEach((_instance) => {
+        var _x = _instance.x + offsetX;
+        shape.roundRect(ctx, _x, _instance.y, _instance.w, _instance.h, 2, borderColor, true);
+        ctx.drawImage(imageList[5], imageMap[_instance.image][0], imageMap[_instance.image][1],
+          40, 40, _x + _instance.w / 2 - 13.5, _instance.y + 7.5, 26, 26);
+
+        // DRAW STATUS
+        let statusPos = statusMap[_instance.status];
+        if (!statusPos) {
+          statusPos = statusMap.OTHER;
+        }
+        ctx.drawImage(imageList[4], statusPos[0], statusPos[1],
+          30, 30, _x + _instance.w - 18.5, _instance.y + 3.5, 15, 15);
+        shape.text(ctx, _instance.name, _x + _instance.w / 2, _instance.y + 45, textColor, 'center', _instance.w);
+        if (_instance.floating_ip) {
+          ctx.drawImage(imageList[2], _x + 3.5, _instance.y + 3.5, 16, 16);
+        }
+      });
+    });
+
+    // 6. draw link dots
 
   }
 
