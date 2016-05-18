@@ -37,7 +37,6 @@
       "title": ["name"],
       "dataIndex": "name",
       "key": "name",
-      "width": 130,
       "sort": true
     }, {
       "title": ["id"],

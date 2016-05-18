@@ -48,7 +48,6 @@
       "dataIndex": "name",
       "key": "name",
       "type": "captain",
-      "width": 130,
       "sort": true
     }, {
       "title": ["status"],
