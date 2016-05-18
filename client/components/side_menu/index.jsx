@@ -235,7 +235,8 @@ class SideMenu extends React.Component {
 
   render() {
     var props = this.props,
-      apps = props.application.application_list;
+      apps = props.application.application_list,
+      currentApp = props.application.current_application;
 
     return (
       <div ref="halo_com_menu" className="halo-com-menu">
@@ -244,7 +245,7 @@ class SideMenu extends React.Component {
             apps.map((m) => {
               var k = Object.keys(m)[0];
               return (
-                <li key={k} onClick={this.onSwitch.bind(this, k)}>
+                <li key={k} onClick={this.onSwitch.bind(this, k)} className={currentApp === k ? 'selected' : null}>
                   <i className={'glyphicon icon-g-' + k}></i>
                   <span>{m[k]}</span>
                 </li>
