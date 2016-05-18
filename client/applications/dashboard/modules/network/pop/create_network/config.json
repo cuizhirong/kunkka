@@ -9,6 +9,17 @@
     "is_long_label": true
   }, {
     "type": "checkbox",
+    "field": "enable_vlan",
+    "checked": false,
+    "has_long_label": true
+  },{
+    "type": "input",
+    "field": "vlan_id",
+    "is_long_label": true,
+    "hide": true,
+    "tip_info": "vlan_tip"
+  }, {
+    "type": "checkbox",
     "field": "enable_security",
     "checked": true,
     "has_long_label": true

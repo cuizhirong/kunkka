@@ -331,6 +331,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var networkType = item['provider:network_type'];
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
@@ -342,9 +343,15 @@ class Model extends React.Component {
       title: __.status,
       content: getStatusIcon(item.status)
     }, {
+      title: __.network_type,
+      content: networkType
+    }, {
+      title: __.vlan_id,
+      content: networkType === 'vlan' ? item['provider:segmentation_id'] : '-'
+    }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
-         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
+        <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }, {
       title: __.shared,
       content: item.shared ? __.yes : __.no

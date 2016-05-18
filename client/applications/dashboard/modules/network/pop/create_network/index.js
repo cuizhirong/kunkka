@@ -4,6 +4,9 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 
 function pop(parent, callback) {
+  if (!HALO.settings.is_show_vlan) {
+    config.fields[2].hide = true;
+  }
 
   var props = {
     __: __,
@@ -14,6 +17,16 @@ function pop(parent, callback) {
       var data = {
         name: refs.network_name.state.value
       };
+      // check vlan
+      if (refs.enable_vlan.state.checked) {
+        data['provider:network_type'] = 'vlan';
+        let v = refs.vlan_id.state.value.trim();
+        if (v !== '') {
+          data['provider:segmentation_id'] = v;
+          data['provider:physical_network'] = 'physnet3';
+        }
+      }
+
       if (!refs.enable_security.state.checked) {
         data.port_security_enabled = false;
       }
@@ -37,13 +50,19 @@ function pop(parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
+      var subnetChecked = refs.create_subnet.state.checked;
       switch (field) {
         case 'create_subnet':
           refs.subnet_name.setState({
-            hide: !refs.create_subnet.state.checked
+            hide: !subnetChecked
           });
           refs.net_address.setState({
-            hide: !refs.create_subnet.state.checked
+            hide: !subnetChecked
+          });
+          break;
+        case 'enable_vlan':
+          refs.vlan_id.setState({
+            hide: !refs.enable_vlan.state.checked
           });
           break;
         default:
