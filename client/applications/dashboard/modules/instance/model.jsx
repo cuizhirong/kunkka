@@ -600,10 +600,12 @@ class Model extends React.Component {
   getRelatedSourcesItems(items) {
     var attchVolumes = [];
     items.volume.forEach((volume, i) => {
+      var vid = '(' + volume.id.slice(0, 8) + ')',
+        vname = volume.name || vid;
       attchVolumes.push({
         key: volume.name,
         data: <a data-type="router" href={'/dashboard/volume/' + volume.id}>
-            {volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
+            {vname + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
           </a>,
         childItem: volume
       });

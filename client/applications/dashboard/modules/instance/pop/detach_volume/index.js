@@ -5,7 +5,33 @@ var __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, btnType, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
-  config.fields[1].data = btnType ? [obj.childItem] : obj.rawItem.volume;
+
+  //convey data array to config in cases of detial page remove and main table remove
+  if(btnType) {
+    var volume = obj.childItem,
+      detailData = [];
+    detailData.push({
+      name: volume.name ? volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )' :
+        '(' + volume.id.slice(0, 8) + ')' + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )',
+      id: volume.id,
+      selected: true
+    });
+    config.fields[1].data = detailData;
+    config.btn.disabled = false;
+  } else {
+    var volumes = obj.rawItem.volume,
+      mainData = [];
+    volumes.forEach(v => {
+      mainData.push({
+        name: v.name ? v.name + ' ( ' + v.volume_type + ' | ' + v.size + 'GB )' :
+          '(' + v.id.slice(0, 8) + ')' + ' ( ' + v.volume_type + ' | ' + v.size + 'GB )',
+        id: v.id,
+        selected: false
+      });
+    });
+    config.fields[1].data = mainData;
+    config.btn.disabled = true;
+  }
 
   var props = {
     __: __,
@@ -20,9 +46,9 @@ function pop(obj, btnType, parent, callback) {
         });
       } else {
         var dataArray = [];
-        refs.volume.state.data.some((volume) => {
-          if(volume.selected) {
-            dataArray.push(volume);
+        refs.volume.state.data.some((v) => {
+          if(v.selected) {
+            dataArray.push(v);
           }
         });
         request.detachSomeVolume(obj.rawItem.id, dataArray).then((res) => {
