@@ -40,5 +40,14 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
       data: data
     });
+  },
+  forceDelete: function(id) {
+    var data = {
+      'forceDelete': null
+    };
+    return fetch.post({
+      url: '/proxy/nova/v2/' + HALO.user.projectId + '/servers/' + id + '/action',
+      data: data
+    });
   }
 };

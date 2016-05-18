@@ -1,0 +1,20 @@
+{
+  "title": ["delete", "instance"],
+  "fields": [{
+    "type": "text",
+    "field": "delete_instance_text",
+    "info": "delete_instance_text"
+  }, {
+    "type": "display_box",
+    "field": "display_box"
+  }, {
+    "type": "checkbox",
+    "field": "confirm_force_delete",
+    "checked": false
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "delete",
+    "disabled": true
+  }
+}

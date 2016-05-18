@@ -6,6 +6,7 @@ var Main = require('../../components/main/index');
 
 //detail components
 var BasicProps = require('client/components/basic_props/index');
+var forceDelete = require('./pop/delete/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -301,6 +302,16 @@ class Model extends React.Component {
           refresh();
         });
         break;
+      case 'delete':
+        forceDelete(rows[0], null, (res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
       case 'refresh':
         refresh();
         break;
@@ -331,12 +342,15 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    var single = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
         case 'restore':
-          btns[key].disabled = (sole && sole.status.toLowerCase() === 'soft_deleted') ? false : true;
+          btns[key].disabled = (single && single.status.toLowerCase() === 'soft_deleted') ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = single ? false : true;
           break;
         default:
           break;
