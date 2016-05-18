@@ -39,7 +39,7 @@ function transformSqlBoolean(result) {
       }
     });
   } else if (result && result.value && result.type === 'boolean') {
-    result.value = (result.value === 'true' || result.value === '1') ? true : false;
+    result.value = (result.value === 'true' || result.value === '1' || result.value === true) ? true : false;
   }
   return result;
 }
@@ -48,7 +48,7 @@ function transformCacheBoolean(cache) {
   Object.keys(cache).forEach( c => {
     cache[c].forEach( s => {
       if (s.type === 'boolean') {
-        s.value = (s.value === 'true' || s.value === '1') ? true : false;
+        s.value = (s.value === 'true' || s.value === '1' || s.value === true) ? true : false;
       } else if (s.type === 'number') {
         s.value = Number(s.value);
       }
