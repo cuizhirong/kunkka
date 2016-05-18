@@ -21,7 +21,7 @@ var fetch = {};
       data: options.data,
       contentType: 'application/json',
       headers: {
-        REGION: 'RegionOne'
+        REGION: HALO.current_region
       }
     }).catch(errHandler);
   };
