@@ -25,6 +25,9 @@
 @slider_tip_color: @color_grey_800;
 @progress_tip_color: @color_grey_800;
 
+@display_box_bg_color: @color_grey;
+@display_box_border_color: @color_cancel_600;
+
 .halo-com-modal-common {
   line-height: 18px;
   &.modal-bd {
@@ -86,6 +89,22 @@
       }
       &.long-label-row {
         padding-left: 144px;
+      }
+    }
+
+    &.display-box-row {
+      padding: 20px;
+      margin-top: 16px;
+      background-color: @display_box_bg_color;
+      border: 1px solid @display_box_border_color;
+      margin-left: 36px;
+      > div {
+        width: 50%;
+        display: inline-block;
+
+        .glyphicon {
+          margin-right: 8px;
+        }
       }
     }
 

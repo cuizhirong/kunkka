@@ -16,6 +16,7 @@ var GroupSelect = require('./subs/group_select/index');
 var Slider = require('./subs/slider/index');
 var Progress = require('./subs/progress/index');
 var ShortTip = require('./subs/short_tip/index');
+var DisplayBox = require('./subs/display_box/index');
 
 class ModalBase extends React.Component {
 
@@ -76,6 +77,8 @@ class ModalBase extends React.Component {
           return <Progress key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'short_tip':
           return <ShortTip key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'display_box':
+          return <DisplayBox key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }
