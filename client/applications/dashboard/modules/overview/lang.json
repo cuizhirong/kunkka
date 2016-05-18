@@ -5,8 +5,7 @@
     "gigabyte": " Gigabyte",
     "quota": " Quota",
     "ram": "RAM",
-    "unit_gb": "(GB)",
-    "cpu": "CPU"
+    "unit_gb": "(GB)"
   },
   "zh-CN": {
     "infinity": "无限",
@@ -14,7 +13,6 @@
     "information": "信息",
     "gigabyte": "容量",
     "ram": "内存",
-    "unit_gb": "(GB)",
-    "cpu": "CPU"
+    "unit_gb": "(GB)"
   }
 }
