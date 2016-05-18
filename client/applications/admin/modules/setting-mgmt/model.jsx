@@ -184,17 +184,23 @@ class Model extends React.Component {
     if (actionType === 'click') {
       this.loadingTable();
 
-      var settings = refs.table.state.data;
-      var newSettings = settings.filter((setting) => {
-        return setting.name === data.text || setting.name.includes(data.text);
-      });
-      var newConfig = this.state.config;
-      newConfig.table.data = newSettings;
-      newConfig.table.loading = false;
+      if(data.text) {
+        request.getList().then(res => {
+          var settings = res.setting;
+          var newSettings = settings.filter((setting) => {
+            return setting.name === data.text || setting.name.includes(data.text);
+          });
+          var newConfig = this.state.config;
+          newConfig.table.data = newSettings;
+          newConfig.table.loading = false;
 
-      this.setState({
-        config: newConfig
-      });
+          this.setState({
+            config: newConfig
+          });
+        });
+      } else {
+        this.onInitialize();
+      }
     }
   }
 
