@@ -7,11 +7,11 @@ const noBodyMethodList = ['get', 'head', 'delete'];
 
 module.exports = (app) => {
   app.all('/proxy/*', (req, res, next) => {
-    if (req.body) {
-      if (req.body.forceDelete !== undefined) {
-        return res.status(403).json({Error: 'Request is not allowwed!'});
-      }
-    }
+    // if (req.body) {
+    //   if (req.body.forceDelete !== undefined) {
+    //     return res.status(403).json({Error: 'Request is not allowwed!'});
+    //   }
+    // }
     let remote = req.session.endpoint;
     let region = req.headers.region;
     let service = req.path.split('/')[2];
