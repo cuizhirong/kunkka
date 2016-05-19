@@ -80,6 +80,8 @@ Router.prototype = {
               let userSubnets = results[2].subnets;
               obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
 
+              obj.subnets = this.deduplicate(obj.subnets);
+
               this.orderByCreatedTime(obj.routers);
               obj.routers.forEach( (router) => {
                 this.makeRouter(router, obj);

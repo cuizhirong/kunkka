@@ -271,4 +271,16 @@ API.prototype.getVars = function (req, extra) {
   return objVar;
 };
 
+API.prototype.deduplicate = function (list) {
+  let tmpObj = {};
+  let tmpArr = [];
+  list.forEach( s => {
+    tmpObj[s.id] = s;
+  });
+  Object.keys(tmpObj).forEach( s => {
+    tmpArr.push(tmpObj[s]);
+  });
+  return tmpArr;
+};
+
 module.exports = API;

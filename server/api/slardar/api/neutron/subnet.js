@@ -60,6 +60,8 @@ Subnet.prototype = {
 
           obj.networks = userNetworks.concat([externalNetwork, sharedNetwork]);
 
+          obj.networks = this.deduplicate(obj.networks);
+
           this.arrServiceObject.forEach( (e, index) => {
             obj[e] = theResults[index + 3][e];
           });
@@ -86,6 +88,9 @@ Subnet.prototype = {
               let sharedSubnets = results[1].subnets;
               let userSubnets = results[2].subnets;
               obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
+
+              /* remove duplications. */
+              obj.subnets = this.deduplicate(obj.subnets);
 
               obj.subnets = obj.subnets.filter( s => {
                 obj.networks.some( n => {
