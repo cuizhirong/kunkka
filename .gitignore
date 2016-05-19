@@ -65,5 +65,8 @@ server/api/slardar
 server/api/tusk
 server/api/magnus
 server/drivers/huskar
-
+server/api/**/
+server/drivers/**/
 package.json
+
+client/assets/**/
