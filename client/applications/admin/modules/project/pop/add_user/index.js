@@ -19,9 +19,6 @@ function pop(obj, parent, callback) {
             data: roles,
             hide: false
           });
-          refs.btn.setState({
-            disabled: false
-          });
         }
       });
     },
@@ -40,10 +37,29 @@ function pop(obj, parent, callback) {
       }
     },
     onAction: function(field, status, refs) {
-      if(refs.role.state.value) {
-        refs.btn.setState({
-          disabled: false
-        });
+      switch(field) {
+        case 'role':
+          var hasRole = status.data.some(item => {
+            if (item.selected) {
+              return true;
+            }
+            return false;
+          });
+          if(refs.user_id.state.value) {
+            refs.btn.setState({
+              disabled: !hasRole
+            });
+          }
+          break;
+        case 'user_id':
+          if(refs.role.state.value) {
+            refs.btn.setState({
+              disabled: !refs.btn.state.disabled
+            });
+          }
+          break;
+        default:
+          break;
       }
     }
   };

@@ -4,11 +4,14 @@ var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
+  config.btn.disabled = true;
   config.fields[0].text = obj.project.name;
   config.fields[1].text = obj.user.name;
   config.fields[2].data = obj.user.role;
-  config.fields[2].data[0].selected = true;
-  config.btn.disabled = false;
+  if(obj.user.role.length === 1) {
+    config.fields[2].data[0].selected = true;
+    config.btn.disabled = false;
+  }
 
   var props = {
     __: __,

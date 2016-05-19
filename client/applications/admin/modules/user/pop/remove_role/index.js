@@ -4,6 +4,7 @@ var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
 function pop(type, obj, parent, callback) {
+  config.btn.disabled = true;
   config.fields[0].text = obj.rawItem.name;
   if (type === 'domain') {
     config.fields[1].text = '(' + obj.domain_id.substring(0, 8) + ')';
@@ -16,8 +17,11 @@ function pop(type, obj, parent, callback) {
     config.fields[2].text = '(' + obj.project_id.substring(0, 8) + ')';
     config.fields[3].data = obj.childItem;
   }
-  config.fields[3].data[0].selected = true;
-  config.btn.disabled = false;
+
+  if(config.fields[3].data.length === 1) {
+    config.fields[3].data[0].selected = true;
+    config.btn.disabled = false;
+  }
 
   var props = {
     __: __,
