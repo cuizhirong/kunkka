@@ -80,7 +80,7 @@ class Topology {
     // process router
     data.router.forEach((r, i) => {
       routerPos[i] = {
-        name: r.name,
+        name: r.name || '(' + r.id.slice(0, 8) + ')',
         id: r.id,
         status: r.status,
         subnets: [],
@@ -295,13 +295,15 @@ class Topology {
             ++down;
           }
         });
+
         let max = Math.max(up, down);
         if (max === 0) {
           ins.w = 78;
         } else {
           ins.w = 78 + (max - 1) * 10;
         }
-        var _l = networkPos[ins.layer];
+
+        let _l = networkPos[ins.layer];
         ins.y = _l.h + _l.y + 51.5; // 51+0.5
         ins.h = 58;
 
@@ -328,10 +330,31 @@ class Topology {
           });
           if (ins.x === void(0)) { // last postion in the row
             ins.x = p[p.length - 1].x + p[p.length - 1].w + 10;
+            p.push({
+              x: ins.x,
+              w: ins.w
+            });
           }
         } else {
           ins.x = cur;
+          placeholder[layer] = [{
+            x: cur,
+            w: ins.w
+          }];
         }
+
+        var upX = ins.x + (ins.w - up * 12 + 10) / 2 - 0.5,
+          downX = ins.x + (ins.w - down * 12 + 10) / 2 - 0.5;
+
+        ins.subnets.forEach((s) => {
+          if (s.networkLayer === layer) {
+            s.x = upX;
+            upX += 12;
+          } else {
+            s.x = downX;
+            downX += 12;
+          }
+        });
 
         // 3.根据当前instance的子网，给placeholder重新赋值
 
@@ -395,27 +418,48 @@ class Topology {
         });
       })(network);
 
-      // 2. draw instance link
-
-      // 3. draw router link
-
-      // 4. draw subnets
+      // 2. draw subnets
       var _subnets = network.subnets;
       for (let sLen = _subnets.length, j = sLen - 1; j >= 0; j--) {
         let subnet = _subnets[j];
+        let subnetColor = _color.subnetColor[j % 4];
 
-        shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, _color.subnetColor[j % 4]);
+        shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, subnetColor);
         shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
 
         // 画路由器和子网的连接线
         routerPos.forEach((r) => {
           r.subnets.some((s) => {
             if (s.networkLayer === i && s.subnetLayer === j) {
-              ctx.fillStyle = _color.subnetColor[j % 4];
+              ctx.fillStyle = subnetColor;
               ctx.fillRect(s.x + offsetX, s.y, 2, subnet.y - s.y);
               return true;
             }
             return false;
+          });
+        });
+
+        // 画云主机和子网的连线
+        instancePos.forEach((instances) => {
+          var layer = instances.layer;
+          if (layer === -1) {
+            return;
+          }
+          instances.instances.forEach((_instance) => {
+
+            _instance.subnets.forEach((s) => {
+              if (i === s.networkLayer && j === s.subnetLayer) {
+                if (s.networkLayer === layer) {
+                  // 画上半部分link
+                  ctx.fillStyle = subnetColor;
+                  ctx.fillRect(offsetX + s.x, subnet.y + 20, 2, _instance.y - subnet.y - 20);
+                } else {
+                  // 画下半部分link
+                  ctx.fillStyle = subnetColor;
+                  ctx.fillRect(offsetX + s.x, _instance.y + 58, 2, subnet.y - _instance.y - 58);
+                }
+              }
+            });
           });
         });
 
@@ -453,7 +497,7 @@ class Topology {
       });
     });
 
-    // 6. draw link dots
+    // draw link dots
 
   }
 
