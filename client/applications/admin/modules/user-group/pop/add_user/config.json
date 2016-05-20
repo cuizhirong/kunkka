@@ -5,12 +5,9 @@
     "field": "user-group",
     "icon-type": "user-group"
   }, {
-    "type": "select_group",
-    "field": "user",
-    "empty_text": {
-      "info": "no_user"
-    },
-    "data": []
+    "type": "input",
+    "field": "user_id",
+    "required": true
   }],
   "btn": {
     "value": "add",

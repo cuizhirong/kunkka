@@ -191,14 +191,10 @@ module.exports = {
     }));
     return RSVP.all(deferredList);
   },
-  addUser: function(groupID, users) {
-    var deferredList = [];
-    users.forEach((user) => {
-      deferredList.push(fetch.put({
-        url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + user.id
-      }));
+  addUser: function(groupID, userID) {
+    return fetch.put({
+      url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
     });
-    return RSVP.all(deferredList);
   },
   removeUser: function(groupID, userID) {
     return fetch.delete({
