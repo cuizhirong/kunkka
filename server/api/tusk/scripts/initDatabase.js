@@ -90,6 +90,31 @@ const initSets = [
     name: 'is_show_vlan',
     value: 'true',
     type: 'boolean'
+  }, {
+    app: 'login',
+    name: 'title',
+    value: 'UnitedStack 有云',
+    type: 'string'
+  }, {
+    app: 'dashboard',
+    name: 'title',
+    value: 'UnitedStack 有云',
+    type: 'string'
+  }, {
+    app: 'admin',
+    name: 'title',
+    value: 'UnitedStack',
+    type: 'string'
+  }, {
+    app: 'vmware',
+    name: 'favicon',
+    value: '/static/assets/favicon.ico',
+    type: 'string'
+  }, {
+    app: 'vmware',
+    name: 'title',
+    value: 'UnitedStack 有云',
+    type: 'string'
   }
 ];
 
