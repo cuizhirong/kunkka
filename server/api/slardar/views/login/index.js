@@ -58,6 +58,7 @@ function renderTemplate (req, res, next) {
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let logo = setting.logo ? setting.logo : '/static/assets/logo@2x.png';
     let company = setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
+    let title = setting.title ? setting.title : 'UnitedStack';
     if (!req.session || !req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
@@ -74,6 +75,7 @@ function renderTemplate (req, res, next) {
         logo: logo,
         favicon: favicon,
         company: company,
+        title: title,
         modelTmpl: tmplString[req.i18n.locale]
       });
     } else if (req.session && req.session.user){

@@ -52,6 +52,7 @@ function renderProjectTemplate (req, res, next) {
       });
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
+    let title = setting.title ? setting.title : 'UnitedStack 有云';
     if (req.session && req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
@@ -99,6 +100,7 @@ function renderProjectTemplate (req, res, next) {
         mainCssFile: staticFiles.dashboardCssFile,
         uskinFile: uskinFile[0],
         favicon: favicon,
+        title: title,
         modelTmpl: ReactDOMServer.renderToString(dashboardModelFactory({
           __: __('shared.dashboard'),
           HALO: HALO

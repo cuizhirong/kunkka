@@ -52,6 +52,7 @@ function renderTemplate (req, res, next) {
       });
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
+    let title = setting.title ? setting.title : 'UnitedStack 有云';
     if (req.session && req.session.user) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
@@ -100,6 +101,7 @@ function renderTemplate (req, res, next) {
         mainCssFile: staticFiles.adminCssFile,
         uskinFile: uskinFile[0],
         favicon: favicon,
+        title: title,
         modelTmpl: ReactDOMServer.renderToString(adminModelFactory({
           __: __('shared.admin'),
           HALO: HALO
