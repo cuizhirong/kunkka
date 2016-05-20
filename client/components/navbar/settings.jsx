@@ -41,11 +41,12 @@ class Settings extends React.Component {
     var currtLang = HALO.configs.lang;
     var __ = this.props.__;
 
+    // {
+    //   title: __.setting,
+    //   key: 'settings',
+    //   icon: 'setting'
+    // }
     var config = [{
-      title: __.setting,
-      key: 'settings',
-      icon: 'setting'
-    }, {
       key: 'lang',
       icon: 'global'
     }, {
