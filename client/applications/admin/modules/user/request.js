@@ -38,6 +38,11 @@ module.exports = {
       return res;
     });
   },
+  getUserByName: function(name) {
+    return fetch.get({
+      url: '/api/v1/users?name=' + name
+    });
+  },
   getRelatedResource: function(userID) {
     var deferredList = [];
     deferredList.push(fetch.get({

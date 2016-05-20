@@ -2,6 +2,7 @@ require('./style/index.less');
 
 //react components
 var React = require('react');
+var RSVP = require('rsvp');
 var Main = require('../../components/main/index');
 var {Button} = require('client/uskin/index');
 
@@ -144,12 +145,48 @@ class Model extends React.Component {
     });
   }
 
+  searchByKey(key, data) {
+    var deferredList = [];
+    data.dataList = [];
+
+    deferredList.push(request.getProjectByID(key).then(res => {
+      if(data.dataList.length > 0 && res.project) {
+        data.dataList.forEach(item => {
+          if(item.id !== res.project.id) {
+            data.dataList.push(res.project);
+          }
+        });
+      } else if(res.project) {
+        data.dataList.push(res.project);
+      }
+    }));
+    deferredList.push(request.getProjectByName(key).then(res => {
+      if(data.dataList.length > 0) {
+        data.dataList.forEach(item => {
+          res.projects.forEach(ele => {
+            if(item.id !== ele.id) {
+              data.dataList.push(ele);
+            }
+          });
+        });
+      } else {
+        data.dataList.push(...res.projects);
+      }
+    }));
+
+    return RSVP.all(deferredList);
+  }
+
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
 
       if (data.text) {
-        this.getSingle(data.text);
+        var table = this.state.config.table;
+        this.searchByKey(data.text, data).then(res => {
+          table.data = data.dataList;
+          this.updateTableData(table, res._url);
+        });
       } else {
         this.getList();
       }

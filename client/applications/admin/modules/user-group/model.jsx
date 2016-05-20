@@ -2,6 +2,7 @@ require('./style/index.less');
 
 //react components
 var React = require('react');
+var RSVP = require('rsvp');
 var Main = require('../../components/main/index');
 var {Button} = require('client/uskin/index');
 
@@ -134,12 +135,48 @@ class Model extends React.Component {
     this.getList();
   }
 
+  searchByKey(key, data) {
+    var deferredList = [];
+    data.dataList = [];
+
+    deferredList.push(request.getGroupByID(key).then(res => {
+      if(data.dataList.length > 0 && res.group) {
+        data.dataList.forEach(item => {
+          if(item.id !== res.group.id) {
+            data.dataList.push(res.group);
+          }
+        });
+      } else if(res.group) {
+        data.dataList.push(res.group);
+      }
+    }));
+    deferredList.push(request.getGroupByName(key).then(res => {
+      if(data.dataList.length > 0) {
+        data.dataList.forEach(item => {
+          res.groups.forEach(ele => {
+            if(item.id !== ele.id) {
+              data.dataList.push(ele);
+            }
+          });
+        });
+      } else {
+        data.dataList.push(...res.groups);
+      }
+    }));
+
+    return RSVP.all(deferredList);
+  }
+
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
 
       if (data.text) {
-        this.getSingle(data.text);
+        var table = this.state.config.table;
+        this.searchByKey(data.text, data).then(res => {
+          table.data = data.dataList;
+          this.updateTableData(table, res._url);
+        });
       } else {
         this.getList();
       }

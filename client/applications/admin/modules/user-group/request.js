@@ -42,6 +42,11 @@ module.exports = {
       return res;
     });
   },
+  getGroupByName: function(name) {
+    return fetch.get({
+      url: '/proxy/keystone/v3/groups?name=' + name
+    });
+  },
   deleteItem: function(items) {
     var deferredList = [];
     items.forEach((item) => {

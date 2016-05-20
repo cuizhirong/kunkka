@@ -26,7 +26,8 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "role", "id"]
+    "width": 200,
+    "placeholder": ["pls_enter", "role", "id", "or", "name"]
   },
   "table": {
     "checkbox": true,

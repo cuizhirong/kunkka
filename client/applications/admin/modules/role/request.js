@@ -42,6 +42,11 @@ module.exports = {
       return res;
     });
   },
+  getRoleByName: function(name) {
+    return fetch.get({
+      url: '/proxy/keystone/v3/roles?name=' + name
+    });
+  },
   deleteItem: function(items) {
     var deferredList = [];
     items.forEach((item) => {

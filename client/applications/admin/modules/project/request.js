@@ -38,6 +38,11 @@ module.exports = {
       return res;
     });
   },
+  getProjectByName: function(name) {
+    return fetch.get({
+      url: '/api/v1/projects?name=' + name
+    });
+  },
   deleteItem: function(items) {
     var deferredList = [];
     items.forEach((item) => {

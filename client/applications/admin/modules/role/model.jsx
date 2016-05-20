@@ -2,6 +2,7 @@ require('./style/index.less');
 
 //react components
 var React = require('react');
+var RSVP = require('rsvp');
 var Main = require('../../components/main/index');
 
 //detail components
@@ -125,12 +126,48 @@ class Model extends React.Component {
     this.getList();
   }
 
+  searchByKey(key, data) {
+    var deferredList = [];
+    data.dataList = [];
+
+    deferredList.push(request.getRoleByID(key).then(res => {
+      if(data.dataList.length > 0 && res.role) {
+        data.dataList.forEach(item => {
+          if(item.id !== res.role.id) {
+            data.dataList.push(res.role);
+          }
+        });
+      } else if(res.role) {
+        data.dataList.push(res.role);
+      }
+    }));
+    deferredList.push(request.getRoleByName(key).then(res => {
+      if(data.dataList.length > 0) {
+        data.dataList.forEach(item => {
+          res.roles.forEach(ele => {
+            if(item.id !== ele.id) {
+              data.dataList.push(ele);
+            }
+          });
+        });
+      } else {
+        data.dataList.push(...res.roles);
+      }
+    }));
+
+    return RSVP.all(deferredList);
+  }
+
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
 
       if (data.text) {
-        this.getSingle(data.text);
+        var table = this.state.config.table;
+        this.searchByKey(data.text, data).then(res => {
+          table.data = data.dataList;
+          this.updateTableData(table, res._url);
+        });
       } else {
         this.getList();
       }

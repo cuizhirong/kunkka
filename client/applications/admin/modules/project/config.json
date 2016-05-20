@@ -36,7 +36,8 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "project", "id"]
+    "width": 200,
+    "placeholder": ["pls_enter", "project", "id", "or", "name"]
   },
   "table": {
     "checkbox": true,
