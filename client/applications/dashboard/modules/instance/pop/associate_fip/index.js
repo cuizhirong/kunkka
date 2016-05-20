@@ -83,6 +83,7 @@ function pop(obj, parent, callback) {
         case 'floating_ip':
           if(refs.floating_ip.state.clicked) {
             createFloatingIp(refs.modal, (res) => {
+              res.name = res.floating_ip_address;
               refs.floating_ip.setState({
                 data: [res],
                 value: res.id,
