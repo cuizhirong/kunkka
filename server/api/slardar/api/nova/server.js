@@ -108,8 +108,15 @@ Instance.prototype = {
             return this.handleError(error, req, res, next);
           }
           let obj = {};
-          let externalNetwork = theResults[0].networks[0];
-          let sharedNetwork = theResults[1].networks[0];
+          let externalNetwork;
+          let sharedNetwork;
+
+          if (theResults[0].networks.length) {
+            externalNetwork = theResults[0].networks[0];
+          }
+          if (theResults[1].networks.length) {
+            sharedNetwork = theResults[1].networks[0];
+          }
 
           ['floatingips', 'ports', 'servers'].concat(this.arrServiceObject).forEach( (e, index) => {
             obj[e] = theResults[index + 2][e];
@@ -117,11 +124,21 @@ Instance.prototype = {
 
           let objVarExternal = JSON.parse(JSON.stringify(objVar));
           delete objVarExternal.query.tenant_id;
-          objVarExternal.query.network_id = externalNetwork.id;
+
+          if (externalNetwork) {
+            objVarExternal.query.network_id = externalNetwork.id;
+          } else {
+            objVarExternal.query.network_id = 'null';
+          }
 
           let objVarShared = JSON.parse(JSON.stringify(objVar));
           delete objVarShared.query.tenant_id;
-          objVarShared.query.network_id = sharedNetwork.id;
+
+          if (sharedNetwork) {
+            objVarShared.query.network_id = sharedNetwork.id;
+          } else {
+            objVarShared.query.network_id = 'null';
+          }
 
           async.parallel(
             [

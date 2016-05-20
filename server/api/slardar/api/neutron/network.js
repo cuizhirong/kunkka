@@ -57,10 +57,19 @@ Network.prototype = {
             return this.handleError(error, req, res, next);
           }
           let obj = {};
-          let externalNetwork = theResults[0].networks[0];
-          let sharedNetwork = theResults[1].networks[0];
+          let externalNetwork;
+          let sharedNetwork;
           let networks = theResults[2].networks;
-          obj.networks = networks.concat([externalNetwork, sharedNetwork]);
+          obj.networks = [].concat(networks);
+
+          if (theResults[0].networks.length) {
+            externalNetwork = theResults[0].networks[0];
+            obj.networks.push(externalNetwork);
+          }
+          if (theResults[1].networks.length) {
+            sharedNetwork = theResults[1].networks[0];
+            obj.networks.push(sharedNetwork);
+          }
 
           obj.networks = this.deduplicate(obj.networks);
 
@@ -70,11 +79,21 @@ Network.prototype = {
 
           let objVarExternal = JSON.parse(JSON.stringify(objVar));
           delete objVarExternal.query.tenant_id;
-          objVarExternal.query.network_id = externalNetwork.id;
+
+          if (externalNetwork) {
+            objVarExternal.query.network_id = externalNetwork.id;
+          } else {
+            objVarExternal.query.network_id = 'null';
+          }
 
           let objVarShared = JSON.parse(JSON.stringify(objVar));
           delete objVarShared.query.tenant_id;
-          objVarShared.query.network_id = sharedNetwork.id;
+
+          if (sharedNetwork) {
+            objVarShared.query.network_id = sharedNetwork.id;
+          } else {
+            objVarShared.query.network_id = 'null';
+          }
 
           async.parallel(
             [
