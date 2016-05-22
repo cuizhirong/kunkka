@@ -13,6 +13,7 @@ class Model extends React.Component {
 
   componentDidMount() {
     request.getList().then(data => {
+      this.refs.loading.classList.add('hide');
       var t = new Topology(this.refs.c, data);
       t.render();
     });
@@ -21,7 +22,8 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-topology" style={this.props.style}>
-        <div ref="c" id="c">
+        <div ref="c" className="c">
+          <div ref="loading" className="loading glyphicon icon-loading"></div>
         </div>
       </div>
     );

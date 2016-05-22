@@ -2,12 +2,22 @@
   position: relative;
   flex: 1;
   display: flex;
-  padding: 20px;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
 
-  #c {
-    
+  .c {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -16px;
+      margin-top: -16px;
+    }
   }
 }
