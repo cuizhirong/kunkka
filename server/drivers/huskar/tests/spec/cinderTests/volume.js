@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../cinder/volume', mocks);
+let serverModule = proxyquire('../../../cinder/volume', mocks);
 function callback () {}
 
 describe('listVolumesTest', function() {

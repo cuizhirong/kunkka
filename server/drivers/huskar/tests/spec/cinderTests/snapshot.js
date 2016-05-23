@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../cinder/snapshot', mocks);
+let serverModule = proxyquire('../../../cinder/snapshot', mocks);
 function callback () {}
 
 describe('listSnapshotsTest', function() {

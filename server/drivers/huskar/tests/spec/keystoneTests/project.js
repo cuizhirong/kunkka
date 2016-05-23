@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../keystone/project', mocks);
+let serverModule = proxyquire('../../../keystone/project', mocks);
 function callback () {}
 
 describe('getUserProjectsTest', function() {

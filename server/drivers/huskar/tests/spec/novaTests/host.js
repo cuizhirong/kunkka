@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../nova/host', mocks);
+let serverModule = proxyquire('../../../nova/host', mocks);
 function callback () {}
 
 describe('listHostsTest', function() {

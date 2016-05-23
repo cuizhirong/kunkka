@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../nova/keypair', mocks);
+let serverModule = proxyquire('../../../nova/keypair', mocks);
 function callback () {}
 
 describe('listKeypairsTest', function() {

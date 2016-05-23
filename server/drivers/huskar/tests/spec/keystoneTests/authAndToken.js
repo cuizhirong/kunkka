@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../keystone/authAndToken', mocks);
+let serverModule = proxyquire('../../../keystone/authAndToken', mocks);
 function callback () {}
 
 describe('unscopedAuthTest', function() {

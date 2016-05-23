@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../neutron/subnet', mocks);
+let serverModule = proxyquire('../../../neutron/subnet', mocks);
 function callback () {}
 
 describe('listSubnetsTest', function() {

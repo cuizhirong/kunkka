@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../glance/image', mocks);
+let serverModule = proxyquire('../../../glance/image', mocks);
 function callback () {}
 
 describe('listImagesTest', function() {

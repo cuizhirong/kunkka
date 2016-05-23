@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../neutron/floatingip', mocks);
+let serverModule = proxyquire('../../../neutron/floatingip', mocks);
 function callback () {}
 
 describe('listFloatingipsTest', function() {

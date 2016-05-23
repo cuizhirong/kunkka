@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../nova/flavor', mocks);
+let serverModule = proxyquire('../../../nova/flavor', mocks);
 function callback () {}
 
 describe('listFlavorsTest', function() {

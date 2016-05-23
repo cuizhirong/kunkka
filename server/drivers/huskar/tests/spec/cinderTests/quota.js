@@ -28,7 +28,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../cinder/quota', mocks);
+let serverModule = proxyquire('../../../cinder/quota', mocks);
 function callback () {}
 
 describe('getQuotaTest', function() {

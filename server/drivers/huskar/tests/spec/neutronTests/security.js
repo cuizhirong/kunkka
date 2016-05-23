@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../neutron/security', mocks);
+let serverModule = proxyquire('../../../neutron/security', mocks);
 function callback () {}
 
 describe('listSecurityTest', function() {

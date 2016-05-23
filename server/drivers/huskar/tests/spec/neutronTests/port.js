@@ -19,7 +19,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../neutron/port', mocks);
+let serverModule = proxyquire('../../../neutron/port', mocks);
 function callback () {}
 
 describe('listPortsTest', function() {

@@ -28,7 +28,7 @@ const mocks = {
   '../base.js': mockBase
 };
 
-let serverModule = proxyquire('../../nova/quota', mocks);
+let serverModule = proxyquire('../../../nova/quota', mocks);
 function callback () {}
 
 describe('getQuotaTest', function() {
