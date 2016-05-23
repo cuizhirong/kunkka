@@ -153,7 +153,7 @@ module.exports = {
     });
   },
   getFlavors: function() {
-    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair']).then(function(data) {
+    return storage.getList(['flavor']).then(function(data) {
       return data.flavor;
     });
   },
