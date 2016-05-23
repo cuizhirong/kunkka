@@ -186,12 +186,7 @@ class Model extends React.Component {
         disableGateway(rows[0]);
         break;
       case 'cnt_subnet':
-        request.getSubnets().then((res) => {
-          var items = {};
-          items.rawItem = rows[0];
-          items.subnet = res;
-          relatedSubnet(items);
-        });
+        relatedSubnet(rows[0]);
         break;
       default:
         break;
@@ -426,10 +421,7 @@ class Model extends React.Component {
         request.editRouterName(rawItem, newName).then((res) => {});
         break;
       case 'cnt_subnet':
-        request.getSubnets().then((res) => {
-          data.subnet = res;
-          relatedSubnet(data);
-        });
+        relatedSubnet(data.rawItem);
         break;
       case 'detach_subnet':
         detachSubnet(data);

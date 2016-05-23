@@ -72,8 +72,8 @@ module.exports = {
       return ret;
     });
   },
-  getSubnets: function() {
-    return storage.getList(['subnet']).then(function(data) {
+  getSubnets: function(forced) {
+    return storage.getList(['subnet'], forced).then(function(data) {
       return data.subnet;
     });
   },
