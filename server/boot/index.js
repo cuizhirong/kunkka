@@ -27,7 +27,7 @@ function setup() {
   const app = express();
   app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'client')));
   const assetsDir = config('assets_dir') || '/opt/assets';
-  app.use('/static/assets', express.static(assetsDir));
+  app.use(assetsDir, express.static(assetsDir));
   app.use(cookieParser(config('sessionEngine').secret));
 
   // for nginx
