@@ -443,7 +443,7 @@ class Main extends React.Component {
               {prevUrl ?
                 <div className="default-page"
                   onClick={this.onNextPage.bind(this, null, 'default')}>
-                  <i className="glyphicon icon-refresh" />
+                  <i className="glyphicon icon-double-arrow-left" />
                 </div>
               : null
               }
