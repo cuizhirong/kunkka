@@ -3,7 +3,7 @@
 const driver = require('./driver');
 const configMysql = require('config')('mysql');
 const databaseName = configMysql.database;
-const tableName = configMysql.table;
+const tableName = 'tusk';
 
 const sqlOption = {
   host : configMysql.host,
@@ -34,7 +34,7 @@ module.exports = function(app) {
       return res.status(401).json({error: req.i18n.__('api.auth.unauthorized')});
     }
   });
-
+  require('./api')(app);
   driver.connect(sqlOption, databaseName, function (con) {
     driver.cacheClient = app.get('CacheClient');
     driver.table = tableName;
@@ -43,7 +43,6 @@ module.exports = function(app) {
         console.log(err);
       } else {
         console.log('tusk is ready.');
-        require('./api')(app);
       }
     });
   });

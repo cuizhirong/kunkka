@@ -4,12 +4,11 @@
 
 console.log('---------------------------');
 
-const path = require('path');
 const async = require('async');
 const mysql = require('mysql');
-const sessionEngine = require('config')('sessionEngine');
-
-const configMysql = require(path.join(__dirname, '../../../../configs/server.json')).mysql;
+const config = require('config');
+const sessionEngine = config('sessionEngine');
+const configMysql = config('mysql');
 
 const databaseName = configMysql.database;
 const tableName = configMysql.table;

@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = {
-  'dependencies': {
+  dependencies: {
     'mysql': '^2.10.2'
   },
-  'config': {
+  config: {
     mysql: {
       host: '121.201.52.181',
       port: 3306,
@@ -12,6 +12,7 @@ module.exports = {
       password: '1234',
       database: 'kunkka',
       table: 'tusk'
-    }
+    },
+    assets_dir: '/opt/assets'
   }
 };
