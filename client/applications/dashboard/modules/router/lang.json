@@ -17,7 +17,7 @@
     "tip_en_gw": "",
     "tip_dis_gw": "Do you want to disable external gateway of router {0} ?",
     "tip_related_subnet": "Already filtered subnets with the gateway-status off.",
-    "tip_router_has_subnet": "Cannot delete router, there are subnets related to this router"
+    "tip_router_has_subnet": "Cannot delete router which has related subnets"
   },
   "zh-CN": {
     "add_interface": "绑定",

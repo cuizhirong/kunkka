@@ -145,11 +145,17 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'delete':
+        var hasSource = rows[0].association.type === 'server' ? true : false;
         deleteModal({
           __: __,
           action: 'release',
           type: 'floating_ip',
           data: rows,
+          tip: hasSource ? {
+            hide: false,
+            title: __.attention,
+            value: __.tip_fip_has_source
+          } : null,
           onDelete: function(_data, cb) {
             request.deleteFloatingIps(rows).then((res) => {
               cb(true);
