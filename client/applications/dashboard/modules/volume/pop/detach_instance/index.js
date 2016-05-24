@@ -26,12 +26,16 @@ function pop(obj, parent, callback) {
             name: ele.server.name
           });
         }
-
       });
 
       refs.instance.setState({
         data: data
       });
+      if(data.length === 1) {
+        refs.instance.setState({
+          value: data[0].id
+        });
+      }
     },
     onConfirm: function(refs, cb) {
       var selected = refs.instance.state.data.filter((ele) => ele.selected)[0];

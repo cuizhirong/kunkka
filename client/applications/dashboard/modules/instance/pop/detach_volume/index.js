@@ -29,8 +29,13 @@ function pop(obj, btnType, parent, callback) {
         selected: false
       });
     });
-    config.fields[1].data = mainData;
+
     config.btn.disabled = true;
+    if(volumes.length === 1) {
+      mainData[0].selected = true;
+      config.btn.disabled = false;
+    }
+    config.fields[1].data = mainData;
   }
 
   var props = {
