@@ -37,10 +37,13 @@ function pop(obj, parent, callback) {
           subnet.disabled = true;
           return true;
         }
-        hasAvailableSubnet = true;
         return false;
       });
     });
+    if(subnets.length > joinedSubnet.length) {
+      hasAvailableSubnet = true;
+    }
+
 
     if (hasAvailableSubnet) {
       subnets.forEach((subnet) => {
