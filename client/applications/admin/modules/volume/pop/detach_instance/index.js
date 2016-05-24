@@ -26,6 +26,12 @@ function pop(obj, parent, callback) {
           refs.instance.setState({
             data: data
           });
+
+          if(data.length === 1) {
+            refs.instance.setState({
+              value: data[0].id
+            });
+          }
         }).catch(e => {
           if(e.status === 404) {
             var data = [];
