@@ -63,6 +63,7 @@ class ModalBase extends React.Component {
       dKeypairName: null,
       dUserName: '',
       pswError: true,
+      showPswTip: false,
       dPsw: '',
       dNumber: 1,
       showError: false,
@@ -72,7 +73,8 @@ class ModalBase extends React.Component {
     ['initialize', 'onPaging', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
-    'onChangeKeypair', 'onChangePsw', 'onChangeNumber',
+    'onChangeKeypair', 'onChangeNumber',
+    'onChangePsw', 'onFocusPsw', 'onBlurPsw',
     'createNetwork', 'createKeypair', 'onConfirm'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
@@ -118,34 +120,9 @@ class ModalBase extends React.Component {
     }
 
     var flavors = res.flavor;
-    var cpusKey = {};
-    flavors.forEach((ele) => {
-      cpusKey[ele.vcpus] = true;
-    });
-    var cpus = (Object.keys(cpusKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultCpu = cpus[0];
-
-    var ramsKey = {};
-    (function(_cpu) {
-      flavors.forEach((ele) => {
-        if (ele.vcpus === _cpu) {
-          ramsKey[ele.ram] = true;
-        }
-      });
-    })(defaultCpu);
-    var rams = (Object.keys(ramsKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultRam = rams[0];
-
-    var diskKey = {};
-    (function(_cpu, _ram) {
-      flavors.forEach((ele) => {
-        if (ele.vcpus === _cpu && ele.ram === _ram) {
-          diskKey[ele.disk] = true;
-        }
-      });
-    })(defaultCpu, defaultRam);
-    var disks = (Object.keys(diskKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultDisk = disks[0];
+    this._flavors = flavors;
+    var image = selectDefault(images);
+    this.setFlavor(image, 'all');
 
     var networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
@@ -156,32 +133,83 @@ class ModalBase extends React.Component {
     var keypairs = res.keypair;
     var selectedKeypair = selectDefault(keypairs);
 
+    var hideKeypair = image ? image.image_label.toLowerCase() === 'windows' : false;
+    var dCredential = hideKeypair ? 'psw' : 'keypair';
+
     this.setState({
       ready: true,
       rImages: images,
-      dImage: selectedImage,
+      dImage: image,
       rSnapshots: snapshots,
       dSnapshot: selectDefault(snapshots),
       rFlavors: flavors,
-      dFlavor: selectDefault(flavors),
-      rCpus: cpus,
-      dCpu: defaultCpu,
-      rMemory: rams,
-      dMemory: defaultRam,
-      rVolumes: disks,
-      dVolume: defaultDisk,
       rNetworks: networks,
       dNetwork: selectDefault(networks),
       rSecurityGroup: sg,
       dSecurityGroup: {},
       rKeypairs: keypairs,
       dKeypairName: selectedKeypair ? selectedKeypair.name : null,
-      dUserName: userName
+      dUserName: userName,
+      hideKeypair: hideKeypair,
+      dCredential: dCredential
     });
 
   }
 
-  sortNumber(a, b) {
+  findCpu(flavors, cpu) {
+    var cpuKeys = {};
+    flavors.forEach((ele) => {
+      cpuKeys[ele.vcpus] = true;
+    });
+    var cpus = (Object.keys(cpuKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    if (typeof cpu === 'undefined') {
+      cpu = cpus[0];
+    }
+    return {
+      cpus: cpus,
+      cpu: cpu
+    };
+  }
+
+  findRam(flavors, cpu, ram) {
+    var rawRams = flavors.filter((ele) => ele.vcpus === cpu);
+    var ramKeys = {};
+    rawRams.forEach((ele) => {
+      ramKeys[ele.ram] = true;
+    });
+    var rams = (Object.keys(ramKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    if (typeof ram === 'undefined') {
+      ram = rams[0];
+    }
+
+    return {
+      rams: rams,
+      ram: ram
+    };
+  }
+
+  findDisk(flavors, cpu, ram, disk) {
+    var rawDisks = flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram);
+    var diskKeys = {};
+    rawDisks.forEach((ele) => {
+      diskKeys[ele.disk] = true;
+    });
+    var disks = (Object.keys(diskKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    if (typeof disk === 'undefined') {
+      disk = disks[0];
+    }
+
+    return {
+      disks: disks,
+      disk: disk
+    };
+  }
+
+  findFlavor(flavors, cpu, ram, disk) {
+    return flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram && ele.disk === disk)[0];
+  }
+
+  sortByNumber(a, b) {
     return a - b;
   }
 
@@ -212,14 +240,18 @@ class ModalBase extends React.Component {
       userName = meta.os_username;
     }
 
-    var hideKeypair = false;
-    if (key === 'image' && image) {
-      let label = image.image_label.toLowerCase();
-      hideKeypair = label === 'windows';
-    } else if (key === 'snapshot' && snapshot) {
-      let label = snapshot.image_label.toLowerCase();
-      hideKeypair = label === 'windows';
+    var objImage;
+    if (key === 'image') {
+      objImage = image;
+    } else if (key === 'snapshot') {
+      objImage = snapshot;
     }
+
+    var hideKeypair = false;
+    if (objImage) {
+      hideKeypair = objImage.image_label.toLowerCase() === 'windows';
+    }
+    this.setFlavor(objImage, 'all');
 
     this.setState({
       dImageType: key,
@@ -233,6 +265,55 @@ class ModalBase extends React.Component {
     });
   }
 
+  setFlavor(objImage, type, value) {
+    var state = this.state;
+    var cpus = state.rCpus;
+    var cpu = type === 'cpu' ? value : state.dCpu;
+    var rams = state.rMemory;
+    var ram = type === 'ram' ? value : state.dMemory;
+    var disks = state.rVolumes;
+    var disk = type === 'disk' ? value : state.dVolume;
+
+    if (objImage) {
+      let flavor;
+      let expectedSize = Number(objImage.expected_size);
+      let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
+
+      var inArray = function(item, arr) {
+        return arr.some((ele) => ele === item);
+      };
+
+      if (inArray(type, ['all'])) {
+        var cpuOpt = this.findCpu(flavors);
+        cpus = cpuOpt.cpus;
+        cpu = cpuOpt.cpu;
+      }
+      if (inArray(type, ['all', 'cpu'])) {
+        var ramOpt = this.findRam(flavors, cpu);
+        rams = ramOpt.rams;
+        ram = ramOpt.ram;
+      }
+      if (inArray(type, ['all', 'cpu', 'ram'])) {
+        var diskOpt = this.findDisk(flavors, cpu, ram);
+        disks = diskOpt.disks;
+        disk = diskOpt.disk;
+      }
+      if (inArray(type, ['all', 'cpu', 'ram', 'disk'])) {
+        flavor = this.findFlavor(flavors, cpu, ram, disk);
+      }
+
+      this.setState({
+        dFlavor: flavor,
+        rCpus: cpus,
+        dCpu: cpu,
+        rMemory: rams,
+        dMemory: ram,
+        rVolumes: disks,
+        dVolume: disk
+      });
+    }
+  }
+
   onChangeImage(item, e) {
     var userName = '';
     var meta = JSON.parse(item.image_meta);
@@ -240,6 +321,8 @@ class ModalBase extends React.Component {
 
     var label = item.image_label.toLowerCase();
     var hideKeypair = label === 'windows';
+
+    this.setFlavor(item, 'all');
     this.setState({
       dImage: item,
       userName: userName,
@@ -257,6 +340,8 @@ class ModalBase extends React.Component {
 
     var label = item.image_label.toLowerCase();
     var hideKeypair = label === 'windows';
+
+    this.setFlavor(item, 'all');
     this.setState({
       dSnapshot: item,
       userName: userName,
@@ -345,13 +430,32 @@ class ModalBase extends React.Component {
     });
   }
 
+  checkPsw(pwd) {
+    return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
+  }
+
   onChangePsw(e) {
     var pwd = e.target.value;
-    var pswError = (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
+    var pswError = this.checkPsw(pwd);
 
     this.setState({
       pswError: pswError,
+      showPswTip: true,
       dPsw: pwd
+    });
+  }
+
+  onFocusPsw(e) {
+    var pswError = this.checkPsw(this.state.dPsw);
+
+    this.setState({
+      showPswTip: pswError
+    });
+  }
+
+  onBlurPsw(e) {
+    this.setState({
+      showPswTip: false
     });
   }
 
@@ -387,6 +491,135 @@ class ModalBase extends React.Component {
     this.setState({
       pagingAni: false
     });
+  }
+
+  findDefaultFlavor(flavors, cpu, ram, disk) {
+    var defaultFlavor;
+    flavors.some((ele) => {
+      if (ele.vcpus === cpu && ele.ram === ram && ele.disk === disk) {
+        defaultFlavor = ele;
+        return true;
+      }
+      return false;
+    });
+
+    return defaultFlavor;
+  }
+
+  findSelectedImage() {
+    var state = this.state;
+    if (state.dImageType === 'image') {
+      return state.dImage;
+    } else if (state.dImageType === 'snapshot') {
+      return state.dSnapshot;
+    }
+  }
+
+  onChangeCpu(cpu, e) {
+    var img = this.findSelectedImage();
+    this.setFlavor(img, 'cpu', cpu);
+  }
+
+  onChangeMemory(ram, e) {
+    var img = this.findSelectedImage();
+    this.setFlavor(img, 'ram', ram);
+  }
+
+  onChangeVolume(disk, e) {
+    var img = this.findSelectedImage();
+    this.setFlavor(img, 'disk', disk);
+  }
+
+  onChangeSecurityGroup(sg, e) {
+    var state = this.state;
+    var selects = state.dSecurityGroup;
+
+    if (selects[sg.id]) {
+      delete selects[sg.id];
+    } else {
+      selects[sg.id] = true;
+    }
+
+    this.setState({
+      dSecurityGroup: selects
+    });
+
+    e.stopPropagation();
+  }
+
+  onConfirm() {
+    var state = this.state;
+    if (state.disabled) {
+      return;
+    }
+
+    var enable = state.dName && state.dFlavor && state.dNetwork && state.dNumber;
+    var selectedImage;
+    if (state.dImageType === 'image') {
+      enable = enable && state.dImage;
+      selectedImage = state.dImage;
+    } else {
+      enable = enable && state.dSnapshot;
+      selectedImage = state.dSnapshot;
+    }
+    if (state.dCredential === 'keypair') {
+      enable = enable && state.dKeypairName;
+    } else {
+      enable = enable && !state.pswError;
+    }
+
+    if (enable) {
+      var data = {
+        name: state.dName.trim(),
+        imageRef: selectedImage.id,
+        flavorRef: state.dFlavor.id,
+        networks: [{
+          uuid: state.dNetwork.id
+        }],
+        min_count: state.dNumber,
+        max_count: state.dNumber
+      };
+
+      if (state.dCredential === 'keypair') {
+        data.key_name = state.dKeypairName;
+      } else {
+        data.adminPass = state.dPsw;
+      }
+
+      var selectedSg = state.dSecurityGroup;
+      var securitygroups = state.rSecurityGroup;
+      var sg = [];
+      securitygroups.forEach((ele) => {
+        if (selectedSg[ele.id]) {
+          sg.push({
+            name: ele.name
+          });
+        }
+      });
+      if (sg.length > 0) {
+        data.security_groups = sg;
+      }
+
+      request.createInstance(data).then((res) => {
+        this.props.callback && this.props.callback(res.server);
+        this.setState({
+          visible: false
+        });
+      }).catch((error) => {
+        var reg = new RegExp('"message":"(.*)","');
+        var tip = reg.exec(error.response)[1];
+
+        this.setState({
+          disabled: false,
+          showError: true,
+          dError: tip
+        });
+      });
+
+      this.setState({
+        disabled: true
+      });
+    }
   }
 
   renderName(props, state) {
@@ -485,187 +718,6 @@ class ModalBase extends React.Component {
 
     return ret;
   }
-
-  findDefaultFlavor(flavors, cpu, ram, disk) {
-    var defaultFlavor;
-    flavors.some((ele) => {
-      if (ele.vcpus === cpu && ele.ram === ram && ele.disk === disk) {
-        defaultFlavor = ele;
-        return true;
-      }
-      return false;
-    });
-
-    return defaultFlavor;
-  }
-
-  onChangeCpu(defaultCpu, e) {
-    var flavors = this.state.rFlavors;
-
-    var ramsKey = {};
-    (function findFlavor(_cpu) {
-      flavors.forEach((ele) => {
-        if (ele.vcpus === _cpu) {
-          ramsKey[ele.ram] = true;
-        }
-      });
-    })(defaultCpu);
-    var rams = (Object.keys(ramsKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultRam = rams[0];
-
-    var diskKey = {};
-    (function(_cpu, _ram) {
-      flavors.forEach((ele) => {
-        if (ele.vcpus === _cpu && ele.ram === _ram) {
-          diskKey[ele.disk] = true;
-        }
-      });
-    })(defaultCpu, defaultRam);
-    var disks = (Object.keys(diskKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultDisk = disks[0];
-
-    var defaultFlavor = this.findDefaultFlavor(flavors, defaultCpu, defaultRam, defaultDisk);
-
-    this.setState({
-      dFlavor: defaultFlavor,
-      dCpu: defaultCpu,
-      rMemory: rams,
-      dMemory: defaultRam,
-      rVolumes: disks,
-      dVolume: defaultDisk
-    });
-  }
-
-  onChangeMemory(defaultRam, e) {
-    var flavors = this.state.rFlavors;
-    var defaultCpu = this.state.dCpu;
-
-    var diskKey = {};
-    (function(_cpu, _ram) {
-      flavors.forEach((ele) => {
-        if (ele.vcpus === _cpu && ele.ram === _ram) {
-          diskKey[ele.disk] = true;
-        }
-      });
-    })(defaultCpu, defaultRam);
-    var disks = (Object.keys(diskKey)).map((ele) => Number(ele)).sort(this.sortNumber);
-    var defaultDisk = disks[0];
-
-    var defaultFlavor = this.findDefaultFlavor(flavors, defaultCpu, defaultRam, defaultDisk);
-
-    this.setState({
-      dFlavor: defaultFlavor,
-      dMemory: defaultRam,
-      rVolumes: disks,
-      dVolume: defaultDisk
-    });
-  }
-
-  onChangeVolume(defaultDisk, e) {
-    var state = this.state;
-    var flavors = state.rFlavors;
-    var defaultCpu = state.dCpu;
-    var defaultRam = state.dMemory;
-
-    var defaultFlavor = this.findDefaultFlavor(flavors, defaultCpu, defaultRam, defaultDisk);
-    this.setState({
-      dFlavor: defaultFlavor,
-      dVolume: defaultDisk
-    });
-  }
-
-  onChangeSecurityGroup(sg, e) {
-    var state = this.state;
-    var selects = state.dSecurityGroup;
-
-    if (selects[sg.id]) {
-      delete selects[sg.id];
-    } else {
-      selects[sg.id] = true;
-    }
-
-    this.setState({
-      dSecurityGroup: selects
-    });
-
-    e.stopPropagation();
-  }
-
-  onConfirm() {
-    var state = this.state;
-    if (state.disabled) {
-      return;
-    }
-
-    var enable = state.dName && state.dFlavor && state.dNetwork && state.dNumber;
-    var selectedImage;
-    if (state.dImageType === 'image') {
-      enable = enable && state.dImage;
-      selectedImage = state.dImage;
-    } else {
-      enable = enable && state.dSnapshot;
-      selectedImage = state.dSnapshot;
-    }
-    if (state.dCredential === 'keypair') {
-      enable = enable && state.dKeypairName;
-    } else {
-      enable = enable && !state.pswError;
-    }
-
-    if (enable) {
-      var data = {
-        name: state.dName.trim(),
-        imageRef: selectedImage.id,
-        flavorRef: state.dFlavor.id,
-        networks: [{
-          uuid: state.dNetwork.id
-        }],
-        min_count: state.dNumber,
-        max_count: state.dNumber
-      };
-
-      if (state.dCredential === 'keypair') {
-        data.key_name = state.dKeypairName;
-      } else {
-        data.adminPass = state.dPsw;
-      }
-
-      var selectedSg = state.dSecurityGroup;
-      var securitygroups = state.rSecurityGroup;
-      var sg = [];
-      securitygroups.forEach((ele) => {
-        if (selectedSg[ele.id]) {
-          sg.push({
-            name: ele.name
-          });
-        }
-      });
-      if (sg.length > 0) {
-        data.security_groups = sg;
-      }
-
-      request.createInstance(data).then((res) => {
-        this.props.callback && this.props.callback(res.server);
-        this.setState({
-          visible: false
-        });
-      }).catch((error) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(error.response)[1];
-
-        this.setState({
-          disabled: false,
-          showError: true,
-          dError: tip
-        });
-      });
-
-      this.setState({
-        disabled: true
-      });
-    }
-  }
-
 
   renderFlavors(props, state) {
     var data = [{
@@ -884,12 +936,15 @@ class ModalBase extends React.Component {
           <label>{__.user_name}</label>
           <input type="text" value={state.dUserName} disabled={true} onChange={function(){}} />
           <label>{__.password}</label>
-          <input className={state.pswError ? ' error' : ''}
+          <input type="password"
+            className={state.pswError ? ' error' : ''}
             value={state.dPsw}
-            onChange={this.onChangePsw} type="password" />
+            onChange={this.onChangePsw}
+            onFocus={this.onFocusPsw}
+            onBlur={this.onBlurPsw} />
           {
-            state.page === 2 ?
-              <Tooltip content={__.pwd_tip} width={228} shape="top-left" type={state.pswError ? 'error' : ''} hide={!state.pswError} />
+            state.page === 2 && state.showPswTip ?
+              <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pswError} />
             : null
           }
         </div>
