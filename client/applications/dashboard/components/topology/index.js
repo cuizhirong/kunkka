@@ -74,7 +74,6 @@ class Topology {
     networkPos = [];
     routerPos = [];
     instancePos = [];
-    console.log(data);
     var networks = data.network;
 
     // process router
@@ -357,8 +356,42 @@ class Topology {
         });
 
         // 3.根据当前instance的子网，给placeholder重新赋值
-
-
+        ins.subnets.forEach((subnet) => {
+          if (subnet.networkLayer === ins.layer) {
+            return;
+          }
+          for (let _loop = ins.layer + 1; _loop < subnet.networkLayer; _loop++) {
+            if (!placeholder[_loop]) {
+              placeholder[_loop] = [{
+                x: ins.x,
+                w: ins.w,
+                subnetLayer: subnet.subnetLayer,
+                networkLayer: subnet.networkLayer
+              }];
+            } else {
+              let b = placeholder[_loop].some((_p, i) => { // placeholder 插入顺序按x轴从小到大排序
+                if (ins.x <= _p.x) {
+                  placeholder[_loop].splice(i, 0, {
+                    x: ins.x,
+                    w: ins.w,
+                    subnetLayer: subnet.subnetLayer,
+                    networkLayer: subnet.networkLayer
+                  });
+                  return true;
+                }
+                return false;
+              });
+              if (!b) {
+                placeholder[_loop].push({
+                  x: ins.x,
+                  w: ins.w,
+                  subnetLayer: subnet.subnetLayer,
+                  networkLayer: subnet.networkLayer
+                });
+              }
+            }
+          }
+        });
       });
 
       var lastEle = instances[instances.length - 1];
@@ -367,8 +400,8 @@ class Topology {
       }
     });
 
-    console.log('placeholder: ', placeholder);
-    console.log('instancePos: ', instancePos);
+    // console.log('placeholder: ', placeholder);
+    // console.log('instancePos: ', instancePos);
 
     // The last network
     var p = networkPos[networkPos.length - 1];
@@ -377,6 +410,9 @@ class Topology {
 
   draw() {
     var offsetX = Math.round((w - maxWidth) / 2);
+    if (offsetX < 0) {
+      offsetX = 0;
+    }
 
     ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
     shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
@@ -527,6 +563,18 @@ class Topology {
       height: h
     });
 
+    this.calcPos();
+    this.draw();
+  }
+
+  reRender(data) {
+    h = this.calcPos();
+    autoscale([canvas], {
+      width: w,
+      height: h
+    });
+
+    d = this.processData(data);
     this.calcPos();
     this.draw();
   }
