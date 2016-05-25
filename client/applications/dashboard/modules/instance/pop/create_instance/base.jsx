@@ -121,8 +121,24 @@ class ModalBase extends React.Component {
 
     var flavors = res.flavor;
     this._flavors = flavors;
+
     var image = selectDefault(images);
-    this.setFlavor(image, 'all');
+    var snapshot = selectDefault(snapshots);
+    var currentImage = image;
+    var imageType = 'image';
+    var obj = this.props.obj;
+    if (typeof obj !== 'undefined') {
+      currentImage = obj;
+      if (obj.visibility === 'public') {
+        image = obj;
+      } else if (obj.visibility === 'private') {
+        snapshot = obj;
+        imageType = 'snapshot';
+      }
+    }
+    this.setFlavor(currentImage, 'all');
+    var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    var dCredential = hideKeypair ? 'psw' : 'keypair';
 
     var networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
@@ -133,15 +149,13 @@ class ModalBase extends React.Component {
     var keypairs = res.keypair;
     var selectedKeypair = selectDefault(keypairs);
 
-    var hideKeypair = image ? image.image_label.toLowerCase() === 'windows' : false;
-    var dCredential = hideKeypair ? 'psw' : 'keypair';
-
     this.setState({
       ready: true,
+      dImageType: imageType,
       rImages: images,
       dImage: image,
       rSnapshots: snapshots,
-      dSnapshot: selectDefault(snapshots),
+      dSnapshot: snapshot,
       rFlavors: flavors,
       rNetworks: networks,
       dNetwork: selectDefault(networks),
@@ -276,7 +290,12 @@ class ModalBase extends React.Component {
 
     if (objImage) {
       let flavor;
-      let expectedSize = Number(objImage.expected_size);
+      let expectedSize;
+      if (objImage.visibility === 'public') {//image
+        expectedSize = Number(objImage.expected_size);
+      } else {//snapshot
+        expectedSize = Number(objImage.min_disk);
+      }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
       var inArray = function(item, arr) {

@@ -211,7 +211,7 @@ class Model extends React.Component {
     for (let key in btns) {
       switch (key) {
         case 'create':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
           break;
         case 'del_img':
           let b = rows.some((m) => {
