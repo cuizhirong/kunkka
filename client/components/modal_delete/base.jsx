@@ -71,7 +71,7 @@ class ModalBase extends React.Component {
             }
           </div>
           <div className={'modal-row tip-row' + (tip.hide ? ' hide' : '')}>
-            <Tip type="danger" title={tip.title} content={tip.value} showIcon={true} />
+            <Tip type="danger" title={tip.title} content={tip.value} showIcon={true} width={442}/>
           </div>
         </div>
         <div className="modal-ft">
