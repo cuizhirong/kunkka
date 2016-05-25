@@ -17,7 +17,7 @@
     "tip_en_gw": "",
     "tip_dis_gw": "Do you want to disable external gateway of router {0} ?",
     "tip_related_subnet": "Already filtered subnets with the gateway-status off.",
-    "tip_router_has_subnet": "Cannot delete router which has related subnets"
+    "tip_router_has_subnet": "Cannot delete router which has been related to subnets"
   },
   "zh-CN": {
     "add_interface": "绑定",
@@ -37,6 +37,6 @@
     "tip_en_gw": "公网网关是路由器与外部网络（公网）通信的通道，开启公网网关让你的VDC内部具备与公网通信的能力。",
     "tip_dis_gw": "是否关闭路由器{0}上的公网网关？",
     "tip_related_subnet": "已过滤未开启网关的子网",
-    "tip_router_has_subnet": "不能删除此路由器，有子网关联到该路由器"
+    "tip_router_has_subnet": "不能删除有子网关联的路由器"
   }
 }

@@ -145,12 +145,13 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'delete':
-        var hasSource = rows[0].association.type === 'server' ? true : false;
+        var hasSource = rows.some((ele) => ele.association.type === 'server');
         deleteModal({
           __: __,
           action: 'release',
           type: 'floating_ip',
           data: rows,
+          disabled: hasSource ? true : false,
           tip: hasSource ? {
             hide: false,
             title: __.attention,
