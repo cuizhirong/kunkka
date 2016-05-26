@@ -121,6 +121,9 @@ class ResourceQuota extends React.Component {
                     if (isNaN(inUse)) {
                       inUse = 0;
                     }
+                    if (inUse > 100) {
+                      inUse = 100;
+                    }
                   } else {
                     total = 0;
                     used = 0;
