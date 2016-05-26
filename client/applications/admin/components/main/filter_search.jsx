@@ -131,10 +131,10 @@ class Detail extends React.Component {
       filters = props.items;
 
     return (
-      <div className={'filter-search' + (props.visible ? '' : ' hidden')}>
+      <div className={'filter-search' + (props.visible === false ? ' hidden' : '')}>
         {expand ?
             <Button iconClass="filter-collapse" initial={true} onClick={this.collapseFilter.bind(this)}/>
-          : <Button iconClass="filter-expand" initial={true} onClick={this.expandFilter.bind(this)}/>
+          : <Button iconClass="filter-expand" disabled={props.btnDisabled} initial={true} onClick={this.expandFilter.bind(this)}/>
         }
         <div className={'search-expand ' + (expand ? 'visible' : '')}>
           {this.renderFilters(filters)}

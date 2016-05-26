@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var {InputSearch, Tab, Table} = require('client/uskin/index');
+var {InputSearch, Pagination, Tab, Table} = require('client/uskin/index');
 var ButtonList = require('./button_list');
 var FilterSearch = require('./filter_search');
 var Detail = require('./detail');
@@ -19,6 +19,10 @@ class Main extends React.Component {
     this.stores = {
       rows: []
     };
+
+    ['onNextPage'].forEach((func) => {
+      this[func] = this[func].bind(this);
+    });
   }
 
   componentWillMount() {
@@ -358,9 +362,16 @@ class Main extends React.Component {
     }
   }
 
-  onNextPage(url, direction) {
+  onNextPage(direction) {
     var data = {};
-    data.url = url;
+    data.url = '';
+
+    var pagi = this.props.config.table.pagination;
+    if (direction === 'next') {
+      data.url = pagi.nextUrl;
+    } else if( direction === 'prev') {
+      data.url = pagi.prevUrl;
+    }
     data.direction = direction;
     this.onAction('table', 'pagination', data);
   }
@@ -376,12 +387,19 @@ class Main extends React.Component {
       detail = _config.table.detail;
 
     var pagination = table.pagination,
-      nextUrl, prevUrl;
-    if (!pagination) {
-      pagination = {};
-    } else if (!table.loading) {
-      nextUrl = pagination.nextUrl;
-      prevUrl = pagination.prevUrl;
+      hasPagi, pagiLabel;
+    if (pagination && !table.loading) {
+      let hasNext = pagination.nextUrl ? true : false;
+      let hasPrev = pagination.prevUrl ? true : false;
+      hasPagi = hasNext || hasPrev;
+
+      pagiLabel = {
+        first: hasPrev,
+        prev: true,
+        prevDisabled: !hasPrev,
+        next: true,
+        nextDisabled: !hasNext
+      };
     }
 
     return (
@@ -410,9 +428,9 @@ class Main extends React.Component {
           {filter ?
             <FilterSearch
               ref="filter_search"
+              btnDisabled={table.loading}
               items={filter}
-              onConfirm={this.onConfirmFilter.bind(this)}
-              visible={!table.loading} />
+              onConfirm={this.onConfirmFilter.bind(this)} />
             : null
           }
         </div>
@@ -438,23 +456,9 @@ class Main extends React.Component {
               hover={table.hover}
               striped={this.striped} />
           }
-          {!table.loading && (prevUrl || nextUrl) ?
-            <div className="pagination">
-              {prevUrl ?
-                <div className="default-page"
-                  onClick={this.onNextPage.bind(this, null, 'default')}>
-                  <i className="glyphicon icon-double-arrow-left" />
-                </div>
-              : null
-              }
-              <div className={'prev ' + (prevUrl ? '' : 'disabled')}
-                onClick={prevUrl ? this.onNextPage.bind(this, prevUrl, 'prev') : null}>
-                <i className="glyphicon icon-arrow-left" />
-              </div>
-              <div className={'next ' + (nextUrl ? '' : 'disabled')}
-                onClick={nextUrl ? this.onNextPage.bind(this, nextUrl, 'next') : null}>
-                <i className="glyphicon icon-arrow-right" />
-              </div>
+          {!table.loading && hasPagi ?
+            <div className="pagination-box">
+              <Pagination labelOnly={true} label={pagiLabel} onClickLabel={this.onNextPage}/>
             </div>
             : null
           }

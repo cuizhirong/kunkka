@@ -7,8 +7,6 @@
 @filter-box-border-color: @color_grey_600;
 @filter-select-border-color: @color_grey_600;
 @filter-select-border-hover-color: @color_info;
-@pagination-border-color: @color_grey_600;
-@pagination-border-hover-color: @color_info;
 @table-active-color: @color_info_600;
 @table-down-color: @color_font_800;
 
@@ -153,38 +151,13 @@
         color: @table-down-color;
       }
     }
-    > .pagination {
+    > .pagination-box {
       flex: 1;
       height: 30px;
       max-height: 30px;
       min-height: 30px;
       margin-bottom: 20px;
       text-align: right;
-      > div {
-        margin-right: 10px;
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-      .default-page,
-      .prev,
-      .next {
-        display: inline-block;
-        border: 1px solid @pagination-border-color;
-        border-radius: 2px;
-        color: @pagination-border-color;
-        cursor: pointer;
-        padding: 4px;
-        &:hover {
-          border-color: @pagination-border-hover-color;
-          color: @pagination-border-hover-color;
-        }
-        &.disabled {
-          border-color: @pagination-border-color;
-          color: @pagination-border-color;
-          cursor: not-allowed!important;
-        }
-      }
     }
   }
 }
