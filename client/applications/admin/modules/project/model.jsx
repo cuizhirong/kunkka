@@ -604,14 +604,20 @@ class Model extends React.Component {
   }
 
   getQuotaItems(item, quotas) {
-    var items = [{
+    var ram = quotas.ram.total;
+    if (ram > 0) {
+      ram = Math.round(ram / 1024 * 100) / 100;
+    }
+
+    var items = [];
+    Array.prototype.push.apply(items, [{
       title: __.instance,
       content: quotas.instances.total,
       type: 'editable',
       field: 'instances'
     }, {
       title: __.ram + '(GB)',
-      content: quotas.ram.total / 1024,
+      content: ram,
       type: 'editable',
       field: 'ram'
     }, {
@@ -619,12 +625,54 @@ class Model extends React.Component {
       content: quotas.cores.total,
       type: 'editable',
       field: 'cores'
-    }, {
+    }]);
+
+    items.push({
       title: __.volume + __.size + '(GB)',
       content: quotas.gigabytes.total,
       type: 'editable',
       field: 'gigabytes'
-    }, {
+    });
+    if (quotas.gigabytes_sata) {
+      items.push({
+        title: __.capacity_type + __.size + '(GB)',
+        content: quotas.gigabytes_sata.total,
+        type: 'editable',
+        field: 'gigabytes_sata'
+      });
+    }
+    if (quotas.gigabytes_ssd) {
+      items.push({
+        title: __.performance_type + __.size + '(GB)',
+        content: quotas.gigabytes_sata.total,
+        type: 'editable',
+        field: 'gigabytes_sata'
+      });
+    }
+    items.push({
+      title: __.volume + __.quota,
+      content: quotas.volumes.total,
+      type: 'editable',
+      field: 'volumes'
+    });
+    if (quotas.volumes_sata) {
+      items.push({
+        title: __.capacity_type + __.quota,
+        content: quotas.volumes_sata.total,
+        type: 'editable',
+        field: 'volumes_sata'
+      });
+    }
+    if (quotas.volumes_ssd) {
+      items.push({
+        title: __.performance_type + __.quota,
+        content: quotas.volumes_ssd.total,
+        type: 'editable',
+        field: 'volumes_ssd'
+      });
+    }
+
+    Array.prototype.push.apply(items, [{
       title: __.snapshot,
       content: quotas.snapshots.total,
       type: 'editable',
@@ -659,7 +707,7 @@ class Model extends React.Component {
       content: quotas.key_pairs.total,
       type: 'editable',
       field: 'key_pairs'
-    }];
+    }]);
 
     return items;
   }
@@ -704,7 +752,10 @@ class Model extends React.Component {
         var quotaType = item.field;
         if (quotaType) {
           if (quotaType === 'ram') {
-            newName *= 1024;
+            newName = Number(newName);
+            if (newName > 0) {
+              newName *= 1024;
+            }
           }
           request.modifyQuota(quotaType, rawItem.id, newName).then((res) => {
             this.refresh({
