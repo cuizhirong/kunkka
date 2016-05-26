@@ -418,6 +418,9 @@ class Model extends React.Component {
       title: __.gateway + __.address,
       content: item.gateway_ip ? item.gateway_ip : '-'
     }, {
+      title: __.dns,
+      content: item.dns_nameservers.length > 0 ? item.dns_nameservers.join(', ') : '-'
+    }, {
       title: __.ip + __.version,
       content: 'IP v' + item.ip_version
     }, {

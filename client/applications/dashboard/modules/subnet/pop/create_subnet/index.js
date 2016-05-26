@@ -42,14 +42,37 @@ function pop(obj, parent, callback) {
         cidr: refs.net_address.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked
       };
-      if (!refs.enable_gw.state.checked) {
+
+      var gwChecked = refs.enable_gw.state.checked;
+      if (!gwChecked) {
         data.gateway_ip = null;
-      } else if (refs.gw_address.state.value) {
-        data.gateway_ip = refs.gw_address.state.value;
+      } else {
+        if (refs.gw_address.state.value) {
+          data.gateway_ip = refs.gw_address.state.value;
+        }
+
+        let dns1 = refs.subnet_dns1.state.value;
+        let dns2 = refs.subnet_dns2.state.value;
+        if (dns1 || dns2) {
+          let dns = [];
+          dns1 && dns.push(dns1);
+          dns2 && dns.push(dns2);
+          data.dns_nameservers = dns;
+        }
       }
+
       request.createSubnet(data).then((res) => {
         callback && callback(res.subnet);
         cb(true);
+      }).catch((err) => {
+        var reg = new RegExp('"message":"(.*)","');
+        var tip = reg.exec(err.response)[1];
+
+        refs.error.setState({
+          value: tip,
+          hide: false
+        });
+        cb(false);
       });
     },
     onAction: function(field, status, refs) {
@@ -61,13 +84,19 @@ function pop(obj, parent, callback) {
           break;
         case 'show_more':
           refs.enable_gw.setState({
-            hide: !refs.show_more.state.checked
+            hide: !status.checked
           });
           refs.gw_address.setState({
-            hide: !refs.show_more.state.checked
+            hide: !status.checked
           });
           refs.enable_dhcp.setState({
-            hide: !refs.show_more.state.checked
+            hide: !status.checked
+          });
+          refs.subnet_dns1.setState({
+            hide: !status.checked
+          });
+          refs.subnet_dns2.setState({
+            hide: !status.checked
           });
           break;
         case 'select_network':

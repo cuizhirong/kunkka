@@ -4,6 +4,7 @@
     "change_info": "The address will be used as the instance which in the subnet's default gateway.",
     "cidr": "CIDR",
     "dhcp": "DHCP",
+    "dns": "DNS",
     "dis_router": "Do you want to disconnect this subnet from the router?",
     "enable_dhcp": "Enable DHCP",
     "enable_gw": "Enable Gateway",
@@ -15,6 +16,8 @@
     "no_subnet": "No subnet",
     "pool": "Pool",
     "select_network": "Select NetWork",
+    "subnet_dns1": "DNS1",
+    "subnet_dns2": "DNS2",
     "version": "version"
   },
   "zh-CN": {
@@ -22,6 +25,7 @@
     "change_info": "这个地址可以被用于该私有网络内其他主机的缺省网关。",
     "cidr": "CIDR网段",
     "dhcp": "DHCP",
+    "dns": "DNS",
     "dis_router": "是否断开子网与路由器之间的连接？",
     "enable_dhcp": "开启DHCP",
     "enable_gw": "开启网关",
@@ -33,6 +37,8 @@
     "no_subnet": "没有可用子网",
     "pool": "池",
     "select_network": "选择私有网络",
+    "subnet_dns1": "DNS1",
+    "subnet_dns2": "DNS2",
     "version": "版本"
   }
 }
