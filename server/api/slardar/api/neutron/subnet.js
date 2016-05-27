@@ -114,7 +114,7 @@ Subnet.prototype = {
                 obj.networks.some( n => {
                   return n.id === s.network_id && (s.network = n);
                 });
-                return s.ip_version === 4 && s.network['router:external'] === false;
+                return s.ip_version === 4;
               });
               obj.subnets.forEach( subnet => {
                 this.makeSubnet(subnet, obj);
