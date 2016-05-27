@@ -88,13 +88,17 @@ class Model extends React.Component {
           break;
         case 'assc_router':
           column.render = (col, item, i) => {
-            return item.router.id ?
-              <span>
-                <i className="glyphicon icon-router" />
-                <a data-type="router" href={'/dashboard/router/' + item.router.id}>
-                  {item.router.name || '(' + item.router.id.substr(0, 8) + ')'}
-                </a>
-              </span> : '';
+            if(item.router) {
+              return item.router.id ?
+                <span>
+                  <i className="glyphicon icon-router" />
+                  <a data-type="router" href={'/dashboard/router/' + item.router.id}>
+                    {item.router.name || '(' + item.router.id.substr(0, 8) + ')'}
+                  </a>
+                </span> : '';
+            } else {
+              return '';
+            }
           };
           break;
         case 'ip_ver':

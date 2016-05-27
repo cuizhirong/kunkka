@@ -38,7 +38,26 @@ module.exports = {
           }
         });
       });
-      return subnets;
+
+      var exNetworks = data.network.filter(n => {
+        if(n['router:external'] === true) {
+          return true;
+        }
+        return false;
+      });
+
+      return subnets.filter(s => {
+        var isExSubnet = false;
+        exNetworks.forEach(n => {
+          if(s.network_id === n.id) {
+            isExSubnet = isExSubnet || true;
+          }
+        });
+        if(isExSubnet && s.tenant_id !== HALO.user.projectId) {
+          return false;
+        }
+        return true;
+      });
     });
   },
   editSubnetName: function(item, newName) {

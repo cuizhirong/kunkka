@@ -6,7 +6,7 @@ module.exports = {
   getList: function(forced) {
     return storage.getList(['network', 'subnet'], forced).then(function(data) {
       return data.network.filter((n) => {
-        if (n['router:external']) {
+        if (n['router:external'] && n.tenant_id !== HALO.user.projectId) {
           return false;
         }
         return true;
