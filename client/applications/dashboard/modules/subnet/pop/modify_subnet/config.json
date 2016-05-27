@@ -22,6 +22,14 @@
     "field": "enable_dhcp",
     "checked": true,
     "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns1",
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns2",
+    "is_long_label": true
   }],
   "btn": {
     "value": "modify",

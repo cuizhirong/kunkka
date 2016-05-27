@@ -32,6 +32,10 @@ function pop(obj, parent, callback) {
     getField('enable_dhcp').checked = true;
   }
 
+  var objDns = obj.dns_nameservers;
+  getField('subnet_dns1').value = objDns[0] || '';
+  getField('subnet_dns2').value = objDns[1] || '';
+
   var props = {
     __: __,
     parent: parent,
@@ -47,6 +51,16 @@ function pop(obj, parent, callback) {
       } else {
         data.gateway_ip = refs.gw_address.state.value;
       }
+
+      var dns1 = refs.subnet_dns1.state.value;
+      var dns2 = refs.subnet_dns2.state.value;
+      if (dns1 || dns2) {
+        let dns = [];
+        dns1 && dns.push(dns1);
+        dns2 && dns.push(dns2);
+        data.dns_nameservers = dns;
+      }
+
       request.updateSubnet(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);
