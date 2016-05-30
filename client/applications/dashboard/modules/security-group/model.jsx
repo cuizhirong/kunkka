@@ -413,10 +413,19 @@ class Model extends React.Component {
         });
         break;
       case 'delete_ingress':
-        request.deleteRules(data).then((res) => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'rules',
+          data: [data],
+          onDelete: function(_data, cb) {
+            request.deleteRules(data).then(() => {
+              that.refresh({
+                detailRefresh: true
+              }, true);
+            });
+            cb(true);
+          }
         });
         break;
       default:
