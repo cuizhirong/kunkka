@@ -7,15 +7,15 @@
     "tip_info": "flavor_name_tip"
   }, {
     "type": "input",
-    "field": "vcpu_mb",
+    "field": "vcpu",
     "required": true
   }, {
     "type": "input",
-    "field": "memory",
+    "field": "memory_gb",
     "required": true
   }, {
     "type": "input",
-    "field": "capacity",
+    "field": "capacity_gb",
     "required": true
   }, {
     "type": "input",

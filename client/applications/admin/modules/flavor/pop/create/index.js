@@ -12,9 +12,9 @@ function pop(obj, parent, callback) {
       var data = {
         flavor: {
           name: refs.name.state.value,
-          ram: Number(refs.memory.state.value),
-          vcpus: Number(refs.vcpu_mb.state.value),
-          disk: Number(refs.capacity.state.value)
+          ram: Number(refs.memory_gb.state.value) * 1024,
+          vcpus: Number(refs.vcpu.state.value),
+          disk: Number(refs.capacity_gb.state.value)
         }
       };
 

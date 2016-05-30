@@ -69,6 +69,12 @@ class Model extends React.Component {
             return ram.num + ' ' + ram.unit;
           };
           break;
+        case 'capacity':
+          column.render = (col, item, i) => {
+            var disk = unitConverter(item.disk, 'GB');
+            return disk.num + ' ' + disk.unit;
+          };
+          break;
         case 'enable':
           column.render = (col, item, i) => {
             return __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable;
@@ -367,6 +373,7 @@ class Model extends React.Component {
 
   getBasicPropsItems(item) {
     var memory = unitConverter(item.ram, 'MB');
+    var disk = unitConverter(item.disk, 'GB');
 
     var items = [{
       title: __.name,
@@ -380,6 +387,9 @@ class Model extends React.Component {
     }, {
       title: __.memory,
       content: memory.num + ' ' + memory.unit
+    }, {
+      title: __.capacity,
+      content: disk.num + ' ' + disk.unit
     }, {
       title: __.enable,
       content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable

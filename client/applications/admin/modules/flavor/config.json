@@ -46,6 +46,9 @@
       "title": ["memory"],
       "key": "memory"
     }, {
+      "title": ["capacity"],
+      "key": "capacity"
+    }, {
       "title": ["enable"],
       "key": "enable"
     }],
