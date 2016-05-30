@@ -33,89 +33,29 @@ const tableSet = {
   spec: 'UNIQUE KEY app(app, name)'
 };
 
-const initSets = [
-  {
-    app: 'login',
-    name: 'logo',
-    value: '/static/assets/logo@2x.png',
-    type: 'string'
-  }, {
-    app: 'login',
-    name: 'company',
-    value: '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
-    type: 'string'
-  }, {
-    app: 'login',
-    name: 'favicon',
-    value: '/static/assets/favicon.ico',
-    type: 'string'
-  }, {
-    app: 'admin',
-    name: 'logo',
-    value: '/static/assets/nav_logo.png',
-    type: 'string'
-  }, {
-    app: 'admin',
-    name: 'favicon',
-    value: '/static/assets/favicon.ico',
-    type: 'string'
-  }, {
-    app: 'dashboard',
-    name: 'logo',
-    value: '/static/assets/nav_logo.png',
-    type: 'string'
-  }, {
-    app: 'dashboard',
-    name: 'favicon',
-    value: '/static/assets/favicon.ico',
-    type: 'string'
-  }, {
-    app: 'admin',
-    name: 'is_show_trash',
-    value: 'false',
-    type: 'boolean'
-  }, {
-    app: 'dashboard',
-    name: 'total_gigabytes',
-    value: 5000,
-    type: 'number'
-  }, {
-    app: 'dashboard',
-    name: 'max_single_gigabytes',
-    value: 1000,
-    type: 'number'
-  }, {
-    app: 'dashboard',
-    name: 'is_show_vlan',
-    value: 'true',
-    type: 'boolean'
-  }, {
-    app: 'login',
-    name: 'title',
-    value: 'UnitedStack 有云',
-    type: 'string'
-  }, {
-    app: 'dashboard',
-    name: 'title',
-    value: 'UnitedStack 有云',
-    type: 'string'
-  }, {
-    app: 'admin',
-    name: 'title',
-    value: 'UnitedStack',
-    type: 'string'
-  }, {
-    app: 'vmware',
-    name: 'favicon',
-    value: '/static/assets/favicon.ico',
-    type: 'string'
-  }, {
-    app: 'vmware',
-    name: 'title',
-    value: 'UnitedStack 有云',
-    type: 'string'
-  }
-];
+let initSets = [];
+const path = require('path');
+const apiPath = path.join(__dirname, '../..');
+const driverPath = path.join(__dirname, '../../../drivers');
+const fs = require('fs');
+[apiPath, driverPath].forEach( p => {
+  fs.readdirSync(p)
+    .filter( m => fs.statSync(path.join(p, m)).isDirectory())
+    .forEach( f => {
+      try {
+        let setting = require(path.join(p, f, 'config.sample.js')).setting;
+        if (setting && setting.length > 0) {
+          initSets = initSets.concat(setting);
+        }
+        console.log(initSets);
+      } catch (err) {
+        if (err.code !== 'MODULE_NOT_FOUND') {
+          console.log(err);
+        }
+      }
+    });
+});
+
 
 let num = initSets.length;
 let count = 0;

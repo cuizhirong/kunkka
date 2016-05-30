@@ -14,5 +14,29 @@ module.exports = {
       table: 'tusk'
     },
     assets_dir: '/opt/assets'
-  }
+  },
+  setting: [
+    {
+      app: 'global',
+      name: 'logo_url',
+      value: '/static/assets/nav_logo.png',
+      type: 'string'
+    }, {
+      app: 'global',
+      name: 'favicon',
+      value: '/static/assets/favicon.ico',
+      type: 'string'
+    }, {
+      app: 'global',
+      name: 'title',
+      value: 'UnitedStack 有云',
+      type: 'string'
+    }, {
+      app: 'global',
+      name: 'default_image_url',
+      value: '',
+      type: 'string',
+      description: '图片大小为40*40'
+    }
+  ]
 };
