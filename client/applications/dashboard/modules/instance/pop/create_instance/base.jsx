@@ -741,7 +741,7 @@ class ModalBase extends React.Component {
   renderFlavors(props, state) {
     var data = [{
       key: 'cpu',
-      title: __.pls_select + __.cpu + __.type,
+      title: __.cpu + __.type,
       data: state.rCpus,
       render: (val) => {
         return val + ' vCPU';
@@ -750,7 +750,7 @@ class ModalBase extends React.Component {
       onChange: this.onChangeCpu
     }, {
       key: 'memory',
-      title: __.pls_select + __.memory + __.size,
+      title: __.memory + __.size,
       data: state.rMemory,
       render: (val) => {
         var res = unitConverter(Number(val), 'MB');
@@ -760,7 +760,7 @@ class ModalBase extends React.Component {
       onChange: this.onChangeMemory
     }, {
       key: 'volume',
-      title: __.pls_select + __.volume + __.size,
+      title: __.volume + __.size,
       data: state.rVolumes,
       selected: state.dVolume,
       render: (val) => {
@@ -867,7 +867,7 @@ class ModalBase extends React.Component {
           </div>
           <div ref="drop_security" className={'dropdown-box' + (state.sgUnfold ? '' : ' hide')}>
             <div className="dropdown-item">
-              <div className="dropdown-item-title">{__.pls_select + __.security_group}</div>
+              <div className="dropdown-item-title">{__.security_group}</div>
               <div className="dropdown-item-data">
                 <ul>
                   {
@@ -990,7 +990,7 @@ class ModalBase extends React.Component {
     return (
       <div className="row row-select">
         <div className="modal-label">
-          {__.network}
+          {__.number}
         </div>
         <div className="modal-data">
          <InputNumber onChange={this.onChangeNumber} min={1} value={state.dNumber} width={265}/>

@@ -210,7 +210,7 @@ class ModalBase extends React.Component {
 
     var data = [{
       key: 'cpu',
-      title: __.pls_select + __.cpu + __.type,
+      title: __.cpu + __.type,
       data: state._cpus,
       selected: state.cpu,
       render: (val) => {
@@ -219,7 +219,7 @@ class ModalBase extends React.Component {
       onChange: this.onChangeCpu
     }, {
       key: 'ram',
-      title: __.pls_select + __.memory + __.size,
+      title: __.memory + __.size,
       data: state._rams,
       selected: state.ram,
       render: (val) => {
@@ -229,7 +229,7 @@ class ModalBase extends React.Component {
       onChange: this.onChangeRam
     }, {
       key: 'disk',
-      title: __.pls_select + __.volume + __.size,
+      title: __.volume + __.size,
       data: state._disks,
       selected: state.disk,
       render: (val) => {
