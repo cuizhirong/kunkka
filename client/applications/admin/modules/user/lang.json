@@ -6,6 +6,7 @@
     "confirm_password": "Confirm",
     "en_user_info": "Are you sure to activate user {0}?",
     "de_user_info": "Are you sure to deactivate user{0}?",
+    "leave": "Leave",
     "main": "Main",
     "join": "Join",
     "no_group": "No available group"
@@ -18,6 +19,7 @@
     "en_user_info": "确定激活用户“{0}”吗？",
     "de_user_info": "确定禁用用户“{0}”吗？",
     "main": "主",
+    "leave": "离开",
     "join": "加入",
     "no_group": "没有可用用户组"
   }

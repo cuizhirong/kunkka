@@ -18,6 +18,7 @@ var removeRole = require('./pop/remove_role/index');
 var modifyProject = require('./pop/modify_project/index');
 var resetPassword = require('./pop/reset_password/index');
 var joinGroup = require('./pop/join_group/index');
+var leaveGroup = require('./pop/leave_group/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -801,8 +802,8 @@ class Model extends React.Component {
         });
         break;
       case 'leave_group':
-        request.leaveGroup(data.rawItem.id, data.childItem.id).then(() => {
-          this.refresh({
+        leaveGroup(data, null, function() {
+          that.refresh({
             refreshList: true,
             refreshDetail: true
           });

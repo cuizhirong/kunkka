@@ -14,6 +14,7 @@ var createUserGroup = require('./pop/create/index');
 var addRole = require('./pop/add_role/index');
 var addUser = require('./pop/add_user/index');
 var removeRole = require('./pop/remove_role/index');
+var removeUser = require('./pop/remove_user/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -725,8 +726,8 @@ class Model extends React.Component {
         });
         break;
       case 'rmv_user':
-        request.removeUser(data.rawItem.id, data.childItem.id).then(() => {
-          this.refresh({
+        removeUser(data, null, function() {
+          that.refresh({
             refreshList: true,
             refreshDetail: true
           });
