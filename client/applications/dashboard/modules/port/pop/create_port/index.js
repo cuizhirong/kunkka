@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var createSubnet = require('client/applications/dashboard/modules/subnet/pop/create_subnet/index');
 var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
 var __ = require('locale/client/dashboard.lang.json');
@@ -127,8 +128,8 @@ function pop(obj, parent, callback) {
       request.createPort(port).then((res) => {
         callback && callback(res);
         cb(true);
-      }, () => {
-        cb(false);
+      }).catch(function(error) {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, status, refs) {
