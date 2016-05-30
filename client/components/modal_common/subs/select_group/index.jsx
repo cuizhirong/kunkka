@@ -132,7 +132,7 @@ class SelectGroup extends React.Component {
               } else if (!state.single) {
                 selected = item.selected;
               }
-              return <a key={item.id} className={selected ? 'selected' : ''} onClick={this.onChange.bind(this, index)}>{item.name || '(' + item.id.substr(0, 8) + ')'}<i className="glyphicon icon-active-yes"></i></a>;
+              return <a key={item.id} className={selected ? 'items selected' : 'items '} onClick={this.onChange.bind(this, index)}>{item.name || '(' + item.id.substr(0, 8) + ')'}<i className="glyphicon icon-active-yes"></i></a>;
             })
           }
           {this.renderEmpty()}
