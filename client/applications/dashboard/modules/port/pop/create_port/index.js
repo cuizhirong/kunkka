@@ -164,14 +164,17 @@ function pop(obj, parent, callback) {
           break;
         case 'security_group':
           if (refs.security_group.state.clicked) {
-            createSecurityGroup(refs.modal, (res) => {
-              refs.security_group.setState({
-                data: [res],
-                value: res.id,
-                clicked: false
-              });
-              refs.btn.setState({
-                disabled: false
+            createSecurityGroup(refs.modal, () => {
+              request.getSecuritygroupList().then((data) => {
+                var s = data.securitygroup;
+                refs.security_group.setState({
+                  data: s,
+                  value: s[0].id,
+                  clicked: false
+                });
+                refs.btn.setState({
+                  disabled: false
+                });
               });
             });
           }
