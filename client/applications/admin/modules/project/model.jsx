@@ -646,7 +646,7 @@ class Model extends React.Component {
         title: __.performance_type + __.size + '(GB)',
         content: quotas.gigabytes_ssd.total,
         type: 'editable',
-        field: 'gigabytes_sata'
+        field: 'gigabytes_ssd'
       });
     }
     items.push({
