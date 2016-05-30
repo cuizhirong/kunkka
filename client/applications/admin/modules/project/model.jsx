@@ -644,7 +644,7 @@ class Model extends React.Component {
     if (quotas.gigabytes_ssd) {
       items.push({
         title: __.performance_type + __.size + '(GB)',
-        content: quotas.gigabytes_sata.total,
+        content: quotas.gigabytes_ssd.total,
         type: 'editable',
         field: 'gigabytes_sata'
       });
