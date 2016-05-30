@@ -42,14 +42,35 @@ staticFiles.adminCssFile = files.find((el) => {
 });
 
 let applications;
+const async = require('async');
 
 function renderTemplate (req, res, next) {
-  tusk.getSettingsByApp('admin', function (err, adminSettings) {
+  async.parallel([
+    function (callback) {
+      tusk.getSettingsByApp('admin', (err, results) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, results);
+        }
+      }, false);
+    },
+    function (callback) {
+      tusk.getSettingsByApp('global', (err, results) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, results);
+        }
+      }, false);
+    }
+  ], function (err, results) {
     let setting = {};
     if (!err) {
-      adminSettings.forEach( s => {
-        setting[s.name] = s.value;
-      });
+      let adminSettings = results[0];
+      let globalSettings = results[1];
+      globalSettings.forEach(s => setting[s.name] = s.value);
+      adminSettings.forEach(s => setting[s.name] = s.value);
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let title = setting.title ? setting.title : 'UnitedStack 有云';
@@ -112,7 +133,7 @@ function renderTemplate (req, res, next) {
     } else {
       res.redirect('/');
     }
-  }, false);
+  });
 }
 
 module.exports = (app) => {

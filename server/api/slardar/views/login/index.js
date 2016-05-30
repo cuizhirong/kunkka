@@ -46,17 +46,38 @@ staticFiles.loginCssFile = files.find((el) => {
   return el.match(/login.min.css$/) !== null;
 });
 
-function renderTemplate (req, res, next) {
+const async = require('async');
 
-  tusk.getSettingsByApp('login', function (err, loginSettings) {
+function renderTemplate (req, res, next) {
+  async.parallel([
+    function (callback) {
+      tusk.getSettingsByApp('login', (err, results) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, results);
+        }
+      }, false);
+    },
+    function (callback) {
+      tusk.getSettingsByApp('global', (err, results) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, results);
+        }
+      }, false);
+    }
+  ], function (err, results) {
     let setting = {};
     if (!err) {
-      loginSettings.forEach( s => {
-        setting[s.name] = s.value;
-      });
+      let loginSettings = results[0];
+      let globalSettings = results[1];
+      globalSettings.forEach(s => setting[s.name] = s.value);
+      loginSettings.forEach(s => setting[s.name] = s.value);
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
-    let logo = setting.logo ? setting.logo : '/static/assets/logo@2x.png';
+    let logoUrl = setting.logo_url ? setting.logo_url : '/static/assets/logo@2x.png';
     let company = setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号';
     let title = setting.title ? setting.title : 'UnitedStack';
     if (!req.session || !req.session.user) {
@@ -72,7 +93,7 @@ function renderTemplate (req, res, next) {
         loginCssFile: staticFiles.loginCssFile,
         uskinFile: uskinFile[0],
         settings: setting,
-        logo: logo,
+        logo_url: logoUrl,
         favicon: favicon,
         company: company,
         title: title,
@@ -81,7 +102,7 @@ function renderTemplate (req, res, next) {
     } else if (req.session && req.session.user){
       res.redirect('/dashboard/');
     }
-  }, false);
+  });
 }
 
 module.exports = (app) => {
