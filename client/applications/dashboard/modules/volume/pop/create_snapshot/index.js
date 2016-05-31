@@ -17,6 +17,7 @@ function pop(obj, parent, callback) {
       var data = {};
       data.name = refs.snapshot_name.state.value;
       data.volume_id = obj.id;
+      data.force = true;
 
       request.createSnapshot(data).then((res) => {
         callback && callback(res);

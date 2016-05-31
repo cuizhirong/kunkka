@@ -255,7 +255,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'create_snapshot':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
+          btns[key].disabled = (len === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
           break;
         case 'dtch_instance':
           btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
