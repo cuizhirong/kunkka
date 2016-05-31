@@ -413,9 +413,7 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {
-      rows
-    } = data;
+    var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
     var syncUpdate = true;
@@ -809,6 +807,9 @@ class Model extends React.Component {
         });
         break;
       case 'create_related_instance':
+        createInstance(data.childItem, null, function() {
+          router.pushState('/dashboard/instance');
+        });
         break;
       case 'create_related_snapshot':
         instSnapshot(data.rawItem);
