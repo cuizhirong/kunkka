@@ -42,9 +42,9 @@ module.exports = {
       return res;
     });
   },
-  getGroupByName: function(name) {
+  getGroups: function(name) {
     return fetch.get({
-      url: '/proxy/keystone/v3/groups?name=' + name
+      url: '/proxy/keystone/v3/groups'
     });
   },
   deleteItem: function(items) {

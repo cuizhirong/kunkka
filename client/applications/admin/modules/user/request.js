@@ -38,9 +38,9 @@ module.exports = {
       return res;
     });
   },
-  getUserByName: function(name) {
+  getUsers: function() {
     return fetch.get({
-      url: '/api/v1/users?name=' + name
+      url: '/api/v1/users'
     });
   },
   getRelatedResource: function(userID) {

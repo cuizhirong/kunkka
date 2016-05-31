@@ -42,9 +42,9 @@ module.exports = {
       return res;
     });
   },
-  getRoleByName: function(name) {
+  getRoles: function() {
     return fetch.get({
-      url: '/proxy/keystone/v3/roles?name=' + name
+      url: '/proxy/keystone/v3/roles'
     });
   },
   deleteItem: function(items) {

@@ -151,17 +151,26 @@ class Model extends React.Component {
         data.dataList.push(res.group);
       }
     }));
-    deferredList.push(request.getGroupByName(key).then(res => {
+    deferredList.push(request.getGroups().then(res => {
+      var matchData = [];
+      if(res.groups) {
+        res.groups.forEach(obj => {
+          var reg = new RegExp(key, 'i');
+          if(reg.test(obj.name)) {
+            matchData.push(obj);
+          }
+        });
+      }
       if(data.dataList.length > 0) {
         data.dataList.forEach(item => {
-          res.groups.forEach(ele => {
+          matchData.forEach(ele => {
             if(item.id !== ele.id) {
               data.dataList.push(ele);
             }
           });
         });
       } else {
-        data.dataList.push(...res.groups);
+        data.dataList.push(...matchData);
       }
     }));
 
@@ -171,15 +180,17 @@ class Model extends React.Component {
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
       this.loadingTable();
+      var table = this.state.config.table;
 
       if (data.text) {
-        var table = this.state.config.table;
         this.searchByKey(data.text, data).then(res => {
           table.data = data.dataList;
+          table.pagination = {};
           this.updateTableData(table, res._url);
         });
       } else {
         this.getList();
+        table.pagination = {};
       }
     }
   }

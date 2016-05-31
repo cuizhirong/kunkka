@@ -38,9 +38,9 @@ module.exports = {
       return res;
     });
   },
-  getProjectByName: function(name) {
+  getProjects: function() {
     return fetch.get({
-      url: '/api/v1/projects?name=' + name
+      url: '/api/v1/projects'
     });
   },
   deleteItem: function(items) {
