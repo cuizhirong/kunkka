@@ -35,6 +35,7 @@ function pop(obj, parent, callback) {
         refs.instance.setState({
           value: data[0].id
         });
+        data[0].selected = true;
       }
     },
     onConfirm: function(refs, cb) {
