@@ -24,7 +24,7 @@ module.exports = function (app) {
     if (req.query.lang) {
       req.i18n.setLocaleFromQuery(req);
       res.cookie('locale', req.i18n.getLocale());
-      return res.redirect('/');
+      return res.redirect('back');
     }
     next();
   });
