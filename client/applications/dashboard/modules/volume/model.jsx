@@ -18,7 +18,6 @@ var notify = require('../../utils/notify');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
-var moment = require('client/libs/moment');
 var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
@@ -400,14 +399,14 @@ class Model extends React.Component {
     var data = [];
     items.forEach((item) => {
       data.push({
-        title: moment(item.created_at).fromNow(),
+        title: item.created_at,
         name:
           <span>
             <i className="glyphicon icon-snapshot" />
             <a data-type="router" href={'/dashboard/snapshot/' + item.id}>{item.name}</a>
           </span>,
         size: item.size + 'GB',
-        time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+        time: item.created_at,
         status: getStatusIcon(item.status),
         createIcon: 'volume',
         childItem: item

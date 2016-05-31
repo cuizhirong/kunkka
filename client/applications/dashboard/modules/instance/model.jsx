@@ -692,10 +692,10 @@ class Model extends React.Component {
     var data = [];
     items.forEach((item) => {
       data.push({
-        title: moment(item.created_at).fromNow(),
+        title: item.created_at,
         name: <a data-type="router" href={'/dashboard/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
-        time: moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+        time: item.created_at,
         status: getStatusIcon(item.status),
         createIcon: 'instance',
         childItem: item
