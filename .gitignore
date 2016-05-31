@@ -61,12 +61,11 @@ client/libs/charts/output.js.map
 
 # external modules
 client/applications/*
-server/api/slardar
-server/api/tusk
-server/api/magnus
-server/drivers/huskar
 server/api/**/
 server/drivers/**/
 package.json
 
 client/assets/**/
+
+# gitlab private token file
+/token.json
