@@ -33,6 +33,9 @@ backendApps.forEach((a) => {
 // mock browser global variables: window and document
 global.window = {};
 global.document = {};
+global.HALO = {configs: {
+  renderer: 'server'
+}};
 
 module.exports = (app) => {
   app.set('views', [__dirname]);
