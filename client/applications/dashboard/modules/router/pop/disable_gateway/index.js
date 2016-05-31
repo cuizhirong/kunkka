@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
@@ -18,6 +19,11 @@ function pop(obj, parent, callback) {
       request.updateRouter(obj.id, data).then((res) => {
         callback && callback(res.router);
         cb(true);
+      }).catch(function(error) {
+        cb(false, getErrorMessage(error));
+        refs.btn.setState({
+          disabled: true
+        });
       });
     },
     onAction: function() {}
