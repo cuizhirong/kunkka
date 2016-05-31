@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var {Button} = require('client/uskin/index');
+var getTime = require('client/utils/time_unification');
 
 class RelatedSnapshot extends React.Component {
 
@@ -71,7 +72,7 @@ class RelatedSnapshot extends React.Component {
               <div className="timeline">
                 {items.map((item, i) =>
                   <div className="per-line" key={i}>
-                    <div className="title">{item.title}</div>
+                    <div className="title">{getTime(item.title, true)}</div>
                     <div className="time-spot-box">
                       <div className="time-spot" />
                       <div className="time-line" />
@@ -79,7 +80,7 @@ class RelatedSnapshot extends React.Component {
                     <div className="content">
                       <div className="name">{item.name}</div>
                       <div className="size">{item.size}</div>
-                      <div className="time">{item.time}</div>
+                      <div className="time">{getTime(item.time)}</div>
                       <div className="status">{item.status}</div>
                       {item.childItem.status === 'queued' ?
                         <div className="icon-set">-</div>
