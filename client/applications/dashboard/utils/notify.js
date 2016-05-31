@@ -8,7 +8,8 @@ function notify(data) {
     icon = 'icon-status-active',
     func = notification.addNotice,
     placeholder = 'msg_notify_end',
-    name = data.resource_name ? ('"' + data.resource_name + '"') : '';
+    name = data.resource_name ? ('"' + data.resource_name + '"') : '',
+    resourceType = __[data.resource_type];
 
   if (data.stage === 'start') {
     isAutoHide = false;
@@ -22,10 +23,14 @@ function notify(data) {
     delete stack[data.resource_id];
   }
 
+  if (data.resource_type === 'router' && (data.action === 'clear_gateway' || data.action === 'set_gateway')) {
+    resourceType = '';
+  }
+
   func({
     showIcon: true,
     content: __[placeholder].replace('{0}', __[data.action]).
-    replace('{1}', __[data.resource_type]).
+    replace('{1}', resourceType).
     replace('{2}', name),
     isAutoHide: isAutoHide,
     icon: icon,
