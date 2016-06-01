@@ -13,7 +13,7 @@
     "gw_tip": "Optional. System will generate automaticlly. The address will be used as the instance which in the subnet's default gateway.",
     "ip": "IP",
     "msg_disconnect_inst": "Do you want to disconnect server ?",
-    "no_subnet": "No subnet",
+    "no_subnet": "No subnet ",
     "pool": "Pool",
     "select_network": "Select NetWork",
     "subnet_dns1": "DNS1",

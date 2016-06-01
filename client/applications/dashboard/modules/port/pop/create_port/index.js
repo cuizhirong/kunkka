@@ -136,16 +136,37 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'subnet':
           if (refs.subnet.state.clicked) {
-            createSubnet(refs.modal, (res) => {
-              refs.subnet.setState({
-                data: [res],
-                value: res.id,
-                clicked: false
+            createSubnet(null, refs.modal, (subnet) => {
+              var network;
+              request.getNetworkList().then((res) => {
+                res.network.some((ele) => {
+                  if (ele.id === subnet.network_id) {
+                    network = ele;
+                    return true;
+                  }
+                  return false;
+                });
+
+                var subnetGroup = [];
+                subnetGroup.push({
+                  id: subnet.network_id,
+                  name: network.name,
+                  port_security_enabled: network.port_security_enabled,
+                  shared: network.shared,
+                  data: [subnet]
+                });
+
+                refs.subnet.setState({
+                  data: subnetGroup,
+                  value: subnet.id,
+                  clicked: false
+                });
+                refs.btn.setState({
+                  disabled: false
+                });
+
               });
-              refs.btn.setState({
-                disabled: false
-              });
-            }, refs.modal);
+            });
           } else {
             var portSecurityEnabled = true;
             status.data.some((group) => {

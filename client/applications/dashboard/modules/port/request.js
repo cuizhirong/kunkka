@@ -45,6 +45,9 @@ module.exports = {
   getInstanceList: function(forced) {
     return storage.getList(['instance'], forced);
   },
+  getNetworkList: function(forced) {
+    return storage.getList(['network'], forced);
+  },
   getSubnetList: function(forced) {
     return storage.getList(['subnet'], forced);
   },
