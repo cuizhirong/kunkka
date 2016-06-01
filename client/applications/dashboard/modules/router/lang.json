@@ -1,7 +1,6 @@
 {
   "en": {
     "add_interface": "Bind ",
-    "attention": "Attention",
     "clear_gateway": "Disable external gateway",
     "en_gw": "Do you want to enable the public network gateway of router \"{0}\"?",
     "enable_public_gateway": "Enable public gateway",
@@ -20,7 +19,6 @@
   },
   "zh-CN": {
     "add_interface": "绑定",
-    "attention": "提示",
     "clear_gateway": "禁用公网网关",
     "en_gw": "是否开启路由器\"{0}\"上的公网网关？",
     "enable_public_gateway": "开启公网网关",
