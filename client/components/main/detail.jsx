@@ -67,11 +67,13 @@ class Detail extends React.Component {
   }
 
   refresh() {
-    this.setState({
-      contents: {}
-    }, () => {
-      this.updateTabContent();
-    });
+    if (this.state.visible) {
+      this.setState({
+        contents: {}
+      }, () => {
+        this.updateTabContent();
+      });
+    }
   }
 
   loading() {
