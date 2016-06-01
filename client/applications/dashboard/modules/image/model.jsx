@@ -17,6 +17,7 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
+var unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -82,21 +83,14 @@ class Model extends React.Component {
     column.map((col) => {
       switch (col.key) {
         case 'name':
-          col.formatter = function(rcol, ritem, rindex) {
-            var label = ritem.image_label && ritem.image_label.toLowerCase();
-            return <div><i className={'icon-image-default ' + label}/> {ritem.name}</div>;
+          col.formatter = (rcol, ritem, rindex) => {
+            return this.getImageLabel(ritem);
           };
           break;
         case 'size':
           col.render = (rcol, ritem, rindex) => {
-            let size = ritem.size / 1024 / 1024;
-            if (size >= 1024) {
-              size = (Math.round(size / 1024) + ' GB');
-            } else {
-              size = Math.round(size) + ' MB';
-            }
-
-            return size;
+            var size = unitConverter(ritem.size);
+            return size.num + ' ' + size.unit;
           };
           break;
         case 'type':
@@ -108,6 +102,25 @@ class Model extends React.Component {
           break;
       }
     });
+  }
+
+  getImageLabel(item) {
+    var label = item.image_label && item.image_label.toLowerCase();
+    var style = null;
+
+    var imgURL = HALO.settings.default_image_url;
+    if (imgURL) {
+      style = {
+        background: `url("${imgURL}") 0 0 no-repeat`,
+        backgroundSize: '20px 20px'
+      };
+    }
+    return (
+      <div>
+        <i className={'icon-image-default ' + label} style={style}/>
+        {item.name}
+      </div>
+    );
   }
 
   onInitialize(params) {
@@ -271,14 +284,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var label = item.image_label && item.image_label.toLowerCase();
-    var name = <div><i className={'icon-image-default ' + label}/> {item.name}</div>;
-    var size = item.size / 1024 / 1024;
-    if (size >= 1024) {
-      size = (Math.round(size / 1024) + ' GB');
-    } else {
-      size = Math.round(size) + ' MB';
-    }
+    var name = this.getImageLabel(item);
+    var size = unitConverter(item.size);
 
     var items = [{
       title: __.name,
@@ -288,7 +295,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.size,
-      content: size
+      content: size.num + ' ' + size.unit
     }, {
       title: __.type,
       content: item.image_type === 'snapshot' ? __.instance_snapshot : __.image

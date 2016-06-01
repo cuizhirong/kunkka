@@ -103,17 +103,31 @@ class Model extends React.Component {
     }
   }
 
+  getImageLabel(item) {
+    var label = item.image.image_label && item.image.image_label.toLowerCase();
+    var style = null;
+
+    var imgURL = HALO.settings.default_image_url;
+    if (imgURL) {
+      style = {
+        background: `url("${imgURL}") 0 0 no-repeat`,
+        backgroundSize: '20px 20px'
+      };
+    }
+    return (
+      <div>
+        <i className={'icon-image-default ' + label} style={style}/>
+        <a data-type="router" href={'/dashboard/image/' + item.image.id}>{item.image.name}</a>
+      </div>
+    );
+  }
+
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
         case 'image':
           column.render = (col, item, i) => {
-            var label = item.image.image_label && item.image.image_label.toLowerCase();
-            return item.image ?
-              <span>
-                <i className={'icon-image-default ' + label}/>
-                <a data-type="router" href={'/dashboard/image/' + item.image.id}>{' ' + item.image.name}</a>
-              </span> : '';
+            return this.getImageLabel(item);
           };
           break;
         case 'ip_address':
@@ -539,8 +553,6 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var label = item.image.image_label && item.image.image_label.toLowerCase();
-
     var flavor = '';
     if (item.flavor.name) {
       let ram = unitConverter(item.flavor.ram, 'MB');
@@ -567,12 +579,7 @@ class Model extends React.Component {
         </span> : '-'
     }, {
       title: __.image,
-      content: <span>
-          <i className={'icon-image-default ' + label}/>
-          <a data-type="router" href={'/dashboard/image/' + item.image.id}>
-            {' ' + item.image.name}
-          </a>
-        </span>
+      content: this.getImageLabel(item)
     }, {
       title: __.flavor,
       content: flavor

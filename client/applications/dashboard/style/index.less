@@ -103,33 +103,47 @@ i.icon-image-default {
   background: url(/static/assets/icon_images.png) 0 0 no-repeat;
   background-size: 20px 209px;
   vertical-align: middle;
+  margin-right: 6px;
+
+  &.centos,
+  &.opensuse,
+  &.fedora,
+  &.ubuntu,
+  &.windows,
+  &.debian,
+  &.arch,
+  &.coreos,
+  &.gentoo {
+    background: url(/static/assets/icon_images.png) 0 0 no-repeat!important;
+    background-size: 20px 209px!important;
+  }
 
   &.centos {
-    background-position: 0 -21px;
+    background-position: 0 -21px!important;
   }
   &.opensuse {
-    background-position: 0 -42px;
+    background-position: 0 -42px!important;
   }
   &.fedora {
-    background-position: 0 -63px;
+    background-position: 0 -63px!important;
   }
   &.ubuntu {
-    background-position: 0 -84px;
+    background-position: 0 -84px!important;
   }
   &.windows {
-    background-position: 0 -105px;
+    background-position: 0 -105px!important;
   }
   &.debian {
-    background-position: 0 -126px;
+    background-position: 0 -126px!important;
   }
   &.arch {
-    background-position: 0 -147px;
+    background-position: 0 -147px!important;
   }
   &.coreos {
-    background-position: 0 -168px;
+    background-position: 0 -168px!important;
   }
   &.gentoo {
-    background-position: 0 -189px;
+    background-position: 0 -189px!important;
   }
 }
 
