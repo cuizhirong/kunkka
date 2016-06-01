@@ -1,3 +1,5 @@
+require('./style/index.less');
+
 var autoscale = require('client/libs/charts/autoscale');
 var utils = require('client/libs/charts/utils');
 var routerUtil = require('client/utils/router');
@@ -36,7 +38,8 @@ var resources = [
     OTHER: [0, 120]
   };
 
-var d = null,
+var resourceReady = false,
+  d = null,
   container = null,
   canvas = null,
   ctx = null,
@@ -55,18 +58,26 @@ var d = null,
 
 class Topology {
   constructor(wp, data) {
+    container = wp;
+
+    this.loading();
+
     if (data.instance && data.instance.length > 50) {
       return;
     }
-    container = wp;
     d = this.processData(data);
-
 
     w = wp.clientWidth;
     // calc height by data
     h = this.calcPos();
 
     utils.bind(window, 'resize', this.onResize.bind(this));
+  }
+
+  loading() {
+    var div = document.createElement('div');
+    div.classList.add('loading', 'glyphicon', 'icon-loading');
+    container.appendChild(div);
   }
 
   processData(data) {
@@ -177,6 +188,8 @@ class Topology {
   calcPos() {
     var x = 0,
       y = 243;
+    // reset max width
+    maxWidth = 0;
 
     // calc network positions
     d.network.forEach((data, i) => {
@@ -275,7 +288,7 @@ class Topology {
 
       if (layer === -1) {
         instances.forEach((ins) => {
-          ins.x = maxWidth + 10;
+          ins.x = routerPos.length === 0 ? maxWidth + 0.5 : maxWidth + 10;
           ins.y = 134.5;
           ins.h = 58;
           ins.w = 78;
@@ -402,7 +415,9 @@ class Topology {
 
     // console.log('placeholder: ', placeholder);
     // console.log('instancePos: ', instancePos);
-
+    if (networkPos.length === 0) {
+      return 260;
+    }
     // The last network
     var p = networkPos[networkPos.length - 1];
     return p.h + p.y + 260;
@@ -551,31 +566,38 @@ class Topology {
     // Loder resources
     loader(resources).then(data => {
       imageList = data;
+      resourceReady = true;
+      container.getElementsByClassName('loading')[0].classList.add('hide');
       this.draw();
     });
   }
 
   onResize() {
-    w = container.clientWidth;
+    if (!resourceReady) {
+      return;
+    }
 
+    w = container.clientWidth;
     autoscale([canvas], {
       width: w,
       height: h
     });
 
-    this.calcPos();
+    // this.calcPos();
     this.draw();
   }
 
   reRender(data) {
+    if (!resourceReady) {
+      return;
+    }
+
+    d = this.processData(data);
     h = this.calcPos();
     autoscale([canvas], {
       width: w,
       height: h
     });
-
-    d = this.processData(data);
-    this.calcPos();
     this.draw();
   }
 
