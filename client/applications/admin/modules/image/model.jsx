@@ -14,6 +14,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
+var unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -57,25 +58,37 @@ class Model extends React.Component {
     }
   }
 
+  getImageLabel(item) {
+    var label = item.image_label && item.image_label.toLowerCase();
+    var style = null;
+
+    var imgURL = HALO.settings.default_image_url;
+    if (imgURL) {
+      style = {
+        background: `url("${imgURL}") 0 0 no-repeat`,
+        backgroundSize: '20px 20px'
+      };
+    }
+    return (
+      <div>
+        <i className={'icon-image-default ' + label} style={style}/>
+        {item.name}
+      </div>
+    );
+  }
+
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
         case 'name':
           column.formatter = (col, item, i) => {
-            var label = item.image_label && item.image_label.toLowerCase();
-            return <div><i className={'icon-image-default ' + label}/> {item.name}</div>;
+            return this.getImageLabel(item);
           };
           break;
         case 'size':
           column.render = (col, item, i) => {
-            let size = item.size / 1024 / 1024;
-            if (size >= 1024) {
-              size = (Math.round(size / 1024) + ' GB');
-            } else {
-              size = Math.round(size) + ' MB';
-            }
-
-            return size;
+            var size = unitConverter(item.size);
+            return size.num + ' ' + size.unit;
           };
           break;
         case 'image_type':
@@ -460,22 +473,17 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var size = item.size / 1024 / 1024;
-    if (size >= 1024) {
-      size = (Math.round(size / 1024) + ' GB');
-    } else {
-      size = Math.round(size) + ' MB';
-    }
+    var size = unitConverter(item.size);
 
     var items = [{
       title: __.name,
-      content: item.name
+      content: this.getImageLabel(item)
     }, {
       title: __.id,
       content: item.id
     }, {
       title: __.size,
-      content: size
+      content: size.num + ' ' + size.unit
     }, {
       title: __.type,
       content: item.image_type === 'snapshot' ? __.snapshot_type : __.image
