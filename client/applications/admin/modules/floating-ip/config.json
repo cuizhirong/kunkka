@@ -19,7 +19,7 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "floating_ip", "id"]
+    "placeholder": ["pls_enter", "floating_ip_id"]
   },
   "table": {
     "checkbox": true,

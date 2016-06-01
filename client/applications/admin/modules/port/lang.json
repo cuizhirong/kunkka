@@ -1,8 +1,10 @@
 {
   "en": {
-    "mac": "MAC"
+    "mac": "MAC",
+    "port_id": "Port ID"
   },
   "zh-CN": {
-    "mac": "MAC"
+    "mac": "MAC",
+    "port_id": "网络端口ID"
   }
 }

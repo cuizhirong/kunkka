@@ -2,12 +2,14 @@
   "en": {
     "capacity_gb": "Capacity (GB)",
     "flavor_name_tip": "Only in letter, number, dot and underscore",
+    "flavor_id": "Flavor ID",
     "memory_gb": "Memory (GB)",
     "set_enable": "Set Enable"
   },
   "zh-CN": {
     "capacity_gb": "容量 (GB)",
     "flavor_name_tip": "仅限字母、数字、点和下划线",
+    "flavor_id": "配置ID",
     "memory_gb": "内存 (GB)",
     "set_enable": "设置为启用"
   }

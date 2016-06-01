@@ -2,11 +2,13 @@
   "en": {
     "de_domain_info": "Are you sure to deactivate {0}?",
     "de_domain_tip": "This operation will cause all projects in the domain disabled.",
-    "en_domain_info": "Are you sure to activate {0}?"
+    "en_domain_info": "Are you sure to activate {0}?",
+    "domain_id": "Domain ID"
   },
   "zh-CN": {
     "de_domain_info": "确定禁用域“{0}”吗？",
     "de_domain_tip": "我了解该操作可能导致该域的所有项目不可用。",
-    "en_domain_info": "确定启用域“{0}”吗？"
+    "en_domain_info": "确定启用域“{0}”吗？",
+    "domain_id": "域ID"
   }
 }

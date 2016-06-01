@@ -20,14 +20,14 @@
     "items": [{
       "type": "input",
       "key": "id",
-      "placeholder": ["pls_enter", "image", "id"]
+      "placeholder": ["pls_enter", "image_id"]
     }]
   }, {
     "group_key": "filter_type",
     "items": [{
       "type": "input",
       "key": "name",
-      "placeholder": ["pls_enter", "image", "name"]
+      "placeholder": ["pls_enter", "image_name"]
     }, {
       "type": "select",
       "key": "type",

@@ -1,8 +1,10 @@
 {
   "en": {
-
+    "snapshot_id": "Snapshot ID",
+    "snapshot_name": "Snapshot Name"
   },
   "zh-CN": {
-
+    "snapshot_id": "快照ID",
+    "snapshot_name": "快照名称"
   }
 }

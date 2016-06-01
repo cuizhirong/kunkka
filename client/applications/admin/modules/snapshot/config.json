@@ -20,7 +20,7 @@
     "items": [{
       "type": "input",
       "key": "id",
-      "placeholder": ["pls_enter", "snapshot", "id"]
+      "placeholder": ["pls_enter", "snapshot_id"]
     }]
   }, {
     "group_key": "all_tenant",
@@ -31,7 +31,7 @@
     }, {
       "type": "input",
       "key": "name",
-      "placeholder": ["pls_enter", "snapshot", "name"]
+      "placeholder": ["pls_enter", "snapshot_name"]
     }]
   }],
   "table": {

@@ -56,7 +56,7 @@
   }],
   "search": {
     "width": 200,
-    "placeholder": ["pls_enter", "user", "id", "or", "name"]
+    "placeholder": ["pls_enter", "user", "id_or_name"]
   },
   "table": {
     "checkbox": true,

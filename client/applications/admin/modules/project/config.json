@@ -37,7 +37,7 @@
   }],
   "search": {
     "width": 200,
-    "placeholder": ["pls_enter", "project", "id", "or", "name"]
+    "placeholder": ["pls_enter", "project", "id_or_name"]
   },
   "table": {
     "checkbox": true,

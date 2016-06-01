@@ -21,7 +21,7 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "flavor", "id"]
+    "placeholder": ["pls_enter", "flavor_id"]
   },
   "table": {
     "checkbox": true,

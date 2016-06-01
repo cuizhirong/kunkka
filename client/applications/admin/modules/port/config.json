@@ -16,7 +16,7 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "port", "id"]
+    "placeholder": ["pls_enter", "port_id"]
   },
   "table": {
     "checkbox": true,

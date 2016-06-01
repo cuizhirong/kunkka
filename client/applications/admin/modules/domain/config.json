@@ -25,7 +25,7 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "domain", "id"]
+    "placeholder": ["pls_enter", "domain_id"]
   },
   "table": {
     "checkbox": true,
