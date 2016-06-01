@@ -8,8 +8,7 @@
     "type": "group_select",
     "field": "subnet",
     "empty_text": {
-      "info": "no_subnet",
-      "link_info": ["create", "subnet"]
+      "info": "no_subnet"
     }
   }, {
     "type": "input",

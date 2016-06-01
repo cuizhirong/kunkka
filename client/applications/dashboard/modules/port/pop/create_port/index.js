@@ -2,19 +2,8 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var createSubnet = require('client/applications/dashboard/modules/subnet/pop/create_subnet/index');
 var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
 var __ = require('locale/client/dashboard.lang.json');
-
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
-  if (typeof obj !== 'object') {
-    return newobj;
-  } else {
-    newobj = JSON.parse(JSON.stringify(obj));
-  }
-  return newobj;
-};
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -29,8 +18,8 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       var subnetGroup = [];
-      request.getSubnetList().then((data) => {
-        var subnets = copyObj(data.subnet);
+      request.getSubnetSGList().then((data) => {
+        var subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);
         if (subnets.length > 0) {
           subnets.forEach((subnet) => {
             var hasGroup = subnetGroup.some((group) => {
@@ -60,17 +49,13 @@ function pop(obj, parent, callback) {
           refs.security_group.setState({
             hide: selectedSubnet ? !selectedSubnet.network.port_security_enabled : false
           });
-          refs.btn.setState({
-            disabled: false
-          });
         }
-      });
 
-      request.getSecuritygroupList().then((data) => {
-        if (data.securitygroup.length > 0) {
+        var sgs = data.securitygroup;
+        if (sgs.length > 0) {
           var securitygroups = [],
             defaultSecurity;
-          copyObj(data.securitygroup).forEach((item) => {
+          sgs.forEach((item) => {
             if (item.name === 'default') {
               defaultSecurity = item;
               defaultSecurity.selected = true;
@@ -83,6 +68,9 @@ function pop(obj, parent, callback) {
           refs.security_group.setState({
             data: securitygroups
           });
+        }
+
+        if (subnets.length > 0 && sgs.length > 0) {
           refs.btn.setState({
             disabled: false
           });
@@ -135,39 +123,7 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch (field) {
         case 'subnet':
-          if (refs.subnet.state.clicked) {
-            createSubnet(null, refs.modal, (subnet) => {
-              var network;
-              request.getNetworkList().then((res) => {
-                res.network.some((ele) => {
-                  if (ele.id === subnet.network_id) {
-                    network = ele;
-                    return true;
-                  }
-                  return false;
-                });
-
-                var subnetGroup = [];
-                subnetGroup.push({
-                  id: subnet.network_id,
-                  name: network.name,
-                  port_security_enabled: network.port_security_enabled,
-                  shared: network.shared,
-                  data: [subnet]
-                });
-
-                refs.subnet.setState({
-                  data: subnetGroup,
-                  value: subnet.id,
-                  clicked: false
-                });
-                refs.btn.setState({
-                  disabled: false
-                });
-
-              });
-            });
-          } else {
+          if (!refs.subnet.state.clicked) {
             var portSecurityEnabled = true;
             status.data.some((group) => {
               return group.data.some((s) => {

@@ -51,6 +51,9 @@ module.exports = {
   getSubnetList: function(forced) {
     return storage.getList(['subnet'], forced);
   },
+  getSubnetSGList: function(forced) {
+    return storage.getList(['subnet', 'securitygroup'], forced);
+  },
   editPortName: function(item, newName) {
     var data = {};
     data.port = {};
