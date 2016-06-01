@@ -75,14 +75,21 @@ module.exports = {
       return res;
     });
   },
-  migrate: function(id, hostID) {
-    var data = {
-      'os-migrateLive': {
-        'host': hostID,
-        'block_migration': false,
-        'disk_over_commit': false
-      }
-    };
+  migrate: function(id, hostID, isCool) {
+    var data = {};
+    if(isCool) {
+      data = {
+        'migrate': null
+      };
+    } else {
+      data = {
+        'os-migrateLive': {
+          'host': hostID,
+          'block_migration': false,
+          'disk_over_commit': false
+        }
+      };
+    }
 
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',

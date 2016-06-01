@@ -1,32 +1,40 @@
 {
   "en": {
     "auto": "Auto",
+    "finish_resize": "Resize ",
     "fixed_ip": "Fixed IP",
     "floating_ip": "Floating Ip",
     "migrate_to": "Migrate To",
     "migrate": "Migrate",
     "name": "Name",
     "reset": "Reset",
+    "resize": "Resize ",
+    "resize_prep": "Resize ",
     "reboot": "Reboot",
-    "server": "Server ",
     "power_off": "Power Off",
     "power_on": "Power On",
     "project_id": "Project ID",
-    "user_id": "User ID"
+    "server": "Server ",
+    "user_id": "User ID",
+    "verify_resize": "Resize "
   },
   "zh-CN": {
     "auto": "自动",
+    "finish_resize": "更改配置",
     "fixed_ip": "内网IP",
     "floating_ip": "公网IP",
     "migrate_to": "迁移到",
     "name": "名称",
     "migrate": "迁移",
     "reset": "重置",
+    "resize": "更改配置",
+    "resize_prep": "更改配置",
     "reboot": "重启",
-    "server": "云主机",
     "power_off": "关机",
     "power_on": "开机",
     "project_id": "项目ID",
-    "user_id": "用户ID"
+    "server": "云主机",
+    "user_id": "用户ID",
+    "verify_resize": "验证配置"
   }
 }

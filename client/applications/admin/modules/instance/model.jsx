@@ -571,26 +571,29 @@ class Model extends React.Component {
     var single = rows.length === 1 ? rows[0] : null;
 
     for (let key in btns) {
-      switch (key) {
-        case 'migrate':
-          btns[key].disabled = (single && single.status.toLowerCase() === 'active') ? false : true;
-          break;
-        case 'power_on':
-          btns[key].disabled = (single && single.status.toLowerCase() === 'shutoff') ? false : true;
-          break;
-        case 'power_off':
-        case 'reboot':
-          btns[key].disabled = (single && single.status.toLowerCase() === 'active') ? false : true;
-          break;
-        case 'dissociate_floating_ip':
-          btns[key].disabled = (single && single._floatingIP.length > 0) ? false : true;
-          break;
-        case 'delete':
-          btns[key].disabled = single ? false : true;
-          break;
-        default:
-          break;
+      if(single) {
+        var itemStatus = single.status.toLowerCase();
+        switch (key) {
+          case 'migrate':
+            btns[key].disabled = (itemStatus !== 'error' && itemStatus !== 'error_deleting') ? false : true;
+            break;
+          case 'power_on':
+            btns[key].disabled = itemStatus === 'shutoff' ? false : true;
+            break;
+          case 'power_off':
+          case 'reboot':
+            btns[key].disabled = itemStatus === 'active' ? false : true;
+            break;
+          case 'dissociate_floating_ip':
+            btns[key].disabled = single._floatingIP.length > 0 ? false : true;
+            break;
+          default:
+            break;
+        }
+      } else {
+        btns[key].disabled = true;
       }
+
     }
 
     return btns;

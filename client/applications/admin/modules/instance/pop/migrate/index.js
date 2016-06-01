@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/admin/utils/error_message');
 var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
@@ -16,16 +17,26 @@ function pop(obj, parent, callback) {
     name: __.auto
   });
 
-  hostTypes.forEach((host) => {
-    var name = host.service.host;
+  var itemStatus = row.status.toLowerCase(),
+    isCool = false;
+  if(itemStatus === 'active' || itemStatus === 'paused') {
+    isCool = false;
+  } else if (itemStatus !== 'error' && itemStatus !== 'error_deleting') {
+    isCool = true;
+  }
 
-    if (row['OS-EXT-SRV-ATTR:host'] !== name) {
-      hosts.push({
-        id: name,
-        name: name
-      });
-    }
-  });
+  if(!isCool) {
+    hostTypes.forEach((host) => {
+      var name = host.service.host;
+
+      if (row['OS-EXT-SRV-ATTR:host'] !== name) {
+        hosts.push({
+          id: name,
+          name: name
+        });
+      }
+    });
+  }
 
   var props = {
     __: __,
@@ -43,13 +54,11 @@ function pop(obj, parent, callback) {
         hostID = null;
       }
 
-      request.migrate(row.id, hostID).then((res) => {
-        if (res.status >= 400) {
-          cb(false);
-        } else {
-          callback && callback(res);
-          cb(true);
-        }
+      request.migrate(row.id, hostID, isCool).then((res) => {
+        callback && callback(res);
+        cb(true);
+      }).catch(function(error) {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {
