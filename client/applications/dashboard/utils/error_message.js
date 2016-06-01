@@ -9,6 +9,11 @@ function getErrorMessage(error) {
         errorMessage = response.conflictingRequest.message;
       } else if (response.NeutronError) {
         errorMessage = response.NeutronError.message;
+      } else if (response.overLimit) {
+        errorMessage = response.overLimit.message;
+      } else {
+        let reg = new RegExp('"message":"(.*)","');
+        errorMessage = reg.exec(error.response)[1];
       }
       return errorMessage;
     }
