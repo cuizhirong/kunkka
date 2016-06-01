@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
@@ -22,6 +23,8 @@ function pop(obj, parent, callback) {
       request.associateInstance(obj, refs.port.state.value).then((res) => {
         callback && callback(res);
         cb(true);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, status, refs) {

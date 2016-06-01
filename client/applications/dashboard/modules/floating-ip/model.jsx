@@ -16,6 +16,7 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -152,15 +153,13 @@ class Model extends React.Component {
           type: 'floating_ip',
           data: rows,
           disabled: hasSource ? true : false,
-          tip: hasSource ? {
-            hide: false,
-            title: __.attention,
-            value: __.tip_fip_has_source
-          } : null,
+          tip: hasSource ? __.tip_fip_has_source : null,
           onDelete: function(_data, cb) {
             request.deleteFloatingIps(rows).then((res) => {
               cb(true);
               that.refresh({}, true);
+            }).catch((error) => {
+              cb(false, getErrorMessage(error));
             });
           }
         });

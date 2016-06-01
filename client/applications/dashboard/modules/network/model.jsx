@@ -18,6 +18,7 @@ var request = require('./request');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -169,6 +170,8 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteNetworks(rows).then((res) => {
               cb(true);
+            }).catch((error) => {
+              cb(false, getErrorMessage(error));
             });
           }
         });

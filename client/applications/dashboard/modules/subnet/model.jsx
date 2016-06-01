@@ -22,6 +22,7 @@ var router = require('client/utils/router');
 var request = require('./request');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -221,8 +222,11 @@ class Model extends React.Component {
           type: 'subnet',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteSubnets(rows);
-            cb(true);
+            request.deleteSubnets(rows).then((res) => {
+              cb(true);
+            }).catch((error) => {
+              cb(false, getErrorMessage(error));
+            });
           }
         });
         break;
