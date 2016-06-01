@@ -6,11 +6,10 @@ class ModalBase extends React.Component {
   constructor(props) {
     super(props);
 
-    var tip = props.tip ? props.tip : { hide: true };
-
     this.state = {
       disabled: props.disabled,
-      tip: tip
+      tip: props.tip,
+      tipType: 'warning'
     };
 
     this.onDelete = this.onDelete.bind(this);
@@ -21,12 +20,18 @@ class ModalBase extends React.Component {
     this.setState({
       disabled: true
     });
-    this.props.onDelete && this.props.onDelete(this.state, (status) => {
+    this.props.onDelete && this.props.onDelete(this.state, (status, msg) => {
       if (status) {
         this.setState({
           visible: false
         });
       } else {
+        if (msg) {
+          this.setState({
+            tip: msg,
+            tipType: 'danger'
+          });
+        }
         this.setState({
           disabled: false
         });
@@ -58,7 +63,6 @@ class ModalBase extends React.Component {
 
     var iconType = props.iconType || props.type.replace('_', '-');
 
-    var tip = state.tip;
     return (
       <Modal {..._props} visible={state.visible}>
         <div className="modal-bd halo-com-modal-delete">
@@ -70,8 +74,8 @@ class ModalBase extends React.Component {
               })
             }
           </div>
-          <div className={'modal-row tip-row' + (tip.hide ? ' hide' : '')}>
-            <Tip type="danger" title={tip.title} content={tip.value} showIcon={true} width={442}/>
+          <div className={'modal-row tip-row' + (state.tip ? '' : ' hide')}>
+            <Tip type={state.tipType} content={state.tip} showIcon={true} width={442}/>
           </div>
         </div>
         <div className="modal-ft">
