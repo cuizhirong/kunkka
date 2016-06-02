@@ -4,18 +4,8 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
-  if (typeof obj !== 'object') {
-    return newobj;
-  } else {
-    newobj = JSON.parse(JSON.stringify(obj));
-  }
-  return newobj;
-};
-
 var getAvailableSubnets = function(data, refs) {
-  var subnets = copyObj(data);
+  var subnets = data.filter((ele) => !ele.network['router:external']);
   var subnetGroup = [],
     hasAvailableSubnet = false;
   subnets.forEach((s) => {
