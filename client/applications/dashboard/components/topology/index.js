@@ -418,6 +418,7 @@ class Topology {
     if (offsetX < 0) {
       offsetX = 0;
     }
+    ctx.clearRect(0, 0, w, h);
 
     ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
     shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
@@ -573,8 +574,7 @@ class Topology {
       width: w,
       height: h
     });
-
-    // this.calcPos();
+    this.calcPos();
     this.draw();
   }
 
@@ -584,6 +584,7 @@ class Topology {
     }
 
     d = this.processData(data);
+    w = container.clientWidth;
     h = this.calcPos();
     autoscale([canvas], {
       width: w,
