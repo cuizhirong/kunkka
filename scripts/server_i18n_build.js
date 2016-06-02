@@ -45,7 +45,12 @@ function generateServerLangObject (dirPath, apiI18N, extensionsI18N, viewsI18N) 
       }
       // generate views i18n object
       let viewsPath = path.join(dirPath, app, 'views');
-      loadI18nFile(viewsPath, viewsI18N);
+      try {
+        fs.accessSync(viewsPath, fs.R_OK);
+        loadI18nFile(viewsPath, viewsI18N);
+      } catch (e) {
+        console.log(`${app} has no views`);
+      }
     });
 }
 
