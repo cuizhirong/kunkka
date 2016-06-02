@@ -12,11 +12,30 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getInstances().then((instances) => {
-        refs.instance.setState({
-          data: instances,
-          value: instances[0].id
+      request.getInstances().then((data) => {
+        var instances = data.filter((item) => {
+          var addresses = item.addresses;
+          for (let key in addresses) {
+            for (let ele of addresses[key]) {
+              if (ele['OS-EXT-IPS:type'] === 'fixed') {
+                return true;
+              }
+            }
+          }
+
+          return false;
         });
+
+        if (instances.length > 0) {
+          refs.instance.setState({
+            data: instances,
+            value: instances[0].id
+          });
+        } else {
+          refs.tip_no_port_instance.setState({
+            hide: true
+          });
+        }
       });
     },
     onConfirm: function(refs, cb) {
