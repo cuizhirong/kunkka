@@ -277,8 +277,12 @@ class Topology {
         instances = instance.instances;
 
       if (layer === -1) {
-        instances.forEach((ins) => {
-          ins.x = routerPos.length === 0 ? maxWidth + 0.5 : maxWidth + 10;
+        instances.forEach((ins, i) => {
+          if (i === 0) {
+            ins.x = routerPos.length === 0 ? maxWidth + 0.5 : maxWidth + 10;
+          } else {
+            ins.x = maxWidth + 10;
+          }
           ins.y = 134.5;
           ins.h = 58;
           ins.w = 78;
