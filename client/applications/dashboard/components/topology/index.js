@@ -1,5 +1,3 @@
-require('./style/index.less');
-
 var autoscale = require('client/libs/charts/autoscale');
 var utils = require('client/libs/charts/utils');
 var routerUtil = require('client/utils/router');
@@ -60,8 +58,6 @@ class Topology {
   constructor(wp, data) {
     container = wp;
 
-    this.loading();
-
     if (data.instance && data.instance.length > 50) {
       return;
     }
@@ -72,12 +68,6 @@ class Topology {
     h = this.calcPos();
 
     utils.bind(window, 'resize', this.onResize.bind(this));
-  }
-
-  loading() {
-    var div = document.createElement('div');
-    div.classList.add('loading', 'glyphicon', 'icon-loading');
-    container.appendChild(div);
   }
 
   processData(data) {
@@ -567,7 +557,8 @@ class Topology {
     loader(resources).then(data => {
       imageList = data;
       resourceReady = true;
-      container.getElementsByClassName('loading')[0].classList.add('hide');
+      var loading = container.getElementsByClassName('loading')[0];
+      loading && loading.classList.add('hide');
       this.draw();
     });
   }

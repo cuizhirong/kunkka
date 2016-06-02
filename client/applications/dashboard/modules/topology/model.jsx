@@ -49,7 +49,9 @@ class Model extends React.Component {
   render() {
     return (
       <div className="halo-module-topology" style={this.props.style}>
-        <div ref="c" className="c"></div>
+        <div ref="c" className="c">
+          <div className="loading glyphicon icon-loading"></div>
+        </div>
       </div>
     );
   }
