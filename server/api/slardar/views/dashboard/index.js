@@ -138,5 +138,4 @@ module.exports = (app) => {
   views.push(__dirname);
   applications = app.get('applications');
   app.get(/(^\/dashboard$)|(^\/dashboard\/(.*))/, renderProjectTemplate);
-  app.get(/^\/dashboard($|\/(.*))/, renderProjectTemplate);
 };

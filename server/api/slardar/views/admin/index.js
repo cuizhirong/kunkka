@@ -74,7 +74,7 @@ function renderTemplate (req, res, next) {
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let title = setting.title ? setting.title : 'UnitedStack 有云';
-    if (req.session && req.session.user) {
+    if (req.session && req.session.user && req.session.user.isAdmin) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
       let user = req.session.user;
@@ -129,7 +129,7 @@ function renderTemplate (req, res, next) {
         }))
       });
     } else if (req.session && req.session.user){
-      res.redirect('/project');
+      res.redirect('/dashboard');
     } else {
       res.redirect('/');
     }
