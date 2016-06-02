@@ -15,10 +15,11 @@ var copyObj = function(obj) {
 
 function pop(obj, parent, callback) {
   function getSubnetGroup(subnetArray) {
-    var subnets = copyObj(subnetArray),
-      joinedSubnet = [],
+    var subnets = subnetArray.filter((ele) => !ele.network['router:external']);
+    var joinedSubnet = [],
       subnetGroup = [],
       hasAvailableSubnet = false;
+
     for (let key in obj.addresses) {
       for (let item of obj.addresses[key]) {
         if (item['OS-EXT-IPS:type'] === 'fixed') {
@@ -78,10 +79,17 @@ function pop(obj, parent, callback) {
       request.getSubnetList().then((data) => {
         if (data.length > 0) {
           var subnetGroup = getSubnetGroup(data);
-          refs.select_subnet.setState({
-            data: subnetGroup,
-            value: (subnetGroup.length > 0) ? subnetGroup[0].data[0].id : ''
-          });
+
+          if (subnetGroup.length > 0) {
+            refs.select_subnet.setState({
+              data: subnetGroup,
+              value: subnetGroup[0].data[0].id
+            });
+
+            refs.btn.setState({
+              disabled: false
+            });
+          }
         }
       });
       request.getPortList().then((data) => {
@@ -160,11 +168,25 @@ function pop(obj, parent, callback) {
           refs.select_interface.setState({
             checkedField: state.checkedField
           });
+
+          if (state.checkedField === 'select_subnet') {
+            let subnetDisabled = refs.select_subnet.state.data.length === 0;
+            refs.btn.setState({
+              disabled: subnetDisabled
+            });
+          }
           break;
         case 'select_interface':
           refs.select_subnet.setState({
             checkedField: state.checkedField
           });
+
+          if (state.checkedField === 'select_interface') {
+            let portDisabled = refs.select_interface.state.data.length === 0;
+            refs.btn.setState({
+              disabled: portDisabled
+            });
+          }
           break;
         default:
           break;

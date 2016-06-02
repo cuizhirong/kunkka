@@ -30,6 +30,6 @@
   }],
   "btn": {
     "value": "join",
-    "disabled": false
+    "disabled": true
   }
 }
