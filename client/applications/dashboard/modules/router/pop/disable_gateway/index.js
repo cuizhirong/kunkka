@@ -5,7 +5,8 @@ var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
-  config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
+  var name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';
+  config.fields[0].info = __[config.fields[0].field].replace('{0}', name);
 
   var props = {
     __: __,
