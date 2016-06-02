@@ -6,12 +6,6 @@
 var RSVP = require('rsvp');
 var Promise = RSVP.Promise;
 
-RSVP.on('error', function(err) {
-  if (err && err.stack) {
-    console.assert(false, err.stack);
-  }
-});
-
 var c = {
   dataTypes: {
     _default: '*/*',
