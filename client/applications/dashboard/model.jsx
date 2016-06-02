@@ -5,6 +5,7 @@ var router = require('client/utils/router');
 
 require('./cores/ws');
 require('client/utils/router_delegate');
+require('./cores/watchdog');
 
 var loader = require('./cores/loader'),
   configs = loader.configs;
