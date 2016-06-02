@@ -77,7 +77,13 @@ function handleData(refresh, dataHandle, callback) {
       if (err || cache === null) {
         toHandle(dataHandle, callback);
       } else {
-        dataHandle(callback, JSON.parse(cache));
+        let _cache;
+        try {
+          _cache = JSON.parse(cache);
+        } catch (e) {
+          _cache = null;
+        }
+        dataHandle(callback, _cache);
       }
     });
   } else {
@@ -304,11 +310,11 @@ driver.connect = function connect(option, database, callback) {
         if (!error.fatal) {
           return;
         }
+        logger.error(error);
         if (error.code === 'PROTOCOL_CONNECTION_LOST') {
           con._losted = true;
           console.log('Failed: sql connection break off! \n ...try reconnecting...');
           /* save log for lost connection. */
-          logger.error(error);
           driver.reconnect(callback);
         }
       });
