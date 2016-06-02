@@ -100,7 +100,11 @@ class Model extends React.Component {
                 return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
               }
             } else if (item.device_owner === 'network:router_interface') {
-              return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+              if (item.router) {
+                return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
+              } else {
+                return '';
+              }
             } else {
               return <div>{__[item.device_owner]}</div>;
             }
