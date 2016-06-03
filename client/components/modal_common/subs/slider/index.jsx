@@ -20,6 +20,15 @@ class Slide extends React.Component {
     this.onSliderChange = this.onSliderChange.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    for (var index in this.state) {
+      if (this.state[index] !== nextState[index]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   componentDidUpdate() {
     this.props.onAction(this.props.field, this.state);
   }
