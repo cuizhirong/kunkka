@@ -1,5 +1,6 @@
 {
   "en": {
+    "account": "CNY {0}",
     "basic": "Basic ",
     "build": "Building",
     "console": "Console ",
@@ -12,6 +13,7 @@
     "finish_resize": "Resize ",
     "flavor": "Flavor",
     "fold_up": "Fold Up",
+    "hour": "Hour",
     "id": "ID",
     "inst_snapshot": "Instance Snapshot",
     "inst_snapshot_name": "Image Name",
@@ -24,6 +26,7 @@
     "local_ip": "Fixed IP",
     "memory": "Memory ",
     "monitor": "Monitor",
+    "month": "Month",
     "msg_diss_network": "Do you want to leave network?",
     "no_associate": "No Associate ",
     "no_instance": "No available Instance",
@@ -60,6 +63,7 @@
     "user_name": "User Name"
   },
   "zh-CN": {
+    "account": "{0} 元",
     "basic": "基本",
     "build": "正在创建",
     "console": "监控",
@@ -72,6 +76,7 @@
     "finish_resize": "更改配置",
     "flavor": "配置",
     "fold_up": "折叠",
+    "hour": "小时",
     "id": "ID",
     "inst_snapshot": "主机快照",
     "inst_snapshot_name": "主机快照名称",
@@ -84,6 +89,7 @@
     "local_ip": "本地IP",
     "memory": "内存",
     "monitor": "监控",
+    "month": "月",
     "msg_diss_network": "是否离开网络？",
     "no_associate": "没有",
     "no_instance": "没有可用的云主机",

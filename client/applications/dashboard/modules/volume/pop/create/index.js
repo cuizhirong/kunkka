@@ -100,6 +100,11 @@ function pop(obj, parent, callback) {
           disabled: selectedMax === 0 ? true : false,
           hide: false
         });
+
+        refs.charge.setState({
+          hide: false
+        });
+
         refs.btn.setState({
           disabled: false
         });
@@ -162,6 +167,9 @@ function pop(obj, parent, callback) {
         case 'capacity_size':
           refs.btn.setState({
             disabled: state.error
+          });
+          refs.charge.setState({
+            value: state.value
           });
           break;
         default:

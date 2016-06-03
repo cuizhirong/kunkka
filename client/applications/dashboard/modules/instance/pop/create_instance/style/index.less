@@ -16,6 +16,9 @@
 @dropdown_border_color: @color_grey;
 @dropdown_overview_border_hover_color: @color_info;
 
+@account_color: @color_warning;
+@account_gray_color: @color_grey_700;
+
 @tip_warning_color: @color_warning;
 
 @keyframes moveToSecondPage {
@@ -326,6 +329,25 @@
         .tooltip {
           bottom: 152px;
           right: 36px;
+        }
+      }
+
+      .account-box {
+        display: inline-block;
+        margin-left: 10px;
+        > div {
+          display: inline-block;
+          margin-right: 4px;
+          > strong {
+            color: @account_color;
+            font-weight: normal;
+          }
+          &.account-md {
+            font-size: 14px;
+          }
+          &.account-gray {
+            color: @account_gray_color;
+          }
         }
       }
 

@@ -993,7 +993,18 @@ class ModalBase extends React.Component {
           {__.number}
         </div>
         <div className="modal-data">
-         <InputNumber onChange={this.onChangeNumber} min={1} value={state.dNumber} width={265}/>
+          <InputNumber onChange={this.onChangeNumber} min={1} value={state.dNumber} width={165}/>
+          <div className="account-box">
+            <div className="account-sm">
+              x <strong>{__.account.replace('{0}', '0.0560')}</strong> / <span>{__.hour}</span> =
+            </div>
+            <div className="account-md">
+              x <strong>{__.account.replace('{0}', '0.0560')}</strong> / <span>{__.hour}</span>
+            </div>
+            <div className="account-md account-gray">
+              {'( ' + __.account.replace('{0}', '0.0560') + ' / ' + __.month + ' )'}
+            </div>
+          </div>
         </div>
       </div>
     );
