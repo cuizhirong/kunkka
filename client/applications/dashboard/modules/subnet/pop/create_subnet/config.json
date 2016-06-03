@@ -16,6 +16,7 @@
   }, {
     "type": "input",
     "field": "net_address",
+    "tip_info": "cidr_tip",
     "is_long_label": true,
     "required": true
   }, {

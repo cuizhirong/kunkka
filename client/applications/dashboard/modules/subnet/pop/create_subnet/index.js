@@ -61,19 +61,27 @@ function pop(obj, parent, callback) {
         }
       }
 
-      request.createSubnet(data).then((res) => {
-        callback && callback(res.subnet);
-        cb(true);
-      }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
-
-        refs.error.setState({
-          value: tip,
-          hide: false
+      var netAddr = refs.net_address.state.value,
+        testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
+      if(!testAddr.test(netAddr)) {
+        refs.net_address.setState({
+          error: true
         });
-        cb(false);
-      });
+      } else {
+        request.createSubnet(data).then((res) => {
+          callback && callback(res.subnet);
+          cb(true);
+        }).catch((err) => {
+          var reg = new RegExp('"message":"(.*)","');
+          var tip = reg.exec(err.response)[1];
+
+          refs.error.setState({
+            value: tip,
+            hide: false
+          });
+          cb(false);
+        });
+      }
     },
     onAction: function(field, status, refs) {
       switch (field) {
@@ -110,6 +118,17 @@ function pop(obj, parent, callback) {
               refs.btn.setState({
                 disabled: false
               });
+            });
+          }
+          break;
+        case 'net_address':
+          var netState = refs.net_address.state;
+          if(netState.error === true && netState.value === '') {
+            refs.net_address.setState({
+              error: false
+            });
+            refs.btn.setState({
+              disabled: false
             });
           }
           break;

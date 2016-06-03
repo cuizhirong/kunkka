@@ -30,24 +30,35 @@ function pop(parent, callback) {
       if (!refs.enable_security.state.checked) {
         data.port_security_enabled = false;
       }
-      request.createNetwork(data).then((res) => {
-        if (refs.create_subnet.state.checked) {
-          data = {
-            ip_version: 4,
-            name: refs.subnet_name.state.value,
-            network_id: res.network.id,
-            cidr: refs.net_address.state.value,
-            enable_dhcp: true
-          };
-          request.createSubnet(data).then(() => {
-            callback && callback(res.network);
-            cb(true);
+
+      if(refs.create_subnet.state.checked) {
+        var netAddr = refs.net_address.state.value,
+          testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
+        if(!testAddr.test(netAddr)) {
+          refs.net_address.setState({
+            error: true
           });
         } else {
+          request.createNetwork(data).then((res) => {
+            data = {
+              ip_version: 4,
+              name: refs.subnet_name.state.value,
+              network_id: res.network.id,
+              cidr: refs.net_address.state.value,
+              enable_dhcp: true
+            };
+            request.createSubnet(data).then(() => {
+              callback && callback(res.network);
+              cb(true);
+            });
+          });
+        }
+      } else {
+        request.createNetwork(data).then((res) => {
           callback && callback(res.network);
           cb(true);
-        }
-      });
+        });
+      }
     },
     onAction: function(field, status, refs) {
       var subnetChecked = refs.create_subnet.state.checked;
@@ -64,6 +75,17 @@ function pop(parent, callback) {
           refs.vlan_id.setState({
             hide: !refs.enable_vlan.state.checked
           });
+          break;
+        case 'net_address':
+          var netState = refs.net_address.state;
+          if(netState.error === true && netState.value === '') {
+            refs.net_address.setState({
+              error: false
+            });
+            refs.btn.setState({
+              disabled: false
+            });
+          }
           break;
         default:
           break;
