@@ -1,5 +1,5 @@
 {
-  "title": ["detach", "instance"],
+  "title": ["detach", "volume"],
   "fields": [{
     "type": "icon_label",
     "field": "volume",
