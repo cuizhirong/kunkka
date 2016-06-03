@@ -26,7 +26,7 @@
     "disabled": true
   }],
   "search": {
-    "width": 200,
+    "width": 210,
     "placeholder": ["pls_enter", "user-group", "id_or_name"]
   },
   "table": {
