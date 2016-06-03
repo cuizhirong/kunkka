@@ -1,3 +1,5 @@
+var textEllipsis = require('./text_ellipsis');
+
 module.exports = {
   /**
    * Draws a rounded rectangle using the current state of the canvas.
@@ -49,6 +51,10 @@ module.exports = {
     ctx.fillStyle = color;
     ctx.textBaseline = 'middle';
     ctx.textAlign = textAlign ? textAlign : 'start';
-    ctx.fillText(text, x, y, maxWidth);
+    if (maxWidth) {
+      ctx.fillText(textEllipsis(ctx, text, maxWidth), x, y, maxWidth);
+    } else {
+      ctx.fillText(text, x, y);
+    }
   }
 };
