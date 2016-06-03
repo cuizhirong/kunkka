@@ -28,6 +28,19 @@ function setRemote (catalog) {
   return remote;
 }
 
+function getCookie (req, userId) {
+  let _cookies;
+  if (!req.cookies[userId]) {
+    _cookies = {
+      region: '',
+      project: ''
+    };
+  } else {
+    _cookies = req.cookies[userId];
+  }
+  return _cookies;
+}
+
 Auth.prototype = {
   authentication: function (req, res, next) {
     let _username = req.body.username;
@@ -47,14 +60,7 @@ Auth.prototype = {
           } else {
             let userId = response.body.token.user.id;
             let token = response.header['x-subject-token'];
-            if (!req.cookies[userId]) {
-              cookies = {
-                region: '',
-                project: ''
-              };
-            } else {
-              cookies = req.cookies[userId];
-            }
+            cookies = getCookie(req, userId);
             cb(null, userId, token);
           }
         });
@@ -137,6 +143,7 @@ Auth.prototype = {
   swtichProject: function (req, res, next) {
     let projectId = req.body.projectId ? req.body.projectId : req.params.projectId;
     let token = req.session.user.token;
+    let cookies;
     this.__scopedAuth.call(this, {
       projectId: projectId,
       token: token
@@ -152,7 +159,8 @@ Auth.prototype = {
           return role.name === 'admin';
         });
         let userId = req.session.user.userId;
-        res.cookie(userId, Object.assign(req.cookies[userId], {
+        cookies = getCookie(req, userId);
+        res.cookie(userId, Object.assign(cookies, {
           project: projectId
         }));
         res.json({success: 'switch project successfully'});
@@ -161,7 +169,9 @@ Auth.prototype = {
   },
   swtichRegion: function (req, res) {
     let userId = req.session.user.userId;
-    res.cookie(userId, Object.assign(req.cookies[userId], {
+    let cookies;
+    cookies = getCookie(req, userId);
+    res.cookie(userId, Object.assign(cookies, {
       region: (req.session.user.regionId = req.body.region ? req.body.region : req.params.region)
     }));
     res.status(200).json({success: 'switch region successfully'});
