@@ -327,7 +327,7 @@ class Model extends React.Component {
                 btnConfig={{
                   value: __.create + __.snapshot,
                   actionType: 'create_related_snapshot',
-                  disabled: rows[0].status === 'available' ? false : true
+                  disabled: (rows[0].status === 'available' || rows[0].status === 'in-use') ? false : true
                 }}
                 onAction={this.onDetailAction.bind(this)}
                 actionType={{
