@@ -4,6 +4,7 @@ var SideMenu = require('client/components/side_menu/index');
 var router = require('client/utils/router');
 
 require('client/utils/router_delegate');
+require('./cores/watchdog');
 
 var loader = require('./cores/loader'),
   configs = loader.configs;

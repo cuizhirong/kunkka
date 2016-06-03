@@ -11,6 +11,8 @@ function getErrorMessage(error) {
         errorMessage = response.NeutronError.message;
       } else if (response.overLimit) {
         errorMessage = response.overLimit.message;
+      } else if (response.error) {
+        errorMessage = response.error;
       } else {
         let reg = new RegExp('"message":"(.*)","');
         errorMessage = reg.exec(error.response)[1];
