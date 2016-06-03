@@ -587,11 +587,16 @@ class Model extends React.Component {
           case 'dissociate_floating_ip':
             btns[key].disabled = single._floatingIP.length > 0 ? false : true;
             break;
+          case 'delete':
+            btns[key].disabled = false;
+            break;
           default:
             break;
         }
       } else {
-        btns[key].disabled = true;
+        if (key !== 'refresh') {
+          btns[key].disabled = true;
+        }
       }
 
     }

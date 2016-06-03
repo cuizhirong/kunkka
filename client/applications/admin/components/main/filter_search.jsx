@@ -13,35 +13,31 @@ class Detail extends React.Component {
       expand: false
     };
 
-    ['reset', 'confirm'].forEach((m) => {
+    ['reset', 'confirm', 'foldFilter', 'unfoldFilter'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
 
-  collapseFilter(e) {
-    this.setState({
-      expand: false
-    });
-  }
-
-  expandFilter(e) {
+  unfoldFilter(e) {
     this.setState({
       expand: true
     });
 
-    var that = this;
-    document.addEventListener('click', function collapse(event) {
-      var target = event.target;
+    document.addEventListener('mouseup', this.foldFilter, false);
+    this.refs.filter_box.addEventListener('mouseup', this.preventFold, false);
+  }
 
-      if (!(target.classList.contains('search-expand')
-        || target.parentNode.classList.contains('search-expand')
-        || (!target.classList.contains('btn') && target.parentNode.parentNode.classList.contains('search-expand'))
-        || (target.classList.contains('btn-cancel') && target.parentNode.parentNode.classList.contains('search-expand'))
-        || (target.parentNode.classList.contains('btn-cancel') && target.parentNode.parentNode.parentNode.classList.contains('search-expand')))) {
-        that.collapseFilter();
-        document.removeEventListener('click', collapse, false);
-      }
-    }, false);
+  preventFold(e) {
+    e.stopPropagation();
+  }
+
+  foldFilter(e) {
+    this.setState({
+      expand: false
+    });
+
+    document.removeEventListener('mouseup', this.foldFilter, false);
+    this.refs.filter_box.removeEventListener('mouseup', this.preventFold, false);
   }
 
   reset(e) {
@@ -89,6 +85,8 @@ class Detail extends React.Component {
     if (pathList.length > 2) {
       router.pushState('/' + pathList[0] + '/' + pathList[1]);
     }
+
+    this.foldFilter(e);
   }
 
   renderFilters(filters) {
@@ -132,11 +130,12 @@ class Detail extends React.Component {
 
     return (
       <div className={'filter-search' + (props.visible === false ? ' hidden' : '')}>
-        {expand ?
-            <Button iconClass="filter-collapse" initial={true} onClick={this.collapseFilter.bind(this)}/>
-          : <Button iconClass="filter-expand" disabled={props.btnDisabled} initial={true} onClick={this.expandFilter.bind(this)}/>
+        {
+          expand ?
+            <Button iconClass="filter-collapse" initial={true} onClick={this.foldFilter}/>
+          : <Button iconClass="filter-expand" disabled={props.btnDisabled} initial={true} onClick={this.unfoldFilter}/>
         }
-        <div className={'search-expand ' + (expand ? 'visible' : '')}>
+        <div ref="filter_box" className={'search-expand ' + (expand ? 'visible' : '')}>
           {this.renderFilters(filters)}
           <div className="action">
             <Button value={__.reset} initial={true} type="cancel" onClick={this.reset} />

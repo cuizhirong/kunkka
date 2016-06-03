@@ -118,16 +118,15 @@ class Main extends React.Component {
     let btnList = this.refs.btnList,
       btns = btnList.state.btns;
 
-    for(let key in btns) {
-      if (key === 'refresh') {
-        btns[key].disabled = loading ? true : false;
-        break;
-      }
-    }
+    btns.refresh.disabled = loading ? true : false;
 
     btnList.setState({
       btns: btns
     });
+  }
+
+  onDetailRefeshControl(detailLoading) {
+    this.setRefreshBtn(detailLoading);
   }
 
   updateRows(data) {
@@ -467,7 +466,8 @@ class Main extends React.Component {
               ref="detail"
               tabs={detail.tabs}
               rows={this.stores.rows}
-              onClickTabs={this.onClickDetailTabs.bind(this)} />
+              onClickTabs={this.onClickDetailTabs.bind(this)}
+              onRefreshControl={this.onDetailRefeshControl.bind(this)} />
             : null
           }
         </div>

@@ -77,6 +77,9 @@ class Detail extends React.Component {
     this.setState({
       loading: true
     });
+
+    var func = this.props.onRefreshControl;
+    func && func(true);
   }
 
   onClose() {
