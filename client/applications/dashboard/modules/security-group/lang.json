@@ -61,7 +61,6 @@
     "time_exceeded": "Time Exceeded",
     "timestamp": "Timestamp Request",
     "timestamp_reply": "Timestamp Reply",
-    "tip_security_name": "The name is duplicated with the an one.",
     "tip_info_security": "Security Group is the whitelist in the virtual interface on an instance.",
     "ttl_expired_in_transit": "TTL Expired in Transit"
   },
@@ -127,7 +126,6 @@
     "time_exceeded": "超时",
     "timestamp": "时间戳请求",
     "timestamp_reply": "时间戳应答",
-    "tip_security_name": "安全组名字不能重复",
     "tip_info_security": "安全组是云主机的虚拟网卡上行和下行流量的白名单防火墙，即在名单中的安全组规则允许流量通过。",
     "ttl_expired_in_transit": "TTL在传输中过期"
   }

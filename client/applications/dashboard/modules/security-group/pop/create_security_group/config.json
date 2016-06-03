@@ -6,7 +6,6 @@
   }, {
     "type": "input",
     "field": "name",
-    "tip_info": "tip_security_name",
     "input-type": "text",
     "required": true
   }, {
