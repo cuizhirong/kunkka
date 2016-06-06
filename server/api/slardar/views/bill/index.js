@@ -81,9 +81,9 @@ function renderProjectTemplate (req, res, next) {
       let applicationList = applications.filter(a => {
         return user.isAdmin ? (a !== 'login') : (a !== 'login' && a !== 'admin');
       }).sort((a, b) => {
-        if (a === 'bill') {
+        if (a === 'dashboard') {
           return -1;
-        } else if (b === 'bill') {
+        } else if (b === 'dashboard') {
           return 1;
         } else {
           return 0;
