@@ -77,6 +77,33 @@
       display: none;
     }
 
+    &.charge-row {
+      padding-left: 0;
+      > div.label-row {
+        padding-left: 110px;
+      }
+      > div.long-label-row {
+        padding-left: 144px;
+      }
+      .account-box {
+        display: inline-block;
+        > div {
+          display: inline-block;
+          margin-right: 4px;
+          > strong {
+            color: @account_color;
+            font-weight: normal;
+          }
+          &.account-md {
+            font-size: 14px;
+          }
+          &.account-gray {
+            color: @account_gray_color;
+          }
+        }
+      }
+    }
+
     &.checkbox-row {
       padding-left: 36px;
       height: 18px;

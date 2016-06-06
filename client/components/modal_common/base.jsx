@@ -18,6 +18,7 @@ var Progress = require('./subs/progress/index');
 var ShortTip = require('./subs/short_tip/index');
 var DisplayBox = require('./subs/display_box/index');
 var DataList = require('./subs/data_list/index');
+var Charge = require('./subs/charge/index');
 
 class ModalBase extends React.Component {
 
@@ -82,6 +83,8 @@ class ModalBase extends React.Component {
           return <DisplayBox key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'data_list':
           return <DataList key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'charge':
+          return <Charge key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }
