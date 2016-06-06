@@ -22,7 +22,7 @@ class ResourceInfo extends React.Component {
     }, {
       title: __.router,
       key: 'router',
-      link: 'volume'
+      link: 'router'
     }, {
       title: __['floating-ip'],
       key: 'floatingip',
@@ -63,7 +63,8 @@ class ResourceInfo extends React.Component {
     }
 
     if (info.length % 2 > 0) {
-      leftSide.push(renderItem(info[halfLength], halfLength));
+      let lastKey = info.length - 1;
+      leftSide.push(renderItem(info[lastKey], lastKey));
     }
 
     return (
