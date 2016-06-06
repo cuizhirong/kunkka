@@ -1,0 +1,14 @@
+{
+  "modules": [{
+    "title": "account_bill",
+    "items": [
+      "bill_record"
+    ]
+  }],
+  "default_module": "bill_record",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "theme": "default"
+}

@@ -1,0 +1,79 @@
+{
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "hover": true,
+    "column": [{
+      "title": ["resource"],
+      "dataIndex": "resource_name",
+      "key": "name",
+      "type": "captain"
+    }, {
+      "title": ["resource", "id"],
+      "dataIndex": "resource_id",
+      "key": "resource_id"
+    }, {
+      "title": ["status"],
+      "key": "status",
+      "type": "status",
+      "dataIndex": "status"
+    }, {
+      "title": ["total_amount"],
+      "key": "amount",
+      "dataIndex": "total_price"
+    }, {
+      "title": ["unit_price"],
+      "key": "unit_price",
+      "dataIndex": "unit_price"
+    }, {
+      "title": ["region"],
+      "dataIndex": "region",
+      "key": "region"
+    }, {
+      "title": ["created", "time"],
+      "dataIndex": "created_at",
+      "key": "created_time",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["bill_detail"],
+        "key": "bill_detail",
+        "default": true
+      }],
+      "table": {
+        "dataKey": "id",
+        "hover": true,
+        "column": [{
+          "title": ["start", "time"],
+          "dataIndex": "start_time",
+          "key": "start_time"
+        }, {
+          "title": ["end", "time"],
+          "dataIndex": "end_time",
+          "key": "end_time"
+        }, {
+          "title": ["status"],
+          "key": "status",
+          "type": "status",
+          "dataIndex": "status"
+        }, {
+          "title": ["total_amount"],
+          "key": "amount",
+          "dataIndex": "total_price"
+        }, {
+          "title": ["unit_price"],
+          "key": "unit_price",
+          "dataIndex": "unit_price"
+        }, {
+          "title": ["commentary"],
+          "dataIndex": "commentary",
+          "key": "commentary"
+        }],
+        "data": []
+      }
+    }
+  }
+}

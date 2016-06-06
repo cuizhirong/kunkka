@@ -1,0 +1,143 @@
+@import "../../../../style/index.less";
+
+@detail-head-bg-color: @color_grey;
+@detail-border-color: @color_grey_600;
+@close-icon-hover-color: @color_info;
+@loading-color: @color_font_800;
+@table-active-color: @color_info_600;
+@table-down-color: @color_font_800;
+
+.bill-record-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 20px;
+  overflow: hidden;
+
+  > .select-list {
+    flex: 1;
+    height: 62px;
+    min-height: 62px;
+    max-height: 62px;
+    padding: 15px 0 15px;
+    box-sizing: border-box;
+    position: relative;
+    > select, > .btn {
+      margin-right: 8px;
+    }
+  }
+
+  > .table-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position:relative;
+    .table-with-no-data {
+      p {
+        margin-top: 70px;
+        text-align: center;
+      }
+    }
+    .table {
+      overflow: hidden;
+      margin-bottom: 10px;
+      i.glyphicon {
+        margin-right: 4px;
+      }
+      a.captain {
+        cursor: pointer;
+      }
+      > .loading-data {
+        min-height: 160px;
+        height: 160px;
+        max-height: 160px;
+      }
+      .label-active {
+        color: @table-active-color;
+      }
+      .label-down {
+        color: @table-down-color;
+      }
+    }
+    > .pagination-box {
+      flex: 1;
+      height: 30px;
+      max-height: 30px;
+      min-height: 30px;
+      margin-bottom: 20px;
+      text-align: right;
+    }
+  }
+}
+
+.bill-record-main-detail {
+  position: absolute;
+  top: 36px;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  border-left: 1px solid @detail-border-color;
+  transform: translate(100%, 0);
+  transition: transform 0.5s;
+  &.visible {
+    transform: translate(0, 0);
+  }
+
+  .detail-head {
+    position: absolute;
+    top: -36px;
+    left: -1px;
+    right: 0;
+    border-left: 1px solid @detail-border-color;
+    .close {
+      font-size: 14px;
+      cursor: pointer;
+      float: left;
+      padding: 5px;
+      margin: 7px 0 0 15px;
+      &:hover {
+        color: @close-icon-hover-color;
+      }
+    }
+  }
+
+  .detail-loading {
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    position: relative;
+    .icon-loading {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      margin-left: -18px;
+      width: 36px;
+      color: @loading-color;
+      .loading-ani();
+      font-size: 36px!important;
+    }
+  }
+  .detail-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+    > .table {
+      flex: 1;
+      margin-top: 12px;
+    }
+    > .pagination-box {
+      flex: 1;
+      height: 60px;
+      min-height: 60px;
+      max-height: 60px;
+      .pagination {
+        float: right;
+        margin-top: 12px;
+      }
+    }
+  }
+}

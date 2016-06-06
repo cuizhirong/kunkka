@@ -1,0 +1,24 @@
+{
+  "en": {
+    "account_bill": "Account Bill",
+    "all": "All ",
+    "application_name": "Bill",
+    "bill_record": "Bill Record",
+    "created": "Created ",
+    "id": "ID",
+    "project": "Project",
+    "region": "Region",
+    "time": "Time"
+  },
+  "zh-CN": {
+    "account_bill": "账户消费",
+    "all": "所有",
+    "application_name": "消费",
+    "bill_record": "消费记录",
+    "created": "创建",
+    "id": "ID",
+    "project": "项目",
+    "region": "区域",
+    "time": "时间"
+  }
+}
