@@ -324,6 +324,8 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteSubnet(data.childItem).then(() => {
               cb(true);
+            }).catch(error => {
+              cb(false, getErrorMessage(error));
             });
           }
         });
