@@ -480,7 +480,7 @@ class Model extends React.Component {
                 </div>
               );
             }
-          } else if (element.device_owner === 'network:router_interface') {
+          } else if (element.device_owner === 'network:router_interface' && element.router) {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
