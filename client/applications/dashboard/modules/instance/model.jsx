@@ -24,6 +24,7 @@ var changeSecurityGrp = require('./pop/change_security_grp/index');
 var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
+var deleteInstance = require('./pop/delete/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -345,17 +346,7 @@ class Model extends React.Component {
         }, false);
         break;
       case 'terminate':
-        deleteModal({
-          __: __,
-          action: 'terminate',
-          type: 'instance',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deleteItem(rows).then((res) => {
-              cb(true);
-            });
-          }
-        });
+        deleteInstance(rows);
         break;
       default:
         break;
