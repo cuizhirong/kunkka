@@ -123,8 +123,12 @@ Auth.prototype = {
           project: projectId
         }), opt);
         req.session.cookie.expires = expireDate;
-        let isAdmin = payload.token.roles.some(role => {
-          return role.name === 'admin';
+        let isAdmin = false;
+        let _roles = payload.token.roles.map(role => {
+          if (role.name === 'admin') {
+            isAdmin = true;
+          }
+          return role.name;
         });
         req.session.user = {
           'regionId': regionId,
@@ -133,7 +137,8 @@ Auth.prototype = {
           'token': token,
           'username': username,
           'projects': projects,
-          'isAdmin': isAdmin
+          'isAdmin': isAdmin,
+          'roles': _roles
         };
         req.session.endpoint = setRemote(payload.token.catalog);
         res.json({success: 'login sucess'});
