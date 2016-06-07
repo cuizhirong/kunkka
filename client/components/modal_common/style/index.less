@@ -28,6 +28,12 @@
 @display_box_bg_color: @color_grey;
 @display_box_border_color: @color_cancel_600;
 
+@account_color: @color_warning;
+@account_gray_color: @color_grey_700;
+
+@data_list_bg_color: @color_grey;
+@data_list_border_color: @color_cancel_600;
+
 .halo-com-modal-common {
   line-height: 18px;
   &.modal-bd {
@@ -389,6 +395,29 @@
 
       &.hide {
         display: none;
+      }
+    }
+
+    &.data-list-row {
+      margin-left: 36px;
+      padding: 20px;
+      background-color: @data_list_bg_color;
+      border: 1px solid @data_list_border_color;
+      display: block;
+
+      > span {
+        width: 50%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+        display: inline-block;
+
+        .glyphicon {
+          &:first-child {
+            margin-right: 8px;
+          }
+          margin: 0 4px!important;
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 var React = require('react');
 
-class Error extends React.Component {
+class DisplayBox extends React.Component {
   constructor(props) {
     super(props);
 
@@ -35,4 +35,4 @@ class Error extends React.Component {
   }
 }
 
-module.exports = Error;
+module.exports = DisplayBox;
