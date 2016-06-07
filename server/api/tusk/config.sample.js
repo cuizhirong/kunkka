@@ -37,6 +37,11 @@ module.exports = {
       value: '',
       type: 'string',
       description: '图片大小为40*40'
+    }, {
+      app: 'global',
+      name: 'enable_charge',
+      value: 'true',
+      type: 'boolean'
     }
   ]
 };
