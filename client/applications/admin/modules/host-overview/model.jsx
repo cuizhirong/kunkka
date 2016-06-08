@@ -26,7 +26,8 @@ var infoColor = '#42b9e5',
   basicGrey = '#f2f3f4',
   basicBlack = '#252f3d',
   fontDark = '#939ba3',
-  fontDarker = '#626b7e';
+  fontDarker = '#626b7e',
+  gaugeTickColor = '#bbbfc5';
 
 class Model extends React.Component {
 
@@ -171,6 +172,10 @@ class Model extends React.Component {
         color: rateColor,
         data: rate
       }],
+      tick: {
+        tickWidth: 10,
+        color: gaugeTickColor
+      },
       pointer: {
         radius: 10,
         color: basicBlack
