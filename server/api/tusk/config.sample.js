@@ -2,7 +2,8 @@
 
 module.exports = {
   dependencies: {
-    'mysql': '^2.10.2'
+    'mysql': '^2.10.2',
+    'async': '^1.5.0'
   },
   config: {
     mysql: {
