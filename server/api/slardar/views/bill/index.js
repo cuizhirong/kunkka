@@ -73,14 +73,15 @@ function renderProjectTemplate (req, res, next) {
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let title = setting.title ? setting.title : 'UnitedStack 有云';
-    if (req.session && req.session.user) {
+    let _enableCharge = setting.enable_charge;
+    if (req.session && req.session.user && _enableCharge) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
       let user = req.session.user;
       let username = user.username;
-      let applicationList = applications.filter(a => {
-        return user.isAdmin ? (a !== 'login') : (a !== 'login' && a !== 'admin');
-      }).sort((a, b) => {
+      let applicationList = applications
+      .filter(a => user.isAdmin ? true : a !== 'admin')
+      .sort((a, b) => {
         if (a === 'dashboard') {
           return -1;
         } else if (b === 'dashboard') {
@@ -128,9 +129,9 @@ function renderProjectTemplate (req, res, next) {
   });
 }
 
-module.exports = (app) => {
+module.exports = (app, clientApps) => {
   let views = app.get('views');
   views.push(__dirname);
-  applications = app.get('applications');
+  applications = clientApps;
   app.get(/(^\/bill$)|(^\/bill\/(.*))/, renderProjectTemplate);
 };
