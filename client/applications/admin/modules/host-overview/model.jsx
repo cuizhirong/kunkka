@@ -99,8 +99,8 @@ class Model extends React.Component {
   }
 
   displayDisk(data) {
-    var rate = data.local_gb_used / data.free_disk_gb,
-      rateColor = this.getChartColor(rate);
+    var rate = data.local_gb_used / (data.local_gb / data.count);
+    var rateColor = this.getChartColor(rate);
 
     this.diskChart.setOption({
       lineWidth: 8,
@@ -190,11 +190,15 @@ class Model extends React.Component {
       data = state.data,
       loading = state.loading;
 
+    var diskSum = data.local_gb / data.count;
+    var diskUsed = data.local_gb_used;
+    var diskFree = diskSum - diskUsed;
+
     var disk = {
-      sum: unitConverter(data.local_gb, 'GB'),
-      used: unitConverter(data.local_gb_used, 'GB'),
-      free: unitConverter(data.free_disk_gb, 'GB'),
-      rateClass: this.getChartClass(data.local_gb_used / data.local_gb)
+      sum: unitConverter(diskSum, 'GB'),
+      used: unitConverter(diskUsed, 'GB'),
+      free: unitConverter(diskFree, 'GB'),
+      rateClass: this.getChartClass(diskUsed / diskSum)
     };
     var cpu = {
       sum: data.vcpus,
