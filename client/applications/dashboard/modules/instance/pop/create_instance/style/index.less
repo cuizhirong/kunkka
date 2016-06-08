@@ -19,6 +19,11 @@
 @account_color: @color_warning;
 @account_gray_color: @color_grey_700;
 
+@psw_input_danger_border_color: @color_delete;
+@psw_input_border_color: @color_info;
+@psw_eye_color: @color_grey_700;
+@psw_eye_selected_color: @color_grey_800;
+
 @tip_warning_color: @color_warning;
 
 @keyframes moveToSecondPage {
@@ -322,13 +327,36 @@
               margin-left: 16px;
             }
           }
-          input {
-            width: 160px;
+          .psw-tip-box {
+            position: relative;
+            display: inline-block;
+            .icon-eye {
+              position: absolute;
+              top: 9px;
+              right: 8px;
+              margin-left: 8px;
+              font-size: 15px;
+              cursor: pointer;
+              color: @psw_eye_color;
+              &:hover,
+              &.selected {
+                color: @psw_eye_selected_color;
+              }
+            }
+            .icon-eye:hover + input {
+              border-color: @psw_input_border_color;
+            }
+            .icon-eye:hover + input.error {
+              border-color: @psw_input_danger_border_color;
+            }
+            input {
+              width: 130px;
+              padding-right: 28px;
+            }
+            .tooltip {
+              bottom: 38px;
+            }
           }
-        }
-        .tooltip {
-          bottom: 152px;
-          right: 36px;
         }
       }
 

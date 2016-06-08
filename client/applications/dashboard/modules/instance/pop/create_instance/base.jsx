@@ -1,8 +1,8 @@
 var React = require('react');
 var {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
-var networkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
-var keypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
+var createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
+var createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
 var request = require('../../request');
 var unitConverter = require('client/utils/unit_converter');
 
@@ -13,7 +13,7 @@ class ModalBase extends React.Component {
   constructor(props) {
     super(props);
 
-    var rImageTypes = [{
+    var imageTypes = [{
       value: __.system_image,
       key: 'image'
     }, {
@@ -21,7 +21,7 @@ class ModalBase extends React.Component {
       key: 'snapshot'
     }];
 
-    var rCredentials = [{
+    var credentials = [{
       key: 'keypair',
       value: __.keypair
     }, {
@@ -35,46 +35,47 @@ class ModalBase extends React.Component {
       disabled: false,
       page: 1,
       pagingAni: false,
-      dName: '',
-      rImageTypes: rImageTypes,
-      dImageType: rImageTypes[0].key,
-      rImages: [],
-      dImage: null,
-      rSnapshots: [],
-      dSnapshot: null,
+      name: '',
+      imageTypes: imageTypes,
+      imageType: imageTypes[0].key,
+      images: [],
+      image: null,
+      snapshots: [],
+      snapshot: null,
       flavorUnfold: false,
-      rFlavors: [],
-      dFlavor: null,
-      rCpus: [],
-      dCpu: null,
-      rMemory: [],
-      dMemory: null,
-      rVolumes: [],
-      dVolume: null,
-      rNetworks: [],
-      dNetwork: null,
+      flavors: [],
+      flavor: null,
+      cpus: [],
+      cpu: null,
+      memories: [],
+      memory: null,
+      volumes: [],
+      volume: null,
+      networks: [],
+      network: null,
       hideKeypair: false,
-      rSecurityGroup: [],
-      dSecurityGroup: {},
+      securityGroups: [],
+      securityGroup: {},
       sgUnfold: false,
-      rCredentials: rCredentials,
-      dCredential: rCredentials[0].key,
-      rKeypairs: [],
-      dKeypairName: null,
-      dUserName: '',
-      pswError: true,
-      showPswTip: false,
-      dPsw: '',
-      dNumber: 1,
-      showError: false,
-      dError: ''
+      credentials: credentials,
+      credential: credentials[0].key,
+      keypairs: [],
+      keypairName: '',
+      username: '',
+      pwd: '',
+      pwdVisible: false,
+      pwdError: true,
+      showPwdTip: false,
+      number: 1,
+      error: '',
+      showError: false
     };
 
     ['initialize', 'onPaging', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
-    'onChangeKeypair', 'onChangeNumber',
-    'onChangePsw', 'onFocusPsw', 'onBlurPsw',
+    'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
+    'onChangePwd', 'onFocusPwd', 'onBlurPwd',
     'createNetwork', 'createKeypair', 'onConfirm'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
@@ -113,10 +114,10 @@ class ModalBase extends React.Component {
     images.sort(imageSort);
     snapshots.sort(imageSort);
     var selectedImage = selectDefault(images);
-    var userName = '';
+    var username = '';
     if (selectedImage) {
       let meta = JSON.parse(selectedImage.image_meta);
-      userName = meta.os_username;
+      username = meta.os_username;
     }
 
     var flavors = res.flavor;
@@ -138,7 +139,7 @@ class ModalBase extends React.Component {
     }
     this.setFlavor(currentImage, 'all');
     var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
-    var dCredential = hideKeypair ? 'psw' : 'keypair';
+    var credential = hideKeypair ? 'psw' : 'keypair';
 
     var networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
@@ -151,21 +152,21 @@ class ModalBase extends React.Component {
 
     this.setState({
       ready: true,
-      dImageType: imageType,
-      rImages: images,
-      dImage: image,
-      rSnapshots: snapshots,
-      dSnapshot: snapshot,
-      rFlavors: flavors,
-      rNetworks: networks,
-      dNetwork: selectDefault(networks),
-      rSecurityGroup: sg,
-      dSecurityGroup: {},
-      rKeypairs: keypairs,
-      dKeypairName: selectedKeypair ? selectedKeypair.name : null,
-      dUserName: userName,
+      imageType: imageType,
+      images: images,
+      image: image,
+      snapshots: snapshots,
+      snapshot: snapshot,
+      flavors: flavors,
+      networks: networks,
+      network: selectDefault(networks),
+      securityGroups: sg,
+      securityGroup: {},
+      keypairs: keypairs,
+      keypairName: selectedKeypair ? selectedKeypair.name : null,
+      username: username,
       hideKeypair: hideKeypair,
-      dCredential: dCredential
+      credential: credential
     });
 
   }
@@ -238,20 +239,20 @@ class ModalBase extends React.Component {
     var name = e.target.value;
 
     this.setState({
-      dName: name
+      name: name
     });
   }
 
   onChangeImageType(key, e) {
     var state = this.state;
-    var image = state.rImages.length > 0 ? state.rImages[0] : null;
-    var snapshot = state.rSnapshots.length > 0 ? state.rSnapshots[0] : null;
+    var image = state.images.length > 0 ? state.images[0] : null;
+    var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
 
-    var userName = '';
+    var username = '';
     var obj = (key === 'snapshot') ? snapshot : image;
     if (obj) {
       let meta = JSON.parse(image.image_meta);
-      userName = meta.os_username;
+      username = meta.os_username;
     }
 
     var objImage;
@@ -268,25 +269,26 @@ class ModalBase extends React.Component {
     this.setFlavor(objImage, 'all');
 
     this.setState({
-      dImageType: key,
-      dImage: image,
-      dSnapshot: snapshot,
-      dUserName: userName,
+      imageType: key,
+      image: image,
+      snapshot: snapshot,
+      username: username,
       hideKeypair: hideKeypair,
-      dCredential: hideKeypair ? 'psw' : 'keypair',
-      pswError: true,
-      dPsw: ''
+      credential: hideKeypair ? 'psw' : 'keypair',
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
   }
 
   setFlavor(objImage, type, value) {
     var state = this.state;
-    var cpus = state.rCpus;
-    var cpu = type === 'cpu' ? value : state.dCpu;
-    var rams = state.rMemory;
-    var ram = type === 'ram' ? value : state.dMemory;
-    var disks = state.rVolumes;
-    var disk = type === 'disk' ? value : state.dVolume;
+    var cpus = state.cpus;
+    var cpu = type === 'cpu' ? value : state.cpu;
+    var rams = state.memories;
+    var ram = type === 'ram' ? value : state.memory;
+    var disks = state.volumes;
+    var disk = type === 'disk' ? value : state.volume;
 
     if (objImage) {
       let flavor;
@@ -322,52 +324,54 @@ class ModalBase extends React.Component {
       }
 
       this.setState({
-        dFlavor: flavor,
-        rCpus: cpus,
-        dCpu: cpu,
-        rMemory: rams,
-        dMemory: ram,
-        rVolumes: disks,
-        dVolume: disk
+        flavor: flavor,
+        cpus: cpus,
+        cpu: cpu,
+        memories: rams,
+        memory: ram,
+        volumes: disks,
+        volume: disk
       });
     }
   }
 
   onChangeImage(item, e) {
-    var userName = '';
+    var username = '';
     var meta = JSON.parse(item.image_meta);
-    userName = meta.os_username;
+    username = meta.os_username;
 
     var label = item.image_label.toLowerCase();
     var hideKeypair = label === 'windows';
 
     this.setFlavor(item, 'all');
     this.setState({
-      dImage: item,
-      dUserName: userName,
+      image: item,
+      username: username,
       hideKeypair: hideKeypair,
-      dCredential: hideKeypair ? 'psw' : 'keypair',
-      pswError: true,
-      dPsw: ''
+      credential: hideKeypair ? 'psw' : 'keypair',
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
   }
 
   onChangeSnapshot(item, e) {
-    var userName = '';
+    var username = '';
     var meta = JSON.parse(item.image_meta);
-    userName = meta.os_username;
+    username = meta.os_username;
 
     var label = item.image_label.toLowerCase();
     var hideKeypair = label === 'windows';
 
     this.setFlavor(item, 'all');
     this.setState({
-      dSnapshot: item,
-      dUserName: userName,
+      snapshot: item,
+      username: username,
       hideKeypair: hideKeypair,
-      dCredential: hideKeypair ? 'psw' : 'keypair',
-      pswError: true,
-      dPsw: ''
+      credential: hideKeypair ? 'psw' : 'keypair',
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
   }
 
@@ -394,7 +398,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeNetwork(e) {
-    var subnets = this.state.rNetworks;
+    var subnets = this.state.networks;
     var selected = e.target.value;
 
     var item;
@@ -407,7 +411,7 @@ class ModalBase extends React.Component {
     });
 
     this.setState({
-      dNetwork: item
+      network: item
     });
   }
 
@@ -435,9 +439,10 @@ class ModalBase extends React.Component {
 
   onChangeCredential(key, e) {
     this.setState({
-      dCredential: key,
-      pswError: true,
-      dPsw: ''
+      credential: key,
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
   }
 
@@ -445,7 +450,7 @@ class ModalBase extends React.Component {
     var name = e.target.value;
 
     this.setState({
-      dKeypairName: name
+      keypairName: name
     });
   }
 
@@ -453,42 +458,42 @@ class ModalBase extends React.Component {
     return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
   }
 
-  onChangePsw(e) {
+  onChangePwd(e) {
     var pwd = e.target.value;
-    var pswError = this.checkPsw(pwd);
+    var pwdError = this.checkPsw(pwd);
 
     this.setState({
-      pswError: pswError,
-      showPswTip: true,
-      dPsw: pwd
+      pwdError: pwdError,
+      showPwdTip: true,
+      pwd: pwd
     });
   }
 
-  onFocusPsw(e) {
-    var pswError = this.checkPsw(this.state.dPsw);
+  onFocusPwd(e) {
+    var isError = this.checkPsw(this.state.pwd);
 
     this.setState({
-      showPswTip: pswError
+      showPwdTip: isError
     });
   }
 
-  onBlurPsw(e) {
+  onBlurPwd(e) {
     this.setState({
-      showPswTip: false
+      showPwdTip: false
     });
   }
 
   onChangeNumber(number) {
     this.setState({
-      dNumber: number
+      number: number
     });
   }
 
   createNetwork() {
-    networkPop(this.refs.modal, (network) => {
+    createNetworkPop(this.refs.modal, (network) => {
       this.setState({
-        rNetworks: [network],
-        dNetwork: network
+        networks: [network],
+        network: network
       });
     });
 
@@ -496,10 +501,10 @@ class ModalBase extends React.Component {
   }
 
   createKeypair() {
-    keypairPop(this.refs.modal, (keypair) => {
+    createKeypairPop(this.refs.modal, (keypair) => {
       this.setState({
-        rKeypairs: [keypair],
-        dKeypairName: keypair.name
+        keypairs: [keypair],
+        keypairName: keypair.name
       });
     });
 
@@ -527,10 +532,10 @@ class ModalBase extends React.Component {
 
   findSelectedImage() {
     var state = this.state;
-    if (state.dImageType === 'image') {
-      return state.dImage;
-    } else if (state.dImageType === 'snapshot') {
-      return state.dSnapshot;
+    if (state.imageType === 'image') {
+      return state.image;
+    } else if (state.imageType === 'snapshot') {
+      return state.snapshot;
     }
   }
 
@@ -551,7 +556,7 @@ class ModalBase extends React.Component {
 
   onChangeSecurityGroup(sg, e) {
     var state = this.state;
-    var selects = state.dSecurityGroup;
+    var selects = state.securityGroup;
 
     if (selects[sg.id]) {
       delete selects[sg.id];
@@ -560,7 +565,7 @@ class ModalBase extends React.Component {
     }
 
     this.setState({
-      dSecurityGroup: selects
+      securityGroup: selects
     });
 
     e.stopPropagation();
@@ -572,41 +577,41 @@ class ModalBase extends React.Component {
       return;
     }
 
-    var enable = state.dName && state.dFlavor && state.dNetwork && state.dNumber;
+    var enable = state.name && state.flavor && state.network && state.number;
     var selectedImage;
-    if (state.dImageType === 'image') {
-      enable = enable && state.dImage;
-      selectedImage = state.dImage;
+    if (state.imageType === 'image') {
+      enable = enable && state.image;
+      selectedImage = state.image;
     } else {
-      enable = enable && state.dSnapshot;
-      selectedImage = state.dSnapshot;
+      enable = enable && state.snapshot;
+      selectedImage = state.snapshot;
     }
-    if (state.dCredential === 'keypair') {
-      enable = enable && state.dKeypairName;
+    if (state.credential === 'keypair') {
+      enable = enable && state.keypairName;
     } else {
-      enable = enable && !state.pswError;
+      enable = enable && !state.pwdError;
     }
 
     if (enable) {
       var data = {
-        name: state.dName.trim(),
+        name: state.name.trim(),
         imageRef: selectedImage.id,
-        flavorRef: state.dFlavor.id,
+        flavorRef: state.flavor.id,
         networks: [{
-          uuid: state.dNetwork.id
+          uuid: state.network.id
         }],
-        min_count: state.dNumber,
-        max_count: state.dNumber
+        min_count: state.number,
+        max_count: state.number
       };
 
-      if (state.dCredential === 'keypair') {
-        data.key_name = state.dKeypairName;
+      if (state.credential === 'keypair') {
+        data.key_name = state.keypairName;
       } else {
-        data.adminPass = state.dPsw;
+        data.adminPass = state.pwd;
       }
 
-      var selectedSg = state.dSecurityGroup;
-      var securitygroups = state.rSecurityGroup;
+      var selectedSg = state.securityGroup;
+      var securitygroups = state.securityGroups;
       var sg = [];
       securitygroups.forEach((ele) => {
         if (selectedSg[ele.id]) {
@@ -631,7 +636,7 @@ class ModalBase extends React.Component {
         this.setState({
           disabled: false,
           showError: true,
-          dError: tip
+          error: tip
         });
       });
 
@@ -648,7 +653,7 @@ class ModalBase extends React.Component {
           <strong>* </strong>{__.name}
         </div>
         <div className="modal-data">
-          <input type="text" onChange={this.onChangeName} value={state.dName} />
+          <input type="text" onChange={this.onChangeName} value={state.name} />
         </div>
       </div>
     );
@@ -662,10 +667,10 @@ class ModalBase extends React.Component {
         </div>
         <div className="modal-data">
           {
-            state.rImageTypes.map((ele) =>
+            state.imageTypes.map((ele) =>
               <a key={ele.key}
-                className={ele.key === state.dImageType ? 'selected' : ''}
-                onClick={ele.key === state.dImageType ? null : this.onChangeImageType.bind(this, ele.key)}>
+                className={ele.key === state.imageType ? 'selected' : ''}
+                onClick={ele.key === state.imageType ? null : this.onChangeImageType.bind(this, ele.key)}>
                 {ele.value}
               </a>
             )
@@ -674,7 +679,7 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var imageSelected = state.dImageType === 'image';
+    var imageSelected = state.imageType === 'image';
     var Images = (
       <div className={'row row-tab row-tab-single row-tab-images' + (imageSelected ? '' : ' hide')} key="images">
         {
@@ -685,16 +690,16 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.rImages.map((ele) =>
-            <a key={ele.id} className={state.dImage.id === ele.id ? 'selected' : ''}
-              onClick={state.dImage.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
+          state.images.map((ele) =>
+            <a key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
+              onClick={state.image.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
               <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
                 {ele.name}
             </a>
           )
         }
         {
-          state.ready && !state.dImage ?
+          state.ready && !state.image ?
             <div className="alert-tip">
               {__.there_is_no + __.image}
             </div>
@@ -712,16 +717,16 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.rSnapshots.map((ele) =>
-            <a key={ele.id} className={state.dSnapshot.id === ele.id ? 'selected' : ''}
-              onClick={state.dSnapshot.id === ele.id ? null : this.onChangeSnapshot.bind(this, ele)}>
+          state.snapshots.map((ele) =>
+            <a key={ele.id} className={state.snapshot.id === ele.id ? 'selected' : ''}
+              onClick={state.snapshot.id === ele.id ? null : this.onChangeSnapshot.bind(this, ele)}>
               <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
                 {ele.name}
             </a>
           )
         }
         {
-          state.ready && !state.dSnapshot ?
+          state.ready && !state.snapshot ?
             <div className="alert-tip">
               {__.there_is_no + __.snapshot}
             </div>
@@ -742,34 +747,34 @@ class ModalBase extends React.Component {
     var data = [{
       key: 'cpu',
       title: __.cpu + __.type,
-      data: state.rCpus,
+      data: state.cpus,
       render: (val) => {
         return val + ' vCPU';
       },
-      selected: state.dCpu,
+      selected: state.cpu,
       onChange: this.onChangeCpu
     }, {
       key: 'memory',
       title: __.memory + __.size,
-      data: state.rMemory,
+      data: state.memories,
       render: (val) => {
         var res = unitConverter(Number(val), 'MB');
         return res.num + ' ' + res.unit;
       },
-      selected: state.dMemory,
+      selected: state.memory,
       onChange: this.onChangeMemory
     }, {
       key: 'volume',
       title: __.volume + __.size,
-      data: state.rVolumes,
-      selected: state.dVolume,
+      data: state.volumes,
+      selected: state.volume,
       render: (val) => {
         return val + ' GB';
       },
       onChange: this.onChangeVolume
     }];
 
-    var flavor = state.dFlavor;
+    var flavor = state.flavor;
     var flavorDetail;
     if (flavor) {
       let ram = unitConverter(flavor.ram, 'MB');
@@ -821,7 +826,7 @@ class ModalBase extends React.Component {
   }
 
   renderNetworks(props, state) {
-    var selected = state.dNetwork;
+    var selected = state.network;
     return (
       <div className="row row-select">
         <div className="modal-label">
@@ -832,7 +837,7 @@ class ModalBase extends React.Component {
             selected ?
               <select value={selected.id} onChange={this.onChangeNetwork}>
                 {
-                  state.rNetworks.map((ele) =>
+                  state.networks.map((ele) =>
                     <option key={ele.id} value={ele.id}>
                       {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
                     </option>
@@ -850,9 +855,9 @@ class ModalBase extends React.Component {
   }
 
   renderSecurityGroup(props, state) {
-    var selects = state.dSecurityGroup;
+    var selects = state.securityGroup;
     var hasSelects = Object.keys(selects).length > 0 ? true : false;
-    var selectObj = state.rSecurityGroup.filter((ele) => selects[ele.id]);
+    var selectObj = state.securityGroups.filter((ele) => selects[ele.id]);
     var detail = selectObj.map((ele) => ele.name).join(', ');
 
     return (
@@ -871,7 +876,7 @@ class ModalBase extends React.Component {
               <div className="dropdown-item-data">
                 <ul>
                   {
-                    state.rSecurityGroup.map((ele) => {
+                    state.securityGroups.map((ele) => {
                       var selected = selects[ele.id];
                       return (
                         <li key={ele.id}
@@ -894,11 +899,18 @@ class ModalBase extends React.Component {
     );
   }
 
+  pwdVisibleControl(e) {
+    var visible = this.state.pwdVisible;
+    this.setState({
+      pwdVisible: !visible
+    });
+  }
+
   renderCredentials(props, state) {
-    var selected = state.dCredential;
+    var selected = state.credential;
     var isKeypair = selected === 'keypair';
 
-    var credentials = state.rCredentials;
+    var credentials = state.credentials;
     var hideKeypair = state.hideKeypair;
 
     if (hideKeypair) {
@@ -924,7 +936,7 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var keypair = state.dKeypairName;
+    var keypair = state.keypairName;
     var Keypairs = (
       <div className={'row row-select credential-sub' + (isKeypair ? '' : ' hide')} key="keypairs">
         <div className="modal-label">
@@ -932,10 +944,10 @@ class ModalBase extends React.Component {
         </div>
         <div className="modal-data">
           {
-            state.dKeypairName ?
+            state.keypairName ?
               <select value={keypair} onChange={this.onChangeKeypair}>
                 {
-                  state.rKeypairs.map((ele) =>
+                  state.keypairs.map((ele) =>
                     <option key={ele.name} value={ele.name}>{ele.name}</option>
                   )
                 }
@@ -953,19 +965,23 @@ class ModalBase extends React.Component {
       <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
         <div className="modal-data">
           <label>{__.user_name}</label>
-          <input type="text" value={state.dUserName} disabled={true} onChange={function(){}} />
+          <input type="text" value={state.username} disabled={true} onChange={function(){}} />
           <label>{__.password}</label>
-          <input type="password"
-            className={state.pswError ? ' error' : ''}
-            value={state.dPsw}
-            onChange={this.onChangePsw}
-            onFocus={this.onFocusPsw}
-            onBlur={this.onBlurPsw} />
-          {
-            state.page === 2 && state.showPswTip ?
-              <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pswError} />
-            : null
-          }
+          <div className="psw-tip-box">
+            {
+              state.page === 2 && state.showPwdTip ?
+                <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
+              : null
+            }
+            <i className={'glyphicon icon-eye' + (state.pwdVisible ? ' selected' : '')}
+              onClick={this.pwdVisibleControl}/>
+            <input type={state.pwdVisible ? 'text' : 'password'}
+              className={state.pwdError ? 'error' : null}
+              value={state.pwd}
+              onChange={this.onChangePwd}
+              onFocus={this.onFocusPwd}
+              onBlur={this.onBlurPwd} />
+          </div>
         </div>
       </div>
     );
@@ -993,7 +1009,7 @@ class ModalBase extends React.Component {
           {__.number}
         </div>
         <div className="modal-data">
-          <InputNumber onChange={this.onChangeNumber} min={1} value={state.dNumber} width={165}/>
+          <InputNumber onChange={this.onChangeNumber} min={1} value={state.number} width={120}/>
           <div className="account-box">
             <div className="account-sm">
               x <strong>{__.account.replace('{0}', '0.0560')}</strong> / <span>{__.hour}</span> =
@@ -1013,7 +1029,7 @@ class ModalBase extends React.Component {
   renderErrorTip(props, state) {
     return (
       <div className={'row row-tip' + (state.showError ? '' : ' hide')}>
-        <Tip content={state.dError} type="danger" showIcon={true} width={652} />
+        <Tip content={state.error} type="danger" showIcon={true} width={652} />
       </div>
     );
   }
@@ -1021,13 +1037,13 @@ class ModalBase extends React.Component {
   renderBtn(props, state, page) {
     if (page === 1) {
       var hasImage = false;
-      if (state.dImageType === 'image') {
-        hasImage = state.dImage;
+      if (state.imageType === 'image') {
+        hasImage = state.image;
       } else {
-        hasImage = state.dSnapshot;
+        hasImage = state.snapshot;
       }
 
-      let enable = state.dName.trim() && state.ready && hasImage;
+      let enable = state.name.trim() && state.ready && hasImage;
 
       return (
         <div className="right-side">
@@ -1035,11 +1051,11 @@ class ModalBase extends React.Component {
         </div>
       );
     } else {
-      let enable = state.dFlavor && state.dNetwork;
-      if (state.dCredential === 'keypair') {
-        enable = enable && state.dKeypairName;
+      let enable = state.flavor && state.network;
+      if (state.credential === 'keypair') {
+        enable = enable && state.keypairName;
       } else {
-        enable = enable && !state.pswError;
+        enable = enable && !state.pwdError;
       }
 
       return (
