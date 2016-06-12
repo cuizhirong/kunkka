@@ -84,7 +84,7 @@
     "inst_snapshot_name": "主机快照名称",
     "instance_name": "云主机名称",
     "is_force_shutdown": "强制关机，直接切断电源。没有及时写入硬盘中的内存数据将会丢失",
-    "instance_credential_tip": "一旦密码、密钥确认，将不能在界面上修改，要登陆云主机自行修改",
+    "instance_credential_tip": "一旦密码、密钥确认，将不能在界面上修改，要登录云主机自行修改",
     "instance_snapshot": "主机快照",
     "join_network_tip": "加入多个网络可能会引发云主机路由问题而导致连不上外网，请谨慎操作。",
     "loading": "正在加载",

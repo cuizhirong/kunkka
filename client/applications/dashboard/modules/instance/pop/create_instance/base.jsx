@@ -344,7 +344,7 @@ class ModalBase extends React.Component {
     this.setFlavor(item, 'all');
     this.setState({
       dImage: item,
-      userName: userName,
+      dUserName: userName,
       hideKeypair: hideKeypair,
       dCredential: hideKeypair ? 'psw' : 'keypair',
       pswError: true,
@@ -363,7 +363,7 @@ class ModalBase extends React.Component {
     this.setFlavor(item, 'all');
     this.setState({
       dSnapshot: item,
-      userName: userName,
+      dUserName: userName,
       hideKeypair: hideKeypair,
       dCredential: hideKeypair ? 'psw' : 'keypair',
       pswError: true,
