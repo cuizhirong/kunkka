@@ -1,4 +1,3 @@
-var React = require('react');
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
@@ -7,18 +6,8 @@ var getStatusIcon = require('../../../../utils/status_icon');
 
 function pop(obj, parent, callback) {
 
-  var lists = [];
-  obj.forEach((ele, i) => {
-    lists.push(
-      <span key={i}>
-        <i className="glyphicon icon-instance" />
-        {ele.name + ' ('}
-        {getStatusIcon(ele.status)}
-        {' )'}
-      </span>
-    );
-  });
-  config.fields[0].data = lists;
+  config.fields[0].data = obj;
+  config.fields[0].getStatusIcon = getStatusIcon;
 
   var hasActive = obj.some((ele) => ele.status.toLowerCase() === 'active');
   config.fields[1].hide = !hasActive;
