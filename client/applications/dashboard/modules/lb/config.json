@@ -1,0 +1,86 @@
+{
+  "tabs": [{
+    "name": ["lb"],
+    "key": "lb",
+    "default": true
+  }, {
+    "name": ["resource", "pool"],
+    "key": "resource-pool"
+  }],
+  "btns": [{
+    "value": ["create", "load", "balancer"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["associate", "floating_ip"],
+          "key": "assoc_fip",
+          "disabled": true
+        }, {
+          "title": ["cancel", "associate", "floating_ip"],
+          "key": "dissoc_fip",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["ip_address"],
+      "dataIndex": "vip_address",
+      "key": "ip_address"
+    }, {
+      "title": ["floating_ip"],
+      "key": "floating_ip"
+    }, {
+      "title": ["status"],
+      "dataIndex": "provisioning_status",
+      "key": "status",
+      "type": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "active"
+      }]
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["listener"],
+        "key": "listener"
+      }]
+    }
+  }
+}

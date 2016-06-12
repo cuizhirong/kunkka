@@ -1,0 +1,34 @@
+{
+  "en": {
+    "delay_tip": "Range: 2~60s",
+    "edit": "Edit",
+    "health_monitor": "Health Monitor",
+    "least_connections": "Least_Connections",
+    "listener": "Listener",
+    "load_algorithm": "Load Algorithm",
+    "monitor_delay": "Monitor Delay",
+    "monitor_max_retries": "Monitor Max Retries",
+    "monitor_timeout": "Monitor Timeout",
+    "no_listener": "No available listener",
+    "retries_tip": "Range: 1~10 times",
+    "round_robin": "Round_Robin",
+    "source_ip": "Source_IP",
+    "timeout_tip": "Range: 5~300s"
+  },
+  "zh-CN": {
+    "delay_tip": "范围：2~60秒",
+    "edit": "编辑",
+    "health_monitor": "健康检查方式",
+    "least_connections": "最小连接数",
+    "listener": "监听器",
+    "load_algorithm": "负载方式",
+    "monitor_delay": "健康检查间隔时间",
+    "monitor_max_retries": "健康检查尝试次数",
+    "monitor_timeout": "健康检查超时限制",
+    "no_listener": "没有可用的监听器",
+    "retries_tip": "范围：1~10次",
+    "round_robin": "轮询",
+    "source_ip": "源IP",
+    "timeout_tip": "范围：5~300秒"
+  }
+}

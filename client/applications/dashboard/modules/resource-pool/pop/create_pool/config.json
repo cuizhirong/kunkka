@@ -1,0 +1,75 @@
+{
+  "title": ["create", "resource", "pool"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "is_long_label": true,
+    "input_type": "text"
+  }, {
+    "type": "group_select",
+    "field": "listener",
+    "is_long_label": true,
+    "empty_text": {
+      "info": "no_listener"
+    }
+  }, {
+    "type": "select",
+    "field": "protocol",
+    "is_long_label": true,
+    "empty_text": {
+      "info": "loading"
+    },
+    "data": [{
+      "name": "TCP",
+      "id": "tcp"
+    }, {
+      "name": "HTTP",
+      "id": "http"
+    }]
+  }, {
+    "type": "select",
+    "field": "load_algorithm",
+    "is_long_label": true,
+    "empty_text": {
+      "info": "loading"
+    }
+  }, {
+    "type": "checkbox",
+    "field": "show_more",
+    "has_long_label": true
+  }, {
+    "type": "select_group",
+    "field": "health_monitor",
+    "is_long_label": true,
+    "hide": true,
+    "empty_text": {
+      "info": "loading"
+    }
+  }, {
+    "type": "input",
+    "field": "monitor_delay",
+    "is_long_label": true,
+    "required": true,
+    "hide": true,
+    "tip_info": "delay_tip"
+  }, {
+    "type": "input",
+    "field": "monitor_timeout",
+    "is_long_label": true,
+    "required": true,
+    "hide": true,
+    "tip_info": "timeout_tip"
+  }, {
+    "type": "input",
+    "field": "monitor_max_retries",
+    "is_long_label": true,
+    "required": true,
+    "hide": true,
+    "tip_info": "retries_tip"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

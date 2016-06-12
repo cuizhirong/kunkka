@@ -1,0 +1,19 @@
+{
+  "title": ["create", "load", "balancer"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "input_type": "text"
+  }, {
+    "type": "group_select",
+    "field": "subnet",
+    "empty_text": {
+      "info": "no_subnet"
+    }
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "tabs": [{
+    "name": ["lb"],
+    "key": "lb"
+  }, {
+    "name": ["resource", "pool"],
+    "key": "resource-pool",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "resource", "pool"],
+    "key": "create_pool",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["enable", "resource", "pool"],
+    "key": "enable_pool",
+    "icon": "enable"
+  }, {
+    "value": ["disable", "resource", "pool"],
+    "key": "disable_pool",
+    "icon": "disable"
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["edit"],
+          "key": "edit"
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

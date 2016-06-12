@@ -1,0 +1,21 @@
+{
+  "title": ["associate", "floating_ip"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "lb",
+    "icon_type": "lb",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "floating_ip",
+    "empty_text": {
+      "info": "no_floatingip",
+      "link_info": ["create", "floating_ip"]
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "associate",
+    "disabled": true
+  }
+}

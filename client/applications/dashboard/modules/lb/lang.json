@@ -1,0 +1,14 @@
+{
+  "en": {
+    "lsit": "List",
+    "listener_protocol": "Protocol",
+    "protocol_port": "Protocol Port",
+    "required_port_range": "Port range: 1~65535"
+  },
+  "zh-CN": {
+    "list": "列表",
+    "listener_protocol": "监听协议",
+    "protocol_port": "监听端口",
+    "required_port_range": "端口范围：1~65535"
+  }
+}
