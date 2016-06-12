@@ -432,18 +432,33 @@
       border: 1px solid @data_list_border_color;
       display: block;
 
-      > span {
-        width: 50%;
+      .item,
+      .item-name,
+      .item-status {
         overflow: hidden;
         white-space: nowrap;
         text-overflow:ellipsis;
         display: inline-block;
+        vertical-align: middle;
+      }
 
-        .glyphicon {
-          &:first-child {
-            margin-right: 8px;
+      .item {
+        width: 50%;
+        .item-name {
+          width: 100%;
+          .glyphicon {
+            &:first-child {
+              margin-right: 8px;
+            }
           }
-          margin: 0 4px!important;
+        }
+        &.has-status {
+          .item-name,
+          .item-status {
+            width: 50%;
+            padding: 0 6px 0 1px;
+            box-sizing: border-box;
+          }
         }
       }
     }

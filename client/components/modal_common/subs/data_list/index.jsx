@@ -22,11 +22,30 @@ class DataList extends React.Component {
   }
 
   render() {
+    var props = this.props;
     var state = this.state;
 
     return (
       <div className={'modal-row data-list-row' + (state.hide ? ' hide' : '')}>
-        {state.data}
+        {
+          state.data.map((ele, i) =>
+            <span key={i} className={'item' + (props.hasStatus ? ' has-status' : '')}>
+              <span className="item-name">
+                <i className={'glyphicon icon-' + props.icon} />
+                {ele.name || '(' + ele.id.substr(0, 8) + ')'}
+              </span>
+              {
+                props.hasStatus ?
+                  <span className="item-status">
+                    {' ( '}
+                    {props.getStatusIcon(ele.status)}
+                    {' )'}
+                  </span>
+                : null
+              }
+            </span>
+          )
+        }
       </div>
     );
   }
