@@ -5,6 +5,12 @@ var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(parent, callback) {
+
+  var defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
+  if (defaultBandwidth) {
+    config.fields[0].max = defaultBandwidth;
+  }
+
   var props = {
     __: __,
     parent: parent,
@@ -20,6 +26,9 @@ function pop(parent, callback) {
           let data = {};
           data.floatingip = {};
           data.floatingip.floating_network_id = floatingNetworkId;
+
+          let bandwidth = Number(refs.bandwidth.state.value) * 1024;
+          data.floatingip.rate_limit = bandwidth;
 
           request.createFloatingIp(data).then((res) => {
             callback && callback(res.floatingip);
@@ -39,6 +48,9 @@ function pop(parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'bandwidth':
+          refs.btn.setState({
+            disabled: state.error
+          });
           break;
         default:
           break;

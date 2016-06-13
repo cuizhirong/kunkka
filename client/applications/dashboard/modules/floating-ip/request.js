@@ -49,6 +49,12 @@ module.exports = {
       data: data
     });
   },
+  changeBandwidth: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/floatingips/' + id + '/update_floatingip_ratelimit',
+      data: data
+    });
+  },
   deleteFloatingIps: function(items) {
     var deferredList = [];
     items.forEach((item) => {

@@ -1,5 +1,5 @@
 {
-  "title": ["allocate", "floating_ip"],
+  "title": ["change", "bandwidth"],
   "fields": [{
     "type": "slider",
     "field": "bandwidth",
@@ -7,13 +7,9 @@
     "max": 30,
     "value": 1,
     "unit": "Mbps"
-  }, {
-    "type": "info",
-    "field": "apply_ip_tip"
   }],
   "btn": {
-    "value": "allocate",
-    "type": "create",
+    "value": "confirm",
     "disabled": false
   }
 }

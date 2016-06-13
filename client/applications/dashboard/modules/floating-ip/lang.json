@@ -2,6 +2,7 @@
   "en": {
     "address": "Address",
     "allocate": "Allocate ",
+    "apply_ip_tip": "Applying for floating IP will allocate a random IP address from IP resource pool.",
     "associate_gl": "Associate ",
     "bandwidth": "Bandwidth",
     "carrier": "Carrier",
@@ -14,12 +15,12 @@
     "tip_fip_has_source": "Cannot delete floating IP which has been related to source",
     "tip_info_floatingip": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT(Show More)",
     "tip_no_port_instance": "The instances with no port are excluded in the list",
-    "to": " to ",
-    "apply_ip_tip": "Applying for floating IP will allocate a random IP address from IP resource pool."
+    "to": " to "
   },
   "zh-CN": {
     "address": "地址",
     "allocate": "申请",
+    "apply_ip_tip": "申请公网IP将会从IP资源池中随机分配一个IP地址。",
     "associate_gl": "关联",
     "bandwidth": "带宽",
     "carrier": "IP路线",
@@ -32,7 +33,6 @@
     "tip_fip_has_source": "不能删除已经绑定资源的公网IP",
     "tip_info_floatingip": "解除绑定之后云主机将不能通过公共网络使用,它仍然可以从公共网络通过路由器的SNAT访问",
     "tip_no_port_instance": "没有网络端口的云主机不会显示在列表中",
-    "to": "到",
-    "apply_ip_tip": "申请公网IP将会从IP资源池中随机分配一个IP地址。"
+    "to": "到"
   }
 }

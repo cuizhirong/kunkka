@@ -9,6 +9,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var applyModal = require('./pop/apply_ip/index');
 var associateInstance = require('./pop/associate_instance/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
+var changeBandwidth = require('./pop/change_bandwidth/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -86,6 +87,12 @@ class Model extends React.Component {
               );
             }
             return '';
+          };
+          break;
+        case 'bandwidth':
+          column.render = (col, item, i) => {
+            var bw = item.rate_limit / 1024;
+            return bw + ' Mbps';
           };
           break;
         default:
@@ -181,6 +188,13 @@ class Model extends React.Component {
       case 'assc_to_instance':
         associateInstance(rows[0]);
         break;
+      case 'change_bw':
+        changeBandwidth(rows[0], null, () => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
       default:
         break;
     }
@@ -215,6 +229,9 @@ class Model extends React.Component {
           break;
         case 'dissociate':
           btns[key].disabled = (rows.length === 1 && rows[0].association.type) ? false : true;
+          break;
+        case 'change_bw':
+          btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;
@@ -284,6 +301,9 @@ class Model extends React.Component {
             {item.association.device.name}
           </a>
         </span> : '-'
+    }, {
+      title: __.bandwidth,
+      content: item.rate_limit / 1024 + ' Mbps'
     }, {
       title: __.status,
       content: getStatusIcon(item.status)

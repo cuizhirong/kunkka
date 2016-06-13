@@ -26,6 +26,20 @@
     "type": "delete",
     "disabled": true
   }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["change", "bandwidth"],
+          "key": "change_bw",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],
@@ -47,8 +61,10 @@
       "sort": true
     }, {
       "title": ["associate_gl", "resource"],
-      "dataIndex": "",
       "key": "assc_resource"
+    }, {
+      "title": ["bandwidth"],
+      "key": "bandwidth"
     }, {
       "title": ["status"],
       "dataIndex": "status",
