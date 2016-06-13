@@ -358,13 +358,16 @@ class Model extends React.Component {
         var url,
           history = this.stores.urls;
 
-        if(data.direction === 'next') {
-          url = data.url;
-        } else {
+        if (data.direction === 'prev') {
           history.pop();
-          if(history.length > 0) {
+          if (history.length > 0) {
             url = history.pop();
           }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else { //default
+          url = this.stores.urls[0];
+          this.clearState();
         }
 
         this.loadingTable();
