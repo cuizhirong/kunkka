@@ -2,13 +2,14 @@
   "modules": [{
     "title": "account_bill",
     "items": [
-      "bill_record"
+      "billing-record"
     ]
   }],
-  "default_module": "bill_record",
+  "default_module": "billing-record",
   "languages": [
     "en",
     "zh-CN"
   ],
+  "routers": [],
   "theme": "default"
 }
