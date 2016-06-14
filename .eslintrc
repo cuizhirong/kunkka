@@ -27,7 +27,7 @@
     "key-spacing": 0,
     "no-eq-null": 0,
     "no-else-return": 0,
-    "no-loop-func": 1,
+    "no-loop-func": 0,
     "no-param-reassign": 0,
     "no-this-before-super": 2,
     "no-undef": 2,
@@ -38,7 +38,6 @@
     "padded-blocks": 0,
     "react/jsx-boolean-value": 0,
     "react/jsx-no-duplicate-props": 2,
-    "react/prop-types": [2, { "ignore": [ "children", "className", "style" ] }],
     "react/sort-comp": 0,
     "react/wrap-multilines": 0,
     "react/no-multi-comp": 0,
@@ -50,6 +49,7 @@
     "indent": [2, 2, {"SwitchCase": 1}],
     "vars-on-top": 0,
     "new-cap": [2, {"capIsNewExceptions": ["express.Router"]}],
-    "strict": [0, "never"]
+    "strict": [0, "never"],
+    "no-console": 0
   }
 }
