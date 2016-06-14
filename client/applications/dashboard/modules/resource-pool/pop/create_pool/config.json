@@ -6,7 +6,7 @@
     "is_long_label": true,
     "input_type": "text"
   }, {
-    "type": "group_select",
+    "type": "select",
     "field": "listener",
     "is_long_label": true,
     "empty_text": {
@@ -33,6 +33,10 @@
     "empty_text": {
       "info": "loading"
     }
+  }, {
+    "type": "textarea",
+    "field": "desc",
+    "is_long_label": true
   }, {
     "type": "checkbox",
     "field": "show_more",

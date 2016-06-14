@@ -22,26 +22,34 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getListeners().then(res => {
-        refs.listener.setState({
-          data: res.listeners,
-          value: res.listeners[0].id
-        });
-      });
-
       refs.protocol.setState({
         value: refs.protocol.state.data[0].name
       });
       refs.load_algorithm.setState({
         value: refs.load_algorithm.state.data[0].id
       });
+
+      request.getListeners().then(res => {
+        refs.listener.setState({
+          data: res.listeners,
+          value: res.listeners[0].id
+        });
+
+        if(refs.listener.state.value) {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
+
+      });
     },
     onConfirm: function(refs, cb) {
       var param = {
         name: refs.name.state.value,
         listener_id: refs.listener.state.value,
-        protocol: refs.protocol.state.value,
-        lb_algorithm: refs.load_algorithm.state.value
+        protocol: refs.protocol.state.value.toUpperCase(),
+        lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
+        description: refs.desc.state.value
       };
       request.createPool(param).then(res => {
         callback && callback();

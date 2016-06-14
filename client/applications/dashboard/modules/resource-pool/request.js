@@ -27,5 +27,11 @@ module.exports = {
     return fetch.get({
       url: '/proxy/neutron/v2.0/lbaas/listeners?tenant_id=' + HALO.user.projectId
     });
+  },
+  editPoolName: function(rawItem, newName) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/lbaas/pools/' + rawItem.id,
+      data: {'pool': {'name': newName}}
+    });
   }
 };

@@ -11,6 +11,7 @@
     "monitor_timeout": "Monitor Timeout",
     "no_listener": "No available listener",
     "retries_tip": "Range: 1~10 times",
+    "resource_pool": "Resource Pool",
     "round_robin": "Round_Robin",
     "source_ip": "Source_IP",
     "timeout_tip": "Range: 5~300s"
@@ -27,6 +28,7 @@
     "monitor_timeout": "健康检查超时限制",
     "no_listener": "没有可用的监听器",
     "retries_tip": "范围：1~10次",
+    "resource_pool": "资源池",
     "round_robin": "轮询",
     "source_ip": "源IP",
     "timeout_tip": "范围：5~300秒"

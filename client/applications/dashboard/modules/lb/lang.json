@@ -1,13 +1,35 @@
 {
   "en": {
+    "assoc_pool_policy_tip": "The default pool must have compatible protocol with listener.",
+    "connection_limit": "Connection Limit",
+    "default": "Default",
+    "disabled": "Disabled",
+    "enabled": "Enabled",
+    "enable_listener": "{0} listener \"{1}\"?",
+    "enabled_state": "Enabled State",
+    "forwarding": "Forwarding",
     "lsit": "List",
     "listener_protocol": "Protocol",
+    "no_forwarding_policy": "No Forwarding Policy",
+    "no_matching_pool": "No available resource pool.",
+    "policy": "Policy",
     "protocol_port": "Protocol Port",
     "required_port_range": "Port range: 1~65535"
   },
   "zh-CN": {
+    "assoc_pool_policy_tip": "默认资源池和监听器的协议必须相同。",
+    "connection_limit": "最大连接数",
+    "default": "默认",
+    "disabled": "未启用",
+    "enabled": "已启用",
+    "enable_listener": "确定{0}监听器\"{1}\"?",
+    "enabled_state": "启用状态",
+    "forwarding": "转发",
     "list": "列表",
     "listener_protocol": "监听协议",
+    "no_forwarding_policy": "没有转发策略",
+    "no_matching_pool": "没有可用的资源池。",
+    "policy": "策略",
     "protocol_port": "监听端口",
     "required_port_range": "端口范围：1~65535"
   }

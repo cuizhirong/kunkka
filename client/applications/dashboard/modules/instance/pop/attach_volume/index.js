@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
@@ -41,6 +42,8 @@ function pop(obj, parent, callback) {
       request.attachVolume(obj.rawItem, refs.volume.state.value).then(() => {
         callback && callback();
         cb(true);
+      }).catch(function(error) {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {

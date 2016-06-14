@@ -56,15 +56,17 @@
       "type": "captain",
       "sort": true
     }, {
-      "title": ["status"],
-      "dataIndex": "status",
-      "type": "status",
-      "key": "status",
-      "filter": [{
-        "name": ["active"],
-        "key": "active",
-        "filterBy": "ACTIVE"
-      }]
+      "title": ["protocol"],
+      "key": "protocol",
+      "dataIndex": "protocol"
+    }, {
+      "title": ["load_algorithm"],
+      "key": "load_algorithm",
+      "dataIndex": "lb_algorithm"
+    }, {
+      "title": ["description"],
+      "key": "description",
+      "dataIndex": "description"
     }],
     "data": [],
     "detail": {

@@ -10,6 +10,9 @@
     "empty_text": {
       "info": "no_subnet"
     }
+  }, {
+    "type": "textarea",
+    "field": "desc"
   }],
   "btn": {
     "value": "create",

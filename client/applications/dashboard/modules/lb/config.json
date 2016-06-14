@@ -61,6 +61,10 @@
       "title": ["floating_ip"],
       "key": "floating_ip"
     }, {
+      "title": ["desc"],
+      "key": "desc",
+      "dataIndex": "description"
+    }, {
       "title": ["status"],
       "dataIndex": "provisioning_status",
       "key": "status",

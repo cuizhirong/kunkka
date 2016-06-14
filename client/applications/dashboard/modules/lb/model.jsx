@@ -5,7 +5,9 @@ var Main = require('client/components/main/index');
 
 //detail component
 var BasicProps = require('client/components/basic_props/index');
-var ListenerList = require('../../components/listener_list/index');
+
+//sub module used in listener tab of detail page
+var ListenerList = require('./listener_list');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
@@ -13,12 +15,14 @@ var createLb = require('./pop/create_lb/index');
 var assocFip = require('./pop/assoc_fip/index');
 var dissocFip = require('./pop/dissoc_fip/index');
 var createListener = require('./pop/create_listener/index');
+var updateListenerState = require('./pop/update_listener_state/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
+var notify = require('client/applications/dashboard/utils/notify');
 
 class Model extends React.Component {
 
@@ -141,14 +145,11 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
-      that = this;
+    var {rows} = data;
 
     switch(key) {
       case 'create':
-        createLb(null, null, function(res) {
-          that.refresh(null, true);
-        });
+        createLb();
         break;
       case 'assoc_fip':
         assocFip();
@@ -164,7 +165,6 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteLb(rows[0]).then(res => {
-              that.refresh(null, true);
               cb(true);
             });
           }
@@ -247,6 +247,8 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tabKey={'description'}
                 items={basicPropsItem}
+                rawItem={rows[0]}
+                onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
             </div>
           );
@@ -254,19 +256,21 @@ class Model extends React.Component {
         break;
       case 'listener':
         if (isAvailableView(rows)) {
-          contents[tabKey] = (
-            <ListenerList
-              title={__.listener + __.list}
-              btnConfig={{
-                value: __.create + __.listener,
-                type: 'create',
-                actionType: 'create_listener'
-              }}
-              tabKey={'listener'}
-              rawItem={data.rows[0]}
-              onAction={this.onDetailAction.bind(this)}
-              defaultUnfold={true} />
-          );
+          request.getRelatedListeners(rows[0].listeners).then(res => {
+            contents[tabKey] = (
+              <ListenerList
+                title={__.listener + __.list}
+                tabKey={'listener'}
+                rawItem={data.rows[0]}
+                listenerConfigs={this.getListenerConfigs(res)}
+                onAction={this.onDetailAction.bind(this)}
+                defaultUnfold={true} />
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
         }
         break;
       default:
@@ -286,18 +290,27 @@ class Model extends React.Component {
       title: __.name,
       content: item.name || '(' + item.id.slice(0, 8) + ')',
       type: 'editable'
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.ip_address,
+      content: item.vip_address
+    }, {
+      title: __.desc,
+      content: item.description
     }];
 
     return items;
   }
 
-  onDetailAction(tabKey, actionType, data) {
+  onDetailAction(tabKey, actionType, data, moreBtnKey) {
     switch (tabKey) {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
       case 'listener':
-        this.onListenerAction(actionType, data);
+        this.onListenerAction(actionType, data, moreBtnKey);
         break;
       default:
         break;
@@ -307,16 +320,180 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch (actionType) {
       case 'edit_name':
+        var {rawItem, newName} = data;
+        request.editLbaasName(rawItem, newName).then((res) => {
+          notify({
+            resource_type: 'lb',
+            stage: 'end',
+            action: 'modify',
+            resource_id: rawItem.id
+          });
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       default:
         break;
     }
   }
 
-  onListenerAction(actionType, data) {
+  getListenerConfigs(items) {
+    var configs = [];
+    var wordsToLine = function(data) {
+      var value = '';
+      data.forEach(ele => {
+        value += __[ele];
+      });
+
+      return value;
+    };
+    var getlistenerDropdown = function(item) {
+      var dropdown = [{
+        items: [{
+          title: __.modify,
+          key: 'modify'
+        }, {
+          title: __.enable,
+          key: 'enable',
+          disabled: item.admin_state_up
+        }, {
+          title: __.disable,
+          key: 'disable',
+          disabled: !item.admin_state_up
+        }, {
+          title: wordsToLine(['dissociate', 'default', 'resource_pool']),
+          key: 'dissoc_pool',
+          disabled: item.default_pool_id ? false : true
+        }, {
+          title: __.delete,
+          key: 'delete',
+          danger: true
+        }]
+      }];
+
+      return dropdown;
+    };
+    var getPolicyDropdown = function(item) {
+      var dropdown = [{
+        items: [{
+          title: __.modify,
+          key: 'modify'
+        }, {
+          title: __.enable,
+          key: 'enable'
+        }, {
+          title: __.disable,
+          key: 'disable'
+        }, {
+          title: __.delete,
+          key: 'delete',
+          danger: true
+        }]
+      }];
+
+      return dropdown;
+    };
+    var getListenerDetail = function(item) {
+      var itemDetail = [{
+        feild: __.protocol,
+        value: item.protocol
+      }, {
+        feild: __.protocol_port,
+        value: item.protocol_port
+      }, {
+        feild: __.connection_limit,
+        value: item.connection_limit === -1 ? __.infinity : item.connection_limit
+      }, {
+        feild: wordsToLine(['default', 'resource_pool']),
+        value: item.default_pool_id ? '(' + item.default_pool_id.slice(0, 8) + ')' : '-'
+      }, {
+        feild: __.enabled_state,
+        value: item.admin_state_up ? __.enabled : __.disabled
+      }];
+
+      return itemDetail;
+    };
+    var getPolicyTable = function(item) {return [];};
+    var getPolicyItems = function(item) {return [];};
+
+    items.map((item, i) => {
+      configs.push({listener: item});
+      configs[i].assocPoolDisabled = item.default_pool_id ? true : false;
+      configs[i].listenerDropdown = getlistenerDropdown(item);
+      configs[i].listenerDetail = getListenerDetail(item);
+      if(item.protocol === 'HTTP') {
+        configs[i].policyDropdown = getPolicyDropdown(item);
+        configs[i].policyTable = getPolicyTable(item);
+        configs[i].policyItems = getPolicyItems(item);
+      }
+    });
+
+    return configs;
+  }
+
+  //detail listener btn onClick handler
+  onListenerAction(actionType, data, moreBtnKey) {
     switch (actionType) {
       case 'create_listener':
-        createListener(data.rawItem);
+        createListener(data.rawItem, null, false);
+        break;
+      case 'assoc_pool':
+        //create pool then associate
+        break;
+      case 'add_policy':
+        break;
+      case 'more_listener_ops':
+        this.onClickListenerMoreBtn(moreBtnKey, data);
+        break;
+      case 'more_policy_ops':
+        this.onClickPolicyMoreBtn(moreBtnKey, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickListenerMoreBtn(btnKey, data) {
+    switch(btnKey) {
+      case 'modify':
+        createListener(data.childItem, null, true);
+        break;
+      case 'enable':
+        updateListenerState(data.childItem, null, true);
+        break;
+      case 'disable':
+        updateListenerState(data.childItem, null, false);
+        break;
+      case 'dissoc_pool':
+        break;
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'terminate',
+          type: 'listener',
+          data: [data.childItem],
+          onDelete: function(_data, cb) {
+            request.deleteListener(data.childItem).then(() => {
+              cb(true);
+            });
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickPolicyMoreBtn(btnKey, data) {
+    switch(btnKey) {
+      case 'modify':
+        break;
+      case 'enable':
+        break;
+      case 'disable':
+        break;
+      case 'delete':
         break;
       default:
         break;

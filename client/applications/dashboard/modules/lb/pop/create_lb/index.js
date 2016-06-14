@@ -52,7 +52,8 @@ function pop(obj, parent, callback) {
       var lbParam = {
         name: refs.name.state.value ? refs.name.state.value : '',
         vip_subnet_id: refs.subnet.state.value,
-        tenant_id: HALO.user.projectId
+        tenant_id: HALO.user.projectId,
+        description: refs.desc.state.value
       };
 
       request.createLb(lbParam).then(res => {
