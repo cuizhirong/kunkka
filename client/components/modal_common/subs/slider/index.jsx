@@ -14,7 +14,7 @@ class Slide extends React.Component {
       hide: !!props.hide,
       disabled: props.disabled ? props.disabled : false,
       error: false,
-      event: null
+      eventType: null
     };
 
     this.onInputChange = this.onInputChange.bind(this);
@@ -39,19 +39,19 @@ class Slide extends React.Component {
       min = state.min,
       max = state.max;
 
-    var val = e.target.value,
-      floatVal = parseFloat(val);
+    var val = e.target.value;
+    var floatVal = parseFloat(val);
 
     if (floatVal >= min && floatVal <= max) {
       this.setState({
-        event: e,
+        eventType: 'change',
         value: floatVal,
         inputValue: floatVal,
         error: false
       });
     } else {
       this.setState({
-        event: e,
+        eventType: 'change',
         inputValue: val,
         error: true
       });
@@ -60,7 +60,7 @@ class Slide extends React.Component {
 
   onSliderChange(e, value) {
     this.setState({
-      event: e,
+      eventType: e.type,
       value: value,
       inputValue: value,
       error: false

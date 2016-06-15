@@ -5,7 +5,7 @@ class Charge extends React.Component {
     super(props);
 
     this.state = {
-      value: props.value ? props.value : 0.000,
+      value: props.value ? props.value : '0.000',
       hide: props.hide
     };
   }
@@ -27,6 +27,7 @@ class Charge extends React.Component {
 
     var __ = this.props.__;
     var value = state.value;
+    var monthlyValue = (Number(state.value) * 24 * 30).toFixed(4);
 
     return (
       <div className={'modal-row charge-row' + (state.hide ? ' hide' : '')}>
@@ -40,7 +41,7 @@ class Charge extends React.Component {
             <strong>{__.account.replace('{0}', value)}</strong> / <span>{__.hour}</span>
           </div>
           <div className="account-md account-gray">
-            {'( ' + __.account.replace('{0}', value) + ' / ' + __.month + ' )'}
+            {'( ' + __.account.replace('{0}', monthlyValue) + ' / ' + __.month + ' )'}
           </div>
         </div>
       </div>
