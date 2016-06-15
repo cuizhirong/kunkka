@@ -22,6 +22,7 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -104,7 +105,7 @@ class Model extends React.Component {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {item.volume_type === 'sata' ? __.sata : __.ssd}
+                {utils.getVolumeType(item)}
               </span> : '';
           };
           break;
@@ -376,7 +377,7 @@ class Model extends React.Component {
       content: item.size + ' GB'
     }, {
       title: __.type,
-      content: item.volume_type === 'sata' ? __.sata : __.ssd
+      content: utils.getVolumeType(item)
     }, {
       title: __.attach_to + __.instance,
       content: item.attachments.length > 0 ? getAttachments(item) : '-'
