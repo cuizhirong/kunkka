@@ -55,14 +55,34 @@ function pop(obj, parent, callback) {
           }
         }
 
-        refs.capacity_size.setState({
-          max: max,
-          value: obj.size,
-          disabled: false
-        });
-        refs.btn.setState({
-          disabled: false
-        });
+        var setStates = (res, enableCharge, isError) => {
+          refs.capacity_size.setState({
+            max: max,
+            value: obj.size,
+            disabled: false
+          });
+
+          refs.btn.setState({
+            disabled: false
+          });
+
+          if (enableCharge && !isError) {
+            refs.charge.setState({
+              value: res.unit_price,
+              hide: false
+            });
+          }
+        };
+
+        if (HALO.settings.enable_charge) {
+          request.getVolumePrice('volume.size', obj.size).then((res) => {
+            setStates(res, true, false);
+          }).catch((error) => {
+            setStates(error, true, true);
+          });
+        } else {
+          setStates({}, false);
+        }
       });
     },
     onConfirm: function(refs, cb) {
@@ -86,6 +106,19 @@ function pop(obj, parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'capacity_size':
+          if (HALO.settings.enable_charge) {
+            var sliderEvent = state.eventType === 'mouseup';
+            var inputEvnet = state.eventType === 'change' && !state.error;
+
+            if (sliderEvent || inputEvnet) {
+              request.getVolumePrice('volume.size', state.value).then((res) => {
+                refs.charge.setState({
+                  value: res.unit_price
+                });
+              }).catch((error) => {});
+            }
+          }
+
           refs.btn.setState({
             disabled: state.error
           });

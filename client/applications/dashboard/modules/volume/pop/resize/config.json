@@ -9,6 +9,11 @@
     "hide": false,
     "disabled": true
   }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": true
+  }, {
     "type": "error",
     "field": "error",
     "hide": true

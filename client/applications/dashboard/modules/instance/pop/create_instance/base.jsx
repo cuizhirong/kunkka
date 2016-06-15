@@ -5,6 +5,8 @@ var createNetworkPop = require('client/applications/dashboard/modules/network/po
 var createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
 var request = require('../../request');
 var unitConverter = require('client/utils/unit_converter');
+var priceConverter = require('../../../../utils/price');
+var getErrorMessage = require('../../../../utils/error_message');
 
 const TITLE = __.create + __.instance;
 
@@ -66,6 +68,7 @@ class ModalBase extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
+      price: '0.0000',
       number: 1,
       error: '',
       showError: false
@@ -83,6 +86,12 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getData().then(this.initialize);
+
+    if (!HALO.prices) {
+      request.getPrices().then((res) => {
+        HALO.prices = priceConverter(res);
+      }).catch((error) => {});
+    }
   }
 
   initialize(res) {
@@ -630,13 +639,12 @@ class ModalBase extends React.Component {
           visible: false
         });
       }).catch((error) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(error.response)[1];
+        var errorTip = getErrorMessage(error);
 
         this.setState({
           disabled: false,
           showError: true,
-          error: tip
+          error: errorTip
         });
       });
 
@@ -1003,6 +1011,19 @@ class ModalBase extends React.Component {
   }
 
   renderCreateNum(props, state) {
+    var price = state.price;
+    var numPrice = price;
+    var monthlyPrice = price;
+
+    if (state.flavor) {
+      let type = state.flavor.name;
+      if (HALO.prices) {
+        price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
+        numPrice = (Number(price) * state.number).toFixed(4);
+        monthlyPrice = (Number(numPrice) * 24 * 30).toFixed(4);
+      }
+    }
+
     return (
       <div className="row row-select">
         <div className="modal-label">
@@ -1010,17 +1031,21 @@ class ModalBase extends React.Component {
         </div>
         <div className="modal-data">
           <InputNumber onChange={this.onChangeNumber} min={1} value={state.number} width={120}/>
-          <div className="account-box">
-            <div className="account-sm">
-              x <strong>{__.account.replace('{0}', '0.0560')}</strong> / <span>{__.hour}</span> =
-            </div>
-            <div className="account-md">
-              x <strong>{__.account.replace('{0}', '0.0560')}</strong> / <span>{__.hour}</span>
-            </div>
-            <div className="account-md account-gray">
-              {'( ' + __.account.replace('{0}', '0.0560') + ' / ' + __.month + ' )'}
-            </div>
-          </div>
+          {
+            HALO.settings.enable_charge ?
+              <div className="account-box">
+                <span className="account-sm">
+                  x <strong>{__.account.replace('{0}', +price)}</strong> / <span>{__.hour}</span> =
+                </span>
+                <span className="account-md">
+                  x <strong>{__.account.replace('{0}', +numPrice)}</strong> / <span>{__.hour}</span>
+                </span>
+                <span className="account-md account-gray">
+                  {'( ' + __.account.replace('{0}', +monthlyPrice) + ' / ' + __.month + ' )'}
+                </span>
+              </div>
+            : false
+          }
         </div>
       </div>
     );
@@ -1051,7 +1076,7 @@ class ModalBase extends React.Component {
         </div>
       );
     } else {
-      let enable = state.flavor && state.network;
+      let enable = state.flavor && state.network && state.number;
       if (state.credential === 'keypair') {
         enable = enable && state.keypairName;
       } else {

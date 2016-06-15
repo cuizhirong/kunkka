@@ -436,6 +436,7 @@ class Model extends React.Component {
       }
     };
 
+    var itemStatus = rows[0].status.toLowerCase();
     switch (tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
@@ -465,7 +466,8 @@ class Model extends React.Component {
                 btnConfig={{
                   value: __.create + __.snapshot,
                   type: 'create',
-                  actionType: 'create_related_snapshot'
+                  actionType: 'create_related_snapshot',
+                  disabled: !(itemStatus === 'active' || itemStatus === 'shutoff')
                 }}
                 defaultUnfold={true}
                 tabKey={'description'}

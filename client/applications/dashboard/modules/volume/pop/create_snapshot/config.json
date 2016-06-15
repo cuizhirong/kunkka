@@ -12,6 +12,10 @@
     "type": "input",
     "field": "snapshot_name",
     "required": true
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true
   }],
   "btn": {
     "value": "create",

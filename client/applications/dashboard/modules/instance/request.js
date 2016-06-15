@@ -8,6 +8,11 @@ module.exports = {
       return data.instance;
     });
   },
+  getPrices: function() {
+    return fetch.get({
+      url: '/proxy/gringotts/v2/products'
+    });
+  },
   deleteItem: function(items) {
     var deferredList = [];
     items.forEach((item) => {

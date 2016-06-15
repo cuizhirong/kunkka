@@ -8,8 +8,9 @@
     "value": 1,
     "unit": "Mbps"
   }, {
-    "type": "info",
-    "field": "apply_ip_tip"
+    "type": "charge",
+    "field": "charge",
+    "has_label": true
   }],
   "btn": {
     "value": "allocate",

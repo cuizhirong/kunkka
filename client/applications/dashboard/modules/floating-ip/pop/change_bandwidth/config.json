@@ -7,6 +7,10 @@
     "max": 30,
     "value": 1,
     "unit": "Mbps"
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true
   }],
   "btn": {
     "value": "confirm",

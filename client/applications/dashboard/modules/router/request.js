@@ -8,6 +8,11 @@ module.exports = {
       return data.router;
     });
   },
+  getPrices: function() {
+    return fetch.get({
+      url: '/proxy/gringotts/v2/products'
+    });
+  },
   editRouterName: function(item, newName) {
     var data = {};
     data.router = {};

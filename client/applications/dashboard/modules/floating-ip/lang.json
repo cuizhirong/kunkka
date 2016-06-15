@@ -2,7 +2,6 @@
   "en": {
     "address": "Address",
     "allocate": "Allocate ",
-    "apply_ip_tip": "Applying for floating IP will allocate a random IP address from IP resource pool.",
     "associate_gl": "Associate ",
     "bandwidth": "Bandwidth",
     "carrier": "Carrier",
@@ -20,7 +19,6 @@
   "zh-CN": {
     "address": "地址",
     "allocate": "申请",
-    "apply_ip_tip": "申请公网IP将会从IP资源池中随机分配一个IP地址。",
     "associate_gl": "关联",
     "bandwidth": "带宽",
     "carrier": "IP路线",

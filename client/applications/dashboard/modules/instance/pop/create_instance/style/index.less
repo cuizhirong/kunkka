@@ -362,11 +362,15 @@
 
       .account-box {
         display: inline-block;
+        width: 424px;
+        height: 32px;
+        line-height: 32px;
         margin-left: 10px;
-        height: 20px;
-        line-height: 20px;
-        > div {
-          display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+        > span {
           margin-right: 4px;
           > strong {
             color: @account_color;
