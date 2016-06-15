@@ -1,12 +1,16 @@
-var notification = require('client/uskin/index').Notification;
+var Notification = require('client/uskin/index').Notification;
 var __ = require('locale/client/dashboard.lang.json');
 var stack = {};
 
 // @param data {Object} contains resource_name, stage, action, resource_type, resource_id
 function notify(data) {
+  if (Notification.len >= 30) {
+    return;
+  }
+
   var isAutoHide = true,
     icon = 'icon-status-active',
-    func = notification.addNotice,
+    func = Notification.addNotice,
     placeholder = 'msg_notify_end',
     name = data.resource_name ? ('"' + data.resource_name + '"') : '',
     resourceType = __[data.resource_type];
@@ -19,7 +23,7 @@ function notify(data) {
   }
 
   if (stack[data.resource_id] && data.stage === 'end') {
-    func = notification.updateNotice;
+    func = Notification.updateNotice;
     delete stack[data.resource_id];
   }
 

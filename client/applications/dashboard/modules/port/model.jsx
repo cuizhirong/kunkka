@@ -118,11 +118,9 @@ class Model extends React.Component {
           break;
         case 'ip_adrs':
           column.render = (col, item, i) => {
-            return <span>{
-              item.fixed_ips.map((_item, _i) =>
+            return item.fixed_ips.map((_item, _i) =>
                 <span key={_i}>{(_i > 0 ? ', ' : '') + _item.ip_address}</span>
-              )
-            }</span>;
+              );
           };
           break;
         case 'floating_ip':
