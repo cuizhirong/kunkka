@@ -25,6 +25,7 @@ try {
  */
 function setup() {
   const app = express();
+  app.set('query parser', 'simple');
   app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'client')));
   const assetsDir = config('assets_dir') || '/opt/assets';
   app.use(assetsDir, express.static(assetsDir));
@@ -35,7 +36,6 @@ function setup() {
 
   // template engine
   app.set('view engine', 'ejs');
-
   // use Redis | Memcached to store session
   const sessionHandler = require('../middlewares/sessionHandler');
   sessionHandler(app);
