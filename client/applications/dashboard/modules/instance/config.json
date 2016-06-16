@@ -15,12 +15,12 @@
     "icon": "volume",
     "disabled": true
   }, {
-    "value": ["power_on"],
+    "value": ["power_on_ins"],
     "key": "power_on",
     "icon": "power-on",
     "disabled": true
   }, {
-    "value": ["power_off"],
+    "value": ["power_off_ins"],
     "key": "power_off",
     "icon": "power-off",
     "disabled": true

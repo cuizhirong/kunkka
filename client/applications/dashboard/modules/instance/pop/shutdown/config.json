@@ -1,5 +1,5 @@
 {
-  "title": ["power_off"],
+  "title": ["power_off_ins"],
   "fields": [{
     "type": "text",
     "field": "ensure_shutdown",
