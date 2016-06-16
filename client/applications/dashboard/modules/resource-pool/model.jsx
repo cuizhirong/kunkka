@@ -9,6 +9,7 @@ var BasicProps = require('client/components/basic_props/index');
 //pop modals
 var createPool = require('./pop/create_pool/');
 var deleteModal = require('client/components/modal_delete/index');
+var updatePoolState = require('./pop/update_pool_state/index');
 
 var config = require('./config.json');
 var router = require('client/utils/router');
@@ -16,6 +17,7 @@ var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
 var notify = require('client/applications/dashboard/utils/notify');
+var msgEvent = require('client/applications/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -34,6 +36,22 @@ class Model extends React.Component {
   componentWillMount() {
     var columns = this.state.config.table.column;
     this.tableColRender(columns);
+
+    msgEvent.on('dataChange', data => {
+      if (this.props.style.display !== 'none') {
+        if(data.resource_type === 'pool') {
+          this.refresh({
+            detailRefresh: true
+          }, false);
+
+          if (data.action === 'delete'
+            && data.stage === 'end'
+            && data.resource_id === router.getPathList()[2]) {
+            router.replaceState('/dashboard/resource-pool');
+          }
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -53,10 +71,23 @@ class Model extends React.Component {
     }
   }
 
-  tableColRender(column) {
-    column.map(col => {
-      switch (col.key) {
+  tableColRender(columns) {
+    columns.map(column => {
+      switch (column.key) {
         case 'name':
+          column.render = (col, item, i) => {
+            return item.name || '(' + item.id.slice(0, 8) + ')';
+          };
+          break;
+        case 'admin_state':
+          column.render = (col, item, i) => {
+            return item.admin_state_up ? __.enabled : __.disabled;
+          };
+          break;
+        case 'load_algorithm':
+          column.render = (col, item, i) => {
+            return __[item.lb_algorithm.toLowerCase()];
+          };
           break;
         default:
           break;
@@ -108,12 +139,20 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
-      that = this;
+    var {rows} = data;
 
     switch(key) {
       case 'create_pool':
         createPool();
+        break;
+      case 'enable_pool':
+        updatePoolState(rows[0], null, true);
+        break;
+      case 'disable_pool':
+        updatePoolState(rows[0], null, false);
+        break;
+      case 'edit':
+        createPool(rows[0]);
         break;
       case 'delete':
         deleteModal({
@@ -123,7 +162,6 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deletePools(rows).then(res => {
-              that.refresh(null, true);
               cb(true);
             });
           }
@@ -165,6 +203,15 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'enable_pool':
+          btns[key].disabled = !(rows.length === 1 && !rows[0].admin_state_up);
+          break;
+        case 'disable_pool':
+          btns[key].disabled = !(rows.length === 1 && rows[0].admin_state_up);
+          break;
+        case 'edit':
+          btns[key].disabled = rows.length !== 1;
+          break;
         case 'delete':
           btns[key].disabled = rows.length > 0 ? false : true;
           break;
@@ -297,9 +344,6 @@ class Model extends React.Component {
             action: 'modify',
             resource_id: rawItem.id
           });
-          this.refresh({
-            detailRefresh: true
-          }, true);
         });
         break;
       default:

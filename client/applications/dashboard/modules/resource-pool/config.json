@@ -61,12 +61,14 @@
       "dataIndex": "protocol"
     }, {
       "title": ["load_algorithm"],
-      "key": "load_algorithm",
-      "dataIndex": "lb_algorithm"
+      "key": "load_algorithm"
     }, {
       "title": ["description"],
       "key": "description",
       "dataIndex": "description"
+    }, {
+      "title": ["admin_state"],
+      "key": "admin_state"
     }],
     "data": [],
     "detail": {

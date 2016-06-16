@@ -18,8 +18,9 @@ var securitygroup = require('../modules/security-group/cache');
 var snapshot = require('../modules/snapshot/cache');
 var subnet = require('../modules/subnet/cache');
 var volume = require('../modules/volume/cache');
-var lbaas = require('../modules/lb/cache');
-var pools = require('../modules/resource-pool/cache');
+var loadbalancer = require('../modules/lb/cache');
+var pool = require('../modules/resource-pool/cache');
+var listener = require('../modules/resource-pool/pop/create_pool/cache');
 
 var map = {
   network: ['subnet'],
@@ -77,6 +78,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, lbaas, pools);
+Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener);
 
 module.exports = new Storage();

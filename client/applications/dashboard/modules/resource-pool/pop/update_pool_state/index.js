@@ -4,9 +4,17 @@ var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var __ = require('locale/client/dashboard.lang.json');
 
-function pop(obj, parent, callback) {
-  config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
-  config.fields[1].text = obj.floatingip.floating_ip_address;
+function pop(obj, parent, enableTrue, callback) {
+  if(enableTrue) {
+    config.title = ['enable', 'pool'];
+    config.btn.value = 'enable';
+    config.fields[0].info = __[config.fields[0].field].replace('{0}', __.enable);
+  } else {
+    config.title = ['disable', 'pool'];
+    config.btn.value = 'disable';
+    config.fields[0].info = __[config.fields[0].field].replace('{0}', __.disable);
+  }
+  config.fields[0].info = config.fields[0].info.replace('{1}', obj.name || '(' + obj.id.slice(0, 8) + ')');
   config.btn.disabled = false;
 
   var props = {
@@ -15,11 +23,11 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var fipID = obj.floatingip.id;
-      request.associateFloatingIp(null, fipID).then(res => {
+      var poolParam = {'admin_state_up': enableTrue};
+      request.updatePool(obj.id, poolParam).then(res => {
         callback && callback();
         cb(true);
-      }).catch((error) => {
+      }).catch(function(error) {
         cb(false, getErrorMessage(error));
       });
     },

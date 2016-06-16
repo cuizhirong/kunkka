@@ -2,6 +2,7 @@
   "en": {
     "delay_tip": "Range: 2~60s",
     "edit": "Edit",
+    "enable_pool": "{0} resource pool \"{1}\"?",
     "health_monitor": "Health Monitor",
     "least_connections": "Least_Connections",
     "listener": "Listener",
@@ -19,6 +20,7 @@
   "zh-CN": {
     "delay_tip": "范围：2~60秒",
     "edit": "编辑",
+    "enable_pool": "确定{0}资源池\"{1}\"?",
     "health_monitor": "健康检查方式",
     "least_connections": "最小连接数",
     "listener": "监听器",

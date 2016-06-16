@@ -4,8 +4,17 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['lbaas'], forced).then(function(data) {
-      return data.lbaas;
+    return storage.getList(['loadbalancer', 'floatingip'], forced).then(function(data) {
+      data.loadbalancer.forEach(lb => {
+        data.floatingip.some(fip => {
+          if(lb.vip_port_id === fip.port_id) {
+            lb.floatingip = fip;
+            return true;
+          }
+          return false;
+        });
+      });
+      return data.loadbalancer;
     });
   },
   createLb: function(data) {
@@ -57,6 +66,17 @@ module.exports = {
     return fetch.put({
       url: '/proxy/neutron/v2.0/lbaas/listeners/' + listenerID,
       data: {'listener': data}
+    });
+  },
+  getFloatingIpList: function() {
+    return storage.getList(['floatingip']).then(function(data) {
+      return data.floatingip;
+    });
+  },
+  associateFloatingIp: function(portID, fipID) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/floatingips/' + fipID,
+      data: {'floatingip': {'port_id': portID}}
     });
   }
 };

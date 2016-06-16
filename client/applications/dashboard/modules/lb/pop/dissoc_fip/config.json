@@ -6,12 +6,10 @@
     "icon_type": "lb",
     "text": ""
   }, {
-    "type": "select_group",
+    "type": "icon_label",
     "field": "floating_ip",
-    "empty_text": {
-      "info": "loading"
-    },
-    "data": []
+    "icon_type": "floating-ip",
+    "text": ""
   }],
   "btn": {
     "value": "dissociate",

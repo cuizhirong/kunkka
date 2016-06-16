@@ -1,5 +1,6 @@
 {
   "en": {
+    "admin_state": "Administrative State",
     "assoc_pool_policy_tip": "The default pool must have compatible protocol with listener.",
     "connection_limit": "Connection Limit",
     "default": "Default",
@@ -17,6 +18,7 @@
     "required_port_range": "Port range: 1~65535"
   },
   "zh-CN": {
+    "admin_state": "管理状态",
     "assoc_pool_policy_tip": "默认资源池和监听器的协议必须相同。",
     "connection_limit": "最大连接数",
     "default": "默认",

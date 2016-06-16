@@ -6,15 +6,15 @@ var __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, enableTrue, callback) {
   if(enableTrue) {
-    config.title = ['enable', 'listener', 'status'];
+    config.title = ['enable', 'listener'];
     config.btn.value = 'enable';
     config.fields[0].info = __[config.fields[0].field].replace('{0}', __.enable);
   } else {
-    config.title = ['disable', 'listener', 'status'];
+    config.title = ['disable', 'listener'];
     config.btn.value = 'disable';
     config.fields[0].info = __[config.fields[0].field].replace('{0}', __.disable);
   }
-  config.fields[0].info = config.fields[0].info.replace('{1}', obj.name);
+  config.fields[0].info = config.fields[0].info.replace('{1}', obj.name || '(' + obj.id.slice(0, 8) + ')');
   config.btn.disabled = false;
 
   var props = {

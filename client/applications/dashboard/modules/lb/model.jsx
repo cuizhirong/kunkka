@@ -23,6 +23,7 @@ var request = require('./request');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var notify = require('client/applications/dashboard/utils/notify');
+var msgEvent = require('client/applications/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -41,6 +42,20 @@ class Model extends React.Component {
   componentWillMount() {
     var columns = this.state.config.table.column;
     this.tableColRender(columns);
+
+    msgEvent.on('dataChange', data => {
+      if(this.props.style.display !== 'none') {
+        if(data.resource_type === 'loadbalancer' || data.resource_type === 'floatingip' || data.resource_type === 'listener') {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+
+          if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
+            router.replaceState('/dashboard/lb');
+          }
+        }
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -60,10 +75,18 @@ class Model extends React.Component {
     }
   }
 
-  tableColRender(column) {
-    column.map(col => {
-      switch (col.key) {
+  tableColRender(columns) {
+    columns.map(column => {
+      switch (column.key) {
         case 'name':
+          column.render = (col, item, i) => {
+            return item.name || '(' + item.id.slice(0, 8) + ')';
+          };
+          break;
+        case 'floating_ip':
+          column.render = (col, item, i) => {
+            return item.floatingip ? item.floatingip.floating_ip_address : '-';
+          };
           break;
         default:
           break;
@@ -152,10 +175,10 @@ class Model extends React.Component {
         createLb();
         break;
       case 'assoc_fip':
-        assocFip();
+        assocFip(rows[0]);
         break;
       case 'dissoc_fip':
-        dissocFip();
+        dissocFip(rows[0]);
         break;
       case 'delete':
         deleteModal({
@@ -208,6 +231,12 @@ class Model extends React.Component {
       switch (key) {
         case 'delete':
           btns[key].disabled = rows.length === 1 ? false : true;
+          break;
+        case 'assoc_fip':
+          btns[key].disabled = (rows.length === 1 && !rows[0].floatingip) ? false : true;
+          break;
+        case 'dissoc_fip':
+          btns[key].disabled = (rows.length === 1 && rows[0].floatingip) ? false : true;
           break;
         default:
           break;
@@ -328,9 +357,6 @@ class Model extends React.Component {
             action: 'modify',
             resource_id: rawItem.id
           });
-          this.refresh({
-            detailRefresh: true
-          }, true);
         });
         break;
       default:
@@ -351,9 +377,6 @@ class Model extends React.Component {
     var getlistenerDropdown = function(item) {
       var dropdown = [{
         items: [{
-          title: __.modify,
-          key: 'modify'
-        }, {
           title: __.enable,
           key: 'enable',
           disabled: item.admin_state_up
@@ -361,10 +384,6 @@ class Model extends React.Component {
           title: __.disable,
           key: 'disable',
           disabled: !item.admin_state_up
-        }, {
-          title: wordsToLine(['dissociate', 'default', 'resource_pool']),
-          key: 'dissoc_pool',
-          disabled: item.default_pool_id ? false : true
         }, {
           title: __.delete,
           key: 'delete',
@@ -419,7 +438,6 @@ class Model extends React.Component {
 
     items.map((item, i) => {
       configs.push({listener: item});
-      configs[i].assocPoolDisabled = item.default_pool_id ? true : false;
       configs[i].listenerDropdown = getlistenerDropdown(item);
       configs[i].listenerDetail = getListenerDetail(item);
       if(item.protocol === 'HTTP') {
@@ -438,10 +456,10 @@ class Model extends React.Component {
       case 'create_listener':
         createListener(data.rawItem, null, false);
         break;
-      case 'assoc_pool':
-        //create pool then associate
-        break;
       case 'add_policy':
+        break;
+      case 'modify_listener':
+        createListener(data.childItem, null, true);
         break;
       case 'more_listener_ops':
         this.onClickListenerMoreBtn(moreBtnKey, data);
@@ -456,16 +474,11 @@ class Model extends React.Component {
 
   onClickListenerMoreBtn(btnKey, data) {
     switch(btnKey) {
-      case 'modify':
-        createListener(data.childItem, null, true);
-        break;
       case 'enable':
         updateListenerState(data.childItem, null, true);
         break;
       case 'disable':
         updateListenerState(data.childItem, null, false);
-        break;
-      case 'dissoc_pool':
         break;
       case 'delete':
         deleteModal({

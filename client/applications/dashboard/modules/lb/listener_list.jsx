@@ -57,7 +57,7 @@ class ListenerList extends React.Component {
 
   render() {
     var listenerConfigs = this.props.listenerConfigs,
-      btnValue = this.wordsToLine(['associate_gl', 'default', 'resource_pool']),
+      btnValue = this.wordsToLine(['modify', 'listener']),
       policyBtnValue = this.wordsToLine(['add_', 'forwarding', 'policy']),
       btnData = {value: __.more},
       policyColumn = [{
@@ -94,7 +94,7 @@ class ListenerList extends React.Component {
                     <div className="listener-detail-head">
                       <div className="listener-name">{__.listener} : <span>{config.listener.name}</span></div>
                       <div className="listener-btn">
-                        <Button value={btnValue} disabled={config.assocPoolDisabled} onClick={this.onAction.bind(this, 'assoc_pool', config.listener)} />
+                        <Button value={btnValue} onClick={this.onAction.bind(this, 'modify_listener', config.listener)} />
                         <DropdownButton buttonData={btnData} dropdownItems={config.listenerDropdown} dropdownOnClick={this.onAction.bind(this, 'more_listener_ops', config.listener)}/>
                       </div>
                       <div className="clearfix"></div>

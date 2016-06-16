@@ -63,9 +63,7 @@ function pop(obj, parent, callback) {
         cb(false, getErrorMessage(error));
       });
     },
-    onAction: function(field, status, refs) {
-      // console.log('fff', field)
-    }
+    onAction: function(field, status, refs) {}
   };
 
   commonModal(props);

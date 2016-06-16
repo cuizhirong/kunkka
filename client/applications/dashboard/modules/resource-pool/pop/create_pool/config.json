@@ -37,39 +37,6 @@
     "type": "textarea",
     "field": "desc",
     "is_long_label": true
-  }, {
-    "type": "checkbox",
-    "field": "show_more",
-    "has_long_label": true
-  }, {
-    "type": "select_group",
-    "field": "health_monitor",
-    "is_long_label": true,
-    "hide": true,
-    "empty_text": {
-      "info": "loading"
-    }
-  }, {
-    "type": "input",
-    "field": "monitor_delay",
-    "is_long_label": true,
-    "required": true,
-    "hide": true,
-    "tip_info": "delay_tip"
-  }, {
-    "type": "input",
-    "field": "monitor_timeout",
-    "is_long_label": true,
-    "required": true,
-    "hide": true,
-    "tip_info": "timeout_tip"
-  }, {
-    "type": "input",
-    "field": "monitor_max_retries",
-    "is_long_label": true,
-    "required": true,
-    "hide": true,
-    "tip_info": "retries_tip"
   }],
   "btn": {
     "value": "create",

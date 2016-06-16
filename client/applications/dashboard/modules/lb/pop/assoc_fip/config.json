@@ -6,7 +6,7 @@
     "icon_type": "lb",
     "text": ""
   }, {
-    "type": "select_group",
+    "type": "select",
     "field": "floating_ip",
     "empty_text": {
       "info": "no_floatingip",
