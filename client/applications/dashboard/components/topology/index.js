@@ -59,7 +59,7 @@ class Topology {
     container = wp;
 
     if (data.instance && data.instance.length > 50) {
-      return;
+      data.instance = data.instance.slice(0, 50);
     }
     d = this.processData(data);
 
@@ -422,7 +422,11 @@ class Topology {
     if (offsetX < 0) {
       offsetX = 0;
     }
+
+    // clear canvas
     ctx.clearRect(0, 0, w, h);
+    // clear events
+    event.unBindAll();
 
     ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
     shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
