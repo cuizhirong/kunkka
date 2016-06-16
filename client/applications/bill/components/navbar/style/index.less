@@ -1,0 +1,172 @@
+@import "../../../style/index.less";
+
+@navbar_font_color: #fff;
+@user_info_hover_bg_color: rgba(4,7,20,0.5);
+@settings_bg_color: #081224;
+@settings_hover_color: #17415b;
+
+.halo-com-navbar {
+  width: 100%;
+  height: 68px;
+  position: relative;
+  background: url(/static/assets/top_bg.jpg) 0 0 repeat-x;
+  > .logo {
+    height: 32px;
+    width: 144px;
+    background: url(/static/assets/nav_logo.png) center center no-repeat;
+    background-size: auto 32px;
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    margin-top: -16px;
+  }
+
+  > .region-wp {
+    margin-left: 212px;
+  }
+
+  > .project-wp {
+    margin-left: 20px;
+  }
+
+  > .region-wp,
+  > .project-wp {
+    position: relative;
+    float: left;
+    margin-top: 17px;
+    height: 32px;
+    line-height: 32px;
+    max-width: 180px;
+    color: #fff;
+    cursor: pointer;
+    &:hover {
+      background-color: @user_info_hover_bg_color;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      > .region {
+        display: block;
+      }
+    }
+    .region-name {
+      height: 32px;
+      padding: 0 12px;
+      width: 106px;
+      > .name-label {
+        width: 98px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      > .settings-btn {
+        width: 0;
+        height: 20px;
+        float: right;
+        border-left: 7px solid transparent;
+        border-bottom: 7px solid @navbar_font_color;
+      }
+    }
+
+    .region {
+      position: absolute;
+      top: 32px;
+      left: 0;
+      display: none;
+      .region-dropdown {
+        padding: 10px 0;
+        width: 130px;
+        background-color: @settings_bg_color;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        > li {
+          height: 30px;
+          line-height: 30px;
+          padding: 0 12px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          &:hover {
+            background-color: @settings_hover_color;
+          }
+          a {
+            color: @navbar_font_color;
+          }
+        }
+      }
+    }
+  }
+
+  > .user-info {
+    float: right;
+    cursor: pointer;
+    color: @navbar_font_color;
+    font-size: 16px;
+    line-height: 68px;
+    margin-right: 20px;
+    padding: 0 5px;
+    &:hover {
+      background-color: @user_info_hover_bg_color;
+      .settings {
+        display: block;
+      }
+    }
+    > .user-name {
+      margin: 0 10px;
+      user-select: none;
+    }
+    > .settings-btn {
+      width: 0;
+      height: 36px;
+      float: right;
+      border-left: 7px solid transparent;
+      border-bottom: 7px solid @navbar_font_color;
+    }
+    > .settings {
+      position: absolute;
+      display: none;
+      top: 68px;
+      right: 20px;
+      font-size: 12px;
+      .settings-dropdown {
+        padding: 10px 0;
+        width: 130px;
+        background-color: @settings_bg_color;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        > li {
+          height: 30px;
+          line-height: 30px;
+          padding-left: 16px;
+          &:hover {
+            background-color: @settings_hover_color;
+          }
+          a {
+            color: @navbar_font_color;
+          }
+          i {
+            width: 13px;
+            margin-right: 8px;
+          }
+          &.lang {
+            cursor: default;
+            background-color: transparent;
+            i {
+              margin-right: 4px;
+            }
+            a {
+              padding: 4px;
+              &.active:hover {
+                cursor: pointer;
+                background-color: @settings_hover_color;
+                border-radius: 2px;
+              }
+              &.disabled {
+                cursor: default;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

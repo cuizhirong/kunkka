@@ -1,4 +1,19 @@
+@import "../../../style/index.less";
+
+@price_color: @color_warning;
+@unit_price_color: @color_success;
+
 .halo-module-record {
   flex: 1;
   display: flex;
+  .table {
+    .price {
+      font-weight: bold;
+      color: @price_color;
+    }
+    .unit-price {
+      font-weight: bold;
+      color: @unit_price_color;
+    }
+  }
 }

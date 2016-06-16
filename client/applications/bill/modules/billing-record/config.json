@@ -1,6 +1,6 @@
 {
   "table": {
-    "dataKey": "id",
+    "dataKey": "order_id",
     "loading": true,
     "limit": 10,
     "hover": true,
@@ -20,7 +20,7 @@
       "dataIndex": "status"
     }, {
       "title": ["total_amount"],
-      "key": "amount",
+      "key": "price",
       "dataIndex": "total_price"
     }, {
       "title": ["unit_price"],
@@ -28,7 +28,7 @@
       "dataIndex": "unit_price"
     }, {
       "title": ["region"],
-      "dataIndex": "region",
+      "dataIndex": "region_id",
       "key": "region"
     }, {
       "title": ["created", "time"],
@@ -44,7 +44,8 @@
         "default": true
       }],
       "table": {
-        "dataKey": "id",
+        "dataKey": "_id",
+        "limit": 10,
         "hover": true,
         "column": [{
           "title": ["start", "time"],
@@ -55,13 +56,8 @@
           "dataIndex": "end_time",
           "key": "end_time"
         }, {
-          "title": ["status"],
-          "key": "status",
-          "type": "status",
-          "dataIndex": "status"
-        }, {
           "title": ["total_amount"],
-          "key": "amount",
+          "key": "price",
           "dataIndex": "total_price"
         }, {
           "title": ["unit_price"],
@@ -69,7 +65,7 @@
           "dataIndex": "unit_price"
         }, {
           "title": ["commentary"],
-          "dataIndex": "commentary",
+          "dataIndex": "remarks",
           "key": "commentary"
         }],
         "data": []

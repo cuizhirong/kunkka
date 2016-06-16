@@ -36,7 +36,7 @@ class Main extends React.Component {
           column.render = (col, item, i) => {
             var formatData = column.formatter && column.formatter(col, item, i);
             if (!formatData) {
-              formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')');
+              formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.order_id.substr(0, 8) + ')');
             }
             return (
               <a className="captain" onClick={this.onClickCaptain.bind(this, item)}>
@@ -52,7 +52,7 @@ class Main extends React.Component {
           break;
         case 'time':
           column.render = (col, item, i) => {
-            return moment(item[col.dataIndex]).fromNow();
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
           };
           break;
         default:
@@ -71,7 +71,7 @@ class Main extends React.Component {
   onClickCaptain(item, e) {
     var detail = this.refs.detail;
     var table = this.refs.table;
-    var checked = table.state.checkedKey[item.id];
+    var checked = table.state.checkedKey[item.order_id];
 
     if (checked) {
       table.setState({ checkedKey: {} });
@@ -79,12 +79,12 @@ class Main extends React.Component {
       this.stores.selected = null;
     } else {
       let checkedKey = {};
-      checkedKey[item.id] = true;
+      checkedKey[item.order_id] = true;
       table.setState({
         checkedKey: checkedKey
       });
 
-      detail.open();
+      // detail.open();
       this.stores.selected = item;
       this.onAction('detail', 'open', { data: item });
     }
@@ -123,33 +123,23 @@ class Main extends React.Component {
 
     return (
       <div className="bill-record-main">
-        <SelectList
-          ref="select_list"
-          __={__}
-          onAction={this.onAction} />
+        <SelectList ref="select_list" __={__} onAction={this.onAction} />
         <div className="table-box">
           {
             !table.loading && !table.data.length ?
               <div className="table-with-no-data">
-                <Table
-                  column={table.column}
-                  data={[]}
-                  checkbox={table.checkbox} />
+                <Table ref="table" column={table.column} data={[]} />
                 <p>
-                  {__.there_is_no + __.bill_record + __.full_stop}
+                  {__.no_order_data}
                 </p>
               </div>
-            : <Table
-                ref="table"
-                column={table.column}
-                data={table.data}
-                dataKey={table.dataKey}
-                loading={table.loading}
-                hover={table.hover} />
+            : <Table ref="table" {...table}/>
           }
           {
             !table.loading && pagi ?
               <div className="pagination-box">
+                <span className="page-guide">{__.pages + ': ' + pagi.current + '/' + pagi.total + ' '
+                  + __.total + ': ' + pagi.total_num}</span>
                 <Pagination onClick={this.onClickPagination} current={pagi.current} total={pagi.total}/>
               </div>
               : null

@@ -9,9 +9,24 @@ module.exports = (str) => {
   var type = {};
 
   switch(status) {
+    case 'running':
+      type.icon = 'active';
+      type.status = 'success';
+      break;
+    case 'stopped':
+      type.icon = 'paused';
+      type.status = 'cancel';
+      break;
     case 'deleted':
       type.icon = 'deleted';
       type.status = 'cancel';
+      break;
+    case 'changing':
+      type.icon = 'loading';
+      break;
+    case 'error':
+      type.icon = 'warning';
+      type.status = 'danger';
       break;
     default:
       type.status = 'loading';

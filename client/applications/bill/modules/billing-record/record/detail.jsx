@@ -2,6 +2,8 @@ require('./style/index.less');
 
 var React = require('react');
 var {Tab, Table, Pagination} = require('client/uskin/index');
+var moment = require('client/libs/moment');
+var __ = require('locale/client/bill.lang.json');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -14,9 +16,13 @@ class Detail extends React.Component {
       content: this.props.content
     };
 
-    ['onClickPagination', 'close'].forEach((func) => {
+    ['tableColRender', 'onClickPagination', 'close'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
+  }
+
+  componentWillMount() {
+    this.tableColRender(this.props.content.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -25,6 +31,35 @@ class Detail extends React.Component {
     }
 
     return true;
+  }
+
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'price':
+          column.render = (col, item, i) => {
+            return <span className="price">{item.total_price}</span>;
+          };
+          break;
+        case 'unit_price':
+          column.render = (col, item, i) => {
+            return <span className="unit-price">{item.unit_price}</span>;
+          };
+          break;
+        case 'start_time':
+          column.render = (col, item, i) => {
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+          };
+          break;
+        case 'end_time':
+          column.render = (col, item, i) => {
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+          };
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   open() {
@@ -65,21 +100,25 @@ class Detail extends React.Component {
           <Tab ref="tab" items={state.tabs} type="sm" />
         </div>
         <div className="detail-content">
-          <Table
-            ref="table"
-            mini={true}
-            column={table.column}
-            data={table.data}
-            dataKey={table.dataKey}
-            loading={table.loading}
-            hover={table.hover} />
-          <div className="pagination-box">
-            {
-              pagi ?
+          {
+            table.data.length > 0 ?
+              <Table ref="table" mini={true} {...table}/>
+            : <div className="table-with-no-data">
+                <Table ref="table" mini={true} column={table.column} data={[]} />
+                <p>
+                  {__.no_bill_data}
+                </p>
+              </div>
+          }
+          {
+            pagi ?
+              <div className="pagination-box">
+                <span className="page-guide">{__.pages + ': ' + pagi.current + '/' + pagi.total + ' '
+                  + __.total + ': ' + pagi.total_num}</span>
                 <Pagination current={pagi.current} total={pagi.total} onClick={this.onClickPagination} />
-              : null
-            }
-          </div>
+              </div>
+            : null
+          }
         </div>
       </div>
     );

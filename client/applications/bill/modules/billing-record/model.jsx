@@ -3,7 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var Record = require('./record/index');
 
-// var request = require('./request');
+var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var getStatusIcon = require('../../utils/status_icon');
@@ -21,9 +21,14 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction', 'tableColRender'].forEach((m) => {
+    ['onInitialize', 'onAction', 'tableColRender',
+    'onNextPage', 'openDetail', 'onNextDetailPage'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+  }
+
+  componentWillMount() {
+    this.tableColRender(this.state.config.table.column);
   }
 
   componentDidMount() {
@@ -40,6 +45,16 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'price':
+          column.render = (col, item, i) => {
+            return <span className="price">{item.total_price}</span>;
+          };
+          break;
+        case 'unit_price':
+          column.render = (col, item, i) => {
+            return <span className="unit-price">{item.unit_price}</span>;
+          };
+          break;
         default:
           break;
       }
@@ -47,99 +62,101 @@ class Model extends React.Component {
   }
 
   onInitialize() {
-    this.getProjectRegion();
-    this.getTableData();
+    this.getFilters();
+
+    var current = 1;
+    var limit = this.state.config.table.limit;
+    this.getSales(current, limit);
   }
 
-  getProjectRegion() {
-    //fake data
-    var projects = [{
-      id: '1',
-      name: 'pro1'
-    }, {
-      id: '2',
-      name: 'pro2'
-    }];
-
+  getFilters() {
+    var projects = Object.assign([], HALO.user.projects);
     projects.unshift({
-      id: 'all_project',
+      id: 'all',
       name: __.all + __.project
     });
 
-    var regions = HALO.region_list;
-
+    var regions = Object.assign([], HALO.region_list);
     regions.unshift({
-      id: 'all_region',
+      id: 'all',
       name: __.all + __.region
     });
 
+    var status = [{
+      id: 'all',
+      name: __.all + __.status
+    }, {
+      id: 'running',
+      name: __.running
+    }, {
+      id: 'stopped',
+      name: __.stopped
+    }, {
+      id: 'deleted',
+      name: __.deleted
+    }, {
+      id: 'changing',
+      name: __.changing
+    }, {
+      id: 'error',
+      name: __.error
+    }];
+
     var selectList = this.refs.record.refs.select_list;
     selectList.setState({
-      _projects: projects,
+      projects: projects,
       project: projects[0],
-      _regions: regions,
-      region: regions[0]
+      regions: regions,
+      region: regions[0],
+      statuses: status,
+      status: status[0]
     });
   }
 
-  getTableData() {
-    //fake data
-    var data = [{
-      resource_name: 'name1',
-      id: '1',
-      resource_id: 'id1',
-      status: 'deleted',
-      total_price: '10.111',
-      unit_price: '11.111',
-      region: 'region1',
-      created_at: '2016-06-06T02:26:41Z'
-    }, {
-      resource_name: 'name2',
-      id: '2',
-      resource_id: 'id2',
-      status: 'deleted',
-      total_price: '20.222',
-      unit_price: '22.222',
-      region: 'region2',
-      created_at: '2016-06-06T02:26:41Z'
-    }, {
-      resource_name: 'name3',
-      id: '3',
-      resource_id: 'id3',
-      status: 'deleted',
-      total_price: '30.333',
-      unit_price: '33.333',
-      region: 'region3',
-      created_at: '2016-06-06T02:26:41Z'
-    }, {
-      resource_name: 'name4',
-      id: '4',
-      resource_id: 'id4',
-      status: 'deleted',
-      total_price: '40.444',
-      unit_price: '44.444',
-      region: 'region1',
-      created_at: '2016-06-06T02:26:41Z'
-    }];
+  setTable(data, current, totalNum, limit) {
+    var state = this.state;
+    var newConfig = state.config;
 
-    var newConfig = this.state.config;
     var table = newConfig.table;
     table.data = data;
     table.loading = false;
-    table.pagination = {
-      current: 1,
-      total: 7
-    };
+
+    if (totalNum > 0) {
+      var total = Math.ceil(totalNum / limit);
+      table.pagination = {
+        current: current,
+        total: total,
+        total_num: totalNum
+      };
+    } else {
+      table.pagination = null;
+    }
 
     this.setState({
       config: newConfig
     });
+  }
 
-    // var table = this.refs.record.refs.table;
-    // table.setState({
-      // data: data,
-      // loading: false
-    // });
+  getSales(current, limit) {
+    if (current < 1) {
+      current = 1;
+    }
+
+    var state = this.refs.record.refs.select_list.state;
+    var data = {};
+    if (state.project.id && state.project.id !== 'all') {
+      data.project_id = state.project.id;
+    }
+    if (state.region.id && state.region.id !== 'all') {
+      data.region_id = state.region.id;
+    }
+    if (state.status.id && state.status.id !== 'all') {
+      data.status = state.status.id;
+    }
+
+    request.getSales(current - 1, limit, data).then((res) => {
+      this.setTable(res.orders, current, res.total_count, limit);
+    });
   }
 
   onAction(field, actionType, refs, data) {
@@ -150,7 +167,7 @@ class Model extends React.Component {
       case 'detail':
         if (actionType === 'open') {
           this.openDetail(refs, data.data);
-        } else {
+        } else if (actionType === 'pagination') {
           this.onNextDetailPage(refs, data);
         }
         break;
@@ -165,78 +182,67 @@ class Model extends React.Component {
   onClickSelectList(key, refs, data) {
     switch (key) {
       case 'search':
-        console.log('search', data);
-        break;
       case 'reset':
-        console.log('reset', data);
+        refs.detail.close();
+
+        var current = 1;
+        var limit = this.state.config.table.limit;
+        this.getSales(current, limit);
         break;
       default:
         break;
     }
   }
 
-  openDetail(refs, item) {
-    console.log('click captain', item);
-    var content = refs.detail.state.content;
+  setDetailTable(data, current, totalNum, limit) {
+    var detail = this.refs.record.refs.detail;
 
-    if (item.id === '1') {
-      content.table.data = [{
-        id: '1',
-        end_time: '2016-03-31T23:03:56Z',
-        remarks: 'Hourly Billing',
-        resource_id: '2ff15905-670e-46a9-86e0-c57d01c4a651',
-        start_time: '2016-03-31T22:03:56Z',
-        total_price: '11111',
-        unit: 'hour',
-        unit_price: '11111'
-      }, {
-        id: '2',
-        end_time: '2016-03-31T23:03:56Z',
-        remarks: 'Hourly Billing',
-        resource_id: '2ff15905-670e-46a9-86e0-c57d01c4a651',
-        start_time: '2016-03-31T22:03:56Z',
-        total_price: '11111',
-        unit: 'hour',
-        unit_price: '11111'
-      }];
-      content.pagination = {
-        current: 1,
-        total: 4
+    var content = detail.state.content;
+    content.table.data = data;
+
+    var pagination = null;
+    var total = Math.ceil(totalNum / limit);
+    if (data.length > 0 && total > 1) {
+      pagination = {
+        current: current,
+        total: total,
+        total_num: totalNum
       };
-    } else if (item.id === '2') {
-      content.table.data = [{
-        id: '1',
-        end_time: '2016-03-31T23:03:56Z',
-        remarks: 'Hourly Billing',
-        resource_id: '2ff15905-670e-46a9-86e0-c57d01c4a651',
-        start_time: '2016-03-31T22:03:56Z',
-        total_price: '22222',
-        unit: 'hour',
-        unit_price: '22222'
-      }, {
-        id: '2',
-        end_time: '2016-03-31T23:03:56Z',
-        remarks: 'Hourly Billing',
-        resource_id: '2ff15905-670e-46a9-86e0-c57d01c4a651',
-        start_time: '2016-03-31T22:03:56Z',
-        total_price: '22222',
-        unit: 'hour',
-        unit_price: '22222'
-      }];
-      content.pagination = null;
     }
+    content.pagination = pagination;
 
-    refs.detail.setState({
+    detail.setState({
+      visible: true,
       content: content
     });
   }
 
+  getBillsByOrder(id, current, limit) {
+    if (current < 1) {
+      current = 1;
+    }
+
+    request.getBillsByOrder(id, (current - 1) * limit, limit).then((res) => {
+      this.setDetailTable(res.bills, current, res.total_count, limit);
+    });
+  }
+
+  openDetail(refs, item) {
+    var limit = this.state.config.table.detail.table.limit;
+    var current = 1;
+
+    this.getBillsByOrder(item.order_id, current, limit);
+  }
+
   onNextDetailPage(refs, data) {
-    console.log('on next detail page', data.page, data.item);
+    var limit = this.state.config.table.detail.table.limit;
+
+    this.getBillsByOrder(data.item.order_id, data.page, limit);
   }
 
   onNextPage(refs, page) {
-    console.log('on Next Page', page);
+    var limit = this.state.config.table.limit;
+    this.getSales(page, limit);
   }
 
   render() {
