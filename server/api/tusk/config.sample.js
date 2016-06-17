@@ -41,7 +41,7 @@ module.exports = {
     }, {
       app: 'global',
       name: 'enable_charge',
-      value: 'true',
+      value: 'false',
       type: 'boolean'
     }
   ]
