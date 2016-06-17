@@ -49,6 +49,11 @@ module.exports = {
       name: 'is_show_vlan',
       value: 'true',
       type: 'boolean'
+    }, {
+      app: 'dashboard',
+      name: 'max_floatingip_bandwidth',
+      value: 30,
+      type: 'number'
     }
   ]
 };
