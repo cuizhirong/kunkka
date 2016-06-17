@@ -249,15 +249,15 @@ class Model extends React.Component {
                 <div className={'description' + (loading ? ' hidden' : '')}>
                   <div className="total">
                     <strong>{disk.sum.num + disk.sum.unit}</strong>
-                    <span>{__.host + __.all_capacity}</span>
+                    <span>{__.storage + __.all_capacity}</span>
                   </div>
                   <div className="allocate-box">
                     <div className={'allocate allocate-' + disk.rateClass}>
-                      {__.allocated + __.disk}
+                      {__.allocated + __.capacity}
                       <span>{disk.used.num}</span>{disk.used.unit}
                     </div>
                     <div className="allocate allocate-free">
-                      {__.unallocated + __.disk}
+                      {__.unallocated + __.capacity}
                       <span>{disk.free.num}</span>{disk.free.unit}
                     </div>
                   </div>
