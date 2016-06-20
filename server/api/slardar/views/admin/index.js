@@ -99,7 +99,8 @@ function renderTemplate (req, res, next) {
       };
       let HALO = {
         configs: {
-          lang: locale
+          lang: locale,
+          domain: config('domain')
         },
         user: {
           projectId: user.projectId,
