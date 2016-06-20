@@ -544,6 +544,16 @@ class Topology {
         if (_instance.floating_ip) {
           ctx.drawImage(imageList[2], _x + 3.5, _instance.y + 3.5, 16, 16);
         }
+        (function(n) {
+          event.bind({
+            left: n.x,
+            top: n.y,
+            width: n.w,
+            height: n.h
+          }, 0, function() {
+            routerUtil.pushState('/dashboard/instance/' + n.id);
+          });
+        })(_instance);
       });
     });
 
