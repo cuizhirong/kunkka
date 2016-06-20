@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
+var getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -9,6 +10,7 @@ function pop(obj, parent, callback) {
     config.fields[0].value = obj.name;
     config.fields[1].value = obj.email;
     config.fields[2].value = obj.description;
+    config.fields[6].hide = true;
     config.btn.value = 'modify';
     config.btn.type = 'update';
     config.btn.disabled = false;
@@ -17,6 +19,7 @@ function pop(obj, parent, callback) {
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.fields[2].value = '';
+    config.fields[6].hide = false;
     config.btn.value = 'create';
     config.btn.type = 'create';
     config.btn.disabled = true;
@@ -26,31 +29,72 @@ function pop(obj, parent, callback) {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
-    onConfirm: function(refs, cb) {
-      request.getDomains().then((domainRes) => {
+    onInitialize: function(refs) {
+      request.getDomains().then((domains) => {
         var defaultDomainName = HALO.configs.domain;
-        var domain = domainRes.domains.find((ele) => ele.name.toLowerCase() === defaultDomainName);
+        var domain = domains.find((ele) => ele.name.toLowerCase() === defaultDomainName);
 
+        refs.domain.setState({
+          data: domains,
+          value: domain.id,
+          hide: false
+        });
+      });
+
+      request.getRoles().then((res) => {
+        refs.role.setState({
+          data: res,
+          value: res[0].id
+        });
+      });
+    },
+    onConfirm: function(refs, cb) {
+      request.getDomains().then((domains) => {
+        var username = refs.name.state.value;
         var data = {
-          name: refs.name.state.value,
+          name: username,
           description: refs.describe.state.value,
           email: refs.email.state.value,
           password: refs.password.state.value,
-          domain_id: domain.id
+          domain_id: refs.domain.state.value
         };
         if (obj) {
           request.editUser(obj.id, data).then((res) => {
             callback && callback(res.user);
             cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
           });
         } else {
+          var hasPrj = refs.crt_user_project.state.checked;
+          data.is_create_project = hasPrj;
+
+          if (hasPrj) {
+            var prjName = refs.project_name.state.value;
+            prjName = prjName !== '' ? prjName : username + '_project';
+            data.project_name = prjName;
+            data.role = refs.role.state.value;
+          }
+
           request.createUser(data).then((res) => {
             callback && callback(res.user);
             cb(true);
+          }).catch((prjError) => {
+            var response = JSON.parse(prjError.response);
+
+            var msg;
+            if (response.error) {
+              msg = response.error;
+            } else if (response.response) {
+              let text = JSON.parse(response.response.text);
+              msg = text.error.message;
+            } else {
+              msg = 'There is an error occured';
+            }
+
+            cb(false, msg);
           });
         }
-
       });
     },
     onAction: function(field, status, refs) {
@@ -65,6 +109,18 @@ function pop(obj, parent, callback) {
 
           refs.btn.setState({
             disabled: !valid
+          });
+          break;
+        case 'crt_user_project':
+          var checked = status.checked;
+          var username = refs.name.state.value;
+          var prjName = refs.project_name.state.value;
+          refs.project_name.setState({
+            hide: !checked,
+            value: checked ? username + '_project' : prjName
+          });
+          refs.role.setState({
+            hide: !checked
           });
           break;
         default:

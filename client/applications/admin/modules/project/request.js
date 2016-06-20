@@ -65,6 +65,11 @@ module.exports = {
       return users;
     });
   },
+  addRole: function (domainID, userID, roleID) {
+    return fetch.put({
+      url: '/proxy/keystone/v3/projects/' + domainID + '/users/' + userID + '/roles/' + roleID
+    });
+  },
   getUsers: function(userIds, assignments) {
     var deferredList = [];
     deferredList.push(fetch.get({
@@ -133,12 +138,13 @@ module.exports = {
     }).then((res) => {
       var domains = [];
       res.domains.forEach((domain) => {
-        if (domain.id === 'defult') {
-          domain.unshift(domain);
+        if (domain.id === 'default') {
+          domains.unshift(domain);
         } else {
           domains.push(domain);
         }
       });
+
       return domains;
     });
   },

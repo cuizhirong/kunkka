@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
+var getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -48,12 +49,17 @@ function pop(obj, parent, callback) {
         request.editProject(obj.id, data).then((res) => {
           callback && callback(res.project);
           cb(true);
+        }).catch((error) => {
+          cb(false, getErrorMessage(error));
         });
       } else {
         data.domain_id = refs.domain.state.value;
+
         request.createProject(data).then((res) => {
-          callback && callback(res.projecte);
+          callback && callback(res.project);
           cb(true);
+        }).catch((error) => {
+          cb(false, getErrorMessage(error));
         });
       }
     },

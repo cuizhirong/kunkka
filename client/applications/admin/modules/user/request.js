@@ -53,6 +53,38 @@ module.exports = {
     }));
     return RSVP.all(deferredList);
   },
+  getDomains: function() {
+    return fetch.get({
+      url: '/proxy/keystone/v3/domains'
+    }).then((res) => {
+      var domains = [];
+      res.domains.forEach((domain) => {
+        if (domain.id === 'default') {
+          domains.unshift(domain);
+        } else {
+          domains.push(domain);
+        }
+      });
+
+      return domains;
+    });
+  },
+  createProject: function(data) {
+    return fetch.post({
+      url: '/proxy/keystone/v3/projects',
+      data: {
+        project: data
+      }
+    });
+  },
+  getRoles: function() {
+    return fetch.get({
+      url: '/proxy/keystone/v3/roles'
+    }).then((res) => {
+      var roles = res.roles.filter((ele) => ele.name !== 'billing_owner');
+      return roles;
+    });
+  },
   deleteItem: function(items) {
     var deferredList = [];
     items.forEach((item) => {
@@ -64,10 +96,8 @@ module.exports = {
   },
   createUser: function(data) {
     return fetch.post({
-      url: '/proxy/keystone/v3/users',
-      data: {
-        user: data
-      }
+      url: '/api/v1/users',
+      data: data
     });
   },
   editUser: function(userID, data) {
@@ -149,11 +179,6 @@ module.exports = {
       };
     });
   },
-  getRoles: function() {
-    return fetch.get({
-      url: '/proxy/keystone/v3/roles'
-    });
-  },
   addRole: function(type, user, roleID, domainID) {
     if (type === 'domain') {
       return fetch.put({
@@ -203,11 +228,6 @@ module.exports = {
         });
       });
       return allGroups;
-    });
-  },
-  getDomains: function() {
-    return fetch.get({
-      url: '/proxy/keystone/v3/domains'
     });
   },
   joinGroup: function(userID, groupID) {

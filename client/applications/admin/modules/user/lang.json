@@ -9,7 +9,9 @@
     "leave": "Leave",
     "main": "Main",
     "join": "Join",
-    "no_group": "No available group"
+    "no_group": "No available group",
+    "crt_user_project": "Create a new project",
+    "project_name": "Project Name"
   },
   "zh-CN": {
     "email": "邮箱",
@@ -21,6 +23,8 @@
     "main": "主",
     "leave": "离开",
     "join": "加入",
-    "no_group": "没有可用用户组"
+    "no_group": "没有可用用户组",
+    "crt_user_project": "创建项目",
+    "project_name": "项目名称"
   }
 }

@@ -15,12 +15,29 @@
     "input_type": "password",
     "required": true
   }, {
+    "type": "select",
+    "field": "domain",
+    "hide": true
+  }, {
     "type": "input",
     "field": "email"
   }, {
     "type": "textarea",
     "field": "describe",
     "value": ""
+  }, {
+    "type": "checkbox",
+    "field": "crt_user_project",
+    "checked": false,
+    "has_label": true
+  }, {
+    "type": "input",
+    "field": "project_name",
+    "hide": true
+  }, {
+    "type": "select",
+    "field": "role",
+    "hide": true
   }],
   "btn": {
     "value": "create",
