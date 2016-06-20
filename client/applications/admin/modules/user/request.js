@@ -205,6 +205,11 @@ module.exports = {
       return allGroups;
     });
   },
+  getDomains: function() {
+    return fetch.get({
+      url: '/proxy/keystone/v3/domains'
+    });
+  },
   joinGroup: function(userID, groupID) {
     return fetch.put({
       url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID

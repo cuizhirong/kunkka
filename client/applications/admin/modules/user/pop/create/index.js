@@ -28,23 +28,30 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {
-        name: refs.name.state.value,
-        description: refs.describe.state.value,
-        email: refs.email.state.value,
-        password: refs.password.state.value
-      };
-      if (obj) {
-        request.editUser(obj.id, data).then((res) => {
-          callback && callback(res.user);
-          cb(true);
-        });
-      } else {
-        request.createUser(data).then((res) => {
-          callback && callback(res.user);
-          cb(true);
-        });
-      }
+      request.getDomains().then((domainRes) => {
+        var defaultDomainName = HALO.configs.domain;
+        var domain = domainRes.domains.find((ele) => ele.name.toLowerCase() === defaultDomainName);
+
+        var data = {
+          name: refs.name.state.value,
+          description: refs.describe.state.value,
+          email: refs.email.state.value,
+          password: refs.password.state.value,
+          domain_id: domain.id
+        };
+        if (obj) {
+          request.editUser(obj.id, data).then((res) => {
+            callback && callback(res.user);
+            cb(true);
+          });
+        } else {
+          request.createUser(data).then((res) => {
+            callback && callback(res.user);
+            cb(true);
+          });
+        }
+
+      });
     },
     onAction: function(field, status, refs) {
       switch(field) {
