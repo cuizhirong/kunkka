@@ -21,4 +21,13 @@ driver.listProjects = function (token, remote, callback, query) {
   );
 };
 
+driver.createProject = function (token, remote, callback, payload) {
+  return driver.postMethod(
+    remote + '/v3/projects',
+    token,
+    callback,
+    payload
+  );
+};
+
 module.exports = driver;
