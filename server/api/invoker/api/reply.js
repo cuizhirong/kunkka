@@ -26,9 +26,28 @@ Reply.prototype = {
     });
   },
   updateReply: function (req, res, next) {
+    let replyId = req.params.replyId;
+    let content = req.body.content;
+
+    replyDao.findOneById(replyId).then(reply => {
+      reply.content = content;
+      return reply.save();
+    }).then(result => {
+      res.json(result);
+    }).catch(err => {
+      res.status(500).json(err);
+    });
 
   },
   deleteReply: function (req, res, next) {
+    let replyId = req.params.replyId;
+    replyDao.findOneById(replyId).then(reply => {
+      return reply.destroy();
+    }).then(result => {
+      res.json(result);
+    }).catch(err => {
+      res.status(500).json(err)
+    });
 
   },
   getRepliesByTicket: function (req, res, next) {
@@ -36,6 +55,8 @@ Reply.prototype = {
   },
   initRoutes: function () {
     this.app.post('/api/ticket/:owner/ticket/:ticketId/reply', this.checkOwner, this.createReply);
+    this.app.put('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.updateReply);
+    this.app.delete('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.deleteReply);
   }
 };
 
