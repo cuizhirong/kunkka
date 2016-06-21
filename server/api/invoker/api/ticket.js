@@ -12,7 +12,7 @@ function Ticket (app) {
 
 Ticket.prototype = {
   createTicket: function (req, res, next) {
-    let owner = req.body.owner;
+    let owner = req.params.owner;
     let title = req.body.title;
     let description = req.body.description;
     let type = req.body.type;
@@ -40,8 +40,21 @@ Ticket.prototype = {
   },
   updateTicket: function (req, res, next) {
     let ticketId = req.params.ticketId;
+    let owner = req.params.owner;
     let data = req.body;
+    let _attachments = [];
+    if (req.body.attachments) {
+      req.body.addAttachments.forEach(a => {
+        _attachments.push({
+          owner: owner,
+          url: a
+        });
+      });
+    }
     ticketDao.findOneById(ticketId).then(ticket => {
+      if (data.attachments) {
+        data.attachments = _attachments;
+      }
       Object.assign(ticket, data);
       return ticket.save();
     }).then(result => {
@@ -53,7 +66,6 @@ Ticket.prototype = {
   addAttachments: function (req, res, next) {
     let owner = req.params.owner;
     let attachments = req.body.attachments;
-    console.log(attachments);
     let ticketId = req.params.ticketId;
     let _attachments = [];
     attachments.forEach(a => {
