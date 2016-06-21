@@ -1,8 +1,12 @@
 {
   "en": {
-    "unauthorized": "Unauthorized"
+    "unauthorized": "Unauthorized",
+    "duplicateUser": "Duplicated user name",
+    "duplicateProject": "Duplicated project name"
     },
   "zh-CN": {
-    "unauthorized": "授权失效"
+    "unauthorized": "授权失效",
+    "duplicateUser": "用户名重复",
+    "duplicateProject": "项目名重复"
   }
 }
