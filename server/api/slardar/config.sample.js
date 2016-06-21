@@ -54,6 +54,11 @@ module.exports = {
       name: 'max_floatingip_bandwidth',
       value: 30,
       type: 'number'
+    }, {
+      app: 'dashboard',
+      name: 'listener_max_connection',
+      value: 40000,
+      type: 'number'
     }
   ]
 };
