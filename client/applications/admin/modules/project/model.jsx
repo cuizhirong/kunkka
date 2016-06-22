@@ -644,51 +644,55 @@ class Model extends React.Component {
       type: 'editable',
       field: 'gigabytes'
     });
-    if (quotas.gigabytes_sata) {
-      items.push({
-        title: __.capacity_type + __.size + '(GB)',
-        content: quotas.gigabytes_sata.total,
-        type: 'editable',
-        field: 'gigabytes_sata'
-      });
-    }
-    if (quotas.gigabytes_ssd) {
-      items.push({
-        title: __.performance_type + __.size + '(GB)',
-        content: quotas.gigabytes_ssd.total,
-        type: 'editable',
-        field: 'gigabytes_ssd'
-      });
-    }
+    Object.keys(quotas).forEach((key) => {
+      var type = key.split('gigabytes_')[1];
+      if (type) {
+        items.push({
+          title: __.volume + (__[type] ? __[type] : ' ' + type + ' ') + __.size + '(GB)',
+          content: quotas[key].total,
+          type: 'editable',
+          field: key
+        });
+      }
+    });
+
     items.push({
       title: __.volume + __.quota,
       content: quotas.volumes.total,
       type: 'editable',
       field: 'volumes'
     });
-    if (quotas.volumes_sata) {
-      items.push({
-        title: __.capacity_type + __.quota,
-        content: quotas.volumes_sata.total,
-        type: 'editable',
-        field: 'volumes_sata'
-      });
-    }
-    if (quotas.volumes_ssd) {
-      items.push({
-        title: __.performance_type + __.quota,
-        content: quotas.volumes_ssd.total,
-        type: 'editable',
-        field: 'volumes_ssd'
-      });
-    }
+    Object.keys(quotas).forEach((key) => {
+      var type = key.split('volumes_')[1];
+      if (type) {
+        items.push({
+          title: __.volume + (__[type] ? __[type] : ' ' + type + ' ') + __.quota,
+          content: quotas[key].total,
+          type: 'editable',
+          field: key
+        });
+      }
+    });
 
-    Array.prototype.push.apply(items, [{
-      title: __.snapshot,
+    items.push({
+      title: __.snapshot + __.quota,
       content: quotas.snapshots.total,
       type: 'editable',
       field: 'snapshots'
-    }, {
+    });
+    Object.keys(quotas).forEach((key) => {
+      var type = key.split('snapshots_')[1];
+      if (type) {
+        items.push({
+          title: __.snapshot + (__[type] ? __[type] : ' ' + type + ' ') + __.quota,
+          content: quotas[key].total,
+          type: 'editable',
+          field: key
+        });
+      }
+    });
+
+    Array.prototype.push.apply(items, [{
       title: __.floatingip,
       content: quotas.floatingip.total,
       type: 'editable',
@@ -703,6 +707,11 @@ class Model extends React.Component {
       content: quotas.subnet.total,
       type: 'editable',
       field: 'subnet'
+    }, {
+      title: __.port,
+      content: quotas.port.total,
+      type: 'editable',
+      field: 'port'
     }, {
       title: __.router,
       content: quotas.router.total,

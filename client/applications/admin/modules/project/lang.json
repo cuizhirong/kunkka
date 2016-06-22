@@ -11,7 +11,9 @@
     "network": "Network",
     "floatingip": "Floating IP",
     "keypair": "Keypair",
-    "security_group": "Security Group"
+    "security_group": "Security Group",
+    "sata": "SATA",
+    "ssd": "SSD"
   },
   "zh-CN": {
     "quota": "配额",
@@ -25,6 +27,8 @@
     "network": "网络",
     "floatingip": "公网IP",
     "keypair": "密钥",
-    "security_group": "安全组"
+    "security_group": "安全组",
+    "sata": "容量型",
+    "ssd": "性能型"
   }
 }
