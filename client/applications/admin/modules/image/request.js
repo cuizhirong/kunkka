@@ -66,6 +66,12 @@ module.exports = {
       return res;
     });
   },
+  editName: function(imageID, data) {
+    return fetch.patch({
+      url: '/api/v1/images/' + imageID,
+      data: data
+    });
+  },
   delete: function(id) {
     return fetch.delete({
       url: '/proxy/glance/v2/images/' + id

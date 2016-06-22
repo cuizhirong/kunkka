@@ -1,0 +1,11 @@
+{
+  "title": ["edit", "name"],
+  "fields": [{
+    "type": "input",
+    "field": "name"
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": false
+  }
+}

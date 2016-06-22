@@ -5,6 +5,11 @@
     "default": true
   }],
   "btns": [{
+    "value": ["edit", "name"],
+    "key": "edit_name",
+    "icon": "edit",
+    "disabled": true
+  }, {
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",

@@ -7,6 +7,7 @@ var Main = require('../../components/main/index');
 //detail components
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
+var editName = require('./pop/edit_name/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -345,6 +346,14 @@ class Model extends React.Component {
 
     var that = this;
     switch(key) {
+      case 'edit_name':
+        editName(rows[0], null, (res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -427,6 +436,9 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
+        case 'edit_name':
+          btns[key].disabled = sole ? false : true;
+          break;
         case 'delete':
           btns[key].disabled = (sole && sole.image_type === 'snapshot') ? false : true;
           break;
