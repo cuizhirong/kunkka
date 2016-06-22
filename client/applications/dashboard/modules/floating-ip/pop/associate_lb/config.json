@@ -1,0 +1,26 @@
+{
+  "title": ["associate", "load", "balancer"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "floating_ip",
+    "icon_type": "floating-ip",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "lb",
+    "empty_text": {
+      "info": "no_lb"
+    }
+  }, {
+    "type": "select",
+    "field": "port",
+    "hide": true
+  }, {
+    "type": "warning",
+    "field": "tip_lb_assoc_fip"
+  }],
+  "btn": {
+    "value": "associate",
+    "disabled": true
+  }
+}

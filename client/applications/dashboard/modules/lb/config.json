@@ -19,6 +19,10 @@
     "dropdown": {
       "items": [{
         "items": [{
+          "title": ["modify"],
+          "key": "modify",
+          "disabled": true
+        }, {
           "title": ["associate", "floating_ip"],
           "key": "assoc_fip",
           "disabled": true
@@ -73,7 +77,18 @@
         "name": ["active"],
         "key": "active",
         "filterBy": "active"
+      }, {
+        "name": ["error"],
+        "key": "error",
+        "filterBy": "ERROR"
+      }, {
+        "name": ["build"],
+        "key": "pending_create",
+        "filterBy": "pending_create"
       }]
+    }, {
+      "title": ["operation", "status"],
+      "key": "operating_status"
     }],
     "data": [],
     "detail": {

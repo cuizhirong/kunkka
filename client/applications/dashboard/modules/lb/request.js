@@ -4,11 +4,18 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['loadbalancer', 'floatingip'], forced).then(function(data) {
+    return storage.getList(['loadbalancer', 'floatingip', 'subnet'], forced).then(function(data) {
       data.loadbalancer.forEach(lb => {
         data.floatingip.some(fip => {
           if(lb.vip_port_id === fip.port_id) {
             lb.floatingip = fip;
+            return true;
+          }
+          return false;
+        });
+        data.subnet.some(s => {
+          if(lb.vip_subnet_id === s.id) {
+            lb.subnet = s.name;
             return true;
           }
           return false;
@@ -20,6 +27,12 @@ module.exports = {
   createLb: function(data) {
     return fetch.post({
       url: '/proxy/neutron/v2.0/lbaas/loadbalancers',
+      data: {'loadbalancer': data}
+    });
+  },
+  updateLb: function(lbID, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/lbaas/loadbalancers/' + lbID,
       data: {'loadbalancer': data}
     });
   },

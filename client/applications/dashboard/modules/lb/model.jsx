@@ -88,6 +88,11 @@ class Model extends React.Component {
             return item.floatingip ? item.floatingip.floating_ip_address : '-';
           };
           break;
+        case 'operating_status':
+          column.render = (col, item, i) => {
+            return __[item.operating_status.toLowerCase()];
+          };
+          break;
         default:
           break;
       }
@@ -174,6 +179,9 @@ class Model extends React.Component {
       case 'create':
         createLb();
         break;
+      case 'modify':
+        createLb(rows[0]);
+        break;
       case 'assoc_fip':
         assocFip(rows[0]);
         break;
@@ -229,6 +237,7 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'modify':
         case 'delete':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
@@ -285,6 +294,7 @@ class Model extends React.Component {
         break;
       case 'listener':
         if (isAvailableView(rows)) {
+          detail.setState({loading: true});
           request.getRelatedListeners(rows[0].listeners).then(res => {
             contents[tabKey] = (
               <ListenerList
@@ -323,8 +333,32 @@ class Model extends React.Component {
       title: __.id,
       content: item.id
     }, {
+      title: __.subnet,
+      content: item.vip_subnet_id ?
+        <span>
+          <i className="glyphicon icon-subnet" />
+          <a data-type="router" href={'/dashboard/subnet/' + item.vip_subnet_id}>
+            {item.subnet || '(' + item.vip_subnet_id.substring(0, 8) + ')'}
+          </a>
+        </span> : '-'
+    }, {
       title: __.ip_address,
       content: item.vip_address
+    }, {
+      title: __.floating_ip,
+      content: item.floatingip ?
+        <span>
+          <i className="glyphicon icon-floating-ip" />
+          <a data-type="router" href={'/dashboard/floating-ip/' + item.floatingip.id}>
+            {item.floatingip.floating_ip_address}
+          </a>
+        </span> : '-'
+    }, {
+      title: __.status,
+      content: getStatusIcon(item.provisioning_status.toLowerCase())
+    }, {
+      title: __.operation + __.status,
+      content: __[item.operating_status.toLowerCase()]
     }, {
       title: __.desc,
       content: item.description
@@ -393,26 +427,7 @@ class Model extends React.Component {
 
       return dropdown;
     };
-    var getPolicyDropdown = function(item) {
-      var dropdown = [{
-        items: [{
-          title: __.modify,
-          key: 'modify'
-        }, {
-          title: __.enable,
-          key: 'enable'
-        }, {
-          title: __.disable,
-          key: 'disable'
-        }, {
-          title: __.delete,
-          key: 'delete',
-          danger: true
-        }]
-      }];
 
-      return dropdown;
-    };
     var getListenerDetail = function(item) {
       var itemDetail = [{
         feild: __.protocol,
@@ -433,18 +448,11 @@ class Model extends React.Component {
 
       return itemDetail;
     };
-    var getPolicyTable = function(item) {return [];};
-    var getPolicyItems = function(item) {return [];};
 
     items.map((item, i) => {
       configs.push({listener: item});
       configs[i].listenerDropdown = getlistenerDropdown(item);
       configs[i].listenerDetail = getListenerDetail(item);
-      if(item.protocol === 'HTTP') {
-        configs[i].policyDropdown = getPolicyDropdown(item);
-        configs[i].policyTable = getPolicyTable(item);
-        configs[i].policyItems = getPolicyItems(item);
-      }
     });
 
     return configs;
@@ -456,16 +464,11 @@ class Model extends React.Component {
       case 'create_listener':
         createListener(data.rawItem, null, false);
         break;
-      case 'add_policy':
-        break;
       case 'modify_listener':
         createListener(data.childItem, null, true);
         break;
       case 'more_listener_ops':
         this.onClickListenerMoreBtn(moreBtnKey, data);
-        break;
-      case 'more_policy_ops':
-        this.onClickPolicyMoreBtn(moreBtnKey, data);
         break;
       default:
         break;
@@ -498,24 +501,9 @@ class Model extends React.Component {
     }
   }
 
-  onClickPolicyMoreBtn(btnKey, data) {
-    switch(btnKey) {
-      case 'modify':
-        break;
-      case 'enable':
-        break;
-      case 'disable':
-        break;
-      case 'delete':
-        break;
-      default:
-        break;
-    }
-  }
-
   render() {
     return (
-      <div className="halo-module-image" style={this.props.style}>
+      <div className="halo-module-lb" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

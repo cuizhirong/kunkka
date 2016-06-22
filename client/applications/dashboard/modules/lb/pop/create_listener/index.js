@@ -3,6 +3,7 @@ var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var popSlider = require('./com_slider');
 
 function pop(obj, parent, actionModify, callback) {
   if(actionModify) {
@@ -18,6 +19,11 @@ function pop(obj, parent, actionModify, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      refs.connection_limit.setState({
+        render: popSlider,
+        value: 10000
+      });
+
       if(actionModify) {
         refs.name.setState({
           value: obj.name

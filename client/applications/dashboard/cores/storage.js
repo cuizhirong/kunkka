@@ -20,7 +20,9 @@ var subnet = require('../modules/subnet/cache');
 var volume = require('../modules/volume/cache');
 var loadbalancer = require('../modules/lb/cache');
 var pool = require('../modules/resource-pool/cache');
-var listener = require('../modules/resource-pool/pop/create_pool/cache');
+var listener = require('../modules/lb/cache');
+var healthmonitor = require('../modules/resource-pool/cache');
+var member = require('../modules/resource-pool/cache');
 
 var map = {
   network: ['subnet'],
@@ -78,6 +80,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener);
+Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member);
 
 module.exports = new Storage();

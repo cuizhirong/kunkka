@@ -17,15 +17,25 @@ function pop(obj, parent, callback) {
   }];
   config.fields[3].data = algorithm;
 
+  if(obj) {
+    config.title = ['modify', 'resource', 'pool'];
+    config.btn.value = 'modify';
+  } else {
+    config.title = ['create', 'resource', 'pool'];
+    config.btn.value = 'create';
+  }
+
   var getListenersUnderType = function(items) {
     var listeners = {};
     items.forEach(item => {
-      if(item.protocol === 'TCP') {
-        listeners.tcp = [];
-        listeners.tcp.push(item);
-      } else {
-        listeners.http = [];
-        listeners.http.push(item);
+      if(!item.default_pool_id) {
+        if(item.protocol === 'TCP') {
+          listeners.tcp = [];
+          listeners.tcp.push(item);
+        } else {
+          listeners.http = [];
+          listeners.http.push(item);
+        }
       }
     });
 
@@ -52,47 +62,46 @@ function pop(obj, parent, callback) {
           disabled: true
         });
 
-        request.getListeners(true).then(res => {
-          var l = [];
-          res.some(item => {
-            if(item.id === obj.listeners[0].id) {
-              l.push(item);
-              return true;
-            }
-            return false;
+        refs.listener.setState({
+          data: [obj.listener],
+          value: obj.listener.id,
+          disabled: true
+        });
+
+        //checkbox to modify the healthmonitor associated with the pool
+        if(obj.healthmonitor) {
+          refs.modify_hm.setState({
+            hide: false
           });
-          refs.listener.setState({
-            data: l,
-            value: l[0] ? l[0].id : '',
-            disabled: true
+          refs.delay.setState({
+            value: obj.healthmonitor.delay
           });
-          refs.btn.setState({
-            disabled: false
+          refs.timeout.setState({
+            value: obj.healthmonitor.timeout
           });
+          refs.max_retries.setState({
+            value: obj.healthmonitor.max_retries
+          });
+        }
+
+        refs.btn.setState({
+          disabled: false
         });
       } else {
-        var p = refs.protocol.state.data[0].name;
-        refs.protocol.setState({
-          value: p
-        });
-        refs.load_algorithm.setState({
-          value: refs.load_algorithm.state.data[0].id
-        });
-
         request.getListeners(true).then(res => {
-          var listeners = getListenersUnderType(res),
-            l = listeners[p.toLowerCase()];
+          var listeners = getListenersUnderType(res);
           refs.listener.setState({
-            listeners: listeners,
-            data: l,
-            value: l[0] ? l[0].id : ''
+            listeners: listeners
           });
 
-          if(refs.listener.state.value) {
-            refs.btn.setState({
-              disabled: false
-            });
-          }
+          var p = refs.protocol.state.data[0].name;
+          refs.protocol.setState({
+            value: p
+          });
+          refs.load_algorithm.setState({
+            value: refs.load_algorithm.state.data[0].id
+          });
+
         });
       }
     },
@@ -104,12 +113,29 @@ function pop(obj, parent, callback) {
           description: refs.desc.state.value
         };
 
-        request.updatePool(obj.id, updateParam).then(res => {
-          callback && callback();
-          cb(true);
-        }).catch(function(error) {
-          cb(false, getErrorMessage(error));
-        });
+        if(!refs.modify_hm.state.checked) {
+          request.updatePool(obj.id, updateParam).then(res => {
+            callback && callback();
+            cb(true);
+          }).catch(function(error) {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          var updateMonitor = {
+            delay: refs.delay.state.value,
+            timeout: refs.timeout.state.value,
+            max_retries: refs.max_retries.state.value
+          };
+
+          request.updatePool(obj.id, updateParam).then(res => {
+            request.updateMonitor(obj.healthmonitor.id, updateMonitor).then(r => {
+              callback && callback();
+              cb(true);
+            }).catch(er => {
+              cb(false, getErrorMessage(er));
+            });
+          });
+        }
       } else {
         var param = {
           name: refs.name.state.value,
@@ -128,28 +154,110 @@ function pop(obj, parent, callback) {
       }
     },
     onAction: function(field, status, refs) {
-      switch(field) {
-        case 'protocol':
-          var listeners = refs.listener.state.listeners;
-          if(listeners) {
-            var tcpL = refs.listener.state.listeners.tcp,
-              httpL = refs.listener.state.listeners.http;
+      if(!obj) {
+        switch(field) {
+          case 'protocol':
+            var listeners = refs.listener.state.listeners;
+            if(listeners) {
+              var tcpL = listeners.tcp,
+                httpL = listeners.http;
 
-            if(refs.protocol.state.value === 'TCP') {
-              refs.listener.setState({
-                data: tcpL,
-                value: tcpL[0] ? tcpL[0].id : ''
+              if(refs.protocol.state.value === 'TCP') {
+                refs.listener.setState({
+                  data: tcpL,
+                  value: tcpL ? tcpL[0].id : ''
+                });
+              } else {
+                refs.listener.setState({
+                  data: httpL,
+                  value: httpL ? httpL[0].id : ''
+                });
+              }
+            }
+            break;
+          default:
+            break;
+        }
+        if(refs.protocol.state.value && refs.listener.state.value && refs.load_algorithm.state.value) {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
+      } else {
+        var delay = refs.delay.state,
+          timeout = refs.timeout.state,
+          retries = refs.max_retries.state,
+          hmFilled = delay.value && timeout.value && retries.value && !delay.error && !timeout.error && !retries.error;
+        switch(field) {
+          case 'modify_hm':
+            var modifyHm = refs.modify_hm.state.checked;
+            if(obj.healthmonitor) {
+              refs.delay.setState({
+                hide: !modifyHm
               });
-            } else {
-              refs.listener.setState({
-                data: httpL,
-                value: httpL[0] ? httpL[0].id : ''
+              refs.timeout.setState({
+                hide: !modifyHm
+              });
+              refs.max_retries.setState({
+                hide: !modifyHm
+              });
+            } else if(!obj.healthmonitor) {
+              refs.pool_no_hm.setState({
+                hide: !modifyHm
               });
             }
+            break;
+          case 'delay':
+            if(delay.value > 1 && delay.value < 61) {
+              refs.delay.setState({
+                error: false
+              });
+            } else {
+              refs.delay.setState({
+                error: true
+              });
+            }
+            break;
+          case 'timeout':
+            if(timeout.value > 4 && timeout.value < 301) {
+              refs.timeout.setState({
+                error: false
+              });
+            } else {
+              refs.timeout.setState({
+                error: true
+              });
+            }
+            break;
+          case 'max_retries':
+            if(retries.value > 0 && retries.value < 11) {
+              refs.max_retries.setState({
+                error: false
+              });
+            } else {
+              refs.max_retries.setState({
+                error: true
+              });
+            }
+            break;
+          default:
+            break;
+        }
+        if(refs.modify_hm.state.checked) {
+          if(hmFilled) {
+            refs.btn.setState({
+              disabled: false
+            });
+          } else {
+            refs.btn.setState({
+              disabled: true
+            });
           }
-          break;
-        default:
-          break;
+        } else {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
       }
     }
   };

@@ -1,0 +1,11 @@
+{
+  "title": ["enable", "resource", "status"],
+  "fields": [{
+    "type": "text",
+    "field": "enable_resource"
+  }],
+  "btn": {
+    "value": "enable",
+    "disabled": true
+  }
+}

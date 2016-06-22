@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var {Button, DropdownButton, Table} = require('client/uskin/index');
+var {Button, DropdownButton} = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
 // var getStatusIcon = require('../../utils/status_icon');
 
@@ -58,25 +58,7 @@ class ListenerList extends React.Component {
   render() {
     var listenerConfigs = this.props.listenerConfigs,
       btnValue = this.wordsToLine(['modify', 'listener']),
-      policyBtnValue = this.wordsToLine(['add_', 'forwarding', 'policy']),
-      btnData = {value: __.more},
-      policyColumn = [{
-        title: 'name',
-        key: 'name',
-        dataIndex: 'name'
-      }, {
-        title: 'action',
-        key: 'action'
-      }, {
-        title: 'rules',
-        key: 'rules'
-      }, {
-        title: 'status',
-        key: 'status'
-      }, {
-        title: 'enabled',
-        key: 'enabled'
-      }];
+      btnData = {value: __.more};
 
     return (
       <div className="toggle">
@@ -85,7 +67,7 @@ class ListenerList extends React.Component {
           <i className={'glyphicon icon-arrow-' + (this.state.toggle ? 'up' : 'down')} />
         </div>
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
-          <div className="halo-com-listener-list">
+          <div className="halo-listener-list">
             <div className="listener-table-content">
               <Button type="create" value={__.create + __.listener} onClick={this.onAction.bind(this, 'create_listener')}/>
               <div className="listeners-list">
@@ -104,15 +86,6 @@ class ListenerList extends React.Component {
                         <div className="detail-item" key={j}>{ele.feild} : {ele.value}</div>
                       )}
                     </div>
-                    {config.listener.protocol === 'HTTP' ?
-                      <div className="http-policy-table">
-                        <Button value={policyBtnValue} onClick={this.onAction.bind(this, 'add_policy')}/>
-                        <DropdownButton buttonData={btnData} dropdownItems={config.policyDropdown} dropdownOnClick={this.onAction.bind(this, 'more_policy_ops', config.listener)}/>
-                        <Table column={policyColumn} data={config.policyItems} checkbox={true}/>
-                        <div className="no-data-tip">{config.policyItems[0] ? '' : __.no_forwarding_policy}</div>
-                      </div>
-                      : ''
-                    }
                   </div>
                 )}
               </div>

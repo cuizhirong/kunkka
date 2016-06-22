@@ -1,12 +1,14 @@
 {
-  "title": ["create", "resource", "pool"],
+  "title": ["create", "health", "monitor"],
   "fields": [{
-    "type": "input",
-    "field": "name",
-    "input_type": "text"
+    "type": "select",
+    "field": "resource_pool",
+    "empty_text": {
+      "info": "no_resource_pool"
+    }
   }, {
     "type": "select",
-    "field": "protocol",
+    "field": "probe_type",
     "empty_text": {
       "info": "loading"
     },
@@ -18,30 +20,10 @@
       "id": "HTTP"
     }]
   }, {
-    "type": "select",
-    "field": "listener",
-    "empty_text": {
-      "info": "no_listener"
-    }
-  }, {
-    "type": "select",
-    "field": "load_algorithm",
-    "empty_text": {
-      "info": "loading"
-    }
-  }, {
-    "type": "textarea",
-    "field": "desc"
-  }, {
-    "type": "checkbox",
-    "field": "modify_hm",
-    "hide": true
-  }, {
     "type": "input",
     "field": "delay",
     "input_type": "text",
     "tip_info": "delay_tip",
-    "hide": true,
     "required": true
 
   }, {
@@ -49,19 +31,13 @@
     "field": "timeout",
     "input_type": "text",
     "tip_info": "timeout_tip",
-    "hide": true,
     "required": true
   }, {
     "type": "input",
     "field": "max_retries",
     "input_type": "text",
     "tip_info": "retries_tip",
-    "hide": true,
     "required": true
-  }, {
-    "type": "warning",
-    "field": "pool_no_hm",
-    "hide": true
   }],
   "btn": {
     "value": "create",

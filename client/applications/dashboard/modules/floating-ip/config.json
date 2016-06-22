@@ -15,6 +15,11 @@
     "icon": "associate",
     "disabled": true
   }, {
+    "value": ["associate", "to", "loadbalancer"],
+    "key": "assc_to_lb",
+    "icon": "associate",
+    "disabled": true
+  }, {
     "value": ["dissociate"],
     "key": "dissociate",
     "icon": "dissociate",

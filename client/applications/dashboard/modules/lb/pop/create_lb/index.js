@@ -6,6 +6,14 @@ var getErrorMessage = require('client/applications/dashboard/utils/error_message
 var __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
+  if(obj) {
+    config.title = ['modify', 'load', 'balancer'];
+    config.btn.value = 'modify';
+  } else {
+    config.title = ['create', 'load', 'balancer'];
+    config.btn.value = 'create';
+  }
+
   var props = {
     __: __,
     parent: parent,
@@ -34,11 +42,24 @@ function pop(obj, parent, callback) {
           });
 
           var selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
-          selectedSubnet = obj ? obj : selectedSubnet;
-          refs.subnet.setState({
-            data: subnetGroup,
-            value: selectedSubnet ? selectedSubnet.id : null
-          });
+          if(obj) {
+            refs.name.setState({
+              value: obj.name
+            });
+            refs.desc.setState({
+              value: obj.description
+            });
+            refs.subnet.setState({
+              data: subnetGroup,
+              value: obj.vip_subnet_id,
+              disabled: true
+            });
+          } else {
+            refs.subnet.setState({
+              data: subnetGroup,
+              value: selectedSubnet ? selectedSubnet.id : null
+            });
+          }
         }
 
         if (subnets.length > 0) {
@@ -49,19 +70,32 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var lbParam = {
-        name: refs.name.state.value ? refs.name.state.value : '',
-        vip_subnet_id: refs.subnet.state.value,
-        tenant_id: HALO.user.projectId,
-        description: refs.desc.state.value
-      };
+      var lbParam = {};
 
-      request.createLb(lbParam).then(res => {
-        callback && callback(res);
-        cb(true);
-      }).catch(function(error) {
-        cb(false, getErrorMessage(error));
-      });
+      if(obj) {
+        lbParam = {
+          name: refs.name.state.value ? refs.name.state.value : '',
+          description: refs.desc.state.value
+        };
+        request.updateLb(obj.id, lbParam).then(res => {
+          callback && callback(res);
+          cb(true);
+        }).catch(error => {
+          cb(false, getErrorMessage(error));
+        });
+      } else {
+        lbParam = {
+          name: refs.name.state.value ? refs.name.state.value : '',
+          vip_subnet_id: refs.subnet.state.value,
+          description: refs.desc.state.value
+        };
+        request.createLb(lbParam).then(res => {
+          callback && callback(res);
+          cb(true);
+        }).catch(function(error) {
+          cb(false, getErrorMessage(error));
+        });
+      }
     },
     onAction: function(field, status, refs) {}
   };

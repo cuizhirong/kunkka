@@ -22,11 +22,8 @@
     "required": true,
     "tip_info": "required_port_range"
   }, {
-    "type": "select_single",
-    "field": "connection_limit",
-    "columnNum": 4,
-    "data": [5000, 10000, 20000, 40000],
-    "value": 5000
+    "type": "adapter",
+    "field": "connection_limit"
   }],
   "btn": {
     "value": "create",

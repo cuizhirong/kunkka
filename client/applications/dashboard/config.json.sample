@@ -19,7 +19,9 @@
       "floating-ip",
       "router",
       "port",
-      "security-group"
+      "security-group",
+      "lb",
+      "resource-pool"
     ]
   }, {
     "title": "storage",
@@ -36,6 +38,9 @@
   "routers": [{
     "key": "subnet",
     "link": "network"
+  }, {
+    "key": "resource-pool",
+    "link": "loadbalancers"
   }],
   "theme": "default"
 }

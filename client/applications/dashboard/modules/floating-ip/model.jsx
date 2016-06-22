@@ -10,6 +10,7 @@ var applyModal = require('./pop/apply_ip/index');
 var associateInstance = require('./pop/associate_instance/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
 // var changeBandwidth = require('./pop/change_bandwidth/index');
+var assciateLb = require('./pop/associate_lb/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -216,6 +217,9 @@ class Model extends React.Component {
           }, true);
         });
         break;*/
+      case 'assc_to_lb':
+        assciateLb(rows[0]);
+        break;
       default:
         break;
     }
@@ -245,6 +249,7 @@ class Model extends React.Component {
     var shouldAssociate = (rows.length === 1) && !(rows[0].association.type);
     for(let key in btns) {
       switch (key) {
+        case 'assc_to_lb':
         case 'assc_to_instance':
           btns[key].disabled = shouldAssociate ? false : true;
           break;

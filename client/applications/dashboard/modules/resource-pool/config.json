@@ -13,6 +13,11 @@
     "type": "create",
     "icon": "create"
   }, {
+    "value": ["create", "health_monitor"],
+    "key": "create_monitor",
+    "type": "create",
+    "icon": "create"
+  }, {
     "value": ["enable", "resource", "pool"],
     "key": "enable_pool",
     "icon": "enable"
@@ -27,10 +32,13 @@
     "dropdown": {
       "items": [{
         "items": [{
-          "title": ["edit"],
-          "key": "edit"
+          "title": ["modify", "resource", "pool"],
+          "key": "modify_pool"
         }, {
-          "title": ["delete"],
+          "title": ["cancel", "health_monitor"],
+          "key": "cancel_monitor"
+        }, {
+          "title": ["delete", "resource", "pool"],
           "key": "delete",
           "danger": true
         }]
