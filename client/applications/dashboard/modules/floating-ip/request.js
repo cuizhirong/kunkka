@@ -41,23 +41,15 @@ module.exports = {
       data: data
     });
   },
-  associateInstance: function(item, portId) {
-    var data = {};
-    data.floatingip = {};
-    data.floatingip.port_id = portId;
-
-    return fetch.put({
-      url: '/proxy/neutron/v2.0/floatingips/' + item.id,
+  associateInstance: function(serverID, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID + '/action',
       data: data
     });
   },
-  dissociateInstance: function(item) {
-    var data = {};
-    data.floatingip = {};
-    data.floatingip.port_id = null;
-
-    return fetch.put({
-      url: '/proxy/neutron/v2.0/floatingips/' + item.id,
+  dissociateInstance: function(serverID, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID + '/action',
       data: data
     });
   },

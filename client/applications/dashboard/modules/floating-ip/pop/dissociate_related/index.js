@@ -15,7 +15,14 @@ function pop(obj, parent, callback) {
 
     },
     onConfirm: function(refs, cb) {
-      request.dissociateInstance(obj).then((res) => {
+      var serverID = obj.association.device.id;
+      var data = {
+        removeFloatingIp: {
+          address: obj.floating_ip_address
+        }
+      };
+
+      request.dissociateInstance(serverID, data).then((res) => {
         callback && callback(res.floatingip);
         cb(true);
       });

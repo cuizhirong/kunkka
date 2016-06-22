@@ -39,7 +39,17 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      request.associateInstance(obj, refs.port.state.value).then((res) => {
+      var serverID = refs.instance.state.value;
+      var portID = refs.port.state.value;
+      var fixedAddress = refs.port.state.data.find((ele) => ele.id === portID);
+      var data = {
+        addFloatingIp: {
+          address: obj.floating_ip_address,
+          fixed_address: fixedAddress.name
+        }
+      };
+
+      request.associateInstance(serverID, data).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch((error) => {
