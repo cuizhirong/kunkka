@@ -24,7 +24,7 @@
     "gb": "(GB)",
     "memory": "内存",
     "migrate_host_tip": "迁移关机状态的云主机（随机指定）",
-    "physical_host": "物理机",
+    "physical_host": "宿主机",
     "state": "State",
     "vcpu": "vCPU",
     "virtual_machine": "虚拟机"

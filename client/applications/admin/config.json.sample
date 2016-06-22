@@ -36,7 +36,7 @@
       "setting-mgmt"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "host",
   "languages": [
     "en",
     "zh-CN"
