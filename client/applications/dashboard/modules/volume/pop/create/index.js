@@ -94,17 +94,22 @@ function pop(obj, parent, callback) {
             });
           }
 
+          if (obj) {
+            selectedMin = obj.size;
+          }
+          var lackOfSize = selectedMin > selectedMax;
+
           refs.capacity_size.setState({
             min: selectedMin,
             max: selectedMax,
             value: selectedMin,
             inputValue: selectedMin,
-            disabled: selectedMax === 0 ? true : false,
+            disabled: lackOfSize || selectedMax <= 0 ? true : false,
             hide: false
           });
 
           refs.btn.setState({
-            disabled: false
+            disabled: lackOfSize
           });
         };
 
