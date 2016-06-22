@@ -4,8 +4,8 @@ var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
 
 function pop(obj, parent, callback) {
-
-  config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
+  var names = obj.map((ele) => '\'' + ele.name + '\'').join(', ');
+  config.fields[0].info = __[config.fields[0].field].replace('{0}', names);
 
   var props = {
     __: __,

@@ -247,8 +247,10 @@ class Model extends React.Component {
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
-        request.poweron(rows[0]).then((res) => {
-          rows[0].status = 'powering_on';
+        request.poweron(rows).then((res) => {
+          rows.forEach((ele) => {
+            ele.status = 'powering_on';
+          });
 
           //change status of current data
           this.setState({
@@ -260,8 +262,10 @@ class Model extends React.Component {
         });
         break;
       case 'power_off':
-        shutdownInstance(rows[0], null, (res) => {
-          rows[0].status = 'powering_off';
+        shutdownInstance(rows, null, (res) => {
+          rows.forEach((ele) => {
+            ele.status = 'powering_off';
+          });
 
           this.setState({
             config: this.state.config
@@ -279,8 +283,10 @@ class Model extends React.Component {
         }, true);
         break;
       case 'reboot':
-        request.reboot(rows[0]).then((res) => {
-          rows[0].status = 'rebooting';
+        request.reboot(rows).then((res) => {
+          rows.forEach((ele) => {
+            ele.status = 'rebooting';
+          });
 
           this.setState({
             config: this.state.config
@@ -379,15 +385,15 @@ class Model extends React.Component {
     for (let key in btns) {
       switch (key) {
         case 'vnc_console':
-        case 'power_off':
         case 'chg_security_grp':
           btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
           break;
         case 'power_on':
-          btns[key].disabled = (rows.length === 1 && status === 'shutoff') ? false : true;
+          btns[key].disabled = rows.length > 0 && !rows.some((ele) => ele.status.toLowerCase() !== 'shutoff') ? false : true;
           break;
+        case 'power_off':
         case 'reboot':
-          btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
+          btns[key].disabled = rows.length > 0 && !rows.some((ele) => ele.status.toLowerCase() !== 'active') ? false : true;
           break;
         case 'instance_snapshot':
         case 'resize':

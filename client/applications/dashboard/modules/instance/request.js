@@ -32,33 +32,45 @@ module.exports = {
       return data.floatingip;
     });
   },
-  poweron: function(item) {
+  poweron: function(items) {
     var data = {};
     data['os-start'] = null;
 
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+        data: data
+      }));
     });
+    return RSVP.all(deferredList);
   },
-  poweroff: function(item) {
+  poweroff: function(items) {
     var data = {};
     data['os-stop'] = null;
 
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+        data: data
+      }));
     });
+    return RSVP.all(deferredList);
   },
-  reboot: function(item) {
+  reboot: function(items) {
     var data = {};
     data.reboot = {};
     data.reboot.type = 'SOFT';
 
-    return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
-      data: data
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+        data: data
+      }));
     });
+    return RSVP.all(deferredList);
   },
   editServerName: function(item, newName) {
     var data = {};
