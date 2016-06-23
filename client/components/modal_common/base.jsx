@@ -19,6 +19,7 @@ var ShortTip = require('./subs/short_tip/index');
 var DisplayBox = require('./subs/display_box/index');
 var DataList = require('./subs/data_list/index');
 var Charge = require('./subs/charge/index');
+var Adapter = require('./subs/adapter/index');
 
 class ModalBase extends React.Component {
 
@@ -85,6 +86,8 @@ class ModalBase extends React.Component {
           return <DataList key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         case 'charge':
           return <Charge key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
+        case 'adapter':
+          return <Adapter key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
         default:
           return null;
       }
