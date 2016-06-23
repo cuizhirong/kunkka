@@ -181,6 +181,10 @@ API.prototype = {
   __getVNCConsole: function (objVar, callback) {
     let remote = objVar.endpoint.nova[objVar.region];
     driver.nova.server.getVNCConsole(objVar.projectId, objVar.serverId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'os-getVNCConsole': {'type': 'novnc'}});
+  },
+  __updateImage: function (objVar, callback) {
+    let remote = objVar.endpoint.glance[objVar.region];
+    driver.glance.image.updateImage(objVar.imageId, objVar.payload, objVar.token, remote, callback);
   }
 };
 

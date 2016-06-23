@@ -65,12 +65,24 @@ Image.prototype = {
       }
     );
   },
+  updateImage: function (req, res, next) {
+    let objVar = this.getVars(req, ['imageId']);
+    objVar.payload = req.body;
+    this.__updateImage(objVar, (err, data) => {
+      if (err) {
+        this.handleError(err, req, res, next);
+      } else {
+        res.json(data.text);
+      }
+    });
+  },
   initRoutes: function () {
     return this.__initRoutes( () => {
       this.app.get('/api/v1/images', this.getImageList.bind(this));
       this.app.get('/api/v1/images/:imageId', this.getImageDetails.bind(this));
       this.app.get('/api/v1/instanceSnapshots', this.getInstanceSnapshotList.bind(this));
       this.app.get('/api/v1/instanceSnapshots/:imageId', this.getInstanceSnapshotDetails.bind(this));
+      this.app.patch('/api/v1/images/:imageId', this.updateImage.bind(this));
     });
   }
 };
