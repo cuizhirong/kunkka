@@ -90,7 +90,9 @@ module.exports = (function(m) {
     },
     processData: function(data) {
       if (!data) return null;
-      if (toString.call(data) === '[object Object]') {
+
+      var type = toString.call(data);
+      if (type === '[object Object]' || type === '[object Array]') {
         return JSON.stringify(data);
       }
       return null;
