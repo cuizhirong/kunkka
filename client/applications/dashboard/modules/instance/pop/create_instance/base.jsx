@@ -87,7 +87,7 @@ class ModalBase extends React.Component {
   componentWillMount() {
     request.getData().then(this.initialize);
 
-    if (!HALO.prices) {
+    if (HALO.settings.enable_charge && !HALO.prices) {
       request.getPrices().then((res) => {
         HALO.prices = priceConverter(res);
       }).catch((error) => {});
@@ -1015,7 +1015,8 @@ class ModalBase extends React.Component {
     var numPrice = price;
     var monthlyPrice = price;
 
-    if (state.flavor) {
+    var enableCharge = HALO.settings.enable_charge;
+    if (enableCharge && state.flavor) {
       let type = state.flavor.name;
       if (HALO.prices) {
         price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
@@ -1032,7 +1033,7 @@ class ModalBase extends React.Component {
         <div className="modal-data">
           <InputNumber onChange={this.onChangeNumber} min={1} value={state.number} width={120}/>
           {
-            HALO.settings.enable_charge ?
+            enableCharge ?
               <div className="account-box">
                 <span className="account-sm">
                   x <strong>{__.account.replace('{0}', +price)}</strong> / <span>{__.hour}</span> =

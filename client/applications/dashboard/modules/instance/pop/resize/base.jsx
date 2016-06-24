@@ -3,6 +3,7 @@ var {Modal, Button, Tip} = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
 var unitConverter = require('client/utils/unit_converter');
 var request = require('../../request');
+var priceConverter = require('../../../../utils/price');
 
 class ModalBase extends React.Component {
 
@@ -32,6 +33,12 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getFlavors().then(this.setFlavor);
+
+    if (HALO.settings.enable_charge && !HALO.prices) {
+      request.getPrices().then((res) => {
+        HALO.prices = priceConverter(res);
+      }).catch((error) => {});
+    }
   }
 
   sortByNumber(a, b) {
@@ -250,9 +257,21 @@ class ModalBase extends React.Component {
       flavorDetail = '';
     }
 
+    var price = '0.0000';
+    var monthlyPrice = price;
+
+    var enableCharge = HALO.settings.enable_charge;
+    if (enableCharge && flavor) {
+      let type = flavor.name;
+      if (HALO.prices) {
+        price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
+        monthlyPrice = (Number(price) * 24 * 30).toFixed(4);
+      }
+    }
+
     return (
       <Modal ref="modal" {...props} title={title} visible={state.visible} width={726}>
-        <div className="modal-bd halo-com-modal-resize-instance">
+        <div className="modal-bd halo-com-modal-common halo-com-modal-resize-instance">
           <div className="name-row">
             <div className="modal-label">
               {__.instance}
@@ -298,6 +317,23 @@ class ModalBase extends React.Component {
               </div>
             </div>
           </div>
+          {
+            enableCharge ?
+              <div className="modal-row charge-row">
+                <div className="modal-label" />
+                <div className="modal-data">
+                  <div className="account-box">
+                    <div className="account-md">
+                      <strong>{__.account.replace('{0}', price)}</strong> / <span>{__.hour}</span>
+                    </div>
+                    <div className="account-md account-gray">
+                      {'( ' + __.account.replace('{0}', monthlyPrice) + ' / ' + __.month + ' )'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            : false
+          }
           <div className={'row row-tip' + (state.showError ? '' : ' hide')}>
             <div className="modal-label" />
             <Tip content={state.error} type="danger" showIcon={true} width={512} />
