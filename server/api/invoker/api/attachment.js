@@ -4,6 +4,7 @@ const multer = require('multer');
 const uuid = require('node-uuid');
 const config = require('config');
 const Base = require('./base');
+var path = require('path');
 
 const attachmentPath = config('attachment_path') || '/opt/attachment/nfs';
 const sendFileOpts = {
@@ -11,13 +12,9 @@ const sendFileOpts = {
 };
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, attachmentPath);
-  },
+  destination: path.join(attachmentPath, uuid.v1()),
   filename: function (req, file, cb) {
-    let ext = file.originalname.split('.').pop();
-    let name = ext ? (uuid.v1() + '.' + ext) : uuid.v1();
-    cb(null, name);
+    cb(null, file.originalname);
   }
 });
 
@@ -29,9 +26,10 @@ function Attachment (app) {
 }
 
 Attachment.prototype = {
-  createAttachment: function(req, res, next) {
+  createAttachment: function (req, res, next) {
     let owner = req.session.user.userId;
-    res.json({attachment_url: `/api/ticket/${owner}/attachments/${req.file.filename}`});
+    let pathSplit = req.file.path.split(path.sep);
+    res.json({attachment_url: `/api/ticket/${owner}/attachments/${pathSplit[pathSplit.length - 2]}/${req.file.filename}`});
   },
   getAttachmentByName: function (req, res, next) {
     let name = req.params.name;

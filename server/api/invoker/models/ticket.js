@@ -26,16 +26,13 @@ module.exports = function (mysql, DataTypes) {
     type: {
       type: DataTypes.STRING,
       allowNull: false
-    },
-    approver: {
-      type: DataTypes.STRING,
-      allowNull: true
     }
   }, {
     classMethods: {
       associate: function (models) {
         Ticket.hasMany(models.reply);
         Ticket.hasMany(models.attachment);
+        Ticket.hasMany(models.approver);
       }
     },
     paranoid: true

@@ -4,6 +4,7 @@ const dao = require('../dao');
 const Base = require('./base');
 const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
+const config = require('config')('invoker_approver');
 
 function Ticket (app) {
   Base.call(this);
@@ -25,13 +26,29 @@ Ticket.prototype = {
         url: a
       });
     });
+
+    if (!req.session.user || !Array.isArray(req.session.user.roles)) {
+      return;
+    }
+
+    let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
+
+    let approvers = config[currentRole] && config[currentRole].approver;
+    let _approvers = [];
+    approvers.forEach(role => {
+      _approvers.push({
+        approver: role
+      });
+    });
+
     ticketDao.create({
       title: title,
       description: description,
       owner: owner,
       type: type,
       status: status,
-      attachments: _attachments
+      attachments: _attachments,
+      approvers: _approvers
     }).then(result => {
       res.status(200).json(result);
     }).catch(err => {
@@ -81,10 +98,41 @@ Ticket.prototype = {
       res.status(500).json(err);
     });
   },
-  getTicketList: function (req, res, next) {
+  //获取角色/
+  _getCurrentRole: function (arrRoles) {
+    if (!Array.isArray(arrRoles)) {
+      return false;
+    }
+
+    let roleList = Object.keys(config).reverse();
+    let roleIndex = -1;
+
+    roleList.some(function (role) {
+      roleIndex = arrRoles.indexOf(role);
+      return roleIndex > -1;
+    });
+
+    if (roleIndex < 0) {
+      return false;
+    }
+    return roleList[roleIndex];
+  },
+
+  getApproverTicketList: function (req, res, next) {
+    Ticket.prototype.getTicketList(req, res, {self: false});
+  },
+
+  getSelfTicketList: function (req, res, next) {
+    Ticket.prototype.getTicketList(req, res, {self: true});
+  },
+
+  getTicketList: function (req, res, options) {
     let owner = req.params.owner;
     let limit = req.query.limit;
     let page = req.query.page;
+    let status = req.query.status && req.query.status.split(',');
+    let start = req.query.start;
+    let end = req.query.end;
     let fields = {};
     if (limit) {
       fields.limit = parseInt(limit, 10);
@@ -92,9 +140,31 @@ Ticket.prototype = {
     if (page) {
       fields.page = parseInt(page, 10);
     }
-    if (!req.session.user.isAdmin) {
-      fields.owner = owner;
+
+    if (status && Array.isArray(status) && status.length) {
+      fields.status = status;
     }
+
+    if (start) {
+      fields.start = start;
+    }
+    if (end) {
+      fields.end = end;
+    }
+
+    if (options.self) {
+      fields.owner = owner;
+    } else {
+
+      if (req.session.user && Array.isArray(req.session.user.roles)) {
+        let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
+        fields.approver = config[currentRole].scope;
+      } else {
+        fields.approver = [];
+      }
+    }
+
+
     ticketDao.findAllByFields(fields).then(result => {
       let _next = (result.count / limit) > fields.page ? (fields.page + 1) : null;
       let prev = fields.page === 1 ? null : (page - 1);
@@ -106,6 +176,7 @@ Ticket.prototype = {
       });
     });
   },
+
   getTicketById: function (req, res, next) {
     let ticketId = req.params.ticketId;
     ticketDao.findOneById(ticketId).then(result => {
@@ -116,7 +187,8 @@ Ticket.prototype = {
   },
   initRoutes: function () {
     this.app.post('/api/ticket/:owner/tickets', this.checkOwner, this.createTicket);
-    this.app.get('/api/ticket/:owner/tickets', this.checkOwner, this.getTicketList);
+    this.app.get('/api/ticket/:owner/tickets', this.checkOwner, this.getApproverTicketList);
+    this.app.get('/api/ticket/:owner/self-tickets', this.checkOwner, this.getSelfTicketList);
     this.app.get('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.getTicketById);
     this.app.put('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.updateTicket);
     this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments);

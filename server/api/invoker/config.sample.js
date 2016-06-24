@@ -6,6 +6,10 @@ module.exports = {
     'node-uuid': '^1.4.7'
   },
   config: {
-
+    invoker_approver: {
+      member: {approver: ['owner', 'admin'], scope: [], show_self: true},
+      owner: {approver: ['admin'], scope: ['owner'], show_self: true},
+      admin: {approver: [], scope: ['admin'], show_self: false}
+    }
   }
 };

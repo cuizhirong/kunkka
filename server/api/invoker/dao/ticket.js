@@ -3,10 +3,11 @@
 const models = require('../models');
 const Ticket = models.ticket;
 const Attachment = models.attachment;
+const Approver = models.approver;
 
 exports.create = function (data) {
   return Ticket.create(data, {
-    include: [ Attachment ]
+    include: [Attachment, Approver]
   });
 };
 
@@ -41,9 +42,30 @@ exports.findAllByFields = function (fields) {
   if (fields.page) {
     obj.offset = (fields.page - 1) * fields.limit;
   }
+
+  if (fields.start) {
+    obj.createdAt = {
+      $gt: new Date(fields.start)
+    };
+    if (fields.end) {
+      obj.createdAt.$lt = new Date(fields.end);
+    }
+
+  }
+  if (fields.status && Array.isArray(fields.status)) {
+    obj.status = {
+      $in: fields.status
+    };
+  }
   obj.order = [
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
+  if (fields.approver) {
+    obj.include = [{model: Approver, where: {approver: {$in: fields.approver}}}];
+  } else {
+    obj.include = [{model: Approver}];
+  }
+
   return Ticket.findAndCount(obj);
 };
