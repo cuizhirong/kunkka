@@ -24,7 +24,7 @@ config.entry = entry;
 
 config.watch = true;
 config.keepAlive = true;
-config.devtool = 'source-map';
+config.devtool = 'cheap-source-map';
 config.debug = true;
 
 config.output.path = 'dist';

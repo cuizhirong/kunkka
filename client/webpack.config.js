@@ -53,7 +53,10 @@ module.exports = {
       loader: ExtractTextPlugin.extract(
         'css?sourceMap&-minimize!' + 'postcss-loader'
       )
-    }]
+    }],
+    noParse: [
+      /moment/g
+    ]
   },
 
   postcss: function() {
