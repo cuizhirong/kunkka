@@ -7,9 +7,7 @@ require('../helpers/less_register');
 
 const path = require('path');
 const fs = require('fs');
-const frontendApps = fs.readdirSync('client/applications').filter(file => {
-  return file !== '.DS_Store';
-});
+const frontendApps = fs.readdirSync('client/applications').filter(file => file.indexOf('.') === -1);
 const backendApps = fs.readdirSync('server/api').filter(file => {
   return fs.statSync('server/api/' + file).isDirectory();
 });
