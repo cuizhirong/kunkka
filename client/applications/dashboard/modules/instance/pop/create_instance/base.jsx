@@ -613,6 +613,10 @@ class ModalBase extends React.Component {
         max_count: state.number
       };
 
+      if (state.number > 1) {
+        data.return_reservation_id = true;
+      }
+
       if (state.credential === 'keypair') {
         data.key_name = state.keypairName;
       } else {
