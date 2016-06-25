@@ -154,7 +154,7 @@ class Model extends React.Component {
       data.status = state.status.id;
     }
 
-    request.getSales(current - 1, limit, data).then((res) => {
+    request.getSales((current - 1) * limit, limit, data).then((res) => {
       this.setTable(res.orders, current, res.total_count, limit);
     });
   }
