@@ -1,16 +1,13 @@
 {
   "title": ["allocate", "floating_ip"],
   "fields": [{
-    "type": "slider",
-    "field": "bandwidth",
-    "min": 1,
-    "max": 30,
-    "value": 1,
-    "unit": "Mbps"
+    "type": "text",
+    "field": "apply_ip_tip",
+    "info": "apply_ip_tip"
   }, {
-    "type": "charge",
-    "field": "charge",
-    "has_label": true
+    "type": "warning",
+    "field": "warning",
+    "hide": true
   }],
   "btn": {
     "value": "allocate",
