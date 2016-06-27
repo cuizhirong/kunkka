@@ -3,26 +3,31 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('../../../../utils/error_message');
-var priceConverter = require('../../../../utils/price');
+// var priceConverter = require('../../../../utils/price');
 
 var gatewayId = null;
 function pop(parent, callback) {
 
-  var enableCharge = HALO.settings.enable_charge;
-  config.fields[2].hide = !enableCharge;
+  // var enableCharge = HALO.settings.enable_charge;
+  // config.fields[2].hide = !enableCharge;
 
   var props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      function setPrice() {
-        var price = HALO.prices.router.unit_price.price.segmented[0].price;
+      // config:{
+      //   "type": "charge",
+      //   "field": "charge",
+      //   "has_label": true
+      // }
+      // function setPrice() {
+      //   var price = HALO.prices.router.unit_price.price.segmented[0].price;
 
-        refs.charge.setState({
-          value: price
-        });
-      }
+      //   refs.charge.setState({
+      //     value: price
+      //   });
+      // }
 
       request.getGateway().then((res) => {
         gatewayId = res;
@@ -31,16 +36,16 @@ function pop(parent, callback) {
         });
       });
 
-      if (HALO.settings.enable_charge) {
-        if (!HALO.prices) {
-          request.getPrices().then((res) => {
-            HALO.prices = priceConverter(res);
-            setPrice();
-          }).catch((error) => {});
-        } else {
-          setPrice();
-        }
-      }
+      // if (HALO.settings.enable_charge) {
+      //   if (!HALO.prices) {
+      //     request.getPrices().then((res) => {
+      //       HALO.prices = priceConverter(res);
+      //       setPrice();
+      //     }).catch((error) => {});
+      //   } else {
+      //     setPrice();
+      //   }
+      // }
     },
     onConfirm: function(refs, cb) {
       var data = {

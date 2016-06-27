@@ -8,10 +8,6 @@
     "field": "enable_public_gateway",
     "has_label": true,
     "checked": true
-  }, {
-    "type": "charge",
-    "field": "charge",
-    "has_label": true
   }],
   "btn": {
     "value": "create",
