@@ -9,6 +9,7 @@ var __ = require('locale/client/admin.lang.json');
 var converter = require('./converter');
 var moment = require('client/libs/moment');
 var router = require('client/utils/router');
+var getTime = require('client/utils/time_unification');
 
 class Main extends React.Component {
   constructor(props) {
@@ -69,7 +70,7 @@ class Main extends React.Component {
           break;
         case 'time':
           column.render = (col, item, i) => {
-            return moment(item[col.dataIndex]).fromNow();
+            return getTime(item[col.dataIndex], true);
           };
           break;
         default:
