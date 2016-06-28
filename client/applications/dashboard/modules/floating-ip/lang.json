@@ -15,7 +15,8 @@
     "tip_fip_has_source": "Cannot delete floating IP which has been related to source",
     "tip_info_floatingip": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT(Show More)",
     "tip_no_port_instance": "The instances with no port are excluded in the list",
-    "to": " to "
+    "to": " to ",
+    "unlimited": "Unlimited"
   },
   "zh-CN": {
     "address": "地址",
@@ -33,6 +34,7 @@
     "tip_fip_has_source": "不能删除已经绑定资源的公网IP",
     "tip_info_floatingip": "解除绑定之后云主机将不能通过公共网络使用,它仍然可以从公共网络通过路由器的SNAT访问",
     "tip_no_port_instance": "没有网络端口的云主机不会显示在列表中",
-    "to": "到"
+    "to": "到",
+    "unlimited": "无限制"
   }
 }

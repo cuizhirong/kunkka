@@ -54,6 +54,9 @@
       "title": ["associate_gl", "resource"],
       "key": "assc_resource"
     }, {
+      "title": ["bandwidth"],
+      "key": "bandwidth"
+    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",

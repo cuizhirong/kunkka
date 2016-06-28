@@ -90,17 +90,12 @@ class Model extends React.Component {
             return '';
           };
           break;
-        /*
-        config: {
-          "title": ["bandwidth"],
-          "key": "bandwidth"
-        },
         case 'bandwidth':
           column.render = (col, item, i) => {
-            var bw = item.rate_limit / 1024;
-            return bw + ' Mbps';
+            var rateLimit = Number(item.rate_limit);
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
           };
-          break;*/
+          break;
         default:
           break;
       }
@@ -312,6 +307,9 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var rateLimit = Number(item.rate_limit);
+    var bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+
     var items = [{
       title: __.id,
       content: item.id
@@ -328,14 +326,12 @@ class Model extends React.Component {
           </a>
         </span> : '-'
     }, {
+      title: __.bandwidth,
+      content: bandwidth
+    }, {
       title: __.status,
       content: getStatusIcon(item.status)
     }];
-
-    /*{
-    title: __.bandwidth,
-    content: item.rate_limit / 1024 + ' Mbps'
-    },*/
 
     return items;
   }
