@@ -19,10 +19,10 @@ function pop(type, obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getRoles().then((res) => {
-        if (res.roles.length > 0) {
+        if (res.length > 0) {
           refs.role.setState({
-            data: res.roles,
-            value: res.roles[0].id,
+            data: res,
+            value: res[0].id,
             hide: false
           });
           refs.btn.setState({

@@ -2,8 +2,8 @@
   "title": ["add", "role"],
   "fields": [{
     "type": "icon_label",
-    "field": "user-group",
-    "icon_type": "user-group",
+    "field": "user",
+    "icon_type": "user",
     "text": ""
   }, {
     "type": "input",
