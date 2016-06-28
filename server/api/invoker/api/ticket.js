@@ -146,10 +146,10 @@ Ticket.prototype = {
     }
 
     if (start) {
-      fields.start = start;
+      fields.start = parseInt(start, 10);
     }
     if (end) {
-      fields.end = end;
+      fields.end = parseInt(end, 10);
     }
 
     if (options.self) {

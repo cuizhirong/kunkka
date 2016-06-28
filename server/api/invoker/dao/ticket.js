@@ -43,14 +43,11 @@ exports.findAllByFields = function (fields) {
     obj.offset = (fields.page - 1) * fields.limit;
   }
 
-  if (fields.start) {
+  if (fields.start || fields.end) {
     obj.createdAt = {
-      $gt: new Date(fields.start)
+      $gt: fields.start && new Date(fields.start),
+      $lt: fields.end && new Date(fields.end)
     };
-    if (fields.end) {
-      obj.createdAt.$lt = new Date(fields.end);
-    }
-
   }
   if (fields.status && Array.isArray(fields.status)) {
     obj.status = {

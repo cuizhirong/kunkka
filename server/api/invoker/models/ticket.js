@@ -7,6 +7,11 @@ module.exports = function (mysql, DataTypes) {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
+    number: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false
