@@ -1,9 +1,13 @@
 {
-  "title": ["power_off_ins"],
+  "title": ["reboot"],
   "fields": [{
     "type": "text",
-    "field": "ensure_shutdown",
-    "info": "ensure_shutdown"
+    "field": "text"
+  }, {
+    "type": "data_list",
+    "icon": "instance",
+    "field": "list",
+    "info": "list"
   }, {
     "type": "error",
     "field": "error",

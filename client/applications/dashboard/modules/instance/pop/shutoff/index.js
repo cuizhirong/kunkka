@@ -4,8 +4,8 @@ var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
 
 function pop(obj, parent, callback) {
-  var names = obj.map((ele) => '\'' + ele.name + '\'').join(', ');
-  config.fields[0].info = __[config.fields[0].field].replace('{0}', names);
+  config.fields[0].info = __.confirm_inst_action.replace('{0}', __.ins_action_shutoff);
+  config.fields[1].data = obj;
 
   var props = {
     __: __,
@@ -26,12 +26,7 @@ function pop(obj, parent, callback) {
         cb(false);
       });
     },
-    onAction: function(field, state, refs) {
-      switch(field) {
-        default:
-          break;
-      }
-    }
+    onAction: function(field, state, refs) {}
   };
 
   commonModal(props);

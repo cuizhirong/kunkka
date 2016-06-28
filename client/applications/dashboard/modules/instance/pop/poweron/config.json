@@ -1,0 +1,20 @@
+{
+  "title": ["power_on_ins"],
+  "fields": [{
+    "type": "text",
+    "field": "text"
+  }, {
+    "type": "data_list",
+    "icon": "instance",
+    "field": "list",
+    "info": "list"
+  }, {
+    "type": "error",
+    "field": "error",
+    "hide": true
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}

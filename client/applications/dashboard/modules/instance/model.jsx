@@ -14,7 +14,9 @@ var VncConsole = require('../../components/vnc_console/index');
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
 var createInstance = require('./pop/create_instance/index');
-var shutdownInstance = require('./pop/shutdown/index');
+var poweronInstance = require('./pop/poweron/index');
+var shutoffInstance = require('./pop/shutoff/index');
+var rebootInstance = require('./pop/reboot/index');
 var associateFip = require('./pop/associate_fip/index');
 var attachVolume = require('./pop/attach_volume/index');
 var joinNetwork = require('./pop/join_network/index');
@@ -247,7 +249,7 @@ class Model extends React.Component {
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
-        request.poweron(rows).then((res) => {
+        poweronInstance(rows, null, (res) => {
           rows.forEach((ele) => {
             ele.status = 'powering_on';
           });
@@ -262,7 +264,7 @@ class Model extends React.Component {
         });
         break;
       case 'power_off':
-        shutdownInstance(rows, null, (res) => {
+        shutoffInstance(rows, null, (res) => {
           rows.forEach((ele) => {
             ele.status = 'powering_off';
           });
@@ -283,7 +285,7 @@ class Model extends React.Component {
         }, true);
         break;
       case 'reboot':
-        request.reboot(rows).then((res) => {
+        rebootInstance(rows, null, (res) => {
           rows.forEach((ele) => {
             ele.status = 'rebooting';
           });
