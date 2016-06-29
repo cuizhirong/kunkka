@@ -5,7 +5,12 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['securitygroup'], forced).then(function(data) {
-      return data.securitygroup;
+      return data.securitygroup.map((sg) => {
+        var rules = sg.security_group_rules.filter((rule) => rule.ethertype !== 'IPv6');
+        sg.security_group_rules = rules;
+
+        return sg;
+      });
     });
   },
   deleteSecurityGroup: function(items) {
