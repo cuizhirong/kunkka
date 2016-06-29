@@ -40,14 +40,6 @@ class Detail extends React.Component {
     });
   }
 
-  componentDidMount() {
-
-  }
-
-  componentWillReceiveProps() {
-
-  }
-
   onClickDropdownBtn(e, item) {
     this.props.onAction('btnList', 'click', {
       key: item.key

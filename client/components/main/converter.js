@@ -3,12 +3,16 @@
  */
 module.exports = {
   getLangValue(lang, obj) {
-    var strs = '';
-    obj.map((str) => {
-      strs += lang[str];
-    });
+    if (toString.call(obj) === '[object Array]') {
+      var strs = '';
+      obj.map((str) => {
+        strs += lang[str];
+      });
 
-    return strs;
+      return strs;
+    } else {
+      return obj;
+    }
   },
 
   convertLang(lang, config) {
