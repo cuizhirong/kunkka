@@ -72,7 +72,7 @@ class GroupSelect extends React.Component {
       __ = props.__;
     if (state.data && state.data.length > 0) {
       return (
-        <select value={state.value} disabled={state.checkedField && state.checkedField !== props.field} onChange={this.onChange}>
+        <select value={state.value} disabled={state.disabled || state.checkedField && state.checkedField !== props.field} onChange={this.onChange}>
             {
               state.data.map(function(group) {
                 return (
