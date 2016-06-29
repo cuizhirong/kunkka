@@ -120,7 +120,13 @@ function pop(obj, parent, callback) {
               value: res.unit_price,
               hide: false
             });
-          }).catch((error) => {});
+          }).catch((error) => {
+            setFields();
+            refs.charge.setState({
+              value: '0.0000',
+              hide: false
+            });
+          });
         } else {
           setFields();
         }

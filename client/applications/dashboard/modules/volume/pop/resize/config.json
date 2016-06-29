@@ -12,7 +12,8 @@
     "type": "charge",
     "field": "charge",
     "has_label": true,
-    "hide": true
+    "value": "0.0000",
+    "hide": false
   }, {
     "type": "error",
     "field": "error",
