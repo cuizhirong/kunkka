@@ -3,6 +3,9 @@
     "name": ["image"],
     "key": "image",
     "default": true
+  }, {
+    "name": ["instance_snapshot"],
+    "key": "image-snapshot"
   }],
   "btns": [{
     "value": ["create", "instance"],
@@ -12,7 +15,7 @@
     "disabled": true
   }, {
     "value": ["delete"],
-    "key": "del_img",
+    "key": "delete",
     "type": "delete",
     "icon": "delete",
     "disabled": true
@@ -42,15 +45,7 @@
     }, {
       "title": ["type"],
       "key": "type",
-      "dataIndex": "image_type",
-      "filter": [{
-        "name": ["snapshot"],
-        "key": "snapshot",
-        "filterBy": "snapshot"
-      }, {
-        "name": ["image"],
-        "key": "image"
-      }]
+      "dataIndex": "image_type"
     }, {
       "title": ["status"],
       "dataIndex": "status",

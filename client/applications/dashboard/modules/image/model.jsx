@@ -25,7 +25,7 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      config: config
+      config: this.setConfig(config)
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -35,7 +35,6 @@ class Model extends React.Component {
 
   componentWillMount() {
     var columns = this.state.config.table.column;
-    this.setTableFilter(columns);
     this.tableColRender(columns);
 
     msgEvent.on('dataChange', (data) => {
@@ -45,8 +44,9 @@ class Model extends React.Component {
             detailRefresh: true
           }, false);
 
-          if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/image');
+          var path = router.getPathList();
+          if (data.action === 'delete' && data.stage === 'end' && data.resource_id === path[2]) {
+            router.replaceState('/dashboard/' + path[1]);
           }
         }
       }
@@ -70,13 +70,14 @@ class Model extends React.Component {
     }
   }
 
-  setTableFilter(columns) {
-    var filters = columns.filter((col) => col.key === 'type')[0].filter;
-    var imageFilter = filters.filter((fil) => fil.key === 'image')[0];
+  setConfig(_config) {
+    var tabs = _config.tabs;
+    tabs[0].default = true;
+    tabs[1].default = false;
 
-    imageFilter.filterBy = function(item) {
-      return item.image_type === 'snapshot' ? false : true;
-    };
+    _config.btns = _config.btns.filter((ele) => ele.key !== 'delete');
+
+    return _config;
   }
 
   tableColRender(column) {
@@ -129,8 +130,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
-      table.data = res;
+      var _config = this.setConfig(this.state.config);
+
+      var table = _config.table;
+      var data = res.filter((ele) => ele.visibility === 'public');
+      table.data = data;
       table.loading = false;
 
       var detail = this.refs.dashboard.refs.detail;
@@ -141,7 +145,7 @@ class Model extends React.Component {
       }
 
       this.setState({
-        config: config
+        config: _config
       }, () => {
         if (detail && detailRefresh) {
           detail.refresh();
@@ -174,7 +178,7 @@ class Model extends React.Component {
           router.pushState('/dashboard/instance');
         });
         break;
-      case 'del_img':
+      case 'delete':
         deleteModal({
           __: __,
           action: 'delete',
@@ -226,11 +230,9 @@ class Model extends React.Component {
         case 'create':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
           break;
-        case 'del_img':
-          let b = rows.some((m) => {
-            return m.image_type !== 'snapshot';
-          });
-          btns[key].disabled = (rows.length === 0 || b) ? true : false;
+        case 'delete':
+          let hasPublicImage = rows.some((ele) => ele.visibility === 'public');
+          btns[key].disabled = (rows.length === 0 || hasPublicImage) ? true : false;
           break;
         default:
           break;
