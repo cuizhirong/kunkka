@@ -15,6 +15,7 @@ var addResource = require('./pop/add_resource/index');
 var updateResourceState = require('./pop/update_resource_state/index');
 var modifyWeight = require('./pop/modify_weight/index');
 var createMonitor = require('./pop/create_monitor/index');
+var modifyMonitor = require('./pop/modify_monitor/index');
 
 var config = require('./config.json');
 var router = require('client/utils/router');
@@ -44,10 +45,10 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', data => {
       if (this.props.style.display !== 'none') {
-        if(data.resource_type === 'pool' || data.resource_type === 'member') {
+        if(data.resource_type === 'pool' || data.resource_type === 'member' || data.resource_type === 'healthmonitor') {
           this.refresh({
             detailRefresh: true
-          }, false);
+          }, true);
 
           if (data.action === 'delete'
             && data.stage === 'end'
@@ -175,6 +176,9 @@ class Model extends React.Component {
           }
         });
         break;
+      case 'modify_monitor':
+        modifyMonitor(rows[0]);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -234,6 +238,7 @@ class Model extends React.Component {
           btns[key].disabled = rows.length !== 1;
           break;
         case 'cancel_monitor':
+        case 'modify_monitor':
           btns[key].disabled = !(rows.length === 1 && rows[0].healthmonitor);
           break;
         case 'delete':

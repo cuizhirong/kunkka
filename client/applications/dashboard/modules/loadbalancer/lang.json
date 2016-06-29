@@ -2,6 +2,7 @@
   "en": {
     "admin_state": "Administrative State",
     "assoc_pool_policy_tip": "The default pool must have compatible protocol with listener.",
+    "clear_pool": "Update",
     "connection_limit": "Connection Limit",
     "current": "Current",
     "default": "Default",
@@ -10,7 +11,7 @@
     "enable_listener": "{0} listener \"{1}\"?",
     "enabled_state": "Enabled State",
     "forwarding": "Forwarding",
-    "loadbalancer": "Loadbalancer",
+    "lb": "Loadbalancer",
     "lsit": "List",
     "listener_protocol": "Protocol",
     "no_lb": "No available loadbalancer.",
@@ -25,6 +26,7 @@
   "zh-CN": {
     "admin_state": "管理状态",
     "assoc_pool_policy_tip": "默认资源池和监听器的协议必须相同。",
+    "clear_pool": "修改",
     "connection_limit": "最大连接数",
     "current": "当前",
     "default": "默认",
@@ -33,7 +35,7 @@
     "enable_listener": "确定{0}监听器\"{1}\"?",
     "enabled_state": "启用状态",
     "forwarding": "转发",
-    "loadbalancer": "负载均衡",
+    "lb": "负载均衡",
     "list": "列表",
     "listener_protocol": "监听协议",
     "no_lb": "没有可用的负载均衡器。",

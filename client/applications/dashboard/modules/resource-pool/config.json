@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["lb"],
-    "key": "lb"
+    "name": ["loadbalancer"],
+    "key": "loadbalancer"
   }, {
     "name": ["resource", "pool"],
     "key": "resource-pool",
@@ -20,11 +20,13 @@
   }, {
     "value": ["enable", "resource", "pool"],
     "key": "enable_pool",
-    "icon": "enable"
+    "icon": "enable",
+    "disabled": true
   }, {
     "value": ["disable", "resource", "pool"],
     "key": "disable_pool",
-    "icon": "disable"
+    "icon": "disable",
+    "disabled": true
   }, {
     "value": ["more"],
     "key": "more",
@@ -34,6 +36,9 @@
         "items": [{
           "title": ["modify", "resource", "pool"],
           "key": "modify_pool"
+        }, {
+          "title": ["modify", "health_monitor"],
+          "key": "modify_monitor"
         }, {
           "title": ["cancel", "health_monitor"],
           "key": "cancel_monitor"

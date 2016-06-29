@@ -1,6 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
-var request = require('../../../lb/request');
+var request = require('../../../loadbalancer/request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 

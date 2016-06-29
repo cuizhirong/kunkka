@@ -21,7 +21,7 @@
       "router",
       "port",
       "security-group",
-      "lb",
+      "loadbalancer",
       "resource-pool"
     ]
   }, {
@@ -44,7 +44,7 @@
     "link": "network"
   }, {
     "key": "resource-pool",
-    "link": "loadbalancers"
+    "link": "loadbalancer"
   }],
   "theme": "default"
 }

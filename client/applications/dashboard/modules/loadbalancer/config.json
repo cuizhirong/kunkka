@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["lb"],
-    "key": "lb",
+    "name": ["loadbalancer"],
+    "key": "loadbalancer",
     "default": true
   }, {
     "name": ["resource", "pool"],

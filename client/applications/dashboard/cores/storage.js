@@ -18,9 +18,9 @@ var securitygroup = require('../modules/security-group/cache');
 var snapshot = require('../modules/snapshot/cache');
 var subnet = require('../modules/subnet/cache');
 var volume = require('../modules/volume/cache');
-var loadbalancer = require('../modules/lb/cache');
+var loadbalancer = require('../modules/loadbalancer/cache');
 var pool = require('../modules/resource-pool/cache');
-var listener = require('../modules/lb/cache');
+var listener = require('../modules/loadbalancer/cache');
 var healthmonitor = require('../modules/resource-pool/cache');
 var member = require('../modules/resource-pool/cache');
 

@@ -32,36 +32,6 @@
   }, {
     "type": "textarea",
     "field": "desc"
-  }, {
-    "type": "checkbox",
-    "field": "modify_hm",
-    "hide": true
-  }, {
-    "type": "input",
-    "field": "delay",
-    "input_type": "text",
-    "tip_info": "delay_tip",
-    "hide": true,
-    "required": true
-
-  }, {
-    "type": "input",
-    "field": "timeout",
-    "input_type": "text",
-    "tip_info": "timeout_tip",
-    "hide": true,
-    "required": true
-  }, {
-    "type": "input",
-    "field": "max_retries",
-    "input_type": "text",
-    "tip_info": "retries_tip",
-    "hide": true,
-    "required": true
-  }, {
-    "type": "warning",
-    "field": "pool_no_hm",
-    "hide": true
   }],
   "btn": {
     "value": "create",
