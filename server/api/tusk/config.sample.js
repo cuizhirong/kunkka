@@ -7,7 +7,7 @@ module.exports = {
   },
   config: {
     mysql: {
-      host: '121.201.52.181',
+      host: '42.62.101.6',
       port: 3306,
       user: 'root',
       password: '1234',
