@@ -96,6 +96,28 @@ class Model extends React.Component {
             return isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
           };
           break;
+        case 'status':
+          column.render = (col, item, i) => {
+            var status = item.status.toLowerCase();
+            if (status === 'active') {
+              return (
+                <div className="status-data">
+                  <i className="glyphicon icon-status-light in-use"></i>
+                  {__['in-use']}
+                </div>
+              );
+            } else if (status === 'down') {
+              return (
+                <div className="status-data">
+                  <i className="glyphicon icon-status-light active"></i>
+                  {__.available}
+                </div>
+              );
+            } else {
+              return item.status;
+            }
+          };
+          break;
         default:
           break;
       }

@@ -777,7 +777,7 @@ class ModalBase extends React.Component {
       onChange: this.onChangeMemory
     }, {
       key: 'volume',
-      title: __.volume + __.size,
+      title: __.system_disk + __.size,
       data: state.volumes,
       selected: state.volume,
       render: (val) => {
