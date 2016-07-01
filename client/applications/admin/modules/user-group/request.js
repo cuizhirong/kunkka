@@ -7,15 +7,18 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/groups';
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain;
+      var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
+
+      var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + urlParam;
+      return fetch.get({
+        url: url
+      }).then((res) => {
+        res._url = url;
+        return res;
+      });
     });
   },
   getNextList: function(nextUrl) {
