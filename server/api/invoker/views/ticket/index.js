@@ -137,5 +137,5 @@ module.exports = (app, clientApps) => {
   views.push(__dirname);
   console.log(views);
   applications = clientApps;
-  app.get(/(^\/apply$)|(^\/apply\/(.*))/, renderProjectTemplate);
+  app.get(/(^\/ticket$)|(^\/ticket\/(.*))/, renderProjectTemplate);
 };
