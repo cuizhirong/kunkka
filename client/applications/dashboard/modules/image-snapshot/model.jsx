@@ -1,5 +1,5 @@
 var ImageModel = require('../image/model');
-var __ = require('locale/client/dashboard.lang.json');
+var config = require('./config.json');
 var request = require('../image/request');
 
 class Model extends ImageModel {
@@ -7,37 +7,14 @@ class Model extends ImageModel {
   constructor(props) {
     super(props);
 
-    var config = this.state.config;
-    this.setConfig(config);
-
     this.state = {
       config: config
     };
   }
 
-  setConfig(config) {
-    var tabs = config.tabs;
-    tabs[0].default = false;
-    tabs[1].default = true;
-
-    var hasDelete = config.btns.some((ele) => ele.key === 'delete');
-    if (!hasDelete) {
-      config.btns.splice(1, 0, {
-        value: __.delete,
-        key: 'delete',
-        type: 'delete',
-        icon: 'delete',
-        disabled: true
-      });
-    }
-
-    return config;
-  }
-
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var config = this.state.config;
-      this.setConfig(config);
+      var _config = this.state.config;
 
       var table = config.table;
       var data = res.filter((ele) => ele.visibility === 'private');
@@ -52,7 +29,7 @@ class Model extends ImageModel {
       }
 
       this.setState({
-        config: config
+        config: _config
       }, () => {
         if (detail && detailRefresh) {
           detail.refresh();

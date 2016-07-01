@@ -1,17 +1,23 @@
 {
   "tabs": [{
     "name": ["image"],
-    "key": "image",
-    "default": true
+    "key": "image"
   }, {
     "name": ["instance_snapshot"],
-    "key": "image-snapshot"
+    "key": "image-snapshot",
+    "default": true
   }],
   "btns": [{
     "value": ["create", "instance"],
     "key": "create",
     "type": "create",
     "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
     "disabled": true
   }, {
     "key": "refresh",

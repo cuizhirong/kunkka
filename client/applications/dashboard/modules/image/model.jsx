@@ -25,7 +25,7 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      config: this.setConfig(config)
+      config: config
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -68,16 +68,6 @@ class Model extends React.Component {
         this.getTableData(false);
       }
     }
-  }
-
-  setConfig(_config) {
-    var tabs = _config.tabs;
-    tabs[0].default = true;
-    tabs[1].default = false;
-
-    _config.btns = _config.btns.filter((ele) => ele.key !== 'delete');
-
-    return _config;
   }
 
   tableColRender(column) {
@@ -130,7 +120,7 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var _config = this.setConfig(this.state.config);
+      var _config = this.state.config;
 
       var table = _config.table;
       var data = res.filter((ele) => ele.visibility === 'public');
