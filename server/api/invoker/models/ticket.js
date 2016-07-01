@@ -10,6 +10,7 @@ module.exports = function (mysql, DataTypes) {
     number: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      unique: true,
       autoIncrement: true
     },
     title: {
@@ -31,6 +32,10 @@ module.exports = function (mysql, DataTypes) {
     type: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    processor: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     classMethods: {

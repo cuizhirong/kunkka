@@ -28,7 +28,7 @@ Ticket.prototype = {
     });
 
     if (!req.session.user || !Array.isArray(req.session.user.roles)) {
-      return;
+      return res.status(500).json({msg: "未登录,或者权限不足。", code: "-1"});
     }
 
     let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
@@ -60,6 +60,11 @@ Ticket.prototype = {
     let owner = req.params.owner;
     let data = req.body;
     let _attachments = [];
+    if (data.status === 'proceeding') {
+      data.processor = req.session.user.userId;
+    } else {
+      data.processor = "";
+    }
     if (req.body.attachments) {
       req.body.addAttachments.forEach(a => {
         _attachments.push({
@@ -156,6 +161,8 @@ Ticket.prototype = {
       fields.owner = owner;
     } else {
 
+      fields.processor = req.session.user.userId;
+
       if (req.session.user && Array.isArray(req.session.user.roles)) {
         let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
         fields.approver = config[currentRole].scope;
@@ -187,10 +194,10 @@ Ticket.prototype = {
   },
   initRoutes: function () {
     this.app.post('/api/ticket/:owner/tickets', this.checkOwner, this.createTicket);
-    this.app.get('/api/ticket/:owner/tickets', this.checkOwner, this.getApproverTicketList);
+    this.app.get('/api/ticket/:owner/tickets', this.getApproverTicketList);
     this.app.get('/api/ticket/:owner/self-tickets', this.checkOwner, this.getSelfTicketList);
-    this.app.get('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.getTicketById);
-    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.updateTicket);
+    this.app.get('/api/ticket/:owner/tickets/:ticketId', this.getTicketById);
+    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.updateTicket);
     this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments);
   }
 };

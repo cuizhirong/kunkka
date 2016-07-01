@@ -35,6 +35,19 @@ exports.findAllByFields = function (fields) {
     obj.where = {
       owner: fields.owner
     };
+  } else {
+    if (fields.approver) {
+      obj.include = [{model: Approver, where: {approver: {$in: fields.approver}}}];
+    } else {
+      obj.include = [{model: Approver}];
+    }
+
+    if (fields.processor) {
+      obj.$or = [
+        {status: "proceeding", processor: fields.processor},
+        {status: {$ne: "proceeding"}}
+      ];
+    }
   }
   if (fields.limit) {
     obj.limit = fields.limit;
@@ -58,11 +71,7 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
-  if (fields.approver) {
-    obj.include = [{model: Approver, where: {approver: {$in: fields.approver}}}];
-  } else {
-    obj.include = [{model: Approver}];
-  }
+
 
   return Ticket.findAndCount(obj);
 };
