@@ -71,12 +71,12 @@ class Model extends React.Component {
   }
 
   tableColRender(columns) {
-    columns.map((column) => {
+    columns.forEach((column) => {
       switch (column.key) {
         case 'subnet':
           column.render = (col, item, i) => {
             var subnets = [];
-            item.subnets.map((_subnet, _i) => {
+            item.subnets.forEach((_subnet, _i) => {
               if(_subnet.id) {
                 _i && subnets.push(', ');
                 subnets.push(
@@ -88,7 +88,7 @@ class Model extends React.Component {
                   </span>);
               }
             });
-            return item.subnets.length ? <div>{subnets}</div> : '';
+            return item.subnets.length ? subnets : '';
           };
           break;
         case 'related_resource':
