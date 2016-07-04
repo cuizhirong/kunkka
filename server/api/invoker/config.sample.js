@@ -11,5 +11,13 @@ module.exports = {
       owner: {approver: ['admin'], scope: ['owner'], show_self: true},
       admin: {approver: [], scope: ['admin'], show_self: false}
     }
-  }
+  },
+  setting: [
+    {
+      app: 'global',
+      name: 'enable_ticket',
+      value: 'false',
+      type: 'boolean'
+    }
+  ]
 };

@@ -8,6 +8,8 @@ const ticketModelFactory = React.createFactory(ticketModel);
 const upperCaseLocale = require('helpers/upper_case_locale');
 const config = require('config');
 const tusk = require('api/tusk/driver');
+const getRole = require('helpers/get_role');
+const roleConfig = config('invoker_approver') || {};
 
 const regions = {};
 const languages = Object.keys(config('region')[0].name);
@@ -44,7 +46,6 @@ let applications;
 const async = require('async');
 
 function renderProjectTemplate (req, res, next) {
-  console.log('render ticket');
   async.parallel(
     [function (callback) {
       tusk.getSettingsByApp('ticket', (err, results) => {
@@ -74,14 +75,26 @@ function renderProjectTemplate (req, res, next) {
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let title = setting.title ? setting.title : 'UnitedStack 有云';
-    let _enableCharge = setting.enable_charge;
-    if (req.session && req.session.user && _enableCharge) {
+    let _enableTicket = setting.enable_ticket;
+    if (req.session && req.session.user && _enableTicket) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
       let user = req.session.user;
       let username = user.username;
+      let _enableCharge = setting.enable_charge;
       let applicationList = applications
-      .filter(a => user.isAdmin ? true : a !== 'admin')
+      .filter(a => {
+        switch (a) {
+          case 'admin':
+            return user.isAdmin;
+          case 'bill':
+            return _enableCharge;
+          case 'ticket':
+            return _enableTicket;
+          default:
+            return true;
+        }
+      })
       .sort((a, b) => {
         if (a === 'dashboard') {
           return -1;
@@ -97,10 +110,22 @@ function renderProjectTemplate (req, res, next) {
         application_list: applicationList,
         current_application: 'ticket'
       };
+      let selfTicket = true;
+      let othersTicket = true;
+      if (_enableTicket) {
+        let roleObj = getRole(req.session.user.roles, roleConfig);
+        if (!roleObj.showSelf) {
+          selfTicket = false;
+        }
+        if (!roleObj.showOthers) {
+          othersTicket = false;
+        }
+      }
       let HALO = {
         configs: {
           lang: locale,
-          domain: config('domain')
+          domain: config('domain'),
+          ticket: _enableTicket ? {show_self: selfTicket, show_others: othersTicket} : null
         },
         user: {
           projectId: user.projectId,
@@ -132,10 +157,8 @@ function renderProjectTemplate (req, res, next) {
 }
 
 module.exports = (app, clientApps) => {
-  console.log('in ticket');
   let views = app.get('views');
   views.push(__dirname);
-  console.log(views);
   applications = clientApps;
   app.get(/(^\/ticket$)|(^\/ticket\/(.*))/, renderProjectTemplate);
 };
