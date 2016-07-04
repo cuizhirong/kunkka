@@ -44,8 +44,8 @@ exports.findAllByFields = function (fields) {
 
     if (fields.processor) {
       obj.$or = [
-        {status: "proceeding", processor: fields.processor},
-        {status: {$ne: "proceeding"}}
+        {status: 'proceeding', processor: fields.processor},
+        {status: {$ne: 'proceeding'}}
       ];
     }
   }

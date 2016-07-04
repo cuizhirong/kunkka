@@ -28,7 +28,7 @@ Ticket.prototype = {
     });
 
     if (!req.session.user || !Array.isArray(req.session.user.roles)) {
-      return res.status(500).json({msg: "未登录,或者权限不足。", code: "-1"});
+      return res.status(500).json({msg: 'limited Authority', code: -1});
     }
 
     let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
@@ -63,7 +63,7 @@ Ticket.prototype = {
     if (data.status === 'proceeding') {
       data.processor = req.session.user.userId;
     } else {
-      data.processor = "";
+      data.processor = '';
     }
     if (req.body.attachments) {
       req.body.addAttachments.forEach(a => {
