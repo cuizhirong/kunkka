@@ -1,0 +1,14 @@
+{
+  "zh-CN":{
+    "limitedAuthority":"权限不足。",
+    "hadBeenApproved":"此申请已经被审批过。",
+    "unopened":"审批未开放。",
+    "approvedError":"审批异常。"
+  },
+  "en":{
+    "limitedAuthority":"limited authority",
+    "hadBeenApproved":"had been approved",
+    "unopened":"unopened",
+    "approveError":"approve error"
+  }
+}
