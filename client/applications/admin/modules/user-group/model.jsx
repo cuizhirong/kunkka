@@ -1,14 +1,12 @@
 require('./style/index.less');
 
-//react components
 var React = require('react');
 var RSVP = require('rsvp');
-var Main = require('../../components/main/index');
+var Main = require('client/components/main_paged/index');
 var {Button} = require('client/uskin/index');
-
-//detail components
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
+
 var deleteModal = require('client/components/modal_delete/index');
 var createUserGroup = require('./pop/create/index');
 var addRole = require('./pop/add_role/index');
@@ -757,6 +755,7 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
           getStatusIcon={getStatusIcon}

@@ -1,11 +1,9 @@
 require('./style/index.less');
 
-//react components
 var React = require('react');
-var Main = require('../../components/main/index');
-
-//detail components
+var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
+
 var forceDelete = require('./pop/delete/index');
 
 var request = require('./request');
@@ -440,6 +438,7 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
         />

@@ -1,8 +1,9 @@
 require('./style/index.less');
 
 var React = require('react');
-var Main = require('../../components/main/index');
+var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
+
 var allocateModal = require('./pop/allocation_floating_ip/index');
 var dissociateModal = require('./pop/dissociate_floating_ip/index');
 
@@ -444,6 +445,7 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : 'none'}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
           getStatusIcon={getStatusIcon}

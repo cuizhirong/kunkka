@@ -1,13 +1,9 @@
 require('./style/index.less');
 
-//react components
 var React = require('react');
-var Main = require('../../components/main/index');
-
-//detail components
+var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 
-//pop
 var createFlavor = require('./pop/create/index');
 var deleteModal = require('client/components/modal_delete/index');
 
@@ -426,6 +422,7 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
         />

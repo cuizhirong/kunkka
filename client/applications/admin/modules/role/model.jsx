@@ -1,11 +1,9 @@
 require('./style/index.less');
 
-//react components
 var React = require('react');
 var RSVP = require('rsvp');
-var Main = require('../../components/main/index');
+var Main = require('client/components/main_paged/index');
 
-//detail components
 var deleteModal = require('client/components/modal_delete/index');
 var createRole = require('./pop/create/index');
 
@@ -405,6 +403,7 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
           getStatusIcon={getStatusIcon}
