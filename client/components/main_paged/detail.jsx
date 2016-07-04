@@ -17,6 +17,13 @@ class Detail extends React.Component {
     };
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (!nextState.loading && this.state.loading) {
+      var func = this.props.setRefreshBtnDisabled();
+      func && func(false);
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.visible) {
       if (!nextState.loading && (Object.keys(nextState.contents).length === 0)) {
@@ -77,9 +84,6 @@ class Detail extends React.Component {
     this.setState({
       loading: true
     });
-
-    var func = this.props.onRefreshControl;
-    func && func(true);
   }
 
   onClose() {

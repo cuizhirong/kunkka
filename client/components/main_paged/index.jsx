@@ -102,7 +102,9 @@ class Main extends React.Component {
       }
     }
 
-    this.setRefreshBtn(nextProps.config.table.loading);
+    var detail = this.refs.detail;
+    var refreshBtnDisabled = nextProps.config.table.loading || detail && detail.state.loading;
+    this.setRefreshBtnDisabled(refreshBtnDisabled);
     this.updateRows(nextProps.config.table.data);
   }
 
@@ -113,20 +115,15 @@ class Main extends React.Component {
     return true;
   }
 
-  setRefreshBtn(loading) {
-    //set refresh btn as disabled when table loading, vise versa
+  setRefreshBtnDisabled(disabled) {
     let btnList = this.refs.btnList,
       btns = btnList.state.btns;
 
-    btns.refresh.disabled = loading ? true : false;
+    btns.refresh.disabled = disabled;
 
     btnList.setState({
       btns: btns
     });
-  }
-
-  onDetailRefeshControl(detailLoading) {
-    this.setRefreshBtn(detailLoading);
   }
 
   updateRows(data) {
@@ -472,7 +469,7 @@ class Main extends React.Component {
               tabs={detail.tabs}
               rows={this.stores.rows}
               onClickTabs={this.onClickDetailTabs.bind(this)}
-              onRefreshControl={this.onDetailRefeshControl.bind(this)} />
+              setRefreshBtnDisabled={this.setRefreshBtnDisabled.bind(this)} />
             : null
           }
         </div>
