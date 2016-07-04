@@ -236,6 +236,7 @@ class Model extends React.Component {
       if (params[2]) {
         if (data.loadingDetail) {
           this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
         }
       } else {
         if (data.loadingTable) {

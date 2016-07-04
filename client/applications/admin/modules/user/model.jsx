@@ -273,6 +273,7 @@ class Model extends React.Component {
       if (params[2]) {
         if (data.loadingDetail) {
           this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
         }
       } else {
         if (data.loadingTable) {
@@ -553,6 +554,7 @@ class Model extends React.Component {
                   </DetailMinitable>
                 </div>
               );
+
               detail.setState({
                 contents: contents,
                 loading: false
@@ -564,6 +566,7 @@ class Model extends React.Component {
       default:
         break;
     }
+
     if (syncUpdate) {
       detail.setState({
         contents: contents,

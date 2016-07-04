@@ -208,8 +208,10 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      var dashboard = this.refs.dashboard,
+        detail = dashboard.refs.detail,
         params = this.props.params;
+
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
       }
@@ -264,6 +266,7 @@ class Model extends React.Component {
       if (params[2]) {
         if (data.loadingDetail) {
           this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
         }
       } else {
         if (data.loadingTable) {

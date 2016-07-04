@@ -396,6 +396,7 @@ class Model extends React.Component {
       if (params[2]) {
         if (data.loadingDetail) {
           this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
         }
       } else {
         if (data.loadingTable) {
@@ -601,9 +602,7 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {
-      rows
-    } = data;
+    var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
 
