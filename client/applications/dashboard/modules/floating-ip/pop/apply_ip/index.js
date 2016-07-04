@@ -60,7 +60,14 @@ function pop(parent, callback) {
         var floatingNetwork = networks.filter((item) => item['router:external']);
 
         if (floatingNetwork.length > 0) {
-          externalNetwork = floatingNetwork[0];
+          externalNetwork = floatingNetwork;
+          if(externalNetwork.length > 1) {
+            refs.external_network.setState({
+              data: externalNetwork,
+              value: externalNetwork[0].id,
+              hide: false
+            });
+          }
         } else {
           refs.warning.setState({
             value: __.create_floatingip_error,
@@ -78,7 +85,11 @@ function pop(parent, callback) {
       if (externalNetwork) {
         let data = {};
         data.floatingip = {};
-        data.floatingip.floating_network_id = externalNetwork.id;
+        if(externalNetwork.length === 1) {
+          data.floatingip.floating_network_id = externalNetwork[0].id;
+        } else {
+          data.floatingip.floating_network_id = refs.external_network.state.value;
+        }
 
         /*let bandwidth = Number(refs.bandwidth.state.value) * 1024;
         data.floatingip.rate_limit = bandwidth;*/

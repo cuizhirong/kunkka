@@ -35,7 +35,22 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    this.tableColRender(this.state.config.table.column);
+    //In case of having 2 or more external network, show the floating_network of the floating ip.
+    request.getNetworks().then(networks => {
+      var exNetworks = networks.filter(n => n['router:external']);
+      if(exNetworks.length > 1) {
+        var newConfig = this.state.config,
+          newColumn = {
+            title: __.external_network,
+            key: 'external_network'
+          };
+        newConfig.table.column.splice(1, 0, newColumn);
+        this.setState({
+          config: newConfig
+        });
+      }
+      this.tableColRender(this.state.config.table.column);
+    });
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
@@ -74,6 +89,16 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'external_network':
+          column.render = (col, item, i) => {
+            return (<span>
+              <i className="glyphicon icon-network" />
+              <a data-type="router" href={'/dashboard/network/' + item.floating_network_id}>
+                {item.floating_network_name || '(' + item.floating_network_id.slice(0, 8) + ')'}
+              </a>
+            </span>);
+          };
+          break;
         case 'assc_resource': //router.name or server
           column.render = (col, item, i) => {
             if (item.association && item.association.type === 'server') {

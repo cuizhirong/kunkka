@@ -5,6 +5,10 @@
     "field": "apply_ip_tip",
     "info": "apply_ip_tip"
   }, {
+    "type": "select",
+    "field": "external_network",
+    "hide": true
+  }, {
     "type": "warning",
     "field": "warning",
     "hide": true

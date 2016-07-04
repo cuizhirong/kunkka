@@ -6,6 +6,13 @@ module.exports = {
   getList: function(forced) {
     return storage.getList(['floatingip', 'instance', 'network'], forced).then(function(data) {
       data.floatingip.forEach((f) => {
+        data.network.some(n => {
+          if(n.id === f.floating_network_id) {
+            f.floating_network_name = n.name;
+            return true;
+          }
+          return false;
+        });
         if (f.association.type) {
           f.status = 'active';
         }
