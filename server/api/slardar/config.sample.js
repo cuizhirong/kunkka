@@ -12,7 +12,7 @@ module.exports = {
       },
       'id': 'RegionOne'
     }],
-    'domain': 'default',
+    'domain': 'Default',
     'cookie': {
       'maxAge': 1000 * 60 * 60 * 24 * 7
     },
@@ -59,6 +59,11 @@ module.exports = {
       name: 'listener_max_connection',
       value: 40000,
       type: 'number'
+    }, {
+      app: 'dashboard',
+      name: 'enable_floatingip_bandwidth',
+      value: 'false',
+      type: 'boolean'
     }
   ]
 };

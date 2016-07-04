@@ -8,6 +8,8 @@ const adminModelFactory = React.createFactory(adminModel);
 const upperCaseLocale = require('helpers/upper_case_locale');
 const config = require('config');
 const tusk = require('api/tusk/driver');
+const getRole = require('helpers/get_role');
+const roleConfig = config('invoker_approver') || {};
 
 const websocketUrl = config('websocket').url;
 const regions = {};
@@ -74,14 +76,24 @@ function renderTemplate (req, res, next) {
     }
     let favicon = setting.favicon ? setting.favicon : '/static/assets/favicon.ico';
     let title = setting.title ? setting.title : 'UnitedStack 有云';
-    let _enableCharge = setting.enable_charge;
     if (req.session && req.session.user && req.session.user.isAdmin) {
       let locale = upperCaseLocale(req.i18n.getLocale());
       let __ = req.i18n.__.bind(req.i18n);
       let user = req.session.user;
       let username = user.username;
+      let _enableCharge = setting.enable_charge;
+      let _enableTicket = setting.enable_ticket;
       let applicationList = applications
-      .filter(a => _enableCharge ? true : a !== 'bill')
+      .filter(a => {
+        switch (a) {
+          case 'bill':
+            return _enableCharge;
+          case 'ticket':
+            return _enableTicket;
+          default:
+            return true;
+        }
+      })
       .sort((a, b) => {
         if (a === 'dashboard') {
           return -1;
@@ -97,10 +109,22 @@ function renderTemplate (req, res, next) {
         application_list: applicationList,
         current_application: 'admin'
       };
+      let selfTicket = true;
+      let othersTicket = true;
+      if (_enableTicket) {
+        let roleObj = getRole(req.session.user.roles, roleConfig);
+        if (!roleObj.showSelf) {
+          selfTicket = false;
+        }
+        if (!roleObj.showOthers) {
+          othersTicket = false;
+        }
+      }
       let HALO = {
         configs: {
           lang: locale,
-          domain: config('domain')
+          domain: config('domain'),
+          ticket: _enableTicket ? {show_self: selfTicket, show_others: othersTicket} : null
         },
         user: {
           projectId: user.projectId,
