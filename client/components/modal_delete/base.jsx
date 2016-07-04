@@ -67,13 +67,16 @@ class ModalBase extends React.Component {
       <Modal {..._props} visible={state.visible}>
         <div className="modal-bd halo-com-modal-delete">
           <span dangerouslySetInnerHTML={{__html: content}}></span>
-          <div className="data-list">
+          <ul className="data-list">
             {
-              props.data.map((item) => {
-                return <span key={item.id || item.name}><i className={'glyphicon icon-' + iconType}></i>{item.name || '(' + item.id.substr(0, 8) + ')'}</span>;
-              })
+              props.data.map((item) =>
+                <li key={item.id || item.name}>
+                  <i className={'glyphicon icon-' + iconType} />
+                  {item.name || '(' + item.id.substr(0, 8) + ')'}
+                </li>
+              )
             }
-          </div>
+          </ul>
           <div className={'modal-row tip-row' + (state.tip ? '' : ' hide')}>
             <Tip type={state.tipType} content={state.tip} showIcon={true} width={442}/>
           </div>
