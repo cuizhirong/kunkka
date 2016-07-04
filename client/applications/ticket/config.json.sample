@@ -1,0 +1,14 @@
+{
+  "modules": [{
+    "items": [
+      "image"
+    ]
+  }],
+  "default_module": "image",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [],
+  "theme": "default"
+}

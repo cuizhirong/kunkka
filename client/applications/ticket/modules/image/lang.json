@@ -1,0 +1,14 @@
+{
+  "en": {
+    "edit": "Edit ",
+    "image_id": "Image ID",
+    "image_name": "Image Name",
+    "snapshot_type": "Snapshot"
+  },
+  "zh-CN": {
+    "edit": "修改",
+    "image_id": "镜像ID",
+    "image_name": "镜像名称",
+    "snapshot_type": "快照"
+  }
+}
