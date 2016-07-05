@@ -57,19 +57,18 @@ Network.prototype = {
             return this.handleError(error, req, res, next);
           }
           let obj = {};
-          let externalNetwork;
-          let sharedNetwork;
           let networks = theResults[2].networks;
+          let arrRequestSubnet = [this.__subnets.bind(this, objVar)];
           obj.networks = [].concat(networks);
 
-          if (theResults[0].networks.length) {
-            externalNetwork = theResults[0].networks[0];
-            obj.networks.push(externalNetwork);
-          }
-          if (theResults[1].networks.length) {
-            sharedNetwork = theResults[1].networks[0];
-            obj.networks.push(sharedNetwork);
-          }
+          // all itmes of not-self tenant.
+          theResults[0].networks.concat(theResults[1].networks).forEach( e => {
+            obj.networks.push(e);
+            let objVarCopy = JSON.parse(JSON.stringify(objVar));
+            delete objVarCopy.query.tenant_id;
+            objVarCopy.query.network_id = e.id;
+            arrRequestSubnet.push( this.__subnets.bind(this, objVarCopy) );
+          });
 
           obj.networks = this.deduplicate(obj.networks);
 
@@ -77,38 +76,15 @@ Network.prototype = {
             obj[e] = theResults[index + 3][e];
           });
 
-          let objVarExternal = JSON.parse(JSON.stringify(objVar));
-          delete objVarExternal.query.tenant_id;
-
-          if (externalNetwork) {
-            objVarExternal.query.network_id = externalNetwork.id;
-          } else {
-            objVarExternal.query.network_id = 'null';
-          }
-
-          let objVarShared = JSON.parse(JSON.stringify(objVar));
-          delete objVarShared.query.tenant_id;
-
-          if (sharedNetwork) {
-            objVarShared.query.network_id = sharedNetwork.id;
-          } else {
-            objVarShared.query.network_id = 'null';
-          }
-
-          async.parallel(
-            [
-              this.__subnets.bind(this, objVarExternal),
-              this.__subnets.bind(this, objVarShared),
-              this.__subnets.bind(this, objVar)
-            ],
+          async.parallel(arrRequestSubnet,
             (err, results) => {
               if (err) {
                 return this.handleError(err, req, res, next);
               }
-              let externalSubnets = results[0].subnets;
-              let sharedSubnets = results[1].subnets;
-              let userSubnets = results[2].subnets;
-              obj.subnets = userSubnets.concat(externalSubnets, sharedSubnets);
+              obj.subnets = [];
+              results.forEach( e => {
+                obj.subnets = obj.subnets.concat(e.subnets);
+              });
 
               obj.subnets = this.deduplicate(obj.subnets);
 
