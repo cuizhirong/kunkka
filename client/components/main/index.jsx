@@ -24,6 +24,8 @@ class Main extends React.Component {
 
   componentWillMount() {
     var config = this.props.config;
+    var dataKey = config.table.dataKey;
+
     config.table.column.forEach((col) => {
       if (col.filter) {
         col.filterAll = ['all'];
@@ -31,8 +33,8 @@ class Main extends React.Component {
       if (col.sort) {
         col.sortBy = function(item1, item2) {
           var key = col.dataIndex,
-            a = item1[key] ? item1[key] : '(' + item1.id + ')',
-            b = item2[key] ? item2[key] : '(' + item2.id + ')';
+            a = item1[key] ? item1[key] : '(' + item1[dataKey] + ')',
+            b = item2[key] ? item2[key] : '(' + item2[dataKey] + ')';
 
           return a.localeCompare(b);
         };
@@ -49,7 +51,8 @@ class Main extends React.Component {
           column.render = (col, item, i) => {
             var formatData = column.formatter && column.formatter(col, item, i);
             if (!formatData) {
-              formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')');
+              var key = this.props.config.table.dataKey;
+              formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item[key].substr(0, 8) + ')');
             }
             return (
               <a className="captain" onClick={this.onClickCaptain.bind(this, item)}>
@@ -121,9 +124,10 @@ class Main extends React.Component {
   updateRows(data) {
     //update main store rows
     var newRows = [];
+    var key = this.props.config.table.dataKey;
 
     this.stores.rows.forEach((item) => {
-      var existed = data.filter((d) => d.id === item.id)[0];
+      var existed = data.filter((d) => d[key] === item[key])[0];
 
       if (existed) {
         newRows.push(existed);
@@ -135,7 +139,7 @@ class Main extends React.Component {
     //update table checkedKey
     var checkedKey = {};
     newRows.forEach((item) => {
-      checkedKey[item.id] = true;
+      checkedKey[item[key]] = true;
     });
 
     var table = this.refs.table;
@@ -154,8 +158,9 @@ class Main extends React.Component {
     var table = this.refs.table,
       detail = this.refs.detail;
 
+    var key = this.props.config.table.dataKey;
     if (params.length === 3) {
-      var row = this.props.config.table.data.filter((data) => data.id === params[2])[0];
+      var row = this.props.config.table.data.filter((data) => data[key] === params[2])[0];
       /* no row data means invalid path list */
       if (!row) {
         router.replaceState('/' + params.slice(0, 2).join('/'));
@@ -240,15 +245,16 @@ class Main extends React.Component {
   onClickCaptain(item, e) {
     e.preventDefault();
 
+    var key = this.props.config.table.dataKey;
     var shouldClose = this.refs.detail.state.visible
       && (this.stores.rows.length === 1)
-      && (this.stores.rows[0].id === item.id);
+      && (this.stores.rows[0][key] === item[key]);
 
     var path = router.getPathList();
     if (shouldClose) {
       router.pushState('/' + path[0] + '/' + path[1]);
     } else {
-      router.pushState('/' + path[0] + '/' + path[1] + '/' + item.id);
+      router.pushState('/' + path[0] + '/' + path[1] + '/' + item[key]);
     }
   }
 
@@ -267,13 +273,15 @@ class Main extends React.Component {
 
   checkboxListener(status, clickedRow, arr) {
     var path = this.props.params;
+    var key = this.props.config.table.dataKey;
+
     if (arr.length <= 0) {
       router.pushState('/' + path[0] + '/' + path[1]);
     } else if (arr.length <= 1) {
-      if (path[2] === arr[0].id) {
-        router.replaceState('/' + path[0] + '/' + path[1] + '/' + arr[0].id, null, null, true);
+      if (path[2] === arr[0][key]) {
+        router.replaceState('/' + path[0] + '/' + path[1] + '/' + arr[0][key], null, null, true);
       } else {
-        router.pushState('/' + path[0] + '/' + path[1] + '/' + arr[0].id);
+        router.pushState('/' + path[0] + '/' + path[1] + '/' + arr[0][key]);
       }
     } else {
       // this.refs.detail.updateContent(this.stores.rows);
