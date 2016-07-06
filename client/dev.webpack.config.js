@@ -11,7 +11,7 @@ if (!language) {
   language = 'zh-CN';
 }
 
-var applications =fs.readdirSync('./applications').filter(function(m) {
+var applications = fs.readdirSync('./applications').filter(function(m) {
   return fs.statSync(path.join('./applications', m)).isDirectory();
 });
 var apps = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;

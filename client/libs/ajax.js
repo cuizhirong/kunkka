@@ -29,6 +29,7 @@ module.exports = (function(m) {
           async: true,
           contentType: 'application/x-www-form-urlencoded',
           data: null,
+          processData: true,
           dataType: '_default',
           headers: {}
         },
@@ -56,7 +57,7 @@ module.exports = (function(m) {
           xhr.timeout = o.timeout;
         }
 
-        if (o.data || o.contentType) {
+        if (o.contentType !== false) {
           xhr.setRequestHeader('Content-Type', o.contentType);
         }
         xhr.setRequestHeader('Accept', m.dataTypes[o.dataType] || m.dataTypes._default);
@@ -72,7 +73,7 @@ module.exports = (function(m) {
 
         xhr.onreadystatechange = handler;
 
-        xhr.send(request.processData(o.data));
+        xhr.send(o.processData ? request.processData(o.data) : o.data);
       });
 
       return promise;

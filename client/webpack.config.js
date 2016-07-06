@@ -46,12 +46,12 @@ module.exports = {
     }, {
       test: /\.less$/,
       loader: ExtractTextPlugin.extract(
-        'css?sourceMap&-minimize!' + 'postcss-loader!' + 'less?sourceMap'
+        'css!postcss-loader!less'
       )
     }, {
       test: /\.css$/,
       loader: ExtractTextPlugin.extract(
-        'css?sourceMap&-minimize!' + 'postcss-loader'
+        'css!postcss-loader'
       )
     }],
     noParse: [
