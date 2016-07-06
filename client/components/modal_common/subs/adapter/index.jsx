@@ -38,6 +38,7 @@ class Adapter extends React.Component {
   render() {
     var state = this.state;
     var adapaterConfig = {
+      ref: 'child',
       field: state.field,
       value: state.value,
       required: state.required,
