@@ -1,10 +1,11 @@
 {
   "modules": [{
     "items": [
-      "image"
+      "create-ticket",
+      "manage-ticket"
     ]
   }],
-  "default_module": "image",
+  "default_module": "create-ticket",
   "languages": [
     "en",
     "zh-CN"

@@ -1,21 +1,12 @@
 var fetch = require('../../cores/fetch');
 
-function requestParams(obj) {
-  var str = '';
-  for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
-  }
-
-  return str;
-}
-
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
 
-    var url = '/proxy/glance/v2/images?limit=' + pageLimit;
+    var url = '/api/ticket/' + HALO.user.userId + '/self-tickets';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -27,7 +18,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    var url = '/proxy/glance/v2/images/' + id;
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -39,7 +30,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/glance/v2/' + nextUrl;
+    var url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -50,31 +41,16 @@ module.exports = {
       return res;
     });
   },
-  filter: function(data, pageLimit) {
-    if(isNaN(Number(pageLimit))) {
-      pageLimit = 10;
-    }
-
-    var url = '/proxy/glance/v2/images?limit=' + pageLimit + '&' + requestParams(data);
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
-    });
-  },
-  editName: function(imageID, data) {
-    return fetch.patch({
-      url: '/api/v1/images/' + imageID,
+  createTickets: function(data) {
+    console.log(data);
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets';
+    return fetch.post({
+      url: url,
       data: data
-    });
-  },
-  delete: function(id) {
-    return fetch.delete({
-      url: '/proxy/glance/v2/images/' + id
+    }).then((res) => {
+      return res;
+    }).catch((res) => {
+      return res;
     });
   }
 };
