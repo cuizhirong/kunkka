@@ -20,7 +20,7 @@ function pop(obj, parent, actionModify, callback) {
     config: config,
     onInitialize: function(refs) {
       refs.connection_limit.setState({
-        render: popSlider,
+        renderer: popSlider,
         value: 10000
       });
 
