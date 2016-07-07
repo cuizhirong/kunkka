@@ -287,4 +287,6 @@ API.prototype.deduplicate = function (list) {
   return tmpArr;
 };
 
+API.prototype.routerTypes = ['network:router_interface', 'network:router_interface_distributed'];
+
 module.exports = API;

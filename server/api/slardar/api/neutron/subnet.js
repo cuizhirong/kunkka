@@ -11,6 +11,7 @@ function Subnet (app) {
 
 Subnet.prototype = {
   makeSubnet: function(subnet, obj) {
+    let routerTypes = this.routerTypes;
     obj.networks.some(function (n) {
       return subnet.network_id === n.id && (subnet.network = n);
     });
@@ -25,7 +26,7 @@ Subnet.prototype = {
                 return server.id === p.device_id && (p.server = server);
               });
             }
-          } else if (p.device_owner === 'network:router_interface') {
+          } else if (routerTypes.indexOf(p.device_owner) > -1) {
             obj.routers.some(function (r) {
               return r.id === p.device_id && (subnet.router = r);
             });

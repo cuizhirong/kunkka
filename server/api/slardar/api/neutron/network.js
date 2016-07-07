@@ -11,12 +11,13 @@ function Network (app) {
 
 Network.prototype = {
   makeNetwork: function (network, obj) {
+    let routerTypes = this.routerTypes;
     network.subnets.forEach(function (subnet, index) {
       obj.subnets.some(function (sub) {
         if (sub.id === subnet) {
           network.subnets[index] = sub;
           obj.ports.forEach(function(port){
-            if (port.network_id === network.id && port.device_owner === 'network:router_interface') {
+            if (port.network_id === network.id && routerTypes.indexOf(port.device_owner) > -1) {
               port.fixed_ips.some(function(s){
                 if (s.subnet_id === subnet) {
                   obj.routers.some(function(router){

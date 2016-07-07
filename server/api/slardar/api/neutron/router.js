@@ -11,6 +11,7 @@ function Router (app, neutron) {
 
 Router.prototype = {
   makeRouter: function (router, obj) {
+    let routerTypes = this.routerTypes;
     router.floatingip = {}; // customized floatingip.
     obj.floatingips.some(function (fip) {
       obj.ports.some(function (port) {
@@ -25,7 +26,7 @@ Router.prototype = {
     });
     router.subnets = [];
     obj.ports.forEach(function (port) {
-      if (port.device_id === router.id && port.device_owner === 'network:router_interface') {
+      if (port.device_id === router.id && routerTypes.indexOf(port.device_owner) > -1) {
         obj.subnets.forEach(function (subnet) {
           if (subnet.ip_version === 4 && subnet.id === port.fixed_ips[0].subnet_id) {
             router.subnets.push(subnet);
