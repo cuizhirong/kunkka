@@ -18,7 +18,7 @@ Ticket.prototype = {
     let description = req.body.description;
     let type = req.body.type;
     let status = req.body.status;
-    let attachments = req.body.attachments;
+    let attachments = req.body.attachments || [];
     let _attachments = [];
     attachments.forEach(a => {
       _attachments.push({

@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({storage: storage});
+const upload = multer({storage: storage, limits: {fileSize: config('file_size_limit') || 10 * 1024 * 1024}});
 
 function Attachment (app) {
   Base.call(this);
