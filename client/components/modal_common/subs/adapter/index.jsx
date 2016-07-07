@@ -5,7 +5,7 @@ class Adapter extends React.Component {
     super(props);
 
     this.state = {
-      render: props.render,
+      renderer: props.renderer,
       field: props.field,
       value: props.value ? props.value : '',
       required: props.required,
@@ -38,7 +38,6 @@ class Adapter extends React.Component {
   render() {
     var state = this.state;
     var adapaterConfig = {
-      ref: 'child',
       field: state.field,
       value: state.value,
       required: state.required,
@@ -49,7 +48,7 @@ class Adapter extends React.Component {
     };
 
     return (
-      this.state.render ? this.state.render(adapaterConfig) : <div>no info</div>
+      this.state.renderer ? this.state.renderer(adapaterConfig) : <div>no info</div>
     );
   }
 }
