@@ -1,0 +1,85 @@
+{
+  "tabs": [{
+    "name": ["pending"],
+    "key": "manage_ticket",
+    "default": true
+  }, {
+    "name": ["proceeding"],
+    "key": "proceeding_ticket"
+  }, {
+    "name": ["closed"],
+    "key": "closed_ticket"
+  }],
+  "btns": [{
+    "value": ["update_to", "proceeding"],
+    "key": "proceeding",
+    "icon": "active",
+    "disabled": false
+  }, {
+    "value": ["update_to", "closed"],
+    "key": "closed",
+    "icon": "remove",
+    "disabled": false
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "filter_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "ticket_id"]
+    }]
+  }, {
+    "group_key": "filter_type",
+    "items": [{
+      "type": "select",
+      "key": "time",
+      "default": ["all", "time"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["title"],
+      "dataIndex": "title",
+      "key": "title",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["num"],
+      "dataIndex": "number",
+      "key": "number"
+    }, {
+      "title": ["replies"],
+      "dataIndex": "reply",
+      "key": "reply"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status"
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "createdAt",
+      "key": "createdAt",
+      "type": "time"
+    }, {
+      "title": ["update", "time"],
+      "dataIndex": "updatedAt",
+      "key": "updatedAt",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["ticket", "description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "tabs": [{
-    "name": ["create-ticket"],
+    "name": ["create_ticket"],
     "key": "create_tickets",
     "default": true
   }],
@@ -14,12 +14,12 @@
     "value": ["open"],
     "key": "open",
     "icon": "active",
-    "disabled": false
+    "disabled": true
   }, {
     "value": ["close"],
     "key": "close",
     "icon": "remove",
-    "disabled": false
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"
@@ -37,21 +37,25 @@
       "sort": true
     }, {
       "title": ["num"],
-      "dataIndex": "num",
-      "key": "num"
+      "dataIndex": "number",
+      "key": "number"
     }, {
       "title": ["replies"],
-      "dataIndex": "replies",
-      "key": "replies"
+      "dataIndex": "reply",
+      "key": "reply"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status"
     }, {
       "title": ["create", "time"],
-      "dataIndex": "created_at",
-      "key": "created",
+      "dataIndex": "createdAt",
+      "key": "createdAt",
       "type": "time"
     }, {
       "title": ["update", "time"],
-      "dataIndex": "update_at",
-      "key": "update",
+      "dataIndex": "updatedAt",
+      "key": "updatedAt",
       "type": "time"
     }],
     "data": [],

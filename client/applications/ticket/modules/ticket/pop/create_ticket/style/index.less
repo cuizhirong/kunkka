@@ -1,0 +1,63 @@
+@import "../../../../../../../style/index.less";
+
+@attach_bg_color: @color_grey;
+@attach_delete: @color_delete;
+@border_color: @color_grey_600;
+
+.halo-pop-attach {
+  .attach-label {
+    margin-bottom: 20px;
+    .attach-file {
+      padding-left: 70px!important;
+      .attach {
+        margin-left: 42px;
+        padding-left: 10px;
+        width: 382px;
+        height: 30px;
+        line-height: 30px;
+        text-align: left;
+        background-color: @attach_bg_color;
+        .error {
+          color: @attach_delete;
+        }
+        i:last-child {
+          margin-left: 300px;
+          &:hover {
+            color: @attach_delete;
+          }
+        }
+      }
+    }
+  }
+  .attach-info {
+    margin-left: 112px;
+    color: @border_color;
+    .btn-browse {
+      float: left;
+      position: relative;
+      margin: 0 40px 40px 16px;
+      a {
+        zoom: 1;
+        display: inline-block;
+        width: 72px;
+        height: 20px;
+        line-height: 20px;
+        cursor: pointer;
+        .upload_file {
+          float: right;
+          margin-right: 10px;
+        }
+        .myfile {
+          opacity: 0;
+          padding: 0;
+          zoom: 0;
+          position: absolute;
+          right: 0;
+          width: 130px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

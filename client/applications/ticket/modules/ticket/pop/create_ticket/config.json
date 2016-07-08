@@ -1,5 +1,5 @@
 {
-  "title": ["create-ticket"],
+  "title": ["create_ticket"],
   "fields": [{
     "type": "input",
     "field": "title"

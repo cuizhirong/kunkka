@@ -78,8 +78,8 @@ class Model extends React.Component {
 
   getIcon(name) {
     switch(name) {
-      case 'loadbalancer':
-        return 'lb';
+      case 'manage_ticket':
+        return 'setting';
       default:
         return name;
     }

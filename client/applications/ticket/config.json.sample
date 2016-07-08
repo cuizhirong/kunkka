@@ -1,15 +1,23 @@
 {
   "modules": [{
     "items": [
-      "create-ticket",
-      "manage-ticket"
+      "ticket",
+      "manage_ticket",
+      "proceeding_ticket",
+      "closed_ticket"
     ]
   }],
-  "default_module": "create-ticket",
+  "default_module": "ticket",
   "languages": [
     "en",
     "zh-CN"
   ],
-  "routers": [],
+  "routers": [{
+    "key": "proceeding_ticket",
+    "link": "manage_ticket"
+  }, {
+    "key": "closed_ticket",
+    "link": "manage_ticket"
+  }],
   "theme": "default"
 }

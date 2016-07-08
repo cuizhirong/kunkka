@@ -13,13 +13,16 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       refs.attach_file.setState({
-        render: popAttach
+        renderer: popAttach
       });
     },
     onConfirm: function(refs, cb) {
       var data = {
         title: refs.title.state.value,
-        description: refs.description.state.value
+        description: refs.description.state.value,
+        type: 'pending',
+        status: 'pending',
+        attachments: refs.attach_file.refs.child.state.attachments
       };
       request.createTickets(data).then((res) => {
         callback && callback();

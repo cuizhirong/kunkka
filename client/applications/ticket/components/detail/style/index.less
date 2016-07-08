@@ -1,0 +1,135 @@
+@import "../../../style/index.less";
+
+@title_color: @color_font;
+@right_color: @color_grey_800;
+@attach_color: @color_info;
+@border_color: @color_grey_600;
+@bg_left: @color_delete_100;
+@bg_right: @color_info_100;
+
+.halo-com-detail {
+  margin: 0 20px;
+  .detail-question {
+    margin-top: 24px;
+    .content-question {
+      margin-bottom: 14px;
+      overflow: auto;
+      .question-left {
+        float: left;
+        width: 60%;
+        .question-title {
+          font-size: 14px;
+          color: @title_color;
+          margin-bottom: 20px;
+        }
+        .question-content {
+          margin-bottom: 12px;
+          color: @right_color;
+        }
+      }
+      .question-right {
+        float: right;
+        color: @right_color;
+      }
+    }
+  }
+  .file_url {
+    float: left;
+    margin: 18px;
+    div:last-child {
+      text-align: center;
+      padding-top: 10px;
+    }
+  }
+  .detail-reply {
+    margin-top: 24px;
+    clear: both;
+    border-top: 1px solid @border_color;
+    .reply-msg {
+      margin: 20px 0;
+      overflow: auto;
+      .reply {
+        width: 46px;
+        overflow: hidden;
+        float: left;
+        clear: both;
+        .reply-name {
+          color: @attach_color;
+          width: 100%;
+          text-align: center;
+        }
+        img {
+          position: relative;
+          left: -14px;
+          width: 100px;
+        }
+      }
+      .reply-right {
+        float: right;
+      }
+      .admin {
+        img {
+          left: -58px;
+        }
+      }
+      .member {
+        img {
+          left: -14px;
+        }
+      }
+      .msg {
+        float: left;
+        .reply-content {
+          float: left;
+          line-height: 22px;
+          max-width: 360px;
+          background-color: @bg_left;
+          padding: 16px 20px;
+        }
+        .reply-update {
+          float: right;
+          clear: both;
+        }
+      }
+      .msg-right {
+        float: right;
+        .reply-content {
+          float: right;
+          background-color: @color_info_100;
+        }
+        .reply-update {
+          float: left;
+        }
+      }
+    }
+    .reply-text {
+      margin-top: 40px;
+      clear: both;
+      textarea {
+        margin: 8px 0 12px;
+        height: 100px;
+        width: 100%;
+        line-height: 22px;
+        padding: 4px 10px;
+        overflow: auto;
+        box-sizing: border-box;
+        resize: none;
+        border-color: @border_color;
+        &:hover {
+          border-color: @attach_color;
+        }
+      }
+    }
+    .reply-attach {
+      margin-left: -112px;
+      margin-top: -20px;
+    }
+  }
+  .detail-bottom {
+    float: right;
+    margin: 20px 0 30px;
+    .btn:not(:last-child) {
+      margin-right: 12px;
+    }
+  }
+}
