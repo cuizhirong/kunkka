@@ -331,7 +331,7 @@ class Model extends React.Component {
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __.port} disabled={rows[0].network.shared || rows[0].network['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
+                <Button value={__.add_ + __.port} disabled={rows[0].network['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
               </DetailMinitable>
             </div>
           );

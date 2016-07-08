@@ -41,11 +41,18 @@ function pop(obj, parent, callback) {
           });
 
           var selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
-          selectedSubnet = obj ? obj : selectedSubnet;
+          if(obj) {
+            selectedSubnet = subnets.find(ele => ele.id === obj.id);
+            var currentGroup = subnetGroup.find(ele => ele.id === obj.network.id);
+            currentGroup.data = [{name: selectedSubnet.name, id: selectedSubnet.id}];
+            subnetGroup = [currentGroup];
+          }
+
           refs.subnet.setState({
             data: subnetGroup,
             value: selectedSubnet ? selectedSubnet.id : null
           });
+
           refs.security_group.setState({
             hide: selectedSubnet ? !selectedSubnet.network.port_security_enabled : false
           });
@@ -89,13 +96,11 @@ function pop(obj, parent, callback) {
 
       var subnet = refs.subnet.state;
 
-      var shared = false;
       subnet.data.some((ele) => {
         return ele.data.some((s) => {
           if (s.id === subnet.value) {
             port.network_id = ele.id;
             port.port_security_enabled = ele.port_security_enabled;
-            shared = ele.shared;
             return true;
           }
           return false;
@@ -108,7 +113,7 @@ function pop(obj, parent, callback) {
         });
       }
 
-      if (!shared && refs.address_ip.state.value !== '') {
+      if (refs.address_ip.state.value !== '') {
         port.fixed_ips[0].ip_address = '';
         port.fixed_ips[0].ip_address = refs.address_ip.state.value;
       }
