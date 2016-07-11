@@ -32,9 +32,9 @@ class ModalBase extends React.Component {
       disabled: this.props.config.btn.disabled
     };
 
-    this.onConfirm = this.onConfirm.bind(this);
-    this.onCancel = this.onCancel.bind(this);
-    this.onAction = this.onAction.bind(this);
+    ['onConfirm', 'onCancel', 'onAction'].forEach(m => {
+      this[m] = this[m].bind(this);
+    });
     // this.onPop = this.onPop.bind(this);
   }
 
@@ -49,48 +49,31 @@ class ModalBase extends React.Component {
       m.label = this.__[m.field];
       m.__ = this.__;
 
-      switch(m.type) {
-        case 'text':
-          return <Text key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'input':
-          return <Input key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'error':
-        case 'warning':
-        case 'info':
-          return <Tip key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'checkbox':
-          return <Checkbox key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'icon_label':
-          return <IconLabel key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'textarea':
-          return <TextArea key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'select':
-          return <Select key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'select_group':
-          return <SelectGroup key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'select_single':
-          return <SelectSingle key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'tab':
-          return <Tab key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'group_select':
-          return <GroupSelect key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'slider':
-          return <Slider key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'progress':
-          return <Progress key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'short_tip':
-          return <ShortTip key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'display_box':
-          return <DisplayBox key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'data_list':
-          return <DataList key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'charge':
-          return <Charge key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        case 'adapter':
-          return <Adapter key={m.field} ref={m.field} {...m} onAction={this.onAction} />;
-        default:
-          return null;
-      }
+      var subComs = {
+        'text': Text,
+        'tab': Tab,
+        'input': Input,
+        'textarea': TextArea,
+        'tip': Tip,
+        'checkbox': Checkbox,
+        'icon_label': IconLabel,
+        'select': Select,
+        'select_group': SelectGroup,
+        'select_single': SelectSingle,
+        'group_select': GroupSelect,
+        'slider': Slider,
+        'progress': Progress,
+        'short_tip': ShortTip,
+        'display_box': DisplayBox,
+        'data_list': DataList,
+        'charge': Charge,
+        'adapter': Adapter
+      };
+
+      var Sub = null;
+      Sub = subComs[m.type];
+
+      return Sub ? <Sub key={m.field} ref={m.field} {...m} onAction={this.onAction} /> : null;
     });
   }
 

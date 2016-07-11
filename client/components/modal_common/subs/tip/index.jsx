@@ -27,7 +27,7 @@ class Error extends React.Component {
       state = this.state;
 
     var className = this.state.hide ? 'modal-row tip-row hide' : 'modal-row tip-row';
-    var type = (props.type === 'error') ? 'danger' : props.type;
+    var type = (props.tip_type === 'error') ? 'danger' : props.tip_type;
 
     return (
       <div className={className}>
