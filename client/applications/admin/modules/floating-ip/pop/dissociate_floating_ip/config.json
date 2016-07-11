@@ -11,7 +11,8 @@
   }, {
     "type": "icon_label"
   }, {
-    "type": "info",
+    "type": "tip",
+    "tip_type": "info",
     "field": "tip_dissociate_into"
   }],
   "btn": {

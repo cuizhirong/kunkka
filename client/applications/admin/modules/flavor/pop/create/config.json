@@ -21,7 +21,8 @@
     "type": "input",
     "field": "id"
   }, {
-    "type": "error",
+    "type": "tip",
+    "tip_type": "error",
     "field": "error",
     "hide": true
   }],

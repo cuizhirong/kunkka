@@ -11,7 +11,8 @@
     "input-type": "text",
     "required": true
   }, {
-    "type": "info",
+    "type": "tip",
+    "tip_type": "info",
     "field": "tip_info_floating_ip"
   }],
   "btn": {
