@@ -71,7 +71,7 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
-
+  obj.include = [Attachment];
 
   return Ticket.findAndCount(obj);
 };
