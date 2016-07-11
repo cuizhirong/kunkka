@@ -14,7 +14,8 @@
     },
     "data": []
   }, {
-    "type": "warning",
+    "type": "tip",
+    "tip_type": "warning",
     "field": "tip_related_subnet"
   }],
   "btn": {

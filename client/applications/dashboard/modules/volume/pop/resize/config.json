@@ -15,7 +15,8 @@
     "value": "0.0000",
     "hide": false
   }, {
-    "type": "error",
+    "type": "tip",
+    "tip_type": "error",
     "field": "error",
     "hide": true
   }],

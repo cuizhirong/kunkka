@@ -16,7 +16,8 @@
     "field": "port",
     "hide": true
   }, {
-    "type": "warning",
+    "type": "tip",
+    "tip_type": "warning",
     "field": "tip_lb_assoc_fip"
   }],
   "btn": {

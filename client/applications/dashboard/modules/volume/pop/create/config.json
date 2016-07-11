@@ -23,7 +23,8 @@
     "has_label": true,
     "hide": true
   }, {
-    "type": "error",
+    "type": "tip",
+    "tip_type": "error",
     "field": "error",
     "hide": true
   }],

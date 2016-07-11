@@ -9,7 +9,8 @@
     "field": "external_network",
     "hide": true
   }, {
-    "type": "warning",
+    "type": "tip",
+    "tip_type": "warning",
     "field": "warning",
     "hide": true
   }],

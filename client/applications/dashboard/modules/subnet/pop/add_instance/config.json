@@ -12,7 +12,8 @@
       "info": "no_instance"
     }
   }, {
-    "type": "warning",
+    "type": "tip",
+    "tip_type": "warning",
     "field": "join_network_tip"
   }],
   "btn": {

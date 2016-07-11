@@ -35,7 +35,8 @@
     "field": "security_group",
     "hide": true
   }, {
-    "type": "error",
+    "type": "tip",
+    "tip_type": "error",
     "field": "error_msg",
     "hide": true
   }],

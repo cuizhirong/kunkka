@@ -10,7 +10,8 @@
     "is_warning": true,
     "data": []
   }, {
-    "type": "warning",
+    "type": "tip",
+    "tip_type": "warning",
     "field": "detach_volume_tip"
   }],
   "btn": {

@@ -15,7 +15,8 @@
     "icon_type": "instance",
     "text": ""
   }, {
-    "type": "info",
+    "type": "tip",
+    "tip_type": "info",
     "field": "tip_info_floatingip"
   }],
   "btn": {

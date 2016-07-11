@@ -1,7 +1,8 @@
 {
   "title": ["create", "prv_network"],
   "fields": [{
-    "type": "info",
+    "type": "tip",
+    "tip_type": "info",
     "field": "prv_info"
   }, {
     "type": "input",
