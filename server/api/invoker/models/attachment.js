@@ -16,7 +16,8 @@ module.exports = function (mysql, DataTypes) {
       allowNull: false
     }
   }, {
-    paranoid: true
+    paranoid: true,
+    charset: 'utf8'
   });
   return Attachment;
 };

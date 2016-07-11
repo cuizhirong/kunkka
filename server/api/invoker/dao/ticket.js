@@ -4,6 +4,7 @@ const models = require('../models');
 const Ticket = models.ticket;
 const Attachment = models.attachment;
 const Approver = models.approver;
+const Reply = models.reply;
 
 exports.create = function (data) {
   return Ticket.create(data, {
@@ -71,7 +72,7 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
-  obj.include = [Attachment];
+  obj.include = [Attachment, Reply];
 
   return Ticket.findAndCount(obj);
 };

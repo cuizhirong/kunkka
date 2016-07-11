@@ -45,7 +45,8 @@ module.exports = function (mysql, DataTypes) {
         Ticket.hasMany(models.approver);
       }
     },
-    paranoid: true
+    paranoid: true,
+    charset:'utf8'
   });
   return Ticket;
 };
