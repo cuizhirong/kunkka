@@ -15,15 +15,15 @@ var fetch = {};
 
 ['get', 'post', 'put', 'delete'].forEach((m) => {
   fetch[m] = function(options) {
-    return request[m]({
-      url: options.url,
-      dataType: options.dataType || 'json',
-      data: options.data,
+    var opt = Object.assign({
+      dataType: 'json',
       contentType: 'application/json',
       headers: {
         REGION: HALO.current_region
       }
-    }).catch(errHandler);
+    }, options);
+
+    return request[m](opt).catch(errHandler);
   };
 });
 
