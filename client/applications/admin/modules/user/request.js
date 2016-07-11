@@ -8,7 +8,7 @@ module.exports = {
     }
 
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain;
+      var currentDomain = HALO.configs.domain.toLowerCase();
       var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
       var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
 

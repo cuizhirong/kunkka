@@ -31,7 +31,7 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getDomains().then((domains) => {
-        var defaultDomainName = HALO.configs.domain;
+        var defaultDomainName = HALO.configs.domain.toLowerCase();
         var domain = domains.find((ele) => ele.name.toLowerCase() === defaultDomainName);
 
         refs.domain.setState({
