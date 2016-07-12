@@ -93,9 +93,9 @@ class Model extends React.Component {
           column.render = (col, item, i) => {
             return (<span>
               <i className="glyphicon icon-network" />
-              <a data-type="router" href={'/dashboard/network/' + item.floating_network_id}>
+              <span>
                 {item.floating_network_name || '(' + item.floating_network_id.slice(0, 8) + ')'}
-              </a>
+              </span>
             </span>);
           };
           break;

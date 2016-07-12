@@ -66,15 +66,15 @@ module.exports = {
   },
   getGateway: function() {
     return storage.getList(['network']).then(function(data) {
-      var ret;
-      data.network.some((item) => {
+      var exNetworks = [];
+      data.network.forEach((item) => {
         if (item['router:external']) {
-          ret = item.id;
+          exNetworks.push(item);
           return true;
         }
         return false;
       });
-      return ret;
+      return exNetworks;
     });
   },
   getSubnets: function(forced) {

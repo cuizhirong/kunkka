@@ -30,10 +30,21 @@ function pop(parent, callback) {
       // }
 
       request.getGateway().then((res) => {
-        gatewayId = res;
-        refs.btn.setState({
-          disabled: false
-        });
+        if(res.length > 0) {
+          gatewayId = res[0].id;
+          if(res.length > 1) {
+            gatewayId = '';
+            refs.external_network.setState({
+              data: res,
+              value: res[0].id,
+              hide: false
+            });
+          }
+
+          refs.btn.setState({
+            disabled: false
+          });
+        }
       });
 
       // if (HALO.settings.enable_charge) {
@@ -53,7 +64,7 @@ function pop(parent, callback) {
       };
       if (refs.enable_public_gateway.state.checked) {
         data.external_gateway_info = {
-          network_id: gatewayId
+          network_id: gatewayId ? gatewayId : refs.external_network.state.value
         };
       }
       request.createRouter(data).then((res) => {
@@ -63,7 +74,23 @@ function pop(parent, callback) {
         cb(false, getErrorMessage(error));
       });
     },
-    onAction: function(field, status, refs) {}
+    onAction: function(field, status, refs) {
+      switch(field) {
+        case 'enable_public_gateway':
+          if(refs.enable_public_gateway.state.checked) {
+            refs.external_network.setState({
+              hide: false
+            });
+          } else {
+            refs.external_network.setState({
+              hide: true
+            });
+          }
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   commonModal(props);

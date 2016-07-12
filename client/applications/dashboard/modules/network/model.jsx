@@ -358,6 +358,9 @@ class Model extends React.Component {
       content: item.port_security_enabled ?
         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
     }, {
+      title: __.external_network,
+      content: item['router:external'] ? __.yes : __.no
+    }, {
       title: __.shared,
       content: item.shared ? __.yes : __.no
     }];
