@@ -39,9 +39,16 @@ module.exports = (app) => {
   app.set('views', [__dirname]);
   app.set('applications', frontendApps);
   let clientApps = frontendApps.filter(a => a !== 'login');
+  let clientAppModules = [];
   frontendApps.forEach(a => {
     if (viewsPath[a]) {
-      require(viewsPath[a])(app, clientApps);
+      clientAppModules.push({
+        model: require(viewsPath[a]),
+        name: a
+      });
     }
+  });
+  clientAppModules.forEach(m => {
+    m.model.main(app, clientApps, m.name, clientAppModules);
   });
 };
