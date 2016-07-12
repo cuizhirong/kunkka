@@ -31,16 +31,15 @@ exports.findOneByIdAndOwner = function (id, owner) {
 };
 
 exports.findAllByFields = function (fields) {
-  let obj = {};
+  let obj = {where: {}, include: [Attachment, Reply]};
+
   if (fields.owner) {
-    obj.where = {
-      owner: fields.owner
-    };
+    obj.where.owner = fields.owner
   } else {
     if (fields.approver) {
-      obj.include = [{model: Approver, where: {approver: {$in: fields.approver}}}];
+      obj.include.push({model: Approver, where: {approver: {$in: fields.approver}}});
     } else {
-      obj.include = [{model: Approver}];
+      obj.include.push({model: Approver});
     }
 
     if (fields.processor) {
@@ -58,13 +57,17 @@ exports.findAllByFields = function (fields) {
   }
 
   if (fields.start || fields.end) {
-    obj.createdAt = {
-      $gt: fields.start && new Date(fields.start),
-      $lt: fields.end && new Date(fields.end)
-    };
+    obj.where.createdAt = {};
+    if (fields.start) {
+      obj.where.createdAt.$gt = new Date(fields.start);
+    }
+    if (fields.end) {
+      obj.where.createdAt.$lt = new Date(fields.end);
+    }
   }
+
   if (fields.status && Array.isArray(fields.status)) {
-    obj.status = {
+    obj.where.status = {
       $in: fields.status
     };
   }
@@ -72,7 +75,6 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
-  obj.include = [Attachment, Reply];
 
   return Ticket.findAndCount(obj);
 };
