@@ -7,7 +7,7 @@
   }, {
     "type": "icon_label",
     "field": "floating_ip",
-    "icon_type": "floating_ip",
+    "icon_type": "floating-ip",
     "text": ""
   }, {
     "type": "icon_label",

@@ -99,7 +99,7 @@ class Model extends React.Component {
             </span>);
           };
           break;
-        case 'assc_resource': //router.name or server
+        case 'assc_resource': //router, server or lbaas
           column.render = (col, item, i) => {
             if (item.association && item.association.type === 'server') {
               var server = item.association.device;
@@ -108,6 +108,15 @@ class Model extends React.Component {
                   <i className="glyphicon icon-instance" />
                   <a data-type="router" href={'/dashboard/instance/' + server.id}>
                     {server.name}
+                  </a>
+                </span>
+              );
+            } else if (item.lbaas) {
+              return (
+                <span>
+                  <i className="glyphicon icon-lb" />
+                  <a data-type="router" href={'/dashboard/loadbalancer/' + item.lbaas.id}>
+                    {item.lbaas.name}
                   </a>
                 </span>
               );
@@ -288,15 +297,14 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var shouldAssociate = (rows.length === 1) && !(rows[0].association.type);
     for(let key in btns) {
       switch (key) {
         case 'assc_to_lb':
         case 'assc_to_instance':
-          btns[key].disabled = shouldAssociate ? false : true;
+          btns[key].disabled = (rows.length === 1 && !rows[0].association.type && !rows[0].lbaas) ? false : true;
           break;
         case 'dissociate':
-          btns[key].disabled = (rows.length === 1 && rows[0].association.type) ? false : true;
+          btns[key].disabled = (rows.length === 1 && (rows[0].association.type || rows[0].lbaas)) ? false : true;
           break;
         /*case 'change_bw':
           btns[key].disabled = rows.length === 1 ? false : true;
@@ -356,6 +364,25 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var rateLimit = Number(item.rate_limit);
     var bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+    var getResource = function() {
+      if(item.association && item.association.type === 'server') {
+        return (<span>
+          <i className="glyphicon icon-instance" />
+          <a data-type="router" href={'/dashboard/instance/' + item.association.device.id}>
+            {item.association.device.name}
+          </a>
+        </span>);
+      } else if(item.lbaas) {
+        return (<span>
+          <i className="glyphicon icon-lb" />
+          <a data-type="router" href={'/dashboard/loadbalancer/' + item.lbaas.id}>
+            {item.lbaas.name}
+          </a>
+        </span>);
+      } else {
+        return '-';
+      }
+    };
 
     var items = [{
       title: __.id,
@@ -365,13 +392,7 @@ class Model extends React.Component {
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,
-      content: (item.association && item.association.type === 'server') ?
-        <span>
-          <i className="glyphicon icon-instance" />
-          <a data-type="router" href={'/dashboard/instance/' + item.association.device.id}>
-            {item.association.device.name}
-          </a>
-        </span> : '-'
+      content: getResource()
     }, {
       title: __.bandwidth,
       content: bandwidth
