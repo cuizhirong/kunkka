@@ -10,7 +10,6 @@ var ResourceList = require('./resource_list');
 //pop modals
 var createPool = require('./pop/create_pool/');
 var deleteModal = require('client/components/modal_delete/index');
-var updatePoolState = require('./pop/update_pool_state/index');
 var addResource = require('./pop/add_resource/index');
 var updateResourceState = require('./pop/update_resource_state/index');
 var modifyWeight = require('./pop/modify_weight/index');
@@ -85,11 +84,6 @@ class Model extends React.Component {
             return item.name || '(' + item.id.slice(0, 8) + ')';
           };
           break;
-        case 'admin_state':
-          column.render = (col, item, i) => {
-            return item.admin_state_up ? __.enabled : __.disabled;
-          };
-          break;
         case 'load_algorithm':
           column.render = (col, item, i) => {
             return __[item.lb_algorithm.toLowerCase()];
@@ -153,12 +147,6 @@ class Model extends React.Component {
         break;
       case 'create_monitor':
         createMonitor();
-        break;
-      case 'enable_pool':
-        updatePoolState(rows[0], null, true);
-        break;
-      case 'disable_pool':
-        updatePoolState(rows[0], null, false);
         break;
       case 'modify_pool':
         createPool(rows[0]);
@@ -228,12 +216,6 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'enable_pool':
-          btns[key].disabled = !(rows.length === 1 && !rows[0].admin_state_up);
-          break;
-        case 'disable_pool':
-          btns[key].disabled = !(rows.length === 1 && rows[0].admin_state_up);
-          break;
         case 'modify_pool':
           btns[key].disabled = rows.length !== 1;
           break;
