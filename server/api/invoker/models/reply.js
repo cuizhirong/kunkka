@@ -15,6 +15,14 @@ module.exports = function (mysql, DataTypes) {
     owner: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     paranoid: true,

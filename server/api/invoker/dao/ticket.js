@@ -34,7 +34,7 @@ exports.findAllByFields = function (fields) {
   let obj = {where: {}, include: [Attachment, Reply]};
 
   if (fields.owner) {
-    obj.where.owner = fields.owner
+    obj.where.owner = fields.owner;
   } else {
     if (fields.approver) {
       obj.include.push({model: Approver, where: {approver: {$in: fields.approver}}});

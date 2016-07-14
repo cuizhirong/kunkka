@@ -32,7 +32,7 @@ Attachment.prototype = {
     res.json({attachment_url: `/api/ticket/${owner}/attachments/${pathSplit[pathSplit.length - 2]}/${req.file.filename}`});
   },
   getAttachmentByName: function (req, res, next) {
-    let name = req.params.name;
+    let name = '/' + req.params.uuid + '/' + req.params.name;
     res.sendFile(name, sendFileOpts, function (err) {
       if (err) {
         res.status(err.status).end();
@@ -41,7 +41,7 @@ Attachment.prototype = {
   },
   initRoutes: function () {
     this.app.post('/api/ticket/:owner/attachments', this.checkOwner, upload.single('attachment'), this.createAttachment);
-    this.app.get('/api/ticket/:owner/attachments/:name', this.checkOwner, this.getAttachmentByName);
+    this.app.get('/api/ticket/:owner/attachments/:uuid/:name', this.checkOwner, this.getAttachmentByName);
   }
 };
 

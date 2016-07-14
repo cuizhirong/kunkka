@@ -14,6 +14,7 @@ function Ticket (app) {
 Ticket.prototype = {
   createTicket: function (req, res, next) {
     let owner = req.params.owner;
+    let username = req.session.user.username;
     let title = req.body.title;
     let description = req.body.description;
     let type = req.body.type;
@@ -31,7 +32,7 @@ Ticket.prototype = {
       return res.status(500).json({msg: 'limited Authority', code: -1});
     }
 
-    let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
+    let currentRole = Ticket.prototype.getCurrentRole(req.session.user.roles);
 
     let approvers = config[currentRole] && config[currentRole].approver;
     let _approvers = [];
@@ -47,6 +48,8 @@ Ticket.prototype = {
       owner: owner,
       type: type,
       status: status,
+      username: username,
+      role: currentRole,
       attachments: _attachments,
       approvers: _approvers
     }).then(result => {
@@ -103,25 +106,6 @@ Ticket.prototype = {
       res.status(500).json(err);
     });
   },
-  //获取角色/
-  _getCurrentRole: function (arrRoles) {
-    if (!Array.isArray(arrRoles)) {
-      return false;
-    }
-
-    let roleList = Object.keys(config).reverse();
-    let roleIndex = -1;
-
-    roleList.some(function (role) {
-      roleIndex = arrRoles.indexOf(role);
-      return roleIndex > -1;
-    });
-
-    if (roleIndex < 0) {
-      return false;
-    }
-    return roleList[roleIndex];
-  },
 
   getApproverTicketList: function (req, res, next) {
     Ticket.prototype.getTicketList(req, res, {self: false});
@@ -160,17 +144,15 @@ Ticket.prototype = {
     if (options.self) {
       fields.owner = owner;
     } else {
-
       fields.processor = req.session.user.userId;
 
       if (req.session.user && Array.isArray(req.session.user.roles)) {
-        let currentRole = Ticket.prototype._getCurrentRole(req.session.user.roles);
+        let currentRole = Ticket.prototype.getCurrentRole(req.session.user.roles);
         fields.approver = config[currentRole].scope;
       } else {
         fields.approver = [];
       }
     }
-
 
     ticketDao.findAllByFields(fields).then(result => {
       let _next = (result.count / limit) > fields.page ? (fields.page + 1) : null;

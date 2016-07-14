@@ -25,6 +25,14 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false
@@ -46,7 +54,7 @@ module.exports = function (mysql, DataTypes) {
       }
     },
     paranoid: true,
-    charset:'utf8'
+    charset: 'utf8'
   });
   return Ticket;
 };

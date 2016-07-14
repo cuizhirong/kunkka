@@ -3,7 +3,6 @@
 const dao = require('../dao');
 const Base = require('./base');
 const replyDao = dao.reply;
-//const ticketDao = dao.ticket;
 
 function Reply (app) {
   Base.call(this);
@@ -15,10 +14,14 @@ Reply.prototype = {
     let owner = req.params.owner;
     let ticketId = req.params.ticketId;
     let content = req.body.content;
+    let username = req.session.user.username;
+    let currentRole = Reply.prototype.getCurrentRole(req.session.user.roles);
     replyDao.create({
       owner: owner,
       content: content,
-      ticketId: ticketId
+      ticketId: ticketId,
+      username: username,
+      role: currentRole
     }).then(result => {
       res.json(result);
     }).catch(err => {
