@@ -14,10 +14,13 @@ class NavBar extends React.Component {
 
   render() {
     var HALO = this.props.HALO;
+    var logo = {
+      backgroundImage: 'url(' + (HALO.settings.logo_url || '/static/assets/nav_logo.png') + ')'
+    };
 
     return (
       <div className="halo-com-navbar">
-        <div className="logo"></div>
+        <div className="logo" style={logo}></div>
         <div className="user-info">
           <i className="glyphicon icon-avatar"></i>
           <span className="user-name">{HALO.user.username}</span>
