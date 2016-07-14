@@ -3,6 +3,7 @@ var createSubnet = require('../../../subnet/pop/create_subnet/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 var getAvailableSubnets = function(data, refs) {
   var subnets = data.filter((ele) => !ele.network['router:external']);
@@ -78,8 +79,10 @@ function pop(obj, parent, callback) {
       request.addInterface(obj.id, {
         subnet_id: refs.subnet.state.value
       }).then((res) => {
-        callback && callback();
+        callback && callback(res);
         cb(true);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, status, refs) {
