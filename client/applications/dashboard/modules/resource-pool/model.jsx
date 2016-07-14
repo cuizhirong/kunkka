@@ -346,7 +346,7 @@ class Model extends React.Component {
       content: item.loadbalancer ?
         <span>
           <i className="glyphicon icon-lb" />
-          <a data-type="router" href={'/dashboard/lb/' + item.loadbalancer.id}>{item.loadbalancer.name || '(' + item.loadbalancer.id.slice(0, 8) + ')'}</a>
+          <a data-type="router" href={'/dashboard/loadbalancer/' + item.loadbalancer.id}>{item.loadbalancer.name || '(' + item.loadbalancer.id.slice(0, 8) + ')'}</a>
         </span>
         : '-'
     }, {
