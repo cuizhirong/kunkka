@@ -70,8 +70,7 @@ class ModalBase extends React.Component {
         'adapter': Adapter
       };
 
-      var Sub = null;
-      Sub = subComs[m.type];
+      var Sub = subComs[m.type];
 
       return Sub ? <Sub key={m.field} ref={m.field} {...m} onAction={this.onAction} /> : null;
     });
