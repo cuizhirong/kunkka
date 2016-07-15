@@ -111,7 +111,11 @@ class Model extends React.Component {
           break;
         case 'attributes':
           column.render = (col, item, i) => {
-            return item.metadata.readonly === 'True' ? __.read_only : __.read_write;
+            if(item.metadata.readonly) {
+              return item.metadata.readonly === 'True' ? __.read_only : __.read_write;
+            } else {
+              return '-';
+            }
           };
           break;
         default:
@@ -383,7 +387,13 @@ class Model extends React.Component {
       content: item.attachments.length > 0 ? getAttachments(item) : '-'
     }, {
       title: __.attributes,
-      content: item.metadata.readonly === 'False' ? __.read_write : __.read_only
+      content: (() => {
+        if(item.metadata.readonly) {
+          return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
+        } else {
+          return '-';
+        }
+      })()
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
