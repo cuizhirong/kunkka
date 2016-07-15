@@ -62,8 +62,6 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if (this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -296,10 +294,7 @@ class Model extends React.Component {
       } else if (allTenant) {
         this.getFilterList(allTenant);
       } else {
-        this.refresh({
-          initialList: true,
-          clearState: true
-        });
+        this.getList();
       }
     }
   }

@@ -21,9 +21,6 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
     });
   },
   getSingle: function(id) {
@@ -31,9 +28,6 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
-      res._url = url;
-      return res;
-    }).catch((res) => {
       res._url = url;
       return res;
     });
@@ -45,9 +39,6 @@ module.exports = {
     }).then((res) => {
       res._url = url;
       return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
     });
   },
   filter: function(data, pageLimit) {
@@ -55,7 +46,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/glance/v2/images?limit=' + pageLimit + '&' + requestParams(data);
+    var url = '/proxy/glance/v2/images?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {

@@ -1,6 +1,15 @@
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
+function requestParams(obj) {
+  var str = '';
+  for(let key in obj) {
+    str += ('&' + key + '=' + obj[key]);
+  }
+
+  return str;
+}
+
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
@@ -9,7 +18,7 @@ module.exports = {
 
     return this.getDomains().then((domains) => {
       var currentDomain = HALO.configs.domain;
-      var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
+      var domainID = domains.find((ele) => ele.name === currentDomain).id;
       var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
 
       var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + urlParam;
@@ -19,6 +28,19 @@ module.exports = {
         res._url = url;
         return res;
       });
+    });
+  },
+  getFilteredList: function(data, pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + requestParams(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
     });
   },
   getNextList: function(nextUrl) {

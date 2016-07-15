@@ -47,8 +47,6 @@ class Model extends React.Component {
     if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -274,6 +272,7 @@ class Model extends React.Component {
 
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
+      this.loadingTable();
       if (data.text) {
         this.getSingle(data.text);
       } else {
@@ -524,7 +523,7 @@ class Model extends React.Component {
       <div className="halo-module-port" style={this.props.style}>
         <Main
           ref="dashboard"
-          visible={this.props.style.display === 'none' ? false : 'none'}
+          visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
           __={__}

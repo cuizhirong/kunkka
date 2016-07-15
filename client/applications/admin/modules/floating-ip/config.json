@@ -24,6 +24,7 @@
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "limit": 10,
     "loading": true,
     "column": [{
       "title": ["floating_ip", "address"],

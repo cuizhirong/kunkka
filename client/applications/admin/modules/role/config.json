@@ -25,10 +25,21 @@
     "icon": "refresh",
     "disabled": true
   }],
-  "search": {
-    "width": 200,
-    "placeholder": ["pls_enter", "role", "id_or_name"]
-  },
+  "filter": [{
+    "group_key": "role",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "role", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "role", "name"]
+    }]
+  }],
   "table": {
     "checkbox": true,
     "dataKey": "id",

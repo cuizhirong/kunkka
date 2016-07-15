@@ -48,8 +48,6 @@ class Model extends React.Component {
     if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -115,7 +113,10 @@ class Model extends React.Component {
         table.data = [res.floatingip];
       } else if(res.floatingips) {
         table.data = res.floatingips;
+      } else {
+        table.data = [];
       }
+
       this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
     }).catch((res) => {
@@ -443,7 +444,7 @@ class Model extends React.Component {
       <div className="halo-module-floating-ip" style={this.props.style}>
         <Main
           ref="dashboard"
-          visible={this.props.style.display === 'none' ? false : 'none'}
+          visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
           __={__}

@@ -1,7 +1,6 @@
 require('./style/index.less');
 
 var React = require('react');
-var RSVP = require('rsvp');
 var Main = require('client/components/main_paged/index');
 
 var deleteModal = require('client/components/modal_delete/index');
@@ -48,8 +47,6 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -100,6 +97,22 @@ class Model extends React.Component {
     request.getList(table.limit).then((res) => {
       table.data = res.roles;
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  getFilterList(data) {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getFilteredList(data, table.limit).then((res) => {
+      table.data = res.roles;
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, res._url);
     });
   }
 
@@ -124,61 +137,19 @@ class Model extends React.Component {
     this.getList();
   }
 
-  searchByKey(key, data) {
-    var deferredList = [];
-    data.dataList = [];
-
-    deferredList.push(request.getRoleByID(key).then(res => {
-      if(data.dataList.length > 0 && res.role) {
-        data.dataList.forEach(item => {
-          if(item.id !== res.role.id) {
-            data.dataList.push(res.role);
-          }
-        });
-      } else if(res.role) {
-        data.dataList.push(res.role);
-      }
-    }));
-    deferredList.push(request.getRoles().then(res => {
-      var matchData = [];
-      if(res.roles) {
-        res.roles.forEach(obj => {
-          var reg = new RegExp(key, 'i');
-          if(reg.test(obj.name)) {
-            matchData.push(obj);
-          }
-        });
-      }
-      if(data.dataList.length > 0) {
-        data.dataList.forEach(item => {
-          matchData.forEach(ele => {
-            if(item.id !== ele.id) {
-              data.dataList.push(ele);
-            }
-          });
-        });
-      } else {
-        data.dataList.push(...matchData);
-      }
-    }));
-
-    return RSVP.all(deferredList);
-  }
-
-  onClickSearch(actionType, refs, data) {
-    if (actionType === 'click') {
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
       this.loadingTable();
-      var table = this.state.config.table;
 
-      if (data.text) {
-        this.searchByKey(data.text, data).then(res => {
-          table.data = data.dataList;
-          table.pagination = {};
-          this.updateTableData(table, res._url);
-        });
+      var roleID = data.role,
+        allTenant = data.all_tenant;
+
+      if (roleID) {
+        this.getSingle(roleID.id);
+      } else if (allTenant) {
+        this.getFilterList(allTenant);
       } else {
         this.getList();
-        table.pagination = {};
       }
     }
   }
@@ -272,8 +243,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'search':
-        this.onClickSearch(actionType, refs, data);
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);

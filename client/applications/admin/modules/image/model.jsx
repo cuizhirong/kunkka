@@ -52,8 +52,6 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -92,7 +90,7 @@ class Model extends React.Component {
           break;
         case 'image_type':
           column.render = (col, item, i) => {
-            return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
+            return item.visibility === 'private' ? __.snapshot_type : __.image;
           };
           break;
         default:
@@ -138,14 +136,15 @@ class Model extends React.Component {
     var table = this.state.config.table;
     request.getSingle(id).then((res) => {
       table.data = [res];
+      this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
       table.data = [];
-      this.setPagination(table, res);
-      this.updateTableData(table);
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
@@ -160,13 +159,17 @@ class Model extends React.Component {
       table.data = res.images;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
 //request: get next list
   getNextList(url, refreshDetail) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
       if (res.images) {
         table.data = res.images;
       } else if (res.id) {
@@ -177,6 +180,10 @@ class Model extends React.Component {
 
       this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 

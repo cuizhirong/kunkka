@@ -1,24 +1,15 @@
-var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getFilterOptions: function(forced) {
-    return storage.getList([], forced);
-  },
-  getListInitialize: function(pageLimit, forced) {
-    var req = [];
-    req.push(this.getList(pageLimit));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
-  },
-  getSnapshotByIDInitialize: function(snapshotID, forced) {
-    var req = [];
-    req.push(this.getSnapshotByID(snapshotID));
-    req.push(this.getFilterOptions(forced));
-
-    return RSVP.all(req);
+  getSnapshotByID: function(snapshotID) {
+    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + snapshotID;
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
   },
   getList: function(pageLimit) {
     if (isNaN(Number(pageLimit))) {
@@ -42,22 +33,11 @@ module.exports = {
       return res;
     });
   },
-  getVolumeById: function(volumeID) {
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeID;
-    return fetch.get({
-      url: url
-    });
-  },
-  getSnapshotByID: function(snapshotID) {
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + snapshotID;
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
-    });
-  },
-  filterFromAll: function(data) {
+  filterFromAll: function(data, pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
     function requestParams(obj) {
       var str = '';
       for(let key in obj) {
@@ -67,12 +47,18 @@ module.exports = {
       return str;
     }
 
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1' + requestParams(data);
+    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
       res._url = url;
       return res;
+    });
+  },
+  getVolumeById: function(volumeID) {
+    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeID;
+    return fetch.get({
+      url: url
     });
   },
   editSnapshotName: function(item, newName) {

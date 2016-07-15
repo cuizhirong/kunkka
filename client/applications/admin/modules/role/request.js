@@ -1,6 +1,15 @@
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
 
+function requestParams(obj) {
+  var str = '';
+  for(let key in obj) {
+    str += ('&' + key + '=' + obj[key]);
+  }
+
+  return str;
+}
+
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
@@ -26,6 +35,19 @@ module.exports = {
       res._url = url;
       return res;
     }).catch((res) => {
+      res._url = url;
+      return res;
+    });
+  },
+  getFilteredList: function(data, pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    var url = '/proxy/keystone/v3/roles?limit=' + pageLimit + requestParams(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
       res._url = url;
       return res;
     });

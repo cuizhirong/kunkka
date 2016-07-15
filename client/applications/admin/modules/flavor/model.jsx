@@ -51,8 +51,6 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -92,21 +90,28 @@ class Model extends React.Component {
   }
 
   getList() {
+    this.clearState();
+
     var table = this.state.config.table;
     request.getList().then((res) => {
       table.data = res.flavors;
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
   getFlavorById(id) {
+    this.clearState();
+
     var table = this.state.config.table;
     request.getFlavorById(id).then((res) => {
       table.data = [res.flavor];
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
-      this.updateTableData(table);
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
@@ -125,14 +130,23 @@ class Model extends React.Component {
         table.data = [];
       }
       this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
 //request: search request
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
+      var flavorID = data.text;
+
       this.loadingTable();
-      this.getFlavorById(data.text);
+      if (flavorID) {
+        this.getFlavorById(flavorID);
+      } else {
+        this.getList();
+      }
     }
   }
 
@@ -210,7 +224,11 @@ class Model extends React.Component {
 
   clearState() {
     this.stores.urls = [];
-    this.refs.dashboard.clearState();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      this.refs.dashboard.clearState();
+    }
   }
 
   onAction(field, actionType, refs, data) {
@@ -241,13 +259,16 @@ class Model extends React.Component {
         var url,
           history = this.stores.urls;
 
-        if (data.direction === 'next') {
-          url = data.url;
-        } else {
+        if (data.direction === 'prev') {
           history.pop();
           if (history.length > 0) {
             url = history.pop();
           }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else { //default
+          url = this.stores.urls[0];
+          this.clearState();
         }
 
         this.loadingTable();
@@ -289,19 +310,12 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        var params = this.props.params,
-          r = {};
-        if (params[2]) {
-          r.refreshList = true;
-          r.refreshDetail = true;
-          r.loadingTable = true;
-          r.loadingDetail = true;
-        } else {
-          r.initialList = true;
-          r.loadingTable = true;
-          r.clearState = true;
-        }
-        this.refresh(r, params);
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;

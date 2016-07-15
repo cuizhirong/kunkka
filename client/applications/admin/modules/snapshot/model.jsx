@@ -47,8 +47,6 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
       this.onInitialize(nextProps.params);
-    } else if(this.props.style.display !== 'none' && nextProps.style.display === 'none') {
-      this.clearState();
     }
   }
 
@@ -93,48 +91,88 @@ class Model extends React.Component {
     setOption('status', statusTypes);
   }
 
-//initialize table data
   onInitialize(params) {
-    var _config = this.state.config,
-      filter = _config.filter,
-      table = _config.table;
+    var filter = this.state.config.filter;
+    this.initializeFilter(filter);
 
     if (params[2]) {
-      request.getSnapshotByIDInitialize(params[2]).then((res) => {
-        this.initializeFilter(filter, res[1]);
-        table.data = [res[0].snapshot];
-        this.updateTableData(table, res[0]._url);
-      });
+      this.getSingle(params[2]);
     } else {
-      var pageLimit = this.state.config.table.limit;
-      request.getListInitialize(pageLimit).then((res) => {
-        this.initializeFilter(filter, res[1]);
-        var newTable = this.processTableData(table, res[0]);
-        this.updateTableData(newTable, res[0]._url);
-      });
+      this.getList();
     }
   }
 
-//request: get list data(according to page limit)
   getInitialListData() {
+    this.getList();
+  }
+
+  getSingle(snapshotID) {
     this.clearState();
 
-    var pageLimit = this.state.config.table.limit;
-    request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+    var table = this.state.config.table;
+
+    request.getSnapshotByID(snapshotID).then((res) => {
+      table.data = [res.snapshot];
+      table.pagination = null;
       this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
-//request: jump to next page according to the given url
-  getNextListData(url, refreshDetail) {
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    var pageLimit = table.limit;
+
+    request.getList(pageLimit).then((res) => {
+      table.data = res.snapshots;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
+    });
+  }
+
+  getNextListData(url) {
+    var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+      if (res.snapshots) {
+        table.data = res.snapshots;
+      } else if (res.snapshot) {
+        table.data = [res.snapshot];
+      } else {
+        table.data = [];
+      }
+
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
     });
   }
 
-//request: filter request
+  getFilteredList(data) {
+    var table = this.state.config.table;
+
+    request.filterFromAll(data, table.limit).then((res) => {
+      table.data = res.snapshots;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
+    });
+  }
+
   onFilterSearch(actionType, refs, data) {
     this.clearState();
 
@@ -145,33 +183,15 @@ class Model extends React.Component {
         allTenant = data.all_tenant;
 
       if (snapshotID) {
-        request.getSnapshotByID(snapshotID.id).then((res) => {
-          var table = this.state.config.table;
-          table.data = [res.snapshot];
-          this.processTableData(table, res);
-          this.updateTableData(table, res._url);
-        }).catch(e => {
-          if(e.status === 404) {
-            var table = this.state.config.table;
-            table.data = [];
-            this.updateTableData(table);
-
-          }
-        });
+        this.getSingle(snapshotID.id);
       } else if (allTenant){
-        request.filterFromAll(allTenant).then((res) => {
-          var table = this.state.config.table;
-          table.data = res.snapshots;
-          this.processTableData(table, res);
-          this.updateTableData(table, res._url);
-        });
+        this.getFilteredList(allTenant);
       } else {
         this.getInitialListData();
       }
     }
   }
 
-//rerender: update table data
   updateTableData(table, currentUrl, refreshDetail) {
     var newConfig = this.state.config;
     newConfig.table = table;
@@ -190,14 +210,7 @@ class Model extends React.Component {
     });
   }
 
-//change table data structure: to record url history
-  processTableData(table, res) {
-    if (res.snapshot) {
-      table.data = [res.snapshot];
-    } else if (res.snapshots) {
-      table.data = res.snapshots;
-    }
-
+  setPagination(table, res) {
     var pagination = {},
       next = res.snapshots_links ? res.snapshots_links[0] : null;
 
@@ -215,7 +228,6 @@ class Model extends React.Component {
     return table;
   }
 
-//refresh: according to the given data rules
   refresh(data, params) {
     if (!data) {
       data = {};

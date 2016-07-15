@@ -57,7 +57,11 @@ module.exports = {
       url: url
     });
   },
-  filterFromAll: function(data) {
+  filterFromAll: function(data, pageLimit) {
+    if(isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
     function requestParams(obj) {
       var str = '';
       for(let key in obj) {
@@ -67,7 +71,7 @@ module.exports = {
       return str;
     }
 
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + requestParams(data);
+    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + '&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
