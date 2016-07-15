@@ -123,7 +123,7 @@ View.prototype = {
   renderTemplate: function(setting, req, res, next) {
     let locale = this.upperCaseLocale(req.i18n.getLocale());
     let __ = req.i18n.__.bind(req.i18n);
-    let user = req.session.user;
+    let user = (req.session && req.session.user) ? req.session.user : {};
     let HALO = this.getHALO(locale, setting, user);
     if (this.plugins) {
       this.plugins.forEach(p => p.model.haloProcessor(user, HALO));
