@@ -5,7 +5,7 @@ module.exports = {
   getLangValue(lang, obj) {
     if (toString.call(obj) === '[object Array]') {
       var strs = '';
-      obj.map((str) => {
+      obj.forEach((str) => {
         strs += lang[str];
       });
 

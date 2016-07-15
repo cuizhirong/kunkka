@@ -1,13 +1,13 @@
 var moment = require('client/libs/moment');
 
-function getTime(time, fromNow) {
+function getTime(time, fromNow, formatter) {
   var uniformTime = time.replace('.000000', 'Z'),
-    formatter = 'YYYY-MM-DD HH:mm:ss';
+    _formatter = formatter || 'YYYY-MM-DD HH:mm:ss';
 
   if(fromNow) {
     return moment(uniformTime).fromNow();
   } else {
-    return moment(uniformTime).format(formatter);
+    return moment(uniformTime).format(_formatter);
   }
 }
 
