@@ -93,11 +93,20 @@ class Main extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.visible) {
-      this.clearAllState();
+      this.clearAllState(nextProps.visible);
     } else {
       if (nextProps.config.table.data.length > 0) {
         if (this.props.params[1] === nextProps.params[1]) {
           this.onChangeParams(nextProps.params);
+        }
+      } else {
+        if (nextProps.params[2]) {
+          this.closeDetail();
+        } else {
+          let detail = this.refs.detail;
+          detail.setState({
+            visible: false
+          });
         }
       }
     }
@@ -229,13 +238,11 @@ class Main extends React.Component {
   }
 
   onConfirmFilter(data) {
-    this.closeDeatail();
     this.onAction('filter', 'search', data);
   }
 
   changeSearchInput(str, status) {
     if (status) {
-      this.closeDeatail();
       this.onAction('search', 'click', {
         text: str
       });
@@ -246,7 +253,6 @@ class Main extends React.Component {
     if (e.key === 'Enter') {
       var value = this.refs.search.state.value;
 
-      this.closeDeatail();
       this.onAction('search', 'click', {
         text: value
       });
@@ -313,31 +319,39 @@ class Main extends React.Component {
     this.onAction('detail', tab ? tab.key : this.refs.detail.findDefaultTab().key, {});
   }
 
-  clearAllState() {
+  clearAllState(visible) {
     //clear search bar or filter box
     this.clearSearchState();
     this.clearFilterState();
 
     //clear other state
-    this.clearState();
+    this.clearState(visible);
   }
 
-  clearState() {
+  clearState(visible) {
     this.stores.rows = [];
     this.onAction('table', 'check', {
       status: false,
       clickedRow: []
     });
 
-    this.closeDeatail();
     this.clearTableState();
+    this.closeDetail(visible);
   }
 
-  closeDeatail() {
-    if (this.refs.detail) {
-      this.refs.detail.setState({
-        visible: false
-      });
+  closeDetail(visible) {
+    var dashboardVisible = typeof visible === 'undefined' ? this.props.visible : visible;
+    var detail = this.refs.detail;
+
+    if (detail.state.visible) {
+      let params = this.props.params;
+      if (params.length > 2 && dashboardVisible) {
+        router.pushState('/' + params.slice(0, 2).join('/'));
+      } else {
+        detail.setState({
+          visible: false
+        });
+      }
     }
   }
 
