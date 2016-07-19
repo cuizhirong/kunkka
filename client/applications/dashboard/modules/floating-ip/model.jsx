@@ -9,7 +9,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var applyModal = require('./pop/apply_ip/index');
 var associateInstance = require('./pop/associate_instance/index');
 var dissociateRelated = require('./pop/dissociate_related/index');
-// var changeBandwidth = require('./pop/change_bandwidth/index');
+var changeBandwidth = require('./pop/change_bandwidth/index');
 var assciateLb = require('./pop/associate_lb/index');
 
 var config = require('./config.json');
@@ -24,6 +24,12 @@ class Model extends React.Component {
 
   constructor(props) {
     super(props);
+
+    var enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
+    if (!enableBandwidth) {
+      let dropdown = config.btns[3].dropdown.items[0].items;
+      delete dropdown[2];
+    }
 
     this.state = {
       config: config
@@ -245,29 +251,13 @@ class Model extends React.Component {
       case 'assc_to_instance':
         associateInstance(rows[0]);
         break;
-      /*
-       config: {
-        "value": ["more"],
-        "key": "more",
-        "iconClass": "more",
-        "dropdown": {
-          "width": 160,
-          "items": [{
-            "items": [{
-              "title": ["change", "bandwidth"],
-              "key": "change_bw",
-              "disabled": true
-            }]
-          }]
-        }
-      },
       case 'change_bw':
         changeBandwidth(rows[0], null, () => {
           this.refresh({
             detailRefresh: true
           }, true);
         });
-        break;*/
+        break;
       case 'assc_to_lb':
         assciateLb(rows[0]);
         break;
@@ -306,9 +296,9 @@ class Model extends React.Component {
         case 'dissociate':
           btns[key].disabled = (rows.length === 1 && (rows[0].association.type || rows[0].lbaas)) ? false : true;
           break;
-        /*case 'change_bw':
+        case 'change_bw':
           btns[key].disabled = rows.length === 1 ? false : true;
-          break;*/
+          break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;
           break;

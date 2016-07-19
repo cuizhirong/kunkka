@@ -4,11 +4,11 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
-function priceError(refs, error) {
-  refs.btn.setState({
-    disabled: false
-  });
-}
+// function priceError(refs, error) {
+//   refs.btn.setState({
+//     disabled: false
+//   });
+// }
 
 function pop(obj, parent, callback) {
 
@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
   }
   config.fields[0].value = currentBandwidth;
 
-  var enableCharge = HALO.settings.enable_charge;
+  var enableCharge = false;//HALO.settings.enable_charge;
   config.btn.disabled = enableCharge;
   config.fields[1].hide = !enableCharge;
 
@@ -41,18 +41,18 @@ function pop(obj, parent, callback) {
         });
       }
 
-      if (HALO.settings.enable_charge) {
-        var bandwidth = currentBandwidth;
-        request.getFloatingIPPrice(bandwidth).then((res) => {
-          refs.charge.setState({
-            value: res.unit_price
-          });
+      // if (enableCharge) {
+      //   var bandwidth = currentBandwidth;
+      //   request.getFloatingIPPrice(bandwidth).then((res) => {
+      //     refs.charge.setState({
+      //       value: res.unit_price
+      //     });
 
-          refs.btn.setState({
-            disabled: false
-          });
-        }).catch(priceError.bind(this, refs));
-      }
+      //     refs.btn.setState({
+      //       disabled: false
+      //     });
+      //   }).catch(priceError.bind(this, refs));
+      // }
     },
     onConfirm: function(refs, cb) {
       var bw = Number(refs.bandwidth.state.value) * 1024;
@@ -72,22 +72,21 @@ function pop(obj, parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'bandwidth':
-          if (HALO.settings.enable_charge) {
-            var sliderEvent = state.eventType === 'mouseup';
-            var inputEvnet = state.eventType === 'change' && !state.error;
+          // if (enableCharge) {
+          //   var sliderEvent = state.eventType === 'mouseup';
+          //   var inputEvnet = state.eventType === 'change' && !state.error;
 
-            if (sliderEvent || inputEvnet) {
-              request.getFloatingIPPrice(state.value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch(priceError.bind(this, refs));
-            }
-
-            refs.btn.setState({
-              disabled: state.error
-            });
-          }
+          //   if (sliderEvent || inputEvnet) {
+          //     request.getFloatingIPPrice(state.value).then((res) => {
+          //       refs.charge.setState({
+          //         value: res.unit_price
+          //       });
+          //     }).catch(priceError.bind(this, refs));
+          //   }
+          // }
+          refs.btn.setState({
+            disabled: state.error
+          });
           break;
         default:
           break;

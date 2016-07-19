@@ -15,21 +15,33 @@
     "icon": "associate",
     "disabled": true
   }, {
-    "value": ["associate", "to", "loadbalancer"],
-    "key": "assc_to_lb",
-    "icon": "associate",
-    "disabled": true
-  }, {
-    "value": ["dissociate"],
-    "key": "dissociate",
-    "icon": "dissociate",
-    "disabled": true
-  }, {
     "value": ["release"],
     "key": "delete",
     "icon": "delete",
     "type": "delete",
     "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["associate", "to", "loadbalancer"],
+          "key": "assc_to_lb",
+          "disabled": true
+        }, {
+          "title": ["dissociate"],
+          "key": "dissociate",
+          "disabled": true
+        }, {
+          "title": ["change", "bandwidth"],
+          "key": "change_bw",
+          "disabled": true
+        }]
+      }]
+    }
   }, {
     "key": "refresh",
     "icon": "refresh"

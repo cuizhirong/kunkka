@@ -14,36 +14,36 @@ var externalNetwork = null;
 
 function pop(parent, callback) {
 
-  /*
-  config: {
-    "type": "slider",
-    "field": "bandwidth",
-    "min": 1,
-    "max": 30,
-    "value": 1,
-    "unit": "Mbps"
-  }, {
-    "type": "charge",
-    "field": "charge",
-    "has_label": true
-  }*/
+  var settings = HALO.settings;
+  var enableBandwidth = settings.enable_floatingip_bandwidth;
+  // var enableCharge = settings.enable_charge;
+  var defaultBandwidth = settings.max_floatingip_bandwidth;
 
-  /*var defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
-  var slider = config.fields[0];
-  if (defaultBandwidth) {
-    slider.max = defaultBandwidth;
+  var tipField = config.fields[0];
+  var bandwidthField = config.fields[1];
+  var chargeField = config.fields[2];
+
+  if (enableBandwidth) {
+    if (defaultBandwidth) {
+      bandwidthField.max = defaultBandwidth;
+    }
+    bandwidthField.hide = false;
+    tipField.hide = true;
+    // if (enableCharge) {
+    //   chargeField.hide = false;
+    // }
+  } else {
+    bandwidthField.hide = true;
+    chargeField.hide = true;
+    tipField.hide = false;
   }
-
-  var enableCharge = HALO.settings.enable_charge;
-  config.btn.disabled = enableCharge;
-  config.fields[1].hide = !enableCharge;*/
 
   var props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      /*if (HALO.settings.enable_charge) {
+      /*if (enableCharge) {
         var bandwidth = config.fields[0].min;
         request.getFloatingIPPrice(bandwidth).then((res) => {
           refs.charge.setState({
@@ -91,8 +91,10 @@ function pop(parent, callback) {
           data.floatingip.floating_network_id = refs.external_network.state.value;
         }
 
-        /*let bandwidth = Number(refs.bandwidth.state.value) * 1024;
-        data.floatingip.rate_limit = bandwidth;*/
+        if (enableBandwidth) {
+          let bandwidth = Number(refs.bandwidth.state.value) * 1024;
+          data.floatingip.rate_limit = bandwidth;
+        }
 
         request.createFloatingIp(data).then((res) => {
           callback && callback(res.floatingip);
@@ -105,7 +107,7 @@ function pop(parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         /*case 'bandwidth':
-          if (HALO.settings.enable_charge) {
+          if (enableCharge) {
             var sliderEvent = state.eventType === 'mouseup';
             var inputEvnet = state.eventType === 'change' && !state.error;
 
