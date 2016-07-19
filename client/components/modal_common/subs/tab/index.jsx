@@ -70,7 +70,7 @@ class Tab extends React.Component {
         <div>
           {
             state.data.map((value, index) => {
-              return <a key={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{props.__[value] || value}</a>;
+              return <a key={value} title={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{props.__[value] || value}</a>;
             })
           }
         </div>

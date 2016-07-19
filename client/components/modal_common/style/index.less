@@ -64,11 +64,15 @@
       }
       >div:last-child {
         flex: 1;
+        max-width: 392px;
       }
 
       &.long-label-row {
         >div:first-child {
           .fixed-width(134px);
+        }
+        >div:last-child {
+          max-width: 358px;
         }
       }
     }
@@ -319,6 +323,7 @@
           text-align: center;
           margin-right: 14px;
           flex: 1;
+          .overflow();
 
           &:hover {
             background-color: @tab_row_hover_bg_color;
