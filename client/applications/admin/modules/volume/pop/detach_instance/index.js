@@ -28,6 +28,7 @@ function pop(obj, parent, callback) {
           });
 
           if(data.length === 1) {
+            data[0].selected = true;
             refs.instance.setState({
               value: data[0].id
             });
