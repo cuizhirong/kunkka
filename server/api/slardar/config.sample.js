@@ -64,6 +64,11 @@ module.exports = {
       name: 'enable_floatingip_bandwidth',
       value: 'false',
       type: 'boolean'
+    }, {
+      app: 'dashboard',
+      name: 'view.css',
+      value: '',
+      type: 'text'
     }
   ]
 };
