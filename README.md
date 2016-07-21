@@ -74,7 +74,7 @@ Besides, we can also compile specific application as you want by:
 npm run dev --app=dashboard // dasboard or admin
 ```
 
-###i18n
+### i18n
 In the client side, in order to optimise the size of output files, we need to collect all the languages files, and transpile all of them to a specific language file `lang.json` under the `i18n/client` directory.
 
 While developing, you may need to update the language config file all the time.
@@ -102,6 +102,67 @@ More information:
 pm2 -h
 ```
 
+### Scripts
+#### build the front-end code, i18n and configs
+```
+npm run build
+```
+
+#### run the node instance using pm2
+```
+npm start
+```
+
+#### restart the current node instance
+```
+npm restart
+```
+
+#### run the test
+```
+npm test
+```
+
+#### run the JavaScript eslint check
+```
+npm run eslint
+```
+
+#### run front-end dev mode
+```
+npm run dev
+```
+
+#### install uskin sub module
+```
+npm run prepublish
+```
+
+#### generate i18n files
+```
+npm run transpile
+```
+
+#### assemble all projects to halo based on kunkka/config.json or whatever/config.json
+```
+npm run assemble
+```
+
+#### update the latest code for each project in halo
+```
+npm run pull
+```
+
+#### merge the configs from each project to halo/configs/server.json
+```
+npm run merge
+```
+
+#### fetch all projects's newest tag and write into kunkka/config.json or whatever/config.json
+You need to copy halo/token.json.sample to halo/token.json and insert your owner gitlab token
+```
+npm run tags
+```
 
 ## Code Standard
 

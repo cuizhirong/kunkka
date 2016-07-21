@@ -17,12 +17,8 @@ backendApps.forEach((a) => {
   let viewPath = path.join('server/api', a, 'views');
   try {
     fs.readdirSync(viewPath)
-      .filter(file => {
-        return fs.statSync(path.join(viewPath, file)).isDirectory();
-      })
-      .forEach(p => {
-        viewsPath[p] = path.join(viewPath, p);
-      });
+      .filter(file => fs.statSync(path.join(viewPath, file)).isDirectory())
+      .forEach(p => viewsPath[p] = path.join(viewPath, p));
   } catch (e) {
     console.log(`${a} has no views`);
   }

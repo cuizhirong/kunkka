@@ -81,7 +81,7 @@ View.prototype = {
       res.redirect('/');
     }
   },
-  getHALO: function(locale, setting, user, appl) {
+  getHALO: function(locale, setting, user) {
     return {
       configs: {
         lang: locale,
@@ -114,6 +114,7 @@ View.prototype = {
       uskinFile: this.uskinFile[0],
       favicon: setting.favicon ? setting.favicon : '/static/assets/favicon.ico',
       title: setting.title ? setting.title : 'UnitedStack 有云',
+      viewCss: setting['view.css'] ? setting['view.css'] : '',
       modelTmpl: this.reactDOMServer.renderToString(this.viewModelFactory({
         __: __(`shared.${this.name}`),
         HALO: HALO
@@ -126,7 +127,7 @@ View.prototype = {
     let user = (req.session && req.session.user) ? req.session.user : {};
     let HALO = this.getHALO(locale, setting, user);
     if (this.plugins) {
-      this.plugins.forEach(p => p.model.haloProcessor(user, HALO));
+      this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
     }
     HALO.application.application_list = HALO.application.application_list.map(a => {
       return {[a]: __(`shared.${a}.application_name`)};
