@@ -1,17 +1,14 @@
 var PendModel = require('../manage_ticket/model');
-var __ = require('locale/client/ticket.lang.json');
 var request = require('../manage_ticket/request');
+var config = require('./config.json');
 
 class Model extends PendModel {
 
   constructor(props) {
     super(props);
 
-    var config = this.state.config;
-    this.setConfig(config);
-
     this.state = {
-      config: config
+      config: this.setConfig(config)
     };
 
     this.stores = {
@@ -19,25 +16,13 @@ class Model extends PendModel {
     };
   }
 
-  setConfig(config) {
-    var tabs = config.tabs;
+  setConfig(_config) {
+    var tabs = _config.tabs;
     tabs[0].default = false;
     tabs[1].default = true;
     tabs[2].default = false;
 
-    config.btns.splice(0, 2, {
-      value: __.update_to + __.pending,
-      key: 'pending',
-      icon: 'refresh',
-      disabled: false
-    }, {
-      value: __.update_to + __.closed,
-      key: 'closed',
-      icon: 'refresh',
-      disabled: false
-    });
-
-    return config;
+    return _config;
   }
 
   getList() {

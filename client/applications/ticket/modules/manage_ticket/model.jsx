@@ -60,18 +60,6 @@ class Model extends React.Component {
     tabs[0].default = true;
     tabs[1].default = false;
     tabs[2].default = false;
-
-    _config.btns.splice(0, 2, {
-      value: __.update_to + __.proceeding,
-      key: 'proceeding',
-      icon: 'refresh',
-      disabled: false
-    }, {
-      value: __.update_to + __.closed,
-      key: 'closed',
-      icon: 'refresh',
-      disabled: false
-    });
     return _config;
   }
 
@@ -389,6 +377,7 @@ class Model extends React.Component {
   onClickTable(actionType, refs, data) {
     switch(actionType) {
       case 'check':
+        this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
         var url,
@@ -410,6 +399,35 @@ class Model extends React.Component {
       default:
         break;
     }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    var {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    for (let key in btns) {
+      switch(key) {
+        case 'pending':
+          btns[key].disabled = rows.length === 1 ? false : true;
+          break;
+        case 'proceeding':
+          btns[key].disabled = rows.length === 1 ? false : true;
+          break;
+        case 'closed':
+          btns[key].disabled = rows.length === 1 ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+    return btns;
   }
 
   submitReply(that) {

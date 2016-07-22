@@ -1,24 +1,24 @@
 {
   "tabs": [{
     "name": ["pending"],
-    "key": "manage_ticket",
-    "default": true
+    "key": "manage_ticket"
   }, {
     "name": ["proceeding"],
     "key": "proceeding_ticket"
   }, {
     "name": ["closed"],
-    "key": "closed_ticket"
+    "key": "closed_ticket",
+    "default": true
   }],
   "btns": [{
-    "value": ["update_to", "proceeding"],
-    "key": "proceeding",
+    "value": ["update_to", "pending"],
+    "key": "pending",
     "icon": "active",
     "disabled": true
   }, {
-    "value": ["update_to", "closed"],
-    "key": "closed",
-    "icon": "remove",
+    "value": ["update_to", "proceeding"],
+    "key": "proceeding",
+    "icon": "active",
     "disabled": true
   }, {
     "key": "refresh",

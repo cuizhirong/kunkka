@@ -36,7 +36,7 @@ class Detail extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       replies: nextProps.rawItem.replies,
-      files: this.props.rawItem.attachments
+      files: nextProps.rawItem.attachments
     });
   }
 

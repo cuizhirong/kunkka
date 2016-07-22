@@ -2,10 +2,12 @@
   "title": ["create_ticket"],
   "fields": [{
     "type": "input",
-    "field": "title"
+    "field": "title",
+    "required": true
   }, {
     "type": "textarea",
-    "field": "description"
+    "field": "description",
+    "required": true
   }, {
     "type": "adapter",
     "field": "attach_file"
