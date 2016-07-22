@@ -63,6 +63,7 @@ client/libs/charts/output.js.map
 client/applications/*
 server/api/**/
 server/drivers/**/
+server/plugins/**/
 package.json
 
 client/assets/**/

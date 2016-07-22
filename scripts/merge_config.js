@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const apiPath = path.join(__dirname, '../server/api');
 const driverPath = path.join(__dirname, '../server/drivers');
+const pluginPath = path.join(__dirname, '../server/plugins');
 const baseConfig = require('../configs/server.sample.js');
 const basePackage = require('../package.sample.json');
 
@@ -59,7 +60,7 @@ if (argv.length < 1) {
 const configList = [];
 const addressList = [];
 
-[apiPath, driverPath].forEach(p => {
+[apiPath, driverPath, pluginPath].forEach(p => {
   fs.readdirSync(p)
     .filter(m => fs.statSync(path.join(p, m)).isDirectory())
     .forEach(f => {

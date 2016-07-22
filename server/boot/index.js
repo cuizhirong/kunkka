@@ -56,6 +56,9 @@ function setup() {
   const i18n = require('../middlewares/i18n');
   i18n(app);
 
+  // use third-party authentications
+  app.use(require('../plugins'));
+
   const views = require('views');
   views(app);
 
