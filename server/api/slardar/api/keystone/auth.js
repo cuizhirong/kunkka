@@ -42,7 +42,7 @@ function getCookie (req, userId) {
 }
 
 Auth.prototype = {
-  authentication: function (req, res, next, isNotReturn) {
+  authentication: function (req, res, next) {
     let _username = req.body.username;
     let _password = req.body.password;
     let _domain = req.body.domain || config('domain') || 'Default';
@@ -141,7 +141,7 @@ Auth.prototype = {
           'roles': _roles
         };
         req.session.endpoint = setRemote(payload.token.catalog);
-        if (!isNotReturn) {
+        if (!req.isAuthNotReturn) {
           res.json({success: 'login sucess'});
         } else {
           next();
