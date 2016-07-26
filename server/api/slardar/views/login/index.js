@@ -38,6 +38,7 @@ function main(app, clientApps, currentView, viewPlugins) {
   };
   view.initRoute = function() {
     this.app.get(/^\/$/, this.renderHandler.bind(this));
+    this.app.get('/login', this.renderHandler.bind(this));
   };
   view.init();
 }
