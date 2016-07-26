@@ -5,6 +5,29 @@ var RSVP = require('rsvp');
 module.exports = {
   getList: function(forced) {
     return storage.getList(['router', 'network', 'subnet'], forced).then(function(data) {
+      var exNetworks = [];
+      data.network.forEach((item) => {
+        if (item['router:external']) {
+          exNetworks.push(item);
+          return true;
+        }
+        return false;
+      });
+
+      if(exNetworks.length > 1) {
+        data.router.forEach(r => {
+          if(r.external_gateway_info) {
+            exNetworks.some(n => {
+              if(r.external_gateway_info.network_id === n.id) {
+                r.external_gateway_info.network_name = n.name;
+                return true;
+              }
+              return false;
+            });
+          }
+        });
+      }
+
       return data.router;
     });
   },

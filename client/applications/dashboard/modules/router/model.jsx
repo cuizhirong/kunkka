@@ -290,8 +290,11 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var exGateway = item.external_gateway_info;
     var getGatewayState = function() {
-      if(item.external_gateway_info) {
+      if(exGateway && exGateway.network_name) {
+        return __.on + '/' + exGateway.network_name;
+      } else if (exGateway) {
         return __.on;
       } else {
         return __.off;
@@ -299,8 +302,8 @@ class Model extends React.Component {
     };
 
     var fip = '-';
-    if (item.external_gateway_info) {
-      item.external_gateway_info.external_fixed_ips.some((ip) => {
+    if (exGateway) {
+      exGateway.external_fixed_ips.some((ip) => {
         if (ip.ip_address.indexOf(':') < 0) {
           fip = ip.ip_address;
           return true;

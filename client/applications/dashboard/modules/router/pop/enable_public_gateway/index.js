@@ -15,16 +15,27 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getGateway().then((res) => {
-        gatewayId = res;
-        refs.btn.setState({
-          disabled: false
-        });
+        if(res.length > 0) {
+          gatewayId = res[0].id;
+          if(res.length > 1) {
+            gatewayId = '';
+            refs.external_network.setState({
+              data: res,
+              value: res[0].id,
+              hide: false
+            });
+          }
+
+          refs.btn.setState({
+            disabled: false
+          });
+        }
       });
     },
     onConfirm: function(refs, cb) {
       var data = {
         external_gateway_info: {
-          network_id: gatewayId
+          network_id: gatewayId ? gatewayId : refs.external_network.state.value
         }
       };
       request.updateRouter(obj.id, data).then((res) => {

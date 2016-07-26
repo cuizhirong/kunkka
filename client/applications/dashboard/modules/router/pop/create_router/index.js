@@ -34,6 +34,7 @@ function pop(parent, callback) {
           gatewayId = res[0].id;
           if(res.length > 1) {
             gatewayId = '';
+            refs.ex_networks = res;
             refs.external_network.setState({
               data: res,
               value: res[0].id,
@@ -78,9 +79,11 @@ function pop(parent, callback) {
       switch(field) {
         case 'enable_public_gateway':
           if(refs.enable_public_gateway.state.checked) {
-            refs.external_network.setState({
-              hide: false
-            });
+            if(refs.ex_networks) {
+              refs.external_network.setState({
+                hide: false
+              });
+            }
           } else {
             refs.external_network.setState({
               hide: true
