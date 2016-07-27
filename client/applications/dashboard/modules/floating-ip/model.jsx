@@ -133,6 +133,9 @@ class Model extends React.Component {
         case 'bandwidth':
           column.render = (col, item, i) => {
             var rateLimit = Number(item.rate_limit);
+            if(rateLimit === 0) {
+              return '';
+            }
             return isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
           };
           break;
@@ -353,7 +356,12 @@ class Model extends React.Component {
 
   getBasicPropsItems(item) {
     var rateLimit = Number(item.rate_limit);
-    var bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+    var bandwidth;
+    if(rateLimit !== 0) {
+      bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+    } else {
+      bandwidth = '-';
+    }
     var getResource = function() {
       if(item.association && item.association.type === 'server') {
         return (<span>
