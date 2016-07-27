@@ -24,6 +24,11 @@
     "hide": true
   }, {
     "type": "tip",
+    "tip_type": "warning",
+    "field": "warning",
+    "hide": true
+  }, {
+    "type": "tip",
     "tip_type": "error",
     "field": "error",
     "hide": true

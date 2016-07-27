@@ -77,6 +77,11 @@ function pop(obj, parent, callback) {
             min = 0;
           }
 
+          refs.warning.setState({
+            value: __.tip_volume_create_error,
+            hide: !(max <= 0)
+          });
+
           typeCapacity[type].max = max;
           typeCapacity[type].min = min;
         });
@@ -104,12 +109,12 @@ function pop(obj, parent, callback) {
             max: selectedMax,
             value: selectedMin,
             inputValue: selectedMin,
-            disabled: lackOfSize || selectedMax <= 0 ? true : false,
+            disabled: lackOfSize || selectedMax <= 0,
             hide: false
           });
 
           refs.btn.setState({
-            disabled: lackOfSize
+            disabled: lackOfSize || selectedMax <= 0
           });
         };
 
@@ -178,12 +183,16 @@ function pop(obj, parent, callback) {
               value: value,
               inputValue: value,
               hide: false,
-              disabled: max === 0 ? true : false,
+              disabled: max === 0,
               error: false
             });
 
+            refs.warning.setState({
+              hide: !(max <= 0)
+            });
+
             refs.btn.setState({
-              disabled: false
+              disabled: max <= 0
             });
 
             if (HALO.settings.enable_charge) {

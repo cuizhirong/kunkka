@@ -17,7 +17,8 @@
     "set_read_write": "Set Read Write",
     "set_read_only": "Set volume \"{0}\" to read only?",
     "snapshot_name": "Snapshot Name",
-    "tip_volume_snapshot": "Create snapshot for volumes. The performance volume can only create performance snap. So is capacity volume."
+    "tip_volume_snapshot": "Create snapshot for volumes. The performance volume can only create performance snap. So is capacity volume.",
+    "tip_volume_create_error": "No quota left to create volume"
   },
   "zh-CN": {
     "attach": "挂载",
@@ -37,6 +38,7 @@
     "set_read_write": "设置读写",
     "set_read_only": "将云硬盘\"{0}\"设置为只读吗？",
     "snapshot_name": "快照名称",
-    "tip_volume_snapshot": "为云硬盘创建快照。性能型云硬盘只能创建性能型云硬盘快照，容量型云硬盘只能创建容量型快照。"
+    "tip_volume_snapshot": "为云硬盘创建快照。性能型云硬盘只能创建性能型云硬盘快照，容量型云硬盘只能创建容量型快照。",
+    "tip_volume_create_error": "配额不足，无法创建云硬盘"
   }
 }
