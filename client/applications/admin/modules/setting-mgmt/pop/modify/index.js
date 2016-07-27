@@ -12,6 +12,8 @@ function pop (obj, parent, callback) {
   if(obj.type === 'boolean') {
     changeField.type = 'tab';
     changeField.data = ['true', 'false'];
+  } else if (obj.type === 'text') {
+    changeField.type = 'textarea';
   } else {
     changeField.type = 'input';
   }
