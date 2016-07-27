@@ -8,17 +8,23 @@ function pop(obj, parent, callback) {
   if (obj) {
     config.title = ['modify', 'user'];
     config.fields[0].value = obj.name;
-    config.fields[1].value = obj.email;
-    config.fields[2].value = obj.description;
+    config.fields[4].value = obj.email;
+    config.fields[5].value = obj.description;
+    config.fields[1].hide = true;
+    config.fields[2].hide = true;
     config.fields[6].hide = true;
     config.btn.value = 'modify';
     config.btn.type = 'update';
     config.btn.disabled = false;
   } else {
     config.title = ['create', 'user'];
+    config.fields[1].hide = false;
+    config.fields[2].hide = false;
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.fields[2].value = '';
+    config.fields[4].value = '';
+    config.fields[5].value = '';
     config.fields[6].hide = false;
     config.btn.value = 'create';
     config.btn.type = 'create';
@@ -55,7 +61,6 @@ function pop(obj, parent, callback) {
           name: username,
           description: refs.describe.state.value,
           email: refs.email.state.value,
-          password: refs.password.state.value,
           domain_id: refs.domain.state.value
         };
         if (obj) {
@@ -66,6 +71,7 @@ function pop(obj, parent, callback) {
             cb(false, getErrorMessage(error));
           });
         } else {
+          data.password = refs.password.state.value;
           var hasPrj = refs.crt_user_project.state.checked;
           data.is_create_project = hasPrj;
 
