@@ -24,6 +24,10 @@ class ResourceList extends React.Component {
     });
   }
 
+  componentWillReceiveProps() {
+    this.refs.list.clearState();
+  }
+
   toggle(e) {
     this.setState({
       toggle: !this.state.toggle
@@ -64,7 +68,7 @@ class ResourceList extends React.Component {
             <DropdownButton buttonData={btnConfig.btn} dropdownItems={btnConfig.items} dropdownOnClick={this.onAction.bind(this, 'description', 'resource_ops', this.props.rawItem)}/>
             <div className="table-info">
               <Table
-                refs="list"
+                ref="list"
                 mini={true}
                 column={tableConfig.column}
                 data={tableConfig.data}
