@@ -317,6 +317,10 @@ class ModalBase extends React.Component {
               </div>
             </div>
           </div>
+          <div className="row row-tip">
+            <div className="modal-label" />
+            <Tip content={__.resize_instance} type="warning" showIcon={true} width={512} />
+          </div>
           {
             enableCharge ?
               <div className="modal-row charge-row">

@@ -68,7 +68,8 @@
     "verify_resize": "Resize ",
     "vnc_console": "VNC Console",
     "ensure_shutdown": "Do you want to shudown instance {0} ？",
-    "user_name": "User Name"
+    "user_name": "User Name",
+    "resize_instance": "Change will lead to restart the instance, please be careful to operate"
   },
   "zh-CN": {
     "account": "{0} 元",
@@ -139,6 +140,7 @@
     "verify_resize": "验证配置",
     "vnc_console": "VNC登录",
     "ensure_shutdown": "确定关闭云主机{0}吗？",
-    "user_name": "用户名"
+    "user_name": "用户名",
+    "resize_instance": "更改将导致云主机重启，请谨慎操作"
   }
 }

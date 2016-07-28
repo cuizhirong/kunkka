@@ -14,14 +14,12 @@
 
 .halo-com-modal-resize-instance {
   padding-left: 0 !important;
+  margin-bottom: -36px;
 
   >div {
     display: flex;
     align-items: center;
-
-    &:not(:first-child) {
-      margin-top: 24px;
-    }
+    margin-top: 6px;
 
     .modal-label {
       .fixed-width(100px);
@@ -38,6 +36,8 @@
   }
 
   .name-row {
+    margin-top: -14px;
+    padding-bottom: 6px;
     .glyphicon {
       margin-right: 8px;
     }
@@ -61,10 +61,10 @@
         width: 100%;
         .dropdown-item {
           &:not(:first-child) {
-            margin-top: 16px;
+            margin-top: 6px;
           }
-          .dropdown-item-title {
-            margin-bottom: 8px;
+          &:last-child {
+            margin-bottom: 10px;
           }
           .dropdown-item-data {
             > ul {
