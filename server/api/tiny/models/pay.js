@@ -33,6 +33,12 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: 0
+    },
+    //alipay:trade_no
+    //paypal:payment_id
+    paymentId: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     paranoid: true

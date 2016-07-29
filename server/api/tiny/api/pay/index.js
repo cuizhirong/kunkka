@@ -13,6 +13,8 @@ function Pay (app) {
 }
 
 Pay.prototype = {
+
+  //create payment
   pay: function (req, res, next) {
     let user = req.session.user.userId;
     let method = req.params.method;
@@ -34,6 +36,8 @@ Pay.prototype = {
     }).catch(next);
 
   },
+
+
   callback: function (req, res, next) {
     let method = req.params.method;
     let result = req.params.result;
@@ -48,10 +52,40 @@ Pay.prototype = {
       next({code: 'error', msg: req.i18n.__('api.pay.PaymentMethodError')});
     }
   },
-  inform: function (req, res, next) {
-    let region = req.header('REGION');
 
-    PayModel.findOne({where: {id: req.query.id}}).then(pay=> {
+  //paypal execute and check
+  paypalExecute: function (req, res, next) {
+    let result = req.params.result;
+    if (result !== 'success') {
+      return res.json({code: 'error', msg: req.i18n.__('api.pay.PaymentFailed')});
+    }
+
+    payment.paypal.execute(req, res, next);
+  },
+
+
+  //payment success and notify from alipay
+  alipayNotify: function (req, res, next) {
+    if (req.body.trade_status === 'TRADE_FINISHED') {
+      payment.alipay.execute(req, res, next).then(function () {
+        req.query.uuid = req.body.out_trade_no;
+        next();
+      });
+    } else {
+      next(req.body);
+    }
+  },
+  //restrict from alipay
+  alipayReturn: function (req, res, next) {
+    payment.alipay.returnUrl(req, res, next);
+  },
+
+
+  //recharge for users
+  inform: function (req, res, next) {
+    let region = req.header('REGION') || req.body.REGION;
+
+    PayModel.findOne({where: {id: req.query.uuid}}).then(pay=> {
       if (pay.transferred === 1 && pay.informed === 0) {
         request.put({
           url: req.session.endpoint.gringotts[region] + '/v2/accounts/' + req.session.user.userId,
@@ -83,8 +117,11 @@ Pay.prototype = {
   },
   initRoutes: function () {
     this.app.post('/api/pay/:method', this.pay);
-    this.app.get('/api/pay/callback/:method/:result', this.callback, this.inform);
+    this.app.post('/api/pay/alipay/notify', this.alipayNotify, this.inform);
+    this.app.post('/api/pay/alipay/return', this.alipayReturn);
+    this.app.get('/api/pay/paypal/:result', this.paypalExecute, this.inform);
   }
+
 };
 
 

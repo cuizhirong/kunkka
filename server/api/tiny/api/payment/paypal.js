@@ -1,7 +1,7 @@
 'use strict';
 
-const Promise = require('bluebird');
 const paypal = require('paypal-rest-sdk');
+const PayModel = require('../../models').pay;
 
 paypal.configure(require('config')('paypal').live);
 
@@ -31,8 +31,8 @@ module.exports = {
         }
       ],
       'redirect_urls': {
-        'return_url': req.protocol + '://' + req.hostname + '/api/pay/callback/paypal/success?order=' + info.id,
-        'cancel_url': req.protocol + '://' + req.hostname + '/api/pay/callback/paypal/cancel?order=' + info.id
+        'return_url': req.protocol + '://' + req.hostname + '/api/pay/paypal/success?order=' + info.id,
+        'cancel_url': req.protocol + '://' + req.hostname + '/api/pay/paypal/cancel?order=' + info.id
       }
     };
     paypal.payment.create(paypalPayment, {}, function (err, result) {
@@ -51,12 +51,61 @@ module.exports = {
     if (cancel) {
       next({code: -1, msg: req.i18n.__('api.pay.cancelPayment')});
     } else {
+
       if (!payerId || !paymentId || !token) {
         next({code: -1, msg: req.i18n.__('api.pay.parameterError')});
+      } else {
+
+        PayModel.findOne({
+          where: {id: req.query.order}
+        }).then(pay=> {
+          pay.paymentId = paymentId;
+          pay.save();
+        }).then(function () {
+          let payer = {payer_id: payerId};
+
+          paypal.payment.execute(paymentId, payer, function (executeErr, executeResult) {
+
+            if (executeErr && executeErr.code === 'ECONNRESET') {
+              module.exports.moreRequest(paymentId, module.exports.save);
+            } else if (executeErr) {
+              next(executeErr);
+            } else if (executeResult.state === 'approved') {
+              module.exports.save();
+            }
+          });
+        });
       }
-      let payer = {payer_id: payerId};
-      let paypalExecute = Promise.promisify(paypal.payment.execute);
-      return paypalExecute(paymentId, payer, {});
+
     }
+  },
+
+  save: function (req, res, next) {
+    PayModel.findOne({
+      where: {id: req.query.order}
+    }).then(pay=> {
+      pay.transferred = 1;
+      return pay.save();
+    }).then(()=> {
+      req.query.uuid = req.query.order;
+      next();
+    });
+  },
+  moreRequest: function (id, cb) {
+    let times = [0, 5, 10, 20, 40, 60];
+    let timeouts = [];
+
+    times.forEach(function (time, index) {
+      timeouts[index] = setTimeout(function () {
+        paypal.payment.get(id, function (queryErr, queryResult) {
+          if ((!queryErr) || ( queryErr && queryErr.httpStatusCode)) {
+            cb(queryErr, queryResult);
+            timeouts.forEach(out=> {
+              clearTimeout(out);
+            });
+          }
+        });
+      }, time * 60000);
+    });
   }
 };

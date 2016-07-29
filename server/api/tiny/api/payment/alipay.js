@@ -1,10 +1,9 @@
 'use strict';
 const models = require('../../models');
 const PayModel = models.pay;
-const md5 = require('md5');
-const Promise = require('bluebird');
-const request = Promise.promisify(require('request'));
+const request = require('request');
 const xml2json = require('xml2json');
+const md5 = require('md5');
 const allConfig = require('config')('alipay');
 
 const commonData = {
@@ -20,8 +19,8 @@ module.exports = {
       out_trade_no: info.id,
       total_fee: info.amount,
       currency: info.currency,
-      notify_url: req.protocol + '://' + req.hostname + '/api/pay/callback/alipay/success',
-      return_url: req.protocol + '://' + req.hostname + '/api/pay/callback/alipay/success'
+      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION'),
+      return_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/return'
     };
 
     Object.assign(data, allConfig.forex, commonData);
@@ -33,13 +32,25 @@ module.exports = {
     let sign = md5(ret + partnerKey);
 
     res.send({url: gateway + ret + '&sign=' + sign + '&sign_type=MD5'});
-
-
   },
+
+
+  //save database,
   execute: function (req, res, next) {
+    return PayModel.findOne({
+      where: {id: req.body.out_trade_no}
+    }).then(pay=> {
+      pay.transferred = 1;
+      return pay.save();
+    }).catch(err=> {
+      next(err);
+    });
+  },
+
+  returnUrl: function (req, res, next) {
 
     let data = {
-      out_trade_no: req.query.id
+      out_trade_no: req.query.out_trade_no
     };
     Object.assign(data, allConfig.query, commonData);
 
@@ -52,21 +63,11 @@ module.exports = {
     request(gateway + ret + '&sign=' + sign + '&sign_type=MD5').then(function (response) {
       let result = xml2json.toJson(response.body);
       if (result.alipay && result.alipay.is_success === 'T') {
-        return PayModel.findOne({
-          where: {
-            id: req.query.id
-          }
-        });
+        req.send(result.alipay);
       } else {
         next(result);
       }
-
-    }).then(pay=> {
-      pay.transferred = 1;
-      return pay.save();
-    }).catch(err=> {
-      next(err);
     });
-  }
 
+  }
 };
