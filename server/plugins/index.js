@@ -3,13 +3,7 @@
 const pluginName = require('../config')('plugin');
 
 if (pluginName) {
-  module.exports = function (req, res, next) {
-    if (req.session && req.session.user) {
-      next();
-    } else {
-      require('./' + pluginName)(req, res, next);
-    }
-  };
+  module.exports = require('./' + pluginName);
 } else {
   module.exports = function (req, res, next) {
     next();
