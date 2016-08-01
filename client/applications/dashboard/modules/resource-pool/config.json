@@ -30,8 +30,8 @@
           "title": ["modify", "health_monitor"],
           "key": "modify_monitor"
         }, {
-          "title": ["cancel", "health_monitor"],
-          "key": "cancel_monitor"
+          "title": ["delete", "health_monitor"],
+          "key": "delete_monitor"
         }, {
           "title": ["delete", "resource", "pool"],
           "key": "delete",

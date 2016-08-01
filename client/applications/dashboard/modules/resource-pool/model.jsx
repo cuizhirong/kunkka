@@ -151,10 +151,10 @@ class Model extends React.Component {
       case 'modify_pool':
         createPool(rows[0]);
         break;
-      case 'cancel_monitor':
+      case 'delete_monitor':
         deleteModal({
           __: __,
-          action: 'cancel',
+          action: 'delete',
           type: 'health_monitor',
           data: [rows[0].healthmonitor],
           onDelete: function(_data, cb) {
@@ -219,7 +219,7 @@ class Model extends React.Component {
         case 'modify_pool':
           btns[key].disabled = rows.length !== 1;
           break;
-        case 'cancel_monitor':
+        case 'delete_monitor':
         case 'modify_monitor':
           btns[key].disabled = !(rows.length === 1 && rows[0].healthmonitor);
           break;
