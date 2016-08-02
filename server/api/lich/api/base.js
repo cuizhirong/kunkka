@@ -11,7 +11,7 @@ API.prototype = {
     } else {
       next();
     }*/
-    next()
+    next();
   }
 };
 
