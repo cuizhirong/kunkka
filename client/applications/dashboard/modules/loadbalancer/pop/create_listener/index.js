@@ -18,11 +18,23 @@ function pop(obj, parent, actionModify, callback) {
     __: __,
     parent: parent,
     config: config,
+    cacheKey : [],
+    cacheValue: [],
     onInitialize: function(refs) {
+      var initValue = 10000;
       refs.connection_limit.setState({
         renderer: popSlider,
-        value: 10000
+        value: initValue
       });
+
+      request.getPrice('listener', initValue).then((res) => {
+        refs.charge.setState({
+          value: res.unit_price
+        });
+        this.cacheKey.push(initValue);
+        this.cacheValue.push(res.unit_price);
+      }
+      );
 
       if(actionModify) {
         refs.name.setState({
@@ -50,7 +62,8 @@ function pop(obj, parent, actionModify, callback) {
       if(actionModify) {
         var updateData = {
           name: refs.name.state.value,
-          connection_limit: refs.connection_limit.state.value
+          connection_limit: refs.connection_limit.state.value,
+          charge: refs.charge.state.value
         };
 
         request.updateListener(obj.id, updateData).then(res => {
@@ -65,7 +78,8 @@ function pop(obj, parent, actionModify, callback) {
           protocol: refs.listener_protocol.state.value,
           protocol_port: refs.protocol_port.state.value,
           loadbalancer_id: obj.id,
-          connection_limit: refs.connection_limit.state.value
+          connection_limit: refs.connection_limit.state.value,
+          charge: refs.charge.state.value
         };
 
         request.createListener(listenerData).then(res => {
@@ -107,6 +121,28 @@ function pop(obj, parent, actionModify, callback) {
             refs.btn.setState({
               disabled: true
             });
+          }
+          break;
+        case 'connection_limit':
+          if (HALO.settings.enable_charge) {
+            var sliderEvent = refs.connection_limit.refs.slider.state.eventType;
+            if (sliderEvent === 'mouseup') {
+              var conValue = refs.connection_limit.state.value;
+              if(this.cacheKey.includes(conValue)) {
+                refs.charge.setState({
+                  value: this.cacheValue[this.cacheKey.indexOf(conValue)]
+                });
+              } else {
+                request.getPrice('listener', conValue).then((res) => {
+                  refs.charge.setState({
+                    value: res.unit_price
+                  });
+                  this.cacheKey.push(conValue);
+                  this.cacheValue.push(res.unit_price);
+                }
+                ).catch((error) => {});
+              }
+            }
           }
           break;
         default:

@@ -91,5 +91,17 @@ module.exports = {
       url: '/proxy/neutron/v2.0/floatingips/' + fipID,
       data: {'floatingip': {'port_id': portID}}
     });
+  },
+  getPrice: function(type, size) {
+    var url = '/proxy/gringotts/v2/products/price' +
+      '?purchase.bill_method=hour' +
+      '&purchase.purchases[0].product_name=' + type +
+      '&purchase.purchases[0].service=network' +
+      '&purchase.purchases[0].region_id=RegionOne' +
+      '&purchase.purchases[0].quantity=' + size;
+
+    return fetch.get({
+      url: url
+    });
   }
 };

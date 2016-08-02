@@ -24,6 +24,10 @@
   }, {
     "type": "adapter",
     "field": "connection_limit"
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true
   }],
   "btn": {
     "value": "create",

@@ -7,9 +7,15 @@ var __ = require('locale/client/dashboard.lang.json');
 class ComSlider extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      eventType: null
+    };
   }
 
   onChange(e, value) {
+    this.setState({
+      eventType: e.type
+    });
     this.props.onChange && this.props.onChange(value);
   }
 
@@ -45,7 +51,7 @@ class ComSlider extends React.Component {
 }
 
 function popSlider(config) {
-  return <ComSlider {...config} />;
+  return <ComSlider ref="slider" {...config} />;
 }
 
 module.exports = popSlider;
