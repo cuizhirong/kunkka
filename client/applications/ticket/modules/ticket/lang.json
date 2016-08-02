@@ -1,10 +1,18 @@
 {
   "en": {
     "open": "Open",
-    "close": "Close"
+    "close": "Close",
+    "select_type": "Select Type",
+    "breakdown": "Break Down",
+    "consultation": "Consultation",
+    "application": "Application"
   },
   "zh-CN": {
     "open": "打开",
-    "close": "关闭"
+    "close": "关闭",
+    "select_type": "选择类型",
+    "breakdown": "故障",
+    "consultation": "咨询",
+    "application": "申请"
   }
 }

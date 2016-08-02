@@ -21,6 +21,17 @@ class Attach extends React.Component {
     this.uploadFile(file);
   }
 
+  getContent(content) {
+    var strBef, strAft;
+    if (content.length > 14) {
+      strBef = content.substring(0, 7);
+      strAft = content.substring(content.length - 7, content.length);
+      return strBef + '...' + strAft;
+    } else {
+      return content;
+    }
+  }
+
   uploadFile(file) {
     request.postFile(file).then((res) => {
       this.setState({
@@ -39,11 +50,13 @@ class Attach extends React.Component {
   deleteAttach(index) {
     this.state.attachments.splice(index, index + 1);
     this.state.fileNames.splice(index, index + 1);
+    this.state.uploadError.splice(index, index + 1);
     this.forceUpdate();
   }
 
   render() {
-    var className = 'halo-pop-attach';
+    var className = 'halo-pop-attach',
+      classNameFile = '';
     if (this.props.is_long_label) {
       className += ' label-row long-label-row';
     } else {
@@ -51,6 +64,12 @@ class Attach extends React.Component {
     }
     if (this.props.hide) {
       className += ' hide';
+    }
+    if (this.state.fileNames.length >= 5) {
+      this.refs.myfile.disabled = true;
+      classNameFile = 'disabled';
+    } else if (this.refs.myfile) {
+      this.refs.myfile.disabled = false;
     }
 
     return (
@@ -61,7 +80,7 @@ class Attach extends React.Component {
               this.state.fileNames.map((fileName, index) => {
                 return (
                   <div key={index} className="attach">
-                      <i className={this.state.uploadError[index] ? 'glyphicon icon-status-warning error' : 'glyphicon icon-log'} />{this.state.uploadError[index] ? __.upload_error : fileName}
+                      <i className={this.state.uploadError[index] ? 'glyphicon icon-status-warning error' : 'glyphicon icon-log'} /><span>{this.state.uploadError[index] ? __.upload_error : this.getContent(fileName)}</span>
                       <i className="glyphicon icon-delete" onClick={this.deleteAttach.bind(this, index)}/>
                   </div>);
               })
@@ -70,7 +89,7 @@ class Attach extends React.Component {
         </div>
         <div className="attach-info">
           <div className="btn-browse">
-            <a><i className="glyphicon icon-upload" />
+            <a className={classNameFile}><i className="glyphicon icon-upload" />
               <div className="upload_file">{__.upload_files}</div>
               <input ref="myfile" name="attachment" className="myfile" type="file" onChange={this.uploadFileFromBrowse.bind(this)} />
             </a>

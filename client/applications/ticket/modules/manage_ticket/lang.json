@@ -1,6 +1,8 @@
 {
   "en": {
+    "passed_to_admin": "Passed to the Super admin"
   },
   "zh-CN": {
+    "passed_to_admin": "移交上级管理员"
   }
 }

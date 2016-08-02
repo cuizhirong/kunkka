@@ -17,18 +17,6 @@ module.exports = {
       return res;
     });
   },
-  getSingle: function(id) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id;
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
-    });
-  },
   getNextList: function(nextUrl) {
     var url = nextUrl;
     return fetch.get({
@@ -83,7 +71,7 @@ module.exports = {
     });
   },
   updateStatus: function(id, data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id;
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '/owner';
     return fetch.put({
       url: url,
       data: data

@@ -65,6 +65,11 @@ class Model extends React.Component {
             return <div className="replies">{item.replies.length}</div>;
           };
           break;
+        case 'status':
+          column.render = (col, item, i) => {
+            return __[item.status];
+          };
+          break;
         default:
           break;
       }
@@ -73,27 +78,7 @@ class Model extends React.Component {
 
   //initialize table data
   onInitialize(params) {
-    if (params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
-  }
-
-  //request: get single data by ID
-  getSingle(id) {
-    var table = this.state.config.table;
-    request.getSingle(id).then((res) => {
-      table.data = [res];
-      this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
-        router.replaceState('/ticket/' + pathList.slice(1).join('/'), null, null, true);
-      });
-    }).catch((res) => {
-      table.data = [];
-      this.setPagination(table, res);
-      this.updateTableData(table);
-    });
+    this.getList();
   }
 
   //request: get list
@@ -243,6 +228,12 @@ class Model extends React.Component {
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
         break;
+      case 'reply':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true
+        });
+        break;
       default:
         break;
     }
@@ -329,7 +320,7 @@ class Model extends React.Component {
         });
         break;
       case 'close':
-        _data.status = 'close';
+        _data.status = 'closed';
         request.updateStatus(rows[0].id, _data).then((res) => {
           this.refresh({
             refreshList: true,
@@ -367,17 +358,22 @@ class Model extends React.Component {
     var data = {
       attachments: that.refs.upload.refs.child.state.attachments
     };
+    that.refs.upload.refs.child.setState({
+      fileNames: [],
+      uploadError: []
+    });
     var id = that.props.rawItem.id;
     request.addFile(id, data).then((res) => {
       that.setState({
         files: that.state.files.concat(res)
       });
-      if (_data.content !== '' && _data.content !== 'undefined') {
+      if (_data.content) {
         request.createReply(id, _data).then((_res) => {
           that.refs.reply.value = '';
           that.setState({
             replies: that.state.replies.concat(_res)
           });
+          that.forceUpdate();
         });
       }
     });
@@ -392,7 +388,7 @@ class Model extends React.Component {
       reply.updatedAt = getTime(reply.updatedAt);
     });
 
-    var by = function(name) {
+    var sortTime = function(name) {
       return function(o, p) {
         var a, b;
         if (typeof o === 'object' && typeof p === 'object' && o && p) {
@@ -409,7 +405,7 @@ class Model extends React.Component {
       };
     };
 
-    rows[0].replies.sort(by('updatedAt'));
+    rows[0].replies.sort(sortTime('updatedAt'));
 
     switch (tabKey) {
       case 'description':
@@ -419,6 +415,7 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 onCancel={this.onCancel}
                 submitReply={this.submitReply}
+                onAction={this.onAction}
                 dashboard={this.refs.ticket ? this.refs.ticket : null} />
           );
         }

@@ -5,6 +5,10 @@
     "field": "title",
     "required": true
   }, {
+    "type": "select",
+    "field": "select_type",
+    "data": []
+  }, {
     "type": "textarea",
     "field": "description",
     "required": true

@@ -37,7 +37,7 @@ class Model extends PendModel {
           _tickets.push(ticket);
         }
       });
-      table.data = _tickets;
+      table.data = res.tickets;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     });

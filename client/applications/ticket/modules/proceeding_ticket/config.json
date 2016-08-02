@@ -16,8 +16,13 @@
     "icon": "active",
     "disabled": true
   }, {
-    "value": ["update_to", "proceeding"],
-    "key": "proceeding",
+    "value": ["update_to", "closed"],
+    "key": "closed",
+    "icon": "active",
+    "disabled": true
+  }, {
+    "value": ["passed_to_admin"],
+    "key": "passed",
     "icon": "active",
     "disabled": true
   }, {

@@ -41,15 +41,27 @@ class Detail extends React.Component {
   }
 
   onAction(actionType, data) {
-    this.props.onAction && this.props.onAction(this.props.tabKey, actionType, data);
+    this.props.onAction && this.props.onAction('reply', actionType, data);
   }
 
   submitReply() {
     this.props.submitReply && this.props.submitReply(this);
+    this.onAction('_detail');
   }
 
   onCancel() {
     this.props.onCancel && this.props.onCancel();
+  }
+
+  getContent(content) {
+    var strBef, strAft;
+    if (content.length > 12) {
+      strBef = content.substring(0, 7);
+      strAft = content.substring(content.length - 5, content.length);
+      return strBef + '...' + strAft;
+    } else {
+      return content;
+    }
   }
 
   render() {
@@ -57,13 +69,35 @@ class Detail extends React.Component {
       state = this.state,
       replies = state.replies,
       files = state.files,
-      id = HALO.user.userId;
+      id = HALO.user.userId,
+      role = HALO.user.roles[0].toLowerCase();
+
+    var sortTime = function(name) {
+      return function(o, p) {
+        var a, b;
+        if (typeof o === 'object' && typeof p === 'object' && o && p) {
+          a = Date.parse(o[name]);
+          b = Date.parse(p[name]);
+          if (a === b) {
+            return 0;
+          }
+
+          if (typeof a === typeof b) {
+            return a < b ? -1 : 1;
+          }
+        }
+      };
+    };
+
+    replies.sort(sortTime('createdAt'));
+
     return (
       <div className="halo-com-detail">
         <div className="detail-question">
           <div className="content-question">
             <div className="question-left">
               <div className="question-title">{item.title}</div>
+              <div className="question-content">{__.ticket + __.type + ' : ' + __[item.type]}</div>
               <div className="question-content">{item.description}</div>
             </div>
             <div className="question-right">
@@ -84,7 +118,7 @@ class Detail extends React.Component {
                 <div key={index} className="file_url" onClick={this.downloadFile}>
                   <a href={file.url} target="_blank">
                     <div style={style}></div>
-                    <div>{file.url.substring(file.url.lastIndexOf('/') + 1)}</div>
+                    <div>{this.getContent(file.url.substring(file.url.lastIndexOf('/') + 1))}</div>
                   </a>
                 </div>
               );
@@ -118,7 +152,7 @@ class Detail extends React.Component {
               );
             })}
           </div>
-          {item.status === 'proceeding' ?
+          {((item.status === 'proceeding' || item.status === 'pending') && HALO.user.userId === item.owner) || (item.status === 'proceeding' && (role === 'owner' || role === 'admin')) ?
             <div className="reply-text">
               {__.reply}
               <textarea ref="reply"/>

@@ -34,6 +34,9 @@ class Model extends React.Component {
   componentWillMount() {
     var column = this.state.config.table.column;
     this.tableColRender(column);
+    if (HALO.user.roles[0].toLowerCase() === 'admin') {
+      this.state.config.btns.splice(2, 1);
+    }
     this.initializeFilter(this.state.config.filter);
   }
 
@@ -71,6 +74,11 @@ class Model extends React.Component {
             return <div className="replies">{item.replies.length}</div>;
           };
           break;
+        case 'status':
+          column.render = (col, item, i) => {
+            return __[item.status];
+          };
+          break;
         default:
           break;
       }
@@ -78,11 +86,7 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if (params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
+    this.getList();
   }
 
   initializeFilter(filters, res) {
@@ -246,7 +250,7 @@ class Model extends React.Component {
   }
 
   loadingDetail() {
-    this.refs.ticket.refresh.detail.loading();
+    this.refs.ticket.refs.detail.loading();
   }
 
   clearUrls() {
@@ -275,6 +279,12 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'reply':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true
+        });
         break;
       default:
         break;
@@ -330,7 +340,7 @@ class Model extends React.Component {
     switch(key) {
       case 'pending':
         _data.status = 'pending';
-        request.updateTo(rows[0].id, _data).then((res) => {
+        request.updateStatus(rows[0].id, _data).then((res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true,
@@ -341,7 +351,7 @@ class Model extends React.Component {
         break;
       case 'proceeding':
         _data.status = 'proceeding';
-        request.updateTo(rows[0].id, _data).then((res) => {
+        request.updateStatus(rows[0].id, _data).then((res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true,
@@ -352,12 +362,21 @@ class Model extends React.Component {
         break;
       case 'closed':
         _data.status = 'closed';
-        request.updateTo(rows[0].id, _data).then((res) => {
+        request.updateStatus(rows[0].id, _data).then((res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true,
             loadingTable: true
 
+          });
+        });
+        break;
+      case 'passed':
+        request.passedToAdmin(rows[0].id).then((res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true
           });
         });
         break;
@@ -412,6 +431,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    var role = HALO.user.roles[0].toLowerCase() === 'owner';
     for (let key in btns) {
       switch(key) {
         case 'pending':
@@ -423,6 +443,11 @@ class Model extends React.Component {
         case 'closed':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
+        case 'passed':
+          if (role) {
+            btns[key].disabled = rows.length === 1 ? false : true;
+          }
+          break;
         default:
           break;
       }
@@ -432,20 +457,30 @@ class Model extends React.Component {
 
   submitReply(that) {
     var _data = {
-      content: that.refs.reply.value
+      content: that.refs.reply.value.trim()
     };
+    that.refs.upload.refs.child.setState({
+      fileNames: [],
+      uploadError: []
+    });
 
     var data = {
       attachments: that.refs.upload.refs.child.state.attachments
     };
     var id = that.props.rawItem.id;
     request.addFile(id, data).then((res) => {
-      request.createReply(id, _data).then((_res) => {
-        that.refs.reply.value = '';
-        that.setState({
-          replies: that.state.replies.concat(_res)
-        });
+      that.setState({
+        files: that.state.files.concat(res)
       });
+      if (_data.content) {
+        request.createReply(id, _data).then((_res) => {
+          that.refs.reply.value = '';
+          that.setState({
+            replies: that.state.replies.concat(_res)
+          });
+          that.forceUpdate();
+        });
+      }
     });
   }
 
@@ -471,6 +506,7 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 submitReply={this.submitReply}
                 onCancel={this.onCancel}
+                onAction={this.onAction}
                 dashboard={this.refs.ticket ? this.refs.ticket : null} />
             </div>
           );

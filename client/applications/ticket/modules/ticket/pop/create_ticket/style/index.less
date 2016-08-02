@@ -20,14 +20,21 @@
         .error {
           color: @attach_delete;
         }
+        > span {
+          display: inline-block;
+          width: 340px;
+        }
         i:last-child {
-          margin-left: 300px;
           &:hover {
             color: @attach_delete;
+            cursor: pointer;
           }
         }
       }
     }
+  }
+  .disabled {
+    color: @attach_bg_color;
   }
   .attach-info {
     margin-left: 112px;

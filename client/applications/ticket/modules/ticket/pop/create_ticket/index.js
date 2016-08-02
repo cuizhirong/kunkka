@@ -12,6 +12,21 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      var data = [{
+        id: 'breakdown',
+        name: __.breakdown
+      }, {
+        id: 'consultation',
+        name: __.consultation
+      }, {
+        id: 'application',
+        name: __.application
+      }];
+      var selectedItem = data[0].id;
+      refs.select_type.setState({
+        data: data,
+        value: selectedItem
+      });
       refs.attach_file.setState({
         renderer: popAttach
       });
@@ -20,7 +35,7 @@ function pop(obj, parent, callback) {
       var data = {
         title: refs.title.state.value,
         description: refs.description.state.value,
-        type: 'pending',
+        type: refs.select_type.state.value,
         status: 'pending',
         attachments: refs.attach_file.refs.child.state.attachments
       };

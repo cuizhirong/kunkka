@@ -41,8 +41,8 @@ module.exports = {
       return res;
     });
   },
-  updateTo: function(id, data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id;
+  updateStatus: function(id, data) {
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '/handler';
     return fetch.put({
       url: url,
       data: data
@@ -84,6 +84,12 @@ module.exports = {
     }).catch((res) => {
       res._url = url;
       return res;
+    });
+  },
+  passedToAdmin: function(id) {
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '/higher';
+    return fetch.put({
+      url: url
     });
   }
 };

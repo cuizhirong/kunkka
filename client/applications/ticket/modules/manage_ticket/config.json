@@ -21,6 +21,11 @@
     "icon": "remove",
     "disabled": true
   }, {
+    "value": ["passed_to_admin"],
+    "key": "passed",
+    "icon": "active",
+    "disabled": true
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],
