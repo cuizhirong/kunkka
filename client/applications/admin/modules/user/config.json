@@ -15,14 +15,9 @@
     "icon": "edit",
     "disabled": true
   }, {
-    "value": ["activate", "user"],
-    "key": "activate_user",
-    "icon": "enable",
-    "disabled": true
-  }, {
-    "value": ["deactivate", "user"],
-    "key": "deactivate_user",
-    "icon": "disable",
+    "value": ["charge"],
+    "key": "charge",
+    "icon": "edit",
     "disabled": true
   }, {
     "value": ["more"],
@@ -38,6 +33,16 @@
         }, {
           "title": ["modify", "main", "project"],
           "key": "modify_project",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["activate", "user"],
+          "key": "activate_user",
+          "disabled": true
+        }, {
+          "title": ["deactivate", "user"],
+          "key": "deactivate_user",
           "disabled": true
         }]
       }, {
@@ -89,6 +94,9 @@
       "title": ["main", "project"],
       "dataIndex": "",
       "key": "project"
+    }, {
+      "title": ["balance"],
+      "key": "balance"
     }, {
       "title": ["status"],
       "dataIndex": "",

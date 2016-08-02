@@ -26,7 +26,19 @@ module.exports = {
         url: url
       }).then((res) => {
         res._url = url;
-        return res;
+        return this.getCharge().then((charges) => {
+          res.users.map((user) => {
+            charges.accounts.map((account) => {
+              if (account.user_id === user.id) {
+                user.balance = account.balance;
+                return true;
+              }
+              return false;
+            });
+            return res;
+          });
+          return res;
+        });
       });
     });
   },
@@ -48,7 +60,19 @@ module.exports = {
       url: nextUrl
     }).then((res) => {
       res._url = nextUrl;
-      return res;
+      return this.getCharge().then((charges) => {
+        res.users.map((user) => {
+          charges.accounts.map((account) => {
+            if (account.user_id === user.id) {
+              user.balance = account.balance;
+              return true;
+            }
+            return false;
+          });
+          return res;
+        });
+        return res;
+      });
     }).catch((res) => {
       res._url = nextUrl;
       return res;
@@ -266,6 +290,22 @@ module.exports = {
   leaveGroup: function(userID, groupID) {
     return fetch.delete({
       url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
+    });
+  },
+  charge: function(id, data) {
+    return fetch.put({
+      url: '/proxy/gringotts/v2/accounts/' + id,
+      data: data
+    });
+  },
+  getChargeById: function(id) {
+    return fetch.get({
+      url: '/proxy/gringotts/v2/accounts/' + id
+    });
+  },
+  getCharge: function() {
+    return fetch.get({
+      url: '/proxy/gringotts/v2/accounts/'
     });
   }
 };
