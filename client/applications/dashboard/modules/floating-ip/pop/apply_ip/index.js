@@ -4,11 +4,11 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
-// function priceError(refs, error) {
-//   refs.btn.setState({
-//     disabled: false
-//   });
-// }
+function priceError(refs, error) {
+  refs.btn.setState({
+    disabled: false
+  });
+}
 
 var externalNetwork = null;
 
@@ -16,7 +16,7 @@ function pop(parent, callback) {
 
   var settings = HALO.settings;
   var enableBandwidth = settings.enable_floatingip_bandwidth;
-  // var enableCharge = settings.enable_charge;
+  var enableCharge = settings.enable_charge;
   var defaultBandwidth = settings.max_floatingip_bandwidth;
 
   var tipField = config.fields[0];
@@ -29,9 +29,9 @@ function pop(parent, callback) {
     }
     bandwidthField.hide = false;
     tipField.hide = true;
-    // if (enableCharge) {
-    //   chargeField.hide = false;
-    // }
+    if (enableCharge) {
+      chargeField.hide = false;
+    }
   } else {
     bandwidthField.hide = true;
     chargeField.hide = true;
@@ -43,18 +43,14 @@ function pop(parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      /*if (enableCharge) {
-        var bandwidth = config.fields[0].min;
+      if (enableCharge) {
+        var bandwidth = config.fields[1].min;
         request.getFloatingIPPrice(bandwidth).then((res) => {
           refs.charge.setState({
             value: res.unit_price
           });
-
-          refs.btn.setState({
-            disabled: false
-          });
         }).catch(priceError.bind(this, refs));
-      }*/
+      }
 
       request.getNetworks().then((networks) => {
         var floatingNetwork = networks.filter((item) => item['router:external']);
@@ -106,7 +102,7 @@ function pop(parent, callback) {
     },
     onAction: function(field, state, refs) {
       switch (field) {
-        /*case 'bandwidth':
+        case 'bandwidth':
           if (enableCharge) {
             var sliderEvent = state.eventType === 'mouseup';
             var inputEvnet = state.eventType === 'change' && !state.error;
@@ -118,12 +114,8 @@ function pop(parent, callback) {
                 });
               }).catch(priceError.bind(this, refs));
             }
-
-            refs.btn.setState({
-              disabled: state.error
-            });
           }
-          break;*/
+          break;
         default:
           break;
       }
