@@ -1,0 +1,20 @@
+{
+  "title": ["modify", "security_group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "port",
+    "icon_type": "port",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "security_group",
+    "empty_text": {
+      "info": "no_security_group",
+      "link_info": ["create", "security_group"]
+    }
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": true
+  }
+}

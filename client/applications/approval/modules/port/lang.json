@@ -1,0 +1,20 @@
+{
+  "en": {
+    "address_ip": "IP Address",
+    "detach_instance": "Do you want to detach?",
+    "ip_info": "System will auto assign if not filled.",
+    "no_port": "No associated port",
+    "restrict": "Restrict",
+    "network:dhcp": "DHCP",
+    "network:router_interface": "Router"
+  },
+  "zh-CN": {
+    "address_ip": "IP地址",
+    "detach_instance": "该操作将此虚拟网卡从云主机上卸载",
+    "ip_info": "如不填系统会自动分配",
+    "no_port": "没有关联网卡",
+    "restrict": "限制",
+    "network:dhcp": "DHCP",
+    "network:router_interface": "路由器"
+  }
+}

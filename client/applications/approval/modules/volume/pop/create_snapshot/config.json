@@ -1,0 +1,26 @@
+{
+  "title": ["create", "snapshot"],
+  "fields": [{
+    "type": "tip",
+    "tip_type": "info",
+    "field": "tip_volume_snapshot"
+  }, {
+    "type": "icon_label",
+    "field": "volume",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "snapshot_name",
+    "required": true
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

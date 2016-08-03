@@ -1,0 +1,27 @@
+{
+  "title": ["extd_capacity"],
+  "fields": [{
+    "type": "slider",
+    "field": "capacity_size",
+    "min": 0,
+    "max": 1,
+    "unit": "GB",
+    "hide": false,
+    "disabled": true
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "value": "0.0000",
+    "hide": false
+  }, {
+    "type": "tip",
+    "tip_type": "error",
+    "field": "error",
+    "hide": true
+  }],
+  "btn": {
+    "value": "extd_capacity",
+    "disabled": true
+  }
+}

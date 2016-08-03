@@ -1,0 +1,36 @@
+{
+  "title": ["allocate", "floating_ip"],
+  "fields": [{
+    "type": "text",
+    "field": "apply_ip_tip",
+    "info": "apply_ip_tip",
+    "hide": true
+  }, {
+    "type": "slider",
+    "field": "bandwidth",
+    "min": 1,
+    "max": 30,
+    "value": 1,
+    "unit": "Mbps",
+    "hide": true
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": true
+  }, {
+    "type": "select",
+    "field": "external_network",
+    "hide": true
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "warning",
+    "hide": true
+  }],
+  "btn": {
+    "value": "allocate",
+    "type": "create",
+    "disabled": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": ["attach_to", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "volume",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance"
+    },
+    "data": [],
+    "single": true
+  }],
+  "btn": {
+    "value": "attach",
+    "disabled": false
+  }
+}

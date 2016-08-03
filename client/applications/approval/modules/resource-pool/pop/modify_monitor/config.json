@@ -1,0 +1,31 @@
+{
+  "title": ["modify", "health_monitor"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "resource_pool"
+  }, {
+    "type": "input",
+    "field": "delay",
+    "input_type": "text",
+    "tip_info": "delay_tip",
+    "required": true
+
+  }, {
+    "type": "input",
+    "field": "timeout",
+    "input_type": "text",
+    "tip_info": "timeout_tip",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "max_retries",
+    "input_type": "text",
+    "tip_info": "retries_tip",
+    "required": true
+  }],
+  "btn": {
+    "value": "modify",
+    "type": "normal",
+    "disabled": true
+  }
+}

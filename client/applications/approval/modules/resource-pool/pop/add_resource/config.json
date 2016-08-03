@@ -1,0 +1,40 @@
+{
+  "title": ["add_", "resource"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "resource_pool",
+    "icon_type": ""
+  }, {
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet"
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance"
+    }
+  }, {
+    "type": "select",
+    "field": "ip_address",
+    "empty_text": {
+      "info": "loading"
+    }
+  }, {
+    "type": "input",
+    "field": "protocol_port",
+    "input_type": "text",
+    "tip_info": "required_port_range",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "weight",
+    "input_type": "text",
+    "tip_info": "required_weight_range",
+    "required": true
+  }],
+  "btn": {
+    "value": "add_",
+    "disabled": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "modules": [{
+    "title": "compute",
+    "items": [
+      "instance",
+      "image",
+      "image-snapshot",
+      "keypair"
+    ]
+  }, {
+    "title": "network",
+    "items": [
+      "topology",
+      "network",
+      "subnet",
+      "floating-ip",
+      "router",
+      "port",
+      "security-group",
+      "resource-pool"
+    ]
+  }, {
+    "title": "storage",
+    "items": [
+      "volume",
+      "snapshot"
+    ]
+  }],
+  "default_module": "instance",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "image-snapshot",
+    "link": "image"
+  },{
+    "key": "subnet",
+    "link": "network"
+  }, {
+    "key": "resource-pool",
+    "link": "loadbalancer"
+  }],
+  "theme": "default"
+}

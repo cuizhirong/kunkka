@@ -1,0 +1,11 @@
+{
+  "title": ["enable", "pool"],
+  "fields": [{
+    "type": "text",
+    "field": "enable_pool"
+  }],
+  "btn": {
+    "value": "enable",
+    "disabled": true
+  }
+}

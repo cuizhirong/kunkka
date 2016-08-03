@@ -1,0 +1,33 @@
+{
+  "title": ["create", "listener"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "input_type": "text",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "listener_protocol",
+    "data": [{
+      "name": "TCP",
+      "id": "TCP"
+    }, {
+      "name": "HTTP",
+      "id": "HTTP"
+    }]
+  }, {
+    "type": "input",
+    "field": "protocol_port",
+    "input_type": "text",
+    "required": true,
+    "tip_info": "required_port_range"
+  }, {
+    "type": "adapter",
+    "field": "connection_limit"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

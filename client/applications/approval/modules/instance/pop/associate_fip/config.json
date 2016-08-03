@@ -1,0 +1,28 @@
+{
+  "title": ["associate", "floating_ip"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance"
+  }, {
+    "type": "select",
+    "field": "floating_ip",
+    "empty_text": {
+      "info": "no_floatingip",
+      "link_info": ["create", "floating_ip"]
+    },
+    "data": []
+  }, {
+    "type": "select",
+    "field": "local_ip",
+    "empty_text": {
+      "info": "no_port"
+    },
+    "long_label": true,
+    "data": []
+  }],
+  "btn": {
+    "value": "associate",
+    "disabled": true
+  }
+}

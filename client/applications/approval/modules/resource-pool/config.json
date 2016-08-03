@@ -1,0 +1,82 @@
+{
+  "tabs": [{
+    "name": ["loadbalancer"],
+    "key": "loadbalancer"
+  }, {
+    "name": ["resource", "pool"],
+    "key": "resource-pool",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "resource", "pool"],
+    "key": "create_pool",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["create", "health_monitor"],
+    "key": "create_monitor",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["modify", "resource", "pool"],
+          "key": "modify_pool"
+        }, {
+          "title": ["modify", "health_monitor"],
+          "key": "modify_monitor"
+        }, {
+          "title": ["delete", "health_monitor"],
+          "key": "delete_monitor"
+        }, {
+          "title": ["delete", "resource", "pool"],
+          "key": "delete",
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["protocol"],
+      "key": "protocol",
+      "dataIndex": "protocol"
+    }, {
+      "title": ["load_algorithm"],
+      "key": "load_algorithm"
+    }, {
+      "title": ["description"],
+      "key": "description",
+      "dataIndex": "description"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

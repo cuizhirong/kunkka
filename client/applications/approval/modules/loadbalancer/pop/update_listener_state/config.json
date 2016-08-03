@@ -1,0 +1,11 @@
+{
+  "title": ["enable", "listener", "status"],
+  "fields": [{
+    "type": "text",
+    "field": "enable_listener"
+  }],
+  "btn": {
+    "value": "enable",
+    "disabled": true
+  }
+}

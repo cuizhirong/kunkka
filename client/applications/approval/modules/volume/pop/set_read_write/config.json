@@ -1,0 +1,12 @@
+{
+  "title": ["set_read_write"],
+  "fields": [{
+    "type": "text",
+    "field": "read_write_all",
+    "info": "read_write_all"
+  }],
+  "btn": {
+    "value": "set",
+    "disabled": false
+  }
+}
