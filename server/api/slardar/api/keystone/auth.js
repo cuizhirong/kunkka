@@ -167,6 +167,9 @@ Auth.prototype = {
         req.session.user.isAdmin = response.body.token.roles.some(role => {
           return role.name === 'admin';
         });
+        req.session.user.roles = response.body.token.roles.map(role => {
+          return role.name;
+        });
         let userId = req.session.user.userId;
         cookies = getCookie(req, userId);
         res.cookie(userId, Object.assign(cookies, {
