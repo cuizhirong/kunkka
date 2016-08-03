@@ -20,7 +20,7 @@ function main(app, clientApps, currentView, viewPlugins) {
 }
 
 function haloProcessor(user, HALO) {
-  let currentView = HALO.application.current_applicaiton;
+  let currentView = 'ticket';
   let setting = HALO.settings;
   let selfTicket = true;
   let othersTicket = true;
@@ -33,7 +33,7 @@ function haloProcessor(user, HALO) {
     if (!roleObj.showOthers) {
       othersTicket = false;
     }
-    HALO.configs.ticket = enableTicket ? {show_self: selfTicket, show_others: othersTicket} : null;
+    HALO.configs.ticket = enableTicket ? {show_apply: selfTicket, show_manage: othersTicket} : null;
   }
   HALO.application.application_list = HALO.application.application_list.filter(e => {
     return enableTicket ? true : e !== currentView;
