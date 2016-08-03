@@ -38,6 +38,12 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
+      var name = refs.name.state,
+        ram = refs.memory_gb.state,
+        vcpus = refs.vcpu.state,
+        disk = refs.capacity_gb.state,
+        flag = name.value && ram.value && vcpus.value && disk.value && !name.error;
+
       switch(field) {
         case 'name':
           var regex = /^[a-zA-Z0-9_.]{1,}$/;
@@ -45,21 +51,20 @@ function pop(obj, parent, callback) {
             refs.name.setState({
               error: false
             });
-            refs.btn.setState({
-              disabled: false
-            });
           } else {
             refs.name.setState({
               error: true
-            });
-            refs.btn.setState({
-              disabled: true
             });
           }
           break;
         default:
           break;
       }
+
+      refs.btn.setState({
+        disabled: !flag
+      });
+
     },
     onLinkClick: function() {
 

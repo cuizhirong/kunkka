@@ -28,6 +28,6 @@
   }],
   "btn": {
     "value": "confirm",
-    "disabled": false
+    "disabled": true
   }
 }
