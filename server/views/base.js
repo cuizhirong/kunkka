@@ -91,7 +91,8 @@ View.prototype = {
         projectId: user.projectId,
         projects: user.projects,
         userId: user.userId,
-        username: user.username
+        username: user.username,
+        roles: user.roles
       },
       region_list: this.regions[locale],
       current_region: user.regionId ? user.regionId : this.regions[locale][0].id,
