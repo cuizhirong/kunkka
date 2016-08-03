@@ -27,8 +27,20 @@ class Model extends React.Component {
     router.on('changeState', this.onChangeState);
 
     var pathList = router.getPathList();
+
     if (pathList.length <= 1) {
-      pathList[1] = configs.default_module;
+      if (!HALO.configs.ticket.show_apply) {
+        pathList[1] = 'manage_ticket';
+      } else {
+        pathList[1] = configs.default_module;
+      }
+    } else {
+      if (!HALO.configs.ticket.show_apply && pathList[1] === 'ticket') {
+        pathList[1] = 'manage_ticket';
+      }
+      if (!HALO.configs.ticket.show_manage && pathList[1] === 'manage_ticket') {
+        pathList[1] = 'ticket';
+      }
     }
     router.replaceState('/ticket/' + pathList.slice(1).join('/'), null, null, true);
   }
@@ -77,7 +89,7 @@ class Model extends React.Component {
   }
 
   getIcon(name) {
-    switch(name) {
+    switch (name) {
       case 'manage_ticket':
         return 'setting';
       default:
@@ -91,11 +103,20 @@ class Model extends React.Component {
       __ = props.__,
       HALO = props.HALO,
       modules = loader.modules,
-      menus = [];
+      menus = [],
+      ticketConfig = HALO.configs.ticket,
+      showApply = ticketConfig.show_apply,
+      showManage = ticketConfig.show_manage;
 
     props.menus.forEach((m) => {
       var submenu = [];
       m.items.forEach((n) => {
+        if (!showApply && n === 'ticket') {
+          return;
+        }
+        if (!showManage && n === 'manage_ticket') {
+          return;
+        }
         submenu.push({
           subtitle: __[n],
           key: n,
@@ -106,7 +127,7 @@ class Model extends React.Component {
       });
       menus.push({
         title: __[m.title],
-        key: m.title || 'overview',
+        key: m.title || 'general',
         submenu: submenu
       });
     });

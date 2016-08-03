@@ -36,6 +36,7 @@
     "last_week": "Last Week",
     "last_month": "Last Month",
     "last_three_month": "Last Three Month",
+    "logout": "Logout",
     "upload_error": "Upload Error"
   },
   "zh-CN": {
@@ -75,6 +76,7 @@
     "last_week": "一周前",
     "last_month": "一个月前",
     "last_three_month": "三个月前",
+    "logout": "注销",
     "upload_error": "上传失败"
   }
 }
