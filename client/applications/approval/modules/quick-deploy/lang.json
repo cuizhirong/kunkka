@@ -1,0 +1,10 @@
+{
+  "en": {
+    "application": " Application",
+    "checkbox_tip_attach_volume": "Create volume and attach to the instance"
+  },
+  "zh-CN": {
+    "application": "申请",
+    "checkbox_tip_attach_volume": "创建云硬盘并挂载"
+  }
+}

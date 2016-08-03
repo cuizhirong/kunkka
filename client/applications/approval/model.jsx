@@ -80,6 +80,8 @@ class Model extends React.Component {
     switch(name) {
       case 'loadbalancer':
         return 'lb';
+      case 'quick-deploy':
+        return 'deploy';
       default:
         return name;
     }

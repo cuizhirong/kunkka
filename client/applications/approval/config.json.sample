@@ -1,5 +1,10 @@
 {
   "modules": [{
+    "title": "approval",
+    "items": [
+      "quick-deploy"
+    ]
+  }, {
     "title": "compute",
     "items": [
       "instance",
@@ -26,7 +31,7 @@
       "snapshot"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "quick-deploy",
   "languages": [
     "en",
     "zh-CN"

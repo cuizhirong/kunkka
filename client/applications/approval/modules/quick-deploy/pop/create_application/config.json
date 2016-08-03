@@ -1,0 +1,12 @@
+{
+  "title": ["create", "application"],
+  "fields": [{
+    "type": "textarea",
+    "field": "description",
+    "value": ""
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": true
+  }
+}
