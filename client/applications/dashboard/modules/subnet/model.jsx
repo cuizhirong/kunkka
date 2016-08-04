@@ -377,7 +377,19 @@ class Model extends React.Component {
         createPort(data);
         break;
       case 'rmv_port':
-        request.deletePort(data).then(() => {});
+        deleteModal({
+          __: __,
+          action: 'terminate',
+          type: 'port',
+          data: [data.rawItem],
+          onDelete: function(_data, cb) {
+            request.deletePort(data.rawItem).then(() => {
+              cb(true);
+            }).catch(error => {
+              cb(false, getErrorMessage(error));
+            });
+          }
+        });
         break;
       case 'connect_inst':
         addInstance(data.rawItem, true, null, function() {
@@ -497,13 +509,13 @@ class Model extends React.Component {
             return (
               <div>
                 <i className="glyphicon icon-associate action" onClick={_this.onDetailAction.bind(_this, 'description', 'connect_inst', {rawItem: element})}/>
-                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
+                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', {rawItem: element})} />
               </div>
             );
           } else if (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') {
             return (
               <div>
-                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
+                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', {rawItem: element})} />
               </div>
             );
           } else {
