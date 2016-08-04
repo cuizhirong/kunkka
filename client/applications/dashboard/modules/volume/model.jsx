@@ -114,7 +114,7 @@ class Model extends React.Component {
             if(item.metadata.readonly) {
               return item.metadata.readonly === 'True' ? __.read_only : __.read_write;
             } else {
-              return '-';
+              return __.read_write;
             }
           };
           break;
@@ -391,7 +391,7 @@ class Model extends React.Component {
         if(item.metadata.readonly) {
           return item.metadata.readonly === 'False' ? __.read_write : __.read_only;
         } else {
-          return '-';
+          return __.read_write;
         }
       })()
     }, {
