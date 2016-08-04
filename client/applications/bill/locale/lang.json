@@ -10,7 +10,9 @@
     "project": "Project",
     "region": "Region",
     "logout": "Logout",
-    "time": "Time"
+    "time": "Time",
+    "there_is_no": "There is No ",
+    "full_stop": "."
   },
   "zh-CN": {
     "account_bill": "账户消费",
@@ -23,6 +25,8 @@
     "project": "项目",
     "region": "区域",
     "logout": "注销",
-    "time": "时间"
+    "time": "时间",
+    "there_is_no": "没有",
+    "full_stop": "。"
   }
 }

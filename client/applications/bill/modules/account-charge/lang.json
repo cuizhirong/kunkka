@@ -1,0 +1,29 @@
+{
+  "en": {
+    "account-charge": "Account Charge",
+    "account_balance": "Account Balance",
+    "recharge": "Recharge",
+    "recharge_num": "Recharge",
+    "payment": "Payment",
+    "cny": "CNY",
+    "tip_info": "Single recharge amount at least CNY 10.00 and must be an integer. ",
+    "waiting_payment": "Waiting Payment",
+    "tip_payment": "Please complete the recharge in the new page window",
+    "finish_payment": "Finish Payment",
+    "cancel": "Cancel"
+  },
+  "zh-CN": {
+    "account-charge": "账户充值",
+    "account_balance": "账户余额",
+    "recharge": "充值",
+    "recharge_num": "充值金额",
+    "payment": "支付方式",
+    "cny": "元",
+    "tip_info": "单笔充值金额最少10.00元且必须为整数",
+    "waiting_payment": "等待支付",
+    "tip_payment": "请在新打开页面中完成充值。",
+    "finish_payment": "已完成支付",
+    "cancel": "取消"
+
+  }
+}

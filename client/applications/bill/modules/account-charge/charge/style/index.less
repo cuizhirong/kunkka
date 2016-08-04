@@ -1,0 +1,87 @@
+@import "../../../../style/theme.less";
+
+@border_color: @color_grey;
+@pagi-total-color: @color_success;
+@tip_bg_color: @color_delete_100;
+@tip_border_color: @color_delete;
+
+.charge-record-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 20px;
+  overflow: hidden;
+  .tip-danger {
+    background-color: @tip_bg_color;
+    border: 1px solid @tip_border_color;
+    padding: 18px 20px;
+    line-height: 18px;
+    position: relative;
+    border-radius: 2px;
+  }
+  .hide {
+    display: none;
+  }
+  .balance {
+    height: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid @border_color;
+    margin-top: 20px;
+    span:first-child {
+      padding-right:16px;
+    }
+    span:last-child {
+      padding-left: 6px;
+      padding-right: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      color: @pagi-total-color;
+    }
+    .balance-n {
+      float: left;
+    }
+  }
+  .table-box {
+    margin: 20px 0;
+    .charge-num {
+      div:first-child {
+        float: left;
+        line-height: 32px;
+        width: 66px;
+      }
+    }
+    .payment {
+      margin-top: 20px;
+      .p-l {
+        float: left;
+        width: 66px;
+        line-height: 56px;
+      }
+      .p-r {
+        float: left;
+        margin-right: 20px;
+        input {
+          display: inline-block;
+          margin-top: -40px;
+          vertical-align: middle;
+        }
+        label {
+          margin-left: 10px;
+          height: 40px;
+        }
+        i {
+          display: inline-block;
+          width: 170px;
+          height: 50px;
+          border: 1px solid @border_color;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+  .s {
+    border-top: 1px solid @border_color;
+    padding-top: 20px;
+  }
+}

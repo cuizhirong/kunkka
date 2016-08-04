@@ -1,0 +1,36 @@
+{
+  "tabs": [{
+    "name": ["charge-record"],
+    "key": "charge-record",
+    "default": true
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "charge_id",
+    "limit": 10,
+    "loading": true,
+    "column": [{
+      "title": ["total_cny"],
+      "dataIndex": "value",
+      "key": "total_cny"
+    }, {
+      "title": ["charge-type"],
+      "dataIndex": "type",
+      "key": "charge-type"
+    }, {
+      "title": ["channel"],
+      "dataIndex": "come_from",
+      "key": "channel"
+    }, {
+      "title": ["charge-time"],
+      "dataIndex": "charge_time",
+      "key": "charge-time",
+      "type": "time"
+    }],
+    "data": []
+  }
+}

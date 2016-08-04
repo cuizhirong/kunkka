@@ -2,7 +2,9 @@
   "modules": [{
     "title": "account_bill",
     "items": [
-      "billing-record"
+      "billing-record",
+      "account-charge",
+      "charge-record"
     ]
   }],
   "default_module": "billing-record",

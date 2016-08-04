@@ -36,7 +36,7 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.style.display === 'none' && nextState.props.style.display === 'none') {
+    if (this.props.style.display === 'none' && nextProps.style.display === 'none') {
       return false;
     }
     return true;

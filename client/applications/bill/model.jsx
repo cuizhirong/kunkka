@@ -73,7 +73,7 @@ class Model extends React.Component {
   }
 
   onClickSubmenu(e, m) {
-    router.pushState('/dashboard/' + m.key);
+    router.pushState('/bill/' + m.key);
   }
 
   render() {
