@@ -343,7 +343,7 @@ class Main extends React.Component {
     var dashboardVisible = typeof visible === 'undefined' ? this.props.visible : visible;
     var detail = this.refs.detail;
 
-    if (detail.state.visible) {
+    if (detail && detail.state.visible) {
       let params = this.props.params;
       if (params.length > 2 && dashboardVisible) {
         router.pushState('/' + params.slice(0, 2).join('/'));
