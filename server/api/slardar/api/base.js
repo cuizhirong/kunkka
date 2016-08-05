@@ -31,6 +31,7 @@ function API (arrServiceObject) {
 }
 
 API.prototype = {
+  // keystone:
   __unscopedAuth: function (objVar, callback) {
     driver.keystone.authAndToken.unscopedAuth(objVar.username, objVar.password, objVar.domain, keystoneRemote, asyncHandlerOrigin.bind(undefined, callback));
   },
@@ -46,7 +47,17 @@ API.prototype = {
   __users: function (objVar, callback) {
     driver.keystone.user.listUsers(objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback), objVar.query);
   },
+  __joinProject: function (objVar, callback) {
+    driver.keystone.role.addRoleToUserOnProject(objVar.projectId, objVar.userId, objVar.roleId, objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback));
+  },
+  __roles: function (objVar, callback) {
+    driver.keystone.role.listRoles(objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __checkRole: function (objVar, callback) {
+    driver.keystone.role.checkRole(objVar.projectId, objVar.userId, objVar.roleId, objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback));
+  },
 
+  // nova:
   __hosts: function (objVar, callback) {
     let remote = objVar.endpoint.nova[objVar.region];
     driver.nova.host.listHosts(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
@@ -76,6 +87,7 @@ API.prototype = {
     driver.nova.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota_set': objVar.novaBody});
   },
 
+  // cinder:
   __volumes: function (objVar, callback) {
     let remote = objVar.endpoint.cinder[objVar.region];
     driver.cinder.volume.listVolumes(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
@@ -105,6 +117,7 @@ API.prototype = {
     driver.cinder.quota.updateQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), {'quota_set': objVar.cinderBody});
   },
 
+  // glance:
   __images: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
     driver.glance.image.listImages(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
@@ -114,6 +127,7 @@ API.prototype = {
     driver.glance.image.showImageDetails(objVar.imageId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
 
+  // neutron:
   __floatingips: function (objVar, callback) {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.floatingip.listFloatingips(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
@@ -185,6 +199,23 @@ API.prototype = {
   __updateImage: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
     driver.glance.image.updateImage(objVar.imageId, objVar.payload, objVar.token, remote, callback);
+  },
+
+  // heat:
+  __createStack: function (objVar, callback) {
+    let remote = {
+      heat: objVar.endpoint.heat[objVar.region],
+      nova: objVar.endpoint.nova[objVar.region],
+      cinder: objVar.endpoint.cinder[objVar.region],
+      neutron: objVar.endpoint.neutron[objVar.region],
+      glance: objVar.endpoint.glance[objVar.region],
+      keystone: objVar.endpoint.keystone[objVar.region]
+    };
+    driver.heat.stack.createStack(objVar.stack, objVar.projectId, objVar.token, remote, callback);
+  },
+  __stacks: function (objVar, callback) {
+    let remote = objVar.endpoint.heat[objVar.region];
+    driver.heat.stack.listStacks(objVar.projectId, objVar.token, remote, callback, objVar.query);
   }
 };
 
@@ -215,7 +246,7 @@ API.prototype.handleError = function (err, req, res, next) {
       }
       next(err);
     } else {
-      res.status(500).send(err);
+      res.status(500).send(err.message || err);
     }
   }
 };
