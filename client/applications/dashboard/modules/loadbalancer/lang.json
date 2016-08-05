@@ -12,7 +12,7 @@
     "enabled_state": "Enabled State",
     "forwarding": "Forwarding",
     "lb": "Loadbalancer",
-    "lsit": "List",
+    "list": " List",
     "listener_protocol": "Protocol",
     "no_lb": "No available loadbalancer.",
     "no_matching_pool": "No available resource pool.",
