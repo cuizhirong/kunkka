@@ -20,4 +20,17 @@ driver.showFloatingipDetails = function (id, token, remote, callback, query) {
   );
 };
 
+driver.resizeFloatingip = function (floatingipId, size, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v2.0/floatingips/' + floatingipId + '/update_floatingip_ratelimit',
+    token,
+    callback,
+    {
+      floatingip: {
+        rate_limit: size
+      }
+    }
+  );
+};
+
 module.exports = driver;

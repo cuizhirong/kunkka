@@ -14,12 +14,27 @@ Driver.prototype.getMethod = function (url, token, callback, query) {
     .end(callback);
 };
 
-Driver.prototype.putMethod = function (url, token, callback, theBody) {
+Driver.prototype.headMethod = function (url, token, callback, query) {
+  let search = getQueryString(query);
   request
-    .put(url)
-    .send(theBody)
+    .head(url + search)
     .set('X-Auth-Token', token)
     .end(callback);
+};
+
+Driver.prototype.putMethod = function (url, token, callback, theBody) {
+  if (theBody) {
+    request
+      .put(url)
+      .send(theBody)
+      .set('X-Auth-Token', token)
+      .end(callback);
+  } else {
+    request
+      .put(url)
+      .set('X-Auth-Token', token)
+      .end(callback);
+  }
 };
 
 Driver.prototype.postMethod = function (url, token, callback, theBody) {

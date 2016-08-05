@@ -5,6 +5,7 @@ const path = require('path');
 const extType = require('config')('extension');
 
 const driver = {};
+let tmp;
 
 /* original driver. */
 fs.readdirSync(__dirname)
@@ -14,8 +15,10 @@ fs.readdirSync(__dirname)
   .forEach( m => {
     driver[m] = {};
     fs.readdirSync(path.join(__dirname, m)).forEach( s => { // snapshot ...
-      if (s !== '.DS_Store') {
-        driver[m][path.basename(s, '.js')] = require(path.join(__dirname, m, s));
+      if (s !== '.DS_Store' && path.extname(s) !== '.json') {
+        tmp = require(path.join(__dirname, m, s));
+        tmp.ref = driver;
+        driver[m][path.basename(s, '.js')] = tmp;
       }
     });
   });

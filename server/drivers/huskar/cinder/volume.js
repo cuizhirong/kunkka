@@ -28,4 +28,17 @@ driver.showVolumeDetails = function (projectId, volumeId, token, remote, callbac
   );
 };
 
+driver.resizeVolume = function (projectId, volumeId, size, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v2/' + projectId + '/volumes/' + volumeId,
+    token,
+    callback,
+    {
+      'os-extend': {
+        new_size: size
+      }
+    }
+  );
+};
+
 module.exports = driver;

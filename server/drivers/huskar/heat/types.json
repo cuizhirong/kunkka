@@ -1,0 +1,99 @@
+{
+  "autoScaling": {
+    "type": "OS::Heat::AutoScalingGroup",
+    "max_size": "",
+    "min_size": "",
+    "resource": {}
+  },
+  "createInstance": {
+    "type": "OS::Nova::Server",
+    "name": "",
+    "flavor": "",
+    "image": "",
+    "admin_pass": ""
+  },
+  "createVolume": {
+    "type": "OS::Cinder::Volume",
+    "name": "",
+    "size": "",
+    "volume_type": "",
+    "snapshot_id": ""
+  },
+
+  "createKeypair": {
+    "type": "OS::Nova::KeyPair",
+    "name": "",
+    "public_key": ""
+  },
+
+  "createNetwork": {
+    "type": "OS::Neutron::ProviderNet",
+    "name": "",
+    "network_type": "",
+    "physical_network": "",
+    "segmentation_id": ""
+  },
+  "createSubnet": {
+    "type": "OS::Neutron::Subnet",
+    "cidr": "",
+    "name": "",
+    "gateway_ip": "",
+    "network": "",
+    "ip_version": "",
+    "enable_dhcp": "",
+    "dns_nameservers": ""
+  },
+  "createFloatingip": {
+    "type": "OS::Neutron::Floatingip",
+    "name": "",
+    "pool": ""
+  },
+  "createRouter": {
+    "type": "OS::Neutron::Router",
+    "external_gateway_info": "",
+    "name": ""
+  },
+  "createPort": {
+    "type": "OS::Neutron::Port",
+    "name": "",
+    "fixed_ips": "",
+    "security_groups": "",
+    "network": ""
+  },
+  "createSecurityGroup": {
+    "type": "OS::Neutron::SecurityGroup",
+    "description": "",
+    "name": ""
+  },
+  "createSecurityGroupRule": {
+    "type": "OS::Neutron::SecurityGroupRule",
+    "direction": "",
+    "port_range_max": "",
+    "port_range_min": "",
+    "protocol": "",
+    "remote_ip_prefix": "",
+    "security_group": ""
+  },
+  "createLoadBalancer": {
+    "type": "OS::Neutron::LBaaS::LoadBalancer",
+    "description": "",
+    "name": "",
+    "vip_subnet": ""
+  },
+  "createResourcePool": {
+    "type": "OS::Neutron::LBaaS::Pool",
+    "description": "",
+    "lb_algorithm": "",
+    "listener": "",
+    "name": "",
+    "protocol": ""
+  },
+  "createHealthMonitor": {
+    "type": "OS::Neutron::LBaaS::HealthMonitor",
+    "delay": "",
+    "max_retries": "",
+    "pool": "",
+    "timeout": "",
+    "type": ""
+  }
+}

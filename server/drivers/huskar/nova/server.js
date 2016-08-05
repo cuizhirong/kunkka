@@ -29,4 +29,17 @@ driver.getVNCConsole = function (projectId, serverId, token, remote, callback, t
   );
 };
 
+driver.resizeServer = function (projectId, serverId, flavor, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
+    token,
+    callback,
+    {
+      resize: {
+        flavorRef: flavor
+      }
+    }
+  );
+};
+
 module.exports = driver;
