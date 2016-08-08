@@ -2,7 +2,7 @@
 
 
 module.exports = function (mysql, DataTypes) {
-  const Reply = mysql.define('reply', {
+  return mysql.define('reply', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -23,10 +23,15 @@ module.exports = function (mysql, DataTypes) {
     role: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    //content,status,
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'content'
     }
   }, {
     paranoid: true,
     charset: 'utf8'
   });
-  return Reply;
 };

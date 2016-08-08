@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function (mysql, DataTypes) {
-  const Attachment = mysql.define('attachment', {
+  return mysql.define('attachment', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -19,5 +19,4 @@ module.exports = function (mysql, DataTypes) {
     paranoid: true,
     charset: 'utf8'
   });
-  return Attachment;
 };

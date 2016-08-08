@@ -3,6 +3,7 @@
 const dao = require('../dao');
 const Base = require('./base');
 const replyDao = dao.reply;
+const flow = require('config')('invoker').flow;
 
 function Reply (app) {
   Base.call(this);
@@ -15,13 +16,14 @@ Reply.prototype = {
     let ticketId = req.params.ticketId;
     let content = req.body.content;
     let username = req.session.user.username;
-    let currentRole = Reply.prototype.getCurrentRole(req.session.user.roles);
+    let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+
     replyDao.create({
       owner: owner,
       content: content,
       ticketId: ticketId,
       username: username,
-      role: currentRole
+      role: flow[roleIndex]
     }).then(result => {
       res.json(result);
     }).catch(err => {
@@ -51,9 +53,6 @@ Reply.prototype = {
     }).catch(err => {
       res.status(500).json(err);
     });
-
-  },
-  getRepliesByTicket: function (req, res, next) {
 
   },
   initRoutes: function () {

@@ -1,5 +1,5 @@
 'use strict';
-const config = require('config')('invoker_approver');
+const flow = require('config')('invoker').flow;
 
 function API () {
 }
@@ -14,26 +14,22 @@ API.prototype = {
     }
   },
 
-  //arrRoles: roles that a user has.
-  getCurrentRole: function (arrRoles) {
+  //arrRoles: roles that a user has. eg.['member'],['owner','member']
+  //flow:['admin','owner','member']
+  getRoleIndex: function (arrRoles) {
     if (!Array.isArray(arrRoles) || arrRoles.length === 0) {
       return false;
     }
-    //list of all of the roles
-    let roleList = Object.keys(config).reverse();
     let roleIndex = -1;
     let tmpIndex = -1;
 
-    roleList.some(function (role, i) {
+    flow.some(function (role, i) {
       tmpIndex = arrRoles.indexOf(role);
       roleIndex = i;
       return tmpIndex > -1;
     });
 
-    if (roleIndex < 0) {
-      return false;
-    }
-    return roleList[roleIndex];
+    return roleIndex;
   }
 };
 

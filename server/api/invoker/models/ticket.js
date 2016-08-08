@@ -21,6 +21,10 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    projectId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     owner: {
       type: DataTypes.STRING,
       allowNull: false
@@ -41,6 +45,10 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    handlerRole: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     processor: {
       type: DataTypes.STRING,
       allowNull: true
@@ -50,7 +58,6 @@ module.exports = function (mysql, DataTypes) {
       associate: function (models) {
         Ticket.hasMany(models.reply);
         Ticket.hasMany(models.attachment);
-        Ticket.hasMany(models.approver);
       }
     },
     paranoid: true,

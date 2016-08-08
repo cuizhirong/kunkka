@@ -4,7 +4,7 @@ const dao = require('../dao');
 const Base = require('./base');
 const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
-const config = require('config')('invoker_approver');
+const flow = require('config')('invoker').flow;
 
 function Ticket (app) {
   Base.call(this);
@@ -19,6 +19,7 @@ Ticket.prototype = {
     let description = req.body.description;
     let type = req.body.type;
     let status = req.body.status;
+    let projectId = req.session.user.projectId;
     let attachments = req.body.attachments || [];
     let _attachments = [];
     attachments.forEach(a => {
@@ -29,45 +30,38 @@ Ticket.prototype = {
     });
 
     if (!req.session.user || !Array.isArray(req.session.user.roles)) {
-      return res.status(500).json({msg: 'limited Authority', code: -1});
+      return next({msg: req.i18n.__('api.ticket.permissionDenied'), code: -1});
     }
 
-    let currentRole = Ticket.prototype.getCurrentRole(req.session.user.roles);
+    let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
 
-    let approvers = config[currentRole] && config[currentRole].approver;
-    let _approvers = [];
-    approvers.forEach(role => {
-      _approvers.push({
-        approver: role
-      });
-    });
+    if (roleIndex < 0) {
+      return next({msg: req.i18n.__('api.ticket.permissionDenied')});
+    } else if (roleIndex === 0) {
+      return next({msg: req.i18n.__('api.ticket.cannotCreate')});
+    }
 
     ticketDao.create({
       title: title,
       description: description,
       owner: owner,
       type: type,
+      projectId: projectId,
       status: status,
       username: username,
-      role: currentRole,
-      attachments: _attachments,
-      approvers: _approvers
-    }).then(result => {
-      res.status(200).json(result);
-    }).catch(err => {
-      res.status(500).json(err);
-    });
+      role: flow[roleIndex],
+      handlerRole: flow[roleIndex - 1],
+      attachments: _attachments
+    }).then(res.json, next);
   },
+
+//owner update ticket content
   updateTicket: function (req, res, next) {
     let ticketId = req.params.ticketId;
     let owner = req.params.owner;
     let data = req.body;
     let _attachments = [];
-    if (data.status === 'proceeding') {
-      data.processor = req.session.user.userId;
-    } else {
-      data.processor = '';
-    }
+
     if (req.body.attachments) {
       req.body.addAttachments.forEach(a => {
         _attachments.push({
@@ -76,17 +70,21 @@ Ticket.prototype = {
         });
       });
     }
-    ticketDao.findOneById(ticketId).then(ticket => {
+    ticketDao.findOneByIdAndOwner(ticketId, owner).then(ticket => {
+      if (!ticket) {
+        return next({msg: req.i18n.__('api.ticket.notExist')});
+      }
+
+      if (ticket.status !== 'processing') {
+        return next({msg: req.i18n.__('api.ticket.cannotUpdate')});
+
+      }
       if (data.attachments) {
         data.attachments = _attachments;
       }
       Object.assign(ticket, data);
-      return ticket.save();
-    }).then(result => {
-      res.json(result);
-    }).catch(err => {
-      res.status(500).json(err);
-    });
+      ticket.save().then(res.json);
+    }).catch(next);
   },
   addAttachments: function (req, res, next) {
     let owner = req.params.owner;
@@ -107,15 +105,15 @@ Ticket.prototype = {
     });
   },
 
-  getApproverTicketList: function (req, res, next) {
-    Ticket.prototype.getTicketList(req, res, {self: false});
+  getHandlerTicketList: function (req, res, next) {
+    Ticket.prototype.getTicketList(req, res, next, {self: false});
   },
 
   getSelfTicketList: function (req, res, next) {
-    Ticket.prototype.getTicketList(req, res, {self: true});
+    Ticket.prototype.getTicketList(req, res, next, {self: true});
   },
 
-  getTicketList: function (req, res, options) {
+  getTicketList: function (req, res, next, options) {
     let owner = req.params.owner;
     let limit = req.query.limit;
     let page = req.query.page;
@@ -147,10 +145,8 @@ Ticket.prototype = {
       fields.processor = req.session.user.userId;
 
       if (req.session.user && Array.isArray(req.session.user.roles)) {
-        let currentRole = Ticket.prototype.getCurrentRole(req.session.user.roles);
-        fields.approver = config[currentRole].scope;
-      } else {
-        fields.approver = [];
+        let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+        fields.handlerRole = flow[roleIndex];
       }
     }
 
@@ -167,20 +163,108 @@ Ticket.prototype = {
   },
 
   getTicketById: function (req, res, next) {
+    const ticketId = req.params.ticketId;
+    const roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+    ticketDao.findOneById(ticketId).then(ticket => {
+
+      if (!ticket) {
+        return next({msg: req.i18n.__('api.ticket.notExist')});
+      }
+
+      if (ticket.owner === req.session.user.userId
+        || (ticket.status === 'processing' && ticket.processor === req.session.user.userId )
+        || (ticket.status !== 'processing' && ticket.handlerRole === flow[roleIndex])) {
+        res.json(ticket);
+      } else {
+        next({msg: req.i18n.__('api.ticket.notExist')});
+      }
+    }).catch(next);
+  },
+
+  ownerUpdate: function (req, res, next) {
+    const ticketId = req.params.ticketId;
+    const status = req.body.status;
+
+    ticketDao.findOneByIdAndOwner(ticketId, req.session.user.userId).then(ticket=> {
+
+      if (!ticket) {
+        return next({msg: req.i18n.__('api.ticket.notExist')});
+      }
+      if (status !== 'closed' || status !== 'unprocessed') {
+        return next({msg: req.i18n.__('api.ticket.statusCannotBe') + req.i18n.__('api.ticket.' + status)});
+      }
+      if (ticket.owner === req.session.user.userId) {
+        ticket.status = status;
+        ticket.processor = '';
+        ticket.save().then(res.json, next);
+      } else {
+        //TODO
+        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+      }
+    });
+  },
+  handlerUpdate: function (req, res, next) {
     let ticketId = req.params.ticketId;
-    ticketDao.findOneById(ticketId).then(result => {
-      res.json(result);
-    }).catch(err => {
-      res.status(500).json(err);
+    let status = req.body.status;
+    ticketDao.findOneById(ticketId).then(ticket=> {
+      const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
+
+      //proceeding+processor
+      //unprocessed+role
+      if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
+        || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
+        ticket.status = status;
+        if (status === 'proceeding') {
+          ticket.processor = req.session.user.userId;
+        } else {
+          ticket.processor = '';
+        }
+        ticket.save().then(res.json, next);
+      } else {
+        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+      }
+    });
+  },
+  higherHandle: function (req, res, next) {
+    const ticketId = req.params.ticketId;
+    ticketDao.findOneById(ticketId).then(ticket=> {
+      const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
+
+      if (roleIndex < 1) {
+        return next({msg: req.i18n.__('api.ticket.noHigher')})
+      }
+
+      if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
+        || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
+        ticket.status = 'unprocessed';
+        ticket.handlerRole = flow[roleIndex - 1];
+        ticket.processor = '';
+        ticket.save().then(res.json, next);
+      } else {
+        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+      }
     });
   },
   initRoutes: function () {
+    //create
     this.app.post('/api/ticket/:owner/tickets', this.checkOwner, this.createTicket);
-    this.app.get('/api/ticket/:owner/tickets', this.getApproverTicketList);
+    //list
+    this.app.get('/api/ticket/:owner/tickets', this.getHandlerTicketList);
+    //self-list
     this.app.get('/api/ticket/:owner/self-tickets', this.checkOwner, this.getSelfTicketList);
+    //get ticket
     this.app.get('/api/ticket/:owner/tickets/:ticketId', this.getTicketById);
-    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.updateTicket);
+    //update
+    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.updateTicket);
+    //add attachment
     this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments);
+    //owner:open/close
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/owner', this.ownerUpdate);
+    //handler:unprocessed processing closed
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/handler', this.handlerUpdate);
+    //higherHandle
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/higher', this.higherHandle);
+
   }
 };
 

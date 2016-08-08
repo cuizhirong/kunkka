@@ -3,12 +3,11 @@
 const models = require('../models');
 const Ticket = models.ticket;
 const Attachment = models.attachment;
-const Approver = models.approver;
 const Reply = models.reply;
 
 exports.create = function (data) {
   return Ticket.create(data, {
-    include: [Attachment, Approver]
+    include: [Attachment]
   });
 };
 
@@ -22,7 +21,7 @@ exports.findOneById = function (id) {
 };
 
 exports.findOneByIdAndOwner = function (id, owner) {
-  return Ticket.findAll({
+  return Ticket.findOne({
     where: {
       id: id,
       owner: owner
@@ -36,10 +35,8 @@ exports.findAllByFields = function (fields) {
   if (fields.owner) {
     obj.where.owner = fields.owner;
   } else {
-    if (fields.approver) {
-      obj.include.push({model: Approver, where: {approver: {$in: fields.approver}}});
-    } else {
-      obj.include.push({model: Approver});
+    if (fields.handlerRole) {
+      obj.where.handlerRole = fields.handlerRole
     }
 
     if (fields.processor) {

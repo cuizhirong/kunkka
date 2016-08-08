@@ -1,0 +1,24 @@
+{
+  "zh-CN":{
+    "notExist":"工单不存在",
+    "processing":"处理中",
+    "unprocessed":"未处理",
+    "closed":"已关闭",
+    "statusCannotBe":"状态不能设置为",
+    "cannotCreate":"您不能创建工单",
+    "permissionDenied":"没有权限",
+    "cannotUpdate":"工单处理中,不可更新。如需添加信息,可以通过回复",
+    "noHigher":"没有更高级别的管理员"
+  },
+  "en":{
+    "notExist":"Ticket not Exist.",
+    "processing":"processing",
+    "unprocessed":"unprocessed",
+    "closed":"closed",
+    "statusCannotBe":"Status Cannot be set as ",
+    "cannotCreate":"You cannot create ticket.",
+    "permissionDenied":"Permission Denied",
+    "cannotUpdate":"Ticket is processing.You can reply the ticket.",
+    "noHigher":"You are the highest administrator."
+  }
+}
