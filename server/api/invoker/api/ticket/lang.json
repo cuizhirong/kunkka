@@ -2,7 +2,7 @@
   "zh-CN":{
     "notExist":"工单不存在",
     "processing":"处理中",
-    "unprocessed":"未处理",
+    "pending":"未处理",
     "closed":"已关闭",
     "statusCannotBe":"状态不能设置为",
     "cannotCreate":"您不能创建工单",
@@ -13,7 +13,7 @@
   "en":{
     "notExist":"Ticket not Exist.",
     "processing":"processing",
-    "unprocessed":"unprocessed",
+    "pending":"pending",
     "closed":"closed",
     "statusCannotBe":"Status Cannot be set as ",
     "cannotCreate":"You cannot create ticket.",

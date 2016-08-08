@@ -1,9 +1,10 @@
 'use strict';
 
-const dao = require('../dao');
-const Base = require('./base');
+const dao = require('../../dao');
+const Base = require('../base');
 const replyDao = dao.reply;
 const flow = require('config')('invoker').flow;
+const Ticket = require('./ticket');
 
 function Reply (app) {
   Base.call(this);

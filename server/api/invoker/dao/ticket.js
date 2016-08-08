@@ -36,7 +36,7 @@ exports.findAllByFields = function (fields) {
     obj.where.owner = fields.owner;
   } else {
     if (fields.handlerRole) {
-      obj.where.handlerRole = fields.handlerRole
+      obj.where.handlerRole = fields.handlerRole;
     }
 
     if (fields.processor) {

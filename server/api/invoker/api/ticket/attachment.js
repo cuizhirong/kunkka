@@ -3,7 +3,7 @@
 const multer = require('multer');
 const uuid = require('node-uuid');
 const config = require('config');
-const Base = require('./base');
+const Base = require('../base');
 var path = require('path');
 
 const attachmentPath = config('attachment_path') || '/opt/attachment/nfs';

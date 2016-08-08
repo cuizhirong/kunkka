@@ -1,7 +1,7 @@
 'use strict';
 
-const dao = require('../dao');
-const Base = require('./base');
+const dao = require('../../dao');
+const Base = require('../base');
 const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
 const flow = require('config')('invoker').flow;
@@ -190,7 +190,7 @@ Ticket.prototype = {
       if (!ticket) {
         return next({msg: req.i18n.__('api.ticket.notExist')});
       }
-      if (status !== 'closed' || status !== 'unprocessed') {
+      if (status !== 'closed' || status !== 'pending') {
         return next({msg: req.i18n.__('api.ticket.statusCannotBe') + req.i18n.__('api.ticket.' + status)});
       }
       if (ticket.owner === req.session.user.userId) {
@@ -198,8 +198,7 @@ Ticket.prototype = {
         ticket.processor = '';
         ticket.save().then(res.json, next);
       } else {
-        //TODO
-        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+        next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
     });
   },
@@ -210,7 +209,7 @@ Ticket.prototype = {
       const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
 
       //proceeding+processor
-      //unprocessed+role
+      //pending+role
       if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
         || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
         ticket.status = status;
@@ -221,7 +220,7 @@ Ticket.prototype = {
         }
         ticket.save().then(res.json, next);
       } else {
-        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+        next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
     });
   },
@@ -231,17 +230,17 @@ Ticket.prototype = {
       const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
 
       if (roleIndex < 1) {
-        return next({msg: req.i18n.__('api.ticket.noHigher')})
+        return next({msg: req.i18n.__('api.ticket.noHigher')});
       }
 
       if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
         || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
-        ticket.status = 'unprocessed';
+        ticket.status = 'pending';
         ticket.handlerRole = flow[roleIndex - 1];
         ticket.processor = '';
         ticket.save().then(res.json, next);
       } else {
-        next({msg: req.i18n.__('api.ticket.permissionDenied')})
+        next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
     });
   },
@@ -260,7 +259,7 @@ Ticket.prototype = {
     this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments);
     //owner:open/close
     this.app.put('/api/ticket/:owner/tickets/:ticketId/owner', this.ownerUpdate);
-    //handler:unprocessed processing closed
+    //handler:pending processing closed
     this.app.put('/api/ticket/:owner/tickets/:ticketId/handler', this.handlerUpdate);
     //higherHandle
     this.app.put('/api/ticket/:owner/tickets/:ticketId/higher', this.higherHandle);
