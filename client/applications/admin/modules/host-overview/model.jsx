@@ -128,14 +128,9 @@ class Model extends React.Component {
       period = Math.ceil(max / 10);
     } else if (max <= 50) {
       period = 5;
-    } else if (max <= 200) {
-      period = Math.ceil(max / 100) * 10;
-    } else if (max <= 1000) {
-      period = Math.ceil(max / 500) * 10;
     } else {
-      period = Math.ceil(max / 1000) * 100;
+      period = Math.ceil(max / 100) * 10;
     }
-
     this.cpuChart.setOption({
       unit: '',
       title: '',
@@ -217,6 +212,10 @@ class Model extends React.Component {
       rate: Math.round((data.memory_mb_used / data.memory_mb) * 100),
       rateClass: this.getChartClass(data.memory_mb_used / data.memory_mb)
     };
+    var csum = cpu.sum / cpu.common;
+    var cused = cpu.used / cpu.common;
+    var numerator = csum / csum;
+    var denominator = (cused / csum).toFixed(2);
 
     return (
       <div className="halo-module-host-overview" style={this.props.style}>
@@ -282,7 +281,7 @@ class Model extends React.Component {
                   </div>
                   <div className="reuse-rate">
                     {__.reuse + __.rate}
-                    <span>{cpu.sum / cpu.common + ' : ' + cpu.used / cpu.common}</span>
+                    <span>{numerator + ' : ' + denominator}</span>
                   </div>
                 </div>
               </div>
