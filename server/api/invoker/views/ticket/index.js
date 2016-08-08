@@ -1,9 +1,10 @@
 'use strict';
 
 const View = require('views/base');
-const getRole = require('helpers/get_role');
 const config = require('config');
-const roleConfig = config('invoker_approver') || {};
+const roleFlow = config('invoker').flow || {};
+const roleFlowLength = roleFlow.length;
+const getRoleIndex = require('../../api/base').prototype.getRoleIndex;
 
 function main(app, clientApps, currentView, viewPlugins) {
   let views = app.get('views');
@@ -26,11 +27,11 @@ function haloProcessor(user, HALO) {
   let othersTicket = true;
   let enableTicket = setting.enable_ticket;
   if (enableTicket) {
-    let roleObj = getRole(user.roles, roleConfig);
-    if (!roleObj.showSelf) {
+    let roleIndex = getRoleIndex(user.roles);
+    if (roleIndex === 0) {
       selfTicket = false;
     }
-    if (!roleObj.showOthers) {
+    if (roleIndex === roleFlowLength - 1) {
       othersTicket = false;
     }
     HALO.configs.ticket = enableTicket ? {show_apply: selfTicket, show_manage: othersTicket} : null;

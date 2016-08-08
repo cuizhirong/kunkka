@@ -33,7 +33,7 @@ Ticket.prototype = {
       return next({msg: req.i18n.__('api.ticket.permissionDenied'), code: -1});
     }
 
-    let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+    let roleIndex = this.getRoleIndex(req.session.user.roles);
 
     if (roleIndex < 0) {
       return next({msg: req.i18n.__('api.ticket.permissionDenied')});
@@ -106,11 +106,11 @@ Ticket.prototype = {
   },
 
   getHandlerTicketList: function (req, res, next) {
-    Ticket.prototype.getTicketList(req, res, next, {self: false});
+    this.getTicketList(req, res, next, {self: false});
   },
 
   getSelfTicketList: function (req, res, next) {
-    Ticket.prototype.getTicketList(req, res, next, {self: true});
+    this.getTicketList(req, res, next, {self: true});
   },
 
   getTicketList: function (req, res, next, options) {
@@ -145,7 +145,7 @@ Ticket.prototype = {
       fields.processor = req.session.user.userId;
 
       if (req.session.user && Array.isArray(req.session.user.roles)) {
-        let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+        let roleIndex = this.getRoleIndex(req.session.user.roles);
         fields.handlerRole = flow[roleIndex];
       }
     }
@@ -164,7 +164,7 @@ Ticket.prototype = {
 
   getTicketById: function (req, res, next) {
     const ticketId = req.params.ticketId;
-    const roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+    const roleIndex = this.getRoleIndex(req.session.user.roles);
     ticketDao.findOneById(ticketId).then(ticket => {
 
       if (!ticket) {
@@ -206,7 +206,7 @@ Ticket.prototype = {
     let ticketId = req.params.ticketId;
     let status = req.body.status;
     ticketDao.findOneById(ticketId).then(ticket=> {
-      const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
+      const roleIndex = this.getRoleIndex(req.session.user.roles);
 
       //proceeding+processor
       //pending+role
@@ -227,7 +227,7 @@ Ticket.prototype = {
   higherHandle: function (req, res, next) {
     const ticketId = req.params.ticketId;
     ticketDao.findOneById(ticketId).then(ticket=> {
-      const roleIndex = Ticket.getRoleIndex(req.session.user.roles);
+      const roleIndex = this.getRoleIndex(req.session.user.roles);
 
       if (roleIndex < 1) {
         return next({msg: req.i18n.__('api.ticket.noHigher')});
@@ -246,23 +246,23 @@ Ticket.prototype = {
   },
   initRoutes: function () {
     //create
-    this.app.post('/api/ticket/:owner/tickets', this.checkOwner, this.createTicket);
+    this.app.post('/api/ticket/:owner/tickets', this.checkOwner, this.createTicket.bind(this));
     //list
-    this.app.get('/api/ticket/:owner/tickets', this.getHandlerTicketList);
+    this.app.get('/api/ticket/:owner/tickets', this.getHandlerTicketList.bind(this));
     //self-list
-    this.app.get('/api/ticket/:owner/self-tickets', this.checkOwner, this.getSelfTicketList);
+    this.app.get('/api/ticket/:owner/self-tickets', this.checkOwner, this.getSelfTicketList.bind(this));
     //get ticket
-    this.app.get('/api/ticket/:owner/tickets/:ticketId', this.getTicketById);
+    this.app.get('/api/ticket/:owner/tickets/:ticketId', this.getTicketById.bind(this));
     //update
-    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.updateTicket);
+    this.app.put('/api/ticket/:owner/tickets/:ticketId', this.checkOwner, this.updateTicket.bind(this));
     //add attachment
-    this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments);
+    this.app.post('/api/ticket/:owner/tickets/:ticketId/attachments', this.checkOwner, this.addAttachments.bind(this));
     //owner:open/close
-    this.app.put('/api/ticket/:owner/tickets/:ticketId/owner', this.ownerUpdate);
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/owner', this.ownerUpdate.bind(this));
     //handler:pending processing closed
-    this.app.put('/api/ticket/:owner/tickets/:ticketId/handler', this.handlerUpdate);
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/handler', this.handlerUpdate.bind(this));
     //higherHandle
-    this.app.put('/api/ticket/:owner/tickets/:ticketId/higher', this.higherHandle);
+    this.app.put('/api/ticket/:owner/tickets/:ticketId/higher', this.higherHandle.bind(this));
 
   }
 };

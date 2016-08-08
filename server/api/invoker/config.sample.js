@@ -7,9 +7,6 @@ module.exports = {
   },
   config: {
     invoker: {
-      member: {approver: ['owner', 'admin'], scope: [], show_self: true},
-      owner: {approver: ['admin'], scope: ['owner'], show_self: true},
-      admin: {approver: [], scope: ['admin'], show_self: false},
       flow: [
         'admin', 'owner', 'member'
       ]

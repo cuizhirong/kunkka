@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = function (app) {
   // FIXME add session check
-  let apiPath = path.join(__dirname, 'api');
+  let apiPath = path.join(__dirname, 'api/ticket');
   fs.readdirSync(apiPath)
     .filter(file => file.indexOf('.') !== 0 && file !== 'base.js' && file !== 'lang.json')
     .forEach(file => {

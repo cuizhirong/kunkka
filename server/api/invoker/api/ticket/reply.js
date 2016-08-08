@@ -4,7 +4,6 @@ const dao = require('../../dao');
 const Base = require('../base');
 const replyDao = dao.reply;
 const flow = require('config')('invoker').flow;
-const Ticket = require('./ticket');
 
 function Reply (app) {
   Base.call(this);
@@ -17,7 +16,7 @@ Reply.prototype = {
     let ticketId = req.params.ticketId;
     let content = req.body.content;
     let username = req.session.user.username;
-    let roleIndex = Ticket.prototype.getRoleIndex(req.session.user.roles);
+    let roleIndex = this.getRoleIndex(req.session.user.roles);
 
     replyDao.create({
       owner: owner,
@@ -57,9 +56,9 @@ Reply.prototype = {
 
   },
   initRoutes: function () {
-    this.app.post('/api/ticket/:owner/ticket/:ticketId/reply', this.checkOwner, this.createReply);
-    this.app.put('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.updateReply);
-    this.app.delete('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.deleteReply);
+    this.app.post('/api/ticket/:owner/ticket/:ticketId/reply', this.checkOwner, this.createReply.bind(this));
+    this.app.put('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.updateReply.bind(this));
+    this.app.delete('/api/ticket/:owner/ticket/:ticketId/reply/:replyId', this.checkOwner, this.deleteReply.bind(this));
   }
 };
 
