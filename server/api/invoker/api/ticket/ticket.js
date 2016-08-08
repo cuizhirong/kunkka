@@ -52,7 +52,7 @@ Ticket.prototype = {
       role: flow[roleIndex],
       handlerRole: flow[roleIndex - 1],
       attachments: _attachments
-    }).then(res.json, next);
+    }).then(res.json.bind(res), next);
   },
 
 //owner update ticket content
@@ -83,7 +83,7 @@ Ticket.prototype = {
         data.attachments = _attachments;
       }
       Object.assign(ticket, data);
-      ticket.save().then(res.json);
+      ticket.save().then(res.json.bind(res));
     }).catch(next);
   },
   addAttachments: function (req, res, next) {
@@ -196,7 +196,7 @@ Ticket.prototype = {
       if (ticket.owner === req.session.user.userId) {
         ticket.status = status;
         ticket.processor = '';
-        ticket.save().then(res.json, next);
+        ticket.save().then(res.json.bind(res), next);
       } else {
         next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
@@ -218,7 +218,7 @@ Ticket.prototype = {
         } else {
           ticket.processor = '';
         }
-        ticket.save().then(res.json, next);
+        ticket.save().then(res.json.bind(res), next);
       } else {
         next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
@@ -238,7 +238,7 @@ Ticket.prototype = {
         ticket.status = 'pending';
         ticket.handlerRole = flow[roleIndex - 1];
         ticket.processor = '';
-        ticket.save().then(res.json, next);
+        ticket.save().then(res.json.bind(res), next);
       } else {
         next({msg: req.i18n.__('api.ticket.permissionDenied')});
       }
