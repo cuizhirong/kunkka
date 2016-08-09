@@ -27,7 +27,7 @@
           "key": "assoc_fip",
           "disabled": true
         }, {
-          "title": ["cancel", "associate", "floating_ip"],
+          "title": ["dissociate", "floating_ip"],
           "key": "dissoc_fip",
           "disabled": true
         }, {

@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
         });
         refs.floating_ip.setState({
           data: availableFIP,
-          value: availableFIP[0].id
+          value: availableFIP[0] ? availableFIP[0].id : ''
         });
         refs.btn.setState({
           disabled: false
