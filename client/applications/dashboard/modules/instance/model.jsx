@@ -155,7 +155,7 @@ class Model extends React.Component {
           break;
         case 'floating_ip':
           column.render = (col, item, i) => {
-            return item.floating_ip ?
+            return (item.floating_ip && item.floating_ip.port_id !== null) ?
               <span>
                 <i className="glyphicon icon-floating-ip" />
                 <a data-type="router" href={'/dashboard/floating-ip/' + item.floating_ip.id}>
