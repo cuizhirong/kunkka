@@ -190,7 +190,7 @@ Ticket.prototype = {
       if (!ticket) {
         return next({msg: req.i18n.__('api.ticket.notExist')});
       }
-      if (status !== 'closed' || status !== 'pending') {
+      if (status !== 'closed' && status !== 'pending') {
         return next({msg: req.i18n.__('api.ticket.statusCannotBe') + req.i18n.__('api.ticket.' + status)});
       }
       if (ticket.owner === req.session.user.userId) {
@@ -211,7 +211,7 @@ Ticket.prototype = {
       //proceeding+processor
       //pending+role
       if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
-        || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
+        || (ticket.status !== 'proceeding' && ticket.handlerRole === flow[roleIndex])) {
         ticket.status = status;
         if (status === 'proceeding') {
           ticket.processor = req.session.user.userId;
@@ -234,7 +234,7 @@ Ticket.prototype = {
       }
 
       if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
-        || (ticket.status !== 'proceeding' && ticket.handleRole === flow[roleIndex])) {
+        || (ticket.status !== 'proceeding' && ticket.handlerRole === flow[roleIndex])) {
         ticket.status = 'pending';
         ticket.handlerRole = flow[roleIndex - 1];
         ticket.processor = '';
