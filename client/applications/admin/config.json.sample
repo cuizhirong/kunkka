@@ -33,7 +33,8 @@
   }, {
     "title": "setting-mgmt",
     "items": [
-      "setting-mgmt"
+      "setting-mgmt",
+      "price-mgmt"
     ]
   }],
   "default_module": "host",

@@ -1,0 +1,73 @@
+{
+  "tabs": [{
+    "name": ["price-mgmt"],
+    "key": "price-mgmt",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "price"],
+    "key": "create",
+    "type": "create",
+    "icon": "create",
+    "disabled": false
+  }, {
+    "value": ["modify", "price"],
+    "key": "modify",
+    "type": "modify",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete", "price"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "price", "name"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "key": "name",
+      "dataIndex": "name",
+      "type": "captain",
+      "sortBy": "string"
+    }, {
+      "title": ["service"],
+      "key": "service",
+      "dataIndex": "service"
+    }, {
+      "title": ["base_price"],
+      "key": "base_price",
+      "dataIndex": "base_price"
+    }, {
+      "title": ["price"],
+      "dataIndex": "price",
+      "key": "price"
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["description"],
+      "dataIndex": "description",
+      "key": "description"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

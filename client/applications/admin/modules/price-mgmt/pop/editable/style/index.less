@@ -1,0 +1,34 @@
+@import "../../../../../../../style/index.less";
+
+@i_color: @color_font_700;
+@i_hover_color: @color_info;
+
+.halo-price-edit {
+  width: 100%;
+  input {
+    width: 60px;
+    padding: 0 10px;
+  }
+
+  .edit-confirm, .edit-cancel, .edit-delete{
+    font-size: 15px;
+    margin-left: 5px;
+    margin-right: 2px;
+    color: @i_color;
+    cursor: pointer;
+    &:hover {
+      color: @i_hover_color;
+    }
+  }
+
+  .edit-delete {
+    float: right;
+    margin-top: 10px;
+  }
+
+  .remodify {
+    margin-left: 5px;
+    color: @i_hover_color;
+    cursor: pointer;
+  }
+}

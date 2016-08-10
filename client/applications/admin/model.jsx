@@ -80,6 +80,8 @@ class Model extends React.Component {
     switch(name) {
       case 'setting-mgmt':
         return 'flavor-setting';
+      case 'price-mgmt':
+        return 'account-charge';
       default:
         return name;
     }

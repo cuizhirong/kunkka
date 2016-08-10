@@ -1,0 +1,47 @@
+{
+  "title": ["modify", "price"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "input-type": "text",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "input",
+    "field": "base_price",
+    "required": true,
+    "value": ""
+  }, {
+    "type": "adapter",
+    "field": "price",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "service",
+    "value": "compute",
+    "data": [{
+      "name": "compute",
+      "id": "compute"
+    }, {
+      "name": "block_storage",
+      "id": "block_storage"
+    }, {
+      "name": "network",
+      "id": "network"
+    }, {
+      "name": "monitor",
+      "id": "monitor"
+    }, {
+      "name": "share",
+      "id": "share"
+    }]
+  }, {
+    "type": "textarea",
+    "field": "description",
+    "value": ""
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": true
+  }
+}
