@@ -21,7 +21,7 @@ Object.keys(db).forEach(modelName => {
 
 db.mysql = mysql;
 mysql.sync().then(() => {
-  console.log('mysql sync done!');
+  console.log('lich: mysql sync done!');
 }).catch(err => {
   console.log(err);
 });

@@ -1,17 +1,16 @@
 'use strict';
 
+
 function API () {
 }
 
 API.prototype = {
-  checkOwner: function (req, res, next) {
-    /*let owner = req.params.owner;
-    if (!req.session.user.isAdmin && owner !== req.session.user.userId) {
-      return res.status(403).json({error: 'Permission Denied'});
-    } else {
+  checkAuth: function (req, res, next) {
+    if (req.session.user) {
       next();
-    }*/
-    next();
+    } else {
+      return res.status(403).json({error: req.i18n.__('api.lich.limitedAuthority')});
+    }
   }
 };
 

@@ -1,23 +1,27 @@
 'use strict';
 
 module.exports = function (mysql, DataTypes) {
-  return mysql.define('approve', {
+  return mysql.define('approval', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    approver: {
+    approverRole: {
       type: DataTypes.STRING,
       allowNull: false
     },
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    //unopened,approving,pass,refused
     status: {
       type: DataTypes.STRING,
-      allowNull: false
-    },
-    result: {
-      type: DataTypes.STRING,
-      defaultValue: 'unopened',
       allowNull: false
     },
     explain: {
@@ -29,6 +33,7 @@ module.exports = function (mysql, DataTypes) {
       allowNull: false
     }
   }, {
-    paranoid: true
+    paranoid: true,
+    charset: 'utf8'
   });
 };

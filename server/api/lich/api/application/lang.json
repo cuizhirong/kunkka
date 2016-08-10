@@ -1,0 +1,16 @@
+{
+  "zh-CN":{
+    "limitedAuthority":"权限不足。",
+    "hadBeenApproved":"此申请已经被审批过。",
+    "unopened":"审批未开放。",
+    "approvedError":"审批异常。",
+    "UnsupportedParameter":"参数有误"
+  },
+  "en":{
+    "limitedAuthority":"Limited authority",
+    "hadBeenApproved":"This application had been approved",
+    "unopened":"Unopened",
+    "approveError":"Approve error",
+    "UnsupportedParameter":"Unsupported Parameter"
+  }
+}
