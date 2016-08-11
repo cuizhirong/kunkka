@@ -51,7 +51,7 @@ class Model extends React.Component {
           }, true);
 
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/lb');
+            router.replaceState('/dashboard/loadbalancer');
           }
         }
       }
