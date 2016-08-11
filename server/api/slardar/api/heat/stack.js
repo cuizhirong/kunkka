@@ -75,6 +75,9 @@ Stack.prototype = {
         this.__createStack.call(this, objVar, cb);
       }
     ], (err, data) => {
+      if (typeof res === 'function') {
+        return res(err, data);
+      }
       if (err) {
         return this.handleError(err, req, res, next);
       } else {
