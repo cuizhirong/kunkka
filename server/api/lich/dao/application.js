@@ -42,7 +42,7 @@ exports.findAllByFields = function (fields) {
         where: {
           userId: fields.approver.userId
         }
-      }]
+      }];
     } else {
       obj.include = [{
         model: Approval,
@@ -50,7 +50,7 @@ exports.findAllByFields = function (fields) {
           approverRole: fields.approver.approverRole,
           status: 'approving'
         }
-      }]
+      }];
     }
   }
   if (fields.limit) {

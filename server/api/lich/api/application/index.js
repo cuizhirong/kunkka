@@ -145,7 +145,7 @@ Application.prototype = {
 
   _getCurrentRole: function (arrRoles) {
     if (!Array.isArray(arrRoles) || arrRoles.length === 0) {
-      return;
+      return undefined;
     }
     let result;
     //[admin,owner,member]
