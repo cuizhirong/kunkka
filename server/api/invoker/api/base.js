@@ -1,5 +1,5 @@
 'use strict';
-const flow = require('config')('invoker').flow;
+const flow = require('config')('ticket_flow') || ['admin', 'owner', 'Member'];
 
 function API () {
 }
@@ -13,19 +13,14 @@ API.prototype = {
     }
   },
 
-  //arrRoles: roles that a user has. eg.['member'],['owner','member']
-  //flow:['admin','owner','member']
   getRoleIndex: function (arrRoles) {
     if (!Array.isArray(arrRoles) || arrRoles.length === 0) {
-      return false;
+      return -1;
     }
-    let roleIndex = -1;
-    let tmpIndex = -1;
 
-    flow.some(function (role, i) {
-      tmpIndex = arrRoles.indexOf(role);
-      roleIndex = i;
-      return tmpIndex > -1;
+    let roleIndex = -1;
+    flowReverse.some(function (role, i) {
+      return arrRoles.indexOf(role) > -1 && (roleIndex = i);
     });
 
     return roleIndex;

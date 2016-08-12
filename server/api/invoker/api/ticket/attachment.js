@@ -6,7 +6,9 @@ const config = require('config');
 const Base = require('../base');
 var path = require('path');
 
-const attachmentPath = config('attachment_path') || '/opt/attachment/nfs';
+const attachmentPath = config('ticket_attachment_path') || '/opt/attachment/nfs';
+const attachmentSizeLimit = config('ticket_attachment_size_limit') || 10 * 1024 * 1024;
+
 const sendFileOpts = {
   root: attachmentPath
 };
@@ -18,7 +20,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({storage: storage, limits: {fileSize: config('file_size_limit') || 10 * 1024 * 1024}});
+const upload = multer({storage: storage, limits: {fileSize: attachmentSizeLimit}});
 
 function Attachment (app) {
   Base.call(this);

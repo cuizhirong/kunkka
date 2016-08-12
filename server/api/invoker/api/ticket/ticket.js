@@ -4,7 +4,7 @@ const dao = require('../../dao');
 const Base = require('../base');
 const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
-const flow = require('config')('invoker').flow;
+const flow = require('config')('ticket_flow') || ['admin', 'owner', 'Member'];
 
 function Ticket (app) {
   Base.call(this);
@@ -165,6 +165,9 @@ Ticket.prototype = {
   getTicketById: function (req, res, next) {
     const ticketId = req.params.ticketId;
     const roleIndex = this.getRoleIndex(req.session.user.roles);
+    if (roleIndex < 0) {
+      return res.status(403).json(req.i18n__('api.ticket.permissionDenied'));
+    }
     ticketDao.findOneById(ticketId).then(ticket => {
 
       if (!ticket) {
