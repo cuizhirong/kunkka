@@ -4,6 +4,7 @@ const models = require('../models');
 const Ticket = models.ticket;
 const Attachment = models.attachment;
 const Reply = models.reply;
+const Promise = require('bluebird');
 
 exports.create = function (data) {
   return Ticket.create(data, {
@@ -72,6 +73,16 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
+  let countObj = {};
 
-  return Ticket.findAndCount(obj);
+  for (let key in obj) {
+    if (key !== 'include' && key !== 'order') {
+      countObj[key] = obj[key];
+    }
+  }
+
+  return Promise.props({
+    rows: Ticket.findAll(obj),
+    count: Ticket.count(countObj)
+  });
 };
