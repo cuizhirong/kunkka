@@ -2,7 +2,7 @@
 
 const View = require('views/base');
 const config = require('config');
-const roleFlow = config('invoker').flow || {};
+const roleFlow = config('ticket_flow') || [];
 const roleFlowLength = roleFlow.length;
 const getRoleIndex = require('../../api/base').prototype.getRoleIndex;
 
