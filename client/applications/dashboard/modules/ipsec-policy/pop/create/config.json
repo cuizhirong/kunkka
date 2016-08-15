@@ -1,0 +1,79 @@
+{
+  "title": ["create", "ipsec", "policy"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "auth_algorithm",
+    "value": "sha1",
+    "data": [{
+      "name": "sha1",
+      "id": "sha1"
+    }]
+  }, {
+    "type": "select",
+    "field": "encryption_algorighm",
+    "value": "aes-128",
+    "data": [{
+      "name": "aes-128",
+      "id": "aes-128"
+    }, {
+      "name": "3des",
+      "id": "3des"
+    }, {
+      "name": "aes-192",
+      "id": "aes-192"
+    }, {
+      "name": "aes-256",
+      "id": "aes-256"
+    }]
+  }, {
+    "type": "select",
+    "field": "encapsulation_mode",
+    "value": "tunnel",
+    "data": [{
+      "name": "tunnel",
+      "id": "tunnel"
+    }, {
+      "name": "transport",
+      "id": "transport"
+    }]
+  }, {
+    "type": "select",
+    "field": "transform_protocol",
+    "value": "esp",
+    "data": [{
+      "name": "esp",
+      "id": "esp"
+    }, {
+      "name": "ah",
+      "id": "ah"
+    }]
+  }, {
+    "type": "select",
+    "field": "pfs",
+    "value": "group5",
+    "data": [{
+      "name": "group5",
+      "id": "group5"
+    }, {
+      "name": "group2",
+      "id": "group2"
+    }, {
+      "name": "group14",
+      "id": "group14"
+    }]
+  }, {
+    "type": "input",
+    "field": "sa_lifetime",
+    "required": true,
+    "value": 3600
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

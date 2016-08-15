@@ -22,7 +22,9 @@
       "port",
       "security-group",
       "loadbalancer",
-      "resource-pool"
+      "resource-pool",
+      "ike-policy",
+      "ipsec-policy"
     ]
   }, {
     "title": "storage",

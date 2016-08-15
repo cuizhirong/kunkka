@@ -1,0 +1,10 @@
+{
+  "en": {
+    "transform_protocol": "Transform Protocol",
+    "encapsulation_mode": "Encapsulation Mode"
+  },
+  "zh-CN": {
+    "transform_protocol": "传输协议",
+    "encapsulation_mode": "封装模式"
+  }
+}
