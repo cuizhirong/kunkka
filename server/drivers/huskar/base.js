@@ -6,6 +6,8 @@ const getQueryString = require('helpers/getQueryString.js');
 function Driver() {
 }
 
+Driver.prototype.noServices = Array.from(require('config')('no_services') || []);
+
 Driver.prototype.getMethod = function (url, token, callback, query) {
   let search = getQueryString(query);
   request

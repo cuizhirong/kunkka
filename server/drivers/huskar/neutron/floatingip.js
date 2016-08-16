@@ -2,14 +2,23 @@
 
 var Base = require('../base.js');
 var driver = new Base();
+const flag = (driver.noServices.indexOf('floatingip') === -1) ? true : false;
 
 driver.listFloatingips = function (token, remote, callback, query) {
-  return driver.getMethod(
-    remote + '/v2.0/floatingips',
-    token,
-    callback,
-    query
-  );
+  if (flag) {
+    return driver.getMethod(
+      remote + '/v2.0/floatingips',
+      token,
+      callback,
+      query
+    );
+  } else {
+    return {
+      body: {
+        floatingips: []
+      }
+    };
+  }
 };
 driver.showFloatingipDetails = function (id, token, remote, callback, query) {
   return driver.getMethod(
