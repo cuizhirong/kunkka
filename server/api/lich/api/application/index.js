@@ -3,7 +3,7 @@
 const dao = require('../../dao');
 const Base = require('./../base');
 const applicationDao = dao.application;
-const flow = require('config')('lich').flow;//low->high
+const flow = require('config')('approve_flow');//low->high
 const flowReverse = JSON.parse(JSON.stringify(flow)).reverse();//high->low
 const Promise = require('bluebird');
 const request = Promise.promisify(require('request'));
@@ -23,7 +23,7 @@ Application.prototype = {
     let userId = req.session.user.userId;
     let description = req.body.description;
     let detail = JSON.stringify(req.body.detail);
-    let status = 'approving';
+    let status = 'pending';
     let username = req.session.user.username;
     let projectId = req.session.user.projectId;
 
@@ -103,7 +103,7 @@ Application.prototype = {
       approvals[currentIndex].explain = data.explain;
       approvals[currentIndex].username = req.session.user.username;
       approvals[currentIndex].userId = req.session.user.userId;
-      apply.status = data.status;
+      apply.status = data.status;//pass,refused
 
       if (data.status === 'pass') {
         if (currentIndex === approvals.length - 1) {
@@ -127,12 +127,16 @@ Application.prototype = {
           });
         } else {
           approvals[currentIndex + 1].status = 'approving';
-          Promise.all([
+          let arrSave = [
             apply.approvals[currentIndex].save(),
             apply.approvals[currentIndex + 1].save()
-          ]).then(res.json.bind(res));
+          ];
+          if (apply.approvals[currentIndex].level === 1) {
+            apply.status = 'approving';
+            arrSave.push(apply.save);
+          }
+          Promise.all(arrSave).then(res.json.bind(res));
         }
-
 
       } else {// apply refused
         Promise.all([
@@ -221,6 +225,7 @@ Application.prototype = {
       const applies = [];
 
       result.rows.forEach(function (item) {
+        item.dataValues.detail = JSON.parse(item.dataValues.detail);
         if (item.stackId) {
           applies.push(item);
         }
@@ -251,7 +256,51 @@ Application.prototype = {
       });
     });
   },
+  delApplicationById: function (req, res, next) {
+    let application = req.application;
+    application.destroy().then(res.json.bind(res), next);
+  },
+  updateApplicationById: function (req, res, next) {
 
+    const detail = JSON.stringify(req.body.detail);
+    const description = req.body.description;
+    let application = req.application;
+    if (detail) {
+      application.detail = detail;
+    }
+    if (description) {
+      application.description = description;
+    }
+
+    application.save().then(res.json.bind(res)).catch(next);
+
+  },
+
+  checkOwnerAndStatus: function (req, res, next) {
+    let applicationId = req.params.applicationId;
+    let userId = req.session.user.userId;
+
+    applicationDao.findOneById(applicationId).then(application => {
+
+      if (!application) {
+        res.status(404).json({msg: req.i18n.__('api.application.notFound')});
+        return;
+      }
+      if (application.userId !== userId) {
+        res.status(403).json({msg: req.i18n.__('api.application.limitedAuthority')});
+        return;
+      }
+      if (application.status !== 'pending') {
+        res.status(500).json({msg: req.i18n.__('api.application.handled')});
+        return;
+      }
+      req.application = application;
+      next();
+    }).catch(err => {
+      next(err);
+    });
+
+  },
 
   initRoutes: function () {
     this.app.post('/api/apply', this.checkAuth, this.createApplication.bind(this));
@@ -259,6 +308,8 @@ Application.prototype = {
     this.app.get('/api/apply/approving', this.checkAuth, this.getApprovingList.bind(this), this.getList.bind(this));
     this.app.get('/api/apply/my-apply', this.checkAuth, this.getMyCreateList.bind(this), this.getList.bind(this));
     this.app.get('/api/apply/:applicationId', this.checkAuth, this.getApplicationById.bind(this));
+    this.app.delete('/api/apply/:applicationId', this.checkAuth, this.checkOwnerAndStatus.bind(this), this.delApplicationById.bind(this));
+    this.app.put('/api/apply/:applicationId', this.checkAuth, this.checkOwnerAndStatus.bind(this), this.updateApplicationById.bind(this));
     this.app.put('/api/apply/:applicationId/approve', this.checkAuth, this.approveApplication.bind(this));
   }
 };

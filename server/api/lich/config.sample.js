@@ -6,12 +6,6 @@ module.exports = {
     'node-uuid': '^1.4.7'
   },
   config: {
-    lich: {
-      flow: [
-        'Member',
-        'owner',
-        'admin'
-      ]
-    }
+    approve_flow: ['Member', 'owner', 'admin']
   }
 };

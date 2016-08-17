@@ -32,7 +32,7 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
-    //approving,pass,refused
+    //pending,approving,pass,refused
     status: {
       type: DataTypes.STRING,
       allowNull: false,
