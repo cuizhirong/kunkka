@@ -1,0 +1,12 @@
+{
+  "en": {
+    "applicant": "Applicant",
+    "apply": "Apply",
+    "detail": "Detail"
+  },
+  "zh-CN": {
+    "applicant": "申请人",
+    "apply": "我的申请",
+    "detail": "详情"
+  }
+}

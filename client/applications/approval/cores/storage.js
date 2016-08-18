@@ -23,6 +23,7 @@ var pool = require('../modules/resource-pool/cache');
 var listener = require('../modules/loadbalancer/cache');
 var healthmonitor = require('../modules/resource-pool/cache');
 var member = require('../modules/resource-pool/cache');
+var apply = require('../modules/apply/cache');
 
 var map = {
   network: ['subnet'],
@@ -80,6 +81,8 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member);
+Object.assign(Storage.prototype, instance, image, port, floatingip, keypair,
+  network, router, securitygroup, snapshot, subnet, volume, loadbalancer,
+  pool, listener, healthmonitor, member, apply);
 
 module.exports = new Storage();

@@ -71,6 +71,7 @@ a {
 
   i[class^="glyphicon icon-status-"] {
     &.active,
+    &.pass,
     &.available {
       color: @icon-status-success-color;
     }
@@ -82,6 +83,7 @@ a {
       color: @icon-status-cancel-color;
     }
     &.shutoff,
+    &.refused,
     &.error {
       color: @icon-status-danger-color;
     }

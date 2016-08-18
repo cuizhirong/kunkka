@@ -1,4 +1,4 @@
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 
 module.exports = {
   getVolumeType: function(item) {

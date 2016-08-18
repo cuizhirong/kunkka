@@ -1,5 +1,5 @@
 var React = require('react');
-var NavBar = require('./components/navbar/index');
+var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
 var router = require('client/utils/router');
 
@@ -82,6 +82,8 @@ class Model extends React.Component {
         return 'lb';
       case 'quick-deploy':
         return 'deploy';
+      case 'apply':
+        return 'collaboration';
       default:
         return name;
     }

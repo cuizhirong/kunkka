@@ -1,0 +1,63 @@
+{
+  "tabs": [{
+    "name": ["apply"],
+    "key": "apply",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["modify", "apply"],
+    "key": "modify_apply",
+    "icon": "create"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "id": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["id"],
+      "type": "captain",
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["applicant"],
+      "dataIndex": "username",
+      "key": "username"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "projectId",
+      "key": "project_id"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status",
+      "type": "status"
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "createdAt",
+      "key": "create_time",
+      "type": "time"
+    }],
+    "data":[],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -2,7 +2,8 @@
   "modules": [{
     "title": "approval",
     "items": [
-      "quick-deploy"
+      "quick-deploy",
+      "apply"
     ]
   }, {
     "title": "compute",
