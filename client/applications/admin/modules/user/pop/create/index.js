@@ -109,13 +109,18 @@ function pop(obj, parent, callback) {
         case 'password':
         case 'confirm_password':
           var name = refs.name.state.value;
-          var psw = refs.password.state.value;
-          var rePsw = refs.confirm_password.state.value;
-          var valid = name && psw && (psw === rePsw);
-
-          refs.btn.setState({
-            disabled: !valid
-          });
+          if(obj) {
+            refs.btn.setState({
+              disabled: !name
+            });
+          } else {
+            var psw = refs.password.state.value;
+            var rePsw = refs.confirm_password.state.value;
+            var valid = name && psw && (psw === rePsw);
+            refs.btn.setState({
+              disabled: !valid
+            });
+          }
           break;
         case 'crt_user_project':
           var checked = status.checked;
