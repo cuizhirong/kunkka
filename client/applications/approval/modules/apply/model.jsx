@@ -5,6 +5,7 @@ var Main = require('client/components/main/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
+var ApplyDetail = require('../../components/apply_detail/index');
 
 var config = require('./config.json');
 var request = require('./request');
@@ -197,7 +198,14 @@ class Model extends React.Component {
               <BasicProps
                 title={__.basic + __.properties}
                 defaultUnfold={true}
-                items={basicPropsItem ? basicPropsItem : []} />
+                tabKey={'description'}
+                rawItem={rows[0]}
+                items={basicPropsItem ? basicPropsItem : []}
+                onAction={this.onDetailAction.bind(this)} />
+              <ApplyDetail
+                title={__.application + __.detail}
+                defaultUnfold={true}
+                items={rows[0].detail} />
             </div>
           );
         }
@@ -216,8 +224,9 @@ class Model extends React.Component {
       title: __.id,
       content: item.id
     }, {
-      title: __.description,
-      content: item.description
+      title: __.apply_desc,
+      content: item.description,
+      type: 'editable'
     }, {
       title: __.applicant,
       content: item.username
@@ -251,6 +260,30 @@ class Model extends React.Component {
     }
 
     this.getTableData(forceUpdate, data ? data.detailRefresh : false);
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      case 'edit_name':
+        request.modifyApply(data.rawItem, data.newName).then(res => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   loadingTable() {

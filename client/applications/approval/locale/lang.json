@@ -1,5 +1,6 @@
 {
   "en": {
+    "_identity": "Mark",
     "graphic": "Graphic",
     "application_name": "Approval",
     "account_placeholder": "Please enter username or email",
@@ -12,6 +13,7 @@
     "associate": "Associate ",
     "attaching": "Attaching",
     "balancer": "Balancer",
+    "bind": "Bind",
     "cancel": "Cancel ",
     "change": "Change ",
     "click": "Click ",
@@ -105,6 +107,7 @@
     "yes": "Yes"
   },
   "zh-CN": {
+    "_identity": "标识",
     "graphic": "图表",
     "application_name": "审批",
     "account_placeholder": "请输入账号",
@@ -117,6 +120,7 @@
     "associate": "绑定",
     "attaching": "挂载中",
     "balancer": "均衡器",
+    "bind": "关联",
     "cancel": "取消",
     "change": "更改",
     "click": "点击",

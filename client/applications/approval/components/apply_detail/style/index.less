@@ -1,0 +1,35 @@
+@import "../../../style/theme.less";
+
+@border_line_color: @color_grey;
+@detail_info_text_color: @color_font_800;
+
+@detail_info_indicator: @color_info_600;
+
+.halo-com-apply-detail {
+  .apply-type {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
+  .apply-items {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-top: 1px solid @border_line_color;
+  }
+
+  .item-info {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding-left: 20px;
+    border-left: 4px solid @color_info_600;
+  }
+
+  .info-box {
+    width: 40%;
+    min-width: 380px;
+    line-height: 28px;
+    display: inline-block;
+    font-size: 12px;
+    color: @detail_info_text_color;
+  }
+}
