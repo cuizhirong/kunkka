@@ -10,6 +10,7 @@ function pop(obj, parent, callback) {
     config.fields[0].value = obj.name;
     config.fields[4].value = obj.email;
     config.fields[5].value = obj.description;
+    config.fields[3].disabled = true;
     config.fields[1].hide = true;
     config.fields[2].hide = true;
     config.fields[6].hide = true;
@@ -20,6 +21,7 @@ function pop(obj, parent, callback) {
     config.title = ['create', 'user'];
     config.fields[1].hide = false;
     config.fields[2].hide = false;
+    config.fields[3].disabled = false;
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.fields[2].value = '';
