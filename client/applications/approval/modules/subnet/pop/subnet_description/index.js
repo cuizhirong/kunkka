@@ -2,24 +2,30 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/approval.lang.json');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 function pop(obj, parent, callback) {
-  config.fields[1].text = obj.rawItem.name || '(' + obj.rawItem.id.substr(0, 8) + ')';
-  config.fields[2].text = obj.childItem.name + '(' + obj.childItem.cidr + ')';
-
   var props = {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      if(obj.detail) {
+        refs.btn.setState({
+          disabled: false
+        });
+      }
+    },
     onConfirm: function(refs, cb) {
-      request.detachSubnet(obj).then(() => {
+      obj.description = refs.apply_description.state.value;
+      request.createSubnet(obj).then(res => {
         callback && callback();
         cb(true);
+      }).catch(err => {
+        getErrorMessage(err);
       });
     },
-    onAction: function(field, state, refs) {},
-    onLinkClick: function() {}
+    onAction: function(field, state, refs) {}
   };
 
   commonModal(props);

@@ -17,10 +17,10 @@ var resizeVolume = require('./pop/resize/index');
 var notify = require('../../utils/notify');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
 var utils = require('../../utils/utils');
 
@@ -51,7 +51,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/volume');
+            router.replaceState('/approval/volume');
           }
         }
       }
@@ -92,7 +92,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/dashboard/instance/' + server.id}>
+                  <a data-type="router" href={'/approval/instance/' + server.id}>
                     {server.name}
                   </a>
                 </span>
@@ -134,7 +134,7 @@ class Model extends React.Component {
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      var detail = this.refs.approval.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -330,7 +330,7 @@ class Model extends React.Component {
                 items={relatedSnapshotItems ? relatedSnapshotItems : []}
                 rawItem={rows[0]}
                 btnConfig={{
-                  value: __.create + __.snapshot,
+                  value: __.apply + __.snapshot,
                   actionType: 'create_related_snapshot',
                   disabled: (rows[0].status === 'available' || rows[0].status === 'in-use') ? false : true
                 }}
@@ -361,7 +361,7 @@ class Model extends React.Component {
         return (
           <span>
             <i className="glyphicon icon-instance" />
-            <a data-type="router" href={'/dashboard/instance/' + server.id}>
+            <a data-type="router" href={'/approval/instance/' + server.id}>
               {server.name}
             </a>
           </span>
@@ -414,7 +414,7 @@ class Model extends React.Component {
         name:
           <span>
             <i className="glyphicon icon-snapshot" />
-            <a data-type="router" href={'/dashboard/snapshot/' + item.id}>{item.name}</a>
+            <a data-type="router" href={'/approval/snapshot/' + item.id}>{item.name}</a>
           </span>,
         size: item.size + 'GB',
         time: item.created_at,
@@ -432,14 +432,14 @@ class Model extends React.Component {
       var path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
-          this.refs.dashboard.refs.detail.loading();
+          this.refs.approval.refs.detail.loading();
         }
       } else {
         if (data.tableLoading) {
           this.loadingTable();
         }
         if (data.clearState) {
-          this.refs.dashboard.clearState();
+          this.refs.approval.clearState();
         }
       }
     }
@@ -503,7 +503,7 @@ class Model extends React.Component {
     return (
       <div className="halo-module-volume" style={this.props.style}>
         <Main
-          ref="dashboard"
+          ref="approval"
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}

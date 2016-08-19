@@ -1,5 +1,5 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
+var storage = require('client/applications/approval/cores/storage');
+var fetch = require('client/applications/approval/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -66,21 +66,15 @@ module.exports = {
     });
   },
   createVolume: function(_data) {
-    var data = {};
-    data.volume = _data;
-
     return fetch.post({
-      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
-      data: data
+      url: '/api/apply',
+      data: _data
     });
   },
   createSnapshot: function(_data) {
-    var data = {};
-    data.snapshot = _data;
-
     return fetch.post({
-      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots',
-      data: data
+      url: '/api/apply',
+      data: _data
     });
   },
   attachInstance: function(_data) {

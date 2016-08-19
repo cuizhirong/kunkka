@@ -2,8 +2,8 @@ var commonModal = require('client/components/modal_common/index');
 var createSubnet = require('../../../subnet/pop/create_subnet/index');
 var config = require('./config.json');
 var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var __ = require('locale/client/approval.lang.json');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 var getAvailableSubnets = function(data, refs) {
   var subnets = data.filter((ele) => !ele.network['router:external']);

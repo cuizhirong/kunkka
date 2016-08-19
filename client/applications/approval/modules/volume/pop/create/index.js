@@ -1,7 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
@@ -117,8 +117,9 @@ function pop(obj, parent, callback) {
             disabled: lackOfSize || selectedMax <= 0
           });
         };
+        setFields();
 
-        if (HALO.settings.enable_charge) {
+/*        if (HALO.settings.enable_charge) {
           request.getVolumePrice('volume.size', selectedMin).then((res) => {
             setFields();
             refs.charge.setState({
@@ -134,18 +135,26 @@ function pop(obj, parent, callback) {
           });
         } else {
           setFields();
-        }
+        }*/
       });
     },
     onConfirm: function(refs, cb) {
       var data = {};
-      data.name = refs.name.state.value;
-      data.volume_type = obj ? obj.volume_type : refs.type.state.value;
-      data.size = Number(refs.capacity_size.state.value);
-      if (obj) {
-        data.snapshot_id = obj.id;
-      }
+      data.detail = {};
+      var createDetail = data.detail;
 
+      createDetail.create = [];
+      var configCreate = createDetail.create;
+      var createItem = {};
+      createItem = {
+        _type: 'Volume',
+        _identity: 'volume',
+        name: refs.name.state.value,
+        volume_type: obj ? obj.volume_type : refs.type.state.value,
+        size: Number(refs.capacity_size.state.value)
+      };
+      configCreate.push(createItem);
+      data.description = refs.apply_description.state.value;
       request.createVolume(data).then((res) => {
         callback && callback(res);
         cb(true);
@@ -195,28 +204,28 @@ function pop(obj, parent, callback) {
               disabled: max <= 0
             });
 
-            if (HALO.settings.enable_charge) {
+            /*if (HALO.settings.enable_charge) {
               request.getVolumePrice(type + '.volume.size', value).then((res) => {
                 refs.charge.setState({
                   value: res.unit_price
                 });
               }).catch((error) => {});
-            }
+            }*/
           }
           break;
         case 'capacity_size':
           if (HALO.settings.enable_charge) {
-            var sliderEvent = state.eventType === 'mouseup';
+            /*var sliderEvent = state.eventType === 'mouseup';
             var inputEvnet = state.eventType === 'change' && !state.error;
             var volType = refs.type.state.value;
-
-            if (sliderEvent || inputEvnet) {
+*/
+           /* if (sliderEvent || inputEvnet) {
               request.getVolumePrice(volType + '.volume.size', state.value).then((res) => {
                 refs.charge.setState({
                   value: res.unit_price
                 });
               }).catch((error) => {});
-            }
+            }*/
           }
 
           refs.btn.setState({

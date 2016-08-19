@@ -9,7 +9,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 
 class Model extends React.Component {
 

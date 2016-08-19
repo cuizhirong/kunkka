@@ -5,7 +5,7 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "router"],
+    "value": ["apply_", "router"],
     "key": "create",
     "type": "create",
     "icon": "create"

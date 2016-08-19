@@ -13,7 +13,6 @@ var VncConsole = require('../../components/vnc_console/index');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
-var createInstance = require('./pop/create_instance/index');
 var poweronInstance = require('./pop/poweron/index');
 var shutoffInstance = require('./pop/shutoff/index');
 var rebootInstance = require('./pop/reboot/index');
@@ -31,10 +30,10 @@ var deleteInstance = require('./pop/delete/index');
 var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
+var msgEvent = require('client/applications/approval/cores/msg_event');
+var notify = require('client/applications/approval/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
 
@@ -79,7 +78,7 @@ class Model extends React.Component {
             }
 
             if (data.action.indexOf('delete') > -1 && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-              router.replaceState('/dashboard/instance');
+              router.replaceState('/approval/instance');
             }
             break;
           default:
@@ -120,7 +119,7 @@ class Model extends React.Component {
     return (
       <div>
         <i className={'icon-image-default ' + label} style={style}/>
-        <a data-type="router" href={'/dashboard/image/' + item.image.id}>{item.image.name}</a>
+        <a data-type="router" href={'/approval/image/' + item.image.id}>{item.image.name}</a>
       </div>
     );
   }
@@ -144,7 +143,7 @@ class Model extends React.Component {
                     if (count !== 0) {
                       arr.push(', ');
                     }
-                    arr.push(<a key={addr.port.id} data-type = "router" href={'/dashboard/port/' + addr.port.id}>{addr.addr}</a>);
+                    arr.push(<a key={addr.port.id} data-type = "router" href={'/approval/port/' + addr.port.id}>{addr.addr}</a>);
                     count++;
                   }
                 }
@@ -158,7 +157,7 @@ class Model extends React.Component {
             return item.floating_ip ?
               <span>
                 <i className="glyphicon icon-floating-ip" />
-                <a data-type="router" href={'/dashboard/floating-ip/' + item.floating_ip.id}>
+                <a data-type="router" href={'/approval/floating-ip/' + item.floating_ip.id}>
                   {item.floating_ip.floating_ip_address}
                 </a>
               </span> : '';
@@ -241,9 +240,6 @@ class Model extends React.Component {
       that = this;
 
     switch (key) {
-      case 'create':
-        createInstance();
-        break;
       case 'vnc_console':
         var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?region=' + HALO.current_region;
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
@@ -472,7 +468,7 @@ class Model extends React.Component {
               <RelatedSnapshot
                 title={__.related_image}
                 btnConfig={{
-                  value: __.create + __.snapshot,
+                  value: __.apply_ + __.snapshot,
                   type: 'create',
                   actionType: 'create_related_snapshot',
                   disabled: !(itemStatus === 'active' || itemStatus === 'shutoff')
@@ -483,7 +479,6 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 onAction={this.onDetailAction.bind(this)}
                 actionType={{
-                  create: 'create_related_instance',
                   delete: 'delete_related_snapshot'
                 }}
                 noItemAlert={__.no_related + __.instance + __.snapshot} />
@@ -574,7 +569,7 @@ class Model extends React.Component {
       content: item.floating_ip ?
         <span>
           <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/dashboard/floating-ip/' + item.floating_ip.id}>
+          <a data-type="router" href={'/approval/floating-ip/' + item.floating_ip.id}>
             {item.floating_ip.floating_ip_address}
           </a>
         </span> : '-'
@@ -589,7 +584,7 @@ class Model extends React.Component {
       content: item.keypair ?
         <span>
           <i className="glyphicon icon-keypair" />
-          <a data-type="router" href="/dashboard/keypair">{item.keypair.name}</a>
+          <a data-type="router" href="/approval/keypair">{item.keypair.name}</a>
         </span> : '-'
     }, {
       title: __.status,
@@ -610,7 +605,7 @@ class Model extends React.Component {
         vname = volume.name || vid;
       attchVolumes.push({
         key: volume.name,
-        data: <a data-type="router" href={'/dashboard/volume/' + volume.id}>
+        data: <a data-type="router" href={'/approval/volume/' + volume.id}>
             {vname + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
           </a>,
         childItem: volume
@@ -637,20 +632,20 @@ class Model extends React.Component {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
             securityGroups.push(
-              <a key={i} data-type="router" href={'/dashboard/security-group/' + item.security_groups[i].id}>
+              <a key={i} data-type="router" href={'/approval/security-group/' + item.security_groups[i].id}>
                 {item.security_groups[i].name}
               </a>
             );
           }
 
           networks.push({
-            port: <a data-type="router" href={'/dashboard/port/' + item.port.id}>
+            port: <a data-type="router" href={'/approval/port/' + item.port.id}>
                 {item.addr}
               </a>,
-            subnet: <a data-type="router" href={'/dashboard/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
+            subnet: <a data-type="router" href={'/approval/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
             floating_ip: floatingIp ?
-              <a data-type="router" href={'/dashboard/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
+              <a data-type="router" href={'/approval/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
             __renderKey: count,
             childItem: item
           });
@@ -699,11 +694,10 @@ class Model extends React.Component {
     items.forEach((item) => {
       data.push({
         title: item.created_at,
-        name: <a data-type="router" href={'/dashboard/image/' + item.id}>{item.name}</a>,
+        name: <a data-type="router" href={'/approval/image/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: item.created_at,
         status: getStatusIcon(item.status),
-        createIcon: 'instance',
         childItem: item
       });
     });
@@ -812,11 +806,6 @@ class Model extends React.Component {
             resource_type: 'port',
             resource_id: data.rawItem.id
           });
-        });
-        break;
-      case 'create_related_instance':
-        createInstance(data.childItem, null, function() {
-          router.pushState('/dashboard/instance');
         });
         break;
       case 'create_related_snapshot':

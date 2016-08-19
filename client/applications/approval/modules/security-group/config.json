@@ -5,7 +5,7 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "security", "group"],
+    "value": ["apply_", "security", "group"],
     "key": "create",
     "type": "create",
     "icon": "create"

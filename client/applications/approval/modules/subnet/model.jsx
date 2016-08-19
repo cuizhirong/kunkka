@@ -6,7 +6,7 @@ var {Button} = require('client/uskin/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
-var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
+var getStatusIcon = require('client/applications/approval/utils/status_icon');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createSubnet = require('./pop/create_subnet/index');
@@ -17,12 +17,12 @@ var modifySubnet = require('./pop/modify_subnet/index');
 var createPort = require('../port/pop/create_port/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var router = require('client/utils/router');
 var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var msgEvent = require('client/applications/approval/cores/msg_event');
+var notify = require('client/applications/approval/utils/notify');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
@@ -49,7 +49,7 @@ class Model extends React.Component {
           }, false);
 
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/subnet');
+            router.replaceState('/approval/subnet');
           }
         }
       }
@@ -81,7 +81,7 @@ class Model extends React.Component {
             return item.network ?
               <span>
                 <i className="glyphicon icon-network" />
-                <a data-type="router" href={'/dashboard/network/' + item.network.id}>
+                <a data-type="router" href={'/approval/network/' + item.network.id}>
                   {item.network.name || '(' + item.network.id.substr(0, 8) + ')'}
                 </a>
               </span> : '';
@@ -93,7 +93,7 @@ class Model extends React.Component {
               return item.router.id ?
                 <span>
                   <i className="glyphicon icon-router" />
-                  <a data-type="router" href={'/dashboard/router/' + item.router.id}>
+                  <a data-type="router" href={'/approval/router/' + item.router.id}>
                     {item.router.name || '(' + item.router.id.substr(0, 8) + ')'}
                   </a>
                 </span> : '';
@@ -331,7 +331,7 @@ class Model extends React.Component {
                 title={__.port}
                 defaultUnfold={true}
                 tableConfig={virtualInterfaceItem ? virtualInterfaceItem : []}>
-                <Button value={__.add_ + __.port} disabled={rows[0].network['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
+                <Button value={__.apply + __.port} disabled={rows[0].network['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_port', rows[0])}/>
               </DetailMinitable>
             </div>
           );
@@ -410,7 +410,7 @@ class Model extends React.Component {
       content: item.network ?
         <span>
           <i className="glyphicon icon-network" />
-          <a data-type="router" href={'/dashboard/network/' + item.network.id}>
+          <a data-type="router" href={'/approval/network/' + item.network.id}>
             {item.network.name || '(' + item.network.id.substring(0, 8) + ')'}
           </a>
         </span> : null
@@ -419,7 +419,7 @@ class Model extends React.Component {
       content: item.router.id ?
         <span>
           <i className="glyphicon icon-router" />
-          <a data-type="router" href={'/dashboard/router/' + item.router.id}>
+          <a data-type="router" href={'/approval/router/' + item.router.id}>
             {item.router.name || '(' + item.router.id.substring(0, 8) + ')'}
           </a>
         </span> : '-'
@@ -461,7 +461,7 @@ class Model extends React.Component {
     item.ports.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/dashboard/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/approval/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
         mac_address: element.mac_address,
         instance: (function() {
@@ -476,7 +476,7 @@ class Model extends React.Component {
               return (
                 <div>
                   <i className="glyphicon icon-instance"></i>
-                  <a data-type="router" href={'/dashboard/instance/' + element.device_id}>{element.server.name}</a>
+                  <a data-type="router" href={'/approval/instance/' + element.device_id}>{element.server.name}</a>
                 </div>
               );
             }
@@ -484,7 +484,7 @@ class Model extends React.Component {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
-                <a data-type="router" href={'/dashboard/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
+                <a data-type="router" href={'/approval/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
           } else {

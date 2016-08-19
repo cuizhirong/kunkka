@@ -1,6 +1,7 @@
 {
   "en": {
     "account": "CNY {0}",
+    "apply_instance": "Apply Instance",
     "basic": "Basic ",
     "build": "Building",
     "console": "Console ",
@@ -73,6 +74,7 @@
   },
   "zh-CN": {
     "account": "{0} 元",
+    "apply_instance": "申请主机",
     "basic": "基本",
     "build": "正在创建",
     "console": "监控",

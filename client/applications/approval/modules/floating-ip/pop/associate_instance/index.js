@@ -1,8 +1,8 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var __ = require('locale/client/approval.lang.json');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;

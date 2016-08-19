@@ -8,12 +8,12 @@
     "key": "subnet"
   }],
   "btns": [{
-    "value": ["create", "prv_network"],
+    "value": ["apply_", "prv_network"],
     "key": "create",
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["create", "subnet"],
+    "value": ["apply_", "subnet"],
     "key": "crt_subnet",
     "type": "create",
     "icon": "create",

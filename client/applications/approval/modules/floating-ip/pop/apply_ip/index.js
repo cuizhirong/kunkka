@@ -3,13 +3,11 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/approval.lang.json');
 var getErrorMessage = require('client/applications/approval/utils/error_message');
-
 // function priceError(refs, error) {
 //   refs.btn.setState({
 //     disabled: false
 //   });
 // }
-
 var externalNetwork = null;
 
 function pop(parent, callback) {
@@ -83,19 +81,31 @@ function pop(parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if (externalNetwork) {
-        let data = {};
-        data.floatingip = {};
+      var data = {};
+      data.detail = {};
+      var createDetail = data.detail;
+
+      createDetail.create = [];
+      var configCreate = createDetail.create;
+      var createItem = {};
+      createItem = {
+        _type: 'Floatingip',
+        _identity: 'floatingip'
+      };
+      
         if(externalNetwork.length === 1) {
-          data.floatingip.floating_network_id = externalNetwork[0].id;
+          createItem.floating_network_id = externalNetwork[0].id;
         } else {
-          data.floatingip.floating_network_id = refs.external_network.state.value;
+          createItem.floating_network_id = refs.external_network.state.value;
         }
 
         if (enableBandwidth) {
           let bandwidth = Number(refs.bandwidth.state.value) * 1024;
-          data.floatingip.rate_limit = bandwidth;
+          createItem.floatingip.rate_limit = bandwidth;
         }
 
+        configCreate.push(createItem);
+        data.description = refs.apply_description.state.value;
         request.createFloatingIp(data).then((res) => {
           callback && callback(res.floatingip);
           cb(true);

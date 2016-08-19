@@ -9,10 +9,10 @@ var deleteModal = require('client/components/modal_delete/index');
 var createVolume = require('../volume/pop/create/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
@@ -42,7 +42,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/snapshot');
+            router.replaceState('/approval/snapshot');
           }
         }
       }
@@ -79,7 +79,7 @@ class Model extends React.Component {
             return (
               <span>
                 <i className="glyphicon icon-volume" />
-                <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
+                <a data-type="router" href={'/approval/volume/' + item.volume.id}>
                   {item.volume.name}
                 </a>
               </span>
@@ -264,7 +264,7 @@ class Model extends React.Component {
       content: item.volume_id ?
         <span>
           <i className="glyphicon icon-volume" />
-          <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>{item.volume.name}</a>
+          <a data-type="router" href={'/approval/volume/' + item.volume.id}>{item.volume.name}</a>
         </span>
         : null
     }, {

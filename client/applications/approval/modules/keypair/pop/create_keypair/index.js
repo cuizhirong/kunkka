@@ -1,8 +1,8 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
+var __ = require('locale/client/approval.lang.json');
 
 function pop(parent, callback) {
   var props = {
@@ -11,7 +11,7 @@ function pop(parent, callback) {
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data;
+      var data = {};
       var name = refs.name.state.value;
       if (refs.type.state.value === 'create_keypair') {
         data = {
@@ -43,15 +43,25 @@ function pop(parent, callback) {
       }
     },
     onAction: function(filed, state, refs) {
+      var name = refs.name.state;
       switch (filed) {
         case 'type':
           refs.public_key.setState({
             hide: state.value === 'create_keypair'
           });
+        case 'name':
+          if(name.error === true && name.value === '') {
+            refs.name.setState({
+              error: false
+            });
+          }
           break;
         default:
           break;
       }
+      refs.btn.setState({
+        disabled: !(!name.error && name.value)
+      });
     }
   };
 

@@ -1,15 +1,15 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-var __ = require('locale/client/dashboard.lang.json');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
+var createSecurityGroup = require('client/applications/approval/modules/security-group/pop/create_security_group/index');
+var __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
   if (obj) {
     config.title[0] = 'add_';
   } else {
-    config.title[0] = 'create';
+    config.title[0] = 'apply_';
   }
 
   var props = {
@@ -85,7 +85,17 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var port = {
+      var data = {};
+      data.detail = {};
+      var port = data.detail;
+
+      port.create = [];
+      var configCreate = port.create;
+      var port = {};
+
+      port = {
+        _type: 'Port',
+        _identity: 'port',
         name: refs.name.state.value,
         network_id: '',
         security_groups: [],
@@ -118,7 +128,10 @@ function pop(obj, parent, callback) {
         port.fixed_ips[0].ip_address = refs.address_ip.state.value;
       }
 
-      request.createPort(port).then((res) => {
+      configCreate.push(port);
+      data.description = refs.apply_description.state.value;
+
+      request.createPort(data).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch(function(error) {

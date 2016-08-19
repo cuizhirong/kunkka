@@ -1,6 +1,6 @@
 {
   "en": {
-    "create_subnet": "Create Subnet",
+    "apply_subnet": "Apply Subnet",
     "cidr_tip": "Please fill in the blank matching format such as 192.168.1.0/24",
     "enable_security": "Enable security restrict(Once be set, it can not be changed)",
     "enable_vlan": "Vlan network",
@@ -19,7 +19,7 @@
     "vlan_tip": "VLAN ID range is determined by the admin."
   },
   "zh-CN": {
-    "create_subnet": "创建子网",
+    "apply_subnet": "申请子网",
     "cidr_tip": "请参照格式填写网络地址，如192.168.1.0/24",
     "enable_security": "开启安全限制（设置后不能更改）",
     "enable_vlan": "Vlan网络",

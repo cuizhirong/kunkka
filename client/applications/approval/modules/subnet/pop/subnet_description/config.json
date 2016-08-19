@@ -1,12 +1,12 @@
 {
-  "title": ["create", "application"],
+  "title": ["apply_", "subnet"],
   "fields": [{
     "type": "textarea",
     "field": "apply_description",
     "value": ""
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "disabled": true
   }
 }

@@ -1,6 +1,6 @@
 var React = require('react');
 var {Modal, Button, Tip} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var unitConverter = require('client/utils/unit_converter');
 var request = require('../../request');
 var priceConverter = require('../../../../utils/price');

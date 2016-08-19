@@ -18,12 +18,12 @@ var createListener = require('./pop/create_listener/index');
 var updateListenerState = require('./pop/update_listener_state/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
-var notify = require('client/applications/dashboard/utils/notify');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var notify = require('client/applications/approval/utils/notify');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -51,7 +51,7 @@ class Model extends React.Component {
           }, true);
 
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/lb');
+            router.replaceState('/approval/lb');
           }
         }
       }
@@ -337,7 +337,7 @@ class Model extends React.Component {
       content: item.vip_subnet_id ?
         <span>
           <i className="glyphicon icon-subnet" />
-          <a data-type="router" href={'/dashboard/subnet/' + item.vip_subnet_id}>
+          <a data-type="router" href={'/approval/subnet/' + item.vip_subnet_id}>
             {item.subnet || '(' + item.vip_subnet_id.substring(0, 8) + ')'}
           </a>
         </span> : '-'
@@ -349,7 +349,7 @@ class Model extends React.Component {
       content: item.floatingip ?
         <span>
           <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/dashboard/floating-ip/' + item.floatingip.id}>
+          <a data-type="router" href={'/approval/floating-ip/' + item.floatingip.id}>
             {item.floatingip.floating_ip_address}
           </a>
         </span> : '-'

@@ -8,12 +8,6 @@
     "key": "image-snapshot"
   }],
   "btns": [{
-    "value": ["create", "instance"],
-    "key": "create",
-    "type": "create",
-    "icon": "create",
-    "disabled": true
-  }, {
     "key": "refresh",
     "icon": "refresh"
   }],

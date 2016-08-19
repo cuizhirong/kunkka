@@ -13,12 +13,12 @@ var changeBandwidth = require('./pop/change_bandwidth/index');
 var assciateLb = require('./pop/associate_lb/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
@@ -68,7 +68,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/floating-ip');
+            router.replaceState('/approval/floating-ip');
           }
         }
       }
@@ -112,7 +112,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
-                  <a data-type="router" href={'/dashboard/instance/' + server.id}>
+                  <a data-type="router" href={'/approval/instance/' + server.id}>
                     {server.name}
                   </a>
                 </span>
@@ -121,7 +121,7 @@ class Model extends React.Component {
               return (
                 <span>
                   <i className="glyphicon icon-lb" />
-                  <a data-type="router" href={'/dashboard/loadbalancer/' + item.lbaas.id}>
+                  <a data-type="router" href={'/approval/loadbalancer/' + item.lbaas.id}>
                     {item.lbaas.name}
                   </a>
                 </span>
@@ -366,14 +366,14 @@ class Model extends React.Component {
       if(item.association && item.association.type === 'server') {
         return (<span>
           <i className="glyphicon icon-instance" />
-          <a data-type="router" href={'/dashboard/instance/' + item.association.device.id}>
+          <a data-type="router" href={'/approval/instance/' + item.association.device.id}>
             {item.association.device.name}
           </a>
         </span>);
       } else if(item.lbaas) {
         return (<span>
           <i className="glyphicon icon-lb" />
-          <a data-type="router" href={'/dashboard/loadbalancer/' + item.lbaas.id}>
+          <a data-type="router" href={'/approval/loadbalancer/' + item.lbaas.id}>
             {item.lbaas.name}
           </a>
         </span>);

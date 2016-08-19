@@ -1,5 +1,5 @@
 {
-  "title": ["create", "port"],
+  "title": ["apply_", "port"],
   "fields": [{
     "type": "input",
     "field": "name",
@@ -22,9 +22,12 @@
       "link_info": ["create", "security_group"]
     },
     "data": []
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
     "disabled": true
   }

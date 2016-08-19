@@ -1,5 +1,5 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
+var storage = require('client/applications/approval/cores/storage');
+var fetch = require('client/applications/approval/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -34,18 +34,18 @@ module.exports = {
   },
   createNetwork: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/networks',
-      data: {
-        network: data
-      }
+      url: '/api/apply',
+      data: data
     });
   },
   createSubnet: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/subnets',
+      /*url: '/proxy/neutron/v2.0/subnets',
       data: {
         subnet: data
-      }
+      }*/
+      url: '/api/apply',
+      data: data
     });
   },
   deleteSubnet: function(item) {

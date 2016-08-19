@@ -1,5 +1,5 @@
 {
-  "title": ["take_instance", "snapshot"],
+  "title": ["apply_instance", "snapshot"],
   "fields": [{
     "type": "icon_label",
     "field": "instance_name",
@@ -10,13 +10,12 @@
     "field": "inst_snapshot_name",
     "required": true
   }, {
-    "type": "charge",
-    "field": "charge",
-    "has_label": true
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
-    "disabled": false
+    "disabled": true
   }
 }

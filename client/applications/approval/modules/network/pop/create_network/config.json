@@ -1,5 +1,5 @@
 {
-  "title": ["create", "prv_network"],
+  "title": ["apply_", "prv_network"],
   "fields": [{
     "type": "tip",
     "tip_type": "info",
@@ -26,7 +26,7 @@
     "has_long_label": true
   }, {
     "type": "checkbox",
-    "field": "create_subnet",
+    "field": "apply_subnet",
     "checked": true,
     "has_long_label": true
   }, {
@@ -39,10 +39,15 @@
     "is_long_label": true,
     "tip_info": "cidr_tip",
     "required": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description",
+    "is_long_label": true,
+    "value": ""
   }],
   "btn": {
-    "value": "create",
-    "type": "create",
-    "disabled": false
+    "value": "apply_",
+    "type": "apply",
+    "disabled": true
   }
 }

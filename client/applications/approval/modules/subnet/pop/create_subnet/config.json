@@ -1,5 +1,5 @@
 {
-  "title": ["create", "subnet"],
+  "title": ["apply_", "subnet"],
   "fields": [{
     "type": "input",
     "field": "subnet_name",
@@ -56,10 +56,15 @@
     "tip_type": "error",
     "field": "error",
     "hide": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description",
+    "value": "",
+    "hide": "true"
   }],
   "btn": {
-    "value": "create",
-    "type": "create",
+    "value": "apply_",
+    "type": "apply",
     "disabled": true
   }
 }

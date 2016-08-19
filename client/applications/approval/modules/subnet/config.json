@@ -8,7 +8,7 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "subnet"],
+    "value": ["apply_", "subnet"],
     "key": "create",
     "type": "create",
     "icon": "create"

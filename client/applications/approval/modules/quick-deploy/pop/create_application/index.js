@@ -18,7 +18,7 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      obj.description = refs.apply_desc.state.value;
+      obj.description = refs.apply_description.state.value;
       request.createApplication(obj).then(res => {
         callback && callback();
         cb(true);

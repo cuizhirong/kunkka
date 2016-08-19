@@ -5,12 +5,12 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "volume"],
+    "value": ["apply_", "volume"],
     "key": "create",
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["create", "snapshot"],
+    "value": ["apply_", "snapshot"],
     "key": "create_snapshot",
     "type": "create",
     "icon": "create",

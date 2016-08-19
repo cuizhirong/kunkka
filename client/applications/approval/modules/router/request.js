@@ -1,5 +1,5 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
+var storage = require('client/applications/approval/cores/storage');
+var fetch = require('client/applications/approval/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -57,10 +57,8 @@ module.exports = {
   },
   createRouter: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/routers',
-      data: {
-        router: data
-      }
+      url: '/api/apply',
+      data: data
     });
   },
   updateRouter: function(routerId, data) {

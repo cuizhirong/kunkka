@@ -12,13 +12,13 @@ var createNetwork = require('./pop/create_network/index');
 var createSubnet = require('../subnet/pop/create_subnet/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var router = require('client/utils/router');
 var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
+var msgEvent = require('client/applications/approval/cores/msg_event');
+var notify = require('client/applications/approval/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
@@ -47,7 +47,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/network');
+            router.replaceState('/approval/network');
           }
         }
       }
@@ -77,7 +77,7 @@ class Model extends React.Component {
         case 'subnet':
           column.render = (col, item, i) => {
             var listener = (subnetID) => {
-              router.pushState('/dashboard/subnet/' + subnetID);
+              router.pushState('/approval/subnet/' + subnetID);
             };
 
             var subnetRender = [];
@@ -269,7 +269,7 @@ class Model extends React.Component {
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.create + __.subnet} disabled={rows[0].shared || rows[0]['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
+                <Button value={__.apply_ + __.subnet} disabled={rows[0].shared || rows[0]['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
                   rawItem: rows[0]
                 })}/>
               </DetailMinitable>
@@ -373,12 +373,12 @@ class Model extends React.Component {
     item.subnets.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        name: <a data-type="router" href={'/dashboard/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
+        name: <a data-type="router" href={'/approval/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
         cidr: element.cidr,
         router: element.router ?
           <span>
             <i className="glyphicon icon-router"/>
-            <a data-type="router" href={'/dashboard/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
+            <a data-type="router" href={'/approval/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
           </span> : '',
         operation: (item.shared || item['router:external']) ? '-' : <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
           rawItem: item,

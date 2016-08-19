@@ -13,7 +13,7 @@ var createRule = require('./pop/create_rule/index');
 var config = require('./config.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 
 class Model extends React.Component {
 
@@ -260,7 +260,7 @@ class Model extends React.Component {
         return (
           <span>
             <i className="glyphicon icon-security-group" />
-            <a data-type="router" href={'/dashboard/security-group/' + source.id}>{source.name}</a>
+            <a data-type="router" href={'/approval/security-group/' + source.id}>{source.name}</a>
           </span>
         );
       }

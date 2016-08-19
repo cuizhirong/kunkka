@@ -1,4 +1,4 @@
-var fetch = require('client/applications/dashboard/cores/fetch');
+var fetch = require('client/applications/approval/cores/fetch');
 
 module.exports = {
   getSubnetList: function() {

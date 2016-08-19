@@ -8,12 +8,6 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "instance"],
-    "key": "create",
-    "type": "create",
-    "icon": "create",
-    "disabled": true
-  }, {
     "value": ["delete"],
     "key": "delete",
     "type": "delete",

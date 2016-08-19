@@ -4,7 +4,7 @@ var React = require('react');
 var Topology = require('../../components/topology/index');
 
 var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 
 var t = null;
 

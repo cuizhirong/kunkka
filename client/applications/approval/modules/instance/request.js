@@ -1,5 +1,5 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
+var storage = require('client/applications/approval/cores/storage');
+var fetch = require('client/applications/approval/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
@@ -119,11 +119,9 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/images/' + item.id
     });
   },
-  createSnapshot: function(snapshot, item) {
-    var data = {};
-    data.createImage = snapshot;
+  createSnapshot: function(data) {
     return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
+      url: '/api/apply',
       data: data
     });
   },

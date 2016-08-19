@@ -1,8 +1,8 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 function pop(obj, parent, callback) {
   var name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';

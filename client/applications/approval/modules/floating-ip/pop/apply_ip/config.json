@@ -27,6 +27,10 @@
     "tip_type": "warning",
     "field": "warning",
     "hide": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description",
+    "value": ""
   }],
   "btn": {
     "value": "allocate",

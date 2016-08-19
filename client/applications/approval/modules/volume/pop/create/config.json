@@ -1,5 +1,5 @@
 {
-  "title": ["create", "volume"],
+  "title": ["apply_", "volume"],
   "fields": [{
     "type": "input",
     "field": "name"
@@ -18,11 +18,6 @@
     "unit": "GB",
     "hide": true
   }, {
-    "type": "charge",
-    "field": "charge",
-    "has_label": true,
-    "hide": true
-  }, {
     "type": "tip",
     "tip_type": "warning",
     "field": "warning",
@@ -32,9 +27,12 @@
     "tip_type": "error",
     "field": "error",
     "hide": true
+  },  {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
     "disabled": true
   }

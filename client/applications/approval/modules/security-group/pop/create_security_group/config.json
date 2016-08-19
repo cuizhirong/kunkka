@@ -1,5 +1,5 @@
 {
-	"title": ["create", "security_group"],
+	"title": ["apply_", "security_group"],
   "fields": [{
     "type": "tip",
     "tip_type": "info",
@@ -11,11 +11,11 @@
     "required": true
   }, {
     "type": "textarea",
-    "field": "desc"
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
-    "disabled": false
+    "disabled": true
   }
 }

@@ -9,13 +9,13 @@ var BasicProps = require('client/components/basic_props/index');
 
 //pop modal
 var deleteModal = require('client/components/modal_delete/index');
-var createInstance = require('../instance/pop/create_instance/index');
+//var createInstance = require('../instance/pop/create_instance/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
 
@@ -46,7 +46,7 @@ class Model extends React.Component {
 
           var path = router.getPathList();
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === path[2]) {
-            router.replaceState('/dashboard/' + path[1]);
+            router.replaceState('/approval/' + path[1]);
           }
         }
       }
@@ -163,11 +163,6 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
     switch (key) {
-      case 'create':
-        createInstance(rows[0], null, function() {
-          router.pushState('/dashboard/instance');
-        });
-        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -217,9 +212,6 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for (let key in btns) {
       switch (key) {
-        case 'create':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
-          break;
         case 'delete':
           let hasPublicImage = rows.some((ele) => ele.visibility === 'public');
           btns[key].disabled = (rows.length === 0 || hasPublicImage) ? true : false;

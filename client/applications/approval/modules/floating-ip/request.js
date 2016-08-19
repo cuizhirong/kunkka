@@ -53,7 +53,7 @@ module.exports = {
   },
   createFloatingIp: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/floatingips',
+      url: '/api/apply',
       data: data
     });
   },

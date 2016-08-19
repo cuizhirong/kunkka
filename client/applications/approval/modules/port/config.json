@@ -5,7 +5,7 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "port"],
+    "value": ["apply_", "port"],
     "key": "create",
     "type": "create",
     "icon": "create"

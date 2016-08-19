@@ -1,8 +1,8 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var priceConverter = require('../../../../utils/price');
+var __ = require('locale/client/approval.lang.json');
+//var priceConverter = require('../../../../utils/price');
 
 function pop(obj, parent, callback) {
 
@@ -16,7 +16,7 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      function setPrice() {
+      /*function setPrice() {
         var unitPrice = HALO.prices['snapshot.size'].unit_price.price.segmented[0].price;
         var imgSize = obj.image.size / 1024 / 1024 / 1024;
         var price = Number(unitPrice * imgSize).toFixed(4);
@@ -24,9 +24,9 @@ function pop(obj, parent, callback) {
         refs.charge.setState({
           value: price
         });
-      }
+      }*/
 
-      if (enableCharge) {
+      /*if (enableCharge) {
         if (!HALO.prices) {
           request.getPrices().then((res) => {
             HALO.prices = priceConverter(res);
@@ -35,21 +35,48 @@ function pop(obj, parent, callback) {
         } else {
           setPrice();
         }
-      }
+      }*/
     },
     onConfirm: function(refs, cb) {
-      var snapshot = {
+      var data = {};
+      data.detail = {};
+      var createDetail = data.detail;
+
+      createDetail.create = [];
+      var configCreate = createDetail.create;
+      var createItem = {};
+      createItem = {
+        _type: 'Snapshot',
+        _identity: 'instSnap',
         name: refs.inst_snapshot_name.state.value,
         metadata: {
           meta_var: 'meta_val'
         }
       };
-      request.createSnapshot(snapshot, obj).then((res) => {
+      configCreate.push(createItem);
+      data.description = refs.apply_description.state.value;
+      request.createSnapshot(data).then((res) => {
         callback && callback(res);
         cb(true);
       });
     },
     onAction: function(field, state, refs) {
+      var inst_snapshot_name = refs.inst_snapshot_name.state;
+      switch (field) {
+        case 'inst_snapshot_name':
+          if(inst_snapshot_name.error === true && inst_snapshot_name.value === '') {
+            refs.inst_snapshot_name.setState({
+              error: false
+            });
+          }
+          break;
+        default:
+          break;
+      }
+      
+      refs.btn.setState({
+        disabled: !(!inst_snapshot_name.error && inst_snapshot_name.value)
+      }); 
 
     },
     onLinkClick: function() {

@@ -15,12 +15,12 @@ var relatedSubnet = require('./pop/related_subnet/index');
 var detachSubnet = require('./pop/detach_subnet/index');
 
 var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
@@ -49,7 +49,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/router');
+            router.replaceState('/approval/router');
           }
         }
       }
@@ -339,7 +339,7 @@ class Model extends React.Component {
         id: index + 1,
         name: <div>
             <i className="glyphicon icon-subnet" />
-            <a data-type="router" href={'/dashboard/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>
+            <a data-type="router" href={'/approval/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>
           </div>,
         cidr: element.cidr,
         gateway_ip: element.gateway_ip,
