@@ -79,6 +79,9 @@
         "name": ["description"],
         "key": "description",
         "default": true
+      }, {
+        "name": ["ipsec", "tunnel"],
+        "key": "ipsec"
       }]
     }
   }

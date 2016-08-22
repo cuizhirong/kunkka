@@ -96,13 +96,19 @@ class Model extends React.Component {
 
     props.menus.forEach((m) => {
       var submenu = [];
-      m.items.forEach((n) => {
+      m.items.forEach((n, i) => {
         submenu.push({
           subtitle: __[n],
           key: n,
           onClick: this.onClickSubmenu,
           iconClass: 'glyphicon icon-' + this.getIcon(n),
-          selected: n === state.selectedMenu ? true : false
+          selected: n === state.selectedMenu ? true : false,
+          hidden: false
+        });
+        configs.hidden && configs.hidden.forEach((module) => {
+          if (module === n) {
+            submenu[i].hidden = true;
+          }
         });
       });
       menus.push({

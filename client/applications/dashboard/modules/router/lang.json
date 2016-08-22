@@ -15,7 +15,20 @@
     "set_gateway": "Enable external gateway",
     "tip_dis_gw": "Do you want to disable external gateway of router \"{0}\" ?",
     "tip_related_subnet": "Already filtered subnets with the gateway-status off.",
-    "tip_router_has_subnet": "Cannot delete router which has been related to subnets"
+    "tip_router_has_subnet": "Cannot delete router which has been related to subnets",
+    "tunnel": "Tunnel",
+    "vpn_service": "VPN Service",
+    "check": "Check",
+    "tunnel_type": "Tunnel Type",
+    "layer_three": "layer 3",
+    "ike_policy": "IKE Policy",
+    "ipsec_policy": "IPsec Policy",
+    "no_resources": "NO {0}",
+    "remote_ip": "Remote IP",
+    "remote_tip": "Please fill out the IP address of peer side router, it must be a public IP, like 1.2.3.4.",
+    "key": "Key",
+    "target_network": "Target Network",
+    "target_tip": "Please fill out the network address of target network, like 192.168.4.0/24 CIDR of target network can't be overlapped with subnets connected to this router."
   },
   "zh-CN": {
     "add_interface": "绑定",
@@ -33,6 +46,19 @@
     "set_gateway": "启用公网网关",
     "tip_dis_gw": "是否关闭路由器\"{0}\"上的公网网关？",
     "tip_related_subnet": "已过滤未开启网关的子网",
-    "tip_router_has_subnet": "不能删除有子网关联的路由器"
+    "tip_router_has_subnet": "不能删除有子网关联的路由器",
+    "tunnel": "隧道",
+    "vpn_service": "VPN服务",
+    "check": "查看",
+    "tunnel_type": "隧道类型",
+    "layer_three": "三层隧道",
+    "ike_policy": "IKE策略",
+    "ipsec_policy": "IPSec策略",
+    "no_resources": "暂无{0}",
+    "remote_ip": "远端IP",
+    "remote_tip": "请填写对端路由的IP地址，须为合法的IP地址，例如1.2.3.4",
+    "key": "密钥",
+    "target_network": "目标网络",
+    "target_tip": "请填写对端路由器的IP地址，例如192.168.0.4/24 目标网络不能和本路由器已有的私有网络重复"
   }
 }

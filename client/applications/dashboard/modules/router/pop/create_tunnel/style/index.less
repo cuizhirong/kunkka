@@ -1,0 +1,84 @@
+@import "../../../../../../../style/index.less";
+
+@strong_color: @color_delete;
+@no_resources: @color_font_700;
+@border_color: @color_grey_600;
+.halo-pop-com-target {
+  margin-top: 18px;
+  padding-left: 0px!important;
+  align-items: baseline!important;
+  > div:first-child {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+    text-align: right;
+    margin-right: 12px;
+    > strong {
+      color: @strong_color;
+    }
+  }
+  > div:last-child {
+    clear: both;
+  }
+  .modal-input {
+    width: 100%;
+    > input {
+      width: 74%;
+      box-sizing: border-box;
+      height: 32px;
+      .error {
+        border-color: @strong_color;
+      }
+    }
+  }
+  .btn {
+    margin-left: 20px;
+  }
+  .short-tip-row {
+    padding-left: 0;
+  }
+  .row {
+    border-bottom: 1px solid @border_color;
+    height: 20px;
+    margin-bottom: 10px;
+    > span {
+      width: 350px;
+      display: inline-block;
+      padding-left: 10px;
+    }
+    > i {
+      &:hover {
+        color: @strong_color;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.halo-pop-com-select {
+  margin-top: 18px;
+  padding-left: 0!important;
+  display: flex;
+  align-items: center;
+  > div:first-child {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+    text-align: right;
+    margin-right: 12px;
+  }
+  > div:last-child {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    .empty-text-label {
+      width: 90%!important;
+      padding-right: 14px;
+      color: @no_resources;
+    }
+    > select {
+      -webkit-box-flex: 1;
+      flex: 1;
+      margin-right: 10px;
+    }
+  }
+}

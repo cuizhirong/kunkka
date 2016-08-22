@@ -1,0 +1,43 @@
+{
+  "title": ["create", "tunnel"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "tunnel_type",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "ike_policy",
+    "data": []
+  }, {
+    "type": "adapter",
+    "field": "ipsec_policy",
+    "data": []
+  }, {
+    "type": "adapter",
+    "field": "vpn_service",
+    "data": []
+  }, {
+    "type": "input",
+    "field": "remote_ip",
+    "required": true,
+    "tip_info": "remote_tip"
+  }, {
+    "type": "input",
+    "field": "key",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "target_network",
+    "required": true,
+    "tip_info": "target_tip"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

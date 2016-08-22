@@ -6,6 +6,7 @@ var {Button} = require('client/uskin/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
+var IpsecTable = require('./ipsec_table/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createRouter = require('./pop/create_router/index');
@@ -13,6 +14,9 @@ var publicGateway = require('./pop/enable_public_gateway/index');
 var disableGateway = require('./pop/disable_gateway/index');
 var relatedSubnet = require('./pop/related_subnet/index');
 var detachSubnet = require('./pop/detach_subnet/index');
+var createVpnService = require('./pop/create_vpn_service/index');
+var createTunnel = require('./pop/create_tunnel/index');
+var editTunnel = require('./pop/edit_tunnel/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -280,6 +284,37 @@ class Model extends React.Component {
           );
         }
         break;
+      case 'ipsec':
+        if (isAvailableView) {
+          var vpnService = this.getVpnService(rows[0]),
+            ipsecItem = this.getIpsecItem(rows[0]);
+
+          contents[tabKey] = (
+            <div>
+              <IpsecTable
+                __={__}
+                title={__.tunnel + __.list}
+                defaultUnfold={true}
+                tableConfig={ipsecItem ? ipsecItem : []}
+                onAction={this.onDetailAction.bind(this)}>
+                <Button type="create" value={__.create + __.tunnel} onClick={this.onDetailAction.bind(this, 'ipsec', 'cnt_tunnel', {
+                  rawItem: rows[0]
+                })} />
+                <a data-type="router" className="link" href={'/dashboard/ike-policy'}>{__.check + __.policy + __.list}</a>
+              </IpsecTable>
+              <DetailMinitable
+                __={__}
+                title={__.vpn_service + __.list}
+                defaultUnfold={true}
+                tableConfig={vpnService ? vpnService : []} >
+                <Button type="create" value={__.create + __.vpn_service} onClick={this.onDetailAction.bind(this, 'ipsec', 'cnt_vpn_service', {
+                  rawItem: rows[0]
+                })} />
+              </DetailMinitable>
+            </div>
+          );
+        }
+        break;
       default:
         break;
     }
@@ -377,6 +412,129 @@ class Model extends React.Component {
     return tableConfig;
   }
 
+  getIpsecItem(item) {
+    var columns = [];
+    var columnIke = [{
+      title: __.ike_policy + __.name,
+      key: 'ipsecpolicy',
+      dataIndex: 'name'
+    }, {
+      title: __.auth_algorithm,
+      key: 'auth_algorithm',
+      dataIndex: 'auth_algorithm'
+    }, {
+      title: __.encryption_algorithm,
+      key: 'encryption_algorithm',
+      dataIndex: 'encryption_algorithm'
+    }, {
+      title: __.ike_version,
+      key: 'ike_version',
+      dataIndex: 'ike_version'
+    }, {
+      title: __.pfs,
+      key: 'pfs',
+      dataIndex: 'pfs'
+    }, {
+      title: __.sa_lifetime,
+      key: 'sa_lifetime',
+      dataIndex: 'sa_lifetime'
+    }];
+    var columnIpsec = [{
+      title: __.ipsec_policy + __.name,
+      key: 'ipsecpolicy',
+      dataIndex: 'name'
+    }, {
+      title: __.transform_protocol,
+      key: 'transform_protocol',
+      dataIndex: 'transform_protocol'
+    }, {
+      title: __.encapsulation_mode,
+      key: 'encapsulation_mode',
+      dataIndex: 'encapsulation_mode'
+    }, {
+      title: __.pfs,
+      key: 'pfs',
+      dataIndex: 'pfs'
+    }, {
+      title: __.sa_lifetime,
+      key: 'sa_lifetime',
+      dataIndex: 'sa_lifetime'
+    }];
+    var columnTagret = [{
+      title: __.target_network,
+      key: 'target',
+      dataIndex: 'peer_cidr'
+    }, {
+      title: __.operation,
+      key: 'operation',
+      dataIndex: 'operation'
+    }];
+    columns.splice(0, 0, columnIke, columnIpsec, columnTagret);
+
+    var dataContent = [],
+      obj = [],
+      dataObj;
+    item.ipsec_site_connections.forEach((element, i) => {
+      obj = [];
+      element.peer_cidrs.forEach((peerCidr, index) => {
+        dataObj = {
+          id: index + peerCidr,
+          peer_cidr: peerCidr,
+          operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'ipsec', 'delete_cidr', {
+            rawItem: element,
+            index: index
+          })} />
+        };
+        obj.push(dataObj);
+      });
+
+      dataContent.push(obj);
+    });
+    var tableConfig = {
+      columns: columns,
+      data: item.ipsec_site_connections,
+      dataContents: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+    return tableConfig;
+  }
+
+  getVpnService(item) {
+    var dataContent = [];
+    item.vpnservices.forEach((vpnService, index) => {
+      var dataObj = {
+        id: index + 1,
+        name: vpnService.name || '(' + vpnService.id.substring(0, 8) + ')',
+        subnet: vpnService.subnet.cidr,
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'ipsec', 'delete_vpn_service', {
+          rawItem: item,
+          childItem: vpnService
+        })} />
+      };
+      dataContent.push(dataObj);
+    });
+    var tableConfig = {
+      column: [{
+        title: __.vpn_service,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.subnet,
+        key: 'subnet',
+        dataIndex: 'subnet'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+    return tableConfig;
+  }
+
   refresh(data, forceUpdate) {
     if (data) {
       var path = router.getPathList();
@@ -411,6 +569,9 @@ class Model extends React.Component {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
+      case 'ipsec':
+        this.onIpsecAction(actionType, data);
+        break;
       default:
         break;
     }
@@ -427,6 +588,84 @@ class Model extends React.Component {
         break;
       case 'detach_subnet':
         detachSubnet(data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onIpsecAction(actionType, data) {
+    var that = this;
+    switch (actionType) {
+      case 'cnt_tunnel':
+        createTunnel(data.rawItem, null, () => {
+          that.refresh({
+            detailRefresh: true
+          });
+        });
+        break;
+      case 'cnt_vpn_service':
+        createVpnService(data.rawItem, null, () => {
+          that.refresh({
+            clearState: true,
+            detailRefresh: true
+          });
+        });
+        break;
+      case 'delete_vpn_service':
+        request.deleteVpnService(data.childItem.id).then(res => {
+          that.refresh({
+            clearState: true,
+            detailRefresh: true
+          });
+        });
+        break;
+      case 'check':
+        let _data = {
+          ipsec_site_connection: {
+            admin_state_up: data.isOpen
+          }
+        };
+        request.updateIpsecConnection(data.id, _data);
+        break;
+      case 'delete_cidr':
+        data.rawItem.peer_cidrs.splice(data.index, 1);
+        var peerCidrs = {
+          ipsec_site_connection: {
+            peer_cidrs: data.rawItem.peer_cidrs
+          }
+        };
+        request.updateIpsecConnection(data.rawItem.id, peerCidrs).then(res => {
+          this.refresh({
+            detailRefresh: true
+          });
+        });
+        break;
+      case 'deleteIpsec':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'tunnel',
+          data: [data.rawItem],
+          onDelete: function(_data1, cb) {
+            request.deleteIpsecConnection(data.id).then((res) => {
+              cb(true);
+              that.refresh({
+                detailRefresh: true
+              }, false);
+            }).catch((error) => {
+              cb(false, getErrorMessage(error));
+            });
+          }
+        });
+        break;
+      case 'editIpsec':
+        editTunnel(data.rawItem, null, () => {
+          this.refresh({
+            clearState: true,
+            detailRefresh: true
+          });
+        });
         break;
       default:
         break;

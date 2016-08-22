@@ -9,7 +9,9 @@
       "instance",
       "image",
       "image-snapshot",
-      "keypair"
+      "keypair",
+      "ike-policy",
+      "ipsec-policy"
     ]
   }, {
     "title": "network",
@@ -48,5 +50,9 @@
     "key": "resource-pool",
     "link": "loadbalancer"
   }],
+  "hidden": [
+    "ike-policy",
+    "ipsec-policy"
+  ],
   "theme": "default"
 }

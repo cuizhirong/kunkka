@@ -1,0 +1,54 @@
+@import "../../../../../../style/index.less";
+
+@border_color: @color_grey_600;
+@delete: @color_delete;
+.halo-com-ipsec-table {
+  .table-title {
+    display: flex;
+    line-height: 28px;
+    border-bottom: 1px solid @border_color;
+    padding-bottom: 4px;
+    margin-top: 20px;
+    .title {
+      display: flex;
+      > div:first-child {
+        font-size: 16px;
+        font-weight: bold;
+        padding-right: 10px;
+      }
+      > .switch {
+        padding-top: 4px;
+      }
+    }
+    .list {
+      justify-content: flex-end;
+      display: flex;
+      flex: 1;
+      > .btn {
+        width: 56px;
+        min-width: 56px;
+        line-height: 28px;
+        height: 28px;
+        margin-left: 10px;
+      }
+    }
+  }
+  .table-info {
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    > div {
+      padding-right: 10px;
+      line-height: 28px;
+      height: 28px;
+      -webkit-flex: 1;
+      flex: 1;
+    }
+  }
+  i {
+    &:hover {
+      color: @delete;
+      cursor: pointer;
+    }
+  }
+}
