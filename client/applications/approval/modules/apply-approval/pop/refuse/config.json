@@ -1,0 +1,10 @@
+{
+  "title": ["accept", "application"],
+  "fields": [{
+    "type": "textarea",
+    "field": "refuse_explain"
+  }],
+  "btn": {
+    "value": "refuse"
+  }
+}

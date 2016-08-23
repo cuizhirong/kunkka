@@ -45,6 +45,14 @@ module.exports = (str) => {
       type.icon = 'warning';
       type.status = 'refused';
       break;
+    case 'pending':
+      type.icon = 'pending';
+      type.status = 'pending';
+      break;
+    case 'approving':
+      type.icon = 'approving';
+      type.status = 'approving';
+      break;
     default:
       type.status = 'loading';
       break;

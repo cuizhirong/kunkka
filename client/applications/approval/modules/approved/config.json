@@ -1,21 +1,13 @@
 {
   "tabs": [{
-    "name": ["apply"],
-    "key": "apply",
+    "name": ["apply-approval"],
+    "key": "apply-approval"
+  }, {
+    "name": ["approved"],
+    "key": "approved",
     "default": true
   }],
   "btns": [{
-    "value": ["modify", "application"],
-    "key": "modify_application",
-    "icon": "property",
-    "disabled": true
-  }, {
-    "value": ["delete"],
-    "key": "delete",
-    "type": "delete",
-    "icon": "delete",
-    "disabled": true
-  }, {
     "key": "refresh",
     "icon": "refresh"
   }],

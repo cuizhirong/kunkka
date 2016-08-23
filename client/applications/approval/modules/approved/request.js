@@ -1,11 +1,10 @@
 var storage = require('client/applications/approval/cores/storage');
 var fetch = require('client/applications/approval/cores/fetch');
-var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['Apply'], forced).then(function(data) {
-      return data.Apply;
+    return storage.getList(['Approved'], forced).then(function(data) {
+      return data.Approved;
     });
   },
   modifyApply: function(item, newDesc) {
@@ -16,14 +15,5 @@ module.exports = {
       url: '/api/apply/' + item.id,
       data: data
     });
-  },
-  deleteApply: function(items) {
-    var deferredList = [];
-    items.forEach(item => {
-      deferredList.push(fetch.delete({
-        url: '/api/apply/' + item.id
-      }));
-    });
-    return RSVP.all(deferredList);
   }
 };

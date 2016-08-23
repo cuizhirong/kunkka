@@ -7,7 +7,8 @@ var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
 var ApplyDetail = require('../../components/apply_detail/index');
 
-var modifyApply = require('./pop/modify_application/index');
+var acceptApply = require('./pop/accept/index');
+var refuseApply = require('./pop/refuse/index');
 
 var config = require('./config.json');
 var request = require('./request');
@@ -93,23 +94,20 @@ class Model extends React.Component {
     var rows = data.rows;
     var that = this;
     switch (key) {
-      case 'modify_application':
-        modifyApply(rows[0], null, () => {
-          this.refresh({
-            tableLoading: true,
-            clearState: true,
-            detailRefresh: true
-          }, true);
-        });
+      case 'accept':
+        acceptApply(rows[0]);
+        break;
+      case 'refuse':
+        refuseApply(rows[0]);
         break;
       case 'delete':
         deleteModal({
           __: __,
           action: 'delete',
-          type: 'application',
+          type: 'keypair',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteApply(rows).then((res) => {
+            request.deleteKeypairs(rows).then((res) => {
               cb(true);
               that.refresh(null, true);
             });
@@ -119,9 +117,7 @@ class Model extends React.Component {
       case 'refresh':
         this.refresh({
           tableLoading: true,
-          detailLoading: true,
-          clearState: true,
-          detailRefresh: true
+          clearState: true
         }, true);
         break;
       default:
@@ -150,18 +146,11 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var rowsPending = true;
-    rows.forEach(r => {
-      rowsPending = r.status === 'pending' && rowsPending;
-    });
-
     for(let key in btns) {
       switch (key) {
-        case 'modify_application':
-          btns[key].disabled = !(rows.length === 1 && rowsPending);
-          break;
-        case 'delete':
-          btns[key].disabled = !(rows.length > 0 && rowsPending);
+        case 'accept':
+        case 'refuse':
+          btns[key].disabled = rows.length === 1 ? false : true;
           break;
         default:
           break;
@@ -201,8 +190,7 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tabKey={'description'}
                 rawItem={rows[0]}
-                items={basicPropsItem ? basicPropsItem : []}
-                onAction={this.onDetailAction.bind(this)} />
+                items={basicPropsItem ? basicPropsItem : []} />
               <ApplyDetail
                 title={__.application + __.detail}
                 defaultUnfold={true}
@@ -226,8 +214,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description,
-      type: 'editable'
+      content: item.description
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
@@ -242,15 +229,6 @@ class Model extends React.Component {
       content: item.createdAt,
       type: 'time'
     }];
-
-    var approvals = item.approvals,
-      len = approvals.length;
-    if(item.status === 'refused' && len > 0) {
-      items.push({
-        title: __.refuse_explain,
-        content: approvals[len - 1].explain
-      });
-    }
 
     return items;
   }
@@ -275,30 +253,6 @@ class Model extends React.Component {
     this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
 
-  onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
-      case 'description':
-        this.onDescriptionAction(actionType, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  onDescriptionAction(actionType, data) {
-    switch(actionType) {
-      case 'edit_name':
-        request.modifyApply(data.rawItem, data.newName).then(res => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
   loadingTable() {
     var _config = this.state.config;
     _config.table.loading = true;
@@ -310,7 +264,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-apply" style={this.props.style}>
+      <div className="halo-module-apply-approval" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

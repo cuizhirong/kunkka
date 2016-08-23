@@ -9,21 +9,15 @@ function pop(obj, parent, callback) {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {
-      if(obj.detail) {
-        // console.log('init', obj)
-        refs.btn.setState({
-          disabled: false
-        });
-      }
-    },
+    onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      obj.description = refs.apply_desc.state.value;
-      request.createApplication(obj).then(res => {
+      var text = refs.refuse_explain.state.value;
+
+      request.refuseApply(obj, text).then(res => {
         callback && callback();
         cb(true);
       }).catch(err => {
-        getErrorMessage(err);
+        cb(false, getErrorMessage(err));
       });
     },
     onAction: function(field, state, refs) {}

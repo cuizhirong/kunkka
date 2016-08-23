@@ -3,7 +3,9 @@
     "title": "approval",
     "items": [
       "quick-deploy",
-      "apply"
+      "apply",
+      "apply-approval",
+      "approved"
     ]
   }, {
     "title": "compute",
@@ -46,6 +48,9 @@
   }, {
     "key": "resource-pool",
     "link": "loadbalancer"
+  }, {
+    "key": "approved",
+    "link": "apply_approval"
   }],
   "theme": "default"
 }

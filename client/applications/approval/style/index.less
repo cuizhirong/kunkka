@@ -7,6 +7,7 @@
 @icon-status-warning-color: @color_warning;
 @icon-status-danger-color: @color_delete;
 @icon-status-cancel-color: @color_grey_700;
+@icon-status-approving-color: @color_info_600;
 
 a {
   cursor: pointer;
@@ -79,6 +80,7 @@ a {
       color: @icon-status-warning-color;
     }
     &.down,
+    &.pending,
     &.paused {
       color: @icon-status-cancel-color;
     }
@@ -86,6 +88,9 @@ a {
     &.refused,
     &.error {
       color: @icon-status-danger-color;
+    }
+    &.approving {
+      color: @icon-status-approving-color;
     }
   }
 

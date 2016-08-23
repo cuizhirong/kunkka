@@ -1,0 +1,14 @@
+{
+  "en": {
+    "apply-approval": "Apply Approval",
+    "accept": "Accept",
+    "refuse": "Refuse",
+    "refuse_explain": "Refuse Explanation"
+  },
+  "zh-CN": {
+    "apply-approval": "申请审批",
+    "accept": "接受",
+    "refuse": "拒绝",
+    "refuse_explain": "拒绝原因"
+  }
+}

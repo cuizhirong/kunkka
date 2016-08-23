@@ -78,7 +78,8 @@ class Model extends React.Component {
       unit: 'GB',
       sliderInputError: false,
       sliderInputValue: 1,
-      volumeEventType: ''
+      volumeEventType: '',
+      btnDisabled: true
     };
 
     ['initialize', 'initializeVolume', 'onChangeName',
@@ -178,7 +179,8 @@ class Model extends React.Component {
       keypairName: selectedKeypair ? selectedKeypair.name : null,
       username: username,
       hideKeypair: hideKeypair,
-      credential: credential
+      credential: credential,
+      btnDisabled: true
     });
   }
 
@@ -196,11 +198,20 @@ class Model extends React.Component {
   }
 
   onChangeName(e) {
-    var name = e.target.value;
+    var state = this.state,
+      name = e.target.value;
 
     this.setState({
       name: name
     });
+
+    var hasAdminPass = false;
+    hasAdminPass = hasAdminPass || state.keypairName || state.pwd;
+    if(hasAdminPass) {
+      this.setState({
+        btnDisabled: false
+      });
+    }
   }
 
   renderImages(props, state) {
@@ -824,7 +835,7 @@ class Model extends React.Component {
           <label>{__.password}</label>
           <div className="psw-tip-box">
             {
-              state.page === 2 && state.showPwdTip ?
+              state.showPwdTip ?
                 <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
               : null
             }
@@ -872,6 +883,12 @@ class Model extends React.Component {
     this.setState({
       keypairName: name
     });
+
+    if(this.state.name) {
+      this.setState({
+        btnDisabled: false
+      });
+    }
   }
 
   createKeypair() {
@@ -881,8 +898,6 @@ class Model extends React.Component {
         keypairName: keypair.name
       });
     });
-
-    this.stopSliding();
   }
 
   pwdVisibleControl(e) {
@@ -905,6 +920,12 @@ class Model extends React.Component {
       showPwdTip: true,
       pwd: pwd
     });
+
+    if(this.state.name && !pwdError) {
+      this.setState({
+        btnDisabled: false
+      });
+    }
   }
 
   onFocusPwd(e) {
@@ -1140,15 +1161,15 @@ class Model extends React.Component {
     configCreate.push(createItem);
 
     var bindNetwork = {
-      instance: createItem._identity,
-      network: state.network.id
+      Instance: createItem._identity,
+      Network: state.network.id
     };
     configBind.push(bindNetwork);
 
     Object.keys(state.securityGroup).forEach(s => {
       var bindSGrp = {
-        instance: createItem._identity,
-        security_group: s
+        Instance: createItem._identity,
+        Security_group: s
       };
       configBind.push(bindSGrp);
     });
@@ -1164,8 +1185,8 @@ class Model extends React.Component {
       configCreate.push(createVolume);
 
       var bindVolume = {
-        instance: createItem._identity,
-        volume: createVolume._identity
+        Instance: createItem._identity,
+        Volume: createVolume._identity
       };
       configBind.push(bindVolume);
     }
@@ -1273,7 +1294,7 @@ class Model extends React.Component {
             {(state.number === 1 && state.checked) ? this.renderVolume(props, state) : ''}
           </div>
           <div className="btns-create-flip">
-            <Button value={__.create + __.application} type="create" onClick={this.onApply.bind(this)} />
+            <Button value={__.create + __.application} type="create" disabled={state.btnDisabled} onClick={this.onApply.bind(this)} />
           </div>
         </div>
       </div>

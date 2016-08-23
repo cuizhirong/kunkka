@@ -4,10 +4,7 @@ var React = require('react');
 var Main = require('client/components/main/index');
 
 var BasicProps = require('client/components/basic_props/index');
-var deleteModal = require('client/components/modal_delete/index');
 var ApplyDetail = require('../../components/apply_detail/index');
-
-var modifyApply = require('./pop/modify_application/index');
 
 var config = require('./config.json');
 var request = require('./request');
@@ -90,38 +87,11 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
     switch (key) {
-      case 'modify_application':
-        modifyApply(rows[0], null, () => {
-          this.refresh({
-            tableLoading: true,
-            clearState: true,
-            detailRefresh: true
-          }, true);
-        });
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'application',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deleteApply(rows).then((res) => {
-              cb(true);
-              that.refresh(null, true);
-            });
-          }
-        });
-        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
-          detailLoading: true,
-          clearState: true,
-          detailRefresh: true
+          clearState: true
         }, true);
         break;
       default:
@@ -150,19 +120,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var rowsPending = true;
-    rows.forEach(r => {
-      rowsPending = r.status === 'pending' && rowsPending;
-    });
-
     for(let key in btns) {
       switch (key) {
-        case 'modify_application':
-          btns[key].disabled = !(rows.length === 1 && rowsPending);
-          break;
-        case 'delete':
-          btns[key].disabled = !(rows.length > 0 && rowsPending);
-          break;
         default:
           break;
       }
@@ -201,8 +160,7 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tabKey={'description'}
                 rawItem={rows[0]}
-                items={basicPropsItem ? basicPropsItem : []}
-                onAction={this.onDetailAction.bind(this)} />
+                items={basicPropsItem ? basicPropsItem : []} />
               <ApplyDetail
                 title={__.application + __.detail}
                 defaultUnfold={true}
@@ -226,8 +184,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description,
-      type: 'editable'
+      content: item.description
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
@@ -275,30 +232,6 @@ class Model extends React.Component {
     this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
 
-  onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
-      case 'description':
-        this.onDescriptionAction(actionType, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  onDescriptionAction(actionType, data) {
-    switch(actionType) {
-      case 'edit_name':
-        request.modifyApply(data.rawItem, data.newName).then(res => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
   loadingTable() {
     var _config = this.state.config;
     _config.table.loading = true;
@@ -310,7 +243,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-apply" style={this.props.style}>
+      <div className="halo-module-approved" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

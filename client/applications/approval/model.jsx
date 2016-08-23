@@ -84,6 +84,8 @@ class Model extends React.Component {
         return 'deploy';
       case 'apply':
         return 'collaboration';
+      case 'apply-approval':
+        return 'applications';
       default:
         return name;
     }

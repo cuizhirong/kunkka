@@ -10,20 +10,18 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      if(obj.detail) {
-        // console.log('init', obj)
-        refs.btn.setState({
-          disabled: false
-        });
-      }
+      refs.apply_desc.setState({
+        value: obj.description
+      });
     },
     onConfirm: function(refs, cb) {
-      obj.description = refs.apply_desc.state.value;
-      request.createApplication(obj).then(res => {
-        callback && callback();
+      var newDesc = refs.apply_desc.state.value;
+
+      request.modifyApply(obj, newDesc).then(res => {
+        callback && callback(res.floatingip);
         cb(true);
-      }).catch(err => {
-        getErrorMessage(err);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {}
