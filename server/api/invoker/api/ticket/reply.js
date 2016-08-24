@@ -3,7 +3,7 @@
 const dao = require('../../dao');
 const Base = require('../base');
 const replyDao = dao.reply;
-const flow = require('config')('ticket_flow')||['admin','owner','Member'];
+const flow = require('config')('ticket_flow') || ['Member', 'owner', 'admin'];
 
 function Reply (app) {
   Base.call(this);

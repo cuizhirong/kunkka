@@ -6,7 +6,7 @@ module.exports = {
     'node-uuid': '^1.4.7'
   },
   config: {
-    ticket_flow: ['admin', 'owner', 'member'],
+    ticket_flow: ['member', 'owner', 'admin'], //low->high
     ticket_attachment_path: '/opt/attachment/nfs',
     ticket_attachment_size_limit: 10 * 1024 * 1024
   },

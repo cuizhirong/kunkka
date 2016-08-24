@@ -1,5 +1,6 @@
 'use strict';
-const flow = require('config')('ticket_flow') || ['admin', 'owner', 'Member'];
+const flow = require('config')('ticket_flow') || ['Member', 'owner', 'admin'];
+const flowReverse = JSON.parse(JSON.stringify(flow)).reverse();
 
 function API () {
 }
@@ -23,7 +24,7 @@ API.prototype = {
       return arrRoles.indexOf(role) > -1 && (roleIndex = i);
     });
 
-    return roleIndex;
+    return flow.indexOf(flowReverse[roleIndex]);
   }
 };
 

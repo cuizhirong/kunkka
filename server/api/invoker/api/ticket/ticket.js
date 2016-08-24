@@ -4,7 +4,7 @@ const dao = require('../../dao');
 const Base = require('../base');
 const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
-const flow = require('config')('ticket_flow') || ['admin', 'owner', 'Member'];
+const flow = require('config')('ticket_flow') || ['Member', 'owner', 'admin'];
 
 function Ticket (app) {
   Base.call(this);
@@ -35,9 +35,9 @@ Ticket.prototype = {
 
     let roleIndex = this.getRoleIndex(req.session.user.roles);
 
-    if (roleIndex < 0) {
+    if (roleIndex < 0 || roleIndex > flow.length - 1) {
       return next({msg: req.i18n.__('api.ticket.permissionDenied')});
-    } else if (roleIndex === 0) {
+    } else if (roleIndex === flow.length - 1) {
       return next({msg: req.i18n.__('api.ticket.cannotCreate')});
     }
 
@@ -50,7 +50,7 @@ Ticket.prototype = {
       status: status,
       username: username,
       role: flow[roleIndex],
-      handlerRole: flow[roleIndex - 1],
+      handlerRole: flow[roleIndex + 1],
       attachments: _attachments
     }).then(res.json.bind(res), next);
   },
@@ -232,14 +232,14 @@ Ticket.prototype = {
     ticketDao.findOneById(ticketId).then(ticket=> {
       const roleIndex = this.getRoleIndex(req.session.user.roles);
 
-      if (roleIndex < 1) {
+      if (roleIndex >= flow.length - 1) {
         return next({msg: req.i18n.__('api.ticket.noHigher')});
       }
 
       if ((ticket.status === 'proceeding' && ticket.processor === req.session.user.userId)
         || (ticket.status !== 'proceeding' && ticket.handlerRole === flow[roleIndex])) {
         ticket.status = 'pending';
-        ticket.handlerRole = flow[roleIndex - 1];
+        ticket.handlerRole = flow[roleIndex + 1];
         ticket.processor = '';
         ticket.save().then(res.json.bind(res), next);
       } else {

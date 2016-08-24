@@ -29,10 +29,10 @@ function haloProcessor(user, HALO) {
   if (enableTicket) {
     let roleIndex = getRoleIndex(user.roles);
     if (roleIndex === 0) {
-      selfTicket = false;
+      othersTicket = false;
     }
     if (roleIndex === roleFlowLength - 1) {
-      othersTicket = false;
+      selfTicket = false;
     }
     HALO.configs.ticket = enableTicket ? {show_apply: selfTicket, show_manage: othersTicket} : null;
   }
