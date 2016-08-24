@@ -27,7 +27,8 @@
     "assemble": "node ./scripts/assemble.js",
     "pull": "node ./scripts/pull.js && node ./scripts/merge_config.js",
     "merge": "node ./scripts/merge_config.js OVERWRITE",
-    "tags": "node ./scripts/get_tag.js"
+    "release": "node ./scripts/get_tag.js",
+    "tags": "node ./scripts/release.js"
   },
   "dependencies": {
     "body-parser": "~1.14.1",

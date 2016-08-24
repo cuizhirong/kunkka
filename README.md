@@ -161,6 +161,11 @@ npm run merge
 #### fetch all projects's newest tag and write into kunkka/config.json or whatever/config.json
 You need to copy halo/token.json.sample to halo/token.json and insert your owner gitlab token
 ```
+npm run release
+```
+
+### tag all projects if project has new commits. Then push new tags to remote
+```
 npm run tags
 ```
 
@@ -180,7 +185,7 @@ The maximum characters for each row should be less than 72.
 This is an example:
 ```
 Ensure setuptools is somewhat recent
- 
+
 Due to bugs in older setuptools version parsing
 we need to set a relatively new version of setuptools
 so that parsing works better (and/or correctly).
