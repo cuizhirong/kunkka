@@ -28,7 +28,8 @@
     "pull": "node ./scripts/pull.js && node ./scripts/merge_config.js",
     "merge": "node ./scripts/merge_config.js OVERWRITE",
     "release": "node ./scripts/get_tag.js",
-    "tags": "node ./scripts/release.js"
+    "tags": "node ./scripts/release.js",
+    "add_eslint": "node ./scripts/add_eslint.js"
   },
   "dependencies": {
     "body-parser": "~1.14.1",

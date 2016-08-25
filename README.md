@@ -169,6 +169,11 @@ npm run release
 npm run tags
 ```
 
+### add eslint hook to all projects
+```
+npm run add_eslint
+```
+
 ## Code Standard
 
 ### Commit message formatter
