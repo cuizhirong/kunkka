@@ -90,7 +90,7 @@ Stack.prototype.dealBind = function() {
             nw.network = {get_resource: '_' + e.Network};
           } else {
           // case Old Network
-            nw.network = e.Network;
+            nw.uuid = e.Network;
           }
         }
         // Floatingip binding
