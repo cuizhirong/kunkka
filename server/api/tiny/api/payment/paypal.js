@@ -3,7 +3,7 @@
 const paypal = require('paypal-rest-sdk');
 const PayModel = require('../../models').pay;
 
-paypal.configure(require('config')('paypal').live);
+paypal.configure(require('config')('paypal'));
 
 module.exports = {
   create: function (info, req, res) {

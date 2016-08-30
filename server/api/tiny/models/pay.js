@@ -18,7 +18,7 @@ module.exports = function (mysql, DataTypes) {
     currency: {
       type: DataTypes.STRING,
       allowNull: false,
-      default: 'CAD'
+      default: 'CNY'
     },
     user: {
       type: DataTypes.STRING,

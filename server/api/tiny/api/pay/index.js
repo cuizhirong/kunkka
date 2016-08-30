@@ -8,6 +8,9 @@ const payment = {
   alipay: require('../payment/alipay')
 };
 
+const currency = require('config')('currency') || {ISO4217: 'CNY', name: '人民币', unit: '元'};
+
+
 function Pay (app) {
   this.app = app;
 }
@@ -17,14 +20,15 @@ Pay.prototype = {
   //create payment
   pay: function (req, res, next) {
     let user = req.session.user.userId;
+    let username = req.session.user.username;
     let method = req.params.method;
     let amount = req.body.amount;
-    let currency = req.body.currency || 'CAD';
     let info = {
       user: user,
+      username: username,
       method: method,
       amount: amount,
-      currency: currency
+      currency: currency.ISO4217
     };
     PayModel.create(info).then(function (pay) {
       info.id = pay.id;
@@ -63,7 +67,6 @@ Pay.prototype = {
     payment.paypal.execute(req, res, next);
   },
 
-
   //payment success and notify from alipay
   alipayNotify: function (req, res, next) {
     if (req.body.trade_status === 'TRADE_FINISHED') {
@@ -75,14 +78,10 @@ Pay.prototype = {
       next(req.body);
     }
   },
-  //restrict from alipay
-  alipayReturn: function (req, res, next) {
-    payment.alipay.returnUrl(req, res, next);
-  },
-
 
   //recharge for users
   inform: function (req, res, next) {
+    let _paymentIsAlipay = req.route.path.indexOf('alipay') > -1;
     let region = req.header('REGION') || req.body.REGION;
 
     PayModel.findOne({where: {id: req.query.uuid}}).then(pay=> {
@@ -100,7 +99,11 @@ Pay.prototype = {
           }
           pay.informed = 1;
           pay.save().then(function (result) {
-            res.json({code: 0, msg: req.i18n.__('api.pay.RechargeSucceed')});
+            if (_paymentIsAlipay) {
+              res.end('success');
+            } else {
+              res.json(result);
+            }
           }).catch(next);
         });
       } else if (pay.transferred === 1 && pay.informed === 1) {
@@ -112,13 +115,11 @@ Pay.prototype = {
     }).catch(err=> {
       next(err);
     });
-
-
   },
+
   initRoutes: function () {
     this.app.post('/api/pay/:method', this.pay);
     this.app.post('/api/pay/alipay/notify', this.alipayNotify, this.inform);
-    this.app.post('/api/pay/alipay/return', this.alipayReturn);
     this.app.get('/api/pay/paypal/:result', this.paypalExecute, this.inform);
   }
 

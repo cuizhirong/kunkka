@@ -1,17 +1,32 @@
 'use strict';
 const models = require('../../models');
 const PayModel = models.pay;
-const request = require('request');
-const xml2json = require('xml2json');
-const md5 = require('md5');
-const allConfig = require('config')('alipay');
+const crypto = require('crypto');
 
-const commonData = {
-  partner: allConfig.common.partner,
-  _input_charset: allConfig.common._input_charset
+const config = require('config');
+const currencyConfig = config('currency') || {ISO4217: 'CNY', name: '人民币', unit: '元'};
+const queryOptions = config('alipay');
+
+const gateway = queryOptions.gateway;
+const partnerKey = queryOptions.partnerKey;
+const charset = queryOptions._input_charset;
+delete queryOptions.partnerKey;
+delete queryOptions.gateway;
+
+
+const _getPreStr = function (options) {
+  return Object.keys(options || {}).sort().map(key=> {
+    if (!(key === 'sign' || key === 'sign_type' || options[key] === '')) {
+      return key + '=' + options[key];
+    } else {
+      return false;
+    }
+  }).filter(option=>option).join('&');
 };
-const gateway = allConfig.common.gateway;
-const partnerKey = allConfig.common.partnerKey;
+const _md5Sign = function (preStr) {
+  return crypto.createHash('md5').update(preStr + partnerKey, charset).digest('hex');
+};
+
 
 module.exports = {
   create: function (info, req, res) {
@@ -19,24 +34,32 @@ module.exports = {
       out_trade_no: info.id,
       total_fee: info.amount,
       currency: info.currency,
-      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION'),
-      return_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/return'
+      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION')
     };
 
-    Object.assign(data, allConfig.forex, commonData);
+    queryOptions.subject += info.username;
+    queryOptions.body += info.amount + currencyConfig.unit;
+    Object.assign(data, queryOptions);
 
-    var ret = Object.keys(data).sort().map((el) => {
-      return el + '=' + data[el];
-    }).join('&');
+    let preStr = _getPreStr(data);
+    let sign = _md5Sign(preStr);
 
-    let sign = md5(ret + partnerKey);
-
-    res.send({url: gateway + ret + '&sign=' + sign + '&sign_type=MD5'});
+    res.send({url: gateway + preStr + '&sign=' + sign + '&sign_type=MD5'});
   },
 
 
   //save database,
   execute: function (req, res, next) {
+    let data = req.body;
+
+    let preStr = _getPreStr(req.body);
+    let mySign = _md5Sign(preStr);
+
+    if (mySign !== data.sign) {
+      return next('sign error');
+    }
+
+
     return PayModel.findOne({
       where: {id: req.body.out_trade_no}
     }).then(pay=> {
@@ -45,29 +68,5 @@ module.exports = {
     }).catch(err=> {
       next(err);
     });
-  },
-
-  returnUrl: function (req, res, next) {
-
-    let data = {
-      out_trade_no: req.query.out_trade_no
-    };
-    Object.assign(data, allConfig.query, commonData);
-
-    var ret = Object.keys(data).sort().map((el) => {
-      return el + '=' + data[el];
-    }).join('&');
-
-    let sign = md5(ret + partnerKey);
-
-    request(gateway + ret + '&sign=' + sign + '&sign_type=MD5').then(function (response) {
-      let result = xml2json.toJson(response.body);
-      if (result.alipay && result.alipay.is_success === 'T') {
-        req.send(result.alipay);
-      } else {
-        next(result);
-      }
-    });
-
   }
 };
