@@ -62,8 +62,7 @@ function pop(obj, parent, actionModify, callback) {
       if(actionModify) {
         var updateData = {
           name: refs.name.state.value,
-          connection_limit: refs.connection_limit.state.value,
-          charge: refs.charge.state.value
+          connection_limit: refs.connection_limit.state.value
         };
 
         request.updateListener(obj.id, updateData).then(res => {
@@ -78,8 +77,7 @@ function pop(obj, parent, actionModify, callback) {
           protocol: refs.listener_protocol.state.value,
           protocol_port: refs.protocol_port.state.value,
           loadbalancer_id: obj.id,
-          connection_limit: refs.connection_limit.state.value,
-          charge: refs.charge.state.value
+          connection_limit: refs.connection_limit.state.value
         };
 
         request.createListener(listenerData).then(res => {
