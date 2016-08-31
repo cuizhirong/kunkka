@@ -39,6 +39,21 @@ Driver.prototype.putMethod = function (url, token, callback, theBody) {
   }
 };
 
+Driver.prototype.patchMethod = function (url, token, callback, theBody) {
+  if (theBody) {
+    request
+      .patch(url)
+      .send(theBody)
+      .set('X-Auth-Token', token)
+      .end(callback);
+  } else {
+    request
+      .patch(url)
+      .set('X-Auth-Token', token)
+      .end(callback);
+  }
+};
+
 Driver.prototype.postMethod = function (url, token, callback, theBody) {
   if (token) {
     request
