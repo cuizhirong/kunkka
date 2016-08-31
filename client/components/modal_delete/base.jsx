@@ -52,7 +52,7 @@ class ModalBase extends React.Component {
       state = this.state,
       __ = props.__,
       action = __[props.action],
-      type = __[props.type],
+      type = Array.isArray(props.type) ? props.type.map(t => __[t]).join('') : __[props.type],
       num = props.data.length,
       cancel = __.cancel,
       content = __.msg_delete.replace('{0}', action).replace('{1}', type).replace('{2}', num);
@@ -61,7 +61,7 @@ class ModalBase extends React.Component {
       title: action + type
     });
 
-    var iconType = props.iconType || props.type.replace('_', '-');
+    var iconType = props.iconType || (Array.isArray(props.type) ? '' : props.type.replace('_', '-'));
 
     return (
       <Modal {..._props} visible={state.visible}>
