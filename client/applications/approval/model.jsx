@@ -27,8 +27,21 @@ class Model extends React.Component {
     router.on('changeState', this.onChangeState);
 
     var pathList = router.getPathList();
+    var roles = HALO.user.roles;
+    var hasAuth = roles.some(r => {
+      if(r === 'admin' || r === 'owner') {return true;}
+      return false;
+    });
+
     if (pathList.length <= 1) {
       pathList[1] = configs.default_module;
+    } else {
+      if(!hasAuth && pathList[1] === 'apply-approval') {
+        pathList[1] = configs.default_module;
+      }
+      if(!hasAuth && pathList[1] === 'approved') {
+        pathList[1] = configs.default_module;
+      }
     }
     router.replaceState('/approval/' + pathList.slice(1).join('/'), null, null, true);
   }
@@ -98,10 +111,18 @@ class Model extends React.Component {
       HALO = props.HALO,
       modules = loader.modules,
       menus = [];
+    var roles = HALO.user.roles;
+    var hasAuth = roles.some(r => {
+      if(r === 'admin' || r === 'owner') {return true;}
+      return false;
+    });
 
     props.menus.forEach((m) => {
       var submenu = [];
       m.items.forEach((n) => {
+        if(!hasAuth && n === 'apply-approval') {
+          return;
+        }
         submenu.push({
           subtitle: __[n],
           key: n,
