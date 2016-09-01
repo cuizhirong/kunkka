@@ -9,7 +9,7 @@ var gatewayId = null;
 function pop(parent, callback) {
 
   var enableCharge = HALO.settings.enable_charge;
-  config.fields[2].hide = !enableCharge;
+  config.fields[3].hide = !enableCharge;
 
   var props = {
     __: __,
@@ -23,19 +23,13 @@ function pop(parent, callback) {
           value: price
         });
       }
-
       request.getGateway().then((res) => {
         if(res.length > 0) {
-          gatewayId = res[0].id;
-          if(res.length > 1) {
-            gatewayId = '';
-            refs.ex_networks = res;
-            refs.external_network.setState({
-              data: res,
-              value: res[0].id,
-              hide: false
-            });
-          }
+          refs.external_network.setState({
+            data: res,
+            value: res[0].id,
+            hide: false
+          });
 
           refs.btn.setState({
             disabled: false
@@ -73,24 +67,21 @@ function pop(parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'enable_public_gateway':
+          if(refs.enable_public_gateway.state.checked && enableCharge) {
+            refs.charge.setState({
+              hide: false
+            });
+          } else {
+            refs.charge.setState({
+              hide: true
+            });
+          }
           if(refs.enable_public_gateway.state.checked) {
             refs.external_network.setState({
               hide: false
             });
-            refs.charge.setState({
-              hide: false
-            });
-            refs.bandwidth.setState({
-              hide: false
-            });
           } else {
             refs.external_network.setState({
-              hide: true
-            });
-            refs.charge.setState({
-              hide: true
-            });
-            refs.bandwidth.setState({
               hide: true
             });
           }

@@ -16,14 +16,6 @@
       "info": "no_network"
     }
   }, {
-    "type": "slider",
-    "field": "bandwidth",
-    "min": 1,
-    "max": 30,
-    "value": 1,
-    "unit": "Mbps",
-    "hide": false
-  }, {
     "type": "charge",
     "field": "charge",
     "has_label": true,

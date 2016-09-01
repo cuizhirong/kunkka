@@ -102,13 +102,7 @@ class Model extends React.Component {
           key: n,
           onClick: this.onClickSubmenu,
           iconClass: 'glyphicon icon-' + this.getIcon(n),
-          selected: n === state.selectedMenu ? true : false,
-          hidden: false
-        });
-        configs.hidden && configs.hidden.forEach((module) => {
-          if (module === n) {
-            submenu[i].hidden = true;
-          }
+          selected: n === state.selectedMenu ? true : false
         });
       });
       menus.push({
@@ -151,7 +145,13 @@ function filterMenu(modules) {
         }
         return false;
       });
-      return !b;
+      var h = configs.hidden.some((hide) => {
+        if (hide === i) {
+          return true;
+        }
+        return false;
+      });
+      return !b && !h;
     });
   });
   return modules;
