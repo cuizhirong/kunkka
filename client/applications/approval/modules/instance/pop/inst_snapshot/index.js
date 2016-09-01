@@ -61,10 +61,10 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
-      var inst_snapshot_name = refs.inst_snapshot_name.state;
+      var instSnapshotName = refs.inst_snapshot_name.state;
       switch (field) {
         case 'inst_snapshot_name':
-          if(inst_snapshot_name.error === true && inst_snapshot_name.value === '') {
+          if(instSnapshotName.error === true && instSnapshotName.value === '') {
             refs.inst_snapshot_name.setState({
               error: false
             });
@@ -73,10 +73,10 @@ function pop(obj, parent, callback) {
         default:
           break;
       }
-      
+
       refs.btn.setState({
-        disabled: !(!inst_snapshot_name.error && inst_snapshot_name.value)
-      }); 
+        disabled: !(!instSnapshotName.error && instSnapshotName.value)
+      });
 
     },
     onLinkClick: function() {

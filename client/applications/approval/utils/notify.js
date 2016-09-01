@@ -1,5 +1,5 @@
 var Notification = require('client/uskin/index').Notification;
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var stack = {};
 
 // @param data {Object} contains resource_name, stage, action, resource_type, resource_id

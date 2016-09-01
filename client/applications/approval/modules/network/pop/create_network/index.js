@@ -23,10 +23,10 @@ function pop(parent, callback) {
       var createItem = {};
 
       createItem = {
-          _type: 'Network',
-          _identity: 'net',
-          name: refs.network_name.state.value
-        };
+        _type: 'Network',
+        _identity: 'net',
+        name: refs.network_name.state.value
+      };
 
       // check vlan
       if (refs.enable_vlan.state.checked) {
@@ -38,8 +38,8 @@ function pop(parent, callback) {
         }
       }
 
-        configCreate.push(createItem);
-        data.description = refs.apply_description.state.value;
+      configCreate.push(createItem);
+      data.description = refs.apply_description.state.value;
 
       if (!refs.enable_security.state.checked) {
         data.port_security_enabled = false;
@@ -54,14 +54,14 @@ function pop(parent, callback) {
           });
         } else {
           request.createNetwork(data).then((res) => {
-            var sub_data = {};
-            sub_data.detail = {};
-            var sub_createDetail = sub_data.detail;
+            var subData = {};
+            subData.detail = {};
+            var subCreateDetail = subData.detail;
 
-            sub_createDetail.create = [];
-            var sub_configCreate = sub_createDetail.create;
-            var sub_createItem = {};
-            sub_createItem = {
+            subCreateDetail.create = [];
+            var subConfigCreate = subCreateDetail.create;
+            var subCreateItem = {};
+            subCreateItem = {
               _type: 'Subnet',
               _identity: 'netSub',
               ip_version: 4,
@@ -70,9 +70,9 @@ function pop(parent, callback) {
               cidr: refs.net_address.state.value,
               enable_dhcp: true
             };
-            sub_configCreate.push(sub_createItem);
-            sub_data.description = refs.description.state.value;
-            request.createSubnet(sub_data).then(() => {
+            subConfigCreate.push(subCreateItem);
+            subData.description = refs.description.state.value;
+            request.createSubnet(subData).then(() => {
               callback && callback(res.network);
               cb(true);
             });
@@ -113,10 +113,10 @@ function pop(parent, callback) {
         default:
           break;
       }
-      
+
       refs.btn.setState({
         disabled: !flag
-      }); 
+      });
     }
   };
 

@@ -18,11 +18,11 @@ var modifyMonitor = require('./pop/modify_monitor/index');
 
 var config = require('./config.json');
 var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
-var notify = require('client/applications/dashboard/utils/notify');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+var notify = require('client/applications/approval/utils/notify');
+var msgEvent = require('client/applications/approval/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -52,7 +52,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/resource-pool');
+            router.replaceState('/approval/resource-pool');
           }
         }
       }
@@ -328,7 +328,7 @@ class Model extends React.Component {
       content: item.loadbalancer ?
         <span>
           <i className="glyphicon icon-lb" />
-          <a data-type="router" href={'/dashboard/loadbalancer/' + item.loadbalancer.id}>{item.loadbalancer.name || '(' + item.loadbalancer.id.slice(0, 8) + ')'}</a>
+          <a data-type="router" href={'/approval/loadbalancer/' + item.loadbalancer.id}>{item.loadbalancer.name || '(' + item.loadbalancer.id.slice(0, 8) + ')'}</a>
         </span>
         : '-'
     }, {
@@ -434,7 +434,7 @@ class Model extends React.Component {
         key: 'name',
         dataIndex: 'name',
         render: function(col, item, i) {
-          return item.server_id ? <a data-type="router" href={'/dashboard/instance/' + item.server_id}>{item.name || '(' + item.server_id.slice(0, 8) + ')'}</a> : '-';
+          return item.server_id ? <a data-type="router" href={'/approval/instance/' + item.server_id}>{item.name || '(' + item.server_id.slice(0, 8) + ')'}</a> : '-';
         }
       }, {
         title: __.ip_address,

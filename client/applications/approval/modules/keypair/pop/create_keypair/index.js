@@ -49,6 +49,7 @@ function pop(parent, callback) {
           refs.public_key.setState({
             hide: state.value === 'create_keypair'
           });
+          break;
         case 'name':
           if(name.error === true && name.value === '') {
             refs.name.setState({

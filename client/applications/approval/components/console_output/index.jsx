@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var fetch = require('client/applications/dashboard/cores/fetch');
+var fetch = require('client/applications/approval/cores/fetch');
 var router = require('client/utils/router');
 var mainEvent = require('client/components/main/event');
 

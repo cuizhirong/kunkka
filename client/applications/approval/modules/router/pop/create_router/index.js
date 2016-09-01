@@ -70,7 +70,7 @@ function pop(parent, callback) {
       createItem = {
         _type: 'Router',
         _identity: 'router',
-        name: refs.name.state.value,
+        name: refs.name.state.value
       };
 
       if (refs.enable_public_gateway.state.checked) {

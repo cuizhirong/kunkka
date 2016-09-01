@@ -1,4 +1,4 @@
-var storage = require('client/applications/dashboard/cores/storage');
+var storage = require('client/applications/approval/cores/storage');
 
 module.exports = {
   getList: function(forced) {

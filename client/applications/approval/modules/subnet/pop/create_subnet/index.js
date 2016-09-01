@@ -49,7 +49,7 @@ function pop(obj, parent, callback) {
         network_id: refs.select_network.state.value,
         cidr: refs.net_address.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked
-        };
+      };
 
       var gwChecked = refs.enable_gw.state.checked;
       if (!gwChecked) {

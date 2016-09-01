@@ -464,7 +464,7 @@ class Topology {
           width: n.w,
           height: n.h
         }, 0, function() {
-          routerUtil.pushState('/dashboard/network/' + n.id);
+          routerUtil.pushState('/approval/network/' + n.id);
         });
       })(network);
 
@@ -519,7 +519,7 @@ class Topology {
           width: subnet.w,
           height: subnet.h
         }, 1, function() {
-          routerUtil.pushState('/dashboard/subnet/' + subnet.id);
+          routerUtil.pushState('/approval/subnet/' + subnet.id);
         });
       }
 
@@ -551,7 +551,7 @@ class Topology {
             width: n.w,
             height: n.h
           }, 0, function() {
-            routerUtil.pushState('/dashboard/instance/' + n.id);
+            routerUtil.pushState('/approval/instance/' + n.id);
           });
         })(_instance);
       });

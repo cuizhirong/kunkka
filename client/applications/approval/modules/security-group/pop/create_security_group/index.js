@@ -19,7 +19,7 @@ function pop(parent, callback) {
       createItem = {
         _type: 'SecurityGroup',
         _identity: 'security',
-        name: refs.name.state.value,
+        name: refs.name.state.value
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;
@@ -43,7 +43,7 @@ function pop(parent, callback) {
       }
       refs.btn.setState({
         disabled: !(!name.error && name.value)
-      }); 
+      });
     }
   };
 

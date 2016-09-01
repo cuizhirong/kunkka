@@ -91,7 +91,7 @@ function pop(obj, parent, callback) {
 
       port.create = [];
       var configCreate = port.create;
-      var port = {};
+      // var port = {};
 
       port = {
         _type: 'Port',

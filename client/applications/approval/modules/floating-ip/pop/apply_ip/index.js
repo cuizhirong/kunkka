@@ -81,18 +81,18 @@ function pop(parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if (externalNetwork) {
-      var data = {};
-      data.detail = {};
-      var createDetail = data.detail;
+        var data = {};
+        data.detail = {};
+        var createDetail = data.detail;
 
-      createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
-      createItem = {
-        _type: 'Floatingip',
-        _identity: 'floatingip'
-      };
-      
+        createDetail.create = [];
+        var configCreate = createDetail.create;
+        var createItem = {};
+        createItem = {
+          _type: 'Floatingip',
+          _identity: 'floatingip'
+        };
+
         if(externalNetwork.length === 1) {
           createItem.floating_network_id = externalNetwork[0].id;
         } else {
