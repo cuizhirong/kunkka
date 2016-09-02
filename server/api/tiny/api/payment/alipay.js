@@ -10,8 +10,12 @@ const queryOptions = config('alipay');
 const gateway = queryOptions.gateway;
 const partnerKey = queryOptions.partnerKey;
 const charset = queryOptions._input_charset;
+const alipaySubject = queryOptions.subject;
+const alipayBody = queryOptions.body;
 delete queryOptions.partnerKey;
 delete queryOptions.gateway;
+delete queryOptions.subject;
+delete queryOptions.body;
 
 
 const _getPreStr = function (options) {
@@ -34,11 +38,11 @@ module.exports = {
       out_trade_no: info.id,
       total_fee: info.amount,
       currency: info.currency,
-      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION')
+      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION'),
+      subject: alipaySubject + info.username,
+      body: alipayBody + info.amount + currencyConfig.unit
     };
 
-    queryOptions.subject += info.username;
-    queryOptions.body += info.amount + currencyConfig.unit;
     Object.assign(data, queryOptions);
 
     let preStr = _getPreStr(data);
