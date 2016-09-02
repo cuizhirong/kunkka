@@ -48,7 +48,7 @@
     "spaced-comment": 0,
     "indent": [2, 2, {"SwitchCase": 1}],
     "vars-on-top": 0,
-    "new-cap": [2, {"capIsNewExceptions": ["express.Router"]}],
+    "new-cap": [2, {"capIsNewExceptions": ["express.Router", "DataTypes.DECIMAL"]}],
     "strict": [0, "never"],
     "no-console": 0
   }
