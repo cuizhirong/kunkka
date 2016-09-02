@@ -219,10 +219,9 @@ Stack.prototype.callStack = function (callback) {
     this.token,
     callback,
     {
-      disable_rollback: false,
+      disable_rollback: true,
       stack_name: getStackName(),
-      template: this.template,
-      timeout_mins: 60
+      template: this.template
     }
   );
 };
