@@ -6,14 +6,6 @@ module.exports = {
     'async': '^1.5.0'
   },
   config: {
-    mysql: {
-      host: '42.62.101.6',
-      port: 3306,
-      user: 'root',
-      password: '1234',
-      database: 'kunkka',
-      table: 'tusk'
-    },
     assets_dir: '/opt/assets'
   },
   setting: [
