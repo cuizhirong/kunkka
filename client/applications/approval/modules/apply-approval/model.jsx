@@ -95,10 +95,22 @@ class Model extends React.Component {
     var that = this;
     switch (key) {
       case 'accept':
-        acceptApply(rows[0]);
+        acceptApply(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'refuse':
-        refuseApply(rows[0]);
+        refuseApply(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete':
         deleteModal({
@@ -214,7 +226,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description
+      content: item.description ? item.description : '-'
     }, {
       title: __.status,
       content: getStatusIcon(item.status)

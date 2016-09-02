@@ -45,7 +45,24 @@
       "title": ["status"],
       "dataIndex": "status",
       "key": "status",
-      "type": "status"
+      "type": "status",
+      "filter": [{
+        "name": ["pending"],
+        "key": "pending",
+        "filterBy": "pending"
+      }, {
+        "name": ["approving"],
+        "key": "approving",
+        "filterBy": "approving"
+      }, {
+        "name": ["pass"],
+        "key": "pass",
+        "filterBy": "pass"
+      }, {
+        "name": ["refused"],
+        "key": "refused",
+        "filterBy": "refused"
+      }]
     }, {
       "title": ["create", "time"],
       "dataIndex": "createdAt",

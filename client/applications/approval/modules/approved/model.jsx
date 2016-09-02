@@ -184,7 +184,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description
+      content: item.description ? item.description : '-'
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
@@ -203,9 +203,10 @@ class Model extends React.Component {
     var approvals = item.approvals,
       len = approvals.length;
     if(item.status === 'refused' && len > 0) {
+      var explain = approvals[len - 1].explain;
       items.push({
         title: __.refuse_explain,
-        content: approvals[len - 1].explain
+        content: explain ? explain : '-'
       });
     }
 

@@ -226,7 +226,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description,
+      content: item.description ? item.description : '-',
       type: 'editable'
     }, {
       title: __.status,

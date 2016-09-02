@@ -786,7 +786,7 @@ class Model extends React.Component {
     var Types = (
       <div className="row row-tab row-tab-credential" key="types">
         <div className="row-label">
-          {__.credentials}
+          <strong>* </strong>{__.credentials}
         </div>
         <div className="row-data">
           {

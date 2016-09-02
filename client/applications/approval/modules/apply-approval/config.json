@@ -1,6 +1,6 @@
 {
   "tabs": [{
-    "name": ["apply-approval"],
+    "name": ["waiting_approve"],
     "key": "apply-approval",
     "default": true
   }, {
@@ -48,7 +48,16 @@
       "title": ["status"],
       "dataIndex": "status",
       "key": "status",
-      "type": "status"
+      "type": "status",
+      "filter": [{
+        "name": ["pending"],
+        "key": "pending",
+        "filterBy": "pending"
+      }, {
+        "name": ["approving"],
+        "key": "approving",
+        "filterBy": "approving"
+      }]
     }, {
       "title": ["create", "time"],
       "dataIndex": "createdAt",
