@@ -133,7 +133,7 @@ Application.prototype = {
           ];
           if (apply.approvals[currentIndex].level === 1) {
             apply.status = 'approving';
-            arrSave.push(apply.save);
+            arrSave.push(apply.save());
           }
           Promise.all(arrSave).then(res.json.bind(res));
         }
