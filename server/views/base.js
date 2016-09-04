@@ -76,7 +76,17 @@ View.prototype = {
   },
   renderChecker: function (setting, req, res, next) {
     if (req.session && req.session.user) {
-      this.renderTemplate(setting, req, res, next);
+      let locale = this.upperCaseLocale(req.i18n.getLocale());
+      let user = (req.session && req.session.user) ? req.session.user : {};
+      let HALO = this.getHALO(locale, setting, user);
+      if (this.plugins) {
+        this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
+      }
+      if (HALO.application.application_list.indexOf(this.name) === -1) {
+        res.redirect('/' + HALO.application.application_list[0]);
+      } else {
+        this.renderTemplate(setting, HALO, locale, req, res, next);
+      }
     } else {
       res.redirect('/');
     }
@@ -122,14 +132,8 @@ View.prototype = {
       }))
     };
   },
-  renderTemplate: function(setting, req, res, next) {
-    let locale = this.upperCaseLocale(req.i18n.getLocale());
+  renderTemplate: function(setting, HALO, locale, req, res, next) {
     let __ = req.i18n.__.bind(req.i18n);
-    let user = (req.session && req.session.user) ? req.session.user : {};
-    let HALO = this.getHALO(locale, setting, user);
-    if (this.plugins) {
-      this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
-    }
     HALO.application.application_list = HALO.application.application_list.map(a => {
       return {[a]: __(`shared.${a}.application_name`)};
     });
