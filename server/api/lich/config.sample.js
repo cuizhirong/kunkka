@@ -6,6 +6,12 @@ module.exports = {
     'node-uuid': '^1.4.7'
   },
   config: {
-    approve_flow: ['Member', 'owner', 'admin']
-  }
+    approval_flow: ['Member', 'owner', 'admin']
+  },
+  setting: [{
+    app: 'global',
+    name: 'enable_approval',
+    value: 'false',
+    type: 'boolean'
+  }]
 };
