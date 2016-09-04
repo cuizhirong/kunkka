@@ -8,10 +8,16 @@ function main(app, clientApps, currentView, viewPlugins) {
   const view = new View(app, clientApps, currentView, viewPlugins);
   // rewrite render qualification
   view.renderChecker = function (setting, req, res, next) {
+    let locale = this.upperCaseLocale(req.i18n.getLocale());
+    let user = (req.session && req.session.user) ? req.session.user : {};
+    let HALO = this.getHALO(locale, setting, user);
+    if (this.plugins) {
+      this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
+    }
     if (!req.session || !req.session.user) {
-      this.renderTemplate(setting, req, res, next);
+      this.renderTemplate(setting, HALO, locale, req, res, next);
     } else if (req.session && req.session.user){
-      res.redirect('/dashboard');
+      res.redirect('/' + HALO.application.application_list[0]);
     }
   };
   view.getTemplateObj = function(HALO, locale, setting, __) {

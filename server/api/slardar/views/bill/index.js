@@ -6,16 +6,6 @@ function main(app, clientApps, currentView, viewPlugins) {
   let views = app.get('views');
   views.push(__dirname);
   const view = new View(app, clientApps, currentView, viewPlugins);
-  // rewrite render qualification
-  view.renderChecker = function (setting, req, res, next) {
-    if (req.session && req.session.user && setting.enable_charge) {
-      this.renderTemplate(setting, req, res, next);
-    } else if (req.session && req.session.user){
-      res.redirect('/dashboard');
-    } else {
-      res.redirect('/');
-    }
-  };
   view.init();
 }
 
