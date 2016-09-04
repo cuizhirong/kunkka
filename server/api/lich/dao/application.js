@@ -78,6 +78,7 @@ exports.findAllByFields = function (fields) {
     ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
+  obj.distinct = true;
 
   return Application.findAndCount(obj);
 };
