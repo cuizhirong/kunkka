@@ -41,7 +41,7 @@ const tusk = mysql.import('tusk', (entity, DataTypes) => {
 });
 
 mysql.sync().then( () => {
-  console.log('mysql for tusk sync done!');
+  console.log('tusk: mysql sync done!');
 }).catch(e => {
   console.log(e);
 });

@@ -11,7 +11,7 @@ const sessionEngine = config('sessionEngine');
 const configMysql = config('mysql');
 
 const databaseName = configMysql.database;
-const tableName = configMysql.table;
+const tableName = 'tusk';
 const sqlOption = {
   host : configMysql.host,
   port : configMysql.port,
@@ -47,7 +47,6 @@ const fs = require('fs');
         if (setting && setting.length > 0) {
           initSets = initSets.concat(setting);
         }
-        console.log(initSets);
       } catch (err) {
         if (err.code !== 'MODULE_NOT_FOUND') {
           console.log(err);
@@ -55,6 +54,8 @@ const fs = require('fs');
       }
     });
 });
+
+console.log(initSets);
 
 
 let num = initSets.length;
