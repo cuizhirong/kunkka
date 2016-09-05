@@ -4,7 +4,7 @@ class Adapter extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.state = Object.assign({
       renderer: props.renderer,
       field: props.field,
       value: props.value ? props.value : '',
@@ -12,7 +12,7 @@ class Adapter extends React.Component {
       disabled: !!props.disabled,
       hide: !!props.hide,
       error: false
-    };
+    }, this.props);
     this.onChange = this.onChange.bind(this);
   }
 
@@ -37,18 +37,8 @@ class Adapter extends React.Component {
 
   render() {
     var state = this.state;
-    var adapaterConfig = {
-      field: state.field,
-      value: state.value,
-      required: state.required,
-      disabled: !!state.disabled,
-      hide: !!state.hide,
-      error: !!state.error,
-      onChange: this.onChange
-    };
-
     return (
-      this.state.renderer ? this.state.renderer(adapaterConfig) : <div>no info</div>
+      this.state.renderer ? this.state.renderer(state) : <div>no info</div>
     );
   }
 }
