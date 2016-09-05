@@ -27,20 +27,48 @@ class Model extends React.Component {
     router.on('changeState', this.onChangeState);
 
     var pathList = router.getPathList();
-    var roles = HALO.user.roles;
-    var hasAuth = roles.some(r => {
-      if(r === 'admin' || r === 'owner') {return true;}
-      return false;
-    });
+    var enableApply = HALO.configs.approval.showApply,
+      showMyApply = HALO.configs.approval.showMyApplication,
+      showMgmtApply = HALO.configs.approval.showManageApplication;
 
     if (pathList.length <= 1) {
-      pathList[1] = configs.default_module;
-    } else {
-      if(!hasAuth && pathList[1] === 'apply-approval') {
+      if(enableApply) {
         pathList[1] = configs.default_module;
+      } else {
+        pathList[1] = 'apply-approval';
       }
-      if(!hasAuth && pathList[1] === 'approved') {
-        pathList[1] = configs.default_module;
+    } else {
+      if(!enableApply) {
+        ['compute', 'network', 'storage'].forEach(title => {
+          var modules = configs.modules;
+          modules.some(obj => {
+            if(obj.title === title) {
+              obj.items.forEach(tab => {
+                if(pathList[1] === tab) {
+                  pathList[1] = 'apply-approval';
+                }
+              });
+              return true;
+            }
+            return false;
+          });
+        });
+      }
+
+      if(!showMyApply && pathList[1] === 'apply') {
+        if(enableApply) {
+          pathList[1] = configs.default_module;
+        } else {
+          pathList[1] = 'apply-approval';
+        }
+      }
+
+      if(!showMgmtApply) {
+        ['apply-approval', 'approved'].forEach(tab => {
+          if(pathList[1] === tab) {
+            pathList[1] = configs.default_module;
+          }
+        });
       }
     }
     router.replaceState('/approval/' + pathList.slice(1).join('/'), null, null, true);
@@ -111,18 +139,39 @@ class Model extends React.Component {
       HALO = props.HALO,
       modules = loader.modules,
       menus = [];
-    var roles = HALO.user.roles;
-    var hasAuth = roles.some(r => {
-      if(r === 'admin' || r === 'owner') {return true;}
-      return false;
-    });
+    var enableApply = HALO.configs.approval.showApply,
+      showMyApply = HALO.configs.approval.showMyApplication,
+      showMgmtApply = HALO.configs.approval.showManageApplication;
 
     props.menus.forEach((m) => {
+      if(!enableApply) {
+        switch(m.title) {
+          case 'compute':
+          case 'network':
+          case 'storage':
+            return;
+          default:
+            break;
+        }
+      }
+
       var submenu = [];
       m.items.forEach((n) => {
-        if(!hasAuth && n === 'apply-approval') {
-          return;
+        switch(n) {
+          case 'quick-deploy':
+            if(!enableApply) return;
+            break;
+          case 'apply':
+            if(!showMyApply) return;
+            break;
+          case 'apply-approval':
+          case 'approved':
+            if(!showMgmtApply) return;
+            break;
+          default:
+            break;
         }
+
         submenu.push({
           subtitle: __[n],
           key: n,
