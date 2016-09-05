@@ -110,12 +110,18 @@ Stack.prototype.dealBind = function() {
         }
         // Volume binding
         if (typeof e.Volume === 'string') {
-          newOne.properties.block_device_mapping_v2 = newOne.properties.block_device_mapping_v2 || [];
+          this.objCreate._volumeAttachment = {
+            type: 'OS::Cinder::VolumeAttachment',
+            properties: {
+              instance_uuid: {get_resource: '_' + e.Instance},
+              volume_id: {get_resource: '_' + e.Volume}
+            }
+          };
           if (this.objCreate['_' + e.Volume]) {
-            newOne.properties.block_device_mapping_v2.push({volume_id: {get_resource: '_' + e.Volume}});
+            this.objCreate._volumeAttachment.properties.volume_id = {get_resource: '_' + e.Volume};
             return true;
           } else {
-            newOne.properties.block_device_mapping_v2.push({volume_id: e.Volume});
+            this.objCreate._volumeAttachment.properties.volume_id = e.Volume;
             return true;
           }
         }
