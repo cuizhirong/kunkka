@@ -72,7 +72,7 @@ class ApplyDetail extends React.Component {
                   {bindDetail.map((b, m) => {
                     return Object.keys(b).map((f, n) =>
                       <div className="info-box" key={'bind' + m + n}>
-                        {__[f] + ': '}<span>{b[f]}</span>
+                        {__[f.toLowerCase()] + ': '}<span>{b[f]}</span>
                       </div>
                     );
                   })}

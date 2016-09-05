@@ -1,13 +1,11 @@
 {
   "en": {
-    "apply-approval": "Apply Approval",
     "accept": "Accept",
     "waiting_approve": "Waiting Approve",
     "refuse": "Refuse",
     "refuse_explain": "Refuse Explanation"
   },
   "zh-CN": {
-    "apply-approval": "申请审批",
     "accept": "接受",
     "waiting_approve": "待审批",
     "refuse": "拒绝",
