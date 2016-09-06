@@ -27,9 +27,10 @@ class Model extends React.Component {
     router.on('changeState', this.onChangeState);
 
     var pathList = router.getPathList();
-    var enableApply = HALO.configs.approval.showApply,
-      showMyApply = HALO.configs.approval.showMyApplication,
-      showMgmtApply = HALO.configs.approval.showManageApplication;
+    var approval = HALO.configs.approval,
+      enableApply = approval.showApply,
+      showMyApply = approval.showMyApplication,
+      showMgmtApply = approval.showManageApplication;
 
     if (pathList.length <= 1) {
       if(enableApply) {
@@ -139,9 +140,10 @@ class Model extends React.Component {
       HALO = props.HALO,
       modules = loader.modules,
       menus = [];
-    var enableApply = HALO.configs.approval.showApply,
-      showMyApply = HALO.configs.approval.showMyApplication,
-      showMgmtApply = HALO.configs.approval.showManageApplication;
+    var approval = HALO.configs.approval,
+      enableApply = approval.showApply,
+      showMyApply = approval.showMyApplication,
+      showMgmtApply = approval.showManageApplication;
 
     props.menus.forEach((m) => {
       if(!enableApply) {
@@ -159,14 +161,14 @@ class Model extends React.Component {
       m.items.forEach((n) => {
         switch(n) {
           case 'quick-deploy':
-            if(!enableApply) return;
+            if(!enableApply) { return; }
             break;
           case 'apply':
-            if(!showMyApply) return;
+            if(!showMyApply) { return; }
             break;
           case 'apply-approval':
           case 'approved':
-            if(!showMgmtApply) return;
+            if(!showMgmtApply) { return; }
             break;
           default:
             break;
@@ -199,7 +201,10 @@ class Model extends React.Component {
               state.modules.map((m, index) => {
                 var M = modules[m];
                 if (M) {
-                  return <M key={index} params={state.params} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
+                  return (<M
+                    key={index}
+                    style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}}
+                    params={state.params} />);
                 }
               })
             }
