@@ -1,15 +1,11 @@
+var storage = require('client/applications/dashboard/cores/storage');
 var fetch = require('client/applications/dashboard/cores/fetch');
 var RSVP = require('rsvp');
 
 module.exports = {
-  getList: function() {
-    return fetch.get({
-      url: '/proxy/neutron/v2.0/vpn/ipsecpolicies'
-    }).then((res) => {
-      res.ipsecpolicies.forEach((item) => {
-        item.sa_lifetime = item.lifetime.value + ' s';
-      });
-      return res;
+  getList: function(forced) {
+    return storage.getList(['ipsecpolicy'], forced).then((res) => {
+      return res.ipsecpolicy;
     });
   },
   deletePolicy: function(items) {

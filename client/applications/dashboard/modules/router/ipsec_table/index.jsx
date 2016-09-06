@@ -34,6 +34,7 @@ class IpsecTable extends React.Component {
       _data: nextProps.tableConfig.data,
       dataContents: nextProps.tableConfig.dataContents
     });
+    this.forceUpdate();
   }
 
   onChange(adminData) {

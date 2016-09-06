@@ -123,7 +123,6 @@ class Model extends React.Component {
           loading: false
         });
       }
-
       this.setState({
         config: config
       }, () => {
@@ -601,7 +600,7 @@ class Model extends React.Component {
         createTunnel(data.rawItem, null, () => {
           that.refresh({
             detailRefresh: true
-          });
+          }, true);
         });
         break;
       case 'cnt_vpn_service':
@@ -609,7 +608,7 @@ class Model extends React.Component {
           that.refresh({
             clearState: true,
             detailRefresh: true
-          });
+          }, true);
         });
         break;
       case 'delete_vpn_service':
@@ -617,7 +616,7 @@ class Model extends React.Component {
           that.refresh({
             clearState: true,
             detailRefresh: true
-          });
+          }, true);
         });
         break;
       case 'check':
@@ -636,9 +635,9 @@ class Model extends React.Component {
           }
         };
         request.updateIpsecConnection(data.rawItem.id, peerCidrs).then(res => {
-          this.refresh({
+          that.refresh({
             detailRefresh: true
-          });
+          }, true);
         });
         break;
       case 'deleteIpsec':
@@ -652,7 +651,7 @@ class Model extends React.Component {
               cb(true);
               that.refresh({
                 detailRefresh: true
-              }, false);
+              }, true);
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
@@ -664,7 +663,7 @@ class Model extends React.Component {
           this.refresh({
             clearState: true,
             detailRefresh: true
-          });
+          }, true);
         });
         break;
       default:
