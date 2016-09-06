@@ -25,5 +25,10 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  getResourceInfo: function(forced) {
+    return storage.getList(['image', 'flavor'], forced).then(function(data) {
+      return data;
+    });
   }
 };

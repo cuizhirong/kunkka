@@ -15,5 +15,10 @@ module.exports = {
       url: '/api/apply/' + item.id,
       data: data
     });
+  },
+  getResourceInfo: function(forced) {
+    return storage.getList(['image', 'flavor'], forced).then(function(data) {
+      return data;
+    });
   }
 };

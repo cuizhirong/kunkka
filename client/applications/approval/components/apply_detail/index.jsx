@@ -2,6 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var __ = require('locale/client/approval.lang.json');
+var unitConverter = require('client/utils/unit_converter');
 
 class ApplyDetail extends React.Component {
   constructor(props) {
@@ -34,8 +35,43 @@ class ApplyDetail extends React.Component {
         return __.keypair;
       case 'volume_type':
         return __.volume + __.type;
+      case 'admin_pass':
+        return __.password;
       default:
         return __[k] ? __[k] : k;
+    }
+  }
+
+  getFieldContent(item, field) {
+    var data = this.props.data;
+    var getResource = function() {
+      var resource = {};
+      data[field].some(ele => {
+        if(ele.id === item[field]) {
+          resource = ele;
+          return true;
+        }
+        return false;
+      });
+
+      return resource;
+    };
+
+    switch(field) {
+      case 'image':
+        let image = getResource();
+        return image ? <span>
+          <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} />
+          <a data-type="router" href={'/approval/' + field + '/' + item[field]}>{image.name}</a>
+        </span> : <span>{item[field]}</span>;
+      case 'flavor':
+        let flavor = getResource(),
+          ram = unitConverter(flavor.ram, 'MB');
+        return flavor ? <span>
+            {flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + flavor.disk + 'GB'}
+          </span> : <span>{item[field]}</span>;
+      default:
+        return <span>{item[field]}</span>;
     }
   }
 
@@ -59,7 +95,7 @@ class ApplyDetail extends React.Component {
                   <div className="item-info" key={'create' + i}>
                     {['_type', '_identity', 'name', 'flavor', 'image', 'admin_pass', 'key_name',
                         'size', 'volume_type'].map((k, j) => {
-                          return (c[k] ? <div className="info-box" key={'create' + i + j}>{this.getFieldName(k) + ': '}<span>{c[k]}</span></div> : '');
+                          return (c[k] ? <div className="info-box" key={'create' + i + j}>{this.getFieldName(k) + ': '}{this.getFieldContent(c, k)}</div> : '');
                         })}
                   </div>
                 )}

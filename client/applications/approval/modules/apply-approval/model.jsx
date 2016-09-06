@@ -83,7 +83,9 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+        request.getResourceInfo().then(res => {
+          this.onClickDetailTabs(actionType, refs, data, res);
+        });
         break;
       default:
         break;
@@ -172,7 +174,7 @@ class Model extends React.Component {
     return btns;
   }
 
-  onClickDetailTabs(tabKey, refs, data) {
+  onClickDetailTabs(tabKey, refs, data, resourceData) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
@@ -206,7 +208,8 @@ class Model extends React.Component {
               <ApplyDetail
                 title={__.application + __.detail}
                 defaultUnfold={true}
-                items={rows[0].detail} />
+                items={rows[0].detail}
+                data={resourceData} />
             </div>
           );
         }

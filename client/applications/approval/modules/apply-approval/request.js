@@ -3,8 +3,8 @@ var fetch = require('client/applications/approval/cores/fetch');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['Approving'], forced).then(function(data) {
-      return data.Approving;
+    return storage.getList(['approving'], forced).then(function(data) {
+      return data.approving;
     });
   },
   modifyApply: function(item, newDesc) {
@@ -29,6 +29,11 @@ module.exports = {
         status: 'refused',
         explain: text
       }
+    });
+  },
+  getResourceInfo: function(forced) {
+    return storage.getList(['image', 'flavor'], forced).then(function(data) {
+      return data;
     });
   }
 };
