@@ -3,10 +3,6 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
-function filterRoles(roles) {
-  return roles.filter((ele) => ele.name !== 'billing_owner');
-}
-
 function pop(type, obj, parent, callback) {
   config.fields[0].text = obj.name;
   if (type === 'domain') {
@@ -23,7 +19,7 @@ function pop(type, obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getRoles().then((res) => {
-        var roles = filterRoles(res.roles);
+        var roles = res.roles;
         if (roles.length > 0) {
           refs.role.setState({
             data: roles,

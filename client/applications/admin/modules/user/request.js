@@ -133,8 +133,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/roles'
     }).then((res) => {
-      var roles = res.roles.filter((ele) => ele.name !== 'billing_owner');
-      return roles;
+      return res.roles;
     });
   },
   deleteItem: function(items) {
