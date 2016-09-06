@@ -12,6 +12,14 @@ driver.listUsers = function (token, remote, callback, query) {
   );
 };
 
+driver.getUser = function (token, remote, userId, callback) {
+  return driver.getMethod(
+    remote + '/v3/users/' + userId,
+    token,
+    callback
+  );
+};
+
 driver.createUser = function (token, remote, payload, callback) {
   return driver.postMethod(
     remote + '/v3/users',
