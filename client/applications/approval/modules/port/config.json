@@ -29,11 +29,6 @@
           "title": ["modify", "security", "group"],
           "key": "modify",
           "disabled": true
-        }, {
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
         }]
       }]
     }

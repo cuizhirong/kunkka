@@ -483,16 +483,6 @@ class Model extends React.Component {
         createSnapshot(data.rawItem);
         break;
       case 'delete_related_snapshot':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'snapshot',
-          data: [data.childItem],
-          onDelete: function(_data, cb) {
-            request.deleteSnapshot(data.childItem);
-            cb(true);
-          }
-        });
         break;
       default:
         break;

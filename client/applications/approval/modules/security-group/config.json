@@ -16,12 +16,6 @@
     "icon": "edit",
     "disabled": true
   }, {
-    "value": ["delete"],
-    "key": "delete",
-    "type": "delete",
-    "icon": "delete",
-    "disabled": true
-  }, {
     "key": "refresh",
     "icon": "refresh"
   }],

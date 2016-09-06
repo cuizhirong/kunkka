@@ -15,12 +15,6 @@
     "icon": "associate",
     "disabled": true
   }, {
-    "value": ["release"],
-    "key": "delete",
-    "icon": "delete",
-    "type": "delete",
-    "disabled": true
-  }, {
     "value": ["more"],
     "key": "more",
     "iconClass": "more",

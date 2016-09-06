@@ -38,11 +38,6 @@
           "title": ["modify", "subnet"],
           "key": "mdfy_subnet",
           "disabled": true
-        }, {
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
         }]
       }]
     }

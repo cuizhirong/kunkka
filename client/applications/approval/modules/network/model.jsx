@@ -380,10 +380,7 @@ class Model extends React.Component {
             <i className="glyphicon icon-router"/>
             <a data-type="router" href={'/approval/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
           </span> : '',
-        operation: (item.shared || item['router:external']) ? '-' : <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
-          rawItem: item,
-          childItem: element
-        })} />
+        operation: '-'
       };
       dataContent.push(dataObj);
     });

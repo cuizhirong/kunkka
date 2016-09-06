@@ -43,13 +43,6 @@
           "key": "set_rd_wrt",
           "disabled": true
         }]
-      }, {
-        "items": [{
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
-        }]
       }]
     }
   }, {

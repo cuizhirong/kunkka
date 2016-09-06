@@ -28,11 +28,6 @@
           "title": ["connect", "subnet"],
           "key": "cnt_subnet",
           "disabled": true
-        }, {
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
         }]
       }]
     }

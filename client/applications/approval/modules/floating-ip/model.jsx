@@ -27,7 +27,7 @@ class Model extends React.Component {
 
     var enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
     if (!enableBandwidth) {
-      let dropdown = config.btns[3].dropdown.items[0].items;
+      let dropdown = config.btns[config.btns.length - 2].dropdown.items[0].items;
       delete dropdown[2];
     }
 

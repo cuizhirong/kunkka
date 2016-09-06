@@ -497,13 +497,6 @@ class Model extends React.Component {
             return (
               <div>
                 <i className="glyphicon icon-associate action" onClick={_this.onDetailAction.bind(_this, 'description', 'connect_inst', {rawItem: element})}/>
-                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
-              </div>
-            );
-          } else if (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') {
-            return (
-              <div>
-                <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', element)} />
               </div>
             );
           } else {
