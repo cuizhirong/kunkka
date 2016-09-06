@@ -35,7 +35,7 @@
           "key": "instance_snapshot",
           "disabled": true
         }, {
-          "title": ["resize"],
+          "title": ["apply_", "resize"],
           "key": "resize",
           "disabled": true
         }]

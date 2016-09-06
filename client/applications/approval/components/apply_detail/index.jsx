@@ -78,7 +78,8 @@ class ApplyDetail extends React.Component {
   render() {
     var applyDetail = this.props.items,
       createDetail = applyDetail.create,
-      bindDetail = applyDetail.bind;
+      bindDetail = applyDetail.bind,
+      resizeDetail = applyDetail.resize;
 
     return (
       <div className="toggle">
@@ -95,7 +96,9 @@ class ApplyDetail extends React.Component {
                   <div className="item-info" key={'create' + i}>
                     {['_type', '_identity', 'name', 'flavor', 'image', 'admin_pass', 'key_name',
                         'size', 'volume_type'].map((k, j) => {
-                          return (c[k] ? <div className="info-box" key={'create' + i + j}>{this.getFieldName(k) + ': '}{this.getFieldContent(c, k)}</div> : '');
+                          return (c[k] ? <div className="info-box" key={'create' + i + j}>
+                            {this.getFieldName(k) + ': '}{this.getFieldContent(c, k)}
+                          </div> : null);
                         })}
                   </div>
                 )}
@@ -113,6 +116,20 @@ class ApplyDetail extends React.Component {
                     );
                   })}
                 </div>
+              </div>
+            </div> : ''}
+            {resizeDetail ? <div className="resize-list">
+              <div className="apply-type">{__.change}</div>
+              <div className="apply-items">
+                {resizeDetail.map((resize, p) =>
+                  <div className="item-info" key={'resize' + p}>
+                    {['_type', 'id', 'flavor', 'size'].map((j, q) => {
+                      return (resize[j] ? <div className="info-box" key={'resize' + p + q}>
+                        {this.getFieldName(j) + ': '}{this.getFieldContent(resize, j)}
+                      </div> : null);
+                    })}
+                  </div>
+                )}
               </div>
             </div> : ''}
           </div>

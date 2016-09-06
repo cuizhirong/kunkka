@@ -55,7 +55,7 @@ function pop(obj, parent, callback) {
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;
-      request.createSnapshot(data).then((res) => {
+      request.createApplication(data).then((res) => {
         callback && callback(res);
         cb(true);
       });

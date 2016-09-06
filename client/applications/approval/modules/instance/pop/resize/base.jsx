@@ -1,5 +1,6 @@
 var React = require('react');
 var {Modal, Button, Tip} = require('client/uskin/index');
+var applyResizeDesc = require('../apply_resize_desc/index');
 var __ = require('locale/client/approval.lang.json');
 var unitConverter = require('client/utils/unit_converter');
 var request = require('../../request');
@@ -174,27 +175,19 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    var state = this.state;
+    var state = this.state,
+      props = this.props;
 
     if (state.flavor) {
       var data = {
-        resize: {
-          flavorRef: state.flavor.id
-        }
+        _type: 'Instance',
+        id: props.obj.id,
+        flavor: state.flavor.id
       };
-      request.resizeInstance(this.props.obj.id, data).then(() => {
-        this.setState({
-          visible: false
-        });
-      }).catch((error) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(error.response)[1];
 
-        this.setState({
-          disabled: false,
-          showError: true,
-          error: tip
-        });
+      applyResizeDesc(data);
+      this.setState({
+        visible: false
       });
 
       this.setState({
@@ -213,7 +206,7 @@ class ModalBase extends React.Component {
     var props = this.props,
       state = this.state;
 
-    var title = __.resize;
+    var title = __.apply_ + __.resize;
 
     var data = [{
       key: 'cpu',
@@ -344,7 +337,7 @@ class ModalBase extends React.Component {
           </div>
         </div>
         <div className="modal-ft">
-          <Button value={__.change} disabled={state.disabled} onClick={this.onConfirm} />
+          <Button value={__.apply_} disabled={state.disabled} onClick={this.onConfirm} />
           <Button value={__.cancel} type="cancel" onClick={this.onCancel} />
         </div>
       </Modal>

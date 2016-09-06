@@ -119,7 +119,7 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/images/' + item.id
     });
   },
-  createSnapshot: function(data) {
+  createApplication: function(data) {
     return fetch.post({
       url: '/api/apply',
       data: data
@@ -146,14 +146,6 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/os-interface',
       data: {
         interfaceAttachment: data
-      }
-    });
-  },
-  createPort: function(port) {
-    return fetch.post({
-      url: '/proxy/neutron/v2.0/ports',
-      data: {
-        port: port
       }
     });
   },
