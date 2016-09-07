@@ -1,6 +1,5 @@
 {
   "en": {
-    "account-charge": "Account Charge",
     "account_balance": "Account Balance",
     "recharge": "Recharge",
     "recharge_num": "Recharge",
@@ -13,7 +12,6 @@
     "cancel": "Cancel"
   },
   "zh-CN": {
-    "account-charge": "账户充值",
     "account_balance": "账户余额",
     "recharge": "充值",
     "recharge_num": "充值金额",

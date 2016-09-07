@@ -58,26 +58,13 @@ class Model extends React.Component {
               break;
             }
           }
-          var _data = {
-            amount: value,
-            currency: 'CAD'
-          };
-          var urlText = '';
           waiting(null, (res) => {
             this.setState({
               balance: res.balance
             });
           });
-          request.payment(payment, _data).then((res) => {
-            if (payment === 'alipay') {
-              urlText = res.url;
-            } else if (payment === 'paypal') {
-              urlText = res.links[1].href;
-            }
-            var insertText = "<div style='display: none'><a href='" + urlText + "' target='_blank' id='link'>text</a></div>";
-            document.getElementById('button').innerHTML = insertText;
-            document.getElementById('link').click();
-          });
+          var url = '/api/pay/' + payment + '?amount=' + value;
+          window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         }
         break;
       default:

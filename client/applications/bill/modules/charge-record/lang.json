@@ -1,13 +1,11 @@
 {
   "en": {
-    "charge-record": "Charge Record",
     "total_cny": "Total(CNY)",
     "charge-type": "Charge Type",
     "channel": "Capital Channel",
     "charge-time": "Charge Time"
   },
   "zh-CN": {
-    "charge-record": "充值记录",
     "total_cny": "充值金额（元）",
     "charge-type": "充值类型",
     "channel": "资金渠道",
