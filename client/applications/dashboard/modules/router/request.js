@@ -4,7 +4,7 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['router', 'network', 'subnet', 'ipsec', 'vpnservice'], forced).then((res) => {
+    return storage.getList(['router', 'network', 'subnet', 'ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy'], forced).then((res) => {
       var exNetworks = [];
       res.network.forEach((item) => {
         if (item['router:external']) {
@@ -31,6 +31,8 @@ module.exports = {
       res.router.forEach((router, index) => {
         res.router[index].vpnservices = [];
         res.router[index].ipsec_site_connections = [];
+        res.router[index].ikepolicies = [];
+        res.router[index].ipsecpolicies = [];
       });
       res.vpnservice.forEach((vpnService) => {
         res.router.forEach((router, index) => {
@@ -49,6 +51,8 @@ module.exports = {
       });
 
       res.router.forEach((router, index) => {
+        res.router[index].ikepolicies = res.ikepolicy.ikepolicies;
+        res.router[index].ipsecpolicies = res.ipsecpolicy.ipsecpolicies;
         res.router[index].vpnservices.forEach((vpnservice) => {
           res.ipsec[0] && res.ipsec[0].ipsec_site_connections.forEach((site) => {
             if (site.vpnservice_id === vpnservice.id) {
@@ -156,28 +160,6 @@ module.exports = {
     var url = '/proxy/neutron/v2.0/vpn/vpnservices/' + id;
     return fetch.delete({
       url: url
-    });
-  },
-  getIkePolicis: function() {
-    var url = '/proxy/neutron/v2.0/vpn/ikepolicies';
-    return fetch.get({
-      url: url
-    }).then(res => {
-      res.ikepolicies.forEach((item) => {
-        item.sa_lifetime = item.lifetime.value + ' s';
-      });
-      return res;
-    });
-  },
-  getIpsecPolicies: function() {
-    var url = '/proxy/neutron/v2.0/vpn/ipsecpolicies';
-    return fetch.get({
-      url: url
-    }).then(res => {
-      res.ipsecpolicies.forEach((item) => {
-        item.sa_lifetime = item.lifetime.value + ' s';
-      });
-      return res;
     });
   },
   createTunnel: function(data) {

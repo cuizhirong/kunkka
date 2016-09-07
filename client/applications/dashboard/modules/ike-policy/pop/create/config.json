@@ -14,7 +14,7 @@
     }]
   }, {
     "type": "select",
-    "field": "encryption_algorighm",
+    "field": "encryption_algorithm",
     "value": "aes-128",
     "data": [{
       "name": "aes-128",

@@ -32,15 +32,15 @@ class TargetNetwork extends React.Component {
   }
 
   deleteRow(index) {
-    this.state.networkIps.splice(index, 1);
     this.setState({
-      networkIps: this.state.networkIps
+      networkIps: this.state.networkIps.slice(0, index).concat(this.state.networkIps.slice(index + 1))
     });
   }
 
   render() {
     var props = this.props,
       state = this.state;
+
     return (
       <div className="halo-pop-com-target modal-row">
         <div>

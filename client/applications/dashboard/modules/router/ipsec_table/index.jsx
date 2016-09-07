@@ -34,7 +34,6 @@ class IpsecTable extends React.Component {
       _data: nextProps.tableConfig.data,
       dataContents: nextProps.tableConfig.dataContents
     });
-    this.forceUpdate();
   }
 
   onChange(adminData) {
@@ -56,7 +55,6 @@ class IpsecTable extends React.Component {
   render() {
     var state = this.state,
       tableConfig = this.props.tableConfig;
-
     return (
       <div className="halo-com-ipsec-table">
         <div className="toggle">

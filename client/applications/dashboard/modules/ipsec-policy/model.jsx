@@ -36,17 +36,17 @@ class Model extends React.Component {
       if (this.state.config.table.loading) {
         this.loadingTable();
       } else {
-        this.getTableData();
+        this.getTableData(false);
       }
     }
   }
 
   onInitialize(params) {
-    this.getTableData();
+    this.getTableData(false);
   }
 
-  getTableData() {
-    request.getList().then((res) => {
+  getTableData(forceUpdate) {
+    request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
       table.data = res.ipsecpolicies;
       table.loading = false;
@@ -152,7 +152,7 @@ class Model extends React.Component {
       }
     }
 
-    this.getTableData();
+    this.getTableData(forceUpdate);
   }
 
   loadingTable() {

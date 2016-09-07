@@ -13,7 +13,7 @@ function pop(parent, callback) {
     onConfirm: function(refs, cb) {
       var name = refs.name.state.value;
       var authAlgorithm = refs.auth_algorithm.state.value;
-      var encryptionAlgorighm = refs.encryption_algorighm.state.value;
+      var encryptionAlgorighm = refs.encryption_algorithm.state.value;
       var encapsulationMode = refs.encapsulation_mode.state.value;
       var transformProtocol = refs.transform_protocol.state.value;
       var pfs = refs.pfs.state.value;

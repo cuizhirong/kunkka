@@ -625,7 +625,11 @@ class Model extends React.Component {
             admin_state_up: data.isOpen
           }
         };
-        request.updateIpsecConnection(data.id, _data);
+        request.updateIpsecConnection(data.id, _data).then((res) => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'delete_cidr':
         data.rawItem.peer_cidrs.splice(data.index, 1);

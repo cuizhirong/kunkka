@@ -11,8 +11,6 @@ var createIpsecPolicy = require('client/applications/dashboard/modules/ipsec-pol
 
 function pop(obj, parent, callback) {
   config.fields[0].text = __.layer_three;
-  var ikepolicies = [],
-    ipsecpolicies = [];
 
   var props = {
     __: __,
@@ -27,21 +25,17 @@ function pop(obj, parent, callback) {
       refs.target_network.setState({
         renderer: popTarget
       });
-      request.getIpsecPolicies().then(policies => {
-        ipsecpolicies = policies.ipsecpolicies.concat();
-        refs.ipsec_policy.setState({
-          renderer: popSelect,
-          data: policies.ipsecpolicies,
-          value: policies.ipsecpolicies[0] && policies.ipsecpolicies[0].id
-        });
+
+      refs.ipsec_policy.setState({
+        renderer: popSelect,
+        data: obj.ipsecpolicies,
+        value: obj.ipsecpolicies[0] && obj.ipsecpolicies[0].id
       });
-      request.getIkePolicis().then(res => {
-        ikepolicies = res.ikepolicies.concat();
-        refs.ike_policy.setState({
-          renderer: popSelect,
-          data: res.ikepolicies,
-          value: res.ikepolicies[0] && res.ikepolicies[0].id
-        });
+
+      refs.ike_policy.setState({
+        renderer: popSelect,
+        data: obj.ikepolicies,
+        value: obj.ikepolicies[0] && obj.ikepolicies[0].id
       });
 
     },
@@ -72,8 +66,8 @@ function pop(obj, parent, callback) {
           if (status.clicked) {
             createIkePolicy(refs.modal, (res) => {
               refs.ike_policy.refs.select.setState({
-                data: ikepolicies.concat(res.ikepolicy),
-                value: ikepolicies[0].id,
+                data: obj.ikepolicies.concat(res.ikepolicy),
+                value: obj.ikepolicies[0].id,
                 clicked: false,
                 renderer: popSelect
               });
@@ -87,8 +81,8 @@ function pop(obj, parent, callback) {
           if (status.clicked) {
             createIpsecPolicy(refs.modal, (res) => {
               refs.ipsec_policy.refs.select.setState({
-                data: ipsecpolicies.concat(res.ipsecpolicy),
-                value: ipsecpolicies[0].id,
+                data: obj.ipsecpolicies.concat(res.ipsecpolicy),
+                value: obj.ipsecpolicies[0].id,
                 clicked: false,
                 renderer: popSelect
               });
