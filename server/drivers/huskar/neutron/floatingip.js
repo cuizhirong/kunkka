@@ -42,4 +42,18 @@ driver.resizeFloatingip = function (floatingipId, size, token, remote, callback)
   );
 };
 
+driver.createFloatingip = function (floatingNetworkId, size, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v2.0/floatingips',
+    token,
+    callback,
+    {
+      floatingip: {
+        floating_network_id: floatingNetworkId,
+        rate_limit: size
+      }
+    }
+  );
+};
+
 module.exports = driver;
