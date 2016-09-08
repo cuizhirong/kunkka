@@ -75,7 +75,7 @@ function pop(parent, callback) {
 
       if (refs.enable_public_gateway.state.checked) {
         createItem.external_gateway_info = {
-          network_id: gatewayId ? gatewayId : refs.external_network.state.value
+          network: gatewayId ? gatewayId : refs.external_network.state.value
         };
       }
 

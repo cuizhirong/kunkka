@@ -94,14 +94,17 @@ function pop(parent, callback) {
         };
 
         if(externalNetwork.length === 1) {
-          createItem.floating_network_id = externalNetwork[0].id;
+          createItem.floating_network = externalNetwork[0].id;
         } else {
-          createItem.floating_network_id = refs.external_network.state.value;
+          createItem.floating_network = refs.external_network.state.value;
         }
 
         if (enableBandwidth) {
           let bandwidth = Number(refs.bandwidth.state.value) * 1024;
-          createItem.floatingip.rate_limit = bandwidth;
+          createItem.rate_limit = bandwidth;
+          // because heat does not support qos, use restful api to create fip directly
+          createDetail.type = 'direct';
+          createDetail.resourceType = 'floatingip';
         }
 
         configCreate.push(createItem);

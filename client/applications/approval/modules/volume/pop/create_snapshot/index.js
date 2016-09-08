@@ -42,7 +42,8 @@ function pop(obj, parent, callback) {
       var data = {};
       data.detail = {};
       var createDetail = data.detail;
-
+      createDetail.type = 'direct';
+      createDetail.resourceType = 'volumeSnapshot';
       createDetail.create = [];
       var configCreate = createDetail.create;
       var createItem = {};

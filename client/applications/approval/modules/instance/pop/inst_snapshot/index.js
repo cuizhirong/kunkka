@@ -41,17 +41,16 @@ function pop(obj, parent, callback) {
       var data = {};
       data.detail = {};
       var createDetail = data.detail;
-
+      createDetail.type = 'direct';
+      createDetail.resourceType = 'instanceSnapshot';
       createDetail.create = [];
       var configCreate = createDetail.create;
       var createItem = {};
       createItem = {
         _type: 'Snapshot',
         _identity: 'instSnap',
-        name: refs.inst_snapshot_name.state.value,
-        metadata: {
-          meta_var: 'meta_val'
-        }
+        instanceId: obj.id,
+        name: refs.inst_snapshot_name.state.value
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;

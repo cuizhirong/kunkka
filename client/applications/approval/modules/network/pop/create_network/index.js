@@ -30,20 +30,23 @@ function pop(parent, callback) {
 
       // check vlan
       if (refs.enable_vlan.state.checked) {
-        createItem.network_type = 'vlan';
+        // create resource by restful api, not heat
+        createDetail.type = 'direct';
+        createDetail.resourceType = 'network';
+        createItem['provider:network_type'] = 'vlan';
         let v = refs.vlan_id.state.value.trim();
         if (v !== '') {
-          createItem.segmentation_id = v;
-          createItem.physical_network = 'physnet3';
+          createItem['provider:segmentation_id'] = v;
+          createItem['provider:physical_network'] = 'physnet3';
         }
+      }
+
+      if (!refs.enable_security.state.checked) {
+        createItem.port_security_enabled = false;
       }
 
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;
-
-      if (!refs.enable_security.state.checked) {
-        data.port_security_enabled = false;
-      }
 
       if(refs.apply_subnet.state.checked) {
         var netAddr = refs.net_address.state.value,
@@ -53,29 +56,20 @@ function pop(parent, callback) {
             error: true
           });
         } else {
+          var subCreateItem = {};
+          subCreateItem = {
+            _type: 'Subnet',
+            _identity: 'netSub',
+            ip_version: 4,
+            name: refs.subnet_name.state.value,
+            network_id: {get_resource: '_net'},
+            cidr: refs.net_address.state.value,
+            enable_dhcp: true
+          };
+          configCreate.push(subCreateItem);
           request.createNetwork(data).then((res) => {
-            var subData = {};
-            subData.detail = {};
-            var subCreateDetail = subData.detail;
-
-            subCreateDetail.create = [];
-            var subConfigCreate = subCreateDetail.create;
-            var subCreateItem = {};
-            subCreateItem = {
-              _type: 'Subnet',
-              _identity: 'netSub',
-              ip_version: 4,
-              name: refs.subnet_name.state.value,
-              network_id: res.id,
-              cidr: refs.net_address.state.value,
-              enable_dhcp: true
-            };
-            subConfigCreate.push(subCreateItem);
-            subData.description = refs.description.state.value;
-            request.createSubnet(subData).then(() => {
-              callback && callback(res.network);
-              cb(true);
-            });
+            callback && callback(res.network);
+            cb(true);
           });
         }
       } else {

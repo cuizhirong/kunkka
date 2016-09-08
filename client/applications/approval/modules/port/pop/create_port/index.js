@@ -97,7 +97,7 @@ function pop(obj, parent, callback) {
         _type: 'Port',
         _identity: 'port',
         name: refs.name.state.value,
-        network_id: '',
+        network: '',
         security_groups: [],
         fixed_ips: [{
           subnet_id: refs.subnet.state.value
@@ -109,7 +109,7 @@ function pop(obj, parent, callback) {
       subnet.data.some((ele) => {
         return ele.data.some((s) => {
           if (s.id === subnet.value) {
-            port.network_id = ele.id;
+            port.network = ele.id;
             port.port_security_enabled = ele.port_security_enabled;
             return true;
           }
