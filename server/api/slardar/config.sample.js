@@ -16,7 +16,10 @@ module.exports = {
     'cookie': {
       'maxAge': 1000 * 60 * 60 * 24 * 7
     },
-    'port': 5678
+    'port': 5678,
+    'admin_username': 'admin',
+    'admin_password': 'dffcb42eb3a0c8795cbea277',
+    'admin_projectId': '54e33c0ea7c24c06aeac8c3036d95ab5'
   },
   'setting': [
     {
