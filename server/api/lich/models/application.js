@@ -28,6 +28,10 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    projectName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     role: {
       type: DataTypes.STRING,
       allowNull: false

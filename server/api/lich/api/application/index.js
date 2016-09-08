@@ -26,6 +26,13 @@ Application.prototype = {
     let status = 'pending';
     let username = req.session.user.username;
     let projectId = req.session.user.projectId;
+    let projectName = '';
+    let projects = req.session.user.projects;
+    if (projects && Array.isArray(projects)) {
+      projects.some(project=> {
+        return (project.id === projectId ) && ( projectName = project.name);
+      })
+    }
 
     let currentRole = this._getCurrentRole(req.session.user.roles);
 
@@ -52,6 +59,7 @@ Application.prototype = {
       userId: userId,
       status: status,
       projectId: projectId,
+      projectName: projectName,
       detail: detail,
       role: currentRole,
       approvals: _approvals
@@ -163,6 +171,7 @@ Application.prototype = {
   getApplicationById: function (req, res, next) {
     let applicationId = req.params.applicationId;
     applicationDao.findOneById(applicationId).then(result => {
+      result.detail = JSON.parse(result.detail);
       res.json(result);
     }).catch(err => {
       next(err);
