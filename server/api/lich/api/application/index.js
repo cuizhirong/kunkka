@@ -32,7 +32,7 @@ Application.prototype = {
     if (projects && Array.isArray(projects)) {
       projects.some(project=> {
         return (project.id === projectId ) && ( projectName = project.name);
-      })
+      });
     }
 
     let currentRole = this._getCurrentRole(req.session.user.roles);
@@ -259,6 +259,16 @@ Application.prototype = {
             callback(err);
           } else {
             callback(null, {resource: d.body.snapshot, type: 'volumeSnapshot'});
+          }
+        });
+      } else if(applyDetail.resourceType === 'floatingip') {
+        let remote = req.session.endpoint.neutron[region];
+        let floatingipData = applyDetail.create[0];
+        driver.neutron.floatingip.createFloatingip(floatingipData.floating_network, floatingipData.rate_limit, _token, remote, function(err, fip) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, {resource: fip.body.floatingip, type: 'floatingip'});
           }
         });
       }
