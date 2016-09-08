@@ -204,8 +204,14 @@
     }
 
     &.icon-label-row {
+      align-items: flex-start;
       .glyphicon {
         margin-right: 8px;
+      }
+
+      > div:last-child {
+        max-width: 400px;
+        word-wrap: break-word;
       }
     }
 
