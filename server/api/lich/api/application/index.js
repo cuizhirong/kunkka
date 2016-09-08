@@ -6,8 +6,9 @@ const applicationDao = dao.application;
 const flow = require('config')('approval_flow');//low->high
 const flowReverse = JSON.parse(JSON.stringify(flow)).reverse();//high->low
 const Promise = require('bluebird');
-const request = Promise.promisify(require('request'));
 const stack = require('api/slardar/api/heat/stack');
+const token = require('api/slardar/common/token');
+const driver = require('server/drivers');
 
 
 function Application (app) {
@@ -115,24 +116,7 @@ Application.prototype = {
 
       if (data.status === 'pass') {
         if (currentIndex === approvals.length - 1) {
-          req.params.projectId = apply.projectId;
-          req.body.stack = JSON.parse(apply.detail);
-          stack.prototype.createStack(req, function (e, d) {
-            if (e) {
-              next(e);
-            } else if (d.stack) {
-              apply.stackId = d.stack.id;
-              apply.stackHref = d.stack.links[0].href;
-              Promise.all([
-                approvals[currentIndex].save(),
-                apply.save()
-              ]).then(function () {
-                res.json(apply);
-              });
-            } else {
-              res.json(apply);
-            }
-          });
+          this.createResource(req, res, next, apply, approvals, currentIndex);
         } else {
           approvals[currentIndex + 1].status = 'approving';
           let arrSave = [
@@ -153,6 +137,133 @@ Application.prototype = {
         ]).then(res.json.bind(res));
       }
     }).catch(next);
+  },
+  createResource: function(req, res, next, apply, approvals, currentIndex) {
+    req.params.projectId = apply.projectId;
+    let applyDetail = JSON.parse(apply.detail);
+    if (applyDetail.type === 'direct') {
+      this.directCreate(req, res, next, apply, applyDetail, function(e, d) {
+        if (e) {
+          next(e);
+        } else if (d.resource) {
+          apply.resourceId = d.resource.id;
+          apply.resourceType = d.resourceType;
+          Promise.all([
+            approvals[currentIndex].save(),
+            apply.save()
+          ]).then(function () {
+            res.json(apply);
+          });
+        } else {
+          res.json(apply);
+        }
+      });
+    } else {
+      req.body.stack = applyDetail;
+      stack.prototype.createStack(req, function(e, d) {
+        if (e) {
+          next(e);
+        } else if (d.stack) {
+          apply.stackId = d.stack.id;
+          apply.stackHref = d.stack.links[0].href;
+          Promise.all([
+            approvals[currentIndex].save(),
+            apply.save()
+          ]).then(function () {
+            res.json(apply);
+          });
+        } else {
+          res.json(apply);
+        }
+      });
+    }
+  },
+  directCreate: function (req, res, next, apply, applyDetail, callback) {
+    let _token;
+    token.prototype.adminGetOtherProjectToken(req, function(_err, data) {
+      if (_err) {
+        return callback(_err);
+      } else {
+        _token = data;
+      }
+      let region = req.headers.region;
+
+      if (applyDetail.resourceType === 'network') {
+        let remote = req.session.endpoint.neutron[region];
+        if (applyDetail.create.length === 1) {
+          let networkData = {network: applyDetail.create[0]};
+          networkData = JSON.parse(JSON.stringify(networkData));
+          delete networkData.network._type;
+          delete networkData.network._identity;
+          driver.neutron.network.createNetwork(_token, remote, networkData, function(err, net) {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, {resource: net.body.network, type: 'network'});
+            }
+          });
+        } else {
+          let networkData, subnetData, networkId;
+          applyDetail.create.forEach(e => {
+            if (e._type === 'Network') {
+              networkData = {network: JSON.parse(JSON.stringify(e))};
+            } else {
+              subnetData = {subnet: JSON.parse(JSON.stringify(e))};
+            }
+          });
+          delete networkData.network._type;
+          delete networkData.network._identity;
+          delete subnetData.subnet._identity;
+          delete subnetData.subnet._type;
+          driver.neutron.network.createNetwork(_token, remote, networkData, function(err, net) {
+            if (err) {
+              callback(err);
+            } else {
+              networkId = net.body.network.id;
+              subnetData.subnet.network_id = networkId;
+              driver.neutron.subnet.createSubnet(_token, remote, subnetData, function(e, subnet) {
+                if (e) {
+                  callback(e);
+                } else {
+                  callback(null, {resource: subnet.body.subnet, type: 'subnet'});
+                }
+              });
+            }
+          });
+        }
+      } else if (applyDetail.resourceType === 'instanceSnapshot') {
+        let snapshotName = applyDetail.create[0].name;
+        let instanceId = applyDetail.create[0].instanceId;
+        let projectId = apply.projectId;
+        let remote = req.session.endpoint.nova[region];
+        driver.nova.server.createSnapshot(projectId, instanceId, snapshotName, _token, remote, function(err, d) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, {resource: d.body.snapshot, type: 'instanceSnapshot'});
+          }
+        });
+      } else if (applyDetail.resourceType === 'volumeSnapshot') {
+        let projectId = apply.projectId;
+        let remote = req.session.endpoint.cinder[region];
+        let metaData = applyDetail.create[0];
+        let _data = {
+          snapshot: {
+            name: metaData.name,
+            volume_id: metaData.volume_id,
+            force: true
+          }
+        };
+        driver.cinder.snapshot.createSnapshot(projectId, _token, remote, _data, function(err, d) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, {resource: d.body.snapshot, type: 'volumeSnapshot'});
+          }
+        });
+      }
+    });
+
   },
 
   _getCurrentRole: function (arrRoles) {
@@ -230,38 +341,14 @@ Application.prototype = {
     applicationDao.findAllByFields(req.getListOptions).then(result => {
       let _next = (result.count / limit) > fields.page ? (fields.page + 1) : null;
       let prev = fields.page === 1 ? null : (page - 1);
-
-      const applies = [];
-
       result.rows.forEach(function (item) {
         item.dataValues.detail = JSON.parse(item.dataValues.detail);
-        if (item.stackId) {
-          applies.push(item);
-        }
       });
-
-      Promise.map(applies, function (item, index) {
-        return request({
-          url: item.stackHref,
-          headers: {
-            'X-Auth-Token': req.session.user.token,
-            'Region': req.header('Region')
-          }
-        });
-      }).then(function (stackResult) {
-
-        applies.forEach(function (item, i) {
-          item.dataValues.stack = JSON.parse(stackResult[i][0].body).stack;
-        });
-
-      }).finally(function () {
-
-        res.json({
-          Applies: result.rows,
-          next: _next,
-          prev: prev,
-          count: result.count
-        });
+      res.json({
+        Applies: result.rows,
+        next: _next,
+        prev: prev,
+        count: result.count
       });
     });
   },
