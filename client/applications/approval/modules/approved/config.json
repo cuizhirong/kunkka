@@ -12,13 +12,12 @@
     "icon": "refresh"
   }],
   "search": {
-    "column": {
-      "id": true
-    }
+    "placeholder": ["pls_enter", "application", "id"]
   },
   "table": {
     "checkbox": true,
     "dataKey": "id",
+    "limit": 10,
     "loading": true,
     "column": [{
       "title": ["id"],

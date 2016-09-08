@@ -1,6 +1,12 @@
 {
   "title": ["accept", "application"],
   "fields": [{
+    "type": "icon_label",
+    "field": "id"
+  }, {
+    "type": "icon_label",
+    "field": "apply_desc"
+  }, {
     "type": "textarea",
     "field": "refuse_explain"
   }],

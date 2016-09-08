@@ -1,18 +1,16 @@
 require('./style/index.less');
 
 var React = require('react');
-var Main = require('client/components/main/index');
-
+var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
-var deleteModal = require('client/components/modal_delete/index');
 var ApplyDetail = require('../../components/apply_detail/index');
 
 var acceptApply = require('./pop/accept/index');
 var refuseApply = require('./pop/refuse/index');
 
-var config = require('./config.json');
 var request = require('./request');
-var router = require('client/utils/router');
+var config = require('./config.json');
+var moment = require('client/libs/moment');
 var __ = require('locale/client/approval.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
 
@@ -21,6 +19,8 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
+    moment.locale(HALO.configs.lang);
+
     this.state = {
       config: config
     };
@@ -28,56 +28,199 @@ class Model extends React.Component {
     ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+
+    this.stores = {
+      urls: []
+    };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.style.display === 'none' && !nextState.config.table.loading) {
+    if(nextProps.style.display === 'none' && this.props.style.display === 'none') {
       return false;
     }
     return true;
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
-      if (this.state.config.table.loading) {
-        this.loadingTable();
-      } else {
-        this.getTableData(false);
-      }
+    if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
+      this.loadingTable();
+      this.onInitialize(nextProps.params);
     }
   }
 
   onInitialize(params) {
-    this.getTableData(false);
+    if(params[2]) {
+      this.getSingle(params[2]);
+    } else {
+      this.getList();
+    }
   }
 
-  getTableData(forceUpdate, detailRefresh) {
-    request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
-      table.data = res;
-      table.loading = false;
+  getInitializeListData() {
+    this.getList();
+  }
 
-      var detail = this.refs.dashboard.refs.detail;
-      if (detail && detail.state.loading) {
-        detail.setState({
-          loading: false
-        });
+  getSingle(id) {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getApplicationByID(id).then((res) => {
+      if (res) {
+        table.data = [res];
+      } else {
+        table.data = [];
       }
-
-      this.setState({
-        config: config
-      }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
-        }
-      });
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
     });
   }
 
+  getList() {
+    this.clearState();
+
+    var table = this.state.config.table;
+    request.getList(table.limit).then((res) => {
+      table.data = res.Applies;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  getNextListData(url, refreshDetail) {
+    var table = this.state.config.table;
+    request.getNextList(url).then((res) => {
+      if(res.Applies) {
+        table.data = res.Applies;
+      } else if(res) {
+        table.data = [res];
+      } else {
+        table.data = [];
+      }
+
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, refreshDetail);
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  updateTableData(table, currentUrl, refreshDetail) {
+    var newConfig = this.state.config;
+    newConfig.table = table;
+    newConfig.table.loading = false;
+
+    this.setState({
+      config: newConfig
+    }, () => {
+      this.stores.urls.push(currentUrl.split('/apply/')[1]);
+
+      var detail = this.refs.dashboard.refs.detail,
+        params = this.props.params;
+      if(detail && refreshDetail && params.length > 2) {
+        detail.refresh();
+      }
+    });
+  }
+
+  setPagination(table, res) {
+    var pagination = {},
+      next = res.next ? res.next : null;
+
+    if(next) {
+      let currUrl = res._url.split('/apply/')[1],
+        urlHead = currUrl.split('page=')[0];
+
+      pagination.nextUrl = urlHead + 'page=' + next;
+    }
+
+    var history = this.stores.urls;
+
+    if(history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
+    table.pagination = pagination;
+
+    return table;
+  }
+
+  refresh(data, params) {
+    if(!data) {
+      data = {};
+    }
+    if(!params) {
+      params = this.props.params;
+    }
+
+    if(data.initialList) {
+      if(data.loadingTable) {
+        this.loadingTable();
+      }
+      if(data.clearState) {
+        this.clearState();
+      }
+
+      this.getInitializeListData();
+    } else if(data.refreshList) {
+      if(params[2]) {
+        if(data.loadingDetail) {
+          this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
+        }
+      } else {
+        if(data.loadingTable) {
+          this.loadingTable();
+        }
+      }
+
+      var history = this.stores.urls,
+        url = history.pop();
+      this.getNextListData(url, data.refreshDetail);
+    }
+  }
+
+  loadingTable() {
+    var _config = this.state.config;
+    _config.table.loading = true;
+
+    this.setState({
+      config: _config
+    });
+  }
+
+  loadingDetail() {
+    this.refs.dashboard.refs.detail.loading();
+  }
+
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
+  clearState() {
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
   onAction(field, actionType, refs, data) {
-    switch (field) {
+    switch(field) {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -92,57 +235,165 @@ class Model extends React.Component {
     }
   }
 
-  onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
-    switch (key) {
-      case 'accept':
-        acceptApply(rows[0], null, () => {
-          this.refresh({
-            tableLoading: true,
-            clearState: true,
-            detailRefresh: true
-          }, true);
-        });
+  onClickSearch(actionType, refs, data) {
+    if (actionType === 'click') {
+      this.loadingTable();
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
+    }
+  }
+
+  onClickDetailTabs(tabKey, refs, data, resourceData) {
+    var {rows} = data;
+    var detail = refs.detail;
+    var contents = detail.state.contents;
+
+    switch(tabKey) {
+      case 'description':
+        if(rows.length === 1) {
+          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+
+          contents[tabKey] = (
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                tabKey={'description'}
+                rawItem={rows[0]}
+                items={basicPropsItem ? basicPropsItem : []}
+                onAction={this.onDetailAction.bind(this)} />
+              <ApplyDetail
+                title={__.application + __.detail}
+                defaultUnfold={true}
+                items={rows[0].detail}
+                data={resourceData} />
+            </div>
+          );
+        }
         break;
-      case 'refuse':
-        refuseApply(rows[0], null, () => {
-          this.refresh({
-            tableLoading: true,
-            clearState: true,
-            detailRefresh: true
-          }, true);
-        });
+      default:
         break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'keypair',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deleteKeypairs(rows).then((res) => {
-              cb(true);
-              that.refresh(null, true);
-            });
-          }
-        });
-        break;
-      case 'refresh':
-        this.refresh({
-          tableLoading: true,
-          clearState: true
-        }, true);
+    }
+
+    detail.setState({
+      contents: contents,
+      loading: false
+    });
+  }
+
+  getBasicPropsItems(item) {
+    var items = [{
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.apply_desc,
+      content: item.description ? item.description : ''
+    }, {
+      title: __.status,
+      content: getStatusIcon(item.status)
+    }, {
+      title: __.applicant,
+      content: item.username
+    }, {
+      title: __.project + __.id,
+      content: item.projectId
+    }, {
+      title: __.create + __.time,
+      content: item.createdAt,
+      type: 'time'
+    }];
+
+    var approvals = item.approvals,
+      len = approvals.length;
+    if(item.status === 'refused' && len > 0) {
+      items.push({
+        title: __.refuse_explain,
+        content: approvals[len - 1].explain
+      });
+    }
+
+    return items;
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
         break;
       default:
         break;
     }
   }
 
+  onDescriptionAction(actionType, data) {
+    switch(actionType) {
+      default:
+        break;
+    }
+  }
+
   onClickTable(actionType, refs, data) {
-    switch (actionType) {
+    switch(actionType) {
       case 'check':
         this.onClickTableCheckbox(refs, data);
+        break;
+      case 'pagination':
+        var url,
+          history = this.stores.urls;
+
+        if (data.direction === 'prev') {
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else { //default
+          url = this.stores.urls[0];
+          this.clearState();
+        }
+
+        this.loadingTable();
+        this.getNextListData(url);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    var rows = data.rows;
+    switch (key) {
+      case 'accept':
+        acceptApply(rows[0], null, () => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
+      case 'refuse':
+        refuseApply(rows[0], null, () => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         break;
       default:
         break;
@@ -174,109 +425,6 @@ class Model extends React.Component {
     return btns;
   }
 
-  onClickDetailTabs(tabKey, refs, data, resourceData) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    // var syncUpdate = true;
-
-    var isAvailableView = (_rows) => {
-      if (_rows.length > 1) {
-        contents[tabKey] = (
-          <div className="no-data-desc">
-            <p>{__.view_is_unavailable}</p>
-          </div>
-        );
-        return false;
-      } else {
-        return true;
-      }
-    };
-
-    switch(tabKey) {
-      case 'description':
-        if(isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                rawItem={rows[0]}
-                items={basicPropsItem ? basicPropsItem : []} />
-              <ApplyDetail
-                title={__.application + __.detail}
-                defaultUnfold={true}
-                items={rows[0].detail}
-                data={resourceData} />
-            </div>
-          );
-        }
-        break;
-      default:
-        break;
-    }
-
-    detail.setState({
-      contents: contents
-    });
-  }
-
-  getBasicPropsItems(item) {
-    var items = [{
-      title: __.id,
-      content: item.id
-    }, {
-      title: __.apply_desc,
-      content: item.description ? item.description : '-'
-    }, {
-      title: __.status,
-      content: getStatusIcon(item.status)
-    }, {
-      title: __.applicant,
-      content: item.username
-    }, {
-      title: __.project + __.id,
-      content: item.projectId
-    }, {
-      title: __.create + __.time,
-      content: item.createdAt,
-      type: 'time'
-    }];
-
-    return items;
-  }
-
-  refresh(data, forceUpdate) {
-    if (data) {
-      var path = router.getPathList();
-      if (path[2]) {
-        if (data.detailLoading) {
-          this.refs.dashboard.refs.detail.loading();
-        }
-      } else {
-        if (data.tableLoading) {
-          this.loadingTable();
-        }
-        if (data.clearState) {
-          this.refs.dashboard.clearState();
-        }
-      }
-    }
-
-    this.getTableData(forceUpdate, data ? data.detailRefresh : false);
-  }
-
-  loadingTable() {
-    var _config = this.state.config;
-    _config.table.loading = true;
-
-    this.setState({
-      config: _config
-    });
-  }
-
   render() {
     return (
       <div className="halo-module-apply-approval" style={this.props.style}>
@@ -285,10 +433,11 @@ class Model extends React.Component {
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
+          __={__}
           config={this.state.config}
           params={this.props.params}
           getStatusIcon={getStatusIcon}
-          __={__} />
+        />
       </div>
     );
   }
