@@ -42,4 +42,13 @@ driver.listSharedNetworks = function (token, remote, callback, query) {
   );
 };
 
+driver.createNetwork = function (token, remote, theBody, callback) {
+  return driver.postMethod(
+    remote + '/v2.0/networks',
+    token,
+    callback,
+    theBody
+  );
+};
+
 module.exports = driver;

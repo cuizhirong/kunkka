@@ -20,4 +20,13 @@ driver.showSubnetDetails = function (subnetId, token, remote, callback, query) {
   );
 };
 
+driver.createSubnet = function (token, remote, theBody, callback) {
+  return driver.postMethod(
+    remote + '/v2.0/subnets',
+    token,
+    callback,
+    theBody
+  );
+};
+
 module.exports = driver;

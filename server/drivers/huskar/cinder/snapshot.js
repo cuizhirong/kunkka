@@ -19,5 +19,13 @@ driver.showSnapshotDetails = function (projectId, snapshotId, token, remote, cal
     query
   );
 };
+driver.createSnapshot = function (projectId, token, remote, theBody, callback) {
+  return driver.postMethod(
+    remote + '/v2/' + projectId + '/snapshots',
+    token,
+    callback,
+    theBody
+  );
+};
 
 module.exports = driver;

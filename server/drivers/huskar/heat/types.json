@@ -19,16 +19,20 @@
     "volume_type": "",
     "snapshot_id": ""
   },
-
   "createKeypair": {
     "type": "OS::Nova::KeyPair",
     "name": "",
     "public_key": ""
   },
-
   "createNetwork": {
+    "type": "OS::Neutron::Net",
+    "name": "",
+    "port_security_enabled": true
+  },
+  "createProviderNet": {
     "type": "OS::Neutron::ProviderNet",
     "name": "",
+    "port_security_enabled": true,
     "network_type": "",
     "physical_network": "",
     "segmentation_id": ""
@@ -38,15 +42,16 @@
     "cidr": "",
     "name": "",
     "gateway_ip": "",
-    "network": "",
+    "network_id": "",
     "ip_version": "",
     "enable_dhcp": "",
     "dns_nameservers": ""
   },
   "createFloatingip": {
-    "type": "OS::Neutron::Floatingip",
+    "type": "OS::Neutron::FloatingIP",
     "name": "",
-    "pool": ""
+    "floating_network": "",
+    "rate_limit": ""
   },
   "createRouter": {
     "type": "OS::Neutron::Router",
