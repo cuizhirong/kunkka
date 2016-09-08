@@ -41,6 +41,7 @@ module.exports = function (mysql, DataTypes) {
       allowNull: true
     }
   }, {
+    charset: 'utf8',
     paranoid: true
   });
 };

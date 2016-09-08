@@ -48,7 +48,7 @@ module.exports = {
     let preStr = _getPreStr(data);
     let sign = _md5Sign(preStr);
 
-    res.redirect(gateway + preStr + '&sign=' + sign + '&sign_type=MD5');
+    res.redirect(encodeURI(gateway + preStr + '&sign=' + sign + '&sign_type=MD5'));
   },
 
 
