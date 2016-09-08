@@ -10,12 +10,6 @@
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["modify", "security", "group"],
-    "key": "modify",
-    "type": "modify",
-    "icon": "edit",
-    "disabled": true
-  }, {
     "key": "refresh",
     "icon": "refresh"
   }],

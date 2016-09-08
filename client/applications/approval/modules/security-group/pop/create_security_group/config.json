@@ -11,6 +11,9 @@
     "required": true
   }, {
     "type": "textarea",
+    "field": "desc"
+  }, {
+    "type": "textarea",
     "field": "apply_description"
   }],
   "btn": {

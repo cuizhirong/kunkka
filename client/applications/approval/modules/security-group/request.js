@@ -32,18 +32,9 @@ module.exports = {
       data: data
     });
   },
-  addSecurityGroup: function(data) {
+  createApplication: function(data) {
     return fetch.post({
       url: '/api/apply',
-      data: data
-    });
-  },
-  addSecurityGroupRule: function(newData) {
-    var data = {};
-    data.security_group_rule = newData;
-
-    return fetch.post({
-      url: '/proxy/neutron/v2.0/security-group-rules',
       data: data
     });
   },

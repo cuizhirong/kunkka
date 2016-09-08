@@ -7,7 +7,6 @@ var SecurityDetail = require('client/components/security_detail/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createSecurityGroup = require('./pop/create_security_group/index');
-var modifySecurityGroup = require('./pop/modify_security_group/index');
 var createRule = require('./pop/create_rule/index');
 
 var config = require('./config.json');
@@ -122,11 +121,6 @@ class Model extends React.Component {
           clearState: true,
           detailRefresh: true
         }, true);
-        break;
-      case 'modify':
-        modifySecurityGroup(rows[0], null, function(_data) {
-          that.refresh(null, true);
-        });
         break;
       default:
         break;

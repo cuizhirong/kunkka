@@ -253,7 +253,7 @@ function pop(item, direction, securityGroups, callback) {
       var sgRule = {};
 
       sgRule.direction = direction;
-      sgRule.security_group_id = item.id;
+      sgRule.security_group = item.id;
 
       var target = refs.target.state.value;
       switch(target) {
@@ -304,19 +304,19 @@ function pop(item, direction, securityGroups, callback) {
           break;
       }
 
-      request.addSecurityGroupRule(sgRule).then((res) => {
-        if (res.status === 409) {
-          let errMsg = JSON.parse(res.responseText).NeutronError.message;
+      sgRule._type = 'SecurityGroupRule';
+      sgRule._identity = 'sg_rule';
 
-          refs.error_msg.setState({
-            hide: false,
-            value: errMsg
-          });
-          cb(false);
-        } else {
-          callback && callback(res);
-          cb(true);
-        }
+      var createParam = {};
+      createParam.description = refs.apply_description.state.value;
+      createParam.detail = {};
+      var detailData = createParam.detail;
+      detailData.create = [];
+      detailData.create.push(sgRule);
+
+      request.createApplication(createParam).then(res => {
+        callback && callback();
+        cb(true);
       });
     },
     onAction: function(filed, status, refs) {

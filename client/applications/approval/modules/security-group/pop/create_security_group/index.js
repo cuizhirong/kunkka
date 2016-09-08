@@ -19,11 +19,12 @@ function pop(parent, callback) {
       createItem = {
         _type: 'SecurityGroup',
         _identity: 'security',
-        name: refs.name.state.value
+        name: refs.name.state.value,
+        description: refs.desc.state.value
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;
-      request.addSecurityGroup(data).then(() => {
+      request.createApplication(data).then(() => {
         callback && callback();
         cb(true);
       });
