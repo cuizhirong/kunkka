@@ -48,7 +48,7 @@ module.exports = {
     let preStr = _getPreStr(data);
     let sign = _md5Sign(preStr);
 
-    res.send({url: gateway + preStr + '&sign=' + sign + '&sign_type=MD5'});
+    res.redirect(gateway + preStr + '&sign=' + sign + '&sign_type=MD5');
   },
 
 
@@ -62,7 +62,6 @@ module.exports = {
     if (mySign !== data.sign) {
       return next('sign error');
     }
-
 
     return PayModel.findOne({
       where: {id: req.body.out_trade_no}
