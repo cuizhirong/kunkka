@@ -104,9 +104,9 @@ Pay.prototype = {
                 type: pay.method,
                 come_form: pay.method
               }
-            }, function (err, response, body) {
-              if (err) {
-                next(err);
+            }, function (_err, response, body) {
+              if (_err) {
+                next(_err);
               }
               pay.informed = 1;
               pay.save().then(function (result) {
