@@ -37,9 +37,8 @@
       "dataIndex": "username",
       "key": "username"
     }, {
-      "title": ["project", "id"],
-      "dataIndex": "projectId",
-      "key": "project_id"
+      "title": ["project", "name"],
+      "key": "project_name"
     }, {
       "title": ["status"],
       "dataIndex": "status",

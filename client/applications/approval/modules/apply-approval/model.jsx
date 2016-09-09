@@ -34,6 +34,10 @@ class Model extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.tableColRender(this.state.config.table.column);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if(nextProps.style.display === 'none' && this.props.style.display === 'none') {
       return false;
@@ -151,6 +155,20 @@ class Model extends React.Component {
     table.pagination = pagination;
 
     return table;
+  }
+
+  tableColRender(columns) {
+    columns.map(column => {
+      switch(column.key) {
+        case 'project_name':
+          column.render = (col, item, i) => {
+            return item.projectName ? item.projectName : '(' + item.projectId.slice(0, 8) + ')';
+          };
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   refresh(data, params) {
@@ -290,7 +308,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.apply_desc,
-      content: item.description ? item.description : ''
+      content: item.description ? item.description : '-'
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
@@ -298,8 +316,8 @@ class Model extends React.Component {
       title: __.applicant,
       content: item.username
     }, {
-      title: __.project + __.id,
-      content: item.projectId
+      title: __.project + __.name,
+      content: item.projectName ? item.projectName + ' / ' + item.projectId : '- / ' + item.projectId
     }, {
       title: __.create + __.time,
       content: item.createdAt,
