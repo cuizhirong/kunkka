@@ -38,7 +38,7 @@ module.exports = {
       out_trade_no: info.id,
       total_fee: info.amount,
       currency: info.currency,
-      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify?REGION=' + req.header('REGION'),
+      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify',
       subject: alipaySubject + info.username,
       body: alipayBody + info.amount + currencyConfig.unit
     };
@@ -66,7 +66,7 @@ module.exports = {
     return PayModel.findOne({
       where: {id: req.body.out_trade_no}
     }).then(pay=> {
-      pay.transferred = 1;
+      pay.transferred = true;
       return pay.save();
     }).catch(err=> {
       next(err);
