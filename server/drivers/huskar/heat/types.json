@@ -100,5 +100,13 @@
     "pool": "",
     "timeout": "",
     "type": ""
+  },
+  "createListener": {
+    "type": "OS::Neutron::LBaaS::Listener",
+    "loadbalancer": "",
+    "protocol": "",
+    "protocol_port": "",
+    "name": "",
+    "connection_limit": ""
   }
 }
