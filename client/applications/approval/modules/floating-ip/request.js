@@ -51,7 +51,7 @@ module.exports = {
       url: url
     });
   },
-  createFloatingIp: function(data) {
+  createApplication: function(data) {
     return fetch.post({
       url: '/api/apply',
       data: data

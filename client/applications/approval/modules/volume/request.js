@@ -65,13 +65,7 @@ module.exports = {
       url: '/proxy/gringotts/v2/products'
     });
   },
-  createVolume: function(_data) {
-    return fetch.post({
-      url: '/api/apply',
-      data: _data
-    });
-  },
-  createSnapshot: function(_data) {
+  createApplication: function(_data) {
     return fetch.post({
       url: '/api/apply',
       data: _data

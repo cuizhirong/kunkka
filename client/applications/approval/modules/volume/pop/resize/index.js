@@ -87,20 +87,22 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       var data = {};
-      data.new_size = Number(refs.capacity_size.state.value);
+      data.description = refs.apply_description.state.value;
+      data.detail = {};
+      data.detail.resize = [];
+      var resize = data.detail.resize,
+        resizeItem = {};
 
-      request.extendVolumeSize(obj, data).then((res) => {
-        callback && callback(res);
+      resizeItem = {
+        _type: 'Volume',
+        id: obj.id,
+        size: Number(refs.capacity_size.state.value)
+      };
+      resize.push(resizeItem);
+
+      request.createApplication(data).then(res => {
+        callback && callback();
         cb(true);
-      }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
-
-        refs.error.setState({
-          value: tip,
-          hide: false
-        });
-        cb(false);
       });
     },
     onAction: function(field, state, refs) {

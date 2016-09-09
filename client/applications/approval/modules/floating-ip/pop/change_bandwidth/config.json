@@ -1,5 +1,5 @@
 {
-  "title": ["change", "bandwidth"],
+  "title": ["apply_", "change", "bandwidth"],
   "fields": [{
     "type": "slider",
     "field": "bandwidth",
@@ -11,6 +11,9 @@
     "type": "charge",
     "field": "charge",
     "has_label": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
     "value": "confirm",

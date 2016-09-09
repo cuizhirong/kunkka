@@ -27,7 +27,7 @@ class ApplyDetail extends React.Component {
     });
   }
 
-  getFieldName(k) {
+  getFieldName(item, k) {
     switch(k) {
       case '_type':
         return __.type;
@@ -37,6 +37,15 @@ class ApplyDetail extends React.Component {
         return __.volume + __.type;
       case 'admin_pass':
         return __.password;
+      case 'port_range_max':
+        return __.max_port;
+      case 'port_range_min':
+        return __.min_port;
+      case 'remote_ip_prefix':
+        let isIngress = item.direction === 'ingress';
+        return isIngress ? __.source_type : __.target;
+      case 'size':
+        return item._type === 'Floatingip' ? __.bandwidth : __.size;
       default:
         return __[k] ? __[k] : k;
     }
@@ -44,9 +53,13 @@ class ApplyDetail extends React.Component {
 
   getFieldContent(item, field) {
     var data = this.props.data;
-    var getResource = function() {
+    var getResource = function(f) {
       var resource = {};
-      data[field].some(ele => {
+      if(f === 'security_group') {
+        f = 'securitygroup';
+      }
+
+      data[f].some(ele => {
         if(ele.id === item[field]) {
           resource = ele;
           return true;
@@ -59,17 +72,33 @@ class ApplyDetail extends React.Component {
 
     switch(field) {
       case 'image':
-        let image = getResource();
+        let image = getResource(field);
         return image ? <span>
           <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} />
           <a data-type="router" href={'/approval/' + field + '/' + item[field]}>{image.name}</a>
         </span> : <span>{item[field]}</span>;
       case 'flavor':
-        let flavor = getResource(),
+        let flavor = getResource(field),
           ram = unitConverter(flavor.ram, 'MB');
         return flavor ? <span>
             {flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + flavor.disk + 'GB'}
           </span> : <span>{item[field]}</span>;
+      case 'security_group':
+        let sg = getResource(field);
+        return sg ? <span>
+            <a data-type="router" href={'/approval/security-group/' + item[field]}>{sg.name}</a>
+          </span> : <span>{item[field]}</span>;
+      case 'size':
+        if(item._type === 'Floatingip') {
+          let bw = Number(item[field]) / 1024;
+          return <span>{bw + ' Mbps'}</span>;
+        } else {
+          return <span>{item[field] + ' GB'}</span>;
+        }
+        break;
+      case 'direction':
+        let key = item[field];
+        return <span>{__[key]}</span>;
       default:
         return <span>{item[field]}</span>;
     }
@@ -95,9 +124,10 @@ class ApplyDetail extends React.Component {
                 {createDetail.map((c, i) =>
                   <div className="item-info" key={'create' + i}>
                     {['_type', '_identity', 'name', 'flavor', 'image', 'admin_pass', 'key_name',
-                        'size', 'volume_type'].map((k, j) => {
+                        'size', 'volume_type', 'direction', 'port_range_max', 'port_range_min',
+                        'protocol', 'remote_ip_prefix', 'security_group'].map((k, j) => {
                           return (c[k] ? <div className="info-box" key={'create' + i + j}>
-                            {this.getFieldName(k) + ': '}{this.getFieldContent(c, k)}
+                            {this.getFieldName(c, k) + ': '}{this.getFieldContent(c, k)}
                           </div> : null);
                         })}
                   </div>
@@ -125,7 +155,7 @@ class ApplyDetail extends React.Component {
                   <div className="item-info" key={'resize' + p}>
                     {['_type', 'id', 'flavor', 'size'].map((j, q) => {
                       return (resize[j] ? <div className="info-box" key={'resize' + p + q}>
-                        {this.getFieldName(j) + ': '}{this.getFieldContent(resize, j)}
+                        {this.getFieldName(resize, j) + ': '}{this.getFieldContent(resize, j)}
                       </div> : null);
                     })}
                   </div>

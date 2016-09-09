@@ -109,7 +109,7 @@ function pop(parent, callback) {
 
         configCreate.push(createItem);
         data.description = refs.apply_description.state.value;
-        request.createFloatingIp(data).then((res) => {
+        request.createApplication(data).then((res) => {
           callback && callback(res.floatingip);
           cb(true);
         }).catch((error) => {

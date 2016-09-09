@@ -2,7 +2,6 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/approval.lang.json');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
 
 // function priceError(refs, error) {
 //   refs.btn.setState({
@@ -55,18 +54,25 @@ function pop(obj, parent, callback) {
       // }
     },
     onConfirm: function(refs, cb) {
-      var bw = Number(refs.bandwidth.state.value) * 1024;
-      var data = {
-        floatingip: {
-          rate_limit: bw
-        }
-      };
+      var data = {};
+      data.description = refs.apply_description.state.value;
+      data.detail = {};
+      data.detail.resize = [];
+      var resize = data.detail.resize,
+        resizeItem = {};
 
-      request.changeBandwidth(obj.id, data).then((res) => {
+      var bw = Number(refs.bandwidth.state.value) * 1024;
+
+      resizeItem = {
+        _type: 'Floatingip',
+        id: obj.id,
+        size: bw
+      };
+      resize.push(resizeItem);
+
+      request.createApplication(data).then(res => {
+        callback && callback();
         cb(true);
-        callback && callback(res);
-      }).catch((error) => {
-        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {

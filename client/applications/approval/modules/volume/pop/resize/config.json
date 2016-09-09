@@ -1,5 +1,5 @@
 {
-  "title": ["extd_capacity"],
+  "title": ["apply_", "extd_capacity"],
   "fields": [{
     "type": "slider",
     "field": "capacity_size",
@@ -19,9 +19,12 @@
     "tip_type": "error",
     "field": "error",
     "hide": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "extd_capacity",
+    "value": "apply_",
     "disabled": true
   }
 }

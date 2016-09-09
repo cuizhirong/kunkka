@@ -30,7 +30,7 @@
           "key": "dissociate",
           "disabled": true
         }, {
-          "title": ["change", "bandwidth"],
+          "title": ["apply_", "change", "bandwidth"],
           "key": "change_bw",
           "disabled": true
         }]
