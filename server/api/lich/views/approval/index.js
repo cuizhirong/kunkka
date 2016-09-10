@@ -5,6 +5,8 @@ const config = require('config');
 const roleFlow = config('approval_flow');
 const length = roleFlow.length;
 const displayDashboardRole = roleFlow[length - 1];
+const reverseRoleFlow = JSON.parse(JSON.stringify(roleFlow)).reverse();
+
 
 function main(app, clientApps, currentView, viewPlugins) {
   let views = app.get('views');
@@ -26,9 +28,11 @@ function haloProcessor(user, HALO) {
     let showApply = true;
     let showMyApplication = true;
     let showManageApplication = true;
-    if (user.roles.indexOf(roleFlow[0]) > -1) {
+    let highestRole;
+    reverseRoleFlow.some(role => user.roles.indexOf(role) > -1 && (highestRole = role));
+    if (roleFlow.indexOf(highestRole) === 0) {
       showManageApplication = false;
-    } else if (user.roles.indexOf(displayDashboardRole) > -1) {
+    } else if (roleFlow.indexOf(highestRole) === length - 1) {
       showApply = showMyApplication = false;
     }
     HALO.configs.approval = {
