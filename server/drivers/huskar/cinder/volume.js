@@ -30,7 +30,7 @@ driver.showVolumeDetails = function (projectId, volumeId, token, remote, callbac
 
 driver.resizeVolume = function (projectId, volumeId, size, token, remote, callback) {
   return driver.postMethod(
-    remote + '/v2/' + projectId + '/volumes/' + volumeId,
+    remote + '/v2/' + projectId + '/volumes/' + volumeId + '/action',
     token,
     callback,
     {
