@@ -30,6 +30,11 @@ class Model extends React.Component {
 
   constructor(props) {
     super(props);
+    var enableIpsec = HALO.settings.enable_ipsec;
+    if (!enableIpsec) {
+      let detail = config.table.detail.tabs;
+      delete detail[1];
+    }
 
     this.state = {
       config: config
