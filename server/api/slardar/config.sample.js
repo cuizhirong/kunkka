@@ -72,6 +72,11 @@ module.exports = {
       name: 'view.css',
       value: '',
       type: 'text'
+    }, {
+      app: 'dashboard',
+      name: 'enable_ipsec',
+      value: 'false',
+      type: 'boolean'
     }
   ]
 };
