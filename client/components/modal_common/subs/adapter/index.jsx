@@ -11,9 +11,9 @@ class Adapter extends React.Component {
       required: props.required,
       disabled: !!props.disabled,
       hide: !!props.hide,
-      error: false
+      error: false,
+      onChange: this.onChange.bind(this)
     }, this.props);
-    this.onChange = this.onChange.bind(this);
   }
 
   onChange(value) {
