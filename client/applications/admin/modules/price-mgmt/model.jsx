@@ -90,15 +90,11 @@ class Model extends React.Component {
 
   //initialize table data
   onInitialize(params) {
-    if(params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
+    this.getTableData();
   }
 
   getInitializeListData() {
-    this.getList();
+    this.getTableData();
   }
 
   getSingle(id) {
@@ -152,6 +148,29 @@ class Model extends React.Component {
     return table;
   }
 
+  getTableData(detailRefresh) {
+    request.getList().then((res) => {
+      var table = this.state.config.table;
+      table.data = res.products;
+      table.loading = false;
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail && detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
+    });
+  }
+
   //refresh: according to the given data rules
   refresh(data, params) {
     if (!data) {
@@ -182,7 +201,7 @@ class Model extends React.Component {
         }
       }
     }
-    this.onInitialize(params);
+    this.getTableData(data.refreshDetail);
   }
 
   loadingTable() {
@@ -217,15 +236,8 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        var item = data.rows[0].product_id;
         this.loadingDetail();
-        if(item) {
-          request.getPriceById(item).then((res) => {
-            this.onClickDetailTabs(actionType, refs, data);
-          });
-        } else {
-          this.onClickDetailTabs(actionType, refs, data);
-        }
+        this.onClickDetailTabs(actionType, refs, data);
         break;
       default:
         break;
