@@ -12,6 +12,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -64,7 +65,7 @@ class Model extends React.Component {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {item.volume_type === 'sata' ? __.performance_type : __.capacity_type}
+                {utils.getVolumeType(item)}
               </span> : '';
           };
           break;
@@ -517,7 +518,7 @@ class Model extends React.Component {
           </span> : '-'
     }, {
       title: __.type,
-      content: item.volume_type === 'sata' ? __.performance_type : __.capacity_type
+      content: utils.getVolumeType(item)
     }, {
       title: __.project + __.id,
       content: item['os-vol-tenant-attr:tenant_id']
