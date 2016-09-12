@@ -37,7 +37,7 @@ class Main extends React.Component {
   accountCharge() {
     var value = this.refs.chargeTable.refs.input.state.value;
     var patrn = /^([1-9]\d*|0)(\.\d*[1-9])?$/;
-    if (patrn.exec(value)) {
+    if (patrn.exec(value) && value >= HALO.settings.min_recharge_amount) {
       if (!this.state.isHide) {
         this.setState({
           isHide: true
@@ -61,7 +61,7 @@ class Main extends React.Component {
     return (
       <div className="charge-record-main">
         <div className={className}>
-          {__.tip_info}
+          {__.tip_info.replace('{0}', HALO.settings.min_recharge_amount)}
         </div>
         <div className="balance">
           <span>{__.account_balance + ': '}</span>

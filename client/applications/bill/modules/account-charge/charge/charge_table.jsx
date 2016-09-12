@@ -10,7 +10,7 @@ class Main extends React.Component {
     super(props);
 
     this.state = {
-      selectValue: 'alipay'
+      selectValue: HALO.settings.enable_alipay ? 'alipay' : 'paypal'
     };
 
     ['onAction', 'renderRadio', 'onSelectedValueChanged'].forEach((m) => {
@@ -31,25 +31,35 @@ class Main extends React.Component {
   }
 
   renderRadio() {
-    var alipay = {
+    var alipayClass = {
       background: 'url(' + resources + ') 0 0 no-repeat',
       backgroundPosition: -150
     };
-    var paypal = {
+    var paypalClass = {
       background: 'url(' + resources + ') 0 0 no-repeat',
       backgroundPosition: -480
     };
-    var listItems = [{
+    var alipay = {
       id: 1,
       name: 'payment',
       value: 'alipay',
-      styleClass: alipay
-    }, {
+      styleClass: alipayClass
+    };
+    var paypal = {
       id: 2,
       name: 'payment',
       value: 'paypal',
-      styleClass: paypal
-    }];
+      styleClass: paypalClass
+    };
+    var enableAlipay = HALO.settings.enable_alipay;
+    var enablePaypal = HALO.settings.enable_paypal;
+    var listItems = [];
+    if (enableAlipay) {
+      listItems.push(alipay);
+    }
+    if (enablePaypal) {
+      listItems.push(paypal);
+    }
 
     return listItems.map((item, index) => {
       return (

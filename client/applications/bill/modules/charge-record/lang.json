@@ -3,12 +3,16 @@
     "total_cny": "Total(CNY)",
     "charge-type": "Charge Type",
     "channel": "Capital Channel",
-    "charge-time": "Charge Time"
+    "charge-time": "Charge Time",
+    "alipay": "Alipay",
+    "paypal": "Paypal"
   },
   "zh-CN": {
     "total_cny": "充值金额（元）",
     "charge-type": "充值类型",
     "channel": "资金渠道",
-    "charge-time": "充值时间"
+    "charge-time": "充值时间",
+    "alipay": "支付宝",
+    "paypal": "Paypal"
   }
 }
