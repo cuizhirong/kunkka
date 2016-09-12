@@ -46,5 +46,21 @@ module.exports = {
       gateway: 'https://mapi.alipay.com/gateway.do?'
       /*** 一般无需配置 end ***/
     }
-  }
+  },
+  setting: [{
+    app: 'bill',
+    name: 'min_recharge_amount',
+    value: 10,
+    type: 'number'
+  }, {
+    app: 'bill',
+    name: 'enable_paypal',
+    value: false,
+    type: 'boolean'
+  }, {
+    app: 'bill',
+    name: 'enable_alipay',
+    value: true,
+    type: 'boolean'
+  }]
 };
