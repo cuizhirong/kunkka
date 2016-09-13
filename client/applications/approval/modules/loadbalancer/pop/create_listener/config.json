@@ -1,5 +1,5 @@
 {
-  "title": ["create", "listener"],
+  "title": ["apply_", "listener"],
   "fields": [{
     "type": "input",
     "field": "name",
@@ -24,9 +24,12 @@
   }, {
     "type": "adapter",
     "field": "connection_limit"
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
     "disabled": true
   }

@@ -57,7 +57,6 @@ class ListenerList extends React.Component {
 
   render() {
     var listenerConfigs = this.props.listenerConfigs,
-      btnValue = this.wordsToLine(['modify', 'listener']),
       btnData = {value: __.more};
 
     return (
@@ -69,14 +68,13 @@ class ListenerList extends React.Component {
         <div className={'toggle-content' + (this.state.toggle ? ' unfold' : ' fold')}>
           <div className="halo-listener-list">
             <div className="listener-table-content">
-              <Button type="create" value={__.create + __.listener} onClick={this.onAction.bind(this, 'create_listener')}/>
+              <Button type="create" value={__.apply_ + __.listener} onClick={this.onAction.bind(this, 'create_listener')}/>
               <div className="listeners-list">
                 {listenerConfigs.map((config, i) =>
                   <div className="listener-detail" key={i}>
                     <div className="listener-detail-head">
                       <div className="listener-name">{__.listener} : <span>{config.listener.name}</span></div>
                       <div className="listener-btn">
-                        <Button value={btnValue} onClick={this.onAction.bind(this, 'modify_listener', config.listener)} />
                         <DropdownButton buttonData={btnData} dropdownItems={config.listenerDropdown} dropdownOnClick={this.onAction.bind(this, 'more_listener_ops', config.listener)}/>
                       </div>
                       <div className="clearfix"></div>

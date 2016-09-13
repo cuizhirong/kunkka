@@ -33,10 +33,10 @@ module.exports = {
       return data.pool;
     });
   },
-  createPool: function(data) {
+  createApplication: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/lbaas/pools',
-      data: {'pool': data}
+      url: '/api/apply',
+      data: data
     });
   },
   deletePools: function(items) {

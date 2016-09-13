@@ -14,7 +14,6 @@ var addResource = require('./pop/add_resource/index');
 var updateResourceState = require('./pop/update_resource_state/index');
 var modifyWeight = require('./pop/modify_weight/index');
 var createMonitor = require('./pop/create_monitor/index');
-var modifyMonitor = require('./pop/modify_monitor/index');
 
 var config = require('./config.json');
 var router = require('client/utils/router');
@@ -139,46 +138,12 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
-
     switch(key) {
       case 'create_pool':
         createPool();
         break;
       case 'create_monitor':
         createMonitor();
-        break;
-      case 'modify_pool':
-        createPool(rows[0]);
-        break;
-      case 'delete_monitor':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'health_monitor',
-          data: [rows[0].healthmonitor],
-          onDelete: function(_data, cb) {
-            request.deleteMonitor(rows[0].healthmonitor).then(res => {
-              cb(true);
-            });
-          }
-        });
-        break;
-      case 'modify_monitor':
-        modifyMonitor(rows[0]);
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'resource_pool',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deletePools(rows).then(res => {
-              cb(true);
-            });
-          }
-        });
         break;
       case 'refresh':
         this.refresh({
@@ -218,13 +183,6 @@ class Model extends React.Component {
       switch (key) {
         case 'modify_pool':
           btns[key].disabled = rows.length !== 1;
-          break;
-        case 'delete_monitor':
-        case 'modify_monitor':
-          btns[key].disabled = !(rows.length === 1 && rows[0].healthmonitor);
-          break;
-        case 'delete':
-          btns[key].disabled = rows.length > 0 ? false : true;
           break;
         default:
           break;

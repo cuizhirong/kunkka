@@ -1,7 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
 var __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
@@ -16,14 +15,6 @@ function pop(obj, parent, callback) {
     id: 'source_ip'
   }];
   config.fields[3].data = algorithm;
-
-  if(obj) {
-    config.title = ['modify', 'resource', 'pool'];
-    config.btn.value = 'modify';
-  } else {
-    config.title = ['create', 'resource', 'pool'];
-    config.btn.value = 'create';
-  }
 
   var getListenersUnderType = function(items) {
     var listeners = {};
@@ -47,78 +38,44 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      if(obj) {
-        refs.name.setState({
-          value: obj.name
+      request.getListeners(true).then(res => {
+        var listeners = getListenersUnderType(res);
+        refs.listener.setState({
+          listeners: listeners
+        });
+
+        var p = refs.protocol.state.data[0].name;
+        refs.protocol.setState({
+          value: p
         });
         refs.load_algorithm.setState({
-          value: obj.lb_algorithm.toLowerCase()
-        });
-        refs.desc.setState({
-          value: obj.description
-        });
-        refs.protocol.setState({
-          value: obj.protocol,
-          disabled: true
+          value: refs.load_algorithm.state.data[0].id
         });
 
-        refs.listener.setState({
-          data: [obj.listener],
-          value: obj.listener.id,
-          disabled: true
-        });
-
-        refs.btn.setState({
-          disabled: false
-        });
-      } else {
-        request.getListeners(true).then(res => {
-          var listeners = getListenersUnderType(res);
-          refs.listener.setState({
-            listeners: listeners
-          });
-
-          var p = refs.protocol.state.data[0].name;
-          refs.protocol.setState({
-            value: p
-          });
-          refs.load_algorithm.setState({
-            value: refs.load_algorithm.state.data[0].id
-          });
-
-        });
-      }
+      });
     },
     onConfirm: function(refs, cb) {
-      if(obj) {
-        var updateParam = {
-          name: refs.name.state.value,
-          lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
-          description: refs.desc.state.value
-        };
+      var data = {};
+      data.description = refs.apply_description.state.value;
+      data.detail = {};
+      data.detail.create = [];
 
-        request.updatePool(obj.id, updateParam).then(res => {
-          callback && callback();
-          cb(true);
-        }).catch(function(error) {
-          cb(false, getErrorMessage(error));
-        });
-      } else {
-        var param = {
-          name: refs.name.state.value,
-          listener_id: refs.listener.state.value,
-          protocol: refs.protocol.state.value.toUpperCase(),
-          lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
-          description: refs.desc.state.value
-        };
+      var createDetail = data.detail.create;
+      var poolParam = {
+        _type: 'ResourcePool',
+        _identity: 'pool',
+        description: refs.desc.state.value,
+        lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
+        listener: refs.listener.state.value,
+        name: refs.name.state.value,
+        protocol: refs.protocol.state.value.toUpperCase()
+      };
+      createDetail.push(poolParam);
 
-        request.createPool(param).then(res => {
-          callback && callback();
-          cb(true);
-        }).catch(function(error) {
-          cb(false, getErrorMessage(error));
-        });
-      }
+      request.createApplication(data).then(res => {
+        callback && callback();
+        cb(true);
+      });
     },
     onAction: function(field, status, refs) {
       if(!obj) {

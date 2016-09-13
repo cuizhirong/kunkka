@@ -73,7 +73,7 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  createPort: function(data) {
+  createApplication: function(data) {
     return fetch.post({
       url: '/api/apply',
       data: data

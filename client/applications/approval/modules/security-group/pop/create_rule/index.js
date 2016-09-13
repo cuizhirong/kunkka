@@ -252,6 +252,8 @@ function pop(item, direction, securityGroups, callback) {
     onConfirm: function(refs, cb) {
       var sgRule = {};
 
+      sgRule._type = 'SecurityGroupRule';
+      sgRule._identity = 'sg_rule';
       sgRule.direction = direction;
       sgRule.security_group = item.id;
 
@@ -303,9 +305,6 @@ function pop(item, direction, securityGroups, callback) {
         default:
           break;
       }
-
-      sgRule._type = 'SecurityGroupRule';
-      sgRule._identity = 'sg_rule';
 
       var createParam = {};
       createParam.description = refs.apply_description.state.value;

@@ -32,18 +32,8 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  createNetwork: function(data) {
+  createApplication: function(data) {
     return fetch.post({
-      url: '/api/apply',
-      data: data
-    });
-  },
-  createSubnet: function(data) {
-    return fetch.post({
-      /*url: '/proxy/neutron/v2.0/subnets',
-      data: {
-        subnet: data
-      }*/
       url: '/api/apply',
       data: data
     });

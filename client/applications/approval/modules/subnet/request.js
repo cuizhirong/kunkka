@@ -79,7 +79,7 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  createSubnet: function(data) {
+  createApplication: function(data) {
     return fetch.post({
       url: '/api/apply',
       data: data

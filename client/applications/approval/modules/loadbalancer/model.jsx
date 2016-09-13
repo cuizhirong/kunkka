@@ -179,9 +179,6 @@ class Model extends React.Component {
       case 'create':
         createLb();
         break;
-      case 'modify':
-        createLb(rows[0]);
-        break;
       case 'assoc_fip':
         assocFip(rows[0]);
         break;
@@ -237,7 +234,6 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
-        case 'modify':
         case 'delete':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
@@ -418,10 +414,6 @@ class Model extends React.Component {
           title: __.disable,
           key: 'disable',
           disabled: !item.admin_state_up
-        }, {
-          title: __.delete,
-          key: 'delete',
-          danger: true
         }]
       }];
 
@@ -462,10 +454,7 @@ class Model extends React.Component {
   onListenerAction(actionType, data, moreBtnKey) {
     switch (actionType) {
       case 'create_listener':
-        createListener(data.rawItem, null, false);
-        break;
-      case 'modify_listener':
-        createListener(data.childItem, null, true);
+        createListener(data.rawItem);
         break;
       case 'more_listener_ops':
         this.onClickListenerMoreBtn(moreBtnKey, data);
@@ -482,19 +471,6 @@ class Model extends React.Component {
         break;
       case 'disable':
         updateListenerState(data.childItem, null, false);
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'terminate',
-          type: 'listener',
-          data: [data.childItem],
-          onDelete: function(_data, cb) {
-            request.deleteListener(data.childItem).then(() => {
-              cb(true);
-            });
-          }
-        });
         break;
       default:
         break;

@@ -59,21 +59,21 @@ function pop(parent, callback) {
           var subCreateItem = {};
           subCreateItem = {
             _type: 'Subnet',
-            _identity: 'netSub',
+            _identity: 'subnet',
             ip_version: 4,
             name: refs.subnet_name.state.value,
-            network_id: {get_resource: '_net'},
+            network:'net',
             cidr: refs.net_address.state.value,
             enable_dhcp: true
           };
           configCreate.push(subCreateItem);
-          request.createNetwork(data).then((res) => {
+          request.createApplication(data).then((res) => {
             callback && callback(res.network);
             cb(true);
           });
         }
       } else {
-        request.createNetwork(data).then((res) => {
+        request.createApplication(data).then((res) => {
           callback && callback(res.network);
           cb(true);
         });

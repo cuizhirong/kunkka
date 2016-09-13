@@ -131,7 +131,7 @@ function pop(obj, parent, callback) {
       configCreate.push(port);
       data.description = refs.apply_description.state.value;
 
-      request.createPort(data).then((res) => {
+      request.createApplication(data).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch(function(error) {

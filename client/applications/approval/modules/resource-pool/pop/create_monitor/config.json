@@ -1,5 +1,5 @@
 {
-  "title": ["create", "health", "monitor"],
+  "title": ["apply_", "health", "monitor"],
   "fields": [{
     "type": "select",
     "field": "resource_pool",
@@ -38,9 +38,12 @@
     "input_type": "text",
     "tip_info": "retries_tip",
     "required": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
     "disabled": true
   }

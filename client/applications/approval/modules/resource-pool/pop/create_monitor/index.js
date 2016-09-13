@@ -1,7 +1,6 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
 var __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
@@ -22,19 +21,26 @@ function pop(obj, parent, callback) {
 
     },
     onConfirm: function(refs, cb) {
+      var data = {};
+      data.description = refs.apply_description.state.value;
+      data.detail = {};
+      data.detail.create = [];
+
+      var createDetail = data.detail.create;
       var monitorParam = {
+        _type: 'HealthMonitor',
+        _identity: 'monitor',
         type: refs.probe_type.state.value,
         delay: refs.delay.state.value,
         timeout: refs.timeout.state.value,
         max_retries: refs.max_retries.state.value,
-        pool_id: refs.resource_pool.state.value
+        pool: refs.resource_pool.state.value
       };
+      createDetail.push(monitorParam);
 
-      request.createMonitor(monitorParam).then(res => {
+      request.createApplication(data).then(res => {
         callback && callback();
         cb(true);
-      }).catch(error => {
-        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, status, refs) {

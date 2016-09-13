@@ -1,5 +1,5 @@
 {
-  "title": ["create", "load", "balancer"],
+  "title": ["apply_", "load", "balancer"],
   "fields": [{
     "type": "input",
     "field": "name",
@@ -13,9 +13,12 @@
   }, {
     "type": "textarea",
     "field": "desc"
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
   }],
   "btn": {
-    "value": "create",
+    "value": "apply_",
     "type": "create",
     "disabled": true
   }

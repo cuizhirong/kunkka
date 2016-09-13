@@ -62,7 +62,9 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getResourceInfo: function(forced) {
-    return storage.getList(['image', 'flavor', 'securitygroup'], forced).then(function(data) {
+    var resources = ['image', 'flavor', 'securitygroup', 'subnet', 'loadbalancer',
+    'listener', 'pool', 'floatingip', 'volume', 'instance', 'network'];
+    return storage.getList(resources, forced).then(function(data) {
       return data;
     });
   }

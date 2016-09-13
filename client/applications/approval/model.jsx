@@ -40,6 +40,7 @@ class Model extends React.Component {
       }
     } else {
       if(!enableApply) {
+        //admin user won't see dashboard regular modules in approval
         ['compute', 'network', 'storage'].forEach(title => {
           var modules = configs.modules;
           modules.some(obj => {
@@ -54,7 +55,9 @@ class Model extends React.Component {
             return false;
           });
         });
-        if(pathList[1] === 'overview') {
+
+        //admin user won't see quick-deploy module in approval
+        if(pathList[1] === 'overview' || 'quick-deploy') {
           pathList[1] = 'apply-approval';
         }
       }

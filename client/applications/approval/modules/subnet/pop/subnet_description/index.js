@@ -18,7 +18,7 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       obj.description = refs.apply_description.state.value;
-      request.createSubnet(obj).then(res => {
+      request.createApplication(obj).then(res => {
         callback && callback();
         cb(true);
       }).catch(err => {

@@ -8,37 +8,15 @@
     "default": true
   }],
   "btns": [{
-    "value": ["create", "resource", "pool"],
+    "value": ["apply_", "resource", "pool"],
     "key": "create_pool",
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["create", "health_monitor"],
+    "value": ["apply_", "health_monitor"],
     "key": "create_monitor",
     "type": "create",
     "icon": "create"
-  }, {
-    "value": ["more"],
-    "key": "more",
-    "iconClass": "more",
-    "dropdown": {
-      "items": [{
-        "items": [{
-          "title": ["modify", "resource", "pool"],
-          "key": "modify_pool"
-        }, {
-          "title": ["modify", "health_monitor"],
-          "key": "modify_monitor"
-        }, {
-          "title": ["delete", "health_monitor"],
-          "key": "delete_monitor"
-        }, {
-          "title": ["delete", "resource", "pool"],
-          "key": "delete",
-          "danger": true
-        }]
-      }]
-    }
   }, {
     "key": "refresh",
     "icon": "refresh"

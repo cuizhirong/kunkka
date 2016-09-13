@@ -24,10 +24,10 @@ module.exports = {
       return data.loadbalancer;
     });
   },
-  createLb: function(data) {
+  createApplication: function(data) {
     return fetch.post({
-      url: '/proxy/neutron/v2.0/lbaas/loadbalancers',
-      data: {'loadbalancer': data}
+      url: '/api/apply',
+      data: data
     });
   },
   updateLb: function(lbID, data) {
@@ -39,12 +39,6 @@ module.exports = {
   deleteLb: function(item) {
     return fetch.delete({
       url: '/proxy/neutron/v2.0/lbaas/loadbalancers/' + item.id
-    });
-  },
-  createListener: function(data) {
-    return fetch.post({
-      url: '/proxy/neutron/v2.0/lbaas/listeners',
-      data: {'listener': data}
     });
   },
   editLbaasName: function(rawItem, newName) {

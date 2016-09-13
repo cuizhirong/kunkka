@@ -46,7 +46,7 @@ function pop(obj, parent, callback) {
         _identity  : 'subnet',
         ip_version: 4,
         name: refs.subnet_name.state.value,
-        network_id: refs.select_network.state.value,
+        network: refs.select_network.state.value,
         cidr: refs.net_address.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked
       };
