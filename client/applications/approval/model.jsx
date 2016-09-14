@@ -54,6 +54,9 @@ class Model extends React.Component {
             return false;
           });
         });
+        if(pathList[1] === 'overview') {
+          pathList[1] = 'apply-approval';
+        }
       }
 
       if(!showMyApply && pathList[1] === 'apply') {
@@ -160,6 +163,9 @@ class Model extends React.Component {
       var submenu = [];
       m.items.forEach((n) => {
         switch(n) {
+          case 'overview':
+            if(!enableApply) { return; }
+            break;
           case 'quick-deploy':
             if(!enableApply) { return; }
             break;

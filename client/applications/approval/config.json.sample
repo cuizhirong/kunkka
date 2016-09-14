@@ -1,5 +1,9 @@
 {
   "modules": [{
+    "items": [
+      "overview"
+    ]
+  }, {
     "title": "compute",
     "items": [
       "instance",
@@ -17,6 +21,7 @@
       "router",
       "port",
       "security-group",
+      "loadbalancer",
       "resource-pool"
     ]
   }, {
@@ -34,7 +39,7 @@
       "approved"
     ]
   }],
-  "default_module": "instance",
+  "default_module": "overview",
   "languages": [
     "en",
     "zh-CN"

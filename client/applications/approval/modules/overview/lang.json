@@ -1,0 +1,18 @@
+{
+  "en": {
+    "infinity": "Infinity",
+    "information": " Information",
+    "gigabyte": " Gigabyte",
+    "quota": " Quota",
+    "ram": "RAM",
+    "unit_gb": "(GB)"
+  },
+  "zh-CN": {
+    "infinity": "无限",
+    "quota": "配额",
+    "information": "信息",
+    "gigabyte": "容量",
+    "ram": "内存",
+    "unit_gb": "(GB)"
+  }
+}
