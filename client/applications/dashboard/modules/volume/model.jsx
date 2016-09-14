@@ -105,7 +105,7 @@ class Model extends React.Component {
             return item.volume_type ?
               <span>
                 <i className="glyphicon icon-performance" />
-                {utils.getVolumeType(item)}
+                {utils.getVolumeType(item.volume_type)}
               </span> : '';
           };
           break;
@@ -381,7 +381,7 @@ class Model extends React.Component {
       content: item.size + ' GB'
     }, {
       title: __.type,
-      content: utils.getVolumeType(item)
+      content: utils.getVolumeType(item.volume_type)
     }, {
       title: __.attach_to + __.instance,
       content: item.attachments.length > 0 ? getAttachments(item) : '-'
