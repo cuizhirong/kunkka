@@ -1,7 +1,14 @@
+@line_bg_gray: @color_grey;
+@line_text_gray: @color_grey_700;
+@input_border: @color_grey_700;
+@input_border_active: @color_info;
+@submit_active: lighten(@color_info, 5%);
+
 body {
   width: 100%;
   height: 100%;
-  background: url(/static/assets/login_bg.jpg) center center no-repeat;
+  background: url(/static/assets/auth/login_bg.jpg) center center no-repeat;
+  background-size: cover;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -15,93 +22,133 @@ body {
     flex: 1;
   }
   .content {
+    position: relative;
     margin: 0 auto;
-    flex: 1;
-    width: 400px;
-    .fixed-height(540px);
+    width: 326px;
+    height: 390px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     background-color: #fff;
-    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.5s;
   }
   .footer {
-    flex: 3;
+    flex: 2;
     min-height: 80px;
   }
 }
 
 .content {
   .img-wrapper {
-    margin-top: 30px;
+    margin-top: 18px;
     text-align: center;
     img {
-      height: 91px;
+      height: 80px;
     }
   }
 
   .input-wrapper {
-    margin-top: 54px;
-    padding: 0 24px;
+    margin-top: 58px;
+    padding: 0 50px;
     input {
       display: block;
-      padding: 16px 16px;
-      width: 352px;
-      height: 50px;
+      padding-right: 20px;
+      width: 226px;
+      height: 24px;
       line-height: 18px;
       font-size: 14px;
       box-sizing: border-box;
+      border: none;
+      border-bottom: 1px solid @input_border;
       outline: none;
+      &:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+      }
       &:hover,
       &:focus {
-        border-color: #4391d9;
+        border-bottom: 1px solid @input_border_active;
       }
       &.error {
-        border: 1px solid #ef5665;
+        border-bottom: 1px solid #ef5665;
+      }
+      &:nth-child(8) {
+        margin-top: 30px;
       }
     }
-    input[type="password"] {
-      margin-top: 14px;
+    input:not(first-child) {
+      margin-top: 20px;
     }
     input[type="submit"] {
-      margin-top: 20px;
-      background-color: #4391d9;
-      border-color: #4391d9;
+      background: none;
+      border: 1px solid @input_border_active;
+      height: 28px;
+      line-height: 18px;
       font-size: 14px;
-      color: #fff;
+      color: @input_border_active;
       letter-spacing: 1px;
+      border-radius: 14px;
       &:hover {
-        background-color: #3283cd;
+        border-color: @submit_active;
+        color: @submit_active;
       }
       &.disabled {
-        color: #a8b3be;
-        background-color: #d9e3e5;
-        border-color: #d9e3e5;
+        color: @input_border;
+        border-color: @input_border;
         cursor: not-allowed;
       }
     }
+    .checkbox {
+      margin-top: 20px;
+      height: 17px;
+      input[type="checkbox"] {
+        margin-top: 0;
+        border: none;
+        height: 17px;
+        width: 17px;
+        display: inline-block;
+        vertical-align: text-bottom;
+      }
+      a {
+        margin-left: 2px;
+      }
+    }
     .tip-wrapper {
-      height: 40px;
+      height: 30px;
       font-size: 14px;
       color: #ef5665;
       overflow: hidden;
       .input-error {
-        margin-top: 15px;
+        margin-top: 8px;
       }
       i {
         margin-right: 5px;
       }
     }
+
+    .link {
+      position: absolute;
+      bottom: 0;
+      width: 326px;
+      margin-left: -50px;
+      margin-top: 24px;
+      height: 44px;
+      line-height: 44px;
+      background-color: @line_bg_gray;
+      text-align: center;
+      color: @line_text_gray;
+      a {
+        cursor: pointer;
+        color: @input_border_active;
+      }
+      span {
+        padding: 0 8px;
+      }
+    }
   }
 
-  .link {
-    display: none;
-    margin-top: 90px;
-    text-align: center;
-    color: #a1a1a1;
-    a {
-      color: #a1a1a1;
-    }
-    span {
-      padding: 0 8px;
-    }
+  .find-Password {
+    margin-top: 10px;
+    width: 100%;
+    text-align: right;
   }
 }
 
@@ -110,6 +157,7 @@ body {
   align-items: flex-end;
   text-align: center;
   justify-content: center;
+  color: #fff;
   .footer-wrapper {
     margin-bottom: 20px;
   }
