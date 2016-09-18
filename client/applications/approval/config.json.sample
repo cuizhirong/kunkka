@@ -33,7 +33,7 @@
   }, {
     "title": "approval",
     "items": [
-      "quick-deploy",
+      "instance-create",
       "apply",
       "apply-approval",
       "approved"

@@ -205,12 +205,17 @@ class Model extends React.Component {
       name: name
     });
 
-    var hasAdminPass = false;
-    hasAdminPass = hasAdminPass || state.keypairName || state.pwd;
+    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
     if(hasAdminPass) {
-      this.setState({
-        btnDisabled: false
-      });
+      if(name) {
+        this.setState({
+          btnDisabled: false
+        });
+      } else {
+        this.setState({
+          btnDisabled: true
+        });
+      }
     }
   }
 
@@ -869,12 +874,35 @@ class Model extends React.Component {
   }
 
   onChangeCredential(key, e) {
+    var state = this.state;
     this.setState({
       credential: key,
       pwdError: true,
       pwd: '',
       pwdVisible: false
     });
+
+    if(key === 'keypair') {
+      if(state.keypairName) {
+        this.setState({
+          btnDisabled: false
+        });
+      } else {
+        this.setState({
+          btnDisabled: true
+        });
+      }
+    } else if (key === 'psw') {
+      if(state.psw) {
+        this.setState({
+          btnDisabled: false
+        });
+      } else {
+        this.setState({
+          btnDisabled: true
+        });
+      }
+    }
   }
 
   onChangeKeypair(e) {
@@ -921,10 +949,16 @@ class Model extends React.Component {
       pwd: pwd
     });
 
-    if(this.state.name && !pwdError) {
-      this.setState({
-        btnDisabled: false
-      });
+    if(this.state.name) {
+      if(pwdError) {
+        this.setState({
+          btnDisabled: true
+        });
+      } else {
+        this.setState({
+          btnDisabled: false
+        });
+      }
     }
   }
 
@@ -1268,11 +1302,11 @@ class Model extends React.Component {
     var props = this.props;
     var state = this.state;
 
-    var tab = [{name: __['quick-deploy'], key: 'quick-deploy'}];
+    var tab = [{name: __['instance-create'], key: 'instance-create'}];
 
     return (
-      <div className="halo-module-quick-deploy" style={this.props.style}>
-        <div className="halo-quick-deploy">
+      <div className="halo-module-instance-create" style={this.props.style}>
+        <div className="halo-instance-create">
           <div className="submenu-tabs">
             <Tab items={tab} />
           </div>

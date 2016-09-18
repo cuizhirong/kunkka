@@ -62,7 +62,7 @@ function pop(parent, callback) {
             _identity: 'subnet',
             ip_version: 4,
             name: refs.subnet_name.state.value,
-            network:'net',
+            network_id: {get_resource: '_net'},
             cidr: refs.net_address.state.value,
             enable_dhcp: true
           };

@@ -56,8 +56,8 @@ class Model extends React.Component {
           });
         });
 
-        //admin user won't see quick-deploy module in approval
-        if(pathList[1] === 'overview' || 'quick-deploy') {
+        //admin user won't see instanc-create module in approval
+        if(pathList[1] === 'overview' || 'instanc-create') {
           pathList[1] = 'apply-approval';
         }
       }
@@ -128,7 +128,7 @@ class Model extends React.Component {
     switch(name) {
       case 'loadbalancer':
         return 'lb';
-      case 'quick-deploy':
+      case 'instance-create':
         return 'deploy';
       case 'apply':
         return 'collaboration';
@@ -169,7 +169,7 @@ class Model extends React.Component {
           case 'overview':
             if(!enableApply) { return; }
             break;
-          case 'quick-deploy':
+          case 'instance-create':
             if(!enableApply) { return; }
             break;
           case 'apply':
