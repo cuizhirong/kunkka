@@ -142,20 +142,16 @@ Application.prototype = {
     req.params.projectId = apply.projectId;
     let applyDetail = JSON.parse(apply.detail);
     if (applyDetail.type === 'direct') {
-      this.directCreate(req, res, next, apply, applyDetail, function(e, d) {
+      this.directCreate(req, res, next, apply, applyDetail, function(e) {
         if (e) {
           next(e);
-        } else if (d.resource) {
-          apply.resourceId = d.resource.id;
-          apply.resourceType = d.resourceType;
+        } else {
           Promise.all([
             approvals[currentIndex].save(),
             apply.save()
           ]).then(function () {
             res.json(apply);
           });
-        } else {
-          res.json(apply);
         }
       });
     } else {
@@ -199,7 +195,7 @@ Application.prototype = {
             if (err) {
               callback(err);
             } else {
-              callback(null, {resource: net.body.network, type: 'network'});
+              callback(null);
             }
           });
         } else {
@@ -225,7 +221,7 @@ Application.prototype = {
                 if (e) {
                   callback(e);
                 } else {
-                  callback(null, {resource: subnet.body.subnet, type: 'subnet'});
+                  callback(null);
                 }
               });
             }
@@ -240,7 +236,7 @@ Application.prototype = {
           if (err) {
             callback(err);
           } else {
-            callback(null, {resource: d.body.snapshot, type: 'instanceSnapshot'});
+            callback(null);
           }
         });
       } else if (applyDetail.resourceType === 'volumeSnapshot') {
@@ -258,7 +254,7 @@ Application.prototype = {
           if (err) {
             callback(err);
           } else {
-            callback(null, {resource: d.body.snapshot, type: 'volumeSnapshot'});
+            callback(null);
           }
         });
       } else if(applyDetail.resourceType === 'floatingip') {
@@ -268,7 +264,7 @@ Application.prototype = {
           if (err) {
             callback(err);
           } else {
-            callback(null, {resource: fip.body.floatingip, type: 'floatingip'});
+            callback(null);
           }
         });
       }
@@ -315,12 +311,18 @@ Application.prototype = {
     let approver = {approved: false};
     approver.approverRole = this._getCurrentRole(req.session.user.roles);
     req.getListOptions = {approver: approver};
+    if (flow[flow.length - 1] !== approver.approverRole) {
+      req.getListOptions.projectId = req.session.user.projectId;
+    }
     next();
 
   },
   //get applications that I created.
   getMyCreateList: function (req, res, next) {
-    req.getListOptions = {userId: req.session.user.userId};
+    req.getListOptions = {
+      userId: req.session.user.userId,
+      projectId: req.session.user.projectId
+    };
     next();
   },
   getList: function (req, res, next) {

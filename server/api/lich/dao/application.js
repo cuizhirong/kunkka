@@ -74,6 +74,9 @@ exports.findAllByFields = function (fields) {
       $in: fields.status
     };
   }
+  if (fields.projectId) {
+    obj.where.projectId = fields.projectId;
+  }
   obj.order = [
     ['status', 'DESC'],
     ['updatedAt', 'DESC']

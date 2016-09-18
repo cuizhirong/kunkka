@@ -13,5 +13,10 @@ module.exports = {
     name: 'enable_approval',
     value: 'false',
     type: 'boolean'
+  }, {
+    app: 'approval',
+    name: 'view.css',
+    value: '',
+    type: 'text'
   }]
 };
