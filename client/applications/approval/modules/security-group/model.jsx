@@ -5,7 +5,6 @@ var Main = require('client/components/main/index');
 
 var SecurityDetail = require('client/components/security_detail/index');
 
-var deleteModal = require('client/components/modal_delete/index');
 var createSecurityGroup = require('./pop/create_security_group/index');
 var createRule = require('./pop/create_rule/index');
 
@@ -92,26 +91,11 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
     var that = this;
     switch (key) {
       case 'create':
         createSecurityGroup(null, function() {
           that.refresh(null, true);
-        });
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'security_group',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deleteSecurityGroup(rows).then(() => {
-              that.refresh(null, true);
-            });
-            cb(true);
-          }
         });
         break;
       case 'refresh':
@@ -271,9 +255,7 @@ class Model extends React.Component {
         icmp_type_code: getICMPTypeCode(ele),
         source_type: sourceOrTarget,
         target: sourceOrTarget,
-        action:
-          <i className="glyphicon icon-delete delete-action"
-              onClick={this.onDetailAction.bind(this, 'description', 'delete_ingress', ele)} />
+        action: '-'
       });
     });
     allRulesData.forEach((rule) => {
@@ -404,22 +386,6 @@ class Model extends React.Component {
           that.refresh({
             detailRefresh: true
           }, true);
-        });
-        break;
-      case 'delete_ingress':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'rules',
-          data: [data],
-          onDelete: function(_data, cb) {
-            request.deleteRules(data).then(() => {
-              that.refresh({
-                detailRefresh: true
-              }, true);
-            });
-            cb(true);
-          }
         });
         break;
       default:
