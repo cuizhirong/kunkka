@@ -19,4 +19,12 @@ driver.showSecurityDetails = function (projectId, securityId, token, remote, cal
     query
   );
 };
+driver.createSecurityGroupRule = function (theBody, token, remote, callback) {
+  return driver.postMethod(
+    remote + '/v2.0/security-group-rules',
+    token,
+    callback,
+    theBody
+  );
+};
 module.exports = driver;
