@@ -95,7 +95,7 @@ class ApplyDetail extends React.Component {
     switch(item._type) {
       case 'Floatingip':
         let fip = this.getResource(item, field, 'floatingip');
-        return fip ? <span>
+        return fip.id ? <span>
           <i className="glyphicon icon-floating-ip" />
           <a className="space-link" data-type="router" href={'/approval/floating-ip/' + item[field]}>
             {fip.floating_ip_address || '(' + fip.id.slice(0, 8) + ')'}
@@ -103,7 +103,7 @@ class ApplyDetail extends React.Component {
         </span> : <span>{item[field]}</span>;
       case 'Volume':
         let volume = this.getResource(item, field, 'volume');
-        return volume ? <span>
+        return volume.id ? <span>
           <i className="glyphicon icon-volume" />
           <a className="space-link" data-type="router" href={'/approval/volume/' + item[field]}>
             {volume.name || '(' + item[field].slice(0, 8) + ')'}
@@ -111,7 +111,7 @@ class ApplyDetail extends React.Component {
         </span> : <span>{item[field]}</span>;
       case 'Instance':
         let instance = this.getResource(item, field, 'instance');
-        return instance ? <span>
+        return instance.id ? <span>
           <i className="glyphicon icon-instance" />
           <a className="space-link" data-type="router" href={'/approval/instance/' + item[field]}>
             {instance.name || '(' + item[field].slice(0, 8) + ')'}
@@ -173,14 +173,14 @@ class ApplyDetail extends React.Component {
     switch(field) {
       case 'image':
         let image = this.getResource(item, field);
-        return image ? <span>
+        return image.id ? <span>
           <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} />
           <a data-type="router" href={'/approval/' + field + '/' + item[field]}>{image.name}</a>
         </span> : <span>{item[field]}</span>;
       case 'flavor':
         let flavor = this.getResource(item, field),
           ram = unitConverter(flavor.ram, 'MB');
-        return flavor ? <span>
+        return flavor.id ? <span>
             {flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + flavor.disk + 'GB'}
           </span> : <span>{item[field]}</span>;
       case 'size':
@@ -193,7 +193,7 @@ class ApplyDetail extends React.Component {
         break;
       case 'listener':
         let lis = this.getResource(item, field);
-        return lis ? <span>
+        return lis.id ? <span>
           <a className="space-link" data-type="router" href={'/approval/loadbalancer/' + lis.loadbalancers[0].id}>
             {lis.name || '(' + lis.id.slice(0, 8) + ')'}
           </a>
