@@ -206,7 +206,8 @@ class Model extends React.Component {
     });
 
     var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
-    if(hasAdminPass) {
+    var hasVolumeName = (state.checked && state.volumeName) || !state.checked;
+    if(hasAdminPass && hasVolumeName) {
       if(name) {
         this.setState({
           btnDisabled: false
@@ -882,7 +883,8 @@ class Model extends React.Component {
       pwdVisible: false
     });
 
-    if(key === 'keypair') {
+    var hasVolumeName = (state.checked && state.volumeName) || !state.checked;
+    if(state.name && hasVolumeName && key === 'keypair') {
       if(state.keypairName) {
         this.setState({
           btnDisabled: false
@@ -892,7 +894,7 @@ class Model extends React.Component {
           btnDisabled: true
         });
       }
-    } else if (key === 'psw') {
+    } else if (state.name && hasVolumeName && key === 'psw') {
       if(state.psw) {
         this.setState({
           btnDisabled: false
@@ -996,6 +998,22 @@ class Model extends React.Component {
   }
 
   onChangeCheckbox() {
+    var state = this.state;
+    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
+    if(hasAdminPass && this.state.name) {
+      if(this.state.checked) {
+        this.setState({
+          btnDisabled: false
+        });
+      } else {
+        if(!this.state.volumeName) {
+          this.setState({
+            btnDisabled: true
+          });
+        }
+      }
+    }
+
     this.setState({
       checked: !this.state.checked
     });
@@ -1118,10 +1136,22 @@ class Model extends React.Component {
 
   onChangeVolumeName(e) {
     var name = e.target.value;
+    var state = this.state;
+    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
 
     this.setState({
       volumeName: name
     });
+
+    if(state.name && hasAdminPass && name) {
+      this.setState({
+        btnDisabled: false
+      });
+    } else {
+      this.setState({
+        btnDisabled: true
+      });
+    }
   }
 
   onClickVolumeType(value) {
@@ -1311,6 +1341,7 @@ class Model extends React.Component {
             <Tab items={tab} />
           </div>
           <div className="operation-list">
+            <Button value={__.create + __.application} type="create" disabled={state.btnDisabled} onClick={this.onApply.bind(this)} />
             <Button initial={true} iconClass="glyphicon icon-refresh" onClick={this.onRefresh.bind(this)} />
           </div>
           <div className="create-config-page">
@@ -1326,9 +1357,6 @@ class Model extends React.Component {
               <label onClick={this.onChangeCheckbox}>{__.checkbox_tip_attach_volume}</label>
             </div> : ''}
             {(state.number === 1 && state.checked) ? this.renderVolume(props, state) : ''}
-          </div>
-          <div className="btns-create-flip">
-            <Button value={__.create + __.application} type="create" disabled={state.btnDisabled} onClick={this.onApply.bind(this)} />
           </div>
         </div>
       </div>
