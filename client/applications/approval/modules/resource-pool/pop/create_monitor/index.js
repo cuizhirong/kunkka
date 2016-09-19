@@ -25,7 +25,8 @@ function pop(obj, parent, callback) {
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
-
+      data.detail.type = 'direct';
+      data.detail.resourceType = 'healthMonitor';
       var createDetail = data.detail.create;
       var monitorParam = {
         _type: 'HealthMonitor',
@@ -34,7 +35,7 @@ function pop(obj, parent, callback) {
         delay: refs.delay.state.value,
         timeout: refs.timeout.state.value,
         max_retries: refs.max_retries.state.value,
-        pool: refs.resource_pool.state.value
+        pool_id: refs.resource_pool.state.value
       };
       createDetail.push(monitorParam);
 

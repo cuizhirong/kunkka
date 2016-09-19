@@ -312,6 +312,8 @@ function pop(item, direction, securityGroups, callback) {
       var detailData = createParam.detail;
       detailData.create = [];
       detailData.create.push(sgRule);
+      detailData.type = 'direct';
+      detailData.resourceType = 'securityGroupRule';
 
       request.createApplication(createParam).then(res => {
         callback && callback();

@@ -54,11 +54,13 @@ function pop(obj, parent, callback) {
       data.detail.create = [];
 
       var createDetail = data.detail.create;
+      data.detail.type = 'direct';
+      data.detail.resourceType = 'loadBalancer';
       var lbParam = {
         _type: 'LoadBalancer',
         _identity: 'lb',
         name: refs.name.state.value ? refs.name.state.value : '',
-        vip_subnet: refs.subnet.state.value,
+        vip_subnet_id: refs.subnet.state.value,
         description: refs.desc.state.value
       };
       createDetail.push(lbParam);

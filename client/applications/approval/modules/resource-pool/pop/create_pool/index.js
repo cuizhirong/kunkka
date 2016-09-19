@@ -59,14 +59,15 @@ function pop(obj, parent, callback) {
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
-
+      data.detail.type = 'direct';
+      data.detail.resourceType = 'resourcePool';
       var createDetail = data.detail.create;
       var poolParam = {
         _type: 'ResourcePool',
         _identity: 'pool',
         description: refs.desc.state.value,
         lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
-        listener: refs.listener.state.value,
+        listener_id: refs.listener.state.value,
         name: refs.name.state.value,
         protocol: refs.protocol.state.value.toUpperCase()
       };

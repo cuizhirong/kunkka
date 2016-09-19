@@ -24,12 +24,13 @@ function pop(obj, parent, callback) {
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
-
+      data.detail.type = 'direct';
+      data.detail.resourceType = 'listener';
       var createDetail = data.detail.create;
       var listenerParam = {
         _type: 'Listener',
         _identity: 'listener',
-        loadbalancer: obj.id,
+        loadbalancer_id: obj.id,
         protocol: refs.listener_protocol.state.value,
         protocol_port: refs.protocol_port.state.value,
         name: refs.name.state.value,
