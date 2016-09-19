@@ -191,13 +191,7 @@ Application.prototype = {
           networkData = JSON.parse(JSON.stringify(networkData));
           delete networkData.network._type;
           delete networkData.network._identity;
-          driver.neutron.network.createNetwork(_token, remote, networkData, function(err, net) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(null);
-            }
-          });
+          driver.neutron.network.createNetwork(_token, remote, networkData, (err) => callback(err));
         } else {
           let networkData, subnetData, networkId;
           applyDetail.create.forEach(e => {
@@ -217,13 +211,7 @@ Application.prototype = {
             } else {
               networkId = net.body.network.id;
               subnetData.subnet.network_id = networkId;
-              driver.neutron.subnet.createSubnet(_token, remote, subnetData, function(e, subnet) {
-                if (e) {
-                  callback(e);
-                } else {
-                  callback(null);
-                }
-              });
+              driver.neutron.subnet.createSubnet(_token, remote, subnetData, (e) => callback(e));
             }
           });
         }
@@ -232,13 +220,7 @@ Application.prototype = {
         let instanceId = applyDetail.create[0].instanceId;
         let projectId = apply.projectId;
         let remote = req.session.endpoint.nova[region];
-        driver.nova.server.createSnapshot(projectId, instanceId, snapshotName, _token, remote, function(err, d) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null);
-          }
-        });
+        driver.nova.server.createSnapshot(projectId, instanceId, snapshotName, _token, remote, (err) => callback(err));
       } else if (applyDetail.resourceType === 'volumeSnapshot') {
         let projectId = apply.projectId;
         let remote = req.session.endpoint.cinder[region];
@@ -250,23 +232,64 @@ Application.prototype = {
             force: true
           }
         };
-        driver.cinder.snapshot.createSnapshot(projectId, _token, remote, _data, function(err, d) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null);
-          }
-        });
-      } else if(applyDetail.resourceType === 'floatingip') {
+        driver.cinder.snapshot.createSnapshot(projectId, _token, remote, _data, (err) => callback(err));
+      } else if (applyDetail.resourceType === 'floatingip') {
         let remote = req.session.endpoint.neutron[region];
         let floatingipData = applyDetail.create[0];
-        driver.neutron.floatingip.createFloatingip(floatingipData.floating_network, floatingipData.rate_limit, _token, remote, function(err, fip) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null);
-          }
-        });
+        driver.neutron.floatingip.createFloatingip(floatingipData.floating_network, floatingipData.rate_limit, _token, remote, (err) => callback(err));
+
+      } else if (applyDetail.resourceType === 'securityGroupRule') {
+        let remote = req.session.endpoint.neutron[region];
+        let securityGroupRule = applyDetail.create[0];
+        securityGroupRule.security_group_id = securityGroupRule.security_group;
+        delete securityGroupRule._identity;
+        delete securityGroupRule._type;
+        delete securityGroupRule.security_group;
+        console.log(securityGroupRule);
+        let body = {
+          security_group_rule: securityGroupRule
+        };
+        driver.neutron.security.createSecurityGroupRule(body, _token, remote, (err) => callback(err));
+
+      } else if (applyDetail.resourceType === 'loadBalancer') {
+        let remote = req.session.endpoint.neutron[region];
+        let loadBalancer = applyDetail.create[0];
+        delete loadBalancer._identity;
+        delete loadBalancer._type;
+        let body = {
+          loadbalancer: loadBalancer
+        };
+        driver.neutron.lbaas.createLoadBalancer(body, _token, remote, (err) => callback(err));
+
+      } else if (applyDetail.resourceType === 'resourcePool') {
+        let remote = req.session.endpoint.neutron[region];
+        let resourcePool = applyDetail.create[0];
+        delete resourcePool._identity;
+        delete resourcePool._type;
+        let body = {
+          pool: resourcePool
+        };
+        driver.neutron.lbaas.createResourcePool(body, _token, remote, (err) => callback(err));
+
+      } else if (applyDetail.resourceType === 'healthMonitor') {
+        let remote = req.session.endpoint.neutron[region];
+        let healthMonitor = applyDetail.create[0];
+        delete healthMonitor._identity;
+        delete healthMonitor._type;
+        let body = {
+          healthmonitor: healthMonitor
+        };
+        driver.neutron.lbaas.createHealthMonitor(body, _token, remote, (err) => callback(err));
+
+      } else if (applyDetail.resourceType === 'listener') {
+        let remote = req.session.endpoint.neutron[region];
+        let listener = applyDetail.create[0];
+        delete listener._identity;
+        delete listener._type;
+        let body = {
+          listener: listener
+        };
+        driver.neutron.lbaas.createListener(body, _token, remote, (err) => callback(err));
       }
     });
 
