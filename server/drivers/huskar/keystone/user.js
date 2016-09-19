@@ -28,10 +28,18 @@ driver.createUser = function (token, remote, payload, callback) {
     payload
   );
 };
-//TODO
 driver.updateUser = function (token, remote, userId, payload, callback) {
   return driver.patchMethod(
     remote + '/v3/users/' + userId,
+    token,
+    callback,
+    payload
+  );
+};
+
+driver.changePassword = function (token, remote, userId, payload, callback) {
+  return driver.postMethod(
+    remote + '/v3/users/' + userId + '/password',
     token,
     callback,
     payload
