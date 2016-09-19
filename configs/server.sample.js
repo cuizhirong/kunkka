@@ -1,7 +1,7 @@
 var config = {
   'sessionEngine': {
     'type': 'Memcached',                               // 'Redis' | 'Memcached' | 'Session' (do not use it in production)
-    'remotes': ['42.62.101.6:11211'],
+    'remotes': ['42.62.101.211:11211'],
     'secret': 'keyboard cat',
     'cookie_name': 'ustack'
   },
