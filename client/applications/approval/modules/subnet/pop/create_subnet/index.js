@@ -78,8 +78,7 @@ function pop(obj, parent, callback) {
           error: true
         });
       } else {
-        subnetDescription(data);
-        cb(true);
+        subnetDescription(data, refs.modal);
       }
     },
     onAction: function(field, status, refs) {
