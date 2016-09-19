@@ -14,7 +14,11 @@ function getErrorMessage(error) {
       } else if (response.msg) {
         errorMessage = response.msg;
       } else if (response.error) {
-        errorMessage = response.error;
+        if(response.error.message) {
+          errorMessage = response.error.message;
+        } else {
+          errorMessage = response.error;
+        }
       } else {
         let reg = new RegExp('"message":"(.*)","');
         let msg = reg.exec(error.response);
