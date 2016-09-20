@@ -1,5 +1,6 @@
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
+var enableCharge = HALO.settings.enable_charge;
 
 function requestParams(obj) {
   var str = '';
@@ -26,7 +27,7 @@ module.exports = {
         url: url
       }).then((res) => {
         res._url = url;
-        return this.getCharge().then((charges) => {
+        return enableCharge ? this.getCharge().then((charges) => {
           res.users.map((user) => {
             charges.accounts.map((account) => {
               if (account.user_id === user.id) {
@@ -38,7 +39,7 @@ module.exports = {
             return res;
           });
           return res;
-        });
+        }) : res;
       });
     });
   },
@@ -60,7 +61,7 @@ module.exports = {
       url: nextUrl
     }).then((res) => {
       res._url = nextUrl;
-      return this.getCharge().then((charges) => {
+      return enableCharge ? this.getCharge().then((charges) => {
         res.users.map((user) => {
           charges.accounts.map((account) => {
             if (account.user_id === user.id) {
@@ -72,7 +73,7 @@ module.exports = {
           return res;
         });
         return res;
-      });
+      }) : res;
     }).catch((res) => {
       res._url = nextUrl;
       return res;
