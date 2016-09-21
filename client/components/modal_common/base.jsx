@@ -103,6 +103,11 @@ class ModalBase extends React.Component {
         this.setState({
           visible: false
         });
+
+        if(this.props.destroyPrevious) {
+          var root = document.getElementById('modal-container');
+          root.firstChild.classList.add('hide');
+        }
       } else {
         if (errorMessage) {
           this.setState({

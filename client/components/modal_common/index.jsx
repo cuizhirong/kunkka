@@ -23,6 +23,12 @@ function modal(props) {
 
       doc.body.appendChild(root);
     }
+
+    if(props.destroyPrevious && root.childNodes.length > 1) {
+      var previousModal = root.lastChild;
+      previousModal.parentNode.removeChild(previousModal);
+    }
+
     container = doc.createElement('div');
     root.appendChild(container);
   })();
