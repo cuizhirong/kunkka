@@ -19,7 +19,8 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "floating_ip_id"]
+    "placeholder": ["pls_enter", "floating_ip_id"],
+    "width": 200
   },
   "table": {
     "checkbox": true,

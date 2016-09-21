@@ -15,7 +15,8 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "configuration", "name"]
+    "placeholder": ["pls_enter", "configuration", "name"],
+    "width": 200
   },
   "table": {
     "checkbox": true,
