@@ -53,7 +53,7 @@ module.exports = {
       '?purchase.bill_method=hour' +
       '&purchase.purchases[0].product_name=' + type +
       '&purchase.purchases[0].service=block_storage' +
-      '&purchase.purchases[0].region_id=RegionOne' +
+      '&purchase.purchases[0].region_id=' + HALO.current_region +
       '&purchase.purchases[0].quantity=' + size;
 
     return fetch.get({

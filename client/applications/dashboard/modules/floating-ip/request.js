@@ -44,7 +44,7 @@ module.exports = {
       '?purchase.bill_method=hour' +
       '&purchase.purchases[0].product_name=ip.floating' +
       '&purchase.purchases[0].service=network' +
-      '&purchase.purchases[0].region_id=RegionOne' +
+      '&purchase.purchases[0].region_id=' + HALO.current_region +
       '&purchase.purchases[0].quantity=' + bandwidth;
 
     return fetch.get({

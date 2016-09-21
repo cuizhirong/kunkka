@@ -27,6 +27,7 @@
   }, {
     "type": "charge",
     "field": "charge",
+    "hide": true,
     "has_label": true
   }],
   "btn": {

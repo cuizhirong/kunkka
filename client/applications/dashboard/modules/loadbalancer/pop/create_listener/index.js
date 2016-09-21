@@ -4,6 +4,7 @@ var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var popSlider = require('./com_slider');
+var enableCharge = HALO.settings.enable_charge;
 
 function pop(obj, parent, actionModify, callback) {
   if(actionModify) {
@@ -12,6 +13,10 @@ function pop(obj, parent, actionModify, callback) {
   } else {
     config.title = ['create', 'listener'];
     config.btn.value = 'create';
+  }
+
+  if (enableCharge) {
+    config.fields[4].hide = false;
   }
 
   var props = {
@@ -26,15 +31,15 @@ function pop(obj, parent, actionModify, callback) {
         renderer: popSlider,
         value: initValue
       });
-
-      request.getPrice('listener', initValue).then((res) => {
-        refs.charge.setState({
-          value: res.unit_price
+      if (enableCharge) {
+        request.getPrice('listener', initValue).then((res) => {
+          refs.charge.setState({
+            value: res.unit_price
+          });
+          this.cacheKey.push(initValue);
+          this.cacheValue.push(res.unit_price);
         });
-        this.cacheKey.push(initValue);
-        this.cacheValue.push(res.unit_price);
       }
-      );
 
       if(actionModify) {
         refs.name.setState({
