@@ -9,6 +9,7 @@ function pop(obj, parent, callback) {
     __: __,
     parent: parent,
     config: config,
+    destroyPrevious: true,
     onInitialize: function(refs) {
       if(obj.detail) {
         refs.btn.setState({
