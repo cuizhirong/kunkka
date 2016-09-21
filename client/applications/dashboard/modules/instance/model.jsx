@@ -699,7 +699,7 @@ class Model extends React.Component {
     items.forEach((item) => {
       data.push({
         title: item.created_at,
-        name: <a data-type="router" href={'/dashboard/image/' + item.id}>{item.name}</a>,
+        name: <a data-type="router" href={'/dashboard/image-snapshot/' + item.id}>{item.name}</a>,
         size: item.size / 1024 + 'MB',
         time: item.created_at,
         status: getStatusIcon(item.status),
