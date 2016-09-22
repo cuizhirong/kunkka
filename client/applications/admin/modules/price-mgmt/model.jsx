@@ -112,6 +112,21 @@ class Model extends React.Component {
     });
   }
 
+  getSingleByName(name) {
+    var table = this.state.config.table;
+    request.getPriceByName(name).then((res) => {
+      if (res) {
+        table.data = [res];
+      } else {
+        table.data = [];
+      }
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table, res._url);
+    });
+  }
+
   getList() {
     this.clearState();
     var table = this.state.config.table;
@@ -249,7 +264,7 @@ class Model extends React.Component {
       this.loadingTable();
 
       if(data.text) {
-        this.getSingle(data.text);
+        this.getSingleByName(data.text);
       } else {
         this.getList();
       }
