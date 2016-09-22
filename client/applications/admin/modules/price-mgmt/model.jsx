@@ -116,7 +116,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
     request.getPriceByName(name).then((res) => {
       if (res) {
-        table.data = [res];
+        table.data = res;
       } else {
         table.data = [];
       }

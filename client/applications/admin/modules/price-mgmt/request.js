@@ -32,13 +32,14 @@ module.exports = {
     return fetch.get({
       url: url
     }).then((res) => {
+      var productsArray = [];
       for(var k in res.products) {
         if(res.products[k].name === name) {
           res.products[k].id = res.products[k].product_id;
-          return res.products[k];
+          productsArray = productsArray.concat(res.products[k]);
         }
       }
-      return '';
+      return productsArray;
     });
   },
   updatePriceById: function(id, data) {
