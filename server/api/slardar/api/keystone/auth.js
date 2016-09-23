@@ -3,6 +3,7 @@
 const async = require('async');
 const Base = require('../base.js');
 const config = require('config');
+const region = config('region');
 
 function Auth (app) {
   this.app = app;
@@ -111,7 +112,7 @@ Auth.prototype = {
         let userId = payload.token.user.id;
         let username = payload.token.user.name;
         let projectId = payload.token.project.id;
-        let regionId = cookies.region ? cookies.region : '';
+        let regionId = cookies.region ? cookies.region : region[0].id;
         let expireDate = new Date(payload.token.expires_at);
         let opt = {
           path: '/',
