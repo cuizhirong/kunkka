@@ -10,7 +10,7 @@ function View(app, clientApps, currentView, viewModels) {
   this.viewModelFactory = this.react.createFactory(this.viewModel);
   this.config = require('config');
   this.tusk = require('api/tusk/dao');
-  this.websocketUrl = this.config('websocket').url;
+  this.websocketUrl = this.config('websocket');
   this.regions = {};
   this.uskinFile = this.glob.sync('*.uskin.min.css', {
     cwd: 'client/dist/uskin'
@@ -108,7 +108,7 @@ View.prototype = {
       current_region: user.regionId ? user.regionId : this.regions[locale][0].id,
       // FIXME:
       websocket: {
-        url: this.websocketUrl
+        url: this.websocketUrl[user.regionId]
       },
       application: {
         application_list: this.applications,
