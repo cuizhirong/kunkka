@@ -34,7 +34,7 @@ class Model extends React.Component {
   componentWillMount() {
     var column = this.state.config.table.column;
     this.tableColRender(column);
-    if (HALO.user.roles[0].toLowerCase() === 'admin') {
+    if (HALO.user.roles.includes('admin')) {
       this.state.config.btns.splice(2, 1);
     }
     this.initializeFilter(this.state.config.filter);
@@ -431,7 +431,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var role = HALO.user.roles[0].toLowerCase() === 'owner';
+    var roleOwner = HALO.user.roles.includes('owner');
+    var roleAdmin = HALO.user.roles.includes('admin');
     for (let key in btns) {
       switch(key) {
         case 'pending':
@@ -444,7 +445,7 @@ class Model extends React.Component {
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'passed':
-          if (role) {
+          if (roleOwner && !roleAdmin) {
             btns[key].disabled = rows.length === 1 ? false : true;
           }
           break;

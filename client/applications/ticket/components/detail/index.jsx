@@ -70,8 +70,8 @@ class Detail extends React.Component {
       replies = state.replies,
       files = state.files,
       id = HALO.user.userId,
-      role = HALO.user.roles[0].toLowerCase();
-
+      roleOwner = HALO.user.roles.includes('owner'),
+      roleAdmin = HALO.user.roles.includes('admin');
     var sortTime = function(name) {
       return function(o, p) {
         var a, b;
@@ -97,6 +97,7 @@ class Detail extends React.Component {
           <div className="content-question">
             <div className="question-left">
               <div className="question-title">{item.title}</div>
+              <div className="question-content">{__.ticket_id + ' : ' + item.id}</div>
               <div className="question-content">{__.ticket + __.type + ' : ' + __[item.type]}</div>
               <div className="question-content">{item.description}</div>
             </div>
@@ -152,7 +153,7 @@ class Detail extends React.Component {
               );
             })}
           </div>
-          {((item.status === 'proceeding' || item.status === 'pending') && HALO.user.userId === item.owner) || (item.status === 'proceeding' && (role === 'owner' || role === 'admin')) ?
+          {((item.status === 'proceeding' || item.status === 'pending') && HALO.user.userId === item.owner) || (item.status === 'proceeding' && (roleOwner || roleAdmin)) ?
             <div className="reply-text">
               {__.reply}
               <textarea ref="reply"/>
