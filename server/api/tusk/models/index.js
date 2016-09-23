@@ -5,8 +5,8 @@ const mysql = require('../../../drivers/meepo').mysql;
 const tusk = mysql.import('tusk', (entity, DataTypes) => {
   return entity.define('tusk', {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true
     },
     app: {
