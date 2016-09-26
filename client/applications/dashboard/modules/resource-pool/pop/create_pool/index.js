@@ -27,13 +27,13 @@ function pop(obj, parent, callback) {
 
   var getListenersUnderType = function(items) {
     var listeners = {};
+    listeners.tcp = [];
+    listeners.http = [];
     items.forEach(item => {
       if(!item.default_pool_id) {
         if(item.protocol === 'TCP') {
-          listeners.tcp = [];
           listeners.tcp.push(item);
         } else {
-          listeners.http = [];
           listeners.http.push(item);
         }
       }
