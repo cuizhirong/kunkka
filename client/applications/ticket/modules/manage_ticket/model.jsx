@@ -117,8 +117,16 @@ class Model extends React.Component {
   }
 
   getSingle(id) {
-    var table = this.state.config.table;
-    request.getSingle(id).then((res) => {
+    var table = this.state.config.table,
+      status = '',
+      key = '';
+    this.state.config.tabs.map(tab => {
+      if (tab.default) {
+        key = tab.key.split('_')[0];
+        status = key === 'manage' ? 'pending' : key;
+      }
+    });
+    request.getSingle(id, status).then((res) => {
       table.data = [res];
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
@@ -298,7 +306,6 @@ class Model extends React.Component {
       var idData = data.filter_id,
         timeData = data.filter_type,
         start = '';
-
       if (idData) {
         this.getSingle(idData.id);
       } else if (timeData) {

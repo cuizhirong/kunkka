@@ -17,8 +17,8 @@ module.exports = {
       return res;
     });
   },
-  getSingle: function(id) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id;
+  getSingle: function(id, status) {
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '?status=' + status;
     return fetch.get({
       url: url
     }).then((res) => {
