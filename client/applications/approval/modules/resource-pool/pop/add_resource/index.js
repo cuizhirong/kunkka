@@ -13,10 +13,30 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getRelated(false).then(res => {
+        //instance should be in the same subnet with pool related lb
+        var subnetID = obj.loadbalancer.vip_subnet_id;
+        var instanceData = res.instance.filter(ins => {
+          for(var s in ins.addresses) {
+            if(ins.addresses[s].length > 0) {
+              var underSubnet = ins.addresses[s].some(addr => {
+                if(addr.subnet && addr.subnet.id === subnetID) {
+                  return true;
+                }
+                return false;
+              });
+
+              if(underSubnet) {
+                return true;
+              }
+            }
+          }
+          return false;
+        });
+
         refs.instance.setState({
           ports: res.port,
-          data: res.instance,
-          value: res.instance[0] ? res.instance[0].id : ''
+          data: instanceData,
+          value: instanceData[0] ? instanceData[0].id : ''
         });
       });
       refs.weight.setState({
