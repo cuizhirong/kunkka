@@ -19,12 +19,12 @@ API.prototype = {
       return -1;
     }
 
-    let roleIndex = -1;
+    let roleIndex;
     flowReverse.some(function (role, i) {
-      return arrRoles.indexOf(role) > -1 && (roleIndex = i);
+      return arrRoles.indexOf(role) > -1 && (roleIndex = role);
     });
 
-    return flow.indexOf(flowReverse[roleIndex]);
+    return flow.indexOf(roleIndex);
   }
 };
 
