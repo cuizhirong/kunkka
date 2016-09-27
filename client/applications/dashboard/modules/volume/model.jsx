@@ -263,7 +263,7 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
           break;
         case 'dtch_instance':
-          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'in-use' && rows[0].bootable !== 'true') ? false : true;
           break;
         case 'attach_to_instance':
           btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
@@ -394,6 +394,9 @@ class Model extends React.Component {
           return __.read_write;
         }
       })()
+    }, {
+      title: __.bootable,
+      content: item.bootable === 'true' ? __.yes : __.no
     }, {
       title: __.status,
       content: getStatusIcon(item.status)

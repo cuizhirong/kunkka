@@ -21,6 +21,9 @@ class ModalBase extends React.Component {
     }, {
       value: __.instance_snapshot,
       key: 'snapshot'
+    }, {
+      value: __.volume,
+      key: 'bootableVolume'
     }];
 
     var credentials = [{
@@ -44,6 +47,8 @@ class ModalBase extends React.Component {
       image: null,
       snapshots: [],
       snapshot: null,
+      bootableVolumes: [],
+      bootableVolume: null,
       flavorUnfold: false,
       flavors: [],
       flavor: null,
@@ -70,6 +75,7 @@ class ModalBase extends React.Component {
       showPwdTip: false,
       price: '0.0000',
       number: 1,
+      disabledNumber: false,
       error: '',
       showError: false
     };
@@ -101,6 +107,7 @@ class ModalBase extends React.Component {
 
     var images = [];
     var snapshots = [];
+    var bootableVolumes = [];
     res.image.forEach((ele) => {
       var type = ele.image_type;
       if (type === 'distribution') {
@@ -109,6 +116,14 @@ class ModalBase extends React.Component {
         snapshots.push(ele);
       }
     });
+
+    bootableVolumes = res.volume.filter(ele => {
+      if(ele.bootable && ele.bootable === 'true') {
+        return true;
+      }
+      return false;
+    });
+
     var imageSort = (a, b) => {
       var aLabel = Number(a.image_label_order);
       var bLabel = Number(b.image_label_order);
@@ -122,6 +137,7 @@ class ModalBase extends React.Component {
     };
     images.sort(imageSort);
     snapshots.sort(imageSort);
+    bootableVolumes.sort(bootableVolumes);
     var selectedImage = selectDefault(images);
     var username = '';
     if (selectedImage) {
@@ -166,6 +182,8 @@ class ModalBase extends React.Component {
       image: image,
       snapshots: snapshots,
       snapshot: snapshot,
+      bootableVolumes: bootableVolumes,
+      bootableVolume: selectDefault(bootableVolumes),
       flavors: flavors,
       networks: networks,
       network: selectDefault(networks),
@@ -256,9 +274,24 @@ class ModalBase extends React.Component {
     var state = this.state;
     var image = state.images.length > 0 ? state.images[0] : null;
     var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
+    var bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
 
     var username = '';
-    var obj = (key === 'snapshot') ? snapshot : image;
+    var obj = null;
+    switch(key) {
+      case 'image':
+        obj = image;
+        break;
+      case 'snapshot':
+        obj = snapshot;
+        break;
+      case 'bootableVolume':
+        obj = bootableVolume;
+        this.setState({number: 1});
+        break;
+      default:
+        break;
+    }
     if (obj) {
       let meta = JSON.parse(image.image_meta);
       username = meta.os_username;
@@ -281,12 +314,14 @@ class ModalBase extends React.Component {
       imageType: key,
       image: image,
       snapshot: snapshot,
+      bootableVolume: bootableVolume,
       username: username,
       hideKeypair: hideKeypair,
       credential: hideKeypair ? 'psw' : 'keypair',
       pwdError: true,
       pwd: '',
-      pwdVisible: false
+      pwdVisible: false,
+      disabledNumber: key === 'bootableVolume'
     });
   }
 
@@ -381,6 +416,12 @@ class ModalBase extends React.Component {
       pwdError: true,
       pwd: '',
       pwdVisible: false
+    });
+  }
+
+  onChangeBootableVolume(item, e) {
+    this.setState({
+      bootableVolume: item
     });
   }
 
@@ -586,14 +627,20 @@ class ModalBase extends React.Component {
       return;
     }
 
-    var enable = state.name && state.flavor && state.network && state.number;
+    var enable = state.name && state.flavor && state.network && state.number,
+      enableImage = false;
     var selectedImage;
     if (state.imageType === 'image') {
       enable = enable && state.image;
+      enableImage = enable;
       selectedImage = state.image;
-    } else {
+    } else if (state.imageType === 'snapshot') {
       enable = enable && state.snapshot;
+      enableImage = enable;
       selectedImage = state.snapshot;
+    } else {
+      enable = enable && state.bootableVolume;
+      selectedImage = state.bootableVolume;
     }
     if (state.credential === 'keypair') {
       enable = enable && state.keypairName;
@@ -602,16 +649,38 @@ class ModalBase extends React.Component {
     }
 
     if (enable) {
-      var data = {
-        name: state.name.trim(),
-        imageRef: selectedImage.id,
-        flavorRef: state.flavor.id,
-        networks: [{
-          uuid: state.network.id
-        }],
-        min_count: state.number,
-        max_count: state.number
-      };
+      var data = {};
+      if(enableImage) {
+        data = {
+          name: state.name.trim(),
+          imageRef: selectedImage.id,
+          flavorRef: state.flavor.id,
+          networks: [{
+            uuid: state.network.id
+          }],
+          min_count: state.number,
+          max_count: state.number
+        };
+      } else {
+        var bootVolume = state.bootableVolume;
+        data = {
+          name: state.name.trim(),
+          block_device_mapping_v2: [{
+            device_name: 'vda',
+            boot_index: 0,
+            uuid: bootVolume.id,
+            source_type: 'volume',
+            volume_size: bootVolume.size,
+            delete_on_termination: false
+          }],
+          flavorRef: state.flavor.id,
+          networks: [{
+            uuid: state.network.id
+          }],
+          min_count: state.number,
+          max_count: state.number
+        };
+      }
 
       if (state.number > 1) {
         data.return_reservation_id = true;
@@ -691,9 +760,9 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var imageSelected = state.imageType === 'image';
+    var selectedKey = state.imageType;
     var Images = (
-      <div className={'row row-tab row-tab-single row-tab-images' + (imageSelected ? '' : ' hide')} key="images">
+      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -720,7 +789,7 @@ class ModalBase extends React.Component {
       </div>
     );
     var Snapshots = (
-      <div className={'row row-tab row-tab-single row-tab-images' + (imageSelected ? ' hide' : '')} key="snapshots">
+      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'snapshot' ? '' : ' hide')} key="snapshots">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -746,11 +815,39 @@ class ModalBase extends React.Component {
         }
       </div>
     );
+    var BootableVolumes = (
+      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'bootableVolume' ? '' : ' hide')} key="bootableVolumes">
+        {
+          !state.ready ?
+            <div className="alert-tip">
+              {__.loading}
+            </div>
+          : null
+        }
+        {
+          state.bootableVolumes.map((ele) =>
+            <a key={ele.id} className={state.bootableVolume.id === ele.id ? 'selected' : ''}
+              onClick={state.bootableVolume.id === ele.id ? null : this.onChangeBootableVolume.bind(this, ele)}>
+              <i className="glyphicon icon-volume" style={{'marginRight': '6px'}}></i>
+                {ele.name}
+            </a>
+          )
+        }
+        {
+          state.ready && !state.snapshot ?
+            <div className="alert-tip">
+              {__.there_is_no + __.bootable + __.volume}
+            </div>
+          : null
+        }
+      </div>
+    );
 
     var ret = [];
     ret.push(Types);
     ret.push(Images);
     ret.push(Snapshots);
+    ret.push(BootableVolumes);
 
     return ret;
   }
@@ -1035,7 +1132,7 @@ class ModalBase extends React.Component {
           {__.number}
         </div>
         <div className="modal-data">
-          <InputNumber onChange={this.onChangeNumber} min={1} value={state.number} width={120}/>
+          <InputNumber onChange={this.onChangeNumber} disabled={state.disabledNumber} min={1} value={state.number} width={120}/>
           {
             enableCharge ?
               <div className="account-box">

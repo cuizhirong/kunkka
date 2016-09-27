@@ -14,6 +14,12 @@
     "icon": "create",
     "disabled": true
   }, {
+    "value": ["create", "volume"],
+    "key": "create_volume",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],

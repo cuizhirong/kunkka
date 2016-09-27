@@ -10,6 +10,7 @@ var BasicProps = require('client/components/basic_props/index');
 //pop modal
 var deleteModal = require('client/components/modal_delete/index');
 var createInstance = require('../instance/pop/create_instance/index');
+var createVolume = require('./pop/create_volume/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -168,6 +169,9 @@ class Model extends React.Component {
           router.pushState('/dashboard/instance');
         });
         break;
+      case 'create_volume':
+        createVolume(rows[0]);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -218,6 +222,7 @@ class Model extends React.Component {
     for (let key in btns) {
       switch (key) {
         case 'create':
+        case 'create_volume':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
           break;
         case 'delete':

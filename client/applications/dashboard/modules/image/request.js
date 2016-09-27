@@ -18,5 +18,41 @@ module.exports = {
       }
     });
     return RSVP.all(deferredList);
+  },
+  getOverview: function() {
+    return fetch.get({
+      url: '/api/v1/' + HALO.user.projectId + '/overview'
+    });
+  },
+  getVolumeTypes: function() {
+    return fetch.get({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
+    });
+  },
+  getVolumePrice: function(type, size) {
+    var url = '/proxy/gringotts/v2/products/price' +
+      '?purchase.bill_method=hour' +
+      '&purchase.purchases[0].product_name=' + type +
+      '&purchase.purchases[0].service=block_storage' +
+      '&purchase.purchases[0].region_id=' + HALO.current_region +
+      '&purchase.purchases[0].quantity=' + size;
+
+    return fetch.get({
+      url: url
+    });
+  },
+  getPrices: function() {
+    return fetch.get({
+      url: '/proxy/gringotts/v2/products'
+    });
+  },
+  createVolume: function(_data) {
+    var data = {};
+    data.volume = _data;
+
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
+      data: data
+    });
   }
 };

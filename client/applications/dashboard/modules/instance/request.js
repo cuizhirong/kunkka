@@ -165,7 +165,7 @@ module.exports = {
     });
   },
   getData: function() {
-    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair']).then(function(data) {
+    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair', 'volume']).then(function(data) {
       return data;
     });
   },
