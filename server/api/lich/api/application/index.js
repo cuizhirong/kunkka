@@ -9,7 +9,7 @@ const Promise = require('bluebird');
 const stack = require('api/slardar/api/heat/stack');
 const token = require('api/slardar/common/token');
 const driver = require('server/drivers');
-
+const emitter = require('helpers/emitter');
 
 function Application (app) {
   Base.call(this);
@@ -64,7 +64,13 @@ Application.prototype = {
       detail: detail,
       role: currentRole,
       approvals: _approvals
-    }).then(res.json.bind(res), next);
+    // }).then(res.json.bind(res), next);
+    }).then(data => {
+      res.json(data);
+      let role = flow[flow.indexOf(currentRole) + 1];
+      // send notification message to approver
+      emitter.emit('approver_message', {role, projectId});
+    }).catch(next);
   },
   approveApplication: function (req, res, next) {
     //status pass refused
@@ -127,14 +133,28 @@ Application.prototype = {
             apply.status = 'approving';
             arrSave.push(apply.save());
           }
-          Promise.all(arrSave).then(res.json.bind(res));
+          // Promise.all(arrSave).then(res.json.bind(res));
+          Promise.all(arrSave).then(result => {
+            res.json(result);
+            let role = flow[flow.indexOf(currentRole) + 1];
+            let projectId = apply.projectId;
+            emitter.emit('approver_message', {role, projectId});
+          }).catch(next);
         }
 
       } else {// apply refused
         Promise.all([
           apply.approvals[currentIndex].save(),
           apply.save()
-        ]).then(res.json.bind(res));
+        // ]).then(res.json.bind(res));
+        ]).then(result => {
+          res.json(result);
+        // send notification message to applicant
+          emitter.emit('applicant_message', {
+            username: apply.username,
+            status: 'reject'
+          });
+        });
       }
     }).catch(next);
   },
@@ -151,6 +171,10 @@ Application.prototype = {
             apply.save()
           ]).then(function () {
             res.json(apply);
+            emitter.emit('applicant_message', {
+              username: apply.username,
+              status: 'pass'
+            });
           });
         }
       });
@@ -167,9 +191,17 @@ Application.prototype = {
             apply.save()
           ]).then(function () {
             res.json(apply);
+            emitter.emit('applicant_message', {
+              username: apply.username,
+              status: 'pass'
+            });
           });
         } else {
           res.json(apply);
+          emitter.emit('applicant_message', {
+            username: apply.username,
+            status: 'pass'
+          });
         }
       });
     }
