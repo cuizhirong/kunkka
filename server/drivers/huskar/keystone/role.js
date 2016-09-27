@@ -28,4 +28,13 @@ driver.listRoles = function (token, remote, callback, query) {
   );
 };
 
+driver.roleAssignments = function (token, remote, query, callback) {
+  return driver.getMethod(
+    `${remote}/v3/role_assignments`,
+    token,
+    callback,
+    query
+  );
+};
+
 module.exports = driver;
