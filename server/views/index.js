@@ -34,7 +34,7 @@ global.HALO = {configs: {
 module.exports = (app) => {
   app.set('views', [__dirname]);
   app.set('applications', frontendApps);
-  let clientApps = frontendApps.filter(a => a !== 'login');
+  let clientApps = frontendApps.filter(a => a !== 'auth');
   let clientAppModules = [];
   frontendApps.forEach(a => {
     if (viewsPath[a]) {

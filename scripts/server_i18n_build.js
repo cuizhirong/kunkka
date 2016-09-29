@@ -24,7 +24,11 @@ function loadI18nFile (dirPath, _i18n) {
         fs.accessSync(langPath, fs.R_OK);
         _i18n[_m] = require(langPath);
       } catch (e) {
-        console.log(`${_m} has no lang.json file.`);
+        if(e.name === 'SyntaxError') {
+          console.log(`${_m} ` + e);
+        } else {
+          console.log(`${_m} has no lang.json file.`);
+        }
       }
     });
 }
