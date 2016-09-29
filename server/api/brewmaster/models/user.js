@@ -1,7 +1,7 @@
 'use strict';
-
+const config = require('config');
 module.exports = function (mysql, DataTypes) {
-  return mysql.define('register', {
+  return mysql.define('user', {
 
     userId: {
       type: DataTypes.UUID,
@@ -11,7 +11,7 @@ module.exports = function (mysql, DataTypes) {
     area_code: {
       type: DataTypes.STRING(5),
       allowNull: false,
-      defaultValue: '86'
+      defaultValue: config('phone_area_code') || '86'
     },
     phone: {
       type: DataTypes.STRING(15),

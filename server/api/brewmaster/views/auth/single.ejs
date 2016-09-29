@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <title><%= title %> - <%= subtitle %></title>
+  <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
+  <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
+  <style>
+    body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
+    .wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
+    .wrapper > .header { flex: 1; }
+    .wrapper > .content { margin: 0 auto; width: 500px; height: 500px; text-align: center; color: #fff; }
+    .wrapper > .content > .img-wrapper { text-align: center; }
+    .wrapper > .content > .img-wrapper > img { height: 50px; }
+    .wrapper > .content > p { margin-top: 84px; font-size: 18px; }
+    .wrapper > .footer { flex: 2; }
+    .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header"></div>
+  <div class="content">
+    <div class="img-wrapper">
+      <img src="/static/assets/logo@2x_1.png"/>
+    </div>
+    <p><%= message %></p>
+  </div>
+  <div class="footer">
+    <p><%= company %></p>
+  </div>
+</div>
+</body>
+</html>

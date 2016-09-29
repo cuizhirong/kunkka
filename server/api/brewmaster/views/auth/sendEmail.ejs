@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <title><%= title %> - <%= subtitle %></title>
+  <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
+  <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
+  <style>
+    body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
+    .wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
+    .wrapper > .header { flex: 1; }
+    .wrapper > .content { margin: 0 auto; width: 500px; height: 500px; text-align: center; font-size: 14px; color: #ffffff; }
+    .wrapper > .content > .img-wrapper { text-align: center; }
+    .wrapper > .content > .img-wrapper > img { height: 50px; }
+    .wrapper > .content > .content-wrapper { margin: 84px auto; width: 300px; text-align: left; }
+    .wrapper > .content > .content-wrapper > p:nth-child(2) { color: #f9952a; }
+    .wrapper > .content > .content-wrapper > p:nth-child(3) { margin-top: 36px; color: #f9952a; }
+    .wrapper > .content > .content-wrapper > p:nth-child(3) > i { margin-right: 5px; font-size: 18px; }
+    .wrapper > .content > .content-wrapper > p:nth-child(4),
+    .wrapper > .content > .content-wrapper > p:nth-child(5),
+    .wrapper > .content > .content-wrapper > p:nth-child(6) { font-size: 12px; }
+    .wrapper > .footer { flex: 2; }
+    .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header"></div>
+  <div class="content">
+    <div class="img-wrapper">
+      <img src="/static/assets/logo@2x_1.png"/>
+    </div>
+    <% if (locale == 'en') { %>
+    <div class="content-wrapper">
+      <p>An email has been sent to: <a herf="#"><%= email %></a></p>
+      <p>In 24 hours, please login your mailbox and click the link to enable your account!</p>
+      <p><i class="glyphicon icon-question"></i>Didn't receive the verification email?</p>
+      <p>Please check in the junk mail</p>
+      <p>Not received yet, <a href="/auth/register/resend-email?email=<%= email %>">Resend Email</a></p>
+      <p>Still not received, try <a href="/auth/register/change-email?email=<%= email %>">Change Email</a></p>
+    </div>
+    <% } else { %>
+    <div class="content-wrapper">
+      <p>邮件已经发送到 <a herf="#"><%= email %></a></p>
+      <p>请在24小时内登录邮箱点击链接进行激活</p>
+      <p><i class="glyphicon icon-question"></i>没有收到验证邮件?</p>
+      <p>请检查是否在垃圾邮件中</p>
+      <p>如果还未收到，点此<a href="/auth/register/resend-email?email=<%= email %>">重新发送</a></p>
+      <p>一直收不到，试试<a href="/auth/register/change-email?email=<%= email %>">更换邮箱</a></p>
+    </div>
+    <% } %>
+
+  </div>
+  <div class="footer">
+    <p><%= company %></p>
+  </div>
+</div>
+</body>
+</html>

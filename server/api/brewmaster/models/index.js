@@ -21,9 +21,7 @@ Object.keys(db).forEach(modelName => {
 
 db.mysql = mysql;
 mysql.sync().then(() => {
-  console.log('user keystone: mysql sync done!');
-}).catch(err => {
-  console.log(err);
-});
+  console.log('mysql sync done: brewmaster user keystone');
+}).catch(console.error);
 
 module.exports = db;

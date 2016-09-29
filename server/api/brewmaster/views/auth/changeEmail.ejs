@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <title><%= title %> - <%= subtitle %></title>
+  <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
+  <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
+  <style>
+    body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
+    .wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
+    .wrapper > .header { flex: 1; }
+    .wrapper > .content { margin: 0 auto; width: 500px; height: auto; }
+    .wrapper > .content > .img-wrapper { text-align: center; }
+    .wrapper > .content > .img-wrapper > img { height: 50px; }
+    .wrapper > .content > .content-wrapper > h4 { margin-top: 80px; color: #42b9e5; }
+    .wrapper > .content > .content-wrapper > form > div { position: relative; background: none; width: 100%; height: 36px; }
+    .wrapper > .content > .content-wrapper > form > div:first-child { margin-top: 34px; }
+    .wrapper > .content > .content-wrapper > form > div:not(:first-child) { margin-top: 12px; }
+    .wrapper > .content > .content-wrapper > form > div > input { border: none; background: rgba(255, 255, 255, 0.1); color: #92959a; width: 480px; height: 28px; font-size: 14px; }
+    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > input { display: inline-block; width: 366px; }
+    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .get_captcha { display: inline-block; margin-left: 10px; width: 100px; height: 34px; line-height: 34px; background-color: #42b9e5; border-radius: 2px; color: #fff; font-size: 14px; text-align: center; cursor: pointer; }
+    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #bbbfc5; }
+    .wrapper > .content > .content-wrapper > form > input { margin-top: 34px; width: 480px; height: 28px; font-size: 14px; border: none; background-color: #42b9e5; color: #ffffff; }
+    .phone_tip,
+    .captcha_tip,
+    .email_tip { margin-top: 4px; color: red; font-size: 12px; display: none; }
+    .brewmaster_icon { position: absolute; top: 6px; right: 10px; width: 18px; height: 24px; background: url(/static/assets/brewmaster_icons.png); background-size: 114px 36px; }
+    .icon_phone { background-position: -36px -6px; }
+    .icon_captcha { right: 124px !important; background-position: -62px -6px; }
+    .icon_email { background-position: -10px -6px; }
+    .wrapper > .footer { flex: 2; }
+    .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header"></div>
+  <div class="content">
+    <div class="img-wrapper">
+      <img src="/static/assets/logo@2x_1.png"/>
+    </div>
+    <div class="content-wrapper">
+      <h4>更换邮箱</h4>
+      <form id="uform" method="post" action="/auth/register/change-email">
+        <div>
+          <input id="phone" name="phone" type="text" placeholder="请输入手机号" autofocus="autofocus"/>
+          <div class="brewmaster_icon icon_phone"></div>
+        </div>
+        <span class="phone_tip"></span>
+        <div>
+          <input id="captcha" name="captcha" type="text" placeholder="请输入验证码"/>
+          <div id="get_captcha" class="get_captcha">发送验证码</div>
+          <div class="brewmaster_icon icon_captcha"></div>
+        </div>
+        <span class="captcha_tip"></span>
+        <div>
+          <input id="email" name="email" type="text" placeholder="请输入新邮箱"/>
+          <div class="brewmaster_icon icon_email"></div>
+        </div>
+        <span class="email_tip"></span>
+        <input id="usubmit" name="usubmit" type="button" value="提交"/>
+      </form>
+    </div>
+  </div>
+  <div class="footer">
+    <p><%= company %></p>
+  </div>
+</div>
+<script>
+  var phone = document.getElementById('phone'),
+          captcha = document.getElementById('captcha'),
+          get_captcha = document.getElementById('get_captcha'),
+          email = document.getElementById('email'),
+          usubmit = document.getElementById('usubmit'),
+          phone_tip = document.getElementsByClassName('phone_tip')[0],
+          captcha_tip = document.getElementsByClassName('captcha_tip')[0],
+          email_tip = document.getElementsByClassName('email_tip')[0],
+          uform = document.getElementById('uform'),
+          enable_getcaptcha = true,
+          enable_phone = false,
+          enable_captcha = false,
+          enable_email = false,
+          timer = null,
+          count = 60;
+  //ajax request
+  function createXMLHTTPRequest() {
+    var xmlHttpRequest;
+    if (window.XMLHttpRequest) {
+      xmlHttpRequest = new XMLHttpRequest();
+      if (xmlHttpRequest.overrideMimeType) {
+        xmlHttpRequest.overrideMimeType("text/xml");
+      }
+    } else if (window.ActiveXObject) {
+      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    return xmlHttpRequest;
+  }
+  function sendCaptcha() {
+    if (enable_getcaptcha) {
+      if (/^\d{11}$/.test(phone.value)) {
+        phone_tip.style.display = "none";
+        var phoneData = JSON.stringify({
+          'phone': phone.value
+        });
+        var req = createXMLHTTPRequest();
+        req.open("POST", "/auth/register/change-email/phone", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.send(phoneData);
+        req.onreadystatechange = function () {
+          if (req.readyState == 4) {
+            if (req.status == 200) {
+              enable_getcaptcha = false;
+              get_captcha.className += ' disabled';
+              get_captcha.innerHTML = '重新发送(' + count + ')秒';
+              timer = setInterval(function () {
+                if (count > 0) {
+                  get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
+                } else {
+                  clearInterval(timer);
+                  enable_getcaptcha = false;
+                  get_captcha.className = 'get_captcha';
+                  get_captcha.innerHTML = '发送验证码';
+                }
+              }, 1000);
+            } else {
+              phone_tip.innerHTML = JSON.parse(req.responseText).msg;
+              phone_tip.style.display = 'block';
+            }
+          }
+        }
+      } else {
+        phone_tip.innerHTML = '请输入正确的格式';
+        phone_tip.style.display = 'block';
+      }
+    }
+  }
+  function verifySubmit(e) {
+    e.preventDefault();
+    //phone
+    if (/^1[3,4,5,6,7,8]\d{9}$/.test(phone.value)) {
+      phone_tip.style.display = 'none';
+      enable_phone = true;
+    } else {
+      phone_tip.innerHTML = '请输入正确的格式';
+      phone_tip.style.display = 'block';
+      enable_phone = false;
+    }
+    //captcha
+    if (/^\d{6}$/.test(captcha.value)) {
+      captcha_tip.style.display = 'none';
+      enable_captcha = true;
+    } else {
+      captcha_tip.innerHTML = '请输入正确的格式';
+      captcha_tip.style.display = 'block';
+      enable_captcha = false;
+    }
+    //email
+    if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
+      email_tip.style.display = 'none';
+      enable_email = true;
+    } else {
+      email_tip.innerHTML = '请输入正确的格式';
+      email_tip.style.display = 'block';
+      enable_email = false;
+    }
+    if (enable_phone && enable_captcha && enable_email) {
+      uform.submit();
+    }
+  }
+  get_captcha.onclick = sendCaptcha;
+  usubmit.onclick = verifySubmit;
+</script>
+</body>
+</html>
