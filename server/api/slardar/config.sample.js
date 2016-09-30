@@ -2,7 +2,8 @@
 
 module.exports = {
   'dependencies': {
-    'async': '^1.5.0'
+    'async': '^1.5.0',
+    'json2csv': '^3.7.0'
   },
   'config': {
     'region': [{
