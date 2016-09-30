@@ -1,0 +1,14 @@
+{
+  "en": {
+    "memory": "Memory(GB)",
+    "disk": "Disk Capacity(GB)",
+    "vms": "Virtual Machine Amount",
+    "status": "Status"
+    },
+  "zh-CN": {
+    "memory": "内存使用量(GB)",
+    "disk": "硬盘使用量(GB)",
+    "vms": "虚拟机数量",
+    "status": "状态"
+  }
+}
