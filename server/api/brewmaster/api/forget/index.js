@@ -22,6 +22,7 @@ Password.prototype = {
         res.render('single', obj);
       } else {
         obj.subtitle = req.i18n.__('api.register.RetrievePassword');
+        obj.locale = req.i18n.locale;
         res.render('findPwd', obj);
       }
     });

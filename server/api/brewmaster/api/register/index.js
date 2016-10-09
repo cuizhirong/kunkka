@@ -477,6 +477,7 @@ User.prototype = {
         res.status(500).render('single', obj);
       } else {
         obj.subtitle = req.i18n.__('api.register.ChangeEmail');
+        obj.locale = req.i18n.locale;
         res.render('changeEmail', obj);
       }
     });
