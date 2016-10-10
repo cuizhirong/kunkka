@@ -31,6 +31,9 @@ function pop(obj, parent, callback) {
   } else {
     getField('enable_dhcp').checked = true;
   }
+  if(obj.router.id) {
+    getField('gw_address').disabled = true;
+  }
 
   var objDns = obj.dns_nameservers;
   getField('subnet_dns1').value = objDns[0] || '';
@@ -49,7 +52,9 @@ function pop(obj, parent, callback) {
       if (!refs.enable_gw.state.checked) {
         data.gateway_ip = null;
       } else {
-        data.gateway_ip = refs.gw_address.state.value;
+        if(!obj.router.id) {
+          data.gateway_ip = refs.gw_address.state.value;
+        }
       }
 
       var dns1 = refs.subnet_dns1.state.value;
@@ -72,7 +77,7 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'enable_gw':
           refs.gw_address.setState({
-            disabled: !refs.enable_gw.state.checked
+            disabled: (obj.router.id ? true : !refs.enable_gw.state.checked)
           });
           break;
         case 'gw_address':
