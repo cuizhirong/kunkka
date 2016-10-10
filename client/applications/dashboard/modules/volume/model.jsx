@@ -263,10 +263,10 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
           break;
         case 'dtch_instance':
-          btns[key].disabled = (len === 1 && rows[0].status === 'in-use' && rows[0].bootable !== 'true') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
           break;
         case 'attach_to_instance':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
+          btns[key].disabled = (len === 1 && rows[0].status === 'available' && !rows[0].attachments[0]) ? false : true;
           break;
         case 'extd_capacity':
           btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;

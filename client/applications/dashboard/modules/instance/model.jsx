@@ -107,9 +107,8 @@ class Model extends React.Component {
   }
 
   getImageLabel(item) {
-    var label = item.image.image_label && item.image.image_label.toLowerCase();
-    var style = null;
-
+    var style = null,
+      label = '';
     var imgURL = HALO.settings.default_image_url;
     if (imgURL) {
       style = {
@@ -117,12 +116,27 @@ class Model extends React.Component {
         backgroundSize: '20px 20px'
       };
     }
-    return (
-      <div>
-        <i className={'icon-image-default ' + label} style={style}/>
-        <a data-type="router" href={'/dashboard/image/' + item.image.id}>{item.image.name}</a>
-      </div>
-    );
+
+    if(item.image && item.image.id) {
+      label = item.image.image_label ? item.image.image_label.toLowerCase() : '';
+
+      return (
+        <div>
+          <i className={'icon-image-default ' + label} style={style}/>
+          <a data-type="router" href={'/dashboard/image/' + item.image.id}>{item.image.name}</a>
+        </div>
+      );
+    } else if(item.volume[0] && item.volume[0].volume_image_metadata) {
+      var imageData = item.volume[0].volume_image_metadata;
+      label = imageData.image_label ? imageData.image_label.toLowerCase() : '';
+
+      return (
+        <div>
+          <i className={'icon-image-default ' + label} style={style}/>
+          <a data-type="router" href={'/dashboard/image/' + imageData.image_id}>{imageData.image_name}</a>
+        </div>
+      );
+    }
   }
 
   tableColRender(columns) {

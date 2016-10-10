@@ -118,7 +118,7 @@ class ModalBase extends React.Component {
     });
 
     bootableVolumes = res.volume.filter(ele => {
-      if(ele.bootable && ele.bootable === 'true') {
+      if(ele.bootable && ele.bootable === 'true' && !ele.attachments[0]) {
         return true;
       }
       return false;
@@ -138,6 +138,7 @@ class ModalBase extends React.Component {
     images.sort(imageSort);
     snapshots.sort(imageSort);
     bootableVolumes.sort(bootableVolumes);
+
     var selectedImage = selectDefault(images);
     var username = '';
     if (selectedImage) {
@@ -150,16 +151,21 @@ class ModalBase extends React.Component {
 
     var image = selectDefault(images);
     var snapshot = selectDefault(snapshots);
+    var bootableVolume = selectDefault(bootableVolumes);
     var currentImage = image;
     var imageType = 'image';
     var obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
-      if (obj.visibility === 'public') {
+      if (obj.visibility === 'public') {//image
         image = obj;
-      } else if (obj.visibility === 'private') {
+      } else if (obj.visibility === 'private') {//snapshot
         snapshot = obj;
         imageType = 'snapshot';
+      } else {//bootableVolume
+        bootableVolume = obj;
+        currentImage = obj.volume_image_metadata;
+        imageType = 'bootableVolume';
       }
     }
     this.setFlavor(currentImage, 'all');
@@ -183,7 +189,7 @@ class ModalBase extends React.Component {
       snapshots: snapshots,
       snapshot: snapshot,
       bootableVolumes: bootableVolumes,
-      bootableVolume: selectDefault(bootableVolumes),
+      bootableVolume: bootableVolume,
       flavors: flavors,
       networks: networks,
       network: selectDefault(networks),
@@ -277,35 +283,28 @@ class ModalBase extends React.Component {
     var bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
 
     var username = '';
-    var obj = null;
+    var objImage = null;
     switch(key) {
       case 'image':
-        obj = image;
+        objImage = image;
         break;
       case 'snapshot':
-        obj = snapshot;
+        objImage = snapshot;
         break;
       case 'bootableVolume':
-        obj = bootableVolume;
+        objImage = bootableVolume ? bootableVolume.volume_image_metadata : null;
         this.setState({number: 1});
         break;
       default:
         break;
     }
-    if (obj) {
+    if (objImage) {
       let meta = JSON.parse(image.image_meta);
       username = meta.os_username;
     }
 
-    var objImage;
-    if (key === 'image') {
-      objImage = image;
-    } else if (key === 'snapshot') {
-      objImage = snapshot;
-    }
-
     var hideKeypair = false;
-    if (objImage) {
+    if (objImage && objImage.image_label) {
       hideKeypair = objImage.image_label.toLowerCase() === 'windows';
     }
     this.setFlavor(objImage, 'all');
@@ -339,8 +338,10 @@ class ModalBase extends React.Component {
       let expectedSize;
       if (objImage.visibility === 'public') {//image
         expectedSize = Number(objImage.expected_size);
-      } else {//snapshot
+      } else if (objImage.visibility === 'private') {//snapshot
         expectedSize = Number(objImage.min_disk);
+      } else {//bootableVolume
+        expectedSize = Number(objImage.expected_size);
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
@@ -420,8 +421,28 @@ class ModalBase extends React.Component {
   }
 
   onChangeBootableVolume(item, e) {
+    var imageData = item.volume_image_metadata;
+    var username = '';
+    if(imageData.image_meta) {
+      var meta = JSON.parse(imageData.image_meta);
+      username = meta.os_username;
+    }
+
+    var hideKeypair = false;
+    if(imageData.image_label) {
+      var label = imageData.image_label.toLowerCase();
+      hideKeypair = label === 'windows';
+    }
+
+    this.setFlavor(imageData, 'all');
     this.setState({
-      bootableVolume: item
+      bootableVolume: item,
+      username: username,
+      hideKeypair: hideKeypair,
+      credential: hideKeypair ? 'psw' : 'keypair',
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
   }
 
@@ -582,10 +603,15 @@ class ModalBase extends React.Component {
 
   findSelectedImage() {
     var state = this.state;
-    if (state.imageType === 'image') {
-      return state.image;
-    } else if (state.imageType === 'snapshot') {
-      return state.snapshot;
+    switch(state.imageType) {
+      case 'image':
+        return state.image;
+      case 'snapshot':
+        return state.snapshot;
+      case 'bootableVolume':
+        return state.bootableVolume.volume_image_metadata;
+      default:
+        return null;
     }
   }
 
@@ -666,7 +692,7 @@ class ModalBase extends React.Component {
         data = {
           name: state.name.trim(),
           block_device_mapping_v2: [{
-            device_name: 'vda',
+            destination_type: 'volume',
             boot_index: 0,
             uuid: bootVolume.id,
             source_type: 'volume',
@@ -834,9 +860,9 @@ class ModalBase extends React.Component {
           )
         }
         {
-          state.ready && !state.snapshot ?
+          state.ready && !state.bootableVolume ?
             <div className="alert-tip">
-              {__.there_is_no + __.bootable + __.volume}
+              {__.there_is_no + __.bootable}
             </div>
           : null
         }

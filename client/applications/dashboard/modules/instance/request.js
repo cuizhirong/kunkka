@@ -175,8 +175,13 @@ module.exports = {
     });
   },
   createInstance: function(data) {
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers';
+    if(!data.imageRef) {
+      url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-volumes_boot';
+    }
+
     return fetch.post({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers',
+      url: url,
       data: {
         server: data
       }

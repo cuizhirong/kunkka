@@ -87,7 +87,12 @@ function pop(obj, parent, callback) {
             });
           }
 
-          selectedMin = unitConverter(obj.size).num;
+          var minBound = unitConverter(obj.size);
+          if(minBound.unit === 'GB') {
+            selectedMin = minBound.num;
+          } else {
+            selectedMin = 1;
+          }
 
           var lackOfSize = selectedMin > selectedMax;
 

@@ -223,7 +223,7 @@ class Model extends React.Component {
       switch (key) {
         case 'create':
         case 'create_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active' && rows[0].image_type) ? false : true;
           break;
         case 'delete':
           let hasPublicImage = rows.some((ele) => ele.visibility === 'public');
