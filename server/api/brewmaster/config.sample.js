@@ -13,7 +13,7 @@ module.exports = {
     {
       app: 'auth',
       name: 'logo_url',
-      value: '/static/assets/logo@2x.png',
+      value: '/static/assets/auth/logo@2x.png',
       type: 'string'
     }, {
       app: 'auth',

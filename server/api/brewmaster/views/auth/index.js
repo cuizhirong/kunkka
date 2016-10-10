@@ -31,7 +31,7 @@ function main (app, clientApps, currentView, viewPlugins){
       loginCssFile: this.staticFiles[`${this.name}CssFile`],
       uskinFile: this.uskinFile[0],
       settings: setting,
-      logo_url: setting.logo_url ? setting.logo_url : '/static/assets/logo@2x.png',
+      logo_url: setting.logo_url ? setting.logo_url : '/static/assets/auth/logo@2x.png',
       favicon: setting.favicon ? setting.favicon : '/static/assets/favicon.ico',
       company: setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
       title: setting.title ? setting.title : 'UnitedStack',
