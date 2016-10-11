@@ -30,6 +30,13 @@ Volume.prototype = {
         volume.snapshots.push(s);
       }
     });
+    if (volume.bootable === 'true') {
+      obj.servers.some(server => {
+        server['os-extended-volumes:volumes_attached'].forEach(e => {
+          return e.id === volume.id && (volume.attachments.push({server_id: server.id}));
+        });
+      });
+    }
   },
   getVolumeList: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId']);
