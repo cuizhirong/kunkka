@@ -39,7 +39,17 @@ module.exports = {
       if (err) {
         res.status(500).json(err);
       } else {
-        res.json(result);
+        try {
+          result.links.some((link)=> {
+            if (link.rel === 'approval_url') {
+              res.redirect(encodeURI(link.href));
+              return true;
+            }
+          });
+        } catch (e) {
+          res.status(500).json(e);
+        }
+
       }
     });
   },
