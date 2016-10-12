@@ -6,7 +6,7 @@ const ticketDao = dao.ticket;
 const attachmentDao = dao.attachment;
 const flow = require('config')('ticket_flow') || ['Member', 'owner', 'admin'];
 
-function Ticket (app) {
+function Ticket(app) {
   Base.call(this);
   this.app = app;
 }
@@ -164,9 +164,10 @@ Ticket.prototype = {
 
   getTicketById: function (req, res, next) {
     const ticketId = req.params.ticketId;
+    const status = req.query.status;
     const roleIndex = this.getRoleIndex(req.session.user.roles);
     if (roleIndex < 0) {
-      return res.status(403).json(req.i18n__('api.ticket.permissionDenied'));
+      return res.status(403).json(req.i18n.__('api.ticket.permissionDenied'));
     }
     ticketDao.findOneById(ticketId).then(ticket => {
 
@@ -174,9 +175,9 @@ Ticket.prototype = {
         return next({msg: req.i18n.__('api.ticket.notExist')});
       }
 
-      if (ticket.owner === req.session.user.userId
+      if ((status ? status === ticket.status : true) && (ticket.owner === req.session.user.userId
         || (ticket.status === 'processing' && ticket.processor === req.session.user.userId )
-        || (ticket.status !== 'processing' && ticket.handlerRole === flow[roleIndex])) {
+        || (ticket.status !== 'processing' && ticket.handlerRole === flow[roleIndex]))) {
         res.json(ticket);
       } else {
         next({msg: req.i18n.__('api.ticket.notExist')});
