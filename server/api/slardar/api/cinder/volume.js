@@ -30,7 +30,7 @@ Volume.prototype = {
         volume.snapshots.push(s);
       }
     });
-    if (volume.bootable === 'true') {
+    if (volume.bootable === 'true' && volume.attachments.length === 0) {
       obj.servers.some(server => {
         server['os-extended-volumes:volumes_attached'].forEach(e => {
           return e.id === volume.id && (volume.attachments.push({server_id: server.id}));
