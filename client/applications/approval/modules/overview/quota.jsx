@@ -29,6 +29,9 @@ class ResourceQuota extends React.Component {
       }, {
         title: __.cpu,
         key: 'cores'
+      }, {
+        title: __.ram + __.unit_gb,
+        key: 'ram'
       }]
     }, {
       title: __.network,
@@ -83,9 +86,6 @@ class ResourceQuota extends React.Component {
         title: __.sata + __.snapshot,
         key: 'snapshots_sata',
         link: 'snapshot'
-      }, {
-        title: __.ram + __.unit_gb,
-        key: 'ram'
       }]
     }];
 
