@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var getErrorMessage = require('../../../../utils/error_message');
 var createRouter = require('client/applications/dashboard/modules/router/pop/create_router/index');
 var __ = require('locale/client/dashboard.lang.json');
 
@@ -30,11 +31,22 @@ function pop(obj, parent, callback) {
       }).then((res) => {
         callback && callback(res);
         cb(true);
+      }).catch((err) => {
+        refs.error.setState({
+          value: getErrorMessage(err),
+          hide: false
+        });
       });
     },
     onAction: function(field, status, refs) {
       switch (field) {
         case 'router':
+          refs.error.setState({
+            hide: true
+          });
+          refs.btn.setState({
+            disabled: false
+          });
           if (refs.router.state.clicked) {
             createRouter(refs.modal, (res) => {
               refs.router.setState({

@@ -13,6 +13,11 @@
       "link_info": ["create", "router"]
     },
     "data": []
+  }, {
+    "type": "tip",
+    "tip_type": "error",
+    "field": "error",
+    "hide": true
   }],
   "btn": {
     "value": "connect",
