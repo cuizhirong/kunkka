@@ -4,7 +4,11 @@ var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['router', 'network', 'subnet', 'ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy'], forced).then((res) => {
+    var storgeList = ['router', 'network', 'subnet'];
+    if (HALO.settings.enable_ipsec) {
+      storgeList = storgeList.concat(['ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy']);
+    }
+    return storage.getList(storgeList, forced).then((res) => {
       var exNetworks = [];
       res.network.forEach((item) => {
         if (item['router:external']) {
@@ -27,40 +31,41 @@ module.exports = {
           }
         });
       }
-
-      res.router.forEach((router, index) => {
-        res.router[index].vpnservices = [];
-        res.router[index].ipsec_site_connections = [];
-        res.router[index].ikepolicies = [];
-        res.router[index].ipsecpolicies = [];
-      });
-      res.vpnservice.forEach((vpnService) => {
+      if (HALO.settings.enable_ipsec) {
         res.router.forEach((router, index) => {
-          if (vpnService.router_id === router.id) {
-            res.router[index].vpnservices.push(vpnService);
-          }
+          res.router[index].vpnservices = [];
+          res.router[index].ipsec_site_connections = [];
+          res.router[index].ikepolicies = [];
+          res.router[index].ipsecpolicies = [];
         });
-      });
-
-      res.vpnservice.forEach((vpnService, index) => {
-        res.subnet.forEach((subnet) => {
-          if (vpnService.subnet_id === subnet.id) {
-            res.vpnservice[index].subnet = subnet;
-          }
-        });
-      });
-
-      res.router.forEach((router, index) => {
-        res.router[index].ikepolicies = res.ikepolicy.ikepolicies;
-        res.router[index].ipsecpolicies = res.ipsecpolicy.ipsecpolicies;
-        res.router[index].vpnservices.forEach((vpnservice) => {
-          res.ipsec[0] && res.ipsec[0].ipsec_site_connections.forEach((site) => {
-            if (site.vpnservice_id === vpnservice.id) {
-              res.router[index].ipsec_site_connections.push(site);
+        res.vpnservice.forEach((vpnService) => {
+          res.router.forEach((router, index) => {
+            if (vpnService.router_id === router.id) {
+              res.router[index].vpnservices.push(vpnService);
             }
           });
         });
-      });
+
+        res.vpnservice.forEach((vpnService, index) => {
+          res.subnet.forEach((subnet) => {
+            if (vpnService.subnet_id === subnet.id) {
+              res.vpnservice[index].subnet = subnet;
+            }
+          });
+        });
+
+        res.router.forEach((router, index) => {
+          res.router[index].ikepolicies = res.ikepolicy.ikepolicies;
+          res.router[index].ipsecpolicies = res.ipsecpolicy.ipsecpolicies;
+          res.router[index].vpnservices.forEach((vpnservice) => {
+            res.ipsec[0] && res.ipsec[0].ipsec_site_connections.forEach((site) => {
+              if (site.vpnservice_id === vpnservice.id) {
+                res.router[index].ipsec_site_connections.push(site);
+              }
+            });
+          });
+        });
+      }
       return res.router;
     });
   },
