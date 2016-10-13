@@ -69,6 +69,13 @@
           "key": "rmv_volume",
           "disabled": true
         }]
+      }, {
+        "items": [{
+          "title": ["terminate"],
+          "key": "terminate",
+          "disabled": true,
+          "danger": true
+        }]
       }]
     }
   }, {

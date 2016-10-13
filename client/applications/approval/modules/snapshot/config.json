@@ -11,6 +11,12 @@
     "icon": "create",
     "disabled": true
   }, {
+    "value": ["delete"],
+    "key": "del_snapshot",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],
