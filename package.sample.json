@@ -19,7 +19,7 @@
     "start": "./scripts/start.sh",
     "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
-    "eslint": "eslint *.js server/**/ configs/ scripts/ client/**/ tests/__tests__/ --ext .js,.jsx",
+    "eslint": "eslint *.js server/**/ configs/ scripts/ client/**/ tests/__tests__/ --ext .js,.jsx --cache",
     "dev": "cd client && rm -rf dist/*.js dist/*.css dist/*.map && node ../scripts/client_i18n_build.js && webpack --config dev.webpack.config.js",
     "benchmark": "./scripts/benchmark.sh",
     "prepublish": "cd client/uskin && npm install",

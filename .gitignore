@@ -70,3 +70,6 @@ client/assets/**/
 
 # gitlab private token file
 /token.json
+
+＃ eslint cache file
+.eslintcache
