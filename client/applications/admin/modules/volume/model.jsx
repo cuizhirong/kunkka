@@ -535,6 +535,9 @@ class Model extends React.Component {
         }
       })()
     }, {
+      title: __.bootable,
+      content: item.bootable === 'true' ? __.yes : __.no
+    }, {
       title: __.status,
       content: getStatusIcon(item.status)
     }, {

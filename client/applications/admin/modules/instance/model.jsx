@@ -94,12 +94,21 @@ class Model extends React.Component {
           break;
         case 'image':
           column.render = (col, item, i) => {
-            var image = this.findItemByID(this.stores.imageTypes, item.image.id);
-            return (
-              <a data-type="router" href={'/admin/image/' + item.image.id}>
-                {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
-              </a>
-            );
+            if(item.image) {
+              var image = this.findItemByID(this.stores.imageTypes, item.image.id);
+              return (
+                <a data-type="router" href={'/admin/image/' + item.image.id}>
+                  {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
+                </a>
+              );
+            } else {
+              var bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
+              return (
+                <a data-type="router" href={'/admin/volume/' + bootableVolume}>
+                  {bootableVolume !== '' ? '(' + bootableVolume.substr(0, 8) + ')' : ''}
+                </a>
+              );
+            }
           };
           break;
         case 'floating_ip':
@@ -646,6 +655,19 @@ class Model extends React.Component {
         return ret.join(', ');
       })();
 
+    var getImage = function() {
+      if(item.image) {
+        return <a data-type="router" href={'/admin/image/' + item.image.id}>
+          {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
+        </a>;
+      } else {
+        let bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
+        return <a data-type="router" href={'/admin/volume/' + bootableVolume}>
+          {bootableVolume !== '' ? '(' + bootableVolume.substr(0, 8) + ')' : ''}
+        </a>;
+      }
+    };
+
     var items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
@@ -662,9 +684,7 @@ class Model extends React.Component {
         </a>
     }, {
       title: __.image,
-      content: <a data-type="router" href={'/admin/image/' + item.image.id}>
-          {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
-        </a>
+      content: getImage()
     }, {
       title: __.fixed_ip,
       content: fixedIps !== '' ? fixedIps : '-'
