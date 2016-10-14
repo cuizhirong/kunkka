@@ -25,6 +25,16 @@ module.exports = {
       name: 'corporation_name',
       value: 'UnitedStack 有云',
       type: 'string'
+    }, {
+      app: 'global',
+      name: 'enable_register',
+      value: 'false',
+      type: 'boolean'
+    }, {
+      app: 'auth',
+      name: 'eula_content',
+      value: '',
+      type: 'string'
     }
   ]
 };
