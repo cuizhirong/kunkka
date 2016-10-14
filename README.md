@@ -181,8 +181,8 @@ npm run add_eslint
 The commit message should contains at least three parts.
 
 1. The summary of the commit. It should be followed by an empty row.
-2. The detail information of the commit. (It is optional.)
-3. The commit type: (BF|NF|RF|OT|BugFix|NewFeature|ReFactor|Other)
+2. The detail information of the commit. (It is optional.).
+3. The commit type: (BF|NF|RF|OT|BugFix|NewFeature|ReFactor|Other).
 4. The commit's JIRA issue ID.
 
 The maximum characters for each row should be less than 72.
