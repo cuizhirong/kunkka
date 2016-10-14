@@ -76,14 +76,18 @@ class Model extends React.Component {
           break;
         case 'volume':
           column.render = (col, item, i) => {
-            return (
-              <span>
-                <i className="glyphicon icon-volume" />
-                <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
-                  {item.volume.name}
-                </a>
-              </span>
-            );
+            if(item.volume) {
+              return (
+                <span>
+                  <i className="glyphicon icon-volume" />
+                  <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
+                    {item.volume.name}
+                  </a>
+                </span>
+              );
+            } else {
+              return '-';
+            }
           };
           break;
         default:
@@ -261,12 +265,12 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.volume,
-      content: item.volume_id ?
+      content: item.volume ?
         <span>
           <i className="glyphicon icon-volume" />
           <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>{item.volume.name}</a>
         </span>
-        : null
+        : '-'
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
