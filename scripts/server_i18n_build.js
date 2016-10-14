@@ -14,23 +14,28 @@ const extensions = {};
 const client = {};
 
 function loadI18nFile (dirPath, _i18n) {
-  fs.readdirSync(dirPath)
-    .filter(_module => {
-      return fs.statSync(path.join(dirPath, _module)).isDirectory();
-    })
-    .forEach(_m => {
-      try {
-        let langPath = path.join(dirPath, _m, 'lang.json');
-        fs.accessSync(langPath, fs.R_OK);
-        _i18n[_m] = require(langPath);
-      } catch (e) {
-        if(e.name === 'SyntaxError') {
-          console.log(`${_m} ` + e);
-        } else {
-          console.log(`${_m} has no lang.json file.`);
+  try {
+    fs.readdirSync(dirPath)
+      .filter(_module => {
+        return fs.statSync(path.join(dirPath, _module)).isDirectory();
+      })
+      .forEach(_m => {
+        try {
+          let langPath = path.join(dirPath, _m, 'lang.json');
+          fs.accessSync(langPath, fs.R_OK);
+          _i18n[_m] = require(langPath);
+        } catch (e) {
+          if(e.name === 'SyntaxError') {
+            console.log(`${_m} ` + e);
+          } else {
+            console.log(`${_m} has no lang.json file.`);
+          }
         }
-      }
-    });
+      });
+  } catch (err) {
+    console.log(`${dirPath} has no api directory`);
+  }
+
 }
 
 function generateServerLangObject (dirPath, apiI18N, extensionsI18N, viewsI18N) {

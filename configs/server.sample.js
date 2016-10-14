@@ -13,7 +13,7 @@ var config = {
     'printAccessLog': true                   // true | false
   },
   'websocket': {
-    'url': ':5679'
+    'RegionOne': ':5679'
   }
 };
 
