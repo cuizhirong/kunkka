@@ -1,6 +1,6 @@
 {
   "en": {
-    "account_placeholder": "Please enter username or email",
+    "account_placeholder": "Please enter username",
     "confirm_password_placeholder": "Please enter password again",
     "code_placeholder": "Please enter verification code",
     "error_tip": "The information you entered is not correct",
@@ -26,7 +26,7 @@
     "name_exist_tip": "This account already exists"
   },
   "zh-CN": {
-    "account_placeholder": "请输入账号或邮箱",
+    "account_placeholder": "请输入用户名",
     "confirm_password_placeholder": "确认密码",
     "code_placeholder": "请输入验证码",
     "error_tip": "用户名或密码不正确",
