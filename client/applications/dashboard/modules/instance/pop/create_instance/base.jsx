@@ -299,7 +299,7 @@ class ModalBase extends React.Component {
         break;
     }
     if (objImage) {
-      let meta = JSON.parse(image.image_meta);
+      let meta = JSON.parse(objImage.image_meta);
       username = meta.os_username;
     }
 
@@ -1192,8 +1192,10 @@ class ModalBase extends React.Component {
       var hasImage = false;
       if (state.imageType === 'image') {
         hasImage = state.image;
-      } else {
+      } else if (state.imageType === 'snapshot') {
         hasImage = state.snapshot;
+      } else {
+        hasImage = state.bootableVolume;
       }
 
       let enable = state.name.trim() && state.ready && hasImage;
