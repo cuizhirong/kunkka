@@ -55,7 +55,7 @@
     "link": "loadbalancer"
   }, {
     "key": "approved",
-    "link": "apply_approval"
+    "link": "apply-approval"
   }],
   "theme": "default"
 }
