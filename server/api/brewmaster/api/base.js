@@ -28,7 +28,7 @@ base.func.verifyUser = function (adminToken, where, cb) {
       if (!userDB) {
         return Promise.reject('userNotExist');
       } else {
-        getUser(adminToken, keystoneRemote, userDB.id).then(()=> {
+        return getUser(adminToken, keystoneRemote, userDB.id).then(()=> {
           cb(null, true, user);
         });
       }
@@ -81,8 +81,8 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
       } catch (e) {
         return next({type: 'SystemError', err: 'JSON.parseError'});
       }
-      if (new Date().getTime() - val.time < 60000) {
-        return res.send({type: 'message', message: __('api.register.Frequently')});
+      if (new Date().getTime() - val.time < 55000) {
+        return res.status(500).send({type: 'message', message: __('api.register.Frequently')});
       }
     }
     let valNew = {
@@ -93,8 +93,6 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
       if (errSet) {
         next({type: 'SystemError', err: errSet});
       } else {
-
-
         getSettingsByApp('auth').then(settings=> {
           let corporationName = 'UnitedStack 有云';
 
@@ -114,7 +112,7 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
                   next({type: 'SystemError', err: errSend});
                 }, 1);
               } else {
-                res.send({type: 'message', message: __('api.register.SendSuccess')});
+                res.send({type: 'message', message: __('api.register.SendSmsSuccess')});
               }
             }
           );

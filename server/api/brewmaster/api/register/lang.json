@@ -9,6 +9,7 @@
     "LinkError": "链接错误或已失效",
     "CodeError": "验证码错误或已失效",
     "SendSuccess": "激活邮件发送成功",
+    "SendSmsSuccess": "短信验证码发送成功",
     "MissParams": "缺少参数",
     "PhoneError": "手机号格式不正确",
     "EnableFailed": "激活失败",
@@ -24,7 +25,10 @@
     "changeEmail": "更换邮箱",
     "changeEmailSuccess": "更换邮箱成功",
     "registerSuccess": "注册成功",
-    "VerificationCode": "校验码是 "
+    "VerificationCode": "校验码是 ",
+    "clickHereToEnableYourAccount": "点击此处以激活您的账户",
+    "LinkFailedCopyTheHref": "如果跳转失败，复制下面的链接到浏览器地址栏中并打开：",
+    "domainNotFound":"domain找不到"
   },
   "en": {
     "Name": "The Username",
@@ -36,6 +40,7 @@
     "LinkError": "This link is error or expired",
     "CodeError": "This captcha is error or expired",
     "SendSuccess": "Email Sent Successfully",
+    "SendSmsSuccess":"an Authentication code has been sent to your phone",
     "MissParams": "Missing Parameters",
     "PhoneError": "The phone number is not formatted correctly",
     "EnableFailed": "Enable Failed",
@@ -50,6 +55,9 @@
     "changeEmail": "Change Email",
     "changeEmailSuccess": "Change Email Success",
     "registerSuccess": "Register Success",
-    "VerificationCode": "Verification Code is "
+    "VerificationCode": "Verification Code is ",
+    "clickHereToEnableYourAccount": "Click here to enable your account",
+    "LinkFailedCopyTheHref": "If failed to link, copy the link below and open it in your the browser :",
+    "domainNotFound":"Domain Not Found"
   }
 }
