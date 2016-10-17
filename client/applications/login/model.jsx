@@ -247,9 +247,22 @@ class Model extends React.Component {
             pass: true
           }, canSub);
         }
+        if(refs.confirm_password.state.value !== '') {
+          if(value !== refs.confirm_password.state.value) {
+            refs.confirm_password.setState({
+              error: true,
+              pass: false
+            }, canSub);
+          } else {
+            refs.confirm_password.setState({
+              error: false,
+              pass: true
+            }, canSub);
+          }
+        }
         break;
       case 'confirm_password':
-        if(value !== this.refs.password.state.value) {
+        if(value !== refs.password.state.value) {
           refs.confirm_password.setState({
             error: true,
             pass: false
