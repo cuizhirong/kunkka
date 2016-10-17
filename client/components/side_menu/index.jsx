@@ -25,30 +25,42 @@ class SideMenu extends React.Component {
   }
 
   componentDidMount() {
-    this.haloScroller();
+    this.haloScroller('menu');
+    this.haloLeftScroller('top_menu');
   }
 
-  haloScroller() {
-    this.container = this.refs.halo_com_menu;
-    this.content = this.container.getElementsByClassName('menu')[0];
-    this.pane = this.refs.halo_scroll_pane;
-    this.slider = this.refs.halo_scroll_slider;
+  haloScroller(name) {
+    this['container' + name] = this.refs.halo_com_menu;
+    this['content' + name] = this['container' + name].getElementsByClassName('menu')[0];
+    this['pane' + name] = this.refs.halo_scroll_pane;
+    this['slider' + name] = this.refs.halo_scroll_slider;
 
-    this.createEvents();
-    this.addEvents();
-    this.reset();
+    this.createEvents(name);
+    this.addEvents(name);
+    this.reset(name);
   }
 
-  scroll() {
+  haloLeftScroller(name) {
+    this['container' + name] = this.refs.halo_com_menu;
+    this['content' + name] = this['container' + name].getElementsByClassName('top-menu')[0];
+    this['pane' + name] = this.refs.halo_scroll_left_pane;
+    this['slider' + name] = this.refs.halo_scroll_left_slider;
+
+    this.createEvents(name);
+    this.addEvents(name);
+    this.reset(name);
+  }
+
+  scroll(name) {
     if (!this.isActive) {
       return;
     }
-    this.sliderY = Math.max(0, this.sliderY);
-    this.sliderY = Math.min(this.maxSliderTop, this.sliderY);
+    this['sliderY' + name] = Math.max(0, this['sliderY' + name]);
+    this['sliderY' + name] = Math.min(this['maxSliderTop' + name], this['sliderY' + name]);
 
-    this.content.scrollTop = this.maxScrollTop * this.sliderY / this.maxSliderTop;
-    this.updateScrollValues();
-    this.slider.style.transform = 'translate(0, ' + this.sliderTop + 'px)';
+    this['content' + name].scrollTop = this['maxScrollTop' + name] * this['sliderY' + name] / this['maxSliderTop' + name];
+    this.updateScrollValues(name);
+    this['slider' + name].style.transform = 'translate(0, ' + this['sliderTop' + name] + 'px)';
   }
 
   trigger(eventType, target) {
@@ -82,17 +94,17 @@ class SideMenu extends React.Component {
     }
   }
 
-  createEvents() {
+  createEvents(name) {
     this.events = {
       down: (function(_this) {
         return function(e) {
           e.stopPropagation();
           _this.isBeingDragged = true;
-          _this.offsetY = e.pageY - _this.container.offsetTop - _this.slider.offsetTop;
-          if (!(_this.slider === e.target)) {
+          _this.offsetY = e.pageY - _this['container' + name].offsetTop - _this['slider' + name].offsetTop;
+          if (!(_this['slider' + name] === e.target)) {
             _this.offsetY = 0;
           }
-          _this.pane.className = 'scroll-pane active';
+          _this['pane' + name].className = 'scroll-pane active';
           _this.bind(document, MOUSEMOVE, _this.events[DRAG]);
           _this.bind(document, MOUSEUP, _this.events[UP]);
           _this.bind(document.body, MOUSEENTER, _this.events[ENTER]);
@@ -101,15 +113,15 @@ class SideMenu extends React.Component {
       })(this),
       drag: (function(_this) {
         return function(e) {
-          _this.sliderY = e.pageY - _this.container.offsetTop - (_this.offsetY || _this.sliderHeight * 0.5);
-          _this.scroll();
+          _this['sliderY' + name] = e.pageY - _this['container' + name].offsetTop - (_this.offsetY || _this['sliderHeight' + name] * 0.5);
+          _this.scroll(name);
           return false;
         };
       })(this),
       up: (function(_this) {
         return function(e) {
           _this.isBeingDragged = false;
-          _this.pane.className = 'scroll-pane';
+          _this['pane' + name].className = 'scroll-pane';
           _this.unbind(document, MOUSEMOVE, _this.events[DRAG]);
           _this.unbind(document, MOUSEUP, _this.events[UP]);
           _this.unbind(document.body, MOUSEENTER, _this.events[ENTER]);
@@ -118,25 +130,25 @@ class SideMenu extends React.Component {
       })(this),
       resize: (function(_this) {
         return function(e) {
-          _this.reset();
+          _this.reset(name);
         };
       })(this),
       panedown: (function(_this) {
         return function(e) {
-          _this.sliderY = (e.offsetY || e.originalEvent.layerY) - (_this.sliderHeight * 0.5);
-          _this.scroll();
+          _this['sliderY' + name] = (e.offsetY || e.originalEvent.layerY) - (_this['sliderHeight' + name] * 0.5);
+          _this.scroll(name);
           _this.events.down(e);
           return false;
         };
       })(this),
       scroll: (function(_this) {
         return function(e) {
-          _this.updateScrollValues();
+          _this.updateScrollValues(name);
           if (_this.isBeingDragged) {
             return;
           }
-          _this.sliderY = _this.sliderTop;
-          _this.slider.style.transform = 'translate(0, ' + _this.sliderTop + 'px)';
+          _this['sliderY' + name] = _this['sliderTop' + name];
+          _this['slider' + name].style.transform = 'translate(0, ' + _this['sliderTop' + name] + 'px)';
         };
       })(this),
       wheel: (function(_this) {
@@ -147,9 +159,9 @@ class SideMenu extends React.Component {
           }
           delta = e.delta || e.wheelDelta || (e.originalEvent && e.originalEvent.wheelDelta) || -e.detail || (e.originalEvent && -e.originalEvent.detail);
           if (delta) {
-            _this.sliderY += -delta / 3;
+            _this['sliderY' + name] += -delta / 3;
           }
-          _this.scroll();
+          _this.scroll(name);
           //return false;
         };
       })(this),
@@ -168,61 +180,61 @@ class SideMenu extends React.Component {
     };
   }
 
-  addEvents() {
+  addEvents(name) {
     var events = this.events;
     this.bind(window, RESIZE, events[RESIZE]);
-    this.bind(this.slider, MOUSEDOWN, events[DOWN]);
-    this.bind(this.pane, MOUSEDOWN, events[PANEDOWN]);
-    this.bind(this.pane, MOUSEWHEEL, events[WHEEL]);
-    this.bind(this.pane, MOUSEWHEEL, events[WHEEL]);
-    this.bind(this.content, SCROLL, events[SCROLL]);
-    this.bind(this.content, MOUSEWHEEL, events[SCROLL]);
-    this.bind(this.content, TOUCHMOVE, events[SCROLL]);
+    this.bind(this['slider' + name], MOUSEDOWN, events[DOWN]);
+    this.bind(this['pane' + name], MOUSEDOWN, events[PANEDOWN]);
+    this.bind(this['pane' + name], MOUSEWHEEL, events[WHEEL]);
+    this.bind(this['pane' + name], MOUSEWHEEL, events[WHEEL]);
+    this.bind(this['content' + name], SCROLL, events[SCROLL]);
+    this.bind(this['content' + name], MOUSEWHEEL, events[SCROLL]);
+    this.bind(this['content' + name], TOUCHMOVE, events[SCROLL]);
   }
 
-  reset() {
-    var content, contentHeight, contentStyle, contentStyleOverflowY, paneHeight, paneOuterHeight, parentMaxHeight, sliderHeight;
-    content = this.content;
+  reset(name) {
+    let content, contentHeight, contentStyle, contentStyleOverflowY, paneHeight, paneOuterHeight, parentMaxHeight, sliderHeight;
+    content = this['content' + name];
     contentStyle = content.style;
     contentStyleOverflowY = contentStyle.overflowY;
     contentHeight = content.scrollHeight;
-    parentMaxHeight = parseInt(this.container.style['max-heigh'] || 0, 10);
+    parentMaxHeight = parseInt(this['container' + name].style['max-heigh'] || 0, 10);
     if (parentMaxHeight > 0) {
-      this.container.style.height = content.scrollHeight > parentMaxHeight ? parentMaxHeight : content.scrollHeight + 'px';
+      this['container' + name].style.height = content.scrollHeight > parentMaxHeight ? parentMaxHeight : content.scrollHeight + 'px';
     }
-    paneHeight = this.pane.clientHeight;
+    paneHeight = this['pane' + name].clientHeight;
     paneOuterHeight = paneHeight;
     sliderHeight = Math.round(paneOuterHeight / contentHeight * paneHeight);
     if (sliderHeight < SLIDER_MIN_HEIGHT) {
       sliderHeight = SLIDER_MIN_HEIGHT;
     }
-    this.maxSliderTop = paneOuterHeight - sliderHeight;
-    this.contentHeight = contentHeight;
-    this.paneHeight = paneHeight;
+    this['maxSliderTop' + name] = paneOuterHeight - sliderHeight;
+    this['content' + name].Height = contentHeight;
+    this['paneHeight' + name] = paneHeight;
     this.paneOuterHeight = paneOuterHeight;
-    this.sliderHeight = sliderHeight;
-    this.slider.style.height = sliderHeight + 'px';
-    this.events.scroll();
-    this.pane.style.display = 'block';
+    this['sliderHeight' + name] = sliderHeight;
+    this['slider' + name].style.height = sliderHeight + 'px';
+    this.events.scroll(name);
+    this['pane' + name].style.display = 'block';
     this.isActive = true;
-    if ((content.scrollHeight === content.clientHeight) || (this.pane.scrollHeight >= content.scrollHeight && contentStyleOverflowY !== SCROLL)) {
-      this.pane.style.display = 'none';
+    if ((content.scrollHeight === content.clientHeight) || (this['pane' + name].scrollHeight >= content.scrollHeight && contentStyleOverflowY !== SCROLL)) {
+      this['pane' + name].style.display = 'none';
       this.isActive = false;
-    } else if (this.container.clientHeight === content.scrollHeight) {
-      this.slider.style.display = 'none';
+    } else if (this['container' + name].clientHeight === content.scrollHeight) {
+      this['slider' + name].style.display = 'none';
     } else {
-      this.slider.style.display = 'block';
+      this['slider' + name].style.display = 'block';
     }
-    this.pane.style.opacity = '';
+    this['pane' + name].style.opacity = '';
   }
 
-  updateScrollValues() {
+  updateScrollValues(name) {
     var content;
-    content = this.content;
-    this.maxScrollTop = content.scrollHeight - content.clientHeight;
-    this.contentScrollTop = content.scrollTop;
-    this.maxSliderTop = this.paneHeight - this.sliderHeight;
-    this.sliderTop = this.maxScrollTop === 0 ? 0 : this.contentScrollTop * this.maxSliderTop / this.maxScrollTop;
+    content = this['content' + name];
+    this['maxScrollTop' + name] = content.scrollHeight - content.clientHeight;
+    this['content' + name].ScrollTop = content.scrollTop;
+    this['maxSliderTop' + name] = this['paneHeight' + name] - this['sliderHeight' + name];
+    this['sliderTop' + name] = this['maxScrollTop' + name] === 0 ? 0 : this['content' + name].ScrollTop * this['maxSliderTop' + name] / this['maxScrollTop' + name];
   }
 
   onSwitch(k) {
@@ -252,6 +264,9 @@ class SideMenu extends React.Component {
               );
             })
           }
+          <div ref="halo_scroll_left_pane" className="scroll-left-pane">
+            <div ref="halo_scroll_left_slider" className="scroll-left-slider"></div>
+          </div>
         </ul>
         <Menu items={props.items} />
         <div ref="halo_scroll_pane" className="scroll-pane">

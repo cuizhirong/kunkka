@@ -15,6 +15,33 @@
     min-width: 96px;
     background-size: 96px auto;
     background-color: #0d1b2e;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    > .scroll-left-pane {
+      position:absolute;
+      width:8px;
+      right:200px;
+      top:0;
+      bottom:0;
+      opacity: 0;
+      transition: .2s;
+      border-radius: 5px;
+      z-index: 100;
+      > .scroll-left-slider {
+        background: rgba(255,255,255,.5);
+        position: relative;
+        margin : 0 1px;
+        border-radius: 3px;
+        cursor: default;
+      }
+    }
+    &:hover > .scroll-left-pane,
+    .scroll-left-pane.active {
+      opacity: 1;
+    }
     > li {
       position: relative;
       width: 96px;
