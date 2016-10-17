@@ -1,0 +1,46 @@
+{
+  "en": {
+    "snapshot": {
+      "name": "Name",
+      "volume_id": "Volume ID",
+      "size": "Size(GB)",
+      "status": "Status"
+    },
+    "volume": {
+      "name": "Name",
+      "type": "Type",
+      "size": "Size(GB)",
+      "status": "Status",
+      "userID": "UserID",
+      "shared": "Shared",
+      "attribute": "Attribute",
+      "projectID": "ProjectID",
+      "true": "Yes",
+      "false": "No",
+      "in-use": "In use",
+      "available": "Available"
+    }
+  },
+  "zh-CN": {
+    "snapshot": {
+      "name": "名称",
+      "volume_id": "硬盘ID",
+      "size": "容量(GB)",
+      "status": "状态"
+    },
+    "volume": {
+      "name": "名称",
+      "type": "类型",
+      "size": "容量(GB)",
+      "status": "状态",
+      "userID": "用户ID",
+      "shared": "共享盘",
+      "attribute": "属性",
+      "projectID": "项目ID",
+      "true": "是",
+      "false": "否",
+      "in-use": "使用中",
+      "available": "可用"
+    }
+  }
+}
