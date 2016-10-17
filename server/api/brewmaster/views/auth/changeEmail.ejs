@@ -84,8 +84,7 @@
           enable_phone = false,
           enable_captcha = false,
           enable_email = false,
-          timer = null,
-          count = 60;
+          timer = null;
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -100,6 +99,7 @@
     return xmlHttpRequest;
   }
   function sendCaptcha() {
+    var count = 60;
     if (enable_getcaptcha) {
       if (/^\d{11}$/.test(phone.value)) {
         phone_tip.style.display = "none";
@@ -121,7 +121,7 @@
                   get_captcha.innerHTML = 'Resend(' + count-- + ')s';
                 } else {
                   clearInterval(timer);
-                  enable_getcaptcha = false;
+                  enable_getcaptcha = true;
                   get_captcha.className = 'get_captcha';
                   get_captcha.innerHTML = 'Get captcha';
                 }
@@ -222,8 +222,7 @@
           enable_phone = false,
           enable_captcha = false,
           enable_email = false,
-          timer = null,
-          count = 60;
+          timer = null;
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -238,6 +237,7 @@
     return xmlHttpRequest;
   }
   function sendCaptcha() {
+    var count = 60;
     if (enable_getcaptcha) {
       if (/^\d{11}$/.test(phone.value)) {
         phone_tip.style.display = "none";
@@ -259,7 +259,7 @@
                   get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
                 } else {
                   clearInterval(timer);
-                  enable_getcaptcha = false;
+                  enable_getcaptcha = true;
                   get_captcha.className = 'get_captcha';
                   get_captcha.innerHTML = '发送验证码';
                 }
