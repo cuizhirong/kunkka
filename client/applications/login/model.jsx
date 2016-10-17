@@ -317,8 +317,10 @@ class Model extends React.Component {
           <form method="POST" onSubmit={this.onSubmit}>
             <input type="text" ref="username" name="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={__.account_placeholder} autoFocus="autofocus" autoComplete="off" />
             <input type="password" ref="password" name="password" className={state.passwordEmptyError ? 'error' : ''} placeholder={__.password_placeholder} autoComplete="off" />
-            <div className="find-Password">
-              <a href="/auth/password"> {__.forgotPass}</a>
+             <div className="find-Password">
+            {
+              this.state.settings.enable_register ? <a href="/auth/password"> {__.forgotPass}</a> : null
+            }
             </div>
             <div className="tip-wrapper">
               <div className={'input-error' + (state.loginError ? '' : ' hide')}>
