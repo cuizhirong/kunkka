@@ -160,7 +160,7 @@ class Model extends React.Component {
       canSub = function() {
         canSubmit = refs.email.state.pass && refs.name.state.pass
           && refs.password.state.pass && refs.confirm_password.state.pass
-          && refs.phone.state.pass && that.state.hasRead;
+          && refs.phone.state.pass && (that.state.settings.eula_content ? that.state.hasRead : true);
         that.setState({
           canSubmit: canSubmit
         });
@@ -298,7 +298,7 @@ class Model extends React.Component {
       state = this.state,
       __ = props.__;
 
-    if(this.state.isLogin) {
+    if(state.isLogin) {
       return (
         <div id="container">
           <form method="POST" onSubmit={this.onSubmit}>
@@ -315,7 +315,7 @@ class Model extends React.Component {
             <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={__.submit} />
           </form>
           {
-            this.state.settings.enable_register ? <div className="link">
+            state.settings.enable_register ? <div className="link">
               {__.hasAccount}
               <span>|</span>
               {__.isNoAccount}<a onClick={this.onClick}>{__.signup}</a>
@@ -336,9 +336,9 @@ class Model extends React.Component {
             <Input input_type="text" ref="code" name="code" __={__} tip={true} placeholder={__.code_placeholder} onChange={this.onChange} />
             <div key="checkbox" className="checkbox">
               {
-                this.state.settings.eula_content ? <div>
+                state.settings.eula_content ? <div>
                   <input name="readme" value="null" type="checkbox" checked={this.state.hasRead} onChange={this.onChange.bind(this, 'readme', '')}/>
-                  <span>{__.readAgree}<a href={this.state.settings.eula_content}>{__.eula}</a></span>
+                  <span>{__.readAgree}<a href={state.settings.eula_content}>{__.eula}</a></span>
                 </div>
                 : null
               }
