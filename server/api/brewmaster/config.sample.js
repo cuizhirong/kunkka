@@ -35,6 +35,11 @@ module.exports = {
       name: 'eula_content',
       value: '',
       type: 'string'
+    }, {
+      app: 'auth',
+      name: 'enable_domain',
+      value: 'false',
+      type: 'boolean'
     }
   ]
 };
