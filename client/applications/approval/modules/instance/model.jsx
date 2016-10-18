@@ -119,7 +119,7 @@ class Model extends React.Component {
     return (
       <div>
         <i className={'icon-image-default ' + label} style={style}/>
-        <a data-type="router" href={'/approval/image/' + item.image.id}>{item.image.name}</a>
+        <span>{item.image.name}</span>
       </div>
     );
   }
@@ -143,7 +143,7 @@ class Model extends React.Component {
                     if (count !== 0) {
                       arr.push(', ');
                     }
-                    arr.push(<a key={addr.port.id} data-type = "router" href={'/approval/port/' + addr.port.id}>{addr.addr}</a>);
+                    arr.push(<span key={addr.port.id}>{addr.addr}</span>);
                     count++;
                   }
                 }
@@ -157,9 +157,9 @@ class Model extends React.Component {
             return item.floating_ip ?
               <span>
                 <i className="glyphicon icon-floating-ip" />
-                <a data-type="router" href={'/approval/floating-ip/' + item.floating_ip.id}>
+                <span>
                   {item.floating_ip.floating_ip_address}
-                </a>
+                </span>
               </span> : '';
           };
           break;
@@ -569,9 +569,9 @@ class Model extends React.Component {
       content: item.floating_ip ?
         <span>
           <i className="glyphicon icon-floating-ip" />
-          <a data-type="router" href={'/approval/floating-ip/' + item.floating_ip.id}>
+          <span>
             {item.floating_ip.floating_ip_address}
-          </a>
+          </span>
         </span> : '-'
     }, {
       title: __.image,
@@ -584,7 +584,7 @@ class Model extends React.Component {
       content: item.keypair ?
         <span>
           <i className="glyphicon icon-keypair" />
-          <a data-type="router" href="/approval/keypair">{item.keypair.name}</a>
+          <span>{item.keypair.name}</span>
         </span> : '-'
     }, {
       title: __.status,
@@ -605,9 +605,9 @@ class Model extends React.Component {
         vname = volume.name || vid;
       attchVolumes.push({
         key: volume.name,
-        data: <a data-type="router" href={'/approval/volume/' + volume.id}>
+        data: <span>
             {vname + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
-          </a>,
+          </span>,
         childItem: volume
       });
     });
@@ -632,20 +632,20 @@ class Model extends React.Component {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
             securityGroups.push(
-              <a key={i} data-type="router" href={'/approval/security-group/' + item.security_groups[i].id}>
+              <span key={i}>
                 {item.security_groups[i].name}
-              </a>
+              </span>
             );
           }
 
           networks.push({
-            port: <a data-type="router" href={'/approval/port/' + item.port.id}>
+            port: <span>
                 {item.addr}
-              </a>,
-            subnet: <a data-type="router" href={'/approval/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
+              </span>,
+            subnet: <span>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</span>,
             security_group: securityGroups,
             floating_ip: floatingIp ?
-              <a data-type="router" href={'/approval/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
+              <span>{floatingIp.addr}</span> : '-',
             __renderKey: count,
             childItem: item
           });
@@ -694,7 +694,7 @@ class Model extends React.Component {
     items.forEach((item) => {
       data.push({
         title: item.created_at,
-        name: <a data-type="router" href={'/approval/image/' + item.id}>{item.name}</a>,
+        name: <span>{item.name}</span>,
         size: item.size / 1024 + 'MB',
         time: item.created_at,
         status: getStatusIcon(item.status),
