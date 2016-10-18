@@ -29,6 +29,8 @@ var infoColor = '#42b9e5',
   fontDarker = '#626b7e',
   gaugeTickColor = '#bbbfc5';
 
+var settings = HALO.settings;
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -100,7 +102,8 @@ class Model extends React.Component {
   }
 
   displayDisk(data) {
-    var rate = data.local_gb_used / (data.local_gb / data.count);
+    // nova bug: if storage is ceph, nova would duplicate the local_gb by multiplying the count!!!, the commercial storage is normal
+    var rate = data.local_gb_used / (settings.is_commercial_storage ? data.local_gb : (data.local_gb / data.count));
     var rateColor = this.getChartColor(rate);
 
     this.diskChart.setOption({
@@ -190,7 +193,8 @@ class Model extends React.Component {
       data = state.data,
       loading = state.loading;
 
-    var diskSum = data.local_gb / data.count;
+    // nova bug: if storage is ceph, nova would duplicate the local_gb by multipying the count!!!, the commercial storage is normal
+    var diskSum = settings.is_commercial_storage ? data.local_gb : data.local_gb / data.count;
     var diskUsed = data.local_gb_used;
     var diskFree = diskSum - diskUsed;
 
