@@ -2,7 +2,7 @@
 
 var Base = require('../base.js');
 var driver = new Base();
-const flag = (driver.noServices.indexOf('floatingip') === -1) ? true : false;
+const flag = (driver.noServices.indexOf('floatingip') === -1);
 
 driver.listFloatingips = function (token, remote, callback, query) {
   if (flag) {
