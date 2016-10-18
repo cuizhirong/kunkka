@@ -5,6 +5,7 @@ var {Tab, Table, Pagination} = require('client/uskin/index');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/bill.lang.json');
 
+
 class Detail extends React.Component {
   constructor(props) {
     super(props);
@@ -54,6 +55,14 @@ class Detail extends React.Component {
         case 'end_time':
           column.render = (col, item, i) => {
             return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+          };
+          break;
+        case 'resource_type':
+          column.render = (col, item, i) => {
+            return (<span className="type">
+              <i className={'glyphicon icon-' + item.type}/>
+              {__[item[col.dataIndex]]}
+            </span>);
           };
           break;
         default:

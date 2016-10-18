@@ -18,7 +18,15 @@
     "stopped": "Stopped",
     "total": "Total",
     "total_amount": "Total (CNY)",
-    "unit_price": "Unit Price (CNY/Hour)"
+    "unit_price": "Unit Price (CNY/Hour)",
+    "type": "Type",
+    "instance": "Instance",
+    "volume": "Volume",
+    "snapshot": "Snapshot",
+    "floating-ip": "Floating Ip",
+    "image": "Image",
+    "port": "Port",
+    "router": "Router"
   },
   "zh-CN": {
     "bill_detail": "消费明细",
@@ -39,6 +47,14 @@
     "stopped": "已停止",
     "total": "总计",
     "total_amount": "金额（元）",
-    "unit_price": "当前单价（元/小时）"
+    "unit_price": "当前单价（元/小时）",
+    "type": "类型",
+    "instance": "云主机",
+    "volume": "云硬盘",
+    "snapshot": "快照",
+    "floating-ip": "公网IP",
+    "image": "镜像",
+    "port": "端口",
+    "router": "路由器"
   }
 }

@@ -9,7 +9,6 @@
     "icon": "refresh"
   }],
   "table": {
-    "checkbox": true,
     "dataKey": "charge_id",
     "limit": 10,
     "loading": true,

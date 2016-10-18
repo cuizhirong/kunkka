@@ -55,6 +55,14 @@ class Model extends React.Component {
             return <span className="unit-price">{item.unit_price}</span>;
           };
           break;
+        case 'resource_type':
+          column.render = (col, item, i) => {
+            return (<span className="type">
+              <i className={'glyphicon icon-' + item.type}/>
+              {__[item.type]}
+            </span>);
+          };
+          break;
         default:
           break;
       }
@@ -217,12 +225,15 @@ class Model extends React.Component {
     });
   }
 
-  getBillsByOrder(id, current, limit) {
+  getBillsByOrder(item, current, limit) {
     if (current < 1) {
       current = 1;
     }
 
-    request.getBillsByOrder(id, (current - 1) * limit, limit).then((res) => {
+    request.getBillsByOrder(item.order_id, (current - 1) * limit, limit).then((res) => {
+      res.bills.forEach((bill) => {
+        bill.type = item.type;
+      });
       this.setDetailTable(res.bills, current, res.total_count, limit);
     });
   }
@@ -231,13 +242,13 @@ class Model extends React.Component {
     var limit = this.state.config.table.detail.table.limit;
     var current = 1;
 
-    this.getBillsByOrder(item.order_id, current, limit);
+    this.getBillsByOrder(item, current, limit);
   }
 
   onNextDetailPage(refs, data) {
     var limit = this.state.config.table.detail.table.limit;
 
-    this.getBillsByOrder(data.item.order_id, data.page, limit);
+    this.getBillsByOrder(data.item, data.page, limit);
   }
 
   onNextPage(refs, page) {

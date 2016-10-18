@@ -14,6 +14,10 @@
       "dataIndex": "resource_id",
       "key": "resource_id"
     }, {
+      "title": ["resource", "type"],
+      "dataIndex": "type",
+      "key": "resource_type"
+    }, {
       "title": ["status"],
       "key": "status",
       "type": "status",
@@ -55,6 +59,10 @@
           "title": ["end", "time"],
           "dataIndex": "end_time",
           "key": "end_time"
+        }, {
+          "title": ["resource", "type"],
+          "dataIndex": "type",
+          "key": "resource_type"
         }, {
           "title": ["total_amount"],
           "key": "price",
