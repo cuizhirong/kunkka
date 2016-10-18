@@ -1,9 +1,8 @@
 {
   "name": "halo",
-  "description": "Openstack NodeJS portable server.",
-  "version": "0.0.1",
+  "description": "UnitedStack United Platform.",
+  "version": "0.4.0",
   "contributors": [
-    "gogocrow <gogocrow@163.com>",
     "majiajun <majiajun@unitedstack.com>",
     "Lee Yao <yaoli@unitedstack.com>"
   ],
@@ -11,7 +10,8 @@
   "repository": "http://git.ustack.com/ustack/halo",
   "keywords": [
     "OpenStack",
-    "API"
+    "API",
+    "CMP"
   ],
   "main": "index.js",
   "scripts": {
@@ -79,6 +79,7 @@
     "grunt-banner": "^0.6.0",
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-copy": "^0.8.2",
+    "grunt-cssnano-plus": "^1.0.0",
     "grunt-webpack": "^1.0.11",
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",

@@ -55,6 +55,18 @@ module.exports = function(grunt) {
     //   }
     // },
 
+    cssnano: {
+      options: {
+        sourcemap: false
+      },
+      dist: {
+        files: [{
+          src: 'client/dist/*.css',
+          dest: 'client/dist/'
+        }]
+      }
+    },
+
     webpack: {
       options: webpackConfig,
       build: {}
@@ -66,7 +78,7 @@ module.exports = function(grunt) {
         banner: '<%= banner %>'
       },
       files: {
-        src: ['dist/*']
+        src: ['client/dist/*']
       }
     },
 
@@ -99,7 +111,10 @@ module.exports = function(grunt) {
   // Build JS
   grunt.registerTask('js', ['webpack:build']);
 
+  // Cope with the rest stuffs
+  grunt.registerTask('rest', ['cssnano', 'usebanner', 'copy']);
+
   // Default task.
-  grunt.registerTask('build', ['clean', 'js', 'usebanner', 'copy']);
+  // grunt.registerTask('build', ['clean', 'js', 'cssnano', 'usebanner', 'copy']);
 
 };
