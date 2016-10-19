@@ -120,7 +120,7 @@ function updateTag(apps) {
           rl.prompt();
         }
         if (finalTag) {
-          let gitTag = execSync(`git tag -a ${newTag} -m 'bump version' && git review -s && git push gerrit ${finalTag}`, {cwd: appDir}).toString();
+          let gitTag = execSync(`git tag -a ${finalTag} -m 'bump version' && git review -s && git push gerrit ${finalTag}`, {cwd: appDir}).toString();
           console.log(gitTag);
           console.log(`${project} update new tag: ${finalTag}\n\n`);
           rl.close();
