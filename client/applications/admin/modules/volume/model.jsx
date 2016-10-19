@@ -13,6 +13,7 @@ var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
 var utils = require('../../utils/utils');
+var exportCSV = require('../../utils/export_csv');
 
 class Model extends React.Component {
 
@@ -360,6 +361,10 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'export_csv':
+        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&region=' + HALO.current_region;
+        exportCSV(url);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -418,6 +423,9 @@ class Model extends React.Component {
           } else {
             btns[key].disabled = true;
           }
+          break;
+        case 'export_csv':
+          btns[key].disabled = false;
           break;
         case 'delete':
           btns[key].disabled = (len > 0 && rows[0].status === 'available') ? false : true;

@@ -14,6 +14,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
+var exportCSV = require('../../utils/export_csv');
 
 class Model extends React.Component {
 
@@ -531,6 +532,10 @@ class Model extends React.Component {
           refresh();
         });
         break;
+      case 'export_csv':
+        let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&region=' + HALO.current_region;
+        exportCSV(url);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -570,6 +575,7 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     var single = rows.length === 1 ? rows[0] : null;
+    btns.export_csv.disabled = false;
 
     for (let key in btns) {
       if(single) {
@@ -588,6 +594,9 @@ class Model extends React.Component {
           case 'dissociate_floating_ip':
             btns[key].disabled = single._floatingIP.length > 0 ? false : true;
             break;
+          case 'export_csv':
+            btns[key].disabled = false;
+            break;
           case 'delete':
             btns[key].disabled = false;
             break;
@@ -595,7 +604,7 @@ class Model extends React.Component {
             break;
         }
       } else {
-        if (key !== 'refresh') {
+        if (key !== 'refresh' && key !== 'export_csv') {
           btns[key].disabled = true;
         }
       }

@@ -12,6 +12,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
+var exportCSV = require('../../utils/export_csv');
 
 class Model extends React.Component {
 
@@ -327,6 +328,10 @@ class Model extends React.Component {
           hostTypes: this.stores.hosts
         });
         break;
+      case 'export_csv':
+        let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/csv?region=' + HALO.current_region;
+        exportCSV(url);
+        break;
       case 'refresh':
         this.refresh({
           refreshList: true,
@@ -375,6 +380,9 @@ class Model extends React.Component {
           break;
         case 'disable':
           btns[key].disabled = (sole && sole.status === 'enabled') ? false : true;
+          break;
+        case 'export_csv':
+          btns[key].disabled = false;
           break;
         default:
           break;

@@ -10,6 +10,11 @@
     "icon": "dissociate",
     "disabled": true
   }, {
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
     "value": ["delete"],
     "key": "delete",
     "type": "delete",

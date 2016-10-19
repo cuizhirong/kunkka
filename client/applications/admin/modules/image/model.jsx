@@ -14,6 +14,7 @@ var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
+var exportCSV = require('../../utils/export_csv');
 
 class Model extends React.Component {
 
@@ -360,6 +361,10 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'export_csv':
+        let url = '/proxy/csv/glance/v2/images?all_tenants=1&region=' + HALO.current_region;
+        exportCSV(url);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -444,6 +449,9 @@ class Model extends React.Component {
       switch (key) {
         case 'edit_name':
           btns[key].disabled = sole ? false : true;
+          break;
+        case 'export_csv':
+          btns[key].disabled = false;
           break;
         case 'delete':
           btns[key].disabled = (sole && sole.image_type === 'snapshot') ? false : true;

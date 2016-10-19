@@ -11,6 +11,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
+var exportCSV = require('../../utils/export_csv');
 
 class Model extends React.Component {
 
@@ -314,6 +315,10 @@ class Model extends React.Component {
       that = this;
 
     switch(key) {
+      case 'export_csv':
+        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&region=' + HALO.current_region;
+        exportCSV(url);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -356,6 +361,9 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for(let key in btns) {
       switch (key) {
+        case 'export_csv':
+          btns[key].disabled = false;
+          break;
         case 'delete':
           btns[key].disabled = rows.length > 0 ? false : true;
           break;

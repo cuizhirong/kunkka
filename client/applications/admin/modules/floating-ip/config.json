@@ -14,6 +14,11 @@
     "key": "allocate",
     "icon": "associate"
   }, {
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
     "key": "refresh",
     "icon": "refresh",
     "disabled": true

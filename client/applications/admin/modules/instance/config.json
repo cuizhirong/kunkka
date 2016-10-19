@@ -29,16 +29,28 @@
     "icon": "restart",
     "disabled": true
   }, {
-    "value": ["dissociate", "floating_ip"],
-    "key": "dissociate_floating_ip",
-    "icon": "dissociate",
-    "disabled": true
-  }, {
-    "value": ["delete"],
-    "key": "delete",
-    "icon": "delete",
-    "type": "delete",
-    "disabled": true
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["dissociate", "floating_ip"],
+          "key": "dissociate_floating_ip",
+          "disabled": true
+        }, {
+          "title": ["export", "csv"],
+          "key": "export_csv",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "danger": true,
+          "disabled": true
+        }]
+      }]
+    }
   }, {
     "key": "refresh",
     "icon": "refresh",
