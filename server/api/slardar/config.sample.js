@@ -78,6 +78,11 @@ module.exports = {
       name: 'enable_ipsec',
       value: 'false',
       type: 'boolean'
+    }, {
+      app: 'admin',
+      name: 'is_commercial_storage',
+      value: 'false',
+      type: 'boolean'
     }
   ]
 };
