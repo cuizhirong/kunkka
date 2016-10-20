@@ -13,6 +13,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/ticket.lang.json');
 var router = require('client/utils/router');
 var getTime = require('client/utils/time_unification');
+var getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -63,11 +64,6 @@ class Model extends React.Component {
         case 'reply':
           column.render = (col, item, i) => {
             return <div className="replies">{item.replies.length}</div>;
-          };
-          break;
-        case 'status':
-          column.render = (col, item, i) => {
-            return __[item.status];
           };
           break;
         default:
@@ -443,6 +439,7 @@ class Model extends React.Component {
           __={__}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

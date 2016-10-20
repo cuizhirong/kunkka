@@ -61,6 +61,8 @@
           color: @attach_color;
           width: 100%;
           text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         img {
           position: relative;
@@ -86,6 +88,7 @@
         .reply-content {
           float: left;
           line-height: 22px;
+          margin-left: 10px;
           max-width: 360px;
           background-color: @bg_left;
           padding: 16px 20px;
@@ -99,6 +102,7 @@
         float: right;
         .reply-content {
           float: right;
+          margin: 0 10px 0 0 ;
           background-color: @color_info_100;
           word-wrap: break-word;
         }

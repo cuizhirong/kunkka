@@ -2,7 +2,7 @@
  * @func: get status icon in table and details
  */
 var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+var __ = require('locale/client/ticket.lang.json');
 
 module.exports = (str) => {
   var status = str.toLowerCase();
@@ -36,6 +36,18 @@ module.exports = (str) => {
     case 'shutoff':
       type.icon = 'shutdown';
       type.status = 'shutoff';
+      break;
+    case 'closed':
+      type.icon = 'paused';
+      type.status = 'closed';
+      break;
+    case 'pending':
+      type.icon = 'pending';
+      type.status = 'pending';
+      break;
+    case 'proceeding':
+      type.icon = 'approving';
+      type.status = 'proceeding';
       break;
     default:
       type.status = 'loading';

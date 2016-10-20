@@ -90,8 +90,8 @@ class Attach extends React.Component {
         <div className="attach-info">
           <div className="btn-browse">
             <a className={classNameFile}><i className="glyphicon icon-upload" />
-              <div className="upload_file">{__.upload_files}</div>
-              <input ref="myfile" name="attachment" className="myfile" type="file" onChange={this.uploadFileFromBrowse.bind(this)} />
+              <div className="upload_file">{__.upload_pic}</div>
+              <input ref="myfile" name="attachment" className="myfile" type="file" accept=".jpg,.png,.gif,.bmp,.pic,.tif" onChange={this.uploadFileFromBrowse.bind(this)} />
             </a>
           </div>
           <div className="format">{__.info_format}</div>

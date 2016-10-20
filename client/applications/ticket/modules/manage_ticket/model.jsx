@@ -8,6 +8,7 @@ var __ = require('locale/client/ticket.lang.json');
 var config = require('./config.json');
 var router = require('client/utils/router');
 var request = require('./request');
+var getStatusIcon = require('../../utils/status_icon');
 var Detail = require('client/applications/ticket/components/detail/index');
 
 class Model extends React.Component {
@@ -72,11 +73,6 @@ class Model extends React.Component {
         case 'reply':
           column.render = (col, item, i) => {
             return <div className="replies">{item.replies.length}</div>;
-          };
-          break;
-        case 'status':
-          column.render = (col, item, i) => {
-            return __[item.status];
           };
           break;
         default:
@@ -317,12 +313,21 @@ class Model extends React.Component {
           if (time === 'day' || time === 'week' || time === 'month') {
             start = moment().subtract(1, time);
           } else {
-            start = moment().subtract(3, time);
+            start = moment().subtract(3, 'month');
           }
         }
 
+        var status = '',
+          key = '';
+        this.state.config.tabs.map(tab => {
+          if (tab.default) {
+            key = tab.key.split('_')[0];
+            status = key === 'manage' ? 'pending' : key;
+          }
+        });
+
         let pageLimit = this.state.config.table.limit;
-        request.filter(start, pageLimit).then((res) => {
+        request.filter(status, start, pageLimit).then((res) => {
           var table = this.state.config.table;
           table.data = res.tickets;
           this.setPagination(table, res);
@@ -543,6 +548,7 @@ class Model extends React.Component {
           onAction={this.onAction}
           config={this.state.config}
           params={this.props.params}
+          getStatusIcon={getStatusIcon}
         />
       </div>
     );

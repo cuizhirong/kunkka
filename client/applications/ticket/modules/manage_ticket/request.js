@@ -70,12 +70,12 @@ module.exports = {
       data: data
     });
   },
-  filter: function(start, pageLimit) {
+  filter: function(status, start, pageLimit) {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
 
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets?limit=' + pageLimit + '&start=' + start + '&page=1';
+    var url = '/api/ticket/' + HALO.user.userId + '/tickets?limit=' + pageLimit + '&status=' + status + '&start=' + start + '&page=1';
     return fetch.get({
       url: url
     }).then((res) => {

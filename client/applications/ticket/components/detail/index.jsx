@@ -141,7 +141,7 @@ class Detail extends React.Component {
               }
               return (
                 <div key={index} className="reply-msg">
-                  <div className={classNameReply}>
+                  <div className={classNameReply} title={reply.username}>
                     <img src={resources} />
                     <div className="reply-name">{reply.username}</div>
                   </div>
