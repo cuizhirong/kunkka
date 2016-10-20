@@ -362,7 +362,7 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/proxy/csv/glance/v2/images?all_tenants=1&region=' + HALO.current_region;
+        let url = '/proxy/csv/glance/v2/images';
         exportCSV(url);
         break;
       case 'delete':

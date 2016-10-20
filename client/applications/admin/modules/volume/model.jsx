@@ -362,7 +362,7 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&region=' + HALO.current_region;
+        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1';
         exportCSV(url);
         break;
       case 'delete':

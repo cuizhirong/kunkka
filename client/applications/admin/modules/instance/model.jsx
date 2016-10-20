@@ -533,7 +533,7 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&region=' + HALO.current_region;
+        let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
         exportCSV(url);
         break;
       case 'delete':

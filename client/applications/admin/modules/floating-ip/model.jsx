@@ -404,7 +404,7 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/proxy/csv/neutron/v2.0/floatingips?all_tenants=1&region=' + HALO.current_region;
+        let url = '/proxy/csv/neutron/v2.0/floatingips?all_tenants=1';
         exportCSV(url);
         break;
       case 'refresh':

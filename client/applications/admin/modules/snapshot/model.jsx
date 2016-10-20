@@ -316,7 +316,7 @@ class Model extends React.Component {
 
     switch(key) {
       case 'export_csv':
-        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&region=' + HALO.current_region;
+        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1';
         exportCSV(url);
         break;
       case 'delete':

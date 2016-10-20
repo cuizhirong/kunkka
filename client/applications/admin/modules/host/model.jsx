@@ -329,7 +329,7 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/csv?region=' + HALO.current_region;
+        let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/csv';
         exportCSV(url);
         break;
       case 'refresh':
