@@ -55,6 +55,7 @@ Host.prototype = {
     });
   },
   getHostCSV: function(req, res, next) {
+    req.headers.region = req.session.regionId;
     let objVar = this.getVars(req, ['projectId']);
     this.__hosts(objVar, (err, payload) => {
       if (err) {

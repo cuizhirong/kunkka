@@ -10,11 +10,10 @@ module.exports = (app) => {
 
   app.get('/proxy/csv/*', (req, res, next)=>{
     let remote = req.session.endpoint;
-    let region = req.headers.region;
+    let region = req.session.user.regionId;
     let service = req.path.split('/')[3];
     let target = remote[service][region] + '/' + req.path.split('/').slice(4).join('/');
     request.get(target + getQueryString(req.query))
-      .set(req.headers)
       .set('X-Auth-Token', req.session.user.token)
       .end((err, payload) => {
         if (err) {

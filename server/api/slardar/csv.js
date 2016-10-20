@@ -176,7 +176,6 @@ const objects = [
 
 
 module.exports = (req, res, next) => {
-
   let obj = {};
   let __ = req.i18n.__.bind(req.i18n);
   objects.some(o=> ((o.pathRegExp.test(req.path)) && (obj = o)));
@@ -186,7 +185,7 @@ module.exports = (req, res, next) => {
 
   res.setHeader('Content-Description', 'File Transfer');
   res.setHeader('Content-Type', 'application/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename=hosts.csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=' + obj.name + '.csv');
   res.setHeader('Expires', '0');
   res.setHeader('Cache-Control', 'must-revalidate');
 
