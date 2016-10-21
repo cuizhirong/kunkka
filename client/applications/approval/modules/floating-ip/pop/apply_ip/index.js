@@ -40,6 +40,7 @@ function pop(parent, callback) {
     __: __,
     parent: parent,
     config: config,
+    destroyPrevious: true,
     onInitialize: function(refs) {
       /*if (enableCharge) {
         var bandwidth = config.fields[0].min;
@@ -109,8 +110,8 @@ function pop(parent, callback) {
 
         configCreate.push(createItem);
         data.description = refs.apply_description.state.value;
-        request.createApplication(data).then((res) => {
-          callback && callback(res.floatingip);
+        request.createApplication(data).then(() => {
+          callback && callback();
           cb(true);
         }).catch((error) => {
           cb(false, getErrorMessage(error));
