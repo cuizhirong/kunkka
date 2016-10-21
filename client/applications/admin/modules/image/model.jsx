@@ -14,7 +14,8 @@ var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
-var exportCSV = require('../../utils/export_csv');
+var utils = require('../../utils/utils');
+var exportCSV = utils.exportCSV;
 
 class Model extends React.Component {
 

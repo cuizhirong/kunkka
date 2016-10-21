@@ -13,7 +13,7 @@ var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
 var utils = require('../../utils/utils');
-var exportCSV = require('../../utils/export_csv');
+var exportCSV = utils.exportCSV;
 
 class Model extends React.Component {
 

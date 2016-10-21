@@ -8,7 +8,8 @@ var request = require('./request');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var unitConverter = require('client/utils/unit_converter');
-var getCommonFactor = require('client/applications/admin/utils/common_factor');
+var utils = require('../../utils/utils');
+var getCommonFactor = utils.getCommonFactor;
 
 var tabs = [{
   name: __.host,

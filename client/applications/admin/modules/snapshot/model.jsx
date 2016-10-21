@@ -11,7 +11,8 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
-var exportCSV = require('../../utils/export_csv');
+var utils = require('../../utils/utils');
+var exportCSV = utils.exportCSV;
 
 class Model extends React.Component {
 

@@ -10,5 +10,24 @@ module.exports = {
       default:
         return item.volume_type;
     }
+  },
+  getCommonFactor: function(m, n) {
+    if (isNaN(m) || isNaN(n)) {
+      return 1;
+    } else {
+      var u = m, v = n, t = v;
+      while (v !== 0){
+        t = u % v;
+        u = v;
+        v = t;
+      }
+      return u;
+    }
+  },
+  exportCSV: function(url) {
+    var linkNode = document.createElement('a');
+    linkNode.href = url;
+    linkNode.click();
+    linkNode = null;
   }
 };
