@@ -389,9 +389,7 @@ class Model extends React.Component {
         acceptApply(rows[0], null, () => {
           this.refresh({
             refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
+            loadingTable: true
           });
         });
         break;
@@ -399,9 +397,7 @@ class Model extends React.Component {
         refuseApply(rows[0], null, () => {
           this.refresh({
             refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
+            loadingTable: true
           });
         });
         break;
