@@ -6,6 +6,12 @@
       "account-charge",
       "charge-record"
     ]
+  }, {
+    "title": "account_mgmt",
+    "items": [
+      "user",
+      "price-mgmt"
+    ]
   }],
   "default_module": "billing-record",
   "languages": [

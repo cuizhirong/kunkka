@@ -1,0 +1,55 @@
+{
+  "tabs": [{
+    "name": ["user"],
+    "key": "user",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["charge"],
+    "key": "charge",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "user_name"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["user_name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["balance"],
+      "key": "balance"
+    }, {
+      "title": ["status"],
+      "dataIndex": "",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["role"],
+        "key": "role"
+      }]
+    }
+  }
+}

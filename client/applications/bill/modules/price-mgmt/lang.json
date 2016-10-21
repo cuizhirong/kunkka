@@ -1,0 +1,34 @@
+{
+  "en": {
+    "base_price": "Base Price",
+    "price": "Price ",
+    "service": "Service",
+    "linear_charge": "Linear Charge",
+    "gradient_charge": "Gradient Charge",
+    "range": "Range",
+    "unit": "CNY/Hour",
+    "rmv": "Remove",
+    "create": "Create ",
+    "modify": "Modify ",
+    "delete": "Delete ",
+    "name": "Name",
+    "description": "Description",
+    "add": "Add"
+  },
+  "zh-CN": {
+    "base_price": "基本价格",
+    "price": "价格",
+    "service": "所属服务",
+    "linear_charge": "线性计费",
+    "gradient_charge": "梯度计费",
+    "range": "范围",
+    "unit": "元/小时",
+    "rmv": "移除",
+    "create": "创建",
+    "modify": "修改",
+    "delete": "删除",
+    "name": "名称",
+    "description": "详细信息",
+    "add": "添加"
+  }
+}

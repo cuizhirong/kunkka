@@ -76,22 +76,35 @@ class Model extends React.Component {
     router.pushState('/bill/' + m.key);
   }
 
+  getIcon(name) {
+    switch(name) {
+      case 'price-mgmt':
+        return 'flavor-setting';
+      default:
+        return name;
+    }
+  }
+
   render() {
     var state = this.state,
       props = this.props,
       __ = props.__,
       HALO = props.HALO,
       modules = loader.modules,
+      isAdmin = HALO.user.roles.indexOf('admin') !== -1,
       menus = [];
 
     props.menus.forEach((m) => {
       var submenu = [];
+      if (!isAdmin && m.title === 'account_mgmt') {
+        return;
+      }
       m.items.forEach((n) => {
         submenu.push({
           subtitle: __[n],
           key: n,
           onClick: this.onClickSubmenu,
-          iconClass: 'glyphicon icon-' + n,
+          iconClass: 'glyphicon icon-' + this.getIcon(n),
           selected: n === state.selectedMenu ? true : false
         });
       });

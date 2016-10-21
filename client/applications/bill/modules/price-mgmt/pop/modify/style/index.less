@@ -1,0 +1,78 @@
+@import "../../../../../../../style/index.less";
+
+@i_color: @color_font_700;
+@i_hover_color: @color_info;
+@strong_color: @color_delete;
+@text_grey: @color_grey_700;
+
+.halo-com-modal-common {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.halo-pop-com-stageinput {
+  display: flex;
+  align-items: flex-start;
+
+  &:not(:first-child) {
+    margin-top: 18px;
+  }
+
+  .stageinput-label {
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+    >strong {
+      color: @strong_color
+    }
+  }
+
+  .stageinput-content {
+    .input-wrapper {
+      >input {
+        width: 130px;
+      }
+
+      >input:nth-child(2) {
+        margin-left: 4px;
+      }
+
+      .btn {
+        min-width: 70px;
+        margin: -2px 0 0 2px;
+      }
+    }
+
+    .price-table {
+      width: 380px;
+      height: auto;
+      margin-bottom: 10px;
+      margin-top: -8px;
+
+      .table-header {
+        border-bottom: 1px solid #ecf0f2;
+        >div {
+          background-color: #fff;
+        }
+      }
+
+      .table-body .row {
+        >div {
+          height: 34px;
+          line-height: 34px;
+        }
+      }
+
+      .no-price-data {
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        color: @text_grey;
+      }
+
+      .price-hide {
+        display: none;
+      }
+    }
+  }
+}

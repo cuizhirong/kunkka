@@ -14,7 +14,12 @@
     "logout": "Logout",
     "time": "Time",
     "there_is_no": "There is No ",
-    "full_stop": "."
+    "full_stop": ".",
+    "user": "User Charge",
+    "account_mgmt": "Account Mangement",
+    "price-mgmt": "Price Management",
+    "msg_delete": "Do you want to {0} {1} {2}? This action can not be restored.",
+    "pls_enter": "Enter "
   },
   "zh-CN": {
     "account_bill": "账户消费",
@@ -31,6 +36,11 @@
     "logout": "注销",
     "time": "时间",
     "there_is_no": "没有",
-    "full_stop": "。"
+    "full_stop": "。",
+    "user": "用户充值",
+    "account_mgmt": "帐户管理",
+    "price-mgmt": "价格管理",
+    "msg_delete": "此操作将无法撤销，确认要{0}以下{1}<strong>（数量:{2}）</strong>？",
+    "pls_enter": "请输入"
   }
 }
