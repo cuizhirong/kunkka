@@ -16,7 +16,6 @@ var modifyProject = require('./pop/modify_project/index');
 var resetPassword = require('./pop/reset_password/index');
 var joinGroup = require('./pop/join_group/index');
 var leaveGroup = require('./pop/leave_group/index');
-var charge = require('./pop/charge/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -47,9 +46,6 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
-    if (!HALO.settings.enable_charge) {
-      this.state.config.btns.splice(2, 1);
-    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -67,9 +63,6 @@ class Model extends React.Component {
   }
 
   tableColRender(columns) {
-    if (!HALO.settings.enable_charge) {
-      columns.splice(3, 1);
-    }
     columns.map((column) => {
       switch (column.key) {
         case 'status':
@@ -83,11 +76,6 @@ class Model extends React.Component {
             var projectId = item.default_project_id;
             return projectId ?
               <a data-type="router" key={projectId} href={'/admin/project/' + projectId}>{'(' + projectId.substring(0, 8) + ')'}</a> : '';
-          };
-          break;
-        case 'balance':
-          column.render = (col, item, i) => {
-            return item.balance;
           };
           break;
         default:
@@ -397,14 +385,6 @@ class Model extends React.Component {
           });
         });
         break;
-      case 'charge':
-        charge(rows[0], null, function() {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -448,7 +428,6 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     var singleRow = rows.length === 1;
     var status = singleRow ? rows[0].enabled : null;
-    var enableCharge = HALO.settings.enable_charge;
 
     for(let key in btns) {
       switch (key) {
@@ -469,10 +448,6 @@ class Model extends React.Component {
         default:
           break;
       }
-    }
-
-    if (enableCharge) {
-      btns.charge.disabled = !singleRow;
     }
 
     return btns;

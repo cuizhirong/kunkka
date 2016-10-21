@@ -12,9 +12,7 @@
     "no_group": "No available group",
     "crt_user_project": "Create a new project",
     "project_name": "Project Name",
-    "charge": "Charge",
-    "user_tip": "Number only",
-    "balance": "Balance"
+    "user_tip": "Number only"
   },
   "zh-CN": {
     "email": "邮箱",
@@ -29,8 +27,6 @@
     "no_group": "没有可用用户组",
     "crt_user_project": "创建项目",
     "project_name": "项目名称",
-    "charge": "充值",
-    "user_tip": "仅限数字",
-    "balance": "余额"
+    "user_tip": "仅限数字"
   }
 }

@@ -15,11 +15,6 @@
     "icon": "edit",
     "disabled": true
   }, {
-    "value": ["charge"],
-    "key": "charge",
-    "icon": "edit",
-    "disabled": true
-  }, {
     "value": ["more"],
     "key": "more",
     "iconClass": "more",
@@ -94,9 +89,6 @@
       "title": ["main", "project"],
       "dataIndex": "",
       "key": "project"
-    }, {
-      "title": ["balance"],
-      "key": "balance"
     }, {
       "title": ["status"],
       "dataIndex": "",
