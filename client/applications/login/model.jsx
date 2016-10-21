@@ -20,7 +20,8 @@ class Model extends React.Component {
       email_tip: props.__.email_tip,
       account_tip: props.__.account_tip,
       timer: null,
-      settings: props.HALO.settings
+      settings: props.HALO.settings,
+      domains: (props.HALO.settings.domains.indexOf('Default') > -1 ? 'Default' : props.HALO.settings.domains[0])
     };
 
     ['onSubmit', 'onClick', 'onChange'].forEach(item => {
@@ -31,7 +32,7 @@ class Model extends React.Component {
   componentDidMount() {
     let wrapper = document.getElementById('container').parentNode;
     let content = wrapper.parentNode;
-    content.style.height = !this.state.isLogin ? '530px' : '390px';
+    content.style.height = !this.state.isLogin ? '530px' : '434px';
     wrapper.style.marginTop = !this.state.isLogin ? '32px' : '58px';
   }
 
@@ -49,7 +50,7 @@ class Model extends React.Component {
   onClick(e) {
     let wrapper = document.getElementById('container').parentNode;
     let content = wrapper.parentNode;
-    content.style.height = this.state.isLogin ? '530px' : '390px';
+    content.style.height = this.state.isLogin ? '530px' : '434px';
     wrapper.style.marginTop = this.state.isLogin ? '32px' : '58px';
     this.setState({
       isLogin: !this.state.isLogin
@@ -65,7 +66,8 @@ class Model extends React.Component {
   onSubmit(e) {
     e.preventDefault();
     let refs = this.refs,
-      that = this;
+      that = this,
+      state = that.state;
 
     if (this.state.isSubmitting) {
       return;
@@ -78,6 +80,10 @@ class Model extends React.Component {
           username: username,
           password: password
         };
+
+      if(state.settings.enable_domain) {
+        data.domain = refs.domains.value;
+      }
 
       that.setState({
         loginError: false,
@@ -301,6 +307,11 @@ class Model extends React.Component {
           hasRead: !this.state.hasRead
         }, canSub);
         break;
+      case 'domains':
+        this.setState({
+          domains: refs.domains.value
+        });
+        break;
       default:
         break;
     }
@@ -309,7 +320,8 @@ class Model extends React.Component {
   render() {
     let props = this.props,
       state = this.state,
-      __ = props.__;
+      __ = props.__,
+      domains = state.settings.domains;
 
     if(state.isLogin) {
       return (
@@ -317,6 +329,15 @@ class Model extends React.Component {
           <form method="POST" onSubmit={this.onSubmit}>
             <input type="text" ref="username" name="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={__.account_placeholder} autoFocus="autofocus" autoComplete="off" />
             <input type="password" ref="password" name="password" className={state.passwordEmptyError ? 'error' : ''} placeholder={__.password_placeholder} autoComplete="off" />
+            {
+              state.settings.enable_domain ? <select ref="domains" value={state.domains} onChange={this.onChange.bind(this, 'domains', '')}>
+                {
+                  domains.map((domain) => {
+                    return <option key={domain} value={domain}>{domain}</option>;
+                  })
+                }
+              </select> : null
+            }
              <div className="find-Password">
             {
               this.state.settings.enable_register ? <a href="/auth/password"> {__.forgotPass}</a> : null
