@@ -25,7 +25,9 @@ class SideMenu extends React.Component {
   }
 
   componentDidMount() {
-    this.haloScroller('menu');
+    if (this.props.items) {
+      this.haloScroller('menu');
+    }
     this.haloLeftScroller('top_menu');
   }
 
@@ -246,12 +248,20 @@ class SideMenu extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       apps = props.application.application_list,
-      currentApp = props.application.current_application;
+      currentApp = props.application.current_application,
+      style;
 
+    if(!props.items) {
+      style = {
+        width: '96px',
+        minWidth: '96px',
+        maxWidth: '96px'
+      };
+    }
     return (
-      <div ref="halo_com_menu" className="halo-com-menu">
+      <div ref="halo_com_menu" className="halo-com-menu" style={style}>
         <ul className="top-menu">
           {
             apps.map((m) => {
@@ -268,10 +278,10 @@ class SideMenu extends React.Component {
             <div ref="halo_scroll_left_slider" className="scroll-left-slider"></div>
           </div>
         </ul>
-        <Menu items={props.items} />
-        <div ref="halo_scroll_pane" className="scroll-pane">
+        {props.items ? <Menu items={props.items} /> : null}
+        {props.items ? (<div ref="halo_scroll_pane" className="scroll-pane">
           <div ref="halo_scroll_slider" className="scroll-slider"></div>
-        </div>
+        </div>) : null}
       </div>
     );
   }
