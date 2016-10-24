@@ -18,19 +18,8 @@ Image.prototype = {
         this.handleError(err, req, res, next);
       } else {
         images = images.concat(payload.images);
-        if (payload.next) {
-          this.getImageListRecursive(objVar, payload.next, images, (_err, _images) => {
-            if (_err) {
-              next(_err);
-            } else {
-              this.orderByCreatedTime(_images);
-              res.json({images: _images});
-            }
-          });
-        } else {
-          this.orderByCreatedTime(images);
-          res.json({images: images});
-        }
+        this.orderByCreatedTime(images);
+        res.json({images: images});
       }
     });
   },
@@ -85,22 +74,6 @@ Image.prototype = {
         this.handleError(err, req, res, next);
       } else {
         res.json(data.text);
-      }
-    });
-  },
-  getImageListRecursive: function (objVar, link, images, callback) {
-    let marker = link.split('=')[1];
-    objVar.query.marker = marker;
-    this.__images(objVar, (err, payload) => {
-      if (err) {
-        callback(err);
-      } else {
-        images = images.concat(payload.images);
-        if (payload.next) {
-          this.getImageListRecursive(objVar, payload.next, images, callback);
-        } else {
-          return callback(null, images);
-        }
       }
     });
   },

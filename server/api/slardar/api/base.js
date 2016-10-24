@@ -30,6 +30,23 @@ function API (arrServiceObject) {
   }
 }
 
+function getImageListRecursive (objVar, link, images, callback) {
+  let marker = link.split('=')[1];
+  objVar.query.marker = marker;
+  this.__images(objVar, (err, payload) => {
+    if (err) {
+      callback(err);
+    } else {
+      images = images.concat(payload.images);
+      if (payload.next) {
+        this.getImageListRecursive(objVar, payload.next, images, callback);
+      } else {
+        return callback(null, {images});
+      }
+    }
+  });
+}
+
 API.prototype = {
   // keystone:
   __unscopedAuth: function (objVar, callback) {
@@ -120,7 +137,19 @@ API.prototype = {
   // glance:
   __images: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
-    driver.glance.image.listImages(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+    let images = [];
+    driver.glance.image.listImages(objVar.token, remote, asyncHandler.bind(undefined, (err, payload) => {
+      if (err) {
+        callback(err);
+      } else {
+        if (payload.next) {
+          images = images.concat(payload.images);
+          getImageListRecursive(objVar, payload.next, images, callback);
+        } else {
+          callback(null, payload);
+        }
+      }
+    }), objVar.query);
   },
   __imageDetail: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
