@@ -89,7 +89,7 @@ function pop(obj, parent, callback) {
 
         var selected = typeCapacity[overview.volume_types[0]];
         var selectedMax = selected.max;
-        var selectedMin = selected.min;
+        var selectedMin = obj ? obj.size : selected.min;
 
         var setFields = () => {
           if (overview.volume_types) {
@@ -100,9 +100,6 @@ function pop(obj, parent, callback) {
             });
           }
 
-          if (obj) {
-            selectedMin = obj.size;
-          }
           var lackOfSize = selectedMin > selectedMax;
 
           refs.capacity_size.setState({
@@ -163,48 +160,6 @@ function pop(obj, parent, callback) {
     },
     onAction: function(field, state, refs) {
       switch (field) {
-        case 'type':
-          var type = refs.type.state.value;
-          var capacity = typeCapacity[type];
-
-          if (capacity) {
-            var min = capacity.min;
-            var max = capacity.max;
-            var value = parseFloat(refs.capacity_size.state.inputValue);
-
-            if (isNaN(value) || value < min) {
-              value = min;
-            } else if (value > max) {
-              value = max;
-            }
-
-            refs.capacity_size.setState({
-              min: min,
-              max: max,
-              value: value,
-              inputValue: value,
-              hide: false,
-              disabled: max === 0,
-              error: false
-            });
-
-            refs.warning.setState({
-              hide: !(max <= 0)
-            });
-
-            refs.btn.setState({
-              disabled: max <= 0
-            });
-
-            if (HALO.settings.enable_charge) {
-              request.getVolumePrice(type + '.volume.size', value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch((error) => {});
-            }
-          }
-          break;
         case 'capacity_size':
           if (HALO.settings.enable_charge) {
             var sliderEvent = state.eventType === 'mouseup';
