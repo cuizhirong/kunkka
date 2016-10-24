@@ -11,12 +11,13 @@
   .fixed-width(296px);
   > .top-menu {
     float: left;
-    width: 96px;
-    min-width: 96px;
-    background-size: 96px auto;
+    width: 114px;
+    min-width: 114px;
+    background-size: 114px auto;
     background-color: #0d1b2e;
     overflow-x: hidden;
     overflow-y: scroll;
+    z-index: 5;
     &::-webkit-scrollbar {
       display: none;
     }
@@ -101,12 +102,13 @@
   }
   > .menu {
     float: left;
+    margin-left: -16px;
     width: 215px;
     min-width: 215px;
     border-right: none;
     overflow: scroll;
     overflow-x: hidden;
-    background-color: transparent;
+    z-index: 8;
     > li {
       li.selected {
         position: relative;
