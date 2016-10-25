@@ -26,9 +26,6 @@ class Model extends React.Component {
       this[m] = this[m].bind(this);
     });
 
-    this.stores = {
-      urls: []
-    };
   }
 
   componentWillMount() {

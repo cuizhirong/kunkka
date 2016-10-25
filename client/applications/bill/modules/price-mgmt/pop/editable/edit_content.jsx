@@ -32,12 +32,11 @@ class EditContent extends React.Component {
 
   onChangeInput(e) {
     var regex = /^[0-9.]{1,}$/;
-    if(regex.exec(e.target.value)) {
-      this.setState({
-        value: e.target.value,
-        className: ''
-      });
-    } else {
+    this.setState({
+      value: e.target.value,
+      className: ''
+    });
+    if(!regex.exec(e.target.value)) {
       this.setState({
         className: 'error'
       });
