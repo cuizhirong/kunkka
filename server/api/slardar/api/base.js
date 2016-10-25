@@ -30,21 +30,23 @@ function API (arrServiceObject) {
   }
 }
 
-function getImageListRecursive (objVar, link, images, callback) {
+function getImageListRecursive (objVar, remote, link, images, callback) {
   let marker = link.split('=')[1];
   objVar.query.marker = marker;
-  this.__images(objVar, (err, payload) => {
+  driver.glance.image.listImages(objVar.token, remote, (err, payload) => {
     if (err) {
       callback(err);
     } else {
-      images = images.concat(payload.images);
-      if (payload.next) {
-        this.getImageListRecursive(objVar, payload.next, images, callback);
+      const result = payload.body;
+      images = images.concat(result.images);
+      if (result.next) {
+        images = images.concat(result.images);
+        getImageListRecursive(objVar, remote, result.next, images, callback);
       } else {
-        return callback(null, {images});
+        callback(null, {images});
       }
     }
-  });
+  }, objVar.query);
 }
 
 API.prototype = {
@@ -138,18 +140,19 @@ API.prototype = {
   __images: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
     let images = [];
-    driver.glance.image.listImages(objVar.token, remote, asyncHandler.bind(undefined, (err, payload) => {
+    driver.glance.image.listImages(objVar.token, remote, (err, payload) => {
       if (err) {
         callback(err);
       } else {
-        if (payload.next) {
-          images = images.concat(payload.images);
-          getImageListRecursive(objVar, payload.next, images, callback);
+        const result = payload.body;
+        if (result.next) {
+          images = images.concat(result.images);
+          getImageListRecursive(objVar, remote, result.next, images, callback);
         } else {
-          callback(null, payload);
+          callback(null, {images});
         }
       }
-    }), objVar.query);
+    }, objVar.query);
   },
   __imageDetail: function (objVar, callback) {
     let remote = objVar.endpoint.glance[objVar.region];
