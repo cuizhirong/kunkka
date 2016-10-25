@@ -18,5 +18,20 @@ module.exports = {
     name: 'view.css',
     value: '',
     type: 'text'
+  }, {
+    app: 'approval',
+    name: 'appliable_volume_types',
+    value: '["ssd", "capacity"]',
+    type: 'string'
+  }, {
+    app: 'approval',
+    name: 'enable_apply_instance_credential',
+    value: 'true',
+    type: 'boolean'
+  }, {
+    app: 'approval',
+    name: 'enable_apply_instance_name',
+    value: 'true',
+    type: 'boolean'
   }]
 };
