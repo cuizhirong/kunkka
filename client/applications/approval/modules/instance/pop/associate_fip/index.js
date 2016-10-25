@@ -38,7 +38,7 @@ function pop(obj, parent, callback) {
         if(data.length > 0) {
           var dataArray = [];
           data.some((_data) => {
-            if(!_data.association.type || _data.association.type !== 'server') {
+            if((!_data.association.type || _data.association.type !== 'server') && !_data.fixed_ip_address) {
               _data.name = _data.floating_ip_address;
               dataArray.push(_data);
             }
