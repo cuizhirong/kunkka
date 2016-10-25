@@ -76,7 +76,7 @@
       "filter": [{
         "name": ["active"],
         "key": "active",
-        "filterBy": "active"
+        "filterBy": "ACTIVE"
       }, {
         "name": ["error"],
         "key": "error",
@@ -84,7 +84,7 @@
       }, {
         "name": ["build"],
         "key": "pending_create",
-        "filterBy": "pending_create"
+        "filterBy": "PENDING_CREATE"
       }]
     }, {
       "title": ["operation", "status"],

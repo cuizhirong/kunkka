@@ -174,6 +174,9 @@ class Model extends React.Component {
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
       var table = this.state.config.table;
+      res.forEach(ele => {
+        ele.status = ele.status.toUpperCase();
+      });
       table.data = res;
       table.loading = false;
 

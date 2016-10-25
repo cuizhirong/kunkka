@@ -73,7 +73,7 @@
       "dataIndex": "status",
       "key": "status",
       "filter": [{
-        "name": ["active"],
+        "name": ["in-use"],
         "key": "active",
         "filterBy": "ACTIVE"
       }, {
