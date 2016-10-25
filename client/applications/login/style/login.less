@@ -7,7 +7,7 @@
 body {
   width: 100%;
   height: 100%;
-  background: url(/static/assets/auth/login_bg.jpg) center center no-repeat;
+  background: url(/static/assets/login/login_bg.jpg) center center no-repeat;
   background-size: cover;
   -webkit-tap-highlight-color: transparent;
 }
@@ -25,7 +25,7 @@ body {
     position: relative;
     margin: 0 auto;
     width: 326px;
-    height: 434px;
+    height: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     background-color: #fff;
     overflow: hidden;
@@ -70,9 +70,6 @@ body {
       &.error {
         border-bottom: 1px solid #ef5665;
       }
-      &:nth-child(8) {
-        margin-top: 30px;
-      }
     }
     input:not(first-child) {
       margin-top: 20px;
@@ -82,6 +79,7 @@ body {
       border: 1px solid @input_border_active;
       height: 28px;
       line-height: 18px;
+      margin-bottom: 24px;
       font-size: 14px;
       color: @input_border_active;
       letter-spacing: 1px;
@@ -103,21 +101,6 @@ body {
       border: none;
       border-bottom: 1px solid @input_border;
     }
-    .checkbox {
-      margin-top: 20px;
-      height: 17px;
-      input[type="checkbox"] {
-        margin-top: 0;
-        border: none;
-        height: 17px;
-        width: 17px;
-        display: inline-block;
-        vertical-align: text-bottom;
-      }
-      a {
-        margin-left: 2px;
-      }
-    }
     .tip-wrapper {
       height: 30px;
       font-size: 14px;
@@ -132,11 +115,8 @@ body {
     }
 
     .link {
-      position: absolute;
-      bottom: 0;
       width: 326px;
       margin-left: -50px;
-      margin-top: 24px;
       height: 44px;
       line-height: 44px;
       background-color: @line_bg_gray;
