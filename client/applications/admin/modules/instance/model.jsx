@@ -305,7 +305,7 @@ class Model extends React.Component {
       } else if (allTenant) {
         this.getFilterList(allTenant);
       } else {
-        this.getList();
+        this.getListInitialize();
       }
     }
   }
@@ -493,13 +493,13 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {
-      rows
-    } = data;
+    var {rows} = data,
+      that = this;
 
     var refresh = () => {
       this.refresh({
         refreshList: true,
+        loadingTable: true,
         refreshDetail: true
       });
     };
@@ -515,12 +515,28 @@ class Model extends React.Component {
         break;
       case 'power_on':
         request.poweron(rows[0]).then(function(res) {
-          refresh();
+          rows.forEach((ele) => {
+            ele.status = 'powering_on';
+          });
+
+          that.setState({
+            config: that.state.config
+          });
+
+          that.onClickTableCheckbox(that.refs.dashboard.refs, { rows: rows });
         });
         break;
       case 'power_off':
         request.poweroff(rows[0]).then(function(res) {
-          refresh();
+          rows.forEach((ele) => {
+            ele.status = 'powering_off';
+          });
+
+          that.setState({
+            config: that.state.config
+          });
+
+          that.onClickTableCheckbox(that.refs.dashboard.refs, { rows: rows });
         });
         break;
       case 'reboot':

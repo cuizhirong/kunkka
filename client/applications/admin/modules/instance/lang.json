@@ -16,7 +16,9 @@
     "project_id": "Project ID",
     "server": "Server ",
     "user_id": "User ID",
-    "verify_resize": "Resize "
+    "verify_resize": "Resize ",
+    "powering_on": "Powering On",
+    "powering_off": "Powering Off"
   },
   "zh-CN": {
     "auto": "自动",
@@ -35,6 +37,8 @@
     "project_id": "项目ID",
     "server": "云主机",
     "user_id": "用户ID",
-    "verify_resize": "验证配置"
+    "verify_resize": "验证配置",
+    "powering_on": "开机中",
+    "powering_off": "关机中"
   }
 }
