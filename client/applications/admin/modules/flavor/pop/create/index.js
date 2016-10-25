@@ -4,6 +4,9 @@ var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
+  if (HALO.settings.enable_charge) {
+    config.fields[5].hide = false;
+  }
   var props = {
     __: __,
     parent: parent,

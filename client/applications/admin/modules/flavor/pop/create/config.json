@@ -22,6 +22,11 @@
     "field": "id"
   }, {
     "type": "tip",
+    "tip_type": "warning",
+    "field": "price_tip",
+    "hide": true
+  }, {
+    "type": "tip",
     "tip_type": "error",
     "field": "error",
     "hide": true
