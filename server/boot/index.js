@@ -26,7 +26,8 @@ try {
 function setup() {
   const app = express();
   app.set('query parser', 'simple');
-  app.use('/static', express.static(path.resolve(__dirname, '..', '..', 'client')));
+  app.use('/static/dist', express.static(path.resolve(__dirname, '..', '..', 'client/dist')));
+  app.use('/static/assets', express.static(path.resolve(__dirname, '..', '..', 'client/assets')));
   const assetsDir = config('assets_dir') || '/opt/assets';
   app.use(assetsDir, express.static(assetsDir));
   app.use(cookieParser(config('sessionEngine').secret));

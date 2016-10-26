@@ -29,7 +29,8 @@
     "merge": "node ./scripts/merge_config.js OVERWRITE",
     "release": "node ./scripts/get_tag.js",
     "tags": "node ./scripts/release.js",
-    "add_eslint": "node ./scripts/add_eslint.js"
+    "add_eslint": "node ./scripts/add_eslint.js",
+    "db_sync": "node ./scripts/cp_migrations.js && sequelize db:migrate"
   },
   "dependencies": {
     "aws-sdk": "2.3.15",
@@ -95,6 +96,7 @@
     "proxyquire": "^1.7.4",
     "react-addons-test-utils": "^15.0.1",
     "rsvp": "^3.1.0",
+    "sequelize-cli": "^2.4.0",
     "supertest": "^1.1.0",
     "time-grunt": "^1.2.2",
     "webpack": "^1.12.6",

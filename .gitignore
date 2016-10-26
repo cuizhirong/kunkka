@@ -73,3 +73,8 @@ client/assets/**/
 
 ＃ eslint cache file
 .eslintcache
+
+# sequelize migration scripts
+/server/db_migration/migrations/*
+/server/db_migration/config.json
+
