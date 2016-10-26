@@ -53,11 +53,35 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if(params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
+    this.getTableData(params[2]);
+  }
+
+  getTableData(detailRefresh) {
+    var table = this.state.config.table;
+    request.getList().then((res) => {
+      table.data = res.Applies;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+
+      var detail = this.refs.dashboard.refs.detail;
+      if (detail && detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
+    }).catch((res) => {
+      table.data = [];
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
   }
 
   getInitializeListData() {

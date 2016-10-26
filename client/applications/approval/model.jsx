@@ -57,7 +57,7 @@ class Model extends React.Component {
         });
 
         //admin user won't see instanc-create module in approval
-        if(pathList[1] === 'overview' || 'instanc-create') {
+        if(pathList[1] === 'overview' || pathList[1] === 'instanc-create') {
           pathList[1] = 'apply-approval';
         }
       }
