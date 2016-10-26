@@ -146,7 +146,7 @@ class Model extends React.Component {
       table = _config.table,
       pagi = table.pagination;
     return (
-      <div className="halo-module-charge" style={this.props.style}>
+      <div className="halo-module-global-record" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

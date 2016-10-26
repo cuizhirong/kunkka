@@ -9,7 +9,7 @@ module.exports = {
       offset = 0;
     }
 
-    var url = '/proxy/gringotts/v2/accounts/' + HALO.user.userId + '/charges?limit=' + pageLimit + '&offset=' + offset;
+    var url = '/proxy/gringotts/v2/accounts/charges?limit=' + pageLimit + '&offset=' + offset;
     return fetch.get({
       url: url
     }).then((res) => {

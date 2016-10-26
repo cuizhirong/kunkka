@@ -7,10 +7,11 @@
       "charge-record"
     ]
   }, {
-    "title": "account_mgmt",
+    "title": "bill_mgmt",
     "items": [
       "user",
-      "price-mgmt"
+      "price-mgmt",
+      "global-record"
     ]
   }],
   "default_module": "billing-record",

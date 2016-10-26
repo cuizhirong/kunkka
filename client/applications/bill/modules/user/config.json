@@ -42,14 +42,7 @@
     }],
     "data": [],
     "detail": {
-      "tabs": [{
-        "name": ["description"],
-        "key": "description",
-        "default": true
-      }, {
-        "name": ["role"],
-        "key": "role"
-      }]
+      "tabs": []
     }
   }
 }

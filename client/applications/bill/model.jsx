@@ -80,6 +80,8 @@ class Model extends React.Component {
     switch(name) {
       case 'price-mgmt':
         return 'flavor-setting';
+      case 'global-record':
+        return 'global';
       default:
         return name;
     }
@@ -96,7 +98,7 @@ class Model extends React.Component {
 
     props.menus.forEach((m) => {
       var submenu = [];
-      if (!isAdmin && m.title === 'account_mgmt') {
+      if (!isAdmin && m.title === 'bill_mgmt') {
         return;
       }
       m.items.forEach((n) => {
