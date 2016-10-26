@@ -145,8 +145,8 @@ API.prototype = {
         callback(err);
       } else {
         const result = payload.body;
+        images = images.concat(result.images);
         if (result.next) {
-          images = images.concat(result.images);
           getImageListRecursive(objVar, remote, result.next, images, callback);
         } else {
           callback(null, {images});

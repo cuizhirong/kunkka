@@ -80,9 +80,9 @@ module.exports = {
       type: 'boolean'
     }, {
       app: 'admin',
-      name: 'is_commercial_storage',
-      value: 'false',
-      type: 'boolean'
+      name: 'commercial_storage',
+      value: 0,
+      type: 'number'
     }
   ]
 };

@@ -12,12 +12,12 @@ function Image (app) {
 Image.prototype = {
   getImageList: function (req, res, next) {
     let objVar = this.getVars(req);
-    let images = [];
+    let images;
     this.__images(objVar, (err, payload) => {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        images = images.concat(payload.images);
+        images = payload.images;
         this.orderByCreatedTime(images);
         res.json({images: images});
       }
