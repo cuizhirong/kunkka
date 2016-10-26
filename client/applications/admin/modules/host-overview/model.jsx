@@ -103,8 +103,9 @@ class Model extends React.Component {
   }
 
   displayDisk(data) {
-    // nova bug: if storage is ceph, nova would duplicate the local_gb by multiplying the count!!!, the commercial storage is normal
-    var rate = data.local_gb_used / (settings.is_commercial_storage ? data.local_gb : (data.local_gb / data.count));
+    // nova bug: if storage is ceph, nova would duplicate the local_gb by multiplying the count!!!
+    // when storage is commercial storage, nova can not get the storage size, we can only set it by setting
+    var rate = data.local_gb_used / (settings.commercial_storage ? settings.commercial_storage : (data.local_gb / data.count));
     var rateColor = this.getChartColor(rate);
 
     this.diskChart.setOption({
@@ -195,7 +196,7 @@ class Model extends React.Component {
       loading = state.loading;
 
     // nova bug: if storage is ceph, nova would duplicate the local_gb by multipying the count!!!, the commercial storage is normal
-    var diskSum = settings.is_commercial_storage ? data.local_gb : data.local_gb / data.count;
+    var diskSum = settings.commercial_storage ? settings.commercial_storage : data.local_gb / data.count;
     var diskUsed = data.local_gb_used;
     var diskFree = diskSum - diskUsed;
 
