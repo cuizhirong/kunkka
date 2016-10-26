@@ -66,11 +66,8 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if (params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
+    this.clearState();
+    this.getList();
   }
 
   getSingle(id) {
