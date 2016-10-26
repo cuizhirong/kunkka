@@ -12,6 +12,9 @@ var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var unitConverter = require('client/utils/unit_converter');
 
+var showCredentials = HALO.settings.enable_apply_instance_credential;
+var nameRequired = HALO.settings.enable_apply_instance_name;
+
 class Model extends React.Component {
   constructor(props) {
     super(props);
@@ -162,6 +165,7 @@ class Model extends React.Component {
 
     var keypairs = res.keypair;
     var selectedKeypair = selectDefault(keypairs);
+    var hasAdminPass = (credential === 'keypair' && selectedKeypair && selectedKeypair.name) || (credential === 'psw' && this.state.pwd);
 
     this.setState({
       ready: true,
@@ -180,12 +184,30 @@ class Model extends React.Component {
       username: username,
       hideKeypair: hideKeypair,
       credential: credential,
-      btnDisabled: true
+      btnDisabled: nameRequired ? true : !hasAdminPass
     });
   }
 
+  checkBeforeApply(m) {
+    let state = this.state;
+    let hasServerName = nameRequired ? !!state.name : true;
+    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
+    let credentialPass = showCredentials ? hasAdminPass : true;
+    let hasVolumeName = (state.checked && state.volumeName) || !state.checked;
+    let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
+
+    let checkObj = {};
+    checkObj.serverName = !!(credentialPass && hasVolumeName && hasImage);
+    checkObj.credentials = !!(hasServerName && hasVolumeName && hasImage);
+    checkObj.volumeName = !!(hasServerName && credentialPass && hasImage);
+    checkObj.image = !!(hasServerName && hasVolumeName && credentialPass);
+
+
+    return m ? checkObj[m] : checkObj;
+  }
+
   renderName(props, state) {
-    return (
+    return nameRequired ? (
       <div className="row row-input">
         <div className="row-label">
           <strong>* </strong>{__.name}
@@ -194,20 +216,18 @@ class Model extends React.Component {
           <input type="text" onChange={this.onChangeName} value={state.name} />
         </div>
       </div>
-    );
+    ) : null;
   }
 
   onChangeName(e) {
-    var state = this.state,
-      name = e.target.value;
+    var name = e.target.value;
 
     this.setState({
       name: name
     });
 
-    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
-    var hasVolumeName = (state.checked && state.volumeName) || !state.checked;
-    if(hasAdminPass && hasVolumeName) {
+    var checkBlanks = this.checkBeforeApply('serverName');
+    if(checkBlanks) {
       if(name) {
         this.setState({
           btnDisabled: false
@@ -440,6 +460,9 @@ class Model extends React.Component {
     }
     this.setFlavor(objImage, 'all');
 
+    var checkBlanks = this.checkBeforeApply('image');
+    var hasImage = (key === 'image' && image) || (key === 'snapshot' && snapshot);
+
     this.setState({
       imageType: key,
       image: image,
@@ -449,7 +472,8 @@ class Model extends React.Component {
       credential: hideKeypair ? 'psw' : 'keypair',
       pwdError: true,
       pwd: '',
-      pwdVisible: false
+      pwdVisible: false,
+      btnDisabled: checkBlanks ? (!hasImage) : true
     });
   }
 
@@ -871,11 +895,11 @@ class Model extends React.Component {
     ret.push(Psw);
     ret.push(CrdTips);
 
-    return ret;
+    return showCredentials ? ret : null;
   }
 
   onChangeCredential(key, e) {
-    var state = this.state;
+    let state = this.state;
     this.setState({
       credential: key,
       pwdError: true,
@@ -883,8 +907,8 @@ class Model extends React.Component {
       pwdVisible: false
     });
 
-    var hasVolumeName = (state.checked && state.volumeName) || !state.checked;
-    if(state.name && hasVolumeName && key === 'keypair') {
+    let checkBlanks = this.checkBeforeApply('credentials');
+    if(checkBlanks && key === 'keypair') {
       if(state.keypairName) {
         this.setState({
           btnDisabled: false
@@ -894,7 +918,7 @@ class Model extends React.Component {
           btnDisabled: true
         });
       }
-    } else if (state.name && hasVolumeName && key === 'psw') {
+    } else if (checkBlanks && key === 'psw') {
       if(state.psw) {
         this.setState({
           btnDisabled: false
@@ -908,13 +932,14 @@ class Model extends React.Component {
   }
 
   onChangeKeypair(e) {
-    var name = e.target.value;
+    let name = e.target.value;
 
     this.setState({
       keypairName: name
     });
 
-    if(this.state.name) {
+    let checkBlanks = this.checkBeforeApply('credentials');
+    if(checkBlanks) {
       this.setState({
         btnDisabled: false
       });
@@ -942,8 +967,8 @@ class Model extends React.Component {
   }
 
   onChangePwd(e) {
-    var pwd = e.target.value;
-    var pwdError = this.checkPsw(pwd);
+    let pwd = e.target.value;
+    let pwdError = this.checkPsw(pwd);
 
     this.setState({
       pwdError: pwdError,
@@ -951,7 +976,8 @@ class Model extends React.Component {
       pwd: pwd
     });
 
-    if(this.state.name) {
+    var checkBlanks = this.checkBeforeApply('credentials');
+    if(checkBlanks) {
       if(pwdError) {
         this.setState({
           btnDisabled: true
@@ -998,9 +1024,10 @@ class Model extends React.Component {
   }
 
   onChangeCheckbox() {
-    var state = this.state;
-    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
-    if(hasAdminPass && this.state.name) {
+    let state = this.state;
+    let hasName = nameRequired ? state.name : true;
+    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
+    if(hasAdminPass && hasName) {
       if(this.state.checked) {
         this.setState({
           btnDisabled: false
@@ -1135,15 +1162,14 @@ class Model extends React.Component {
   }
 
   onChangeVolumeName(e) {
-    var name = e.target.value;
-    var state = this.state;
-    var hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
+    let name = e.target.value;
+    var checkBlanks = this.checkBeforeApply('volumeName');
 
     this.setState({
       volumeName: name
     });
 
-    if(state.name && hasAdminPass && name) {
+    if(checkBlanks && name) {
       this.setState({
         btnDisabled: false
       });
@@ -1217,10 +1243,12 @@ class Model extends React.Component {
       _number: state.number
     };
 
-    if(state.credential === 'keypair') {
-      createItem.key_name = state.keypairName;
-    } else {
-      createItem.admin_pass = state.pwd;
+    if(showCredentials) {
+      if(state.credential === 'keypair') {
+        createItem.key_name = state.keypairName;
+      } else {
+        createItem.admin_pass = state.pwd;
+      }
     }
     configCreate.push(createItem);
 

@@ -4,6 +4,14 @@
       "overview"
     ]
   }, {
+    "title": "approval",
+    "items": [
+      "instance-create",
+      "apply",
+      "apply-approval",
+      "approved"
+    ]
+  }, {
     "title": "compute",
     "items": [
       "instance",
@@ -29,14 +37,6 @@
     "items": [
       "volume",
       "snapshot"
-    ]
-  }, {
-    "title": "approval",
-    "items": [
-      "instance-create",
-      "apply",
-      "apply-approval",
-      "approved"
     ]
   }],
   "default_module": "overview",
