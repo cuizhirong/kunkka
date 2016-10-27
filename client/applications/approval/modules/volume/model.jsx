@@ -330,7 +330,7 @@ class Model extends React.Component {
                 items={relatedSnapshotItems ? relatedSnapshotItems : []}
                 rawItem={rows[0]}
                 btnConfig={{
-                  value: __.apply + __.snapshot,
+                  value: __.apply_ + __.snapshot,
                   actionType: 'create_related_snapshot',
                   disabled: (rows[0].status === 'available' || rows[0].status === 'in-use') ? false : true
                 }}

@@ -2,7 +2,7 @@ require('./style/index.less');
 
 var React = require('react');
 var uskin = require('client/uskin/index');
-var {Tab, Button, Tooltip, InputNumber, Slider} = uskin;
+var {Tab, Button, Tooltip, Slider} = uskin;
 
 var createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
 var createKeypairPop = require('client/applications/approval/modules/keypair/pop/create_keypair/index');
@@ -12,8 +12,11 @@ var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var unitConverter = require('client/utils/unit_converter');
 
-var showCredentials = HALO.settings.enable_apply_instance_credential;
-var nameRequired = HALO.settings.enable_apply_instance_name;
+var halo = HALO.settings;
+const showCredentials = halo.enable_apply_instance_credential;
+const nameRequired = halo.enable_apply_instance_name;
+const showFipBandwidth = halo.enable_floatingip_bandwidth;
+const maxFipBandwidth = halo.max_floatingip_bandwidth;
 
 class Model extends React.Component {
   constructor(props) {
@@ -68,8 +71,14 @@ class Model extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
-      number: 1,
-      checked: false,
+      fipChecked: true,
+      fipSliderValue: 1,
+      fipSliderInputValue: 1,
+      fipSliderInputError: false,
+      fipDisabled: false,
+      bandwidthMin: 1,
+      bandwidthMax: 30,
+      volumeChecked: false,
       volumeName: '',
       volumeTypes: [],
       volumeType: '',
@@ -81,7 +90,6 @@ class Model extends React.Component {
       unit: 'GB',
       sliderInputError: false,
       sliderInputValue: 1,
-      volumeEventType: '',
       btnDisabled: true
     };
 
@@ -89,8 +97,8 @@ class Model extends React.Component {
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
     'onChangeKeypair', 'pwdVisibleControl', 'onChangePwd',
-    'onFocusPwd', 'onBlurPwd', 'onChangeNumber', 'onChangeCheckbox',
-    'createNetwork', 'createKeypair', 'onSliderChange',
+    'onFocusPwd', 'onBlurPwd', 'createNetwork', 'createKeypair',
+    'onFipSliderChange', 'onFipBandwidthChange', 'onSliderChange',
     'onChangeVolumeName', 'onVolumeCapacityChange'].forEach(func => {
       this[func] = this[func].bind(this);
     });
@@ -161,11 +169,14 @@ class Model extends React.Component {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
     });
 
-    var sg = res.securitygroup;
+    //check whether subnets in the network associated router and able to associate floaitng-ip
+    var network = selectDefault(networks);
+    var hasRouter = network ? network.subnets.some(sub => (sub.router && sub.router.external_gateway_info)) : false;
 
+    var sg = res.securitygroup;
     var keypairs = res.keypair;
     var selectedKeypair = selectDefault(keypairs);
-    var hasAdminPass = (credential === 'keypair' && selectedKeypair && selectedKeypair.name) || (credential === 'psw' && this.state.pwd);
+    var checkBlanks = this.checkBeforeApply('all');
 
     this.setState({
       ready: true,
@@ -176,7 +187,7 @@ class Model extends React.Component {
       snapshot: snapshot,
       flavors: flavors,
       networks: networks,
-      network: selectDefault(networks),
+      network: network,
       securityGroups: sg,
       securityGroup: {},
       keypairs: keypairs,
@@ -184,7 +195,9 @@ class Model extends React.Component {
       username: username,
       hideKeypair: hideKeypair,
       credential: credential,
-      btnDisabled: nameRequired ? true : !hasAdminPass
+      btnDisabled: !checkBlanks,
+      fipDisabled: !hasRouter,
+      bandwidthMax: maxFipBandwidth
     });
   }
 
@@ -193,15 +206,17 @@ class Model extends React.Component {
     let hasServerName = nameRequired ? !!state.name : true;
     let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
     let credentialPass = showCredentials ? hasAdminPass : true;
-    let hasVolumeName = (state.checked && state.volumeName) || !state.checked;
+    let hasVolumeName = state.volumeChecked ? state.volumeName : true;
     let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
+    let hasFip = !state.fipChecked ? state.network : true;
 
     let checkObj = {};
-    checkObj.serverName = !!(credentialPass && hasVolumeName && hasImage);
-    checkObj.credentials = !!(hasServerName && hasVolumeName && hasImage);
-    checkObj.volumeName = !!(hasServerName && credentialPass && hasImage);
-    checkObj.image = !!(hasServerName && hasVolumeName && credentialPass);
-
+    checkObj.serverName = !!(credentialPass && hasVolumeName && hasImage && hasFip);
+    checkObj.credentials = !!(hasServerName && hasVolumeName && hasImage && hasFip);
+    checkObj.volumeName = !!(hasServerName && credentialPass && hasImage && hasFip);
+    checkObj.image = !!(hasServerName && hasVolumeName && credentialPass && hasFip);
+    checkObj.fip = !!(hasServerName && hasVolumeName && credentialPass && hasImage);
+    checkObj.all = !!(hasServerName && credentialPass && hasVolumeName && hasImage && hasFip);
 
     return m ? checkObj[m] : checkObj;
   }
@@ -692,11 +707,11 @@ class Model extends React.Component {
   }
 
   onChangeNetwork(e) {
-    var subnets = this.state.networks;
+    var nets = this.state.networks;
     var selected = e.target.value;
 
     var item;
-    subnets.some((ele) => {
+    nets.some((ele) => {
       if (ele.id === selected) {
         item = ele;
         return true;
@@ -704,8 +719,12 @@ class Model extends React.Component {
       return false;
     });
 
+    //check whether subnet in the network has router and able to associate floating-ip
+    let hasRouter = item.subnets.some(sub => (sub.router && sub.router.external_gateway_info));
+
     this.setState({
-      network: item
+      network: item,
+      fipDisabled: !hasRouter
     });
   }
 
@@ -1004,46 +1023,104 @@ class Model extends React.Component {
     });
   }
 
-  renderCreateNum(props, state) {
-    return (
-      <div className="row row-select">
-        <div className="row-label">
-          {__.number}
-        </div>
-        <div className="row-data">
-          <InputNumber onChange={this.onChangeNumber} min={1} value={state.number} width={120}/>
+  onChangeCheckbox(key) {
+    let state = this.state;
+    switch(key) {
+      case 'volume':
+        let check1 = this.checkBeforeApply('volumeName');
+        this.setState({
+          volumeChecked: !state.volumeChecked
+        });
+
+        if(check1) {
+          if(!state.volumeChecked && !state.volumeName) {
+            //volume checkbox was unchecked, now check
+            this.setState({
+              btnDisabled: true
+            });
+          } else {//1or2: 1.now uncheck; 2.check and has volumeName
+            this.setState({
+              btnDisabled: false
+            });
+          }
+        }
+        break;
+      case 'fip':
+        let check2 = this.checkBeforeApply('fip');
+        this.setState({
+          fipChecked: !state.fipChecked
+        });
+
+        if(check2) {
+          if(!state.fipChecked && !state.network) {
+            //fip checkbox was unchecked, now check
+            this.setState({
+              btnDisabled: true
+            });
+          } else {//1or2: 1.now uncheck; 2.check and hasNetwork
+            this.setState({
+              btnDisabled: false
+            });
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  renderFip(props, state) {
+    return showFipBandwidth ? (
+      <div className="create-fip-config">
+        <div className="row row-slider">
+          <div className="row-label">{__.bandwidth}</div>
+          <div className="row-data">
+            <div className="slidearea">
+              <Slider min={state.bandwidthMin} max={state.bandwidthMax} unit="Mbps"
+                value={state.fipSliderValue}
+                onChange={this.onFipSliderChange} />
+              <div className="range">{state.bandwidthMin + '-' + state.bandwidthMax + 'Mbps'}</div>
+            </div>
+            <div className="inputarea">
+              <input type="text" className={state.fipSliderInputError ? 'error' : ''}
+                value={state.fipSliderInputValue}
+                onChange={this.onFipBandwidthChange} />
+              <label className="unit">Mbps</label>
+            </div>
+          </div>
         </div>
       </div>
-    );
+    ) : null;
   }
 
-  onChangeNumber(number) {
+  onFipSliderChange(e, value) {
     this.setState({
-      number: number
+      fipSliderValue: value,
+      fipSliderInputValue: value,
+      fipSliderInputError: false
     });
   }
 
-  onChangeCheckbox() {
-    let state = this.state;
-    let hasName = nameRequired ? state.name : true;
-    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
-    if(hasAdminPass && hasName) {
-      if(this.state.checked) {
-        this.setState({
-          btnDisabled: false
-        });
-      } else {
-        if(!this.state.volumeName) {
-          this.setState({
-            btnDisabled: true
-          });
-        }
-      }
+  onFipBandwidthChange(e) {
+    let state = this.state,
+      min = state.bandwidthMin,
+      max = state.bandwidthMax;
+
+    let val = e.target.value;
+    let floatVal = parseFloat(val);
+
+    if (floatVal >= min && floatVal <= max) {
+      this.setState({
+        fipSliderValue: floatVal,
+        fipSliderInputValue: floatVal,
+        fipSliderInputError: false
+      });
+    } else {
+      this.setState({
+        fipSliderInputValue: val,
+        fipSliderInputError: true
+      });
     }
-
-    this.setState({
-      checked: !this.state.checked
-    });
   }
 
   initializeVolume(overview) {
@@ -1188,7 +1265,6 @@ class Model extends React.Component {
 
   onSliderChange(e, value) {
     this.setState({
-      volumeEventType: e.type,
       sliderValue: value,
       sliderInputValue: value,
       sliderInputError: false
@@ -1205,14 +1281,12 @@ class Model extends React.Component {
 
     if (floatVal >= min && floatVal <= max) {
       this.setState({
-        volumeEventType: 'change',
         sliderValue: floatVal,
         sliderInputValue: floatVal,
         sliderInputError: false
       });
     } else {
       this.setState({
-        volumeEventType: 'change',
         sliderInputValue: val,
         sliderInputError: true
       });
@@ -1239,8 +1313,7 @@ class Model extends React.Component {
       _identity: 'ins',
       name: state.name,
       image: (state.imageType === 'image') ? state.image.id : state.snapshot.id,
-      flavor: state.flavor.id,
-      _number: state.number
+      flavor: state.flavor.id
     };
 
     if(showCredentials) {
@@ -1266,7 +1339,7 @@ class Model extends React.Component {
       configBind.push(bindSGrp);
     });
 
-    if(state.number === 1 && state.checked) {
+    if(state.volumeChecked) {
       var createVolume = {
         _type: 'Volume',
         _identity: 'vol',
@@ -1281,6 +1354,34 @@ class Model extends React.Component {
         Volume: createVolume._identity
       };
       configBind.push(bindVolume);
+    }
+
+    if(state.fipChecked && !state.fipDisabled) {
+      var createFip = {
+        _type: 'Floatingip',
+        _identity: 'fip'
+      };
+
+      let subnet;
+      state.network.subnets.some(sub => {
+        if(sub.router && sub.router.external_gateway_info) {
+          subnet = sub;
+          return true;
+        }
+        return false;
+      });
+      createFip.floating_network = subnet.router.external_gateway_info.network_id;
+
+      if(showFipBandwidth) {
+        createFip.rate_limit = state.fipSliderValue;
+      }
+      configCreate.push(createFip);
+
+      var bindFip = {
+        Instance: createItem._identity,
+        Floatingip: createFip._identity
+      };
+      configBind.push(bindFip);
     }
 
     createApplication(data);
@@ -1336,8 +1437,14 @@ class Model extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
-      number: 1,
-      checked: false,
+      fipChecked: true,
+      fipSliderValue: 1,
+      fipSliderInputValue: 1,
+      fipSliderInputError: false,
+      fipDisabled: false,
+      bandwidthMin: 1,
+      bandwidthMax: 30,
+      volumeChecked: false,
       volumeName: '',
       volumeTypes: [],
       volumeType: '',
@@ -1349,7 +1456,7 @@ class Model extends React.Component {
       unit: 'GB',
       sliderInputError: false,
       sliderInputValue: 1,
-      volumeEventType: ''
+      btnDisabled: true
     });
 
     request.getData().then(this.initialize);
@@ -1379,12 +1486,16 @@ class Model extends React.Component {
             {this.renderNetworks(props, state)}
             {this.renderSecurityGroup(props, state)}
             {this.renderCredentials(props, state)}
-            {this.renderCreateNum(props, state)}
-            {state.number === 1 ? <div className="row-checkbox">
-              <input type="checkbox" onChange={this.onChangeCheckbox} checked={this.state.checked} />
-              <label onClick={this.onChangeCheckbox}>{__.checkbox_tip_attach_volume}</label>
+            {(!state.fipDisabled) ? <div className="row-checkbox">
+              <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'fip')} checked={this.state.fipChecked} />
+              <label onClick={this.onChangeCheckbox.bind(this, 'fip')}>{__.checkbox_tip_attach_fip}</label>
             </div> : ''}
-            {(state.number === 1 && state.checked) ? this.renderVolume(props, state) : ''}
+            {(state.fipChecked && !state.fipDisabled) ? this.renderFip(props, state) : ''}
+            <div className="row-checkbox">
+              <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'volume')} checked={this.state.volumeChecked} />
+              <label onClick={this.onChangeCheckbox.bind(this, 'volume')}>{__.checkbox_tip_attach_volume}</label>
+            </div>
+            {(state.volumeChecked) ? this.renderVolume(props, state) : ''}
           </div>
         </div>
       </div>
