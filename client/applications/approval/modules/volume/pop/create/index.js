@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/approval.lang.json');
+var utils = require('client/applications/approval/utils/utils');
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
@@ -139,10 +140,10 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
+      var usage = refs.usage.state.value;
       var data = {};
       data.detail = {};
       var createDetail = data.detail;
-
       createDetail.create = [];
       var configCreate = createDetail.create;
       var createItem = {};
@@ -151,7 +152,11 @@ function pop(obj, parent, callback) {
         _identity: 'volume',
         name: refs.name.state.value,
         volume_type: obj ? obj.volume_type : refs.type.state.value,
-        size: Number(refs.capacity_size.state.value)
+        size: Number(refs.capacity_size.state.value),
+        metadata: {
+          owner: HALO.user.username,
+          usage: usage
+        }
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;
@@ -231,6 +236,25 @@ function pop(obj, parent, callback) {
           refs.btn.setState({
             disabled: state.error
           });
+          break;
+        case 'usage':
+          var usage = refs.usage.state.value;
+          var usageUTF8Length = utils.getStringUTF8Length(usage);
+          if (usageUTF8Length > 255 || usageUTF8Length === 0) {
+            refs.btn.setState({
+              disabled: true
+            });
+            refs.usage.setState({
+              error: true
+            });
+          } else {
+            refs.btn.setState({
+              disabled: false
+            });
+            refs.usage.setState({
+              error: false
+            });
+          }
           break;
         default:
           break;

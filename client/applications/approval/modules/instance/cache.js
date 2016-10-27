@@ -3,7 +3,7 @@ var fetch = require('client/applications/approval/cores/fetch');
 module.exports = {
   getInstanceList: function() {
     return fetch.get({
-      url: '/api/v1/' + HALO.user.projectId + '/servers/detail'
+      url: '/api/v1/' + HALO.user.projectId + '/servers/detail/owner'
     }).then(function(data) {
       return data.servers;
     });

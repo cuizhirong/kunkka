@@ -1313,7 +1313,10 @@ class Model extends React.Component {
       _identity: 'ins',
       name: state.name,
       image: (state.imageType === 'image') ? state.image.id : state.snapshot.id,
-      flavor: state.flavor.id
+      flavor: state.flavor.id,
+      metadata: {
+        owner: HALO.user.username
+      }
     };
 
     if(showCredentials) {
@@ -1345,7 +1348,10 @@ class Model extends React.Component {
         _identity: 'vol',
         name: state.volumeName,
         volume_type: state.volumeType,
-        size: state.sliderValue
+        size: state.sliderValue,
+        metadata: {
+          owner: HALO.user.username
+        }
       };
       configCreate.push(createVolume);
 

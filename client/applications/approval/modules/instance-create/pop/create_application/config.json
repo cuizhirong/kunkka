@@ -1,9 +1,16 @@
 {
   "title": ["create", "application"],
   "fields": [{
+    "type": "input",
+    "field": "apply_usage",
+    "value": "",
+    "required": true,
+    "tip_info": "max_usage_length"
+  }, {
     "type": "textarea",
     "field": "apply_description",
-    "value": ""
+    "value": "",
+    "required": true
   }],
   "btn": {
     "value": "create",

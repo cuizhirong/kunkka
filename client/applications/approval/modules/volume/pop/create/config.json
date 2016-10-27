@@ -27,7 +27,12 @@
     "tip_type": "error",
     "field": "error",
     "hide": true
-  },  {
+  }, {
+    "type": "input",
+    "field": "usage",
+    "required": true,
+    "tip_info": "max_usage_length"
+  }, {
     "type": "textarea",
     "field": "apply_description"
   }],

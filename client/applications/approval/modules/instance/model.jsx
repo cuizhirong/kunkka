@@ -593,6 +593,12 @@ class Model extends React.Component {
       title: __.create + __.time,
       type: 'time',
       content: item.created
+    }, {
+      title: __.owner,
+      content: item.metadata ? item.metadata.owner : '-'
+    }, {
+      title: __.usage,
+      content: item.metadata ? item.metadata.usage : '-'
     }];
 
     return items;

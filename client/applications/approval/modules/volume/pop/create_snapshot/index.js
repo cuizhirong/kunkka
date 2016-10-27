@@ -52,7 +52,10 @@ function pop(obj, parent, callback) {
         _identity: 'volSnap',
         name: refs.snapshot_name.state.value,
         volume_id: obj.id,
-        force: 'true'
+        force: 'true',
+        metadata: {
+          owner: HALO.user.username
+        }
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;

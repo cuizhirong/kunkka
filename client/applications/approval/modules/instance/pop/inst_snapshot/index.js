@@ -50,7 +50,10 @@ function pop(obj, parent, callback) {
         _type: 'Snapshot',
         _identity: 'instSnap',
         instanceId: obj.id,
-        name: refs.inst_snapshot_name.state.value
+        name: refs.inst_snapshot_name.state.value,
+        metadata: {
+          meta_owner: HALO.user.username
+        }
       };
       configCreate.push(createItem);
       data.description = refs.apply_description.state.value;

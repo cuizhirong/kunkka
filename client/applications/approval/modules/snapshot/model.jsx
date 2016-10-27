@@ -274,6 +274,9 @@ class Model extends React.Component {
       title: __.create + __.time,
       type: 'time',
       content: item.created_at
+    }, {
+      title: __.owner,
+      content: item.metadata ? item.metadata.owner : '-'
     }];
 
     return data;
