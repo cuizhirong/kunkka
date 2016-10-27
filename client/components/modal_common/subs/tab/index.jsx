@@ -69,9 +69,9 @@ class Tab extends React.Component {
         </div>
         <div>
           {
-            state.data.map((value, index) => {
+            !state.empty_text ? state.data.map((value, index) => {
               return <a key={value} title={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{props.__[value] || value}</a>;
-            })
+            }) : <span>{state.empty_text}</span>
           }
         </div>
       </div>
