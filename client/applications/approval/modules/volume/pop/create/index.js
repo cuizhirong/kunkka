@@ -25,6 +25,7 @@ function pop(obj, parent, callback) {
       text: obj.name
     });
   }
+  var volumeTypes = [];
 
   var typeCapacity = {};
 
@@ -92,10 +93,21 @@ function pop(obj, parent, callback) {
         var selectedMin = selected.min;
 
         var setFields = () => {
-          if (overview.volume_types) {
+          var overviewVolumeTypes = overview.volume_types;
+          var settingsVolumeTypes = HALO.settings.appliable_volume_types ? JSON.parse(HALO.settings.appliable_volume_types) : [];
+          overviewVolumeTypes.forEach((item) => {
+            if(settingsVolumeTypes.includes(item)) {
+              volumeTypes.push(item);
+            }
+          });
+          if (volumeTypes && volumeTypes.length > 0) {
             refs.type.setState({
-              data: overview.volume_types,
-              value: overview.volume_types.length > 0 ? overview.volume_types[0] : null,
+              data: volumeTypes,
+              value: volumeTypes.length > 0 ? volumeTypes[0] : null,
+              hide: false
+            });
+          } else {
+            refs.type.setState({
               hide: false
             });
           }
@@ -117,26 +129,13 @@ function pop(obj, parent, callback) {
           refs.btn.setState({
             disabled: lackOfSize || selectedMax <= 0
           });
+          if(!volumeTypes || volumeTypes.length < 1) {
+            refs.btn.setState({
+              disabled: true
+            });
+          }
         };
         setFields();
-
-/*        if (HALO.settings.enable_charge) {
-          request.getVolumePrice('volume.size', selectedMin).then((res) => {
-            setFields();
-            refs.charge.setState({
-              value: res.unit_price,
-              hide: false
-            });
-          }).catch((error) => {
-            setFields();
-            refs.charge.setState({
-              value: '0.0000',
-              hide: false
-            });
-          });
-        } else {
-          setFields();
-        }*/
       });
     },
     onConfirm: function(refs, cb) {
@@ -209,33 +208,14 @@ function pop(obj, parent, callback) {
               disabled: max <= 0
             });
 
-            /*if (HALO.settings.enable_charge) {
-              request.getVolumePrice(type + '.volume.size', value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch((error) => {});
-            }*/
           }
           break;
         case 'capacity_size':
-          if (HALO.settings.enable_charge) {
-            /*var sliderEvent = state.eventType === 'mouseup';
-            var inputEvnet = state.eventType === 'change' && !state.error;
-            var volType = refs.type.state.value;
-*/
-           /* if (sliderEvent || inputEvnet) {
-              request.getVolumePrice(volType + '.volume.size', state.value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch((error) => {});
-            }*/
+          if(volumeTypes.length > 0) {
+            refs.btn.setState({
+              disabled: state.error
+            });
           }
-
-          refs.btn.setState({
-            disabled: state.error
-          });
           break;
         case 'usage':
           var usage = refs.usage.state.value;

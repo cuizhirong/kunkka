@@ -8,6 +8,7 @@
     "field": "type",
     "data": [],
     "value": "",
+    "empty_text": "no_volume_type",
     "hide": true
   }, {
     "type": "slider",
