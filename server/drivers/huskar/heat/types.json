@@ -10,14 +10,16 @@
     "name": "",
     "flavor": "",
     "image": "",
-    "admin_pass": ""
+    "admin_pass": "",
+    "metadata": ""
   },
   "createVolume": {
     "type": "OS::Cinder::Volume",
     "name": "",
     "size": "",
     "volume_type": "",
-    "snapshot_id": ""
+    "snapshot_id": "",
+    "metadata": ""
   },
   "createKeypair": {
     "type": "OS::Nova::KeyPair",

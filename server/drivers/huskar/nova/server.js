@@ -42,16 +42,14 @@ driver.resizeServer = function (projectId, serverId, flavor, token, remote, call
   );
 };
 
-driver.createSnapshot = function (projectId, serverId, name, token, remote, callback) {
+driver.createSnapshot = function (projectId, serverId, name, metadata, token, remote, callback) {
   return driver.postMethod(
     remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
     token,
     callback,
     {
       createImage: {
-        metadata:{
-          meta_val: 'meta_val'
-        },
+        metadata: metadata,
         name: name
       }
     }
