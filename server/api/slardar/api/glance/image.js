@@ -23,6 +23,20 @@ Image.prototype = {
       }
     });
   },
+  getImageListByOwner: function (req, res, next) {
+    let objVar = this.getVars(req);
+    let images;
+    this.__images(objVar, (err, payload) => {
+      if (err) {
+        this.handleError(err, req, res, next);
+      } else {
+        images = payload.images;
+        images = images.filter(image => image.visibility === 'private' ? image.meta_owner === req.session.user.username : true);
+        this.orderByCreatedTime(images);
+        res.json({images: images});
+      }
+    });
+  },
   getImageDetails: function (req, res, next) {
     let objVar = this.getVars(req, ['imageId']);
     this.__imageDetail(objVar, (err, payload) => {
@@ -80,6 +94,7 @@ Image.prototype = {
   initRoutes: function () {
     return this.__initRoutes( () => {
       this.app.get('/api/v1/images', this.getImageList.bind(this));
+      this.app.get('/api/v1/images/owner', this.getImageListByOwner.bind(this));
       this.app.get('/api/v1/images/:imageId', this.getImageDetails.bind(this));
       this.app.get('/api/v1/instanceSnapshots', this.getInstanceSnapshotList.bind(this));
       this.app.get('/api/v1/instanceSnapshots/:imageId', this.getInstanceSnapshotDetails.bind(this));
