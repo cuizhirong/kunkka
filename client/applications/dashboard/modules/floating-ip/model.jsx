@@ -384,6 +384,16 @@ class Model extends React.Component {
         return '-';
       }
     };
+    var type = {}, status;
+    if (item.status === 'active') {
+      type.icon = 'light';
+      type.status = 'in-use';
+      status = 'in-use';
+    } else if (item.status === 'down') {
+      type.icon = 'light';
+      type.status = 'active';
+      status = 'available';
+    }
 
     var items = [{
       title: __.id,
@@ -399,7 +409,7 @@ class Model extends React.Component {
       content: bandwidth
     }, {
       title: __.status,
-      content: getStatusIcon(item.status)
+      content: getStatusIcon(item.status, {status: status, type: type})
     }];
 
     return items;

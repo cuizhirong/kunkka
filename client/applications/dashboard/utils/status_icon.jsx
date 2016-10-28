@@ -4,42 +4,46 @@
 var React = require('react');
 var __ = require('locale/client/dashboard.lang.json');
 
-module.exports = (str) => {
-  var status = str.toLowerCase();
+module.exports = (str, option) => {
+  var status = option ? option.status : str.toLowerCase();
   var type = {};
 
-  switch(status) {
-    case 'active':
-      type.icon = 'active';
-      type.status = 'active';
-      break;
-    case 'available':
-      type.icon = 'light';
-      type.status = 'available';
-      break;
-    case 'down':
-      type.icon = 'active';
-      type.status = 'down';
-      break;
-    case 'error':
-      type.icon = 'warning';
-      type.status = 'error';
-      break;
-    case 'in-use':
-      type.icon = 'light';
-      type.status = 'in-use';
-      break;
-    case 'paused':
-      type.icon = 'paused';
-      type.status = 'paused';
-      break;
-    case 'shutoff':
-      type.icon = 'shutdown';
-      type.status = 'shutoff';
-      break;
-    default:
-      type.status = 'loading';
-      break;
+  if (option) {
+    type = option.type;
+  } else {
+    switch(status) {
+      case 'active':
+        type.icon = 'active';
+        type.status = 'active';
+        break;
+      case 'available':
+        type.icon = 'light';
+        type.status = 'available';
+        break;
+      case 'down':
+        type.icon = 'active';
+        type.status = 'down';
+        break;
+      case 'error':
+        type.icon = 'warning';
+        type.status = 'error';
+        break;
+      case 'in-use':
+        type.icon = 'light';
+        type.status = 'in-use';
+        break;
+      case 'paused':
+        type.icon = 'paused';
+        type.status = 'paused';
+        break;
+      case 'shutoff':
+        type.icon = 'shutdown';
+        type.status = 'shutoff';
+        break;
+      default:
+        type.status = 'loading';
+        break;
+    }
   }
 
   var className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'

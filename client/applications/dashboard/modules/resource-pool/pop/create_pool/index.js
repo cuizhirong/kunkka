@@ -61,7 +61,6 @@ function pop(obj, parent, callback) {
           value: obj.protocol,
           disabled: true
         });
-
         refs.listener.setState({
           data: [obj.listener],
           value: obj.listener.id,
@@ -132,12 +131,12 @@ function pop(obj, parent, callback) {
               if(refs.protocol.state.value === 'TCP') {
                 refs.listener.setState({
                   data: tcpL,
-                  value: tcpL ? tcpL[0].id : ''
+                  value: tcpL[0] ? tcpL[0].id : ''
                 });
               } else {
                 refs.listener.setState({
                   data: httpL,
-                  value: httpL ? httpL[0].id : ''
+                  value: httpL[0] ? httpL[0].id : ''
                 });
               }
             }
