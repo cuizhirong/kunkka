@@ -1,8 +1,11 @@
 'use strict';
 
+const co = require('co');
+
 const dao = require('../../dao');
 const Base = require('./../base');
 const applicationDao = dao.application;
+const serverNameDao = dao.server_name;
 const flow = require('config')('approval_flow');//low->high
 const flowReverse = JSON.parse(JSON.stringify(flow)).reverse();//high->low
 const Promise = require('bluebird');
@@ -161,6 +164,10 @@ Application.prototype = {
   createResource: function(req, res, next, apply, approvals, currentIndex) {
     req.params.projectId = apply.projectId;
     let applyDetail = JSON.parse(apply.detail);
+    let messageData = {
+      username: apply.username,
+      status: 'pass'
+    };
     if (applyDetail.type === 'direct') {
       this.directCreate(req, res, next, apply, applyDetail, function(e) {
         if (e) {
@@ -171,39 +178,42 @@ Application.prototype = {
             apply.save()
           ]).then(function () {
             res.json(apply);
-            emitter.emit('applicant_message', {
-              username: apply.username,
-              status: 'pass'
-            });
+            emitter.emit('applicant_message', messageData);
           });
         }
       });
     } else {
       req.body.stack = applyDetail;
-      stack.prototype.createStack(req, function(e, d) {
-        if (e) {
-          next(e);
-        } else if (d.stack) {
-          apply.stackId = d.stack.id;
-          apply.stackHref = d.stack.links[0].href;
-          Promise.all([
-            approvals[currentIndex].save(),
-            apply.save()
-          ]).then(function () {
-            res.json(apply);
-            emitter.emit('applicant_message', {
-              username: apply.username,
-              status: 'pass'
-            });
-          });
-        } else {
-          res.json(apply);
-          emitter.emit('applicant_message', {
-            username: apply.username,
-            status: 'pass'
-          });
+      let serverName;
+      co(function* () {
+        let instanceResource;
+        applyDetail.create.some(resource => resource._type === 'Instance' && (instanceResource = resource));
+        if (instanceResource && !instanceResource.name) {
+          let serverCode = yield serverNameDao.getNewServerName();
+          instanceResource.name = serverName = 'op-' + serverCode.id;
         }
-      });
+        stack.prototype.createStack(req, function(e, d) {
+          if (e) {
+            next(e);
+          } else if (d.stack) {
+            apply.stackId = d.stack.id;
+            apply.stackHref = d.stack.links[0].href;
+            Promise.all([
+              approvals[currentIndex].save(),
+              apply.save()
+            ]).then(function () {
+              res.json(apply);
+              if (serverName) {
+                messageData.serverName = serverName;
+              }
+              emitter.emit('applicant_message', messageData);
+            });
+          } else {
+            res.json(apply);
+            emitter.emit('applicant_message', messageData);
+          }
+        });
+      }).catch(next);
     }
   },
   directCreate: function (req, res, next, apply, applyDetail, callback) {
@@ -250,9 +260,10 @@ Application.prototype = {
       } else if (applyDetail.resourceType === 'instanceSnapshot') {
         let snapshotName = applyDetail.create[0].name;
         let instanceId = applyDetail.create[0].instanceId;
+        let metadata = applyDetail.create[0].metadata;
         let projectId = apply.projectId;
         let remote = req.session.endpoint.nova[region];
-        driver.nova.server.createSnapshot(projectId, instanceId, snapshotName, _token, remote, (err) => callback(err));
+        driver.nova.server.createSnapshot(projectId, instanceId, snapshotName, metadata, _token, remote, (err) => callback(err));
       } else if (applyDetail.resourceType === 'volumeSnapshot') {
         let projectId = apply.projectId;
         let remote = req.session.endpoint.cinder[region];
@@ -261,7 +272,8 @@ Application.prototype = {
           snapshot: {
             name: metaData.name,
             volume_id: metaData.volume_id,
-            force: true
+            force: true,
+            metadata : metaData.metadata
           }
         };
         driver.cinder.snapshot.createSnapshot(projectId, _token, remote, _data, (err) => callback(err));
