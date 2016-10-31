@@ -96,7 +96,6 @@
     "proxyquire": "^1.7.4",
     "react-addons-test-utils": "^15.0.1",
     "rsvp": "^3.1.0",
-    "sequelize-cli": "^2.4.0",
     "supertest": "^1.1.0",
     "time-grunt": "^1.2.2",
     "webpack": "^1.12.6",
