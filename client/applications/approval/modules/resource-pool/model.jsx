@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var Main = require('client/components/main/index');
+var Main = require('client/components/main_paged/index');
 
 //detail component
 var BasicProps = require('client/components/basic_props/index');
@@ -196,6 +196,7 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
+    var syncUpdate = true;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -213,7 +214,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          detail.setState({loading: true});
+          syncUpdate = false;
           request.getRelated(false).then(res => {
             var pool = rows[0];
             request.getMembers(pool.id).then(r => {
@@ -263,6 +264,17 @@ class Model extends React.Component {
         break;
       default:
         break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    } else {
+      detail.setState({
+        loading: true
+      });
     }
   }
 

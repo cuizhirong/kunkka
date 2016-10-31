@@ -265,9 +265,7 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        request.getResourceInfo().then(res => {
-          this.onClickDetailTabs(actionType, refs, data, res);
-        });
+        this.onClickDetailTabs(actionType, refs, data);
         break;
       default:
         break;
@@ -285,42 +283,55 @@ class Model extends React.Component {
     }
   }
 
-  onClickDetailTabs(tabKey, refs, data, resourceData) {
+  onClickDetailTabs(tabKey, refs, data) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
+    var syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if(rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          syncUpdate = false;
+          request.getResourceInfo().then(res => {
+            var basicPropsItem = this.getBasicPropsItems(rows[0]);
 
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                rawItem={rows[0]}
-                items={basicPropsItem ? basicPropsItem : []}
-                onAction={this.onDetailAction.bind(this)} />
-              <ApplyDetail
-                title={__.application + __.detail}
-                defaultUnfold={true}
-                items={rows[0].detail}
-                data={resourceData} />
-            </div>
-          );
+            contents[tabKey] = (
+              <div>
+                <BasicProps
+                  title={__.basic + __.properties}
+                  defaultUnfold={true}
+                  tabKey={'description'}
+                  rawItem={rows[0]}
+                  items={basicPropsItem ? basicPropsItem : []}
+                  onAction={this.onDetailAction.bind(this)} />
+                <ApplyDetail
+                  title={__.application + __.detail}
+                  defaultUnfold={true}
+                  items={rows[0].detail}
+                  data={res} />
+              </div>
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
         }
         break;
       default:
         break;
     }
-
-    detail.setState({
-      contents: contents,
-      loading: false
-    });
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    } else {
+      detail.setState({
+        loading: true
+      });
+    }
   }
 
   getBasicPropsItems(item) {
