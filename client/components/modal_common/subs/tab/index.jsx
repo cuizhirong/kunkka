@@ -51,7 +51,8 @@ class Tab extends React.Component {
 
   render() {
     var props = this.props,
-      state = this.state;
+      state = this.state,
+      __ = props.__;
     var className = 'modal-row tab-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
@@ -69,9 +70,9 @@ class Tab extends React.Component {
         </div>
         <div>
           {
-            !state.empty_text ? state.data.map((value, index) => {
+            state.data.length > 0 ? state.data.map((value, index) => {
               return <a key={value} title={value} className={value === state.value ? 'selected' : ''} onClick={this.onChange.bind(this, value)}>{props.__[value] || value}</a>;
-            }) : <span>{state.empty_text}</span>
+            }) : <span>{__[props.empty_text]}</span>
           }
         </div>
       </div>
