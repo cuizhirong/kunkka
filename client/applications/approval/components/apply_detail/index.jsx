@@ -70,6 +70,8 @@ class ApplyDetail extends React.Component {
         return 'IP' + __.version;
       case 'network_id':
         return __.network;
+      case 'metadata':
+        return __.usage;
       default:
         return __[k] ? __[k] : k;
     }
@@ -166,10 +168,6 @@ class ApplyDetail extends React.Component {
   }
 
   getFieldContent(item, field) {
-    if(typeof item[field] === 'object') {
-      return '-';
-    }
-
     switch(field) {
       case 'image':
         let image = this.getResource(item, field);
@@ -216,7 +214,12 @@ class ApplyDetail extends React.Component {
       case 'enable_dhcp':
       case 'port_security_enabled':
         return item[field] ? __.on : __.off;
+      case 'metadata':
+        return item[field].usage;
       default:
+        if(typeof item[field] === 'object') {
+          return '-';
+        }
         return <span>{item[field]}</span>;
     }
   }
