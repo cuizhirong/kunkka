@@ -173,35 +173,6 @@ Instance.prototype = {
       );
     }
   },
-  getInstanceListByOwner: function (req, res, next) {
-    let objVar = this.getVars(req, ['projectId']);
-    async.parallel(
-      [
-        this.__servers.bind(this, objVar),
-        this.__subnets.bind(this, objVar),
-        this.__floatingips.bind(this, objVar),
-        this.__ports.bind(this, objVar)
-      ].concat(this.arrAsync(objVar)),
-      (err, results) => {
-        if (err) {
-          this.handleError(err, req, res, next);
-        } else {
-          let obj = {};
-          ['servers', 'subnets', 'floatingips', 'ports'].concat(this.arrServiceObject).forEach( (e, index) => {
-            obj[e] = results[index][e];
-          });
-          obj.servers = obj.servers.filter(server => server.metadata ? server.metadata.owner === req.session.user.username : false);
-          this.orderByCreatedTime(obj.servers);
-          obj.servers.forEach( server => {
-            this.makeServer(server, obj);
-          });
-          res.json({
-            servers: obj.servers
-          });
-        }
-      }
-    );
-  },
   getFlavorList: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId']);
     async.parallel(
@@ -261,7 +232,6 @@ Instance.prototype = {
   initRoutes: function () {
     return this.__initRoutes( () => {
       this.app.get('/api/v1/:projectId/servers/detail', this.getInstanceList.bind(this));
-      this.app.get('/api/v1/:projectId/servers/detail/owner', this.getInstanceListByOwner.bind(this));
       this.app.get('/api/v1/:projectId/flavors/detail', this.getFlavorList.bind(this));
       this.app.get('/api/v1/:projectId/servers/:serverId', this.getInstanceDetails.bind(this));
       this.app.get('/api/v1/:projectId/servers/:serverId/vnc', this.getVNCConsole.bind(this));
