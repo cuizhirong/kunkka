@@ -9,6 +9,7 @@ var BasicProps = require('client/components/basic_props/index');
 var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('../../components/console_output/index');
+var applyInstance = require('./pop/apply_instance/index');
 var VncConsole = require('../../components/vnc_console/index');
 
 //pop modals
@@ -240,6 +241,9 @@ class Model extends React.Component {
       that = this;
 
     switch (key) {
+      case 'apply_instance':
+        applyInstance();
+        break;
       case 'vnc_console':
         var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?region=' + HALO.current_region;
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();

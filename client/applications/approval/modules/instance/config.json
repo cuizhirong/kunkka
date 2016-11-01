@@ -5,6 +5,11 @@
     "default": true
   }],
   "btns": [{
+    "value": ["apply_", "instance"],
+    "key": "apply_instance",
+    "type": "create",
+    "icon": "create"
+  }, {
     "value": ["vnc_console"],
     "key": "vnc_console",
     "icon": "volume",
