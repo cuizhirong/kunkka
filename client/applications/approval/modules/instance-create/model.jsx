@@ -1384,7 +1384,9 @@ class Model extends React.Component {
       configBind.push(bindFip);
     }
 
-    createApplication(data);
+    createApplication(data, null, (res) => {
+      window.location.pathname = '/approval/apply/' + res.id;
+    });
   }
 
   onRefresh() {

@@ -20,7 +20,7 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       obj.description = refs.apply_description.state.value;
       request.createApplication(obj).then(res => {
-        callback && callback();
+        callback && callback(res);
         cb(true);
       }).catch(err => {
         getErrorMessage(err);
