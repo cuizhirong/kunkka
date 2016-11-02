@@ -12,11 +12,9 @@ var __ = require('locale/client/approval.lang.json');
 var request = require('./request');
 var unitConverter = require('client/utils/unit_converter');
 
-var halo = HALO.settings;
+const halo = HALO.settings;
 const showCredentials = halo.enable_apply_instance_credential;
 const nameRequired = halo.enable_apply_instance_name;
-const showFipBandwidth = halo.enable_floatingip_bandwidth;
-const maxFipBandwidth = halo.max_floatingip_bandwidth;
 
 class Model extends React.Component {
   constructor(props) {
@@ -75,7 +73,7 @@ class Model extends React.Component {
       fipSliderValue: 1,
       fipSliderInputValue: 1,
       fipSliderInputError: false,
-      fipDisabled: false,
+      fipDisabled: true,
       bandwidthMin: 1,
       bandwidthMax: 30,
       volumeChecked: false,
@@ -97,8 +95,7 @@ class Model extends React.Component {
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
     'onChangeKeypair', 'pwdVisibleControl', 'onChangePwd',
-    'onFocusPwd', 'onBlurPwd', 'createNetwork', 'createKeypair',
-    'onFipSliderChange', 'onFipBandwidthChange', 'onSliderChange',
+    'onFocusPwd', 'onBlurPwd', 'createNetwork', 'createKeypair', 'onSliderChange',
     'onChangeVolumeName', 'onVolumeCapacityChange'].forEach(func => {
       this[func] = this[func].bind(this);
     });
@@ -176,7 +173,6 @@ class Model extends React.Component {
     var sg = res.securitygroup;
     var keypairs = res.keypair;
     var selectedKeypair = selectDefault(keypairs);
-    var checkBlanks = this.checkBeforeApply('all');
 
     this.setState({
       ready: true,
@@ -195,9 +191,12 @@ class Model extends React.Component {
       username: username,
       hideKeypair: hideKeypair,
       credential: credential,
-      btnDisabled: !checkBlanks,
-      fipDisabled: !hasRouter,
-      bandwidthMax: maxFipBandwidth
+      fipDisabled: !hasRouter
+    });
+
+    var checkBlanks = this.checkBeforeApply('all');
+    this.setState({
+      btnDisabled: !checkBlanks
     });
   }
 
@@ -1069,60 +1068,6 @@ class Model extends React.Component {
     }
   }
 
-  renderFip(props, state) {
-    return showFipBandwidth ? (
-      <div className="create-fip-config">
-        <div className="row row-slider">
-          <div className="row-label">{__.bandwidth}</div>
-          <div className="row-data">
-            <div className="slidearea">
-              <Slider min={state.bandwidthMin} max={state.bandwidthMax} unit="Mbps"
-                value={state.fipSliderValue}
-                onChange={this.onFipSliderChange} />
-              <div className="range">{state.bandwidthMin + '-' + state.bandwidthMax + 'Mbps'}</div>
-            </div>
-            <div className="inputarea">
-              <input type="text" className={state.fipSliderInputError ? 'error' : ''}
-                value={state.fipSliderInputValue}
-                onChange={this.onFipBandwidthChange} />
-              <label className="unit">Mbps</label>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : null;
-  }
-
-  onFipSliderChange(e, value) {
-    this.setState({
-      fipSliderValue: value,
-      fipSliderInputValue: value,
-      fipSliderInputError: false
-    });
-  }
-
-  onFipBandwidthChange(e) {
-    let state = this.state,
-      min = state.bandwidthMin,
-      max = state.bandwidthMax;
-
-    let val = e.target.value;
-    let floatVal = parseFloat(val);
-
-    if (floatVal >= min && floatVal <= max) {
-      this.setState({
-        fipSliderValue: floatVal,
-        fipSliderInputValue: floatVal,
-        fipSliderInputError: false
-      });
-    } else {
-      this.setState({
-        fipSliderInputValue: val,
-        fipSliderInputError: true
-      });
-    }
-  }
-
   initializeVolume(overview) {
     var state = this.state;
 
@@ -1377,10 +1322,6 @@ class Model extends React.Component {
         return false;
       });
       createFip.floating_network = subnet.router.external_gateway_info.network_id;
-
-      if(showFipBandwidth) {
-        createFip.rate_limit = state.fipSliderValue;
-      }
       configCreate.push(createFip);
 
       var bindFip = {
@@ -1449,7 +1390,7 @@ class Model extends React.Component {
       fipSliderValue: 1,
       fipSliderInputValue: 1,
       fipSliderInputError: false,
-      fipDisabled: false,
+      fipDisabled: true,
       bandwidthMin: 1,
       bandwidthMax: 30,
       volumeChecked: false,
@@ -1498,7 +1439,6 @@ class Model extends React.Component {
               <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'fip')} checked={this.state.fipChecked} />
               <label onClick={this.onChangeCheckbox.bind(this, 'fip')}>{__.checkbox_tip_attach_fip}</label>
             </div> : ''}
-            {(state.fipChecked && !state.fipDisabled) ? this.renderFip(props, state) : ''}
             <div className="row-checkbox">
               <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'volume')} checked={this.state.volumeChecked} />
               <label onClick={this.onChangeCheckbox.bind(this, 'volume')}>{__.checkbox_tip_attach_volume}</label>
