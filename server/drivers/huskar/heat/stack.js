@@ -97,11 +97,20 @@ Stack.prototype.dealBind = function() {
         if (typeof e.Floatingip === 'string') {
           // case New Floatingip
           // there is no old one case, since Instance is attached to Subnet directly.
+          // if (this.objCreate['_' + e.Floatingip]) {
+          //   nw.floating_ip = {get_resource: '_' + e.Floatingip};
+          // } else {
+          //   // case Old Floatingip
+          //   nw.floating_ip = e.Floatingip;
+          // }
           if (this.objCreate['_' + e.Floatingip]) {
-            nw.floating_ip = {get_resource: '_' + e.Floatingip};
-          } else {
-            // case Old Floatingip
-            nw.floating_ip = e.Floatingip;
+            this.objCreate._fipAttachment = {
+              type: 'OS::Nova::FloatingIPAssociation',
+              properties: {
+                server_id: {get_resource: '_' + e.Instance},
+                floating_ip: {get_resource: '_' + e.Floatingip}
+              }
+            };
           }
         }
         if (Object.keys(nw).length) {
