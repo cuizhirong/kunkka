@@ -15,6 +15,7 @@ var unitConverter = require('client/utils/unit_converter');
 const halo = HALO.settings;
 const showCredentials = halo.enable_apply_instance_credential;
 const nameRequired = halo.enable_apply_instance_name;
+const volumeTypesSetting = halo.appliable_volume_types ? JSON.parse(halo.appliable_volume_types) : null;
 
 class Model extends React.Component {
   constructor(props) {
@@ -205,7 +206,7 @@ class Model extends React.Component {
     let hasServerName = nameRequired ? !!state.name : true;
     let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
     let credentialPass = showCredentials ? hasAdminPass : true;
-    let hasVolumeName = state.volumeChecked ? state.volumeName : true;
+    let hasVolumeName = state.volumeChecked ? (!nameRequired || state.volumeName) : true;
     let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
     let hasFip = !state.fipChecked ? state.network : true;
 
@@ -1031,7 +1032,7 @@ class Model extends React.Component {
           volumeChecked: !state.volumeChecked
         });
 
-        if(check1) {
+        if(check1 && nameRequired) {
           if(!state.volumeChecked && !state.volumeName) {
             //volume checkbox was unchecked, now check
             this.setState({
@@ -1072,7 +1073,12 @@ class Model extends React.Component {
     var state = this.state;
 
     //get all volume types
-    let types = overview.volume_types;
+    let types = [];
+    overview.volume_types.forEach(t => {
+      volumeTypesSetting.forEach(type => {
+        if(type === t) {types.push(t);}
+      });
+    });
     this.setState({
       volumeTypes: types
     });
@@ -1139,14 +1145,14 @@ class Model extends React.Component {
   renderVolume(props, state) {
     return (
       <div className="create-volume-config">
-        <div className="row row-input">
+        {nameRequired ? <div className="row row-input">
           <div className="row-label">
             <strong>*</strong>{__.volume + __.name}
           </div>
           <div className="row-data">
             <input type="text" onChange={this.onChangeVolumeName} value={state.volumeName} />
           </div>
-        </div>
+        </div> : null}
         <div className="row row-tab">
           <div className="row-label">{__.type}</div>
           <div className="row-data">
@@ -1291,13 +1297,15 @@ class Model extends React.Component {
       var createVolume = {
         _type: 'Volume',
         _identity: 'vol',
-        name: state.volumeName,
         volume_type: state.volumeType,
         size: state.sliderValue,
         metadata: {
           owner: HALO.user.username
         }
       };
+      if(nameRequired) {
+        createVolume.name = state.volumeName;
+      }
       configCreate.push(createVolume);
 
       var bindVolume = {
