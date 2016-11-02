@@ -27,7 +27,7 @@ class ApplyDetail extends React.Component {
     });
   }
 
-  getFieldName(item, k) {
+  fieldRender(item, k) {
     switch(k) {
       case '_type':
         return __.type;
@@ -71,112 +71,22 @@ class ApplyDetail extends React.Component {
       case 'network_id':
         return __.network;
       case 'metadata':
-        return __.usage;
+        return __.apply_usage;
       default:
         return __[k] ? __[k] : k;
     }
   }
 
-  getResource(item, field, f) {
-    var data = this.props.data;
-    var resource = {};
-    f = f ? f : field;
-
-    data[f].some(ele => {
-      if(ele.id === item[field]) {
-        resource = ele;
-        return true;
-      }
-      return false;
-    });
-
-    return resource;
-  }
-
-  getIdContent(item, field) {
-    switch(item._type) {
-      case 'Floatingip':
-        let fip = this.getResource(item, field, 'floatingip');
-        return fip.id ? <span>
-          <i className="glyphicon icon-floating-ip" />
-          <a className="space-link" data-type="router" href={'/approval/floating-ip/' + item[field]}>
-            {fip.floating_ip_address || '(' + fip.id.slice(0, 8) + ')'}
-          </a>
-        </span> : <span>{item[field]}</span>;
-      case 'Volume':
-        let volume = this.getResource(item, field, 'volume');
-        return volume.id ? <span>
-          <i className="glyphicon icon-volume" />
-          <a className="space-link" data-type="router" href={'/approval/volume/' + item[field]}>
-            {volume.name || '(' + item[field].slice(0, 8) + ')'}
-          </a>
-        </span> : <span>{item[field]}</span>;
-      case 'Instance':
-        let instance = this.getResource(item, field, 'instance');
-        return instance.id ? <span>
-          <i className="glyphicon icon-instance" />
-          <a className="space-link" data-type="router" href={'/approval/instance/' + item[field]}>
-            {instance.name || '(' + item[field].slice(0, 8) + ')'}
-          </a>
-        </span> : <span>{item[field]}</span>;
-      default:
-        return null;
-    }
-  }
-
-  getRegularContent(item, field) {
-    let partialKeys = field.split('_'),
-      needDash = partialKeys.length > 1;
-    let resourceName = needDash ? partialKeys.join('') : field;
-    let linkKey = needDash ? partialKeys.join('-') : field;
-    let iconKey = linkKey;
-    switch(field) {
-      case 'vip_subnet':
-        resourceName = 'subnet';
-        linkKey = 'subnet';
-        iconKey = 'subnet';
-        break;
-      case 'loadbalancer':
-        iconKey = 'lb';
-        break;
-      case 'pool':
-        linkKey = 'resource-pool';
-        iconKey = '';
-        break;
-      case 'floating_network':
-      case 'Network':
-        resourceName = 'network';
-        linkKey = 'network';
-        iconKey = 'network';
-        break;
-      case 'volume_id':
-        resourceName = 'volume';
-        linkKey = 'volume';
-        iconKey = 'volume';
-        break;
-      default:
-        break;
-    }
-
-    let resource = this.getResource(item, field, resourceName);
-    return resource.id ? <span>
-      {iconKey ? <i className={'glyphicon icon-' + iconKey} /> : null}
-      <a className="space-link" data-type="router" href={'/approval/' + linkKey + '/' + item[field]}>
-        {resource.name || '(' + resource.id.slice(0, 8) + ')'}
-      </a>
-    </span> : <span>{item[field]}</span>;
-  }
-
-  getFieldContent(item, field) {
+  contentRender(item, field) {
     switch(field) {
       case 'image':
-        let image = this.getResource(item, field);
+        let image = this.getResByID(item, field);
         return image.id ? <span>
           <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} />
-          <a data-type="router" href={'/approval/' + field + '/' + item[field]}>{image.name}</a>
+          <span>{image.name}</span>
         </span> : <span>{item[field]}</span>;
       case 'flavor':
-        let flavor = this.getResource(item, field),
+        let flavor = this.getResByID(item, field),
           ram = unitConverter(flavor.ram, 'MB');
         return flavor.id ? <span>
             {flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + flavor.disk + 'GB'}
@@ -190,14 +100,14 @@ class ApplyDetail extends React.Component {
         }
         break;
       case 'listener':
-        let lis = this.getResource(item, field);
+        let lis = this.getResByID(item, field);
         return lis.id ? <span>
-          <a className="space-link" data-type="router" href={'/approval/loadbalancer/' + lis.loadbalancers[0].id}>
+          <span className="space-link">
             {lis.name || '(' + lis.id.slice(0, 8) + ')'}
-          </a>
+          </span>
         </span> : <span>{item[field]}</span>;
       case 'id':
-        return this.getIdContent(item, field);
+        return this.id2Name(item, field, true);
       case 'security_group':
       case 'vip_subnet':
       case 'loadbalancer':
@@ -206,11 +116,11 @@ class ApplyDetail extends React.Component {
       case 'floating_network':
       case 'Network':
       case 'volume_id':
-        return this.getRegularContent(item, field);
+        return this.id2Name(item, field);
       case 'lb_algorithm':
       case 'direction':
         let key = item[field].toLowerCase();
-        return <span>{__[key]}</span>;
+        return __[key];
       case 'enable_dhcp':
       case 'port_security_enabled':
         return item[field] ? __.on : __.off;
@@ -220,7 +130,93 @@ class ApplyDetail extends React.Component {
         if(typeof item[field] === 'object') {
           return '-';
         }
-        return <span>{item[field]}</span>;
+        return item[field];
+    }
+  }
+
+  getResByID(item, field, itemKey) { //find resource data by id
+    let id = item[field];
+    let data = this.props.data;
+    let res = {};
+    if(!itemKey) {itemKey = field;}
+
+    data[itemKey].some(ele => {
+      if(ele.id === id) {
+        res = ele;
+        return true;
+      }
+      return false;
+    });
+
+    return res;
+  }
+
+  id2Name(item, field, idTypeMatch) {
+    let breakKeyArray = field.split('_'),
+      needDash = breakKeyArray.length > 1;
+    let resourceName = needDash ? breakKeyArray.join('') : field;
+    let iconKey = needDash ? breakKeyArray.join('-') : field;
+    switch(field) {
+      case 'vip_subnet':
+        resourceName = 'subnet';
+        iconKey = 'subnet';
+        break;
+      case 'loadbalancer':
+        iconKey = 'lb';
+        break;
+      case 'pool':
+        iconKey = '';
+        break;
+      case 'floating_network':
+      case 'Network':
+        resourceName = 'network';
+        iconKey = 'network';
+        break;
+      case 'volume_id':
+        resourceName = 'volume';
+        iconKey = 'volume';
+        break;
+      default:
+        break;
+    }
+
+    if(idTypeMatch) {
+      switch(item._type) {
+        case 'Floatingip':
+          let fip = this.getResByID(item, field, 'floatingip');
+          return fip.id ? <span>
+            <i className="glyphicon icon-floating-ip" />
+            <span className="space-link">
+              {fip.floating_ip_address || '(' + fip.id.slice(0, 8) + ')'}
+            </span>
+          </span> : <span>{item[field]}</span>;
+        case 'Volume':
+          let volume = this.getResByID(item, field, 'volume');
+          return volume.id ? <span>
+            <i className="glyphicon icon-volume" />
+            <span className="space-link">
+              {volume.name || '(' + item[field].slice(0, 8) + ')'}
+            </span>
+          </span> : <span>{item[field]}</span>;
+        case 'Instance':
+          let instance = this.getResByID(item, field, 'instance');
+          return instance.id ? <span>
+            <i className="glyphicon icon-instance" />
+            <span className="space-link">
+              {instance.name || '(' + item[field].slice(0, 8) + ')'}
+            </span>
+          </span> : <span>{item[field]}</span>;
+        default:
+          return null;
+      }
+    } else {
+      let resource = this.getResByID(item, field, resourceName);
+      return resource.id ? <span>
+        {iconKey ? <i className={'glyphicon icon-' + iconKey} /> : null}
+        <span className="space-link">
+          {resource.name || '(' + resource.id.slice(0, 8) + ')'}
+        </span>
+      </span> : <span>{item[field]}</span>;
     }
   }
 
@@ -241,11 +237,12 @@ class ApplyDetail extends React.Component {
             {createDetail ? <div className="create-list">
               <div className="apply-type">{__.create}</div>
               <div className="apply-items">
-                {createDetail.map((c, i) =>
+                {createDetail.map((create, i) =>
                   <div className="item-info" key={'create' + i}>
-                    {Object.keys(c).map((k, j) => {
-                      return (c[k] ? <div className="info-box" key={'create' + i + j}>
-                        {this.getFieldName(c, k) + ': '}{this.getFieldContent(c, k)}
+                    {Object.keys(create).map((k, j) => {
+                      return (create[k] ? <div className="info-box" key={'create' + i + j}>
+                        {this.fieldRender(create, k) + ': '}
+                        {this.contentRender(create, k)}
                       </div> : null);
                     })}
                   </div>
@@ -256,10 +253,11 @@ class ApplyDetail extends React.Component {
               <div className="apply-type">{__.bind}</div>
               <div className="apply-items">
                 <div className="item-info">
-                  {bindDetail.map((b, m) => {
-                    return Object.keys(b).map((f, n) =>
+                  {bindDetail.map((bind, m) => {
+                    return Object.keys(bind).map((f, n) =>
                       <div className="info-box" key={'bind' + m + n}>
-                        {__[f.toLowerCase()] + ': '}<span>{this.getFieldContent(b, f)}</span>
+                        {__[f.toLowerCase()] + ': '}
+                        {this.contentRender(bind, f)}
                       </div>
                     );
                   })}
@@ -273,7 +271,8 @@ class ApplyDetail extends React.Component {
                   <div className="item-info" key={'resize' + p}>
                     {Object.keys(resize).map((j, q) => {
                       return (resize[j] ? <div className="info-box" key={'resize' + p + q}>
-                        {this.getFieldName(resize, j) + ': '}{this.getFieldContent(resize, j)}
+                        {this.fieldRender(resize, j) + ': '}
+                        {this.contentRender(resize, j)}
                       </div> : null);
                     })}
                   </div>
