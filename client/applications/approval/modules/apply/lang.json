@@ -2,11 +2,19 @@
   "en": {
     "applicant": "Applicant",
     "apply_desc": "Apply Description",
+    "approval_process": "Approval Process",
+    "process_step1": "Approval Step One: ",
+    "process_step2": "Approval Step Two: ",
+    "already_submit": "Already Submit",
     "detail": "Detail"
   },
   "zh-CN": {
     "applicant": "申请人",
     "apply_desc": "申请说明",
+    "approval_process": "审批进度",
+    "process_step1": "一级审批: ",
+    "process_step2": "二级审批: ",
+    "already_submit": "已提交",
     "detail": "详情"
   }
 }

@@ -5,6 +5,8 @@ var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 var ApplyDetail = require('../../components/apply_detail/index');
 
+var Step = require('client/uskin/index').Step;
+
 var deleteModal = require('client/components/modal_delete/index');
 var modifyApply = require('./pop/modify_application/index');
 
@@ -339,6 +341,29 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
+    var applys = item.approvals,
+      length = applys.length,
+      data = [];
+    applys.sort((a, b) => {
+      if(a.level > b.level) {
+        return 1;
+      }
+      if(a.level < b.level) {
+        return -1;
+      }
+      return 0;
+    });
+    data.push({name: __.already_submit});
+    applys.forEach((approval, index) => {
+      let name = '';
+      approval.status !== 'unopened' ? name = __['process_step' + (index + 1)] + __[approval.status] : name = '';
+      data.push({name: name});
+      if(approval.status !== 'pass') {
+        data[index].default = true;
+      } else {
+        length === index + 1 ? (data[index + 1].default = true) : null;
+      }
+    });
     var items = [{
       title: __.id,
       content: item.id
@@ -369,6 +394,12 @@ class Model extends React.Component {
         content: approvals[len - 1].explain
       });
     }
+    items.push({
+      title: __.approval_process,
+      content: <div className="process_wrapper">
+          <Step items={data} disabled={true} consecutive={true} />
+        </div>
+    });
 
     return items;
   }
