@@ -3,7 +3,6 @@ var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/approval.lang.json');
 
-var createNetwork = require('client/applications/approval/modules/network/pop/create_network/index');
 var subnetDescription = require('../subnet_description/index');
 
 function pop(obj, parent, callback) {
@@ -105,20 +104,6 @@ function pop(obj, parent, callback) {
           refs.subnet_dns2.setState({
             hide: !status.checked
           });
-          break;
-        case 'select_network':
-          if (refs.select_network.state.clicked) {
-            createNetwork(refs.modal, (res) => {
-              refs.select_network.setState({
-                data: [res],
-                value: res.id,
-                clicked: false
-              });
-              refs.btn.setState({
-                disabled: false
-              });
-            });
-          }
           break;
         case 'net_address':
           if(netState.error === true && netState.value === '') {

@@ -9,8 +9,7 @@
     "field": "select_network",
     "data": [],
     "empty_text": {
-      "info": "no_network",
-      "link_info": ["create", "network"]
+      "info": "no_network"
     },
     "is_long_label": true
   }, {
