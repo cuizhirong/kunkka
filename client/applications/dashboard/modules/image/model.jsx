@@ -312,6 +312,13 @@ class Model extends React.Component {
       content: item.updated_at
     }];
 
+    if (HALO.settings.enable_approval && item.visibility === 'private') {
+      items.push({
+        title: __.owner,
+        content: item.meta_owner ? item.meta_owner : '-'
+      });
+    }
+
     return items;
   }
 

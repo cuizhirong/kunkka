@@ -61,6 +61,7 @@
     "operation": "Operation",
     "out_of_service": "out of service",
     "overview": "Overview",
+    "owner": "Owner",
     "ok": "OK",
     "no_related": "No Related ",
     "password": "Password",
@@ -94,6 +95,7 @@
     "type": "Type",
     "update": "Update ",
     "uploading": "Updating",
+    "usage": "Usage",
     "view_is_unavailable": "The view is unavailable.",
     "volume": "Volume ",
     "yes": "Yes"
@@ -160,6 +162,7 @@
     "operation": "操作",
     "out_of_service": "服务不可用",
     "overview": "概览",
+    "owner": "拥有人",
     "ok": "确定",
     "no_related": "没有相关",
     "password": "密码",
@@ -193,6 +196,7 @@
     "type": "类型",
     "update": "更新",
     "uploading": "更新中",
+    "usage": "使用用途",
     "view_is_unavailable": "没有数据可以显示",
     "volume": "云硬盘",
     "yes": "是"

@@ -406,6 +406,17 @@ class Model extends React.Component {
       content: item.created_at
     }];
 
+    if (HALO.settings.enable_approval) {
+      var metadata = item.metadata;
+      data.push({
+        title: __.owner,
+        content: metadata.owner ? metadata.owner : '-'
+      }, {
+        title: __.usage,
+        content: metadata.usage ? metadata.usage : '-'
+      });
+    }
+
     return data;
   }
 
