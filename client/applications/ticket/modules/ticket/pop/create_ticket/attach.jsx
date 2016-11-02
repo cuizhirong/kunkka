@@ -48,9 +48,9 @@ class Attach extends React.Component {
   }
 
   deleteAttach(index) {
-    this.state.attachments.splice(index, index + 1);
-    this.state.fileNames.splice(index, index + 1);
-    this.state.uploadError.splice(index, index + 1);
+    this.state.attachments.splice(index, 1);
+    this.state.fileNames.splice(index, 1);
+    this.state.uploadError.splice(index, 1);
     this.forceUpdate();
   }
 
