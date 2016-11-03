@@ -51,7 +51,19 @@ module.exports = {
       url: url
     }).then((res) => {
       res._url = url;
-      return res;
+      return this.getCharge().then((charges) => {
+        res.users.map((user) => {
+          charges.accounts.map((account) => {
+            if (account.user_id === user.id) {
+              user.balance = account.balance;
+              return true;
+            }
+            return false;
+          });
+          return res;
+        });
+        return res;
+      });
     });
   },
   getNextList: function(nextUrl) {

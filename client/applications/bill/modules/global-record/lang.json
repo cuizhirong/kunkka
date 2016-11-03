@@ -1,6 +1,10 @@
 {
   "en": {
+    "target": "Target",
+    "system": "System"
   },
   "zh-CN": {
+    "target": "用户",
+    "system": "系统"
   }
 }

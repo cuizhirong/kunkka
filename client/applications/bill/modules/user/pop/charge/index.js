@@ -15,7 +15,9 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       var value = refs.charge.state.value;
       var data = {
-        value: value
+        value: value,
+        type: 'user',
+        come_from: 'system'
       };
       request.charge(obj.id, data).then((res) => {
         cb(true);

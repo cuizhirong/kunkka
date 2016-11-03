@@ -21,8 +21,12 @@
       "dataIndex": "type",
       "key": "charge-type"
     }, {
+      "title": ["target"],
+      "dataIndex": "target",
+      "key": "target"
+    }, {
       "title": ["channel"],
-      "dataIndex": "come_from",
+      "dataIndex": "channel",
       "key": "channel"
     }, {
       "title": ["charge-time"],

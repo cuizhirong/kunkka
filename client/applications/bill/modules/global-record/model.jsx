@@ -48,6 +48,16 @@ class Model extends React.Component {
             return __[item.type];
           };
           break;
+        case 'channel':
+          column.render = (col, item, i) => {
+            return __[item.come_from];
+          };
+          break;
+        case 'target':
+          column.render = (col, item, i) => {
+            return item.target.user_name;
+          };
+          break;
         default:
           break;
       }

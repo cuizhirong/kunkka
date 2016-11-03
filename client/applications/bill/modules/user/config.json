@@ -35,10 +35,6 @@
     }, {
       "title": ["balance"],
       "key": "balance"
-    }, {
-      "title": ["status"],
-      "dataIndex": "",
-      "key": "status"
     }],
     "data": [],
     "detail": {

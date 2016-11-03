@@ -51,12 +51,6 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'status':
-          column.render = (col, item, i) => {
-            return item.enabled ?
-              <span className="label-active">{__.activated}</span> : <span className="label-down">{__.inactive}</span>;
-          };
-          break;
         case 'balance':
           column.render = (col, item, i) => {
             return item.balance;
