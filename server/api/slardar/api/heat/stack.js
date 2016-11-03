@@ -16,15 +16,16 @@ Stack.prototype = {
       // Get admin role ID.
       (cb) => {
         this.__roles.call(this, {
-          token: objVar.token
+          token: objVar.token,
+          query: {
+            name: 'admin'
+          }
         }, (err, response) => {
           if (err) {
             cb(err);
           } else {
             cb(null, response.roles[0].id);
           }
-        }, {
-          name: 'admin'
         });
       },
       // Check if admin is in the project.
