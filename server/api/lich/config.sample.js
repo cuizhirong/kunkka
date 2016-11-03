@@ -33,5 +33,10 @@ module.exports = {
     name: 'enable_apply_instance_name',
     value: 'true',
     type: 'boolean'
+  }, {
+    app: 'approval',
+    name: 'server_name_prefix',
+    value: 'op',
+    type: 'string'
   }]
 };

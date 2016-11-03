@@ -13,6 +13,7 @@ const stack = require('api/slardar/api/heat/stack');
 const token = require('api/slardar/common/token');
 const driver = require('server/drivers');
 const emitter = require('helpers/emitter');
+const tusk = require('api/tusk/dao');
 
 function Application (app) {
   Base.call(this);
@@ -186,12 +187,24 @@ Application.prototype = {
       req.body.stack = applyDetail;
       let serverName;
       co(function* () {
-        let instanceResource;
-        applyDetail.create.some(resource => resource._type === 'Instance' && (instanceResource = resource));
-        if (instanceResource && !instanceResource.name) {
-          let serverCode = yield serverNameDao.getNewServerName();
-          instanceResource.name = serverName = 'op-' + serverCode.id;
+        let instanceResource, volumeResource;
+        applyDetail.create.forEach(resource => {
+          if (resource._type === 'Instance') {
+            instanceResource = resource;
+          } else if (resource._type === 'Volume') {
+            volumeResource = resource;
+          }
+        });
+        if (instanceResource && !(instanceResource.name)) {
+          let serverInfo = yield [serverNameDao.getNewServerName(), tusk.getSettingsByApp('approval')];
+          let prefix;
+          serverInfo[1].some(setting => setting.name === 'server_name_prefix' && (prefix = setting.value));
+          instanceResource.name = serverName = `${prefix}-${serverInfo[0].id}`;
+          if (volumeResource && !(volumeResource.name)) {
+            volumeResource.name = serverName;
+          }
         }
+
         stack.prototype.createStack(req, function(e, d) {
           if (e) {
             next(e);
