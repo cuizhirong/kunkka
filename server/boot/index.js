@@ -23,11 +23,22 @@ try {
  *
  * @api public
  */
+
+const oneYear = 60 * 1000 * 60 * 24 * 365;
+
 function setup() {
   const app = express();
   app.set('query parser', 'simple');
-  app.use('/static/dist', express.static(path.resolve(__dirname, '..', '..', 'client/dist')));
-  app.use('/static/assets', express.static(path.resolve(__dirname, '..', '..', 'client/assets')));
+
+  const logConfig = config('log');
+  if (logConfig.printAccessLog) {
+    app.use(morgan(logConfig.format, {
+      'stream': Logger.accessLogger
+    }));
+  }
+
+  app.use('/static/dist', express.static(path.resolve(__dirname, '..', '..', 'client/dist'), {maxAge: oneYear}));
+  app.use('/static/assets', express.static(path.resolve(__dirname, '..', '..', 'client/assets'), {maxAge: oneYear}));
   const assetsDir = config('assets_dir') || '/opt/assets';
   app.use(assetsDir, express.static(assetsDir));
   app.use(cookieParser(config('sessionEngine').secret));
@@ -40,14 +51,6 @@ function setup() {
   // use Redis | Memcached to store session
   const sessionHandler = require('../middlewares/sessionHandler');
   sessionHandler(app);
-
-  // setup access logger
-  const logConfig = config('log');
-  if (logConfig.printAccessLog) {
-    app.use(morgan(logConfig.format, {
-      'stream': Logger.accessLogger
-    }));
-  }
 
   app.use(bodyParser.urlencoded({
     extended: true
