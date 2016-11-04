@@ -145,12 +145,12 @@ function filterMenu(modules) {
         }
         return false;
       });
-      var h = configs.hidden.some((hide) => {
+      var h = configs.hidden ? configs.hidden.some((hide) => {
         if (hide === i) {
           return true;
         }
         return false;
-      });
+      }) : null;
       return !b && !h;
     });
   });
