@@ -138,5 +138,11 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + item.id
     });
+  },
+  updateOwner: function(volumeId, data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeId + '/metadata',
+      data: data
+    });
   }
 };

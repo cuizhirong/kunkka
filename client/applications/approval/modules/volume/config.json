@@ -45,6 +45,12 @@
         }]
       }, {
         "items": [{
+          "title": ["chg_owner"],
+          "key": "chg_owner",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
           "title": ["delete"],
           "key": "delete",
           "disabled": true,

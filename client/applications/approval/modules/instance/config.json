@@ -76,6 +76,12 @@
         }]
       }, {
         "items": [{
+          "title": ["chg_owner"],
+          "key": "chg_owner",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
           "title": ["terminate"],
           "key": "terminate",
           "disabled": true,

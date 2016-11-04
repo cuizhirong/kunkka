@@ -27,6 +27,7 @@ var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
 var deleteInstance = require('./pop/delete/index');
+var changeOwner = require('./pop/change_owner/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -236,6 +237,11 @@ class Model extends React.Component {
     }
   }
 
+  closeDetail() {
+    var detail = this.refs.dashboard.refs.detail;
+    detail.onClose();
+  }
+
   onClickBtnList(key, refs, data) {
     var {rows} = data,
       that = this;
@@ -347,6 +353,12 @@ class Model extends React.Component {
           rawItem: rows[0]
         }, false);
         break;
+      case 'chg_owner':
+        changeOwner(rows[0], null, () => {
+          that.closeDetail();
+          that.refresh(null, true);
+        });
+        break;
       case 'terminate':
         deleteInstance(rows);
         break;
@@ -406,6 +418,7 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1 && rows[0].volume.length !== 0) ? false : true;
           break;
         case 'add_volume':
+        case 'chg_owner':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'terminate':

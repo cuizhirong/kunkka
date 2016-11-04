@@ -14,6 +14,7 @@ var detachInstance = require('./pop/detach_instance/index');
 var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
+var changeOwner = require('./pop/change_owner/index');
 var notify = require('../../utils/notify');
 
 var config = require('./config.json');
@@ -167,6 +168,11 @@ class Model extends React.Component {
     }
   }
 
+  closeDetail() {
+    var detail = this.refs.approval.refs.detail;
+    detail.onClose();
+  }
+
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
     var that = this;
@@ -215,6 +221,12 @@ class Model extends React.Component {
             action: 'update',
             resource_type: 'volume'
           });
+          that.refresh(null, true);
+        });
+        break;
+      case 'chg_owner':
+        changeOwner(rows[0], null, () => {
+          that.closeDetail();
           that.refresh(null, true);
         });
         break;
@@ -276,6 +288,9 @@ class Model extends React.Component {
           break;
         case 'set_rd_wrt':
           btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'True') ? false : true;
+          break;
+        case 'chg_owner':
+          btns[key].disabled = (len === 1) ? false : true;
           break;
         case 'delete':
           var hasAttach = rows.some((item) => {
