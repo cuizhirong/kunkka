@@ -92,7 +92,7 @@ function pop(obj, parent, callback) {
             refs.subnet.setState({
               clicked: false
             });
-            createSubnet(null, null, function() {
+            createSubnet(null, refs.modal, function() {
               request.getSubnets(true).then(res => {
                 var mySubnets = getAvailableSubnets(res, refs);
                 refs.subnet.setState({
