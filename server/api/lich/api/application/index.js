@@ -302,7 +302,6 @@ Application.prototype = {
         delete securityGroupRule._identity;
         delete securityGroupRule._type;
         delete securityGroupRule.security_group;
-        console.log(securityGroupRule);
         let body = {
           security_group_rule: securityGroupRule
         };

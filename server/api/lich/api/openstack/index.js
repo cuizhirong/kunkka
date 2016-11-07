@@ -34,7 +34,7 @@ function Openstack(app) {
           ['servers', 'subnets', 'floatingips', 'ports'].concat(this.arrServiceObject).forEach((e, index) => {
             obj[e] = results[index][e];
           });
-          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse).index;
+          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse, flow).index;
           if (roleIndex === 0) {
             obj.servers = obj.servers.filter(server => server.metadata ? server.metadata.owner === req.session.user.username : false);
           }
@@ -66,7 +66,7 @@ function Openstack(app) {
           ['volumes', 'snapshots', 'servers'].forEach((e, index) => {
             obj[e] = results[index][e];
           });
-          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse).index;
+          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse, flow).index;
           if (roleIndex === 0) {
             obj.volumes = obj.volumes.filter(volume => volume.metadata ? volume.metadata.owner === req.session.user.username : false);
           }
@@ -97,7 +97,7 @@ function Openstack(app) {
           ['snapshots', 'volumes'].forEach(function(e, index) {
             obj[e] = results[index][e];
           });
-          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse).index;
+          let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse, flow).index;
           if (roleIndex === 0) {
             obj.snapshots = obj.snapshots.filter(snapshot => snapshot.metadata.owner === req.session.user.username);
           }
@@ -121,8 +121,8 @@ function Openstack(app) {
         this.handleError(err, req, res, next);
       } else {
         images = payload.images;
-        let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse).index;
-        if (roleIndex) {
+        let roleIndex = roleHelper.getEffectiveRole(req.session.user.roles, flowReverse, flow).index;
+        if (roleIndex === 0) {
           images = images.filter(image => image.visibility === 'private' ? image.meta_owner === req.session.user.username : true);
         }
         this.orderByCreatedTime(images);
