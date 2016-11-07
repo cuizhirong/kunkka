@@ -164,7 +164,8 @@ class Model extends React.Component {
 
   setPagination(table, res) {
     var pagination = {},
-      next = res.next ? res.next : null;
+      next = res.next ? res.next : null,
+      limit = table.limit ? table.limit : 10;
 
     if(next) {
       let currUrl = res._url.split('/apply/')[1],
@@ -178,7 +179,7 @@ class Model extends React.Component {
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
     }
-    table.pagination = pagination;
+    (res.count > limit) ? (table.pagination = pagination) : {};
 
     return table;
   }
