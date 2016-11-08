@@ -702,10 +702,11 @@ class Model extends React.Component {
   getRelatedSnapshotItems(items) {
     var data = [];
     items.forEach((item) => {
+      var size = unitConverter(item.size);
       data.push({
         title: item.created_at,
         name: <span>{item.name}</span>,
-        size: item.size / 1024 + 'MB',
+        size: size.num + ' ' + size.unit,
         time: item.created_at,
         status: getStatusIcon(item.status),
         childItem: item
