@@ -9,7 +9,7 @@ var moment = require('client/libs/moment');
 var router = require('client/utils/router');
 var getTime = require('client/utils/time_unification');
 
-class Main extends React.Component {
+class Modal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -405,4 +405,4 @@ class Main extends React.Component {
   }
 }
 
-module.exports = Main;
+module.exports = Modal;
