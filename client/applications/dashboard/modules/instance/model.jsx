@@ -722,10 +722,11 @@ class Model extends React.Component {
   getRelatedSnapshotItems(items) {
     var data = [];
     items.forEach((item) => {
+      var size = unitConverter(item.size);
       data.push({
         title: item.created_at,
         name: <a data-type="router" href={'/dashboard/image-snapshot/' + item.id}>{item.name}</a>,
-        size: item.size / 1024 + 'MB',
+        size: size.num + ' ' + size.unit,
         time: item.created_at,
         status: getStatusIcon(item.status),
         createIcon: 'instance',
