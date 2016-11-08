@@ -23,29 +23,30 @@
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .get_captcha { display: inline-block; margin-left: 10px; width: 100px; height: 34px; line-height: 34px; background-color: #42b9e5; border-radius: 2px; color: #fff; font-size: 14px; text-align: center; cursor: pointer; }
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #bbbfc5; }
     .wrapper > .content > .content-wrapper > form > input { margin-top: 34px; width: 480px; height: 28px; font-size: 14px; border: none; background-color: #42b9e5; color: #ffffff; }
+    .wrapper > .content > .content-wrapper > a {display:block;margin-top: 6px;float: right;}
     .phone_tip,
     .captcha_tip,
-    .email_tip { margin-top: 4px; color: red; font-size: 12px; display: none; }
-    .brewmaster_icon { position: absolute; top: 6px; right: 10px; width: 18px; height: 24px; background: url(/static/assets/auth/brewmaster_icons.png); background-size: 114px 36px; }
+    .pwd_tip,
+    .confirm_pwd_tip { margin-top: 4px; color: red; font-size: 12px; display: none; }
+    .brewmaster_icon { position: absolute; top: 6px; right: 10px; width: 18px; height: 24px; background: url(/static/assets/login/brewmaster_icons.png); background-size: 114px 36px; }
     .icon_phone { background-position: -36px -6px; }
     .icon_captcha { right: 124px !important; background-position: -62px -6px; }
-    .icon_email { background-position: -10px -6px; }
+    .icon_pwd { background-position: -90px -6px; }
     .wrapper > .footer { flex: 2; }
     .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
   </style>
 </head>
 <body>
-
 <% if (locale == 'en') { %>
 <div class="wrapper">
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/auth/logo@2x_1.png"/>
+      <img src="/static/assets/login/logo@2x_1.png"/>
     </div>
     <div class="content-wrapper">
-      <h4>Change Email</h4>
-      <form id="uform" method="post" action="/auth/register/change-email">
+      <h4>Find Password</h4>
+      <form id="uform" method="post" action="">
         <div>
           <input id="phone" name="phone" type="text" placeholder="please enter phone number" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -58,12 +59,18 @@
         </div>
         <span class="captcha_tip"></span>
         <div>
-          <input id="email" name="email" type="text" placeholder="please enter a new email"/>
-          <div class="brewmaster_icon icon_email"></div>
+          <input id="pwd" name="pwd" type="password" placeholder="please enter new password"/>
+          <div class="brewmaster_icon icon_pwd"></div>
         </div>
-        <span class="email_tip"></span>
-        <input id="usubmit" name="usubmit" type="button" value="Submit"/>
+        <span class="pwd_tip"></span>
+        <div>
+          <input id="confirm_pwd" name="confirm_pwd" type="password" placeholder="please confirm your password"/>
+          <div class="brewmaster_icon icon_pwd"></div>
+        </div>
+        <span class="confirm_pwd_tip"></span>
+        <input id="usubmit" name="usubmit" type="button" value="submit"/>
       </form>
+      <a href="/">Login</a>
     </div>
   </div>
   <div class="footer">
@@ -74,16 +81,19 @@
   var phone = document.getElementById('phone'),
           captcha = document.getElementById('captcha'),
           get_captcha = document.getElementById('get_captcha'),
-          email = document.getElementById('email'),
+          pwd = document.getElementById('pwd'),
+          confirm_pwd = document.getElementById('confirm_pwd'),
           usubmit = document.getElementById('usubmit'),
           phone_tip = document.getElementsByClassName('phone_tip')[0],
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
-          email_tip = document.getElementsByClassName('email_tip')[0],
+          pwd_tip = document.getElementsByClassName('pwd_tip')[0],
+          confirm_pwd_tip = document.getElementsByClassName('confirm_pwd_tip')[0],
           uform = document.getElementById('uform'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
-          enable_email = false,
+          enable_pwd = false,
+          enable_confirm_pwd = false,
           timer = null;
   //ajax request
   function createXMLHTTPRequest() {
@@ -99,7 +109,7 @@
     return xmlHttpRequest;
   }
   function sendCaptcha() {
-    var count = 60;
+    var count = 6;
     if (enable_getcaptcha) {
       if (/^\d{11}$/.test(phone.value)) {
         phone_tip.style.display = "none";
@@ -107,7 +117,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/auth/register/change-email/phone", true);
+        req.open("POST", "/api/password/phone/captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -115,15 +125,15 @@
             if (req.status == 200) {
               enable_getcaptcha = false;
               get_captcha.className += ' disabled';
-              get_captcha.innerHTML = 'Resend(' + count + ')s';
+              get_captcha.innerHTML = 'resend(' + count + ')s';
               timer = setInterval(function () {
                 if (count > 0) {
-                  get_captcha.innerHTML = 'Resend(' + count-- + ')s';
+                  get_captcha.innerHTML = 'resend(' + count-- + ')s';
                 } else {
                   clearInterval(timer);
                   enable_getcaptcha = true;
                   get_captcha.className = 'get_captcha';
-                  get_captcha.innerHTML = 'Get captcha';
+                  get_captcha.innerHTML = 'get captcha';
                 }
               }, 1000);
             } else {
@@ -158,16 +168,25 @@
       captcha_tip.style.display = 'block';
       enable_captcha = false;
     }
-    //email
-    if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
-      email_tip.style.display = 'none';
-      enable_email = true;
+    //password
+    if (pwd.value.length < 8 || !/^[a-zA-Z0-9]/.test(pwd.value) || !/[a-z]+/.test(pwd.value) || !/[A-Z]+/.test(pwd.value) || !/[0-9]+/.test(pwd.value)) {
+      pwd_tip.innerHTML = 'assword must be more than eight and contain both upper and lower case letters  and Numbers';
+      pwd_tip.style.display = 'block';
+      enable_pwd = false;
     } else {
-      email_tip.innerHTML = 'please confirm the format of the email';
-      email_tip.style.display = 'block';
-      enable_email = false;
+      pwd_tip.style.display = 'none';
+      enable_pwd = true;
     }
-    if (enable_phone && enable_captcha && enable_email) {
+    //confirm pwd
+    if (confirm_pwd.value === pwd.value) {
+      confirm_pwd_tip.style.display = 'none';
+      enable_confirm_pwd = true;
+    } else {
+      confirm_pwd_tip.innerHTML = 'Two input password is not consistent';
+      confirm_pwd_tip.style.display = 'block';
+      enable_confirm_pwd = false;
+    }
+    if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
       uform.submit();
     }
   }
@@ -179,11 +198,11 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/auth/logo@2x_1.png"/>
+      <img src="/static/assets/login/logo@2x_1.png"/>
     </div>
     <div class="content-wrapper">
-      <h4>更换邮箱</h4>
-      <form id="uform" method="post" action="/auth/register/change-email">
+      <h4>找回密码</h4>
+      <form id="uform" method="post" action="">
         <div>
           <input id="phone" name="phone" type="text" placeholder="请输入手机号" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -196,12 +215,18 @@
         </div>
         <span class="captcha_tip"></span>
         <div>
-          <input id="email" name="email" type="text" placeholder="请输入新邮箱"/>
-          <div class="brewmaster_icon icon_email"></div>
+          <input id="pwd" name="pwd" type="password" placeholder="请输入新密码"/>
+          <div class="brewmaster_icon icon_pwd"></div>
         </div>
-        <span class="email_tip"></span>
+        <span class="pwd_tip"></span>
+        <div>
+          <input id="confirm_pwd" name="confirm_pwd" type="password" placeholder="确认密码"/>
+          <div class="brewmaster_icon icon_pwd"></div>
+        </div>
+        <span class="confirm_pwd_tip"></span>
         <input id="usubmit" name="usubmit" type="button" value="提交"/>
       </form>
+      <a href="/">返回登录</a>
     </div>
   </div>
   <div class="footer">
@@ -212,16 +237,19 @@
   var phone = document.getElementById('phone'),
           captcha = document.getElementById('captcha'),
           get_captcha = document.getElementById('get_captcha'),
-          email = document.getElementById('email'),
+          pwd = document.getElementById('pwd'),
+          confirm_pwd = document.getElementById('confirm_pwd'),
           usubmit = document.getElementById('usubmit'),
           phone_tip = document.getElementsByClassName('phone_tip')[0],
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
-          email_tip = document.getElementsByClassName('email_tip')[0],
+          pwd_tip = document.getElementsByClassName('pwd_tip')[0],
+          confirm_pwd_tip = document.getElementsByClassName('confirm_pwd_tip')[0],
           uform = document.getElementById('uform'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
-          enable_email = false,
+          enable_pwd = false,
+          enable_confirm_pwd = false,
           timer = null;
   //ajax request
   function createXMLHTTPRequest() {
@@ -245,7 +273,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/auth/register/change-email/phone", true);
+        req.open("POST", "/api/password/phone/captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -296,16 +324,25 @@
       captcha_tip.style.display = 'block';
       enable_captcha = false;
     }
-    //email
-    if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
-      email_tip.style.display = 'none';
-      enable_email = true;
+    //password
+    if (pwd.value.length < 8 || !/^[a-zA-Z0-9]/.test(pwd.value) || !/[a-z]+/.test(pwd.value) || !/[A-Z]+/.test(pwd.value) || !/[0-9]+/.test(pwd.value)) {
+      pwd_tip.innerHTML = '密码必须8位以上且同时包含大小写字母和数字';
+      pwd_tip.style.display = 'block';
+      enable_pwd = false;
     } else {
-      email_tip.innerHTML = '请输入正确的格式';
-      email_tip.style.display = 'block';
-      enable_email = false;
+      pwd_tip.style.display = 'none';
+      enable_pwd = true;
     }
-    if (enable_phone && enable_captcha && enable_email) {
+    //confirm pwd
+    if (confirm_pwd.value === pwd.value) {
+      confirm_pwd_tip.style.display = 'none';
+      enable_confirm_pwd = true;
+    } else {
+      confirm_pwd_tip.innerHTML = '两次输入的密码不一致';
+      confirm_pwd_tip.style.display = 'block';
+      enable_confirm_pwd = false;
+    }
+    if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
       uform.submit();
     }
   }
