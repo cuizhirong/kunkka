@@ -55,10 +55,14 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    this.getTableData(params[2]);
+    if(params[2]) {
+      this.getSingle(params[2]);
+    } else {
+      this.getTableData();
+    }
   }
 
-  getTableData(detailRefresh) {
+  getTableData() {
     var table = this.state.config.table;
     request.getList().then((res) => {
       table.data = res.Applies;
@@ -74,10 +78,6 @@ class Model extends React.Component {
 
       this.setState({
         config: config
-      }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
-        }
       });
     }).catch((res) => {
       table.data = [];
