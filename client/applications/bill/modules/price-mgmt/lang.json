@@ -12,6 +12,7 @@
     "modify": "Modify ",
     "delete": "Delete ",
     "name": "Name",
+    "no_price": "no price now",
     "description": "Description",
     "add": "Add"
   },
@@ -28,6 +29,7 @@
     "modify": "修改",
     "delete": "删除",
     "name": "名称",
+    "no_price": "无价格信息",
     "description": "详细信息",
     "add": "添加"
   }

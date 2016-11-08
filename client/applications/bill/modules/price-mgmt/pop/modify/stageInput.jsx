@@ -33,9 +33,12 @@ class StageInput extends React.Component {
   }
 
   componentWillMount() {
-    var data = [];
+    var data = [],
+      value = this.props.value.sort((a, b) => {
+        return a.count - b.count;
+      });
 
-    this.props.value.forEach((price) => {
+    value.forEach((price) => {
       var o = {
         count: price.count,
         price: price.price
@@ -170,7 +173,7 @@ class StageInput extends React.Component {
               column={columns}
               data={this.state.data}
             />
-            <div className={'no-price-data ' + (this.state.data.length === 0 ? '' : 'price-hide')}>no price now</div>
+            <div className={'no-price-data ' + (this.state.data.length === 0 ? '' : 'price-hide')}>{__.no_price}</div>
           </div>
           <div className="input-wrapper">
             <input className={this.state.rangeClass} ref="range" placeholder={__.range} onChange={this.onChange.bind(this)} />
