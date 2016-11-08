@@ -132,7 +132,7 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       var data = {};
       data.name = refs.name.state.value;
-      data.volume_type = obj ? obj.volume_type : refs.type.state.value;
+      data.volume_type = (obj && obj.volume_type) ? obj.volume_type : refs.type.state.value;
       data.size = Number(refs.capacity_size.state.value);
       data.imageRef = obj.id;
 
