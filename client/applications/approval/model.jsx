@@ -135,6 +135,8 @@ class Model extends React.Component {
         return 'collaboration';
       case 'apply-approval':
         return 'applications';
+      case 'image-snapshot':
+        return 'snapshot';
       default:
         return name;
     }
