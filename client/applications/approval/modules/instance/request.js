@@ -206,5 +206,13 @@ module.exports = {
       url: '/proxy/neutron/v2.0/ports/' + portId,
       data: data
     });
+  },
+  createPort: function(port) {
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/ports',
+      data: {
+        port: port
+      }
+    });
   }
 };

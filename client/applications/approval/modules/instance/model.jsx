@@ -314,12 +314,6 @@ class Model extends React.Component {
           that.refresh({
             detailRefresh: true
           }, true);
-          notify({
-            action: 'associate',
-            resource_id: rows[0].id,
-            resource_type: 'port',
-            stage: 'end'
-          });
         });
         break;
       case 'chg_security_grp':
