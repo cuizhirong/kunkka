@@ -3,9 +3,6 @@
     "name": ["image"],
     "key": "image",
     "default": true
-  }, {
-    "name": ["instance_snapshot"],
-    "key": "image-snapshot"
   }],
   "btns": [{
     "value": ["create", "instance"],

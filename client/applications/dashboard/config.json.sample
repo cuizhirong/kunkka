@@ -41,9 +41,6 @@
     "zh-CN"
   ],
   "routers": [{
-    "key": "image-snapshot",
-    "link": "image"
-  },{
     "key": "subnet",
     "link": "network"
   }, {

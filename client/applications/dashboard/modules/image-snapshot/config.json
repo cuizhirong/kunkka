@@ -1,8 +1,5 @@
 {
   "tabs": [{
-    "name": ["image"],
-    "key": "image"
-  }, {
     "name": ["instance_snapshot"],
     "key": "image-snapshot",
     "default": true

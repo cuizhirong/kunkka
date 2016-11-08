@@ -81,6 +81,8 @@ class Model extends React.Component {
     switch(name) {
       case 'loadbalancer':
         return 'lb';
+      case 'image-snapshot':
+        return 'snapshot';
       default:
         return name;
     }
