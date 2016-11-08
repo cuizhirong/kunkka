@@ -160,7 +160,8 @@ class Model extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    var hideKeypair = true;
+    // var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
     var credential = hideKeypair ? 'psw' : 'keypair';
 
     var networks = res.network.filter((ele) => {
@@ -1361,6 +1362,8 @@ class Model extends React.Component {
       value: __.password
     }];
 
+    let hideKeypair = true;
+
     this.setState({
       name: '',
       ready: false,
@@ -1381,7 +1384,7 @@ class Model extends React.Component {
       volume: null,
       networks: [],
       network: null,
-      hideKeypair: false,
+      hideKeypair: hideKeypair,
       securityGroups: [],
       securityGroup: {},
       sgUnfold: false,

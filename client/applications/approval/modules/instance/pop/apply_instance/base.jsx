@@ -157,7 +157,8 @@ class ModalBase extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    var hideKeypair = true;
+    // var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
     var credential = hideKeypair ? 'psw' : 'keypair';
 
     var networks = res.network.filter((ele) => {
