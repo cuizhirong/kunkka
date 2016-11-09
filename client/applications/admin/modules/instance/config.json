@@ -84,7 +84,7 @@
     }, {
       "type": "input",
       "key": "name",
-      "placeholder": ["pls_enter", "server", "name"]
+      "placeholder": ["pls_enter", "instance", "name"]
     }, {
       "type": "input",
       "key": "ip",
