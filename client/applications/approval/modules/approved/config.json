@@ -12,7 +12,7 @@
     "icon": "refresh"
   }],
   "search": {
-    "placeholder": ["pls_enter", "application", "id"]
+    "placeholder": ["pls_enter", "application_id"]
   },
   "table": {
     "checkbox": true,
