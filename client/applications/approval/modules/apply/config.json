@@ -19,9 +19,21 @@
     "key": "refresh",
     "icon": "refresh"
   }],
-  "search": {
-    "placeholder": ["pls_enter", "application_id"]
-  },
+  "filter": [{
+    "group_key": "application_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "application_id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "select",
+      "key": "status",
+      "default": ["all", "status"]
+    }]
+  }],
   "table": {
     "checkbox": true,
     "dataKey": "id",

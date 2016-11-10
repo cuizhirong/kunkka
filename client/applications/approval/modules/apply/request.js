@@ -43,6 +43,18 @@ module.exports = {
       return res;
     });
   },
+  filterFromAll: function(data) {
+    var url = '/api/apply/my-apply/?limit=' + data.limit + '&status=' + data.status + '&page=1';
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   modifyApply: function(item, newDesc) {
     var data = {};
     data.description = newDesc;

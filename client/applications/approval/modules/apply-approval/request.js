@@ -31,7 +31,7 @@ module.exports = {
     });
   },
   getApplicationByID: function(applicationID) {
-    var url = '/api/apply/' + applicationID;
+    var url = '/api/apply/' + applicationID + '?status=approving';
     return fetch.get({
       url: url
     }).then((res) => {

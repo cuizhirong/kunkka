@@ -147,7 +147,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/apply/')[1]);
+      currentUrl && this.stores.urls.push(currentUrl.split('/apply/')[1]);
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
@@ -174,7 +174,7 @@ class Model extends React.Component {
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
     }
-    (res.count > limit) ? (table.pagination = pagination) : {};
+    table.pagination = res.count > limit ? pagination : {};
 
     return table;
   }

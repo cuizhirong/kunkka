@@ -63,9 +63,11 @@ class Model extends React.Component {
   }
 
   getTableData() {
-    var table = this.state.config.table;
+    var table = this.state.config.table,
+      filter = this.state.config.filter;
     request.getList().then((res) => {
       table.data = res.Applies;
+      this.initializeFilter(filter);
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
 
@@ -84,6 +86,22 @@ class Model extends React.Component {
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     });
+  }
+
+  initializeFilter(filters) {
+    filters[1].items[0].data = [{
+      id: 'pending',
+      name: __.pending
+    }, {
+      id: 'approving',
+      name: __.approving
+    }, {
+      id: 'pass',
+      name: __.pass
+    }, {
+      id: 'refused',
+      name: __.refused
+    }];
   }
 
   getInitializeListData() {
@@ -112,9 +130,11 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    var table = this.state.config.table,
+      filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
       table.data = res.Applies;
+      this.initializeFilter(filter);
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -152,7 +172,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/apply/')[1]);
+      currentUrl && this.stores.urls.push(currentUrl.split('/apply/')[1]);
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
@@ -179,7 +199,7 @@ class Model extends React.Component {
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
     }
-    (res.count > limit) ? (table.pagination = pagination) : {};
+    table.pagination = res.count > limit ? pagination : {};
 
     return table;
   }
@@ -264,8 +284,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'search':
-        this.onClickSearch(actionType, refs, data);
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -278,15 +298,37 @@ class Model extends React.Component {
     }
   }
 
-  onClickSearch(actionType, refs, data) {
-    if (actionType === 'click') {
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
       this.loadingTable();
-      if (data.text) {
-        this.getSingle(data.text);
+
+      var applicationID = data.application_id,
+        allTenant = data.all_tenant;
+
+      if (applicationID) {
+        this.getSingle(applicationID.id);
+      } else if (allTenant) {
+        this.getFilterList(allTenant);
       } else {
         this.getList();
       }
     }
+  }
+
+  getFilterList(filterData) {
+    this.clearState();
+
+    var table = this.state.config.table;
+    filterData.limit = this.state.config.table.limit;
+    request.filterFromAll(filterData).then((res) => {
+      table.data = res.Applies;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
+    });
   }
 
   onClickDetailTabs(tabKey, refs, data) {
