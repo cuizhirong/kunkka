@@ -369,20 +369,17 @@ Application.prototype = {
     let user = req.session.user;
     let allowToReturn = false;
     applicationDao.findOneById(applicationId).then(result => {
-      if (result.userId === user.userId) {
+      if (!req.query.status && result.userId === user.userId) {
         allowToReturn = true;
       } else {
         let currentRole = this._getCurrentRole(user.roles);
         allowToReturn = result.approvals.some(approval => {
-          if (approval.userId === user.userId) {
-            return true;
-          } else {
+          if (req.query.status === 'approved') {
+            return approval.userId === user.userId;
+          } else if (req.query.status === 'approving') {
             return approval.approverRole === currentRole && approval.status === 'approving';
           }
         });
-      }
-      if (req.query.status && req.query.status !== result.status) {
-        allowToReturn = false;
       }
       if (allowToReturn) {
         result.detail = JSON.parse(result.detail);
