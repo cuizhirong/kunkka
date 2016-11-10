@@ -366,13 +366,35 @@ Application.prototype = {
 
   getApplicationById: function (req, res, next) {
     let applicationId = req.params.applicationId;
+    let user = req.session.user;
+    let allowToReturn = false;
     applicationDao.findOneById(applicationId).then(result => {
-      result.detail = JSON.parse(result.detail);
-      res.json(result);
+      if (result.userId === user.userId) {
+        allowToReturn = true;
+      } else {
+        let currentRole = this._getCurrentRole(user.roles);
+        allowToReturn = result.approvals.some(approval => {
+          if (approval.userId === user.userId) {
+            return true;
+          } else {
+            return approval.approverRole === currentRole && approval.status === 'approving';
+          }
+        });
+      }
+      if (req.query.status && req.query.status !== result.status) {
+        allowToReturn = false;
+      }
+      if (allowToReturn) {
+        result.detail = JSON.parse(result.detail);
+        return res.json(result);
+      } else {
+        return res.status(404).end();
+      }
     }).catch(err => {
       next(err);
     });
   },
+
   //get applications that I have approved.
   getApprovedList: function (req, res, next) {
     req.getListOptions = {

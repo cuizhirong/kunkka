@@ -78,7 +78,6 @@ exports.findAllByFields = function (fields) {
     obj.where.projectId = fields.projectId;
   }
   obj.order = [
-    ['status', 'DESC'],
     ['updatedAt', 'DESC']
   ];
   obj.distinct = true;
