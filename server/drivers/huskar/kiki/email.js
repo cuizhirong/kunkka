@@ -12,5 +12,16 @@ driver.sendEmail = function (to, subject, content, remote, token, callback) {
   );
 };
 
+/*** Promise ***/
+driver.sendEmailAsync = function (to, subject, content, remote, token) {
+  return driver.postMethodAsync(
+    remote + '/v1/publish/publish_email',
+    token, {
+      to: to,
+      subject: subject,
+      content: content
+    }
+  );
+};
 
 module.exports = driver;

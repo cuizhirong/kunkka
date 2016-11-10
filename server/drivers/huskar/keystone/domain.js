@@ -12,4 +12,13 @@ driver.listDomains = (token, remote, query, callback) => {
   );
 };
 
+/*** Promise ***/
+driver.listDomainsAsync = (token, remote, query) => {
+  return driver.getMethodAsync(
+    `${remote}/v3/domains`,
+    token,
+    query
+  );
+};
+
 module.exports = driver;

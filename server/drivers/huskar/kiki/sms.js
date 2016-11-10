@@ -12,5 +12,17 @@ driver.sendSms = function (countryCode, mobileNumber, content, remote, token, ca
   );
 };
 
+/*** Promise ***/
+driver.sendSmsAsync = function (countryCode, mobileNumber, content, remote, token) {
+  return driver.postMethodAsync(
+    remote + '/v1/publish/publish_sms',
+    token,
+    {
+      country_code: countryCode,
+      mobile_number: mobileNumber,
+      content: content
+    }
+  );
+};
 
 module.exports = driver;

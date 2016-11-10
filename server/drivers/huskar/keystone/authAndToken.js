@@ -57,4 +57,57 @@ driver.scopedAuth = function (projectId, token, remote, callback) {
   );
 };
 
+/*** Promise ***/
+driver.unscopedAuthAsync = function (username, password, domain, remote) {
+  return driver.postMethodAsync(
+    remote + '/v3/auth/tokens',
+    null,
+    {
+      'auth': {
+        'scope': {
+          'unscoped': {}
+        },
+        'identity': {
+          'methods': [
+            'password'
+          ],
+          'password': {
+            'user': {
+              'name': username,
+              'domain': {
+                'name': domain
+              },
+              'password': password
+            }
+          }
+        }
+      }
+    }
+  );
+};
+
+driver.scopedAuthAsync = function (projectId, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v3/auth/tokens',
+    token,
+    {
+      'auth': {
+        'scope': {
+          'project': {
+            'id': projectId
+          }
+        },
+        'identity': {
+          'token': {
+            'id': token
+          },
+          'methods': [
+            'token'
+          ]
+        }
+      }
+    }
+  );
+};
+
 module.exports = driver;

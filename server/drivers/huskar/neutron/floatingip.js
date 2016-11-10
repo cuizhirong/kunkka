@@ -56,4 +56,7 @@ driver.createFloatingip = function (floatingNetworkId, size, token, remote, call
   );
 };
 
+/*** Promise ***/
+
+
 module.exports = driver;

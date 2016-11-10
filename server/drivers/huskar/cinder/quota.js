@@ -22,4 +22,22 @@ driver.updateQuota = function (projectId, targetId, token, remote, callback, the
   );
 };
 
+/*** Promise ***/
+driver.getQuotaAsync = function (projectId, targetId, token, remote, query) {
+  let pid = targetId ? targetId : projectId;
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/os-quota-sets/' + pid,
+    token,
+    query
+  );
+};
+
+driver.updateQuotaAsync = function (projectId, targetId, token, remote, theBody) {
+  return driver.putMethodAsync(
+    remote + '/v2/' + projectId + '/os-quota-sets/' + targetId,
+    token,
+    theBody
+  );
+};
+
 module.exports = driver;

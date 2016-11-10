@@ -41,4 +41,38 @@ driver.resizeVolume = function (projectId, volumeId, size, token, remote, callba
   );
 };
 
+/*** Promise ***/
+driver.listVolumesAsync = function (projectId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/volumes/detail',
+    token,
+    query
+  );
+};
+driver.listVolumeTypesAsync = function (projectId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/types',
+    token,
+    query
+  );
+};
+driver.showVolumeDetailsAsync = function (projectId, volumeId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/volumes/' + volumeId,
+    token,
+    query
+  );
+};
+
+driver.resizeVolumeAsync = function (projectId, volumeId, size, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2/' + projectId + '/volumes/' + volumeId + '/action',
+    token, {
+      'os-extend': {
+        new_size: size
+      }
+    }
+  );
+};
+
 module.exports = driver;

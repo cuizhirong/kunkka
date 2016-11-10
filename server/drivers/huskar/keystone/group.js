@@ -11,4 +11,12 @@ driver.listUsersInGroup = (token, remote, groupId, callback) => {
   );
 };
 
+/*** Promise ***/
+driver.listUsersInGroupAsync = (token, remote, groupId) => {
+  return driver.getMethodAsync(
+    `${remote}/v3/groups/${groupId}/users`,
+    token
+  );
+};
+
 module.exports = driver;

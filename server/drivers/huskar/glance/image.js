@@ -29,4 +29,27 @@ driver.updateImage = function (imageId, payload, token, remote, callback) {
     .end(callback);
 };
 
+/*** Promise ***/
+driver.listImagesAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/images',
+    token,
+    query
+  );
+};
+driver.showImageDetailsAsync = function (imageId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/images/' + imageId,
+    token,
+    query
+  );
+};
+driver.updateImageAsync = function (imageId, payload, token, remote) {
+  return request
+    .patch(remote + '/v2/images/' + imageId)
+    .set('X-Auth-Token', token)
+    .set('Content-Type', 'application/openstack-images-v2.1-json-patch')
+    .send(JSON.stringify(payload));
+};
+
 module.exports = driver;

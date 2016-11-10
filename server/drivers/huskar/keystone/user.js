@@ -46,4 +46,50 @@ driver.changePassword = function (token, remote, userId, payload, callback) {
   );
 };
 
+/*** Promise ***/
+driver.listUsersAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v3/users',
+    token,
+    query
+  );
+};
+
+driver.getUserAsync = function (token, remote, userId) {
+  return driver.getMethodAsync(
+    remote + '/v3/users/' + userId,
+    token
+  );
+};
+
+driver.createUserAsync = function (token, remote, payload) {
+  return driver.postMethodAsync(
+    remote + '/v3/users',
+    token,
+    payload
+  );
+};
+driver.updateUserAsync = function (token, remote, userId, payload) {
+  return driver.patchMethodAsync(
+    remote + '/v3/users/' + userId,
+    token,
+    payload
+  );
+};
+
+driver.changePasswordAsync = function (token, remote, userId, payload) {
+  return driver.postMethodAsync(
+    remote + '/v3/users/' + userId + '/password',
+    token,
+    payload
+  );
+};
+
+driver.deleteUserAsync = driver.delUserAsync = function (token, remote, userId) {
+  return driver.delMethodAsync(
+    remote + '/v3/users/' + userId,
+    token
+  );
+};
+
 module.exports = driver;

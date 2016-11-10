@@ -37,4 +37,50 @@ driver.roleAssignments = function (token, remote, query, callback) {
   );
 };
 
+/*** Promise ***/
+driver.addRoleToUserOnProjectAsync = function (projectId, userId, roleId, token, remote) {
+  return driver.putMethodAsync(
+    `${remote}/v3/projects/${projectId}/users/${userId}/roles/${roleId}`,
+    token
+  );
+};
+
+driver.removeRoleToUserOnProjectAsync = function (projectId, userId, roleId, token, remote) {
+  return driver.delMethodAsync(
+    `${remote}/v3/projects/${projectId}/users/${userId}/roles/${roleId}`,
+    token
+  );
+};
+
+driver.checkRoleAsync = function (projectId, userId, roleId, token, remote) {
+  return driver.headMethodAsync(
+    `${remote}/v3/projects/${projectId}/users/${userId}/roles/${roleId}`,
+    token
+  );
+};
+
+driver.listRolesAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    `${remote}/v3/roles`,
+    token,
+    query
+  );
+};
+
+driver.roleAssignmentsAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    `${remote}/v3/role_assignments`,
+    token,
+    query
+  );
+};
+
+driver.createRoleAsync = function (token, remote, body) {
+  return driver.postMethodAsync(
+    `${remote}/v3/roles`,
+    token,
+    body
+  );
+};
+
 module.exports = driver;

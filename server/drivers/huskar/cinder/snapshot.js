@@ -28,4 +28,27 @@ driver.createSnapshot = function (projectId, token, remote, theBody, callback) {
   );
 };
 
+/*** Promise ***/
+driver.listSnapshotsAsync = function (projectId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/snapshots/detail',
+    token,
+    query
+  );
+};
+driver.showSnapshotDetailsAsync = function (projectId, snapshotId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2/' + projectId + '/snapshots/' + snapshotId,
+    token,
+    query
+  );
+};
+driver.createSnapshotAsync = function (projectId, token, remote, theBody) {
+  return driver.postMethodAsync(
+    remote + '/v2/' + projectId + '/snapshots',
+    token,
+    theBody
+  );
+};
+
 module.exports = driver;
