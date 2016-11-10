@@ -248,7 +248,22 @@ API.prototype = {
   __stacks: function (objVar, callback) {
     let remote = objVar.endpoint.heat[objVar.region];
     driver.heat.stack.listStacks(objVar.projectId, objVar.token, remote, callback, objVar.query);
+  },
+
+  /*** Promise ***/
+  __unscopedAuthAsync: function (objVar) {
+    return driver.keystone.authAndToken.unscopedAuthAsync(objVar.username, objVar.password, objVar.domain, keystoneRemote);
+  },
+  __scopedAuthAsync: function (objVar) {
+    return driver.keystone.authAndToken.scopedAuthAsync(objVar.projectId, objVar.token, keystoneRemote);
+  },
+  __userProjectsAsync: function (objVar) {
+    return driver.keystone.project.getUserProjectsAsync(objVar.userId, objVar.token, keystoneRemote);
+  },
+  __getUserAsync: function (objVar) {
+    return driver.keystone.user.getUserAsync(objVar.token, keystoneRemote, objVar.userId);
   }
+
 };
 
 API.prototype.handleError = function (err, req, res, next) {

@@ -1,6 +1,6 @@
 'use strict';
 
-const async = require('async');
+const co = require('co');
 const Base = require('../base.js');
 const config = require('config');
 const region = config('region');
@@ -44,110 +44,86 @@ function getCookie (req, userId) {
 
 Auth.prototype = {
   authentication: function (req, res, next) {
+    const that = this;
     let _username = req.body.username;
     let _password = req.body.password;
     let _domain = req.body.domain || config('domain') || 'Default';
-    let projects;
-    let cookies;
-    async.waterfall([
-      (cb) => {
-        this.__unscopedAuth.call(this, {
-          username: _username,
-          password: _password,
-          domain: _domain
-        }, (err, response) => {
-          if (err) {
-            cb(err);
-          } else {
-            let userId = response.body.token.user.id;
-            let token = response.header['x-subject-token'];
-            cookies = getCookie(req, userId);
-            cb(null, userId, token);
-          }
-        });
-      },
-      (userId, token, cb) => {
-        this.__userProjects.call(this, {
-          userId: userId,
-          token: token
-        }, (err, response) => {
-          if (err) {
-            cb(err);
-          } else {
-            projects = response.projects;
-            if (projects.length < 1) {
-              cb({error: 'no project'});
-            } else {
-              let projectId = projects[0].id;
-              if (cookies.project) {
-                projects.some( p => {
-                  return (p.id === cookies.project) && (projectId = cookies.project);
-                });
-              }
-              cb(null, projectId, token);
-            }
-          }
-        });
-        delete this.token;
-      },
-      (projectId, token, cb) => {
-        this.__scopedAuth.call(this, {
-          projectId: projectId,
-          token: token
-        }, (err, response) => {
-          if (err) {
-            cb(err);
-          } else {
-            let _token = response.header['x-subject-token'];
-            cb(null, _token, response.body);
-          }
-        });
-        delete this.token;
-      }
-    ],
-    (err, token, payload) => {
-      if (err) {
-        this.handleError(err, req, res, next);
+
+    co(function *() {
+      //unscope
+      const unScopedRes = yield that.__unscopedAuthAsync({
+        username: _username,
+        password: _password,
+        domain: _domain
+      });
+      const userId = unScopedRes.body.token.user.id;
+      let unScopeToken = unScopedRes.header['x-subject-token'];
+      let cookies = getCookie(req, userId);
+
+      //projects
+      const projectRes = yield that.__userProjectsAsync({
+        userId: userId,
+        token: unScopeToken
+      });
+      const projects = projectRes.body.projects;
+      let projectId;
+      if (projects.length < 1) {
+        return Promise.reject({error: 'no project'});
       } else {
-        let userId = payload.token.user.id;
-        let username = payload.token.user.name;
-        let projectId = payload.token.project.id;
-        let regionId = cookies.region ? cookies.region : region[0].id;
-        let expireDate = new Date(payload.token.expires_at);
-        let opt = {
-          path: '/',
-          maxAge: config('cookie').maxAge ? config('cookie').maxAge : 1000 * 3600 * 24 * 7,
-          httpOnly: true
-        };
-        res.cookie(userId, Object.assign(cookies, {
-          region: regionId,
-          project: projectId
-        }), opt);
-        req.session.cookie.expires = expireDate;
-        let isAdmin = false;
-        let _roles = payload.token.roles.map(role => {
-          if (role.name === 'admin') {
-            isAdmin = true;
-          }
-          return role.name;
-        });
-        req.session.user = {
-          'regionId': regionId,
-          'projectId': projectId,
-          'userId': userId,
-          'token': token,
-          'username': username,
-          'projects': projects,
-          'isAdmin': isAdmin,
-          'roles': _roles
-        };
-        req.session.endpoint = setRemote(payload.token.catalog);
-        if (!req.isAuthNotReturn) {
-          res.json({success: 'login sucess'});
-        } else {
-          next();
+        projectId = projects[0].id;
+        if (cookies.project) {
+          projects.some(p => {
+            return (p.id === cookies.project) && (projectId = cookies.project);
+          });
         }
       }
+
+      //scope
+      const scopedRes = yield that.__scopedAuthAsync({
+        projectId: projectId,
+        token: unScopeToken
+      });
+
+      const payload = scopedRes.body;
+      let scopeToken = scopedRes.header['x-subject-token'];
+      let username = payload.token.user.name;
+      let regionId = cookies.region ? cookies.region : region[0].id;
+      let expireDate = new Date(payload.token.expires_at);
+      let opt = {
+        path: '/',
+        maxAge: config('cookie').maxAge ? config('cookie').maxAge : 1000 * 3600 * 24 * 7,
+        httpOnly: true
+      };
+      res.cookie(userId, Object.assign(cookies, {
+        region: regionId,
+        project: projectId
+      }), opt);
+      req.session.cookie.expires = expireDate;
+      let isAdmin = false;
+      let _roles = payload.token.roles.map(role => {
+        if (role.name === 'admin') {
+          isAdmin = true;
+        }
+        return role.name;
+      });
+      req.session.user = {
+        'regionId': regionId,
+        'projectId': projectId,
+        'userId': userId,
+        'token': scopeToken,
+        'username': username,
+        'projects': projects,
+        'isAdmin': isAdmin,
+        'roles': _roles
+      };
+      req.session.endpoint = setRemote(payload.token.catalog);
+      if (!req.isAuthNotReturn) {
+        res.json({success: 'login sucess'});
+      } else {
+        next();
+      }
+    }).catch(err=> {
+      that.handleError(err, req, res, next);
     });
   },
   swtichProject: function (req, res, next) {
