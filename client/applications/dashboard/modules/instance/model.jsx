@@ -23,6 +23,7 @@ var joinNetwork = require('./pop/join_network/index');
 var instSnapshot = require('./pop/inst_snapshot/index');
 var dissociateFIP = require('./pop/dissociate_fip/index');
 var changeSecurityGrp = require('./pop/change_security_grp/index');
+var changePassword = require('./pop/change_password/index');
 var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
@@ -347,6 +348,11 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'chg_pwd':
+        changePassword(rows[0], null, () => {
+          that.refresh(null, true);
+        });
+        break;
       case 'add_volume':
         request.getVolumeList(!HALO.volume_types).then((res) => {
           if (!HALO.volume_types) {
@@ -402,6 +408,7 @@ class Model extends React.Component {
       switch (key) {
         case 'vnc_console':
         case 'chg_security_grp':
+        case 'chg_pwd':
           btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
           break;
         case 'power_on':

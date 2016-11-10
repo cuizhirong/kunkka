@@ -1,0 +1,16 @@
+{
+  "title": ["change", "password"],
+  "fields": [{
+    "type": "input_pwd",
+    "field": "password",
+    "required": true
+  }, {
+    "type": "input_pwd",
+    "field": "confirm_pwd",
+    "required": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": true
+  }
+}

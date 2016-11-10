@@ -221,5 +221,11 @@ module.exports = {
       url: '/proxy/neutron/v2.0/ports/' + portId,
       data: data
     });
+  },
+  updatePassword: function(id, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+      data: data
+    });
   }
 };
