@@ -4,6 +4,8 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
+const ENABLE_CHARGE = HALO.settings.enable_charge;
+
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
@@ -116,7 +118,7 @@ function pop(obj, parent, callback) {
           });
         };
 
-        if (HALO.settings.enable_charge) {
+        if (ENABLE_CHARGE) {
           request.getVolumePrice('volume.size', selectedMin).then((res) => {
             setFields();
             refs.charge.setState({
@@ -159,12 +161,13 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
+      var volType = refs.type.state.value;
+
       switch (field) {
         case 'capacity_size':
-          if (HALO.settings.enable_charge) {
+          if (ENABLE_CHARGE) {
             var sliderEvent = state.eventType === 'mouseup';
             var inputEvnet = state.eventType === 'change' && !state.error;
-            var volType = refs.type.state.value;
 
             if (sliderEvent || inputEvnet) {
               request.getVolumePrice(volType + '.volume.size', state.value).then((res) => {
@@ -178,6 +181,15 @@ function pop(obj, parent, callback) {
           refs.btn.setState({
             disabled: state.error
           });
+          break;
+        case 'type':
+          if(ENABLE_CHARGE) {
+            request.getVolumePrice(volType + '.volume.size', state.value).then((res) => {
+              refs.charge.setState({
+                value: res.unit_price
+              });
+            }).catch((error) => {});
+          }
           break;
         default:
           break;
