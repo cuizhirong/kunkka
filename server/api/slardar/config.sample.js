@@ -34,7 +34,7 @@ module.exports = {
       value: '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
       type: 'string'
     }, {
-      app: 'admin',
+      app: 'global',
       name: 'is_show_trash',
       value: 'false',
       type: 'boolean'
