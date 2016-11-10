@@ -1,10 +1,48 @@
 'use strict';
 
-var config = require('../config');
-var session = require('express-session');
-var logger = require('./logger').logger;
+const config = require('../config');
+const session = require('express-session');
+const logger = require('./logger').logger;
 
-module.exports = function(app) {
+const promisifyMemcachedClientAPI = function (memcachedClient) {
+  //todo:batch defining async function
+  memcachedClient.setAsync = function (key, value, expires) {
+    return new Promise(function (resolve, reject) {
+      memcachedClient.set(key, value, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(Array.prototype.slice.call(arguments, 1));
+        }
+      }, expires);
+    });
+  };
+
+  memcachedClient.getAsync = function (key) {
+    return new Promise(function (resolve, reject) {
+      memcachedClient.get(key, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(Array.prototype.slice.call(arguments, 1));
+        }
+      });
+    });
+  };
+  memcachedClient.deleteAsync = function (key) {
+    return new Promise(function (resolve, reject) {
+      memcachedClient.delete(key, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(Array.prototype.slice.call(arguments, 1));
+        }
+      });
+    });
+  };
+};
+
+module.exports = function (app) {
   var sessionEngine = config('sessionEngine');
   if (sessionEngine.type === 'Session') {
     app.use(session({
@@ -43,18 +81,19 @@ module.exports = function(app) {
     var Memcached = require('memjs');
     var memjsLogger = {};
     memjsLogger.log = logger.error;
-    var MemcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
+    var memcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
       failover: false,
       logger: memjsLogger
     });
-    app.set('CacheClient', MemcachedClient);
+    promisifyMemcachedClientAPI(memcachedClient);
+    app.set('CacheClient', memcachedClient);
     var MemcachedStore = require('connect-memjs')(session);
     app.use(session({
       secret: sessionEngine.secret,
       resave: false,
       saveUninitialized: true,
       store: new MemcachedStore({
-        client: MemcachedClient
+        client: memcachedClient
       })
     }));
     // handle lost connection to Memcached

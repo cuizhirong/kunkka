@@ -11,8 +11,8 @@ module.exports = function (query) {
       }
       str += k + '=' + qs.escape(query[k]);
     });
+    str = str ? ('?' + str) : '';
   }
-  str = str ? ('?' + str) : '';
 
   return str;
 };
