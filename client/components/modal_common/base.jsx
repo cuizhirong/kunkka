@@ -3,6 +3,7 @@ var {Modal, Button} = require('client/uskin/index');
 var UskinTip = require('client/uskin/index').Tip;
 
 var Input = require('./subs/input/index');
+var InputPassword = require('./subs/input_pwd/index');
 var Text = require('./subs/text/index');
 var Tip = require('./subs/tip/index');
 var Checkbox = require('./subs/checkbox/index');
@@ -53,6 +54,7 @@ class ModalBase extends React.Component {
         'text': Text,
         'tab': Tab,
         'input': Input,
+        'input_pwd': InputPassword,
         'textarea': TextArea,
         'tip': Tip,
         'checkbox': Checkbox,
