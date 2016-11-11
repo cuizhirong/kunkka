@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (key, vals, link, page, limit) {
+module.exports = function (key, vals, link, page, limit, query) {
   page = page ? parseInt(page, 10) : 1;
   limit = limit ? parseInt(limit, 10) : 0;
   let totalPage = 1;
@@ -23,6 +23,13 @@ module.exports = function (key, vals, link, page, limit) {
       obj[keyLink].push({
         href: `${link}?page=${page + 1}${theLimit}`,
         rel: 'next'
+      });
+    }
+    if (query) {
+      Object.keys(query).forEach(q => {
+        obj[keyLink].forEach(_link => {
+          _link.href = `${_link.href}&${q}=${query[q]}`;
+        });
       });
     }
   }
