@@ -18,7 +18,12 @@ User.prototype = {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let obj = paginate('users', payload.users, '/api/v1/users', objVar.query.page, objVar.query.limit);
+        let obj;
+        if (objVar.query.domain_id) {
+          obj = paginate('users', payload.users, '/api/v1/users', objVar.query.page, objVar.query.limit, {domain_id: objVar.query.domain_id});
+        } else {
+          obj = paginate('users', payload.users, '/api/v1/users', objVar.query.page, objVar.query.limit);
+        }
         res.json({
           users: obj.users,
           users_links: obj.users_links
