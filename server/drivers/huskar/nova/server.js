@@ -57,6 +57,12 @@ driver.createSnapshot = function (projectId, serverId, name, metadata, token, re
 };
 
 /*** Promise ***/
-
+driver.listServersAsync = function (projectId, token, remote, query) { // get servers list.
+  return driver.getMethodAsync(
+    remote + '/v2.1/' + projectId + '/servers/detail',
+    token,
+    query
+  );
+};
 
 module.exports = driver;
