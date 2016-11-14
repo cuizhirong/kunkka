@@ -238,8 +238,6 @@ Instance.prototype = {
     co(function*() {
       const region = req.headers.region;
       const adminTokenObj = yield adminLogin();
-      console.log(adminTokenObj.token);
-      console.log(adminTokenObj.remote);
       const softDeletedServers = yield driver.nova.server.listServersAsync(config('admin_projectId'), adminTokenObj.token, adminTokenObj.remote.nova[region], {
         all_tenants: 1,
         tenant_id: req.params.projectId,

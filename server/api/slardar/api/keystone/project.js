@@ -16,7 +16,9 @@ Project.prototype = {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let obj = paginate('projects', payload.projects, '/api/v1/projects', objVar.query.page, objVar.query.limit);
+        let query = objVar.query;
+        let domainId = query.domain_id;
+        let obj = paginate('projects', payload.projects, '/api/v1/projects', query.page, query.limit, (domainId ? {domain_id: domainId} : null));
         res.json({
           projects: obj.projects,
           projects_links: obj.projects_links
