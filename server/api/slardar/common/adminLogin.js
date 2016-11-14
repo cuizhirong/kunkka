@@ -1,6 +1,7 @@
 'use strict';
 
 const async = require('async');
+const co = require('co');
 
 const SlardarBase = require('../api/base');
 
@@ -68,5 +69,27 @@ module.exports = function (callback) {
         }
       }
     );
+  } else {
+    return new Promise((resolve, reject) => {
+      co(function *() {
+        const unsopedAuthObj = yield SlardarBase.prototype.__unscopedAuthAsync({
+          username: adminUsername,
+          password: adminPassword,
+          domain: domain
+        });
+        const scopedAuthObj = yield SlardarBase.prototype.__scopedAuthAsync({
+          projectId: adminProjectId,
+          token: unsopedAuthObj.header['x-subject-token']
+        });
+        const tokenObj = {
+          token: scopedAuthObj.header['x-subject-token'],
+          response: scopedAuthObj,
+          remote: setRemote(scopedAuthObj.body.token.catalog)
+        };
+        resolve(tokenObj);
+      }).catch(e => {
+        reject(e);
+      });
+    });
   }
 };
