@@ -30,11 +30,16 @@ function pop(parent, callback) {
             value: res[0].id,
             hide: false
           });
-
-          refs.btn.setState({
-            disabled: false
+        } else {
+          refs.enable_public_gateway.setState({
+            checked: false,
+            hide: true
           });
         }
+
+        refs.btn.setState({
+          disabled: false
+        });
       });
 
       if (HALO.settings.enable_charge) {
