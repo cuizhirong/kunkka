@@ -28,7 +28,8 @@ class Model extends React.Component {
     moment.locale(HALO.configs.lang);
 
     this.state = {
-      config: config
+      config: config,
+      domains: []
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -41,7 +42,13 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    var that = this;
     this.tableColRender(this.state.config.table.column);
+    request.getDomains().then((res) => {
+      that.setState({
+        domains: res
+      });
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -84,12 +91,14 @@ class Model extends React.Component {
     this.clearState();
 
     var table = this.state.config.table;
+    var filter = this.state.config.filter;
     request.getGroupByID(id).then((res) => {
       if (res.group) {
         table.data = [res.group];
       } else {
         table.data = [];
       }
+      this.initializeFilter(filter);
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
@@ -104,13 +113,26 @@ class Model extends React.Component {
     this.clearState();
 
     var table = this.state.config.table;
+    var filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
       table.data = res.groups;
+      this.initializeFilter(filter);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
       this.updateTableData(table, res._url);
     });
+  }
+
+  initializeFilter(filters) {
+    var domains = [];
+    this.state.domains.forEach((item) => {
+      domains.push({
+        id: item.id,
+        name: item.name
+      });
+    });
+    filters[1].items[1].data = domains;
   }
 
   getFilterList(data) {

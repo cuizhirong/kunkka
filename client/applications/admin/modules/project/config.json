@@ -48,6 +48,10 @@
       "type": "input",
       "key": "name",
       "placeholder": ["pls_enter", "project", "name"]
+    }, {
+      "type": "select",
+      "key": "domain_id",
+      "default": ["all", "domain"]
     }]
   }],
   "table": {

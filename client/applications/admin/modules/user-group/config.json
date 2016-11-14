@@ -38,6 +38,10 @@
       "type": "input",
       "key": "name",
       "placeholder": ["pls_enter", "user-group", "name"]
+    }, {
+      "type": "select",
+      "key": "domain_id",
+      "default": ["all", "domain"]
     }]
   }],
   "table": {

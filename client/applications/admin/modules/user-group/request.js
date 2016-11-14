@@ -26,6 +26,7 @@ module.exports = {
         url: url
       }).then((res) => {
         res._url = url;
+        res.domains = domains;
         return res;
       });
     });

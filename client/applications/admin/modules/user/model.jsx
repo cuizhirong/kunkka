@@ -32,7 +32,8 @@ class Model extends React.Component {
     moment.locale(HALO.configs.lang);
 
     this.state = {
-      config: config
+      config: config,
+      domains: []
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -45,7 +46,13 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    var that = this;
     this.tableColRender(this.state.config.table.column);
+    request.getDomains().then((res) => {
+      that.setState({
+        domains: res
+      });
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -98,6 +105,7 @@ class Model extends React.Component {
     this.clearState();
 
     var table = this.state.config.table;
+    var filter = this.state.config.filter;
     request.getUserByID(id).then((res) => {
       if (res.user) {
         table.data = [res.user];
@@ -105,6 +113,7 @@ class Model extends React.Component {
         table.data = [];
       }
       this.setPagination(table, res);
+      this.initializeFilter(filter);
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
@@ -120,9 +129,11 @@ class Model extends React.Component {
     this.clearState();
 
     var table = this.state.config.table;
+    var filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
       table.data = res.users;
       this.setPagination(table, res);
+      this.initializeFilter(filter);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
@@ -167,6 +178,17 @@ class Model extends React.Component {
 
   getInitialListData() {
     this.getList();
+  }
+
+  initializeFilter(filters) {
+    var domains = [];
+    this.state.domains.forEach((item) => {
+      domains.push({
+        id: item.id,
+        name: item.name
+      });
+    });
+    filters[1].items[1].data = domains;
   }
 
   onFilterSearch(actionType, refs, data) {
@@ -701,6 +723,9 @@ class Model extends React.Component {
     }, {
       title: __.id,
       content: item.id
+    }, {
+      title: __.domain,
+      content: <a data-type="router" key={item.domain_id} href={'/admin/domain/' + item.domain_id}>{item.domain_id}</a>
     }, {
       title: __.describe,
       content: item.description
