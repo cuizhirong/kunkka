@@ -23,11 +23,9 @@ function pop(obj, parent, callback) {
         });
         return;
       }
-      var data = {
-        metadata: {
-          owner: refs.chg_owner.state.value
-        }
-      };
+      var data = {};
+      data.metadata = obj.metadata;
+      data.metadata.owner = refs.chg_owner.state.value;
       request.updateOwner(obj.id, data).then(() => {
         callback && callback();
         cb(true);
