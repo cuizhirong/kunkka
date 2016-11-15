@@ -109,6 +109,9 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteSecurityGroup(rows).then(() => {
+              if (router.getPathList()[2]) {
+                router.replaceState('/dashboard/security-group');
+              }
               that.refresh(null, true);
             });
             cb(true);

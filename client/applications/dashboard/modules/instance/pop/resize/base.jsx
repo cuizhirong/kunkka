@@ -264,7 +264,7 @@ class ModalBase extends React.Component {
     if (enableCharge && flavor) {
       let type = flavor.name;
       if (HALO.prices) {
-        price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
+        price = HALO.prices['instance:' + type] ? HALO.prices['instance:' + type].unit_price.price.segmented[0].price : HALO.prices[type].unit_price.price.segmented[0].price;
         monthlyPrice = (Number(price) * 24 * 30).toFixed(4);
       }
     }
