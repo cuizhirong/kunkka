@@ -53,10 +53,12 @@ Overview.prototype = {
   },
   getOverview: function (req, res, next) {
     let objVar = this.getVars(req, ['projectId']);
-    objVar.targetId = undefined;
-    objVar.query = {
-      tenant_id: objVar.projectId
-    };
+    // /api/v1/:projectId/overview?all_tenants=1&tenant_id=xxx   admin get other tenant overview
+    if (objVar.query.tenant_id && objVar.query.all_tenants) {
+      objVar.targetId = objVar.query.tenant_id;
+    } else {
+      objVar.query.tenant_id = objVar.projectId;
+    }
     async.parallel(
       this.arrAsync(objVar),
       (err, results) => {
