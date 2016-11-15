@@ -243,7 +243,9 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+        request.getExtraSpecs(data.rows[0].id).then(res => {
+          this.onClickDetailTabs(actionType, refs, data, res);
+        });
         break;
       default:
         break;
@@ -348,7 +350,7 @@ class Model extends React.Component {
     return btns;
   }
 
-  onClickDetailTabs(tabKey, refs, data) {
+  onClickDetailTabs(tabKey, refs, data, extraSpecs) {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
@@ -356,7 +358,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var basicPropsItem = this.getBasicPropsItems(rows[0], extraSpecs);
 
           contents[tabKey] = (
             <div>
@@ -382,7 +384,7 @@ class Model extends React.Component {
     });
   }
 
-  getBasicPropsItems(item) {
+  getBasicPropsItems(item, data) {
     var memory = unitConverter(item.ram, 'MB');
     var disk = unitConverter(item.disk, 'GB');
 
@@ -405,8 +407,8 @@ class Model extends React.Component {
       title: __.enable,
       content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable
     }, {
-      title: __.comment,
-      content: ''
+      title: __.extra_specs,
+      content: data ? JSON.stringify(data.extra_specs) : '-'
     }];
 
     return items;

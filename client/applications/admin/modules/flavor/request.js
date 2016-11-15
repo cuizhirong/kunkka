@@ -38,5 +38,16 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID
     });
+  },
+  createExtraSpecs: function(flavorID, dataSpecs) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID + '/os-extra_specs',
+      data: {'extra_specs': dataSpecs}
+    });
+  },
+  getExtraSpecs: function(flavorID) {
+    return fetch.get({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID + '/os-extra_specs'
+    });
   }
 };

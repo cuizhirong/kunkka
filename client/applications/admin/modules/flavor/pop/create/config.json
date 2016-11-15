@@ -21,6 +21,9 @@
     "type": "input",
     "field": "id"
   }, {
+    "type": "input",
+    "field": "extra_specs"
+  }, {
     "type": "tip",
     "tip_type": "warning",
     "field": "price_tip",

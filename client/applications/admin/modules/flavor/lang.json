@@ -1,6 +1,7 @@
 {
   "en": {
     "capacity_gb": "Capacity (GB)",
+    "extra_specs": "Extra Specs",
     "flavor_name_tip": "Only in letter, number, dot and underscore",
     "flavor_id": "Flavor ID",
     "memory_gb": "Memory (GB)",
@@ -9,6 +10,7 @@
   },
   "zh-CN": {
     "capacity_gb": "容量 (GB)",
+    "extra_specs": "额外配置",
     "flavor_name_tip": "仅限字母、数字、点和下划线",
     "flavor_id": "配置ID",
     "memory_gb": "内存 (GB)",

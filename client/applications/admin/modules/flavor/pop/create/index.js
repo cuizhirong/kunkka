@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
+var getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   if (HALO.settings.enable_charge) {
@@ -26,9 +27,27 @@ function pop(obj, parent, callback) {
         data.flavor.id = id;
       }
 
+      let extraSpecs = refs.extra_specs.state.value,
+        dataSpecs = '';
+      if(extraSpecs) {
+        dataSpecs = JSON.parse(extraSpecs);
+      } else {
+        dataSpecs = { 'hw_video:ram_max_mb': '64' };
+      }
+
       request.createFlavor(data).then((res) => {
-        cb(true);
-        callback && callback(res);
+        if(res.flavor.id) {
+          request.createExtraSpecs(res.flavor.id, dataSpecs).then((_res) => {
+            cb(true);
+            callback && callback(_res);
+          }).catch((error) => {
+            refs.error.setState({
+              value: getErrorMessage(error),
+              hide: false
+            });
+            cb(true);
+          });
+        }
       }).catch((err) => {
         var reg = new RegExp('"message":"(.*)","');
         var tip = reg.exec(err.response)[1];
@@ -45,7 +64,8 @@ function pop(obj, parent, callback) {
         ram = refs.memory_gb.state,
         vcpus = refs.vcpu.state,
         disk = refs.capacity_gb.state,
-        flag = name.value && ram.value && vcpus.value && disk.value && !name.error;
+        specs = refs.extra_specs.state,
+        flag = name.value && ram.value && vcpus.value && disk.value && !name.error && !specs.error;
 
       switch(field) {
         case 'name':
@@ -58,6 +78,24 @@ function pop(obj, parent, callback) {
             refs.name.setState({
               error: true
             });
+          }
+          break;
+        case 'extra_specs':
+          try {
+            JSON.parse(specs.value);
+            refs.extra_specs.setState({
+              error: false
+            });
+          } catch(err) {
+            if(specs.value === '') {
+              refs.extra_specs.setState({
+                error: false
+              });
+            } else {
+              refs.extra_specs.setState({
+                error: true
+              });
+            }
           }
           break;
         default:
