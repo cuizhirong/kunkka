@@ -220,5 +220,11 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/metadata',
       data: data
     });
+  },
+  updateUsage: function(serverId, data) {
+    return fetch.put({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/metadata',
+      data: data
+    });
   }
 };

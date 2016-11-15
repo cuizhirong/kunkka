@@ -144,5 +144,11 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeId + '/metadata',
       data: data
     });
+  },
+  updateUsage: function(volumeId, data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeId + '/metadata',
+      data: data
+    });
   }
 };

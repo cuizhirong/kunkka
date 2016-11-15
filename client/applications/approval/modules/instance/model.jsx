@@ -28,6 +28,7 @@ var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
 var deleteInstance = require('./pop/delete/index');
 var changeOwner = require('./pop/change_owner/index');
+var changeUsage = require('./pop/change_usage/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -359,6 +360,13 @@ class Model extends React.Component {
           that.refresh(null, true);
         });
         break;
+      case 'chg_usage':
+        changeUsage(rows[0], null, () => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
       case 'terminate':
         deleteInstance(rows);
         break;
@@ -419,6 +427,9 @@ class Model extends React.Component {
           break;
         case 'add_volume':
         case 'chg_owner':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'chg_usage':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'terminate':

@@ -48,6 +48,10 @@
           "title": ["chg_owner"],
           "key": "chg_owner",
           "disabled": true
+        }, {
+          "title": ["chg_usage"],
+          "key": "chg_usage",
+          "disabled": true
         }]
       }, {
         "items": [{

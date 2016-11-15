@@ -15,6 +15,7 @@ var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
 var changeOwner = require('./pop/change_owner/index');
+var changeUsage = require('./pop/change_usage/index');
 var notify = require('../../utils/notify');
 
 var config = require('./config.json');
@@ -230,6 +231,13 @@ class Model extends React.Component {
           that.refresh(null, true);
         });
         break;
+      case 'chg_usage':
+        changeUsage(rows[0], null, () => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
@@ -290,6 +298,9 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'True') ? false : true;
           break;
         case 'chg_owner':
+          btns[key].disabled = (len === 1) ? false : true;
+          break;
+        case 'chg_usage':
           btns[key].disabled = (len === 1) ? false : true;
           break;
         case 'delete':

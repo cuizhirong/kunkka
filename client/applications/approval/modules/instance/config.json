@@ -43,6 +43,14 @@
           "title": ["apply_", "resize"],
           "key": "resize",
           "disabled": true
+        }, {
+          "title": ["chg_owner"],
+          "key": "chg_owner",
+          "disabled": true
+        }, {
+          "title": ["chg_usage"],
+          "key": "chg_usage",
+          "disabled": true
         }]
       }, {
         "items": [{
@@ -57,9 +65,7 @@
           "title": ["join", "networks"],
           "key": "join_ntw",
           "disabled": true
-        }]
-      }, {
-        "items": [{
+        }, {
           "title": ["modify","security", "group"],
           "key": "chg_security_grp",
           "disabled": true
@@ -72,12 +78,6 @@
         }, {
           "title": ["detach", "volume"],
           "key": "rmv_volume",
-          "disabled": true
-        }]
-      }, {
-        "items": [{
-          "title": ["chg_owner"],
-          "key": "chg_owner",
           "disabled": true
         }]
       }, {
