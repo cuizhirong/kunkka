@@ -146,7 +146,7 @@ User.prototype = {
           user.links = JSON.stringify(user.links);
         }
         user.phone = req.body.phone;
-        user.area_code = config('phone_area_code');
+        user.area_code = config('phone_area_code') || '86';
 
         return userModel.create(user);
       })
