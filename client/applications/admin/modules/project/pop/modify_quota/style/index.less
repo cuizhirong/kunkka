@@ -1,0 +1,87 @@
+@import "../../../../../style/theme.less";
+
+@resource-box-color: @color_grey;
+@resource-quota-title-color: @color_font_400;
+@resource-quota-strip-bg-color: @color_grey_400;
+@resource-quota-strip-default-color: @color_info;
+@resource-quota-strip-general-color: @color_warning;
+@resource-quota-strip-shortage-color: @color_delete;
+
+.halo-com-modal-modify-quota {
+  margin-bottom: 20px;
+  .content {
+    padding-left: 36px;
+    overflow: auto;
+    > div {
+      overflow: auto;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 300;
+      padding-bottom: 16px;
+      color: @resource-quota-title-color;
+    }
+    ul > li {
+      float: left;
+      width: 50%;
+      box-sizing: border-box;
+      display: flex;
+      &:nth-child(2n+1) {
+        padding-right: 16px;
+      }
+      &:nth-child(2n) {
+        padding-left: 16px;
+      }
+      > div:first-child {
+        width: 242px;
+        min-width: 242px;
+        max-width: 242px;
+        flex: 1;
+      }
+      > div {
+        flex: 1;
+        line-height: 54px;
+      }
+      input {
+        width: 78px;
+      }
+      .description {
+        height: 30px;
+        line-height: 30px;
+        width: 220px;
+        > div:first-child {
+          float: left;
+          width: 60%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        > div:last-child {
+          float: right;
+          width: 40%;
+          text-align: right;
+        }
+      }
+      .stripe {
+        width: 220px;
+        height: 14px;
+        background-color: @resource-quota-strip-bg-color;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 0 4px rgba(0,175,200,0.5);
+        }
+        > div {
+          height: inherit;
+          transition: 500ms;
+          background-color: @resource-quota-strip-default-color;
+          &.in-general {
+            background-color: @resource-quota-strip-general-color;
+          }
+          &.in-shortage {
+            background-color: @resource-quota-strip-shortage-color;
+          }
+        }
+      }
+    }
+  }
+}

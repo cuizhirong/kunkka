@@ -29,7 +29,7 @@
     "enabled": "Enabled",
     "error": "Error",
     "error_deleting": "Error Deleting",
-    "export": "Export",
+    "export": "Export ",
     "export_csv_info": "Sure to export csv file ?",
     "flavor": "Flavor",
     "floating-ip": "Floating IP",
@@ -80,7 +80,16 @@
     "user-group": "User Group",
     "view_is_unavailable": "The view is unavailable.",
     "volume": "Volume ",
-    "yes": "Yes"
+    "yes": "Yes",
+    "floating_ip_address": "Floating IP Address",
+    "original_pwd": "Original Password",
+    "new_pwd": "New Password",
+    "modify_success": "Modify Success",
+    "modify_fail": "Modify Failed",
+    "modify_pwd": "Modify Password",
+    "personal_settings": "Settings",
+    "back": "Back",
+    "confirm_pwd": "Confirm Password"
   },
   "zh-CN": {
     "active": "运行中",
@@ -164,6 +173,15 @@
     "user-group": "用户组",
     "view_is_unavailable": "没有数据可以显示",
     "volume": "云硬盘",
-    "yes": "是"
+    "yes": "是",
+    "floating_ip_address": "公网IP地址",
+    "original_pwd": "原始密码",
+    "new_pwd": "新密码",
+    "modify_success": "修改成功！",
+    "modify_fail": "修改失败！",
+    "modify_pwd": "修改密码",
+    "personal_settings": "个人设置",
+    "back": "返回",
+    "confirm_pwd": "确认密码"
   }
 }

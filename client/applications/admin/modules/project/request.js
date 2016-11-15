@@ -127,15 +127,17 @@ module.exports = {
   },
   getQuotas: function(projectID) {
     return fetch.get({
-      url: '/api/v1/' + HALO.user.projectId + '/quota/' + projectID
+      url: '/api/v1/' + HALO.user.projectId + '/overview?all_tenants=1&tenant_id=' + projectID
     });
   },
-  modifyQuota: function(type, projectID, quota) {
-    var data = {};
-    data[type] = quota;
+  modifyQuota: function(data, projectID) {
+    var _data = {};
+    for(var i in data) {
+      _data[i] = data[i].total;
+    }
     return fetch.put({
       url: '/api/v1/' + HALO.user.projectId + '/quota/' + projectID,
-      data: data
+      data: _data
     });
   },
   createProject: function(data) {

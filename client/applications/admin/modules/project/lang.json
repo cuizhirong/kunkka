@@ -12,8 +12,13 @@
     "floatingip": "Floating IP",
     "keypair": "Keypair",
     "security_group": "Security Group",
-    "sata": "SATA",
-    "ssd": "SSD"
+    "sata": "SATA ",
+    "ssd": "SSD ",
+    "infinity": "Infinity",
+    "gigabyte": " Gigabyte",
+    "unit_gb": "(GB)",
+    "compute": "Compute",
+    "quantity": "Quantity"
   },
   "zh-CN": {
     "quota": "配额",
@@ -29,6 +34,11 @@
     "keypair": "密钥",
     "security_group": "安全组",
     "sata": "容量型",
-    "ssd": "性能型"
+    "ssd": "性能型",
+    "infinity": "无限",
+    "gigabyte": "容量",
+    "unit_gb": "(GB)",
+    "compute": "计算",
+    "quantity": "增加数量"
   }
 }

@@ -5,6 +5,7 @@ var Main = require('client/components/main_paged/index');
 var {Button} = require('client/uskin/index');
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
+var ResourceQuota = require('./quota');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createProject = require('./pop/create/index');
@@ -12,6 +13,7 @@ var activateProject = require('./pop/activate/index');
 var deactivateProject = require('./pop/deactivate/index');
 var addUser = require('./pop/add_user/index');
 var removeUser = require('./pop/remove_user/index');
+var modifyQuota = require('./pop/modify_quota/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -385,6 +387,9 @@ class Model extends React.Component {
         });
         break;
       case 'modify_quota':
+        request.getQuotas(rows[0].id).then((res) => {
+          modifyQuota([res.overview_usage, rows[0]], null, () => {});
+        });
         break;
       case 'delete':
         deleteModal({
@@ -518,17 +523,10 @@ class Model extends React.Component {
         if (rows.length === 1) {
           syncUpdate = false;
           request.getQuotas(rows[0].id).then((res) => {
-            var quotaItems = this.getQuotaItems(rows[0], res.quota);
+            var quotaItems = res.overview_usage;
             contents[tabKey] = (
-              <div>
-                <BasicProps
-                  title={__.quota}
-                  defaultUnfold={true}
-                  tabKey={'description'}
-                  items={quotaItems}
-                  rawItem={rows[0]}
-                  onAction={this.onDetailAction.bind(this)}
-                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+              <div className="right-side">
+                <ResourceQuota overview={quotaItems} />
               </div>
             );
             detail.setState({
@@ -770,33 +768,16 @@ class Model extends React.Component {
     var that = this;
     switch(actionType) {
       case 'edit_name':
-        var {item, rawItem, newName} = data;
-        var quotaType = item.field;
-        if (quotaType) {
-          if (quotaType === 'ram') {
-            newName = Number(newName);
-            if (newName > 0) {
-              newName *= 1024;
-            }
-          }
-          request.modifyQuota(quotaType, rawItem.id, newName).then((res) => {
-            this.refresh({
-              loadingDetail: true,
-              refreshList: true,
-              refreshDetail: true
-            });
+        var {newName, rawItem} = data;
+        request.editProject(rawItem.id, {
+          name: newName
+        }).then((res) => {
+          this.refresh({
+            loadingDetail: true,
+            refreshList: true,
+            refreshDetail: true
           });
-        } else {
-          request.editProject(rawItem.id, {
-            name: newName
-          }).then((res) => {
-            this.refresh({
-              loadingDetail: true,
-              refreshList: true,
-              refreshDetail: true
-            });
-          });
-        }
+        });
         break;
       case 'add_user':
         addUser(data.rawItem, null, function() {

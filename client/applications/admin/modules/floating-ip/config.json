@@ -33,7 +33,7 @@
     "limit": 10,
     "loading": true,
     "column": [{
-      "title": ["floating_ip", "address"],
+      "title": ["floating_ip_address"],
       "dataIndex": "floating_ip_address",
       "key": "floating_ip",
       "type": "captain",

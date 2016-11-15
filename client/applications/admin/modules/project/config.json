@@ -25,6 +25,11 @@
     "icon": "disable",
     "disabled": true
   }, {
+    "value": ["modify", "quota"],
+    "key": "modify_quota",
+    "icon": "edit",
+    "disabled": true
+  }, {
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",
