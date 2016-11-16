@@ -70,6 +70,9 @@ class Model extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
+      confirmPwd: '',
+      confirmPwdVisible: false,
+      confirmPwdError: false,
       fipChecked: true,
       fipSliderValue: 1,
       fipSliderInputValue: 1,
@@ -89,14 +92,16 @@ class Model extends React.Component {
       unit: 'GB',
       sliderInputError: false,
       sliderInputValue: 1,
-      btnDisabled: true
+      btnDisabled: false
     };
 
     ['initialize', 'initializeVolume', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
     'onChangeKeypair', 'pwdVisibleControl', 'onChangePwd',
-    'onFocusPwd', 'onBlurPwd', 'createNetwork', 'createKeypair', 'onSliderChange',
+    'onFocusPwd', 'onBlurPwd',
+    'confirmPwdVisibleControl', 'onChangeConfirmPwd',
+    'createNetwork', 'createKeypair', 'onSliderChange',
     'onChangeVolumeName', 'onVolumeCapacityChange'].forEach(func => {
       this[func] = this[func].bind(this);
     });
@@ -198,31 +203,6 @@ class Model extends React.Component {
       credential: credential,
       fipDisabled: !hasRouter
     });
-
-    var checkBlanks = this.checkBeforeApply('all');
-    this.setState({
-      btnDisabled: !checkBlanks
-    });
-  }
-
-  checkBeforeApply(m) {
-    let state = this.state;
-    let hasServerName = nameRequired ? !!state.name : true;
-    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd);
-    let credentialPass = showCredentials ? hasAdminPass : true;
-    let hasVolumeName = state.volumeChecked ? (!nameRequired || state.volumeName) : true;
-    let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
-    let hasFip = !state.fipChecked ? state.network : true;
-
-    let checkObj = {};
-    checkObj.serverName = !!(credentialPass && hasVolumeName && hasImage && hasFip);
-    checkObj.credentials = !!(hasServerName && hasVolumeName && hasImage && hasFip);
-    checkObj.volumeName = !!(hasServerName && credentialPass && hasImage && hasFip);
-    checkObj.image = !!(hasServerName && hasVolumeName && credentialPass && hasFip);
-    checkObj.fip = !!(hasServerName && hasVolumeName && credentialPass && hasImage);
-    checkObj.all = !!(hasServerName && credentialPass && hasVolumeName && hasImage && hasFip);
-
-    return m ? checkObj[m] : checkObj;
   }
 
   renderName(props, state) {
@@ -244,19 +224,6 @@ class Model extends React.Component {
     this.setState({
       name: name
     });
-
-    var checkBlanks = this.checkBeforeApply('serverName');
-    if(checkBlanks) {
-      if(name) {
-        this.setState({
-          btnDisabled: false
-        });
-      } else {
-        this.setState({
-          btnDisabled: true
-        });
-      }
-    }
   }
 
   renderImages(props, state) {
@@ -479,9 +446,6 @@ class Model extends React.Component {
     }
     this.setFlavor(objImage, 'all');
 
-    var checkBlanks = this.checkBeforeApply('image');
-    var hasImage = (key === 'image' && image) || (key === 'snapshot' && snapshot);
-
     this.setState({
       imageType: key,
       image: image,
@@ -491,8 +455,7 @@ class Model extends React.Component {
       credential: hideKeypair ? 'psw' : 'keypair',
       pwdError: true,
       pwd: '',
-      pwdVisible: false,
-      btnDisabled: checkBlanks ? (!hasImage) : true
+      pwdVisible: false
     });
   }
 
@@ -883,23 +846,35 @@ class Model extends React.Component {
     var Psw = (
       <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
         <div className="row-data">
-          <label>{__.user_name}</label>
-          <input type="text" value={state.username} disabled={true} onChange={function(){}} />
-          <label>{__.password}</label>
-          <div className="psw-tip-box">
-            {
-              state.showPwdTip ?
-                <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
-              : null
-            }
-            <i className={'glyphicon icon-eye' + (state.pwdVisible ? ' selected' : '')}
-              onClick={this.pwdVisibleControl}/>
-            <input type={state.pwdVisible ? 'text' : 'password'}
-              className={state.pwdError ? 'error' : null}
-              value={state.pwd}
-              onChange={this.onChangePwd}
-              onFocus={this.onFocusPwd}
-              onBlur={this.onBlurPwd} />
+          <div className="input-user">
+            <label>{__.user_name}</label>
+            <input type="text" value={state.username} disabled={true} onChange={function(){}} />
+          </div>
+          <div className="input-psw">
+            <label>{__.password}</label>
+            <div className="psw-tip-box">
+              {
+                state.page === 2 && state.showPwdTip ?
+                  <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
+                : null
+              }
+              <i className={'glyphicon icon-eye icon-eye-first' + (state.pwdVisible ? ' selected' : '')}
+                onClick={this.pwdVisibleControl}/>
+              <input type={state.pwdVisible ? 'text' : 'password'}
+                className={state.pwdError ? 'error' : null}
+                value={state.pwd}
+                onChange={this.onChangePwd}
+                onFocus={this.onFocusPwd}
+                onBlur={this.onBlurPwd}
+                placeholder={__.pwd_placeholder} />
+              <i className={'glyphicon icon-eye' + (state.confirmPwdVisible ? ' selected' : '')}
+                onClick={this.confirmPwdVisibleControl}/>
+              <input type={state.confirmPwdVisible ? 'text' : 'password'}
+                className={state.confirmPwdError ? 'error' : null}
+                value={state.confirmPwd}
+                onChange={this.onChangeConfirmPwd}
+                placeholder={__.confirm_pwd_placeholder} />
+            </div>
           </div>
         </div>
       </div>
@@ -922,36 +897,12 @@ class Model extends React.Component {
   }
 
   onChangeCredential(key, e) {
-    let state = this.state;
     this.setState({
       credential: key,
       pwdError: true,
       pwd: '',
       pwdVisible: false
     });
-
-    let checkBlanks = this.checkBeforeApply('credentials');
-    if(checkBlanks && key === 'keypair') {
-      if(state.keypairName) {
-        this.setState({
-          btnDisabled: false
-        });
-      } else {
-        this.setState({
-          btnDisabled: true
-        });
-      }
-    } else if (checkBlanks && key === 'psw') {
-      if(state.psw) {
-        this.setState({
-          btnDisabled: false
-        });
-      } else {
-        this.setState({
-          btnDisabled: true
-        });
-      }
-    }
   }
 
   onChangeKeypair(e) {
@@ -960,13 +911,6 @@ class Model extends React.Component {
     this.setState({
       keypairName: name
     });
-
-    let checkBlanks = this.checkBeforeApply('credentials');
-    if(checkBlanks) {
-      this.setState({
-        btnDisabled: false
-      });
-    }
   }
 
   createKeypair() {
@@ -985,6 +929,13 @@ class Model extends React.Component {
     });
   }
 
+  confirmPwdVisibleControl(e) {
+    let visible = this.state.confirmPwdVisible;
+    this.setState({
+      confirmPwdVisible: !visible
+    });
+  }
+
   checkPsw(pwd) {
     return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
   }
@@ -996,21 +947,9 @@ class Model extends React.Component {
     this.setState({
       pwdError: pwdError,
       showPwdTip: true,
-      pwd: pwd
+      pwd: pwd,
+      confirmPwdError: true
     });
-
-    var checkBlanks = this.checkBeforeApply('credentials');
-    if(checkBlanks) {
-      if(pwdError) {
-        this.setState({
-          btnDisabled: true
-        });
-      } else {
-        this.setState({
-          btnDisabled: false
-        });
-      }
-    }
   }
 
   onFocusPwd(e) {
@@ -1027,46 +966,28 @@ class Model extends React.Component {
     });
   }
 
+  onChangeConfirmPwd(e) {
+    let pwd = e.target.value;
+    let pwdError = !(pwd === this.state.pwd);
+
+    this.setState({
+      confirmPwdError: pwdError,
+      confirmPwd: pwd
+    });
+  }
+
   onChangeCheckbox(key) {
     let state = this.state;
     switch(key) {
       case 'volume':
-        let check1 = this.checkBeforeApply('volumeName');
         this.setState({
           volumeChecked: !state.volumeChecked
         });
-
-        if(check1 && nameRequired) {
-          if(!state.volumeChecked && !state.volumeName) {
-            //volume checkbox was unchecked, now check
-            this.setState({
-              btnDisabled: true
-            });
-          } else {//1or2: 1.now uncheck; 2.check and has volumeName
-            this.setState({
-              btnDisabled: false
-            });
-          }
-        }
         break;
       case 'fip':
-        let check2 = this.checkBeforeApply('fip');
         this.setState({
           fipChecked: !state.fipChecked
         });
-
-        if(check2) {
-          if(!state.fipChecked && !state.network) {
-            //fip checkbox was unchecked, now check
-            this.setState({
-              btnDisabled: true
-            });
-          } else {//1or2: 1.now uncheck; 2.check and hasNetwork
-            this.setState({
-              btnDisabled: false
-            });
-          }
-        }
         break;
       default:
         break;
@@ -1195,21 +1116,10 @@ class Model extends React.Component {
 
   onChangeVolumeName(e) {
     let name = e.target.value;
-    var checkBlanks = this.checkBeforeApply('volumeName');
 
     this.setState({
       volumeName: name
     });
-
-    if(checkBlanks && name) {
-      this.setState({
-        btnDisabled: false
-      });
-    } else {
-      this.setState({
-        btnDisabled: true
-      });
-    }
   }
 
   onClickVolumeType(value) {
@@ -1400,6 +1310,9 @@ class Model extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
+      confirmPwd: '',
+      confirmPwdVisible: false,
+      confirmPwdError: false,
       fipChecked: true,
       fipSliderValue: 1,
       fipSliderInputValue: 1,
@@ -1419,7 +1332,7 @@ class Model extends React.Component {
       unit: 'GB',
       sliderInputError: false,
       sliderInputValue: 1,
-      btnDisabled: true
+      btnDisabled: false
     });
 
     request.getData().then(this.initialize);
@@ -1427,10 +1340,18 @@ class Model extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
-    var tab = [{name: __['instance-create'], key: 'instance-create'}];
+    let tab = [{name: __['instance-create'], key: 'instance-create'}];
+
+    let hasServerName = nameRequired ? !!state.name : true;
+    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd && !state.pwdError && !state.confirmPwdError);
+    let credentialPass = showCredentials ? hasAdminPass : true;
+    let hasVolumeName = state.volumeChecked ? (!nameRequired || state.volumeName) : true;
+    let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
+    let hasFip = !state.fipChecked ? state.network : true;
+    let enable = hasServerName && hasAdminPass && credentialPass && hasVolumeName && hasImage && hasFip;
 
     return (
       <div className="halo-module-instance-create" style={this.props.style}>
@@ -1439,7 +1360,7 @@ class Model extends React.Component {
             <Tab items={tab} />
           </div>
           <div className="operation-list">
-            <Button value={__.create + __.application} type="create" disabled={state.btnDisabled} onClick={this.onApply.bind(this)} />
+            <Button value={__.create + __.application} type="create" disabled={state.btnDisabled || !enable} onClick={this.onApply.bind(this)} />
             <Button initial={true} iconClass="glyphicon icon-refresh" onClick={this.onRefresh.bind(this)} />
           </div>
           <div className="create-config-page">
