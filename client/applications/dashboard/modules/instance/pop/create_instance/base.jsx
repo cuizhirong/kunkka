@@ -73,6 +73,9 @@ class ModalBase extends React.Component {
       pwdVisible: false,
       pwdError: true,
       showPwdTip: false,
+      confirmPwd: '',
+      confirmPwdVisible: false,
+      confirmPwdError: false,
       price: '0.0000',
       number: 1,
       disabledNumber: false,
@@ -85,6 +88,7 @@ class ModalBase extends React.Component {
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
     'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
     'onChangePwd', 'onFocusPwd', 'onBlurPwd',
+    'confirmPwdVisibleControl', 'onChangeConfirmPwd',
     'createNetwork', 'createKeypair', 'onConfirm'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
@@ -530,18 +534,19 @@ class ModalBase extends React.Component {
   }
 
   onChangePwd(e) {
-    var pwd = e.target.value;
-    var pwdError = this.checkPsw(pwd);
+    let pwd = e.target.value;
+    let pwdError = this.checkPsw(pwd);
 
     this.setState({
       pwdError: pwdError,
       showPwdTip: true,
-      pwd: pwd
+      pwd: pwd,
+      confirmPwdError: true
     });
   }
 
   onFocusPwd(e) {
-    var isError = this.checkPsw(this.state.pwd);
+    let isError = this.checkPsw(this.state.pwd);
 
     this.setState({
       showPwdTip: isError
@@ -551,6 +556,16 @@ class ModalBase extends React.Component {
   onBlurPwd(e) {
     this.setState({
       showPwdTip: false
+    });
+  }
+
+  onChangeConfirmPwd(e) {
+    let pwd = e.target.value;
+    let pwdError = !(pwd === this.state.pwd);
+
+    this.setState({
+      confirmPwdError: pwdError,
+      confirmPwd: pwd
     });
   }
 
@@ -1035,9 +1050,16 @@ class ModalBase extends React.Component {
   }
 
   pwdVisibleControl(e) {
-    var visible = this.state.pwdVisible;
+    let visible = this.state.pwdVisible;
     this.setState({
       pwdVisible: !visible
+    });
+  }
+
+  confirmPwdVisibleControl(e) {
+    let visible = this.state.confirmPwdVisible;
+    this.setState({
+      confirmPwdVisible: !visible
     });
   }
 
@@ -1099,23 +1121,35 @@ class ModalBase extends React.Component {
     var Psw = (
       <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
         <div className="modal-data">
-          <label>{__.user_name}</label>
-          <input type="text" value={state.username} disabled={true} onChange={function(){}} />
-          <label>{__.password}</label>
-          <div className="psw-tip-box">
-            {
-              state.page === 2 && state.showPwdTip ?
-                <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
-              : null
-            }
-            <i className={'glyphicon icon-eye' + (state.pwdVisible ? ' selected' : '')}
-              onClick={this.pwdVisibleControl}/>
-            <input type={state.pwdVisible ? 'text' : 'password'}
-              className={state.pwdError ? 'error' : null}
-              value={state.pwd}
-              onChange={this.onChangePwd}
-              onFocus={this.onFocusPwd}
-              onBlur={this.onBlurPwd} />
+          <div className="input-user">
+            <label>{__.user_name}</label>
+            <input type="text" value={state.username} disabled={true} onChange={function(){}} />
+          </div>
+          <div className="input-psw">
+            <label>{__.password}</label>
+            <div className="psw-tip-box">
+              {
+                state.page === 2 && state.showPwdTip ?
+                  <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
+                : null
+              }
+              <i className={'glyphicon icon-eye icon-eye-first' + (state.pwdVisible ? ' selected' : '')}
+                onClick={this.pwdVisibleControl}/>
+              <input type={state.pwdVisible ? 'text' : 'password'}
+                className={state.pwdError ? 'error' : null}
+                value={state.pwd}
+                onChange={this.onChangePwd}
+                onFocus={this.onFocusPwd}
+                onBlur={this.onBlurPwd}
+                placeholder={__.pwd_placeholder} />
+              <i className={'glyphicon icon-eye' + (state.confirmPwdVisible ? ' selected' : '')}
+                onClick={this.confirmPwdVisibleControl}/>
+              <input type={state.confirmPwdVisible ? 'text' : 'password'}
+                className={state.confirmPwdError ? 'error' : null}
+                value={state.confirmPwd}
+                onChange={this.onChangeConfirmPwd}
+                placeholder={__.confirm_pwd_placeholder} />
+            </div>
           </div>
         </div>
       </div>
@@ -1210,7 +1244,7 @@ class ModalBase extends React.Component {
       if (state.credential === 'keypair') {
         enable = enable && state.keypairName;
       } else {
-        enable = enable && !state.pwdError;
+        enable = enable && !state.pwdError && !state.confirmPwdError;
       }
 
       return (

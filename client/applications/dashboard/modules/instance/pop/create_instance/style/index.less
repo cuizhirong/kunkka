@@ -71,7 +71,7 @@
     .row {
       display: flex;
       &:not(:first-child) {
-        margin-top: 24px;
+        margin-top: 20px;
       }
 
       .modal-label {
@@ -95,7 +95,7 @@
 
       &.row-input {
         input {
-          width: 100%;
+          width: 98%;
           box-sizing: border-box;
           height: 32px;
           line-height: 32px;
@@ -105,7 +105,7 @@
       &.row-tab {
         a {
           display: inline-block;
-          width: 137px;
+          width: 154px;
           height: 36px;
           line-height: 36px;
           margin-right: 1px;
@@ -319,12 +319,21 @@
         }
         .modal-data {
           select {
-            width: 200px;
+            width: 257px;
           }
           label {
             margin-right: 16px;
             &:not(:first-child) {
               margin-left: 16px;
+            }
+          }
+          .input-user >input {
+            width: 235px;
+          }
+          .input-psw {
+            margin-top: 4px;
+            >label {
+              padding-left: 12px;
             }
           }
           .psw-tip-box {
@@ -339,9 +348,16 @@
               cursor: pointer;
               color: @psw_eye_color;
               &:hover,
+              &.selected:hover {
+                color: @psw_input_border_color;
+              }
               &.selected {
                 color: @psw_eye_selected_color;
               }
+            }
+            i.icon-eye-first {
+              left: 222px;
+              width: 15px;
             }
             .icon-eye:hover + input {
               border-color: @psw_input_border_color;
@@ -350,8 +366,11 @@
               border-color: @psw_input_danger_border_color;
             }
             input {
-              width: 130px;
+              width: 216px;
               padding-right: 28px;
+            }
+            input:last-child {
+              margin-left: 11px;
             }
             .tooltip {
               bottom: 38px;
