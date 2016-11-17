@@ -5,8 +5,9 @@ const path = require('path');
 const apiPath = path.join(__dirname, '../server/api');
 const driverPath = path.join(__dirname, '../server/drivers');
 const pluginPath = path.join(__dirname, '../server/plugins');
+const clientAppsPath = path.join(__dirname, '../client/applications');
 const baseConfig = require('../configs/server.sample.js');
-const basePackage = require('../package.sample.json');
+const basePackage = require('../package.json');
 
 
 /* get the newset (or oldest) version. */
@@ -74,6 +75,21 @@ const addressList = [];
       }
     });
 });
+
+fs.readdirSync(clientAppsPath)
+  .filter(m => fs.statSync(path.join(clientAppsPath, m)).isDirectory())
+  .forEach(m => {
+    let modulePath = path.join(clientAppsPath, m);
+    try {
+      let moduleDepsPath = path.join(modulePath, 'dependence');
+      configList.push({dependencies: require(moduleDepsPath)});
+      addressList.push(moduleDepsPath);
+    } catch (err) {
+      if (err.code !== 'MODULE_NOT_FOUND') {
+        console.log(err);
+      }
+    }
+  });
 
 /* remove other useless characters which don`t cover seperator of version string. */
 const removeOtherChar = function(str, cut) {
