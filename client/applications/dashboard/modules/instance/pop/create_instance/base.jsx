@@ -112,11 +112,14 @@ class ModalBase extends React.Component {
     var images = [];
     var snapshots = [];
     var bootableVolumes = [];
+
+    //sort image and snapshot, and only show visiblilty 'public' image
     res.image.forEach((ele) => {
-      var type = ele.image_type;
-      if (type === 'distribution') {
+      let type = ele.image_type;
+      let visibility = ele.visibility;
+      if (type === 'distribution' && visibility === 'public') {
         images.push(ele);
-      } else if (type === 'snapshot') {
+      } else if (type === 'snapshot' && visibility === 'public') {
         snapshots.push(ele);
       }
     });
