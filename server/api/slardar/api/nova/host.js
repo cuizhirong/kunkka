@@ -63,6 +63,9 @@ Host.prototype = {
       } else {
         let __ = req.i18n.__.bind(req.i18n);
         let fields = [{
+          label:__('api.nova.server.name'),
+          value:'hypervisor_hostname'
+        }, {
           label: __('api.nova.memory'),
           value: row => (row.memory_mb_used / 1024).toFixed(2) + '/' + (row.memory_mb / 1024).toFixed(2)
         }, {
