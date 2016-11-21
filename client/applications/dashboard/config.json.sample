@@ -34,6 +34,11 @@
       "volume",
       "snapshot"
     ]
+  }, {
+    "title": "monitor",
+    "items": [
+      "alarm"
+    ]
   }],
   "default_module": "overview",
   "languages": [

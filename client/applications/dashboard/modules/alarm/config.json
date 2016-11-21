@@ -1,0 +1,87 @@
+{
+  "tabs": [{
+    "name": ["alarm"],
+    "key": "alarm",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "alarm"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["enable", "alarm"],
+    "key": "enable",
+    "icon": "enable",
+    "disabled": true
+  }, {
+    "value": ["disable", "alarm"],
+    "key": "disable",
+    "icon": "disable",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["modify", "alarm"],
+          "key": "modify",
+          "disabled": true
+        }, {
+          "title": ["delete", "alarm"],
+          "key": "delete",
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "alarm_id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["resource"],
+      "key": "resource"
+    }, {
+      "title": ["enabled_state"],
+      "key": "enabled"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status"
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "state_timestamp",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["history"],
+        "key": "history"
+      }]
+    }
+  }
+}

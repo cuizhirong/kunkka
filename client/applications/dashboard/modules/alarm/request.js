@@ -1,0 +1,63 @@
+var storage = require('client/applications/dashboard/cores/storage');
+var fetch = require('client/applications/dashboard/cores/fetch');
+// var RSVP = require('rsvp');
+
+module.exports = {
+  getList: function(forced) {
+    return storage.getList(['alarm', 'instance', 'notification'], forced).then(function(data) {
+      data.alarm.forEach((alarm) => {
+        if (alarm.gnocchi_resources_threshold_rule) {
+          data.instance.some((ins) => {
+            if (ins.id === alarm.resource_id) {
+              alarm.resource_name = ins.name ? ins.name : ins.id.substr(0, 8);
+              return true;
+            }
+            return false;
+          });
+        }
+
+        alarm.status = alarm.state;
+        if (alarm.state === 'insufficient data') {
+          alarm.status = 'data_insufficient';
+        }
+
+      });
+
+      return data.alarm;
+    });
+  },
+  getResources: function() {
+    return storage.getList(['instance']).then(function(data) {
+      return data;
+    });
+  },
+  getAlarmHistory: function(id) {
+    return fetch.get({
+      url: '/proxy/aodh/v2/alarms/' + id + '/history'
+    });
+  },
+  getNofitications: function(forced) {
+    return storage.getList(['notification'], forced).then(function(data) {
+      let notifications = data.notification.map((ele) => {
+        let newEle = ele;
+        ele.id = ele.uuid;
+        return newEle;
+      });
+
+      return notifications;
+    });
+  },
+  getReousrceMeasures: function(resourceId, type, granularity) {
+    return fetch.get({
+      url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + type + '/measures?granularity=' + granularity
+    }).then(function(data) {
+      return data;
+    });
+  },
+  updateAlarm: function(id, data) {
+    return fetch.put({
+      url: '/proxy/aodh/v2/alarms/' + id,
+      data: data
+    });
+  }
+};
