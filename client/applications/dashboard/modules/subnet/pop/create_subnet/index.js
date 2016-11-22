@@ -124,9 +124,15 @@ function pop(obj, parent, callback) {
             refs.net_address.setState({
               error: false
             });
-            refs.btn.setState({
-              disabled: false
-            });
+            if (refs.select_network.state.data.length) {
+              refs.btn.setState({
+                disabled: false
+              });
+            } else {
+              refs.btn.setState({
+                disabled: true
+              });
+            }
           }
           break;
         default:
