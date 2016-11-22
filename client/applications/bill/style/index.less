@@ -1,7 +1,6 @@
 @import "./theme.less";
 @import "./layout.less";
 
-@toggle-bg-color: @color_grey;
 @loading-color: @color_font_800;
 @icon-status-success-color: @color_success;
 @icon-status-warning-color: @color_warning;
@@ -16,44 +15,6 @@ a {
   border-left: 1px solid #e3e4e5;
   box-shadow: 12px 12px 40px 16px rgba(0,0,0,0.07);
   background-color: #fff;
-}
-
-.toggle {
-  margin: 0 0 24px 20px;
-  &:nth-child(1) {
-    margin: 24px 0 24px 20px;
-  }
-  .toggle-title {
-    height: 42px;
-    line-height: 42px;
-    font-size: 14px;
-    background-color: @toggle-bg-color;
-    border-radius: 2px;
-    padding: 0 16px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    user-select: none;
-    cursor: pointer;
-    i {
-      float: right;
-      height: 42px;
-      line-height: 42px;
-    }
-  }
-  .toggle-content {
-    height: 100%;
-    &.fold {
-      height: 0;
-      transition: height .5s;
-      overflow: hidden;
-    }
-    &.unfold {
-      padding-top: 20px;
-      height: auto;
-      transition: height .5s;
-    }
-  }
 }
 
 .status-data {
