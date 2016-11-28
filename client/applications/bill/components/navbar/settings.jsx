@@ -1,4 +1,6 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
+var Password = require('client/components/password/index');
 
 class Settings extends React.Component {
   constructor(props) {
@@ -11,7 +13,25 @@ class Settings extends React.Component {
 
   onClick(key, e) {
     switch (key) {
-      case 'setting':
+      case 'settings':
+        var haloMenu = document.getElementsByClassName('halo-com-menu')[0],
+          menu = document.getElementsByClassName('menu')[0];
+        ['maxWidth', 'width', 'minWidth'].forEach(m => {
+          haloMenu.style[m] = '100px';
+          menu.style[m] = '26px';
+        });
+        var wrapper = document.getElementById('main-wrapper');
+        var div = document.createElement('div');
+        div.setAttribute('class', 'pwd');
+        div.setAttribute('style', ['flex: 1']);
+        wrapper.appendChild(div);
+        document.getElementById('main').style.display = 'none';
+        document.getElementsByClassName('scroll-pane')[0].style.display = 'none';
+        var li = document.getElementsByClassName('menu')[0].getElementsByTagName('li');
+        for(var i = 0; i < li.length; i++) {
+          li[i].style.display = 'none';
+        }
+        ReactDOM.render(<Password __={this.props.__}/>, document.getElementsByClassName('pwd')[0]);
         break;
       case 'help':
         break;
@@ -44,6 +64,10 @@ class Settings extends React.Component {
     var __ = this.props.__;
 
     var config = [{
+      title: __.personal_settings,
+      key: 'settings',
+      icon: 'setting'
+    }, {
       key: 'lang',
       icon: 'global'
     }, {
@@ -66,7 +90,7 @@ class Settings extends React.Component {
         );
       } else {
         return (
-          <li key={index} onClick={this.onClick.bind(null, item.key)}>
+          <li key={index} onClick={this.onClick.bind(this, item.key)}>
             <i className={'glyphicon icon-' + item.icon} />
             <a>{item.title}</a>
           </li>

@@ -22,7 +22,15 @@
     "price-mgmt": "Price Management",
     "msg_delete": "Do you want to {0} {1} {2}? This action can not be restored.",
     "pls_enter": "Enter ",
-    "global-record": "Global Charge Record"
+    "global-record": "Global Charge Record",
+    "original_pwd": "Original Password",
+    "new_pwd": "New Password",
+    "modify_success": "Modify Success",
+    "modify_fail": "Modify Failed",
+    "modify_pwd": "Modify Password",
+    "personal_settings": "Settings",
+    "back": "Back",
+    "confirm_pwd": "Confirm Password"
   },
   "zh-CN": {
     "account_bill": "账户消费",
@@ -47,6 +55,14 @@
     "price-mgmt": "价格管理",
     "msg_delete": "此操作将无法撤销，确认要{0}以下{1}<strong>（数量:{2}）</strong>？",
     "pls_enter": "请输入",
-    "global-record": "全局充值记录"
+    "global-record": "全局充值记录",
+    "original_pwd": "原始密码",
+    "new_pwd": "新密码",
+    "modify_success": "修改成功！",
+    "modify_fail": "修改失败！",
+    "modify_pwd": "修改密码",
+    "personal_settings": "个人设置",
+    "back": "返回",
+    "confirm_pwd": "确认密码"
   }
 }
