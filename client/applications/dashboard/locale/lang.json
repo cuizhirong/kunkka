@@ -99,7 +99,14 @@
     "usage": "Usage",
     "view_is_unavailable": "The view is unavailable.",
     "volume": "Volume ",
-    "yes": "Yes"
+    "yes": "Yes",
+    "original_pwd": "Original Password",
+    "new_pwd": "New Password",
+    "modify_success": "Modify Success",
+    "modify_fail": "Modify Failed",
+    "modify_pwd": "Modify Password",
+    "personal_settings": "Settings",
+    "back": "Back"
   },
   "zh-CN": {
     "graphic": "图表",
@@ -201,6 +208,13 @@
     "usage": "使用用途",
     "view_is_unavailable": "没有数据可以显示",
     "volume": "云硬盘",
-    "yes": "是"
+    "yes": "是",
+    "original_pwd": "原始密码",
+    "new_pwd": "新密码",
+    "modify_success": "修改成功！",
+    "modify_fail": "修改失败！",
+    "modify_pwd": "修改密码",
+    "personal_settings": "个人设置",
+    "back": "返回"
   }
 }
