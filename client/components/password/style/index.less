@@ -1,0 +1,41 @@
+@import "../../../style/index.less";
+
+@error-color: @color_delete;
+.halo-module-password {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  .hide {
+    display: none;
+  }
+  .error {
+    border: 1px solid @error-color;
+  }
+  .back {
+    margin: 10px 0 0 20px;
+  }
+  .toggle {
+    width: 80%;
+    .toggle-title {
+      margin-top: 30px;
+    }
+    .toggle-content {
+      .input-password-row {
+        width: 390px;
+        input {
+          width: 280px;
+        }
+      }
+      .row {
+        margin: 10px 0 0 112px;
+      }
+      .pwd_fail {
+        color: @error-color;
+        span {
+          padding-left: 4px;
+        }
+      }
+    }
+  }
+}

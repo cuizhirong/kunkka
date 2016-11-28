@@ -1,0 +1,14 @@
+{
+  "tabs": [{
+    "name": ["personal_settings"],
+    "key": "personal",
+    "default": true
+  }],
+  "fields": [{
+    "field": "original_pwd"
+  }, {
+    "field": "new_pwd"
+  },{
+    "field": "confirm_pwd"
+  }]
+}
