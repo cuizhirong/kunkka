@@ -32,7 +32,7 @@ try {
     projectId: HALO.user.projectId
   };
   var hostname = window.location.hostname;
-  var protocol = window.location.protocol === 'https' ? 'wss://' : 'ws://';
+  var protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
   opt.url = protocol + hostname + HALO.websocket.url;
   console.log('load websocket');
   connectWS(opt);
