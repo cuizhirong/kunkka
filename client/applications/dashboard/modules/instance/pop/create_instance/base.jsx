@@ -544,7 +544,7 @@ class ModalBase extends React.Component {
       pwdError: pwdError,
       showPwdTip: true,
       pwd: pwd,
-      confirmPwdError: true
+      confirmPwdError: (this.state.confirmPwd !== pwd) || pwdError
     });
   }
 
