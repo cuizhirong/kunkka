@@ -37,7 +37,16 @@
     "last_month": "Within a Month",
     "last_three_month": "Within Three Month",
     "logout": "Logout",
-    "upload_error": "Upload Error"
+    "upload_error": "Upload Error",
+    "original_pwd": "Original Password",
+    "new_pwd": "New Password",
+    "modify_success": "Modify Success",
+    "modify_fail": "Modify Failed",
+    "modify_pwd": "Modify Password",
+    "personal_settings": "Settings",
+    "back": "Back",
+    "confirm_pwd": "Confirm Password",
+    "modify": "Modify"
   },
   "zh-CN": {
     "application_name": "工单",
@@ -77,6 +86,15 @@
     "last_month": "一个月内",
     "last_three_month": "三个月内",
     "logout": "注销",
-    "upload_error": "上传失败"
+    "upload_error": "上传失败",
+    "original_pwd": "原始密码",
+    "new_pwd": "新密码",
+    "modify_success": "修改成功！",
+    "modify_fail": "修改失败！",
+    "modify_pwd": "修改密码",
+    "personal_settings": "个人设置",
+    "back": "返回",
+    "confirm_pwd": "确认密码",
+    "modify": "修改"
   }
 }
