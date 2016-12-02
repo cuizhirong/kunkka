@@ -1,6 +1,7 @@
 @import "../../../style/index.less";
 
 @error-color: @color_delete;
+@toggle-bg-color: @color_grey;
 .halo-module-password {
   flex: 1;
   display: flex;
@@ -17,10 +18,41 @@
   }
   .toggle {
     width: 80%;
+    margin: 0 0 24px 20px;
+    &:nth-child(1) {
+      margin: 24px 0 24px 20px;
+    }
     .toggle-title {
       margin-top: 30px;
+      height: 42px;
+      line-height: 42px;
+      font-size: 14px;
+      background-color: @toggle-bg-color;
+      border-radius: 2px;
+      padding: 0 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+      i {
+        float: right;
+        height: 42px;
+        line-height: 42px;
+      }
     }
     .toggle-content {
+      height: 100%;
+      &.fold {
+        height: 0;
+        transition: height .5s;
+        overflow: hidden;
+      }
+      &.unfold {
+        padding-top: 20px;
+        height: auto;
+        transition: height .5s;
+      }
       .input-password-row {
         width: 390px;
         input {
