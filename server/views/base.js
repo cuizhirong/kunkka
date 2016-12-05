@@ -79,6 +79,9 @@ View.prototype = {
       let locale = this.upperCaseLocale(req.i18n.getLocale());
       let user = (req.session && req.session.user) ? req.session.user : {};
       let HALO = this.getHALO(locale, setting, user);
+      if (req.session.endpoint.kiki) {
+        HALO.configs.kiki_url = req.session.endpoint.kiki[user.regionId];
+      }
       if (this.plugins) {
         this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
       }
