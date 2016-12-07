@@ -131,12 +131,12 @@ function pop(obj, parent, callback) {
               if(refs.protocol.state.value === 'TCP') {
                 refs.listener.setState({
                   data: tcpL,
-                  value: tcpL[0] ? tcpL[0].id : ''
+                  value: (tcpL && tcpL[0]) ? tcpL[0].id : ''
                 });
               } else {
                 refs.listener.setState({
                   data: httpL,
-                  value: httpL[0] ? httpL[0].id : ''
+                  value: (httpL && httpL[0]) ? httpL[0].id : ''
                 });
               }
             }
@@ -145,11 +145,10 @@ function pop(obj, parent, callback) {
             break;
         }
 
-        if(refs.protocol.state.value && refs.listener.state.value && refs.load_algorithm.state.value) {
-          refs.btn.setState({
-            disabled: false
-          });
-        }
+        let enableBtn = refs.protocol.state.value && refs.listener.state.value && refs.load_algorithm.state.value;
+        refs.btn.setState({
+          disabled: !enableBtn
+        });
       }
     }
   };
