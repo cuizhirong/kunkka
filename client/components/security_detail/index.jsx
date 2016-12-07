@@ -62,8 +62,7 @@ class BasicProps extends React.Component {
       props = this.props,
       itemKeys = props.itemKeys,
       items = props.items,
-      selectedItem = items[selectedKey],
-      __ = props.__;
+      selectedItem = items[selectedKey];
 
     return (
       <div className="toggle">
@@ -95,7 +94,7 @@ class BasicProps extends React.Component {
               </ButtonGroup>
               <div className="create-btn">
                 <Button
-                  value={__.add_ + __.security_group + __.rules}
+                  value={props.btnValue}
                   onClick={this.onClickBtn.bind(this)} />
               </div>
               <Table
