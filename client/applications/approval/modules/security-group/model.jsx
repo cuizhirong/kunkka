@@ -178,8 +178,8 @@ class Model extends React.Component {
 
           contents[tabKey] = (
             <SecurityDetail
-              __={__}
               title={__.security_group + __.rules}
+              btnValue={__.apply_ + __.add_ + __.rules}
               defaultUnfold={true}
               itemKeys={itemKeys}
               defaultKey="ingress"
