@@ -652,7 +652,7 @@ class ModalBase extends React.Component {
         if (state.credential === 'keypair') {
           createItem.key_name = state.keypairName;
         } else {
-          createItem.adminPass = state.pwd;
+          createItem.admin_pass = state.pwd;
         }
       }
       configCreate.push(createItem);
