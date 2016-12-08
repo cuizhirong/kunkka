@@ -15,7 +15,14 @@ module.exports = {
       app: 'global',
       name: 'enable_ticket',
       value: 'false',
-      type: 'boolean'
+      type: 'boolean',
+      description: '开启工单功能'
+    }, {
+      app: 'ticket',
+      name: 'view.css',
+      value: '',
+      type: 'text',
+      description: '工单页面-样式定制'
     }
   ]
 };
