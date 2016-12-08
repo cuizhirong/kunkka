@@ -68,7 +68,7 @@ class ResourceQuota extends React.Component {
         link: 'volume'
       }, {
         title: __.sata + __.volume,
-        key: 'volumes',
+        key: 'volumes_sata',
         link: 'volume'
       }, {
         title: __.ssd + __.volume + __.gigabyte + __.unit_gb,
@@ -76,7 +76,7 @@ class ResourceQuota extends React.Component {
         link: 'volume'
       }, {
         title: __.sata + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes',
+        key: 'gigabytes_sata',
         link: 'volume'
       }, {
         title: __.ssd + __.snapshot,
@@ -84,7 +84,7 @@ class ResourceQuota extends React.Component {
         link: 'snapshot'
       }, {
         title: __.sata + __.snapshot,
-        key: 'snapshots',
+        key: 'snapshots_sata',
         link: 'snapshot'
       }]
     }];
