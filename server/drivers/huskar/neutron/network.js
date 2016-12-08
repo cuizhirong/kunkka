@@ -53,5 +53,48 @@ driver.createNetwork = function (token, remote, theBody, callback) {
 
 /*** Promise ***/
 
+driver.listNetworksAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/networks',
+    token,
+    query
+  );
+};
+driver.showNetworkDetailsAsync = function (networkId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/networks/' + networkId,
+    token,
+    query
+  );
+};
+
+driver.listExternalNetworksAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/networks',
+    token,
+    {
+      'router:external': true
+    }
+  );
+};
+
+driver.listSharedNetworksAsync = function (token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/networks',
+    token,
+    {
+      'shared': true
+    }
+  );
+};
+
+driver.createNetworkAsync = function (token, remote, theBody) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/networks',
+    token,
+    theBody
+  );
+};
+
 
 module.exports = driver;

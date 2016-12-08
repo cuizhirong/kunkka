@@ -38,4 +38,33 @@ driver.createResourcePool = function (theBody, token, remote, callback) {
 
 /*** Promise ***/
 
+driver.createLoadBalancerAsync = function (theBody, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/lbaas/loadbalancers',
+    token,
+    theBody
+  );
+};
+driver.createHealthMonitorAsync = function (theBody, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/lbaas/healthmonitors',
+    token,
+    theBody
+  );
+};
+driver.createListenerAsync = function (theBody, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/lbaas/listeners',
+    token,
+    theBody
+  );
+};
+driver.createResourcePoolAsync = function (theBody, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/lbaas/pools',
+    token,
+    theBody
+  );
+};
+
 module.exports = driver;

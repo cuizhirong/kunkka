@@ -31,5 +31,28 @@ driver.showRouterDetails = function (routerId, token, remote, callback, query) {
 
 /*** Promise ***/
 
+driver.listRoutersAsync = function (token, remote, query) {
+  if (flag) {
+    return driver.getMethodAsync(
+      remote + '/v2.0/routers',
+      token,
+      query
+    );
+  } else {
+    return Promise.resolve({
+      body: {
+        routers: []
+      }
+    });
+  }
+};
+driver.showRouterDetailsAsync = function (routerId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/routers/' + routerId,
+    token,
+    query
+  );
+};
+
 
 module.exports = driver;

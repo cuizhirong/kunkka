@@ -64,5 +64,45 @@ driver.listServersAsync = function (projectId, token, remote, query) { // get se
     query
   );
 };
+driver.showServerDetailsAsync = function (projectId, serverId, token, remote, query) { // get single server.
+  return driver.getMethodAsync(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId,
+    token,
+    query
+  );
+};
+
+driver.getVNCConsoleAsync = function (projectId, serverId, token, remote, theBody) {
+  return driver.postMethodAsync(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
+    token,
+    theBody
+  );
+};
+
+driver.resizeServerAsync = function (projectId, serverId, flavor, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
+    token,
+    {
+      resize: {
+        flavorRef: flavor
+      }
+    }
+  );
+};
+
+driver.createSnapshotAsync = function (projectId, serverId, name, metadata, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.1/' + projectId + '/servers/' + serverId + '/action',
+    token,
+    {
+      createImage: {
+        metadata: metadata,
+        name: name
+      }
+    }
+  );
+};
 
 module.exports = driver;

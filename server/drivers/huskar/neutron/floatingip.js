@@ -58,5 +58,53 @@ driver.createFloatingip = function (floatingNetworkId, size, token, remote, call
 
 /*** Promise ***/
 
+driver.listFloatingipsAsync = function (token, remote, query) {
+  if (flag) {
+    return driver.getMethodAsync(
+      remote + '/v2.0/floatingips',
+      token,
+      query
+    );
+  } else {
+    return Promise.resolve({
+      body: {
+        floatingips: []
+      }
+    });
+  }
+};
+driver.showFloatingipDetailsAsync = function (id, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/floatingips/' + id,
+    token,
+    query
+  );
+};
+
+driver.resizeFloatingipAsync = function (floatingipId, size, token, remote) {
+  return driver.putMethodAsync(
+    remote + '/v2.0/floatingips/' + floatingipId + '/update_floatingip_ratelimit',
+    token,
+    {
+      floatingip: {
+        rate_limit: size
+      }
+    }
+  );
+};
+
+driver.createFloatingipAsync = function (floatingNetworkId, size, token, remote, callback) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/floatingips',
+    token,
+    {
+      floatingip: {
+        floating_network_id: floatingNetworkId,
+        rate_limit: size
+      }
+    }
+  );
+};
+
 
 module.exports = driver;

@@ -22,5 +22,20 @@ driver.showFlavorDetails = function (projectId, flavorId, token, remote, callbac
 
 /*** Promise ***/
 
+driver.listFlavorsAsync = function (projectId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.1/' + projectId + '/flavors/detail',
+    token,
+    query
+  );
+};
+driver.showFlavorDetailsAsync = function (projectId, flavorId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.1/' + projectId + '/flavors/' + flavorId,
+    token,
+    query
+  );
+};
+
 
 module.exports = driver;

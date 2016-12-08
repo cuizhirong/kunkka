@@ -31,4 +31,26 @@ driver.createSecurityGroupRule = function (theBody, token, remote, callback) {
 /*** Promise ***/
 
 
+driver.listSecurityAsync = function (projectId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/security-groups',
+    token,
+    query
+  );
+};
+driver.showSecurityDetailsAsync = function (projectId, securityId, token, remote, query) {
+  return driver.getMethodAsync(
+    remote + '/v2.0/security-groups/' + securityId,
+    token,
+    query
+  );
+};
+driver.createSecurityGroupRuleAsync = function (theBody, token, remote) {
+  return driver.postMethodAsync(
+    remote + '/v2.0/security-group-rules',
+    token,
+    theBody
+  );
+};
+
 module.exports = driver;
