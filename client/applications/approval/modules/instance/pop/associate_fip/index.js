@@ -82,7 +82,7 @@ function pop(obj, parent, callback) {
       switch(field) {
         case 'floating_ip':
           if(refs.floating_ip.state.clicked) {
-            createFloatingIp(refs.modal, () => {
+            createFloatingIp(parent, () => {
               refs.btn.setState({
                 disabled: false
               });
