@@ -24,65 +24,77 @@ module.exports = {
   },
   'setting': [
     {
-      app: 'login',
-      name: 'logo_url',
-      value: '/static/assets/logo@2x.png',
-      type: 'string'
-    }, {
-      app: 'login',
-      name: 'company',
-      value: '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
-      type: 'string'
-    }, {
       app: 'global',
       name: 'is_show_trash',
       value: 'false',
-      type: 'boolean'
+      type: 'boolean',
+      description: '显示回收站'
     }, {
       app: 'dashboard',
       name: 'total_gigabytes',
       value: 5000,
-      type: 'number'
+      type: 'number',
+      description: 'dashboard页面-云硬盘最大总容量'
     }, {
       app: 'dashboard',
       name: 'max_single_gigabytes',
       value: 1000,
-      type: 'number'
+      type: 'number',
+      description: 'dashboard页面-单个云硬盘最大容量'
     }, {
       app: 'dashboard',
       name: 'is_show_vlan',
       value: 'true',
-      type: 'boolean'
+      type: 'boolean',
+      description: 'dashboard页面-显示 vlan'
     }, {
       app: 'dashboard',
       name: 'max_floatingip_bandwidth',
       value: 30,
-      type: 'number'
+      type: 'number',
+      description: 'dashboard页面-最大 floatingip 带宽'
     }, {
       app: 'dashboard',
       name: 'listener_max_connection',
       value: 40000,
-      type: 'number'
+      type: 'number',
+      description: 'dashboard页面-最大监听器数量'
     }, {
       app: 'dashboard',
       name: 'enable_floatingip_bandwidth',
       value: 'false',
-      type: 'boolean'
+      type: 'boolean',
+      description: 'dashboard页面-开启 floatingip 带宽'
     }, {
       app: 'dashboard',
       name: 'view.css',
       value: '',
-      type: 'text'
+      type: 'text',
+      description: 'dashboard页面-定制样式'
     }, {
       app: 'dashboard',
       name: 'enable_ipsec',
       value: 'false',
-      type: 'boolean'
+      type: 'boolean',
+      description: 'dashboard页面-开启 ipsec'
     }, {
       app: 'admin',
       name: 'commercial_storage',
       value: 0,
-      type: 'number'
+      type: 'number',
+      description: '管理页面-商业存储总容量'
+    }, {
+      app: 'admin',
+      name: 'view.css',
+      value: '',
+      type: 'text',
+      description: '管理页面-样式定制'
+    }, {
+      app: 'bill',
+      name: 'view.css',
+      value: '',
+      type: 'text',
+      description: '计费页面-样式定制'
     }
   ]
 };
