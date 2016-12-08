@@ -51,16 +51,19 @@ module.exports = {
     app: 'bill',
     name: 'min_recharge_amount',
     value: 10,
-    type: 'number'
+    type: 'number',
+    description: '最小充值金额'
   }, {
     app: 'bill',
     name: 'enable_paypal',
     value: false,
-    type: 'boolean'
+    type: 'boolean',
+    description: '开启 Paypal'
   }, {
     app: 'bill',
     name: 'enable_alipay',
     value: true,
-    type: 'boolean'
+    type: 'boolean',
+    description: '开启支付宝'
   }]
 };
