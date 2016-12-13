@@ -13,6 +13,7 @@ module.exports = (str, option) => {
   } else {
     switch(status) {
       case 'active':
+      case 'ok':
         type.icon = 'active';
         type.status = 'active';
         break;
@@ -20,10 +21,12 @@ module.exports = (str, option) => {
         type.icon = 'light';
         type.status = 'available';
         break;
+      case 'data_insufficient':
       case 'down':
         type.icon = 'active';
         type.status = 'down';
         break;
+      case 'alarm':
       case 'error':
         type.icon = 'warning';
         type.status = 'error';

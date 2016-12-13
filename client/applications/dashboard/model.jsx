@@ -83,6 +83,8 @@ class Model extends React.Component {
         return 'lb';
       case 'image-snapshot':
         return 'snapshot';
+      case 'alarm':
+        return 'monitor';
       default:
         return name;
     }

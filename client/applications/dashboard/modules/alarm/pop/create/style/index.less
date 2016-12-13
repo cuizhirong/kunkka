@@ -1,0 +1,283 @@
+@import "../../../../../style/theme.less";
+
+@multi_dropdown_border: 1px solid @color_grey_600;
+@multi_dropdown_border_hover_color: @color_info;
+@multi_dropdown_bg_color: #fff;
+@multi_dropdown_list_hover_bg_color: @color_info_200;
+@create_alarm_label_strong_color: @color_delete;
+@create_alarm_add_notification_color: @color_info;
+@create_alarm_notification_list_bg_color: @color_grey_400;
+@craete_alarm_notification_remove_color: @color_font_700;
+
+.halo-com-modal-create-alarm {
+  &.modal-bd {
+    padding: 0 !important;
+
+    .row {
+      display: flex;
+      &:not(:first-child) {
+        margin-top: 12px;
+      }
+
+      .modal-label {
+        .fixed-width(100px);
+        height: 32px;
+        line-height: 32px;
+        text-align: right;
+        margin-right: 15px;
+        > strong {
+          color: @create_alarm_label_strong_color;
+        }
+
+        &.long-label {
+          .fixed-width(134px);
+        }
+      }
+
+      .modal-data {
+        flex: 1;
+
+        &.modal-data-long {
+          > * {
+            width: 200px;
+          }
+        }
+
+        &.modal-data-utilization {
+          > select {
+            width: 40px;
+            margin-right: 12px;
+          }
+          > input {
+            width: 20px;
+            margin-right: 4px;
+          }
+        }
+
+        &.modal-data-for {
+          > input {
+            width: 40px;
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+
+    .step-box {
+      width: 100%;
+      height: 60px;
+      padding-top: 30px;
+      > .steps {
+        margin: 0 auto;
+      }
+    }
+
+    .slide-box {
+      width: 300%;
+      height: 380px;
+      position: relative;
+      transition: left .3s;
+
+      &.page-0 {
+        left: 0%;
+      }
+      &.page-1 {
+        left: -100%;
+      }
+      &.page-2 {
+        left: -200%;
+      }
+
+      .page {
+        box-sizing: border-box;
+        float: left;
+        width: 33.3333%;
+        height: 100%;
+        padding: 30px 36px;
+
+
+
+        &.select-metric {
+          .select-box {
+            margin-bottom: 20px;
+
+            > select, .btn-group {
+              vertical-align: middle;
+            }
+            .btn-group {
+              float: right;
+            }
+
+            .multi-dropdown {
+              display: inline-block;
+              box-sizing: border-box;
+              width: 240px;
+              height: 32px;
+              line-height: 32px;
+              border: @multi_dropdown_border;
+              border-radius: 2px;
+              cursor: pointer;
+
+              &:hover,
+              &.active {
+                border-color: @multi_dropdown_border_hover_color;
+              }
+
+              .multi-dropdown-title {
+                position: relative;
+                height: 30px;
+
+                > div {
+                  height: 30px;
+                  margin: 0 24px 0 10px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                }
+                > i.icon-arrow-down {
+                  position: absolute;
+                  right: 6px;
+                  top: 10px;
+                  transition: all .3s ease;
+                  &.rotate {
+                    transform: rotate(-180deg);
+                  }
+                }
+              }
+              .multi-dropdown-box {
+                position: absolute;
+
+                // > ul.multi-dropdown-column {
+                //   top: 2px !important;
+                // }
+
+                // ul.multi-dropdown-column {
+                //   width: 120px;
+                //   padding-bottom: 10px;
+                //   position: absolute;
+                //   left: 100%;
+                //   top: 0;
+                //   background-color: @multi_dropdown_bg_color;
+                //   box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.12);
+                //   border-radius: 2px;
+
+                //   .multi-dropdown-column {
+                //     display: none;
+                //   }
+
+                //   > li {
+                //     padding: 0 20px;
+                //     &:hover,
+                //     &:active,
+                //     &:focus {
+                //       background-color: @multi_dropdown_list_hover_bg_color;
+                //       > .multi-dropdown-column {
+                //         display: block;
+                //       }
+                //     }
+                //   }
+                // }
+              }
+            }
+          }
+
+          .chart-box {
+            width: 100%;
+            height: 260px;
+          }
+        }
+
+
+        &.alarm-config {
+
+          > .alarm-threshold,
+          > .alarm-preview {
+            box-sizing: border-box;
+            width: 50%;
+            height: 100%;
+            float: left;
+
+            .alarm-config-title {
+              font-size: 16px;
+              height: 10%;
+            }
+
+            .alarm-config-content {
+              height: 90%;
+              .chart-box {
+                width: 100%;
+                height: 200px;
+              }
+            }
+          }
+
+          > .alarm-threshold {
+            padding-right: 20px;
+          }
+        }
+
+        &.set-notification {
+          ul.notification-list {
+            max-height: 250px;
+            overflow: auto;
+
+            li {
+              background-color: @create_alarm_notification_list_bg_color;
+              border-radius: 2px;
+              margin-bottom: 12px;
+              padding: 10px 20px;
+              user-select: none;
+
+              * {
+                margin-right: 4px;
+              }
+
+              > select {
+                background-color: #fff;
+              }
+
+              > .create {
+                margin-left: 8px;
+                color: @create_alarm_add_notification_color;
+                cursor: pointer;
+              }
+
+              > i.icon-remove {
+                float: right;
+                margin-top: 9px;
+                color: @craete_alarm_notification_remove_color;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+
+                &:hover {
+                  color: @create_alarm_label_strong_color;
+                }
+              }
+            }
+          }
+
+          .add-notification {
+            margin-top: 12px;
+            font-size: 13px;
+            color: @create_alarm_add_notification_color;
+            cursor: pointer;
+            user-select: none;
+
+            i {
+              font-weight: 600;
+              margin-right: 4px;
+            }
+          }
+        }
+
+      }
+    }
+  }
+
+  &.modal-ft {
+    .left-side > * {
+      float: left;
+    }
+  }
+}

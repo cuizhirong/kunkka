@@ -7,9 +7,10 @@ module.exports = {
     return storage.getList(['alarm', 'instance', 'notification'], forced).then(function(data) {
       data.alarm.forEach((alarm) => {
         if (alarm.gnocchi_resources_threshold_rule) {
+          let rule = alarm.gnocchi_resources_threshold_rule;
           data.instance.some((ins) => {
-            if (ins.id === alarm.resource_id) {
-              alarm.resource_name = ins.name ? ins.name : ins.id.substr(0, 8);
+            if (ins.id === rule.resource_id) {
+              rule.resource_name = ins.name ? ins.name : ins.id.substr(0, 8);
               return true;
             }
             return false;
@@ -54,10 +55,21 @@ module.exports = {
       return data;
     });
   },
+  createAlarm: function(data) {
+    return fetch.post({
+      url: '/proxy/aodh/v2/alarms',
+      data: data
+    });
+  },
   updateAlarm: function(id, data) {
     return fetch.put({
       url: '/proxy/aodh/v2/alarms/' + id,
       data: data
+    });
+  },
+  deleteAlarm: function(id) {
+    return fetch.delete({
+      url: '/proxy/aodh/v2/alarms/' + id
     });
   }
 };
