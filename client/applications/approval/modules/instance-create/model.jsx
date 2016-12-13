@@ -126,7 +126,7 @@ class Model extends React.Component {
       let visibility = ele.visibility;
       if (type === 'distribution' && visibility === 'public') {
         images.push(ele);
-      } else if (type === 'snapshot' && visibility === 'public') {
+      } else if (type === 'snapshot') {
         snapshots.push(ele);
       }
     });
@@ -160,11 +160,13 @@ class Model extends React.Component {
     var obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
-      if (obj.visibility === 'public') {
+      if (obj.image_type === 'distribution' && obj.visibility === 'public') {
         image = obj;
       } else if (obj.visibility === 'private') {
-        snapshot = obj;
-        imageType = 'snapshot';
+        if(obj.image_type === 'snapshot') {
+          snapshot = obj;
+          imageType = 'snapshot';
+        }
       }
     }
     this.setFlavor(currentImage, 'all');
@@ -379,9 +381,9 @@ class Model extends React.Component {
     if (objImage) {
       let flavor;
       let expectedSize;
-      if (objImage.visibility === 'public') {//image
+      if (objImage.image_type === 'distribution' && objImage.visibility === 'public') {//image
         expectedSize = Number(objImage.expected_size);
-      } else {//snapshot
+      } else if (objImage.image_type === 'snapshot') {//snapshot
         expectedSize = Number(objImage.min_disk);
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
