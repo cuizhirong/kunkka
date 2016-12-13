@@ -28,7 +28,9 @@
     "remote_tip": "Please fill out the IP address of peer side router, it must be a public IP, like 1.2.3.4.",
     "key": "Key",
     "target_network": "Target Network",
-    "target_tip": "Please fill out the network address of target network, like 192.168.4.0/24 CIDR of target network can't be overlapped with subnets connected to this router."
+    "target_tip": "Please fill out the network address of target network, like 192.168.4.0/24 CIDR of target network can't be overlapped with subnets connected to this router.",
+    "router_update_end": "Update",
+    "router_update_end": "Update"
   },
   "zh-CN": {
     "add_interface": "绑定",
@@ -59,6 +61,8 @@
     "remote_tip": "请填写对端路由的IP地址，须为合法的IP地址，例如1.2.3.4",
     "key": "密钥",
     "target_network": "目标网络",
-    "target_tip": "请填写对端路由器的IP地址，例如192.168.0.4/24 目标网络不能和本路由器已有的私有网络重复"
+    "target_tip": "请填写对端路由器的IP地址，例如192.168.0.4/24 目标网络不能和本路由器已有的私有网络重复",
+    "router_update_start": "更新",
+    "router_update_end": "更新"
   }
 }

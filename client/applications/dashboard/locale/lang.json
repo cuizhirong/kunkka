@@ -106,7 +106,8 @@
     "modify_fail": "Modify Failed",
     "modify_pwd": "Modify Password",
     "personal_settings": "Settings",
-    "back": "Back"
+    "back": "Back",
+    "notification": "Notification"
   },
   "zh-CN": {
     "graphic": "图表",
@@ -215,6 +216,7 @@
     "modify_fail": "修改失败！",
     "modify_pwd": "修改密码",
     "personal_settings": "个人设置",
-    "back": "返回"
+    "back": "返回",
+    "notification": "通知列表"
   }
 }

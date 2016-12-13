@@ -27,6 +27,7 @@ var vpnservice = require('../modules/router/cache');
 var ipsec = require('../modules/router/cache');
 var ikepolicy = require('../modules/ike-policy/cache');
 var ipsecpolicy = require('../modules/ipsec-policy/cache');
+var notification = require('../modules/notification/cache');
 
 var map = {
   network: ['subnet'],
@@ -84,6 +85,6 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member, vpnservice, ipsec, ikepolicy, ipsecpolicy);
+Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup, snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member, vpnservice, ipsec, ikepolicy, ipsecpolicy, notification);
 
 module.exports = new Storage();

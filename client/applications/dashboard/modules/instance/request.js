@@ -227,5 +227,19 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
       data: data
     });
+  },
+  getAlarmItems() {
+    return fetch.get({
+      url: '/proxy/aodh/v2/alarms'
+    });
+  },
+  getReousrceMeasures: function(resourceId, type, granularity) {
+    var deferredList = [];
+    type.forEach((t) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity
+      }));
+    });
+    return RSVP.all(deferredList);
   }
 };

@@ -10,6 +10,9 @@ var RelatedSources = require('client/components/related_sources/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('../../components/console_output/index');
 var VncConsole = require('../../components/vnc_console/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
+var LineChart = require('client/components/line_chart/index');
+var {Button} = require('client/uskin/index');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
@@ -38,6 +41,7 @@ var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
+var getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 
@@ -50,7 +54,7 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction'].forEach((m) => {
+    ['onInitialize', 'onAction', 'changeDefaultTab'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -562,6 +566,97 @@ class Model extends React.Component {
           });
         }
         break;
+      case 'monitor':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          var asyncMonitorTabKey = tabKey;
+
+          var updateDetailMonitor = function(newContents) {
+            detail.setState({
+              contents: newContents,
+              loading: false
+            });
+          };
+
+          //open detail without delaying
+          contents[asyncMonitorTabKey] = <LineChart/>;
+          updateDetailMonitor(contents);
+
+          var resourceId = rows[0].id,
+            metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            granularity = '300',
+            _data = [], chartData = [], _time = [], chartTime = [];
+          var tabItems = [{
+            name: __.three_hours,
+            key: '300',
+            default: true
+          }, {
+            name: __.one_day,
+            key: '900'
+          }, {
+            name: __.one_week,
+            key: '3600'
+          }, {
+            name: __.one_month,
+            key: '21600'
+          }];
+          request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
+            res.forEach((_d, i) => {
+              _data = [];
+              _d.forEach(d => {
+                _time.push(moment(d[0]).month() + '-' + moment(d[0]).date() + ' ' + moment(d[0]).hour() + ':' + moment(d[0]).minute() + '0');
+                if (i === 0 || i === 1) {
+                  _data.push(d[2].toFixed(2) * 100);
+                } else {
+                  _data.push(d[2].toFixed(2));
+                }
+              });
+              chartData.push(_data);
+              chartTime.push(_time);
+              _time = [];
+            });
+            contents[asyncMonitorTabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
+                unit={['%', '%', 'B/s', 'B/s']}
+                data={chartData}
+                chartTime={chartTime}
+                granularity={granularity}
+                tabItems={tabItems}
+                clickTabs={this.clickTabs.bind(this)}>
+                <Button value={__.create}/>
+              </LineChart>
+            );
+            updateDetailMonitor(contents);
+          }, () => {
+            contents[asyncMonitorTabKey] = (<LineChart
+              __={__}
+              item={rows[0]}
+              title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
+              unit={['%', '%', 'B/s', 'B/s']}
+              data={[[], [], [], []]}
+              chartTime={chartTime}
+              granularity={granularity}
+              tabItems={tabItems}
+              clickTabs={this.clickTabs.bind(this)}/>);
+            updateDetailMonitor(contents);
+          });
+        }
+        break;
+      case 'alarm':
+        if (isAvailableView(rows)) {
+          var alarmItems = this.getAlarmItems(rows[0]);
+          contents[tabKey] = (
+            <DetailMinitable
+              __={__}
+              title={__.alarm}
+              defaultUnfold={true}
+              tableConfig={alarmItems ? alarmItems : []} />
+          );
+        }
+        break;
       default:
         break;
     }
@@ -572,6 +667,117 @@ class Model extends React.Component {
         loading: false
       });
     }
+  }
+
+  changeDefaultTab(tabs, tab) {
+    tabs.forEach((t) => {
+      t.default = (t.key === tab.key) ? true : false;
+    });
+
+    return tabs;
+  }
+
+  clickTabs(e, tabItem, item) {
+    var detail = this.refs.dashboard.refs.detail,
+      contents = detail.state.contents,
+      monitor = 'monitor',
+      resourceId = item.id,
+      tabItems = [],
+      metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+      granularity = tabItem.key,
+      _data = [], chartData = [], _time = [], chartTime = [];
+
+    tabItems = [{
+      name: __.three_hours,
+      key: '300'
+    }, {
+      name: __.one_day,
+      key: '900'
+    }, {
+      name: __.one_week,
+      key: '3600'
+    }, {
+      name: __.one_month,
+      key: '21600'
+    }];
+
+    this.changeDefaultTab(tabItems, tabItem);
+
+    request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
+      res.forEach((data, i) => {
+        _data = [];
+        data.forEach(d => {
+          _time.push(moment(d[0]).month() + '-' + moment(d[0]).date() + ' ' + moment(d[0]).hour() + ':' + moment(d[0]).minute() + '0');
+          if (i === 0 || i === 1) {
+            _data.push(d[2].toFixed(2) * 100);
+          } else {
+            _data.push(d[2].toFixed(2));
+          }
+        });
+        chartData.push(_data);
+        chartTime.push(_time);
+        _time = [];
+      });
+      contents[monitor] = (
+        <LineChart
+          __={__}
+          item={item}
+          title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
+          unit={['%', '%', 'B/s', 'B/s']}
+          data={chartData}
+          chartTime={chartTime}
+          tabItems={tabItems}
+          granularity={granularity}
+          clickTabs={this.clickTabs.bind(this)}>
+          <Button value={__.create}/>
+        </LineChart>
+      );
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    });
+  }
+
+  getAlarmItems(item) {
+    var tableContent = [];
+    item.alarm.forEach((element, index) => {
+      if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance_disk') {
+        var dataObj = {
+          id: index + 1,
+          name: item.name,
+          enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
+          state: element.state === 'insufficient data' ? getStatusIcon('insufficient_data') : getStatusIcon(element.state),
+          created_at: getTime(element.timestamp, true)
+        };
+        tableContent.push(dataObj);
+      }
+    });
+
+    var tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.enable + __.status,
+        key: 'enabled',
+        dataIndex: 'enabled'
+      }, {
+        title: __.status,
+        key: 'state',
+        dataIndex: 'state'
+      }, {
+        title: __.create + __.time,
+        key: 'created_at',
+        dataIndex: 'created_at'
+      }],
+      data: tableContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getBasicPropsItems(item) {

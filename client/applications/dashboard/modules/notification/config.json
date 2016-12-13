@@ -1,0 +1,70 @@
+{
+  "tabs": [{
+    "name": ["notification"],
+    "key": "notification",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "notification"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["update", "notification"],
+    "key": "update",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "limit": 10,
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["description"],
+      "dataIndex": "description",
+      "key": "description"
+    }, {
+      "title": ["total_count"],
+      "key": "total_count"
+    }, {
+      "title": ["verified_count"],
+      "dataIndex": "verified_count",
+      "key": "verified_count"
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "type": "time",
+      "key": "created_at"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}
