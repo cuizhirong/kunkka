@@ -119,7 +119,7 @@ class ModalBase extends React.Component {
       let visibility = ele.visibility;
       if (type === 'distribution' && visibility === 'public') {
         images.push(ele);
-      } else if (type === 'snapshot' && visibility === 'public') {
+      } else if (type === 'snapshot') {
         snapshots.push(ele);
       }
     });
@@ -167,8 +167,10 @@ class ModalBase extends React.Component {
       if (obj.visibility === 'public') {//image
         image = obj;
       } else if (obj.visibility === 'private') {//snapshot
-        snapshot = obj;
-        imageType = 'snapshot';
+        if(obj.image_type === 'snapshot') {
+          snapshot = obj;
+          imageType = 'snapshot';
+        }
       } else {//bootableVolume
         bootableVolume = obj;
         currentImage = obj.volume_image_metadata;
@@ -346,7 +348,9 @@ class ModalBase extends React.Component {
       if (objImage.visibility === 'public') {//image
         expectedSize = Number(objImage.expected_size);
       } else if (objImage.visibility === 'private') {//snapshot
-        expectedSize = Number(objImage.min_disk);
+        if(objImage.image_type === 'snapshot') {
+          expectedSize = Number(objImage.min_disk);
+        }
       } else {//bootableVolume
         expectedSize = Number(objImage.expected_size);
       }
