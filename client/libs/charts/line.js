@@ -1,6 +1,7 @@
 var easing = require('./easing');
 var autoscale = require('./autoscale');
 var utils = require('./utils');
+var CanvasEvent = require('./event');
 
 class LineChart {
   constructor(container) {
@@ -11,13 +12,18 @@ class LineChart {
   initDOM() {
     var canvas = this.canvas = document.createElement('canvas'),
       bCanvas = this.bCanvas = document.createElement('canvas'),
-      vCanvas = this.vCanvas = document.createElement('canvas');
+      vCanvas = this.vCanvas = document.createElement('canvas'),
+      tooltip = this.tooltip = document.createElement('div'),
+      circleTip = this.circleTip = document.createElement('div');
 
     this.width = this.container.clientWidth;
     this.height = this.container.clientHeight;
+    this.event = null;
 
     this.container.appendChild(bCanvas);
     this.container.appendChild(canvas);
+    this.container.appendChild(tooltip);
+    this.container.appendChild(circleTip);
 
     autoscale([canvas, bCanvas, vCanvas], {
       width: this.width,
@@ -26,6 +32,8 @@ class LineChart {
 
     vCanvas.getContext('2d').translate(0.5, -0.5);
     bCanvas.getContext('2d').translate(0.5, -0.5);
+
+    this.event = new CanvasEvent(this.canvas, this.tooltip, this.circleTip);
   }
 
   setOption(option) {
@@ -76,10 +84,14 @@ class LineChart {
       realMin = this.realMin = Math.floor(min * 1.2 / tickPeriod) * tickPeriod;
     }
 
-    this.marginLeft = 20;
+    this.marginLeft = option.yAxis.tickMarginLeft || 20;
     this.marginBottom = 20;
 
-    this.ratioY = (this.height - this.marginBottom) / (realMax - realMin);
+    if (realMax === 0 && realMin === 0) {
+      this.ratioY = 0;
+    } else {
+      this.ratioY = (this.height - this.marginBottom) / (realMax - realMin);
+    }
     // console.log(this.height-this.marginBottom,this.ratioY)
     // console.log(max, realMax, min, realMin);
 
@@ -122,18 +134,27 @@ class LineChart {
     ctx.font = '10px "Helvetica Neue"';
     ctx.textAlign = 'right';
     //console.log((this.realMax-this.realMin) / this.tickPeriod)
+    if (this.realMax === this.realMin && this.realMax === 0) {
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, height - marginBottom);
+      ctx.lineTo(marginLeft - 3, height - marginBottom);
+      ctx.stroke();
+      ctx.fillText(0, this.marginLeft - 5, height - height / 2 + 3);
+    }
     for (let i = 0, len = (this.realMax - this.realMin) / this.tickPeriod; i < len; i++) {
       let y = height - this.ratioY * this.tickPeriod * i;
+      let yAxisData = this.tickPeriod * i + this.realMin;
       ctx.beginPath();
       ctx.moveTo(marginLeft, y - marginBottom);
       ctx.lineTo(marginLeft - 3, y - marginBottom);
       ctx.stroke();
-      ctx.fillText(this.tickPeriod * i + this.realMin, this.marginLeft - 5, y - marginBottom + 3);
+      ctx.fillText(yAxisData >= 1000 ? yAxisData / 1000 + 'k' : yAxisData, this.marginLeft - 5, y - marginBottom + 3);
     }
 
     // draw xAxis
     ctx.font = '10px "Helvetica Neue"';
     ctx.textAlign = 'center';
+
     for (let i = 1, len = Math.ceil(xData.length / this.interval); i < len; i++) {
       let x = marginLeft + i * this.ratioX * this.interval;
       ctx.beginPath();
@@ -168,14 +189,24 @@ class LineChart {
       var len = s.data.length;
 
       s.data.forEach((data, j) => {
-        p.push({
-          x: marginLeft + j * ratioX,
-          y: height - marginBottom - ratioY * (data - realMin)
-        });
+        if (this.realMax === this.realMin && this.realMax === 0) {
+          p.push({
+            x: marginLeft + j * (ratioX / Math.ceil(s.data.length / option.xAxis.data.length)),
+            y: height - height / 2
+          });
+        } else {
+          p.push({
+            x: marginLeft + j * (ratioX / Math.ceil(s.data.length / option.xAxis.data.length)),
+            y: height - marginBottom - ratioY * (data - realMin)
+          });
+        }
       });
 
       s.data.forEach((data, j) => {
         // calc control point for bezierCurveTo func
+        if (len === 1) {
+          p[1] = 0;
+        }
         if (j === 0) {
           cp.push({
             x: (p[0].x + p[1].x) / 2,
@@ -222,9 +253,12 @@ class LineChart {
       realMin = this.realMin,
       zeroY = height - marginBottom + ratioY * realMin,
       positions = this.positions,
-      ctPositions = this.ctPositions;
+      ctPositions = this.ctPositions,
+      num = option.num,
+      that = this;
 
     ctx.clearRect(0, 0, width, height);
+    this.event.unBindAll();
 
     series.forEach((s, j) => {
       var data = s.data,
@@ -270,8 +304,17 @@ class LineChart {
               ctPosition[i * 2 - 1].x, ctPosition[i * 2 - 1].y,
               position[i].x, position[i].y);
           }
-
         }
+        (function(n) {
+          that.event.bind({
+            x: n.x,
+            y: n.y,
+            m: m,
+            num: num,
+            time: option.xAxis.data[i],
+            unit: option.unit
+          }, 0);
+        })(position[i]);
       });
       ctx.lineTo(marginLeft + (data.length - 1) * ratioX, zeroY);
       ctx.stroke();
@@ -288,7 +331,6 @@ class LineChart {
       ctx.lineTo(this.width, _y);
       ctx.stroke();
     }
-
   }
 
   renderLine() {

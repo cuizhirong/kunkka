@@ -1,0 +1,63 @@
+@import "../../../style/index.less";
+
+@tab_color: @color_cancel;
+@bg_color: @color_info_200;
+@color_font: @color_font_700;
+@circle_color: @color_warning;
+@chart_bg_color: @color_info_100;
+.halo-com-line-chart {
+  .tabs_sm {
+    margin-top: 20px;
+    height: 24px;
+    .btn {
+      margin-left: 3%;
+    }
+    .tabs-mini {
+      background-color: #fff;
+      float: right;
+      margin: -4px 3% 0 0;
+      .tab {
+        background-color: @tab_color;
+        margin-right: 1px;
+        &:hover {
+          background-color: @bg_color;
+        }
+      }
+      .selected  {
+        background-color: @bg_color;
+      }
+    }
+  }
+  .chart {
+    position: relative;
+    width: 95%;
+    height: 200px;
+    margin: 20px auto;
+    background-color: @chart_bg_color;
+    .chart-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-left: 20px;
+      margin-top: 20px;
+    }
+    .legendWp {
+      float: right;
+      margin-right: 20px;
+      margin-top: 6px;
+      color: @color_font;
+      .circle {
+        background-color: @circle_color;
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
+      .no-data {
+        position: absolute;
+        top: 50%;
+        right: 50%;
+      }
+    }
+  }
+}
