@@ -13,7 +13,8 @@
       "fixedIp": "Fixed Ip",
       "userID": "UserID",
       "projectID": "ProjectID",
-      "status": "Status"
+      "status": "Status",
+      "type": "Type"
     }
   },
   "zh-CN": {
@@ -30,7 +31,8 @@
       "fixedIp": "私网IP",
       "userID": "用户ID",
       "projectID": "项目ID",
-      "status": "状态"
+      "status": "状态",
+      "type": "类型"
     }
   }
 }

@@ -66,6 +66,12 @@ Host.prototype = {
           label:__('api.nova.server.name'),
           value:'hypervisor_hostname'
         }, {
+          label: 'IP',
+          value: 'host_ip'
+        }, {
+          label: 'vCPU',
+          value: row => row.vcpus_used + '/' + row.vcpus
+        }, {
           label: __('api.nova.memory'),
           value: row => (row.memory_mb_used / 1024).toFixed(2) + '/' + (row.memory_mb / 1024).toFixed(2)
         }, {
@@ -75,8 +81,8 @@ Host.prototype = {
           label: __('api.nova.vms'),
           value: 'running_vms'
         }, {
-          label: 'IP',
-          value: 'host_ip'
+          label: __('api.nova.server.type'),
+          value: 'hypervisor_type'
         }, {
           label: __('api.nova.status'),
           value: 'status'
