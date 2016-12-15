@@ -34,7 +34,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.interval + granularity + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let yAxis = [];
     let xAxis = [];
 

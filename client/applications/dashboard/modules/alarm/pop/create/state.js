@@ -30,7 +30,9 @@ let initialState = {
         status: 'alarm',
         notification: 'none'
       }],
-      notifications: []
+      notifications: [],
+      hideError: true,
+      errorMsg: ''
     };
 
     return state;
@@ -94,7 +96,9 @@ let initialState = {
 
       //set notification
       notificationLists: notificationLists,
-      notifications: []
+      notifications: [],
+      hideError: true,
+      errorMsg: ''
     };
 
     return state;

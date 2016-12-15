@@ -17,11 +17,17 @@ module.exports = {
           });
         }
 
-        alarm.status = alarm.state;
-        if (alarm.state === 'insufficient data') {
-          alarm.status = 'data_insufficient';
+        switch (alarm.state) {
+          case 'insufficient data':
+            alarm.status = 'data_insufficient';
+            break;
+          case 'ok':
+            alarm.status = 'alarm_status_ok';
+            break;
+          default:
+            alarm.status = alarm.state;
+            break;
         }
-
       });
 
       return data.alarm;

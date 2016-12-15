@@ -13,7 +13,7 @@ module.exports = (str, option) => {
   } else {
     switch(status) {
       case 'active':
-      case 'ok':
+      case 'alarm_status_ok':
         type.icon = 'active';
         type.status = 'active';
         break;

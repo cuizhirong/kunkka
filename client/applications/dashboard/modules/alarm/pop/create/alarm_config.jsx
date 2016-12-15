@@ -24,7 +24,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity, threshold) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.interval + granularity + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let measures = [];
     let xAxis = [];
 
@@ -194,7 +194,7 @@ class Modal extends React.Component {
               </div>
               <div className="modal-data modal-data-for">
                 <input value={state.evaluationPeriods} onChange={this.onChange.bind(this, 'evaluationPeriods')} />
-                <span>{'consecutive period(s)'}</span>
+                <span>{__.consecutive_period}</span>
               </div>
             </div>
             <div className="row">

@@ -7,9 +7,8 @@ var __ = require('locale/client/dashboard.lang.json');
 var utils = require('../../utils');
 var request = require('../../request');
 var initialState = require('./state');
-// var unitConverter = require('client/utils/unit_converter');
-// var priceConverter = require('../../../../utils/price');
-// var getErrorMessage = require('../../../../utils/error_message');
+var createNotification = require('../../../notification/pop/modal/index');
+var getErrorMessage = require('../../../../utils/error_message');
 
 let title;
 let measureData = [];
@@ -27,7 +26,7 @@ class ModalBase extends React.Component {
       title = __.create + __.alarm;
     }
 
-    ['onPrevPage', 'onNextPage', 'onChangeState', 'onConfirm'].forEach((func) => {
+    ['onPrevPage', 'onNextPage', 'onChangeState', 'createNotification', 'onConfirm'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
@@ -188,6 +187,26 @@ class ModalBase extends React.Component {
     });
   }
 
+  createNotification(id, e) {
+    createNotification(null, this.refs.modal, (notif) => {
+      let { notifications, notificationLists } = this.state;
+      notif.id = notif.uuid;
+      notifications.push(notif);
+
+      notificationLists.some((ele) => {
+        if (ele.id === id) {
+          ele.notification = notif.id;
+          return true;
+        }
+        return false;
+      });
+
+      this.setState({
+        notifications: notifications
+      });
+    });
+  }
+
   onConfirm(e) {
     this.setState({
       disabled: true
@@ -239,7 +258,11 @@ class ModalBase extends React.Component {
         let cb = this.props.callback;
         cb && cb(res);
       }).catch((err) => {
-        //error tips
+        this.setState({
+          disabled: false,
+          hideError: false,
+          errorMsg: getErrorMessage(err)
+        });
       });
     } else {
       request.createAlarm(data).then((res) => {
@@ -250,7 +273,11 @@ class ModalBase extends React.Component {
         let cb = this.props.callback;
         cb && cb(res);
       }).catch((err) => {
-        //error tips
+        this.setState({
+          disabled: false,
+          hideError: false,
+          errorMsg: getErrorMessage(err)
+        });
       });
     }
 
@@ -311,7 +338,7 @@ class ModalBase extends React.Component {
     }, {
       name: __.set_notification
     }];
-    steps[state.page].default = true; //need to modify uskin
+    steps[state.page].default = true;
 
     return (
       <Modal ref="modal" {...props} title={title} visible={state.visible} width={880}>
@@ -322,7 +349,7 @@ class ModalBase extends React.Component {
           <div className={'slide-box page-' + (state.page)}>
             <SelectMetric ref="select_metric" state={state} onChangeState={this.onChangeState} />
             <AlarmConfig ref="alarm_config" state={state} onChangeState={this.onChangeState} />
-            <SetNotification state={state} onChangeState={this.onChangeState} />
+            <SetNotification state={state} onChangeState={this.onChangeState} createNotification={this.createNotification} />
           </div>
         </div>
         <div className="modal-ft halo-com-modal-create-alarm">

@@ -1,4 +1,5 @@
 var React = require('react');
+var { Tip } = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
 
 let countId = 0;
@@ -8,7 +9,7 @@ class Modal extends React.Component {
   constructor(props) {
     super(props);
 
-    ['addAlarm', 'removeAlarm'].forEach((func) => {
+    ['addAlarm', 'removeAlarm', 'createNotification'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
@@ -57,8 +58,9 @@ class Modal extends React.Component {
     }
   }
 
-  createNotification(e) {
-
+  createNotification(id, e) {
+    let func = this.props.createNotification;
+    func && func(id, e);
   }
 
   onChangeStatus(id, e) {
@@ -89,7 +91,7 @@ class Modal extends React.Component {
     return (
       <div className="page set-notification">
         <div className="notification-box">
-          <ul className="notification-list">
+          <ul className="notification-list" style={state.hideError ? null : {maxHeight: 185}}>
             {state.notificationLists.map((ele) =>
               <li key={ele.id}>
                 <span>{__.when_alarm_status_is}</span>
@@ -107,7 +109,7 @@ class Modal extends React.Component {
                     )
                   }
                 </select>
-                <span className="create-notification create" onClick={this.createNotification}>{__.create_notification}</span>
+                <span className="create-notification create" onClick={this.createNotification.bind(this, ele.id)}>{__.create_notification}</span>
                 <i className="glyphicon icon-remove" onClick={this.removeAlarm.bind(this, ele.id)} />
               </li>
             )}
@@ -118,6 +120,9 @@ class Modal extends React.Component {
             <i className="glyphicon icon-create" />
             {__.add_notification}
           </span>
+        </div>
+        <div className={'error-tip-box' + (state.hideError ? ' hide' : '')}>
+          <Tip content={state.errorMsg} type="danger" showIcon={true} width={805} />
         </div>
       </div>
     );

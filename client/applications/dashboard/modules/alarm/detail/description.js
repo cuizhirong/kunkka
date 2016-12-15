@@ -113,7 +113,7 @@ module.exports = {
         id: countId++,
         type: alarmType,
         trigger: trigger,
-        trigger_behavior: __.send,
+        trigger_behavior: __.alarm_send,
         notification_list: name,
         operation: <i className="glyphicon icon-delete" onClick={that.removeNotification.bind(that, {item, alarmType, id, cb, name})} />
       };
