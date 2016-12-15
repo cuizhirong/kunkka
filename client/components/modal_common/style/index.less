@@ -386,7 +386,8 @@
       }
     }
 
-    &.select-row {
+    &.select-row,
+    &.radio-input-row {
       height: 32px;
       >div:last-child {
         display: flex;
@@ -400,6 +401,18 @@
         }
         select {
           flex: 1;
+        }
+        .radio-input {
+          flex: 1;
+          width: 100%;
+        }
+        .radio-input >input{
+          width: 100%;
+          height: 32px;
+          box-sizing: border-box;
+        }
+        .radio-input >.short-tip-row {
+          padding-left: 0;
         }
         .empty-text-label {
           color: @empty_text_label_color;

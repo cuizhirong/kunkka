@@ -14,6 +14,7 @@ var SelectGroup = require('./subs/select_group/index');
 var SelectSingle = require('./subs/select_single/index');
 var Tab = require('./subs/tab/index');
 var GroupSelect = require('./subs/group_select/index');
+var RadioInput = require('./subs/radio_input/index');
 var Slider = require('./subs/slider/index');
 var Progress = require('./subs/progress/index');
 var ShortTip = require('./subs/short_tip/index');
@@ -63,6 +64,7 @@ class ModalBase extends React.Component {
         'select_group': SelectGroup,
         'select_single': SelectSingle,
         'group_select': GroupSelect,
+        'radio_input': RadioInput,
         'slider': Slider,
         'progress': Progress,
         'short_tip': ShortTip,
