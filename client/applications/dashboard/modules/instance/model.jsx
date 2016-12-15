@@ -43,6 +43,7 @@ var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
 var getTime = require('client/utils/time_unification');
+var utils = require('../alarm/utils');
 
 class Model extends React.Component {
 
@@ -567,7 +568,7 @@ class Model extends React.Component {
           });
         }
         break;
-      case 'monitor':
+      case 'console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
           var asyncMonitorTabKey = tabKey;
@@ -675,11 +676,14 @@ class Model extends React.Component {
   clickTabs(e, tabItem, item) {
     var detail = this.refs.dashboard.refs.detail,
       contents = detail.state.contents,
-      monitor = 'monitor',
+      monitor = 'console',
       resourceId = item.id,
       tabItems = [],
       metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
       granularity = tabItem.key;
+    detail.setState({
+      loading: true
+    });
 
     tabItems = [{
       name: __.three_hours,
@@ -726,7 +730,7 @@ class Model extends React.Component {
           id: index + 1,
           name: element.name,
           enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
-          state: element.state === 'insufficient data' ? getStatusIcon('insufficient_data') : getStatusIcon(element.state),
+          state: utils.getStateName(element.state),
           created_at: getTime(element.timestamp, true)
         };
         tableContent.push(dataObj);

@@ -6,6 +6,7 @@ var request = require('../../request');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var SelectData = require('./select');
+var t;
 
 var copyObj = function(obj) {
   var newobj = obj.constructor === Array ? [] : {};
@@ -77,7 +78,6 @@ class AddEndpoint extends React.Component {
   }
 
   countDown(i, wait) {
-    var t;
     var time = document.getElementById('time' + i);
     var resend = document.getElementById('resend' + i);
     resend && resend.classList.add('hide');
@@ -181,6 +181,7 @@ class AddEndpoint extends React.Component {
     if (this.props.hide) {
       className += ' hide';
     }
+    clearTimeout(t);
 
     return (
       <div className={className}>

@@ -5,7 +5,7 @@ var Main = require('client/components/main/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var modal = require('./pop/modal/index');
-var Detail = require('./pop/detail/index');
+var Detail = require('./detail/index');
 
 var __ = require('locale/client/dashboard.lang.json');
 var config = require('./config.json');
@@ -27,7 +27,7 @@ class Model extends React.Component {
 
     this.wait = 60;
 
-    ['onInitialize', 'onAction', 'countDown'].forEach((m) => {
+    ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -274,9 +274,6 @@ class Model extends React.Component {
           }, true);
         });
         break;
-      case 'send_msg':
-        this.countDown(data.index);
-        break;
       case 'rmv_endpoint':
         request.deleteSub(data.childItem.uuid, data.rawItem.uuid).then(res => {
           that.refresh({
@@ -287,25 +284,6 @@ class Model extends React.Component {
         break;
       default:
         break;
-    }
-  }
-
-  countDown(i) {
-    var t;
-    var time = document.getElementById('timer');
-    var status = document.getElementById('status');
-    status && status.classList.add('hide');
-    time && time.classList.remove('hide');
-    this.wait--;
-    if (time) {
-      time.innerHTML = __.verifying + '(' + this.wait + 's)';
-    }
-    t = setTimeout(this.countDown.bind(this, i), 1000);
-    if ( this.wait <= 0 ){
-      this.wait = 60;
-      status && status.classList.remove('hide');
-      time && time.classList.add('hide');
-      clearTimeout(t);
     }
   }
 

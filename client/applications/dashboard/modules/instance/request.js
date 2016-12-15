@@ -228,9 +228,16 @@ module.exports = {
       data: data
     });
   },
-  getAlarmItems() {
-    return fetch.get({
-      url: '/proxy/aodh/v2/alarms'
+  getAlarmList(id) {
+    var alarm = [], rule = '';
+    return storage.getList(['alarm']).then(function(data) {
+      data.alarm.forEach(a => {
+        rule = a.gnocchi_resources_threshold_rule;
+        if (rule.resource_type === 'instance' && rule.resource_id === id) {
+          alarm.push(a);
+        }
+      });
+      return alarm;
     });
   },
   getReousrceMeasures: function(resourceId, type, granularity) {

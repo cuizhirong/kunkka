@@ -101,29 +101,26 @@ function pop(obj, parent, callback) {
           refs.endpoint.setState({
             hide: !endpointChecked
           });
-          /*if (refs.name.state.value !== '') {
-            refs.btn.setState({
-              disabled: !endpointChecked
-            });
-          } else {
-            refs.btn.setState({
-              disabled: false
-            });
-          }*/
           break;
         case 'name':
-          if (!endpointChecked) {
-            if (refs.name.state.value !== '') {
-              refs.btn.setState({
-                disabled: false
-              });
+          if (refs.add_endpoint.state.checked) {
+            if (refs.name.state.value) {
+              if (refs.endpoint.state.subs && refs.endpoint.state.subs.length !== 0) {
+                refs.btn.setState({
+                  disabled: false
+                });
+              } else {
+                refs.btn.setState({
+                  disabled: true
+                });
+              }
             } else {
               refs.btn.setState({
                 disabled: true
               });
             }
           } else {
-            if (refs.name.state.value !== '') {
+            if (refs.name.state.value) {
               refs.btn.setState({
                 disabled: false
               });
@@ -135,16 +132,28 @@ function pop(obj, parent, callback) {
           }
           break;
         case 'endpoint':
-          if (state.subs && state.subs.length !== 0) {
-            if (refs.name.state.value !== '') {
+          if (refs.add_endpoint.state.checked) {
+            if (state.subs && state.subs.length !== 0) {
+              if (refs.name.state.value !== '') {
+                refs.btn.setState({
+                  disabled: false
+                });
+              }
+            } else {
               refs.btn.setState({
-                disabled: false
+                disabled: true
               });
             }
           } else {
-            refs.btn.setState({
-              disabled: true
-            });
+            if (refs.name.state.value) {
+              refs.btn.setState({
+                disabled: false
+              });
+            } else {
+              refs.btn.setState({
+                disabled: true
+              });
+            }
           }
           break;
         default:

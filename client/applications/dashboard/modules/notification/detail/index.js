@@ -4,11 +4,23 @@ var __ = require('locale/client/dashboard.lang.json');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var BasicProps = require('client/components/basic_props/index');
 var {Button} = require('client/uskin/index');
+var request = require('../request');
+var t, time, resend;
+
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class DetailIndex extends React.Component {
 
   constructor(props) {
     super(props);
+    this.wait = 60;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    resend && resend.classList.remove('hide');
+    time && time.classList.add('hide');
+    clearTimeout(t);
+    this.wait = 60;
   }
 
   getBasicPropsItems(item) {
@@ -27,7 +39,7 @@ class DetailIndex extends React.Component {
       content: parseInt(item.verifing_count, 10) + parseInt(item.verified_count, 10)
     }, {
       title: __.verified_count,
-      content: item.verified_count
+      content: <span style={{color: '#00afc8'}}>{item.verified_count}</span>
     }, {
       title: __.create + __.time,
       type: 'time',
@@ -35,6 +47,32 @@ class DetailIndex extends React.Component {
     }];
 
     return items;
+  }
+
+  times(i, sub) {
+    var that = this;
+    request.resendVerify(sub.uuid).then(() => {
+      that.countDown(i, this.wait);
+    }).catch(error => {
+      getErrorMessage(error);
+    });
+  }
+
+  countDown(i, wait) {
+    time = document.getElementById('time' + i);
+    resend = document.getElementById('resend' + i);
+    resend && resend.classList.add('hide');
+    time && time.classList.remove('hide');
+    wait--;
+    if (time) {
+      time.innerHTML = __.verifying + '(' + wait + 's)';
+    }
+    t = setTimeout(this.countDown.bind(this, i, wait), 1000);
+    if ( wait <= 0 ){
+      resend && resend.classList.remove('hide');
+      time && time.classList.add('hide');
+      clearTimeout(t);
+    }
   }
 
   getDetailTableConfig(item) {
@@ -46,12 +84,12 @@ class DetailIndex extends React.Component {
           element.protocol.replace(/(\w)/, function(v){return v.toUpperCase();})
           : element.protocol.toUpperCase(),
         endpoint: element.endpoint,
-        status: <div><span id="status">{element.verified ? <span style={{color: '#1eb9a5'}}>{__.verified}</span> : __.unverified}
-          {element.verified ? '' : <i className="glyphicon icon-notification msg" onClick={this.onDetailAction.bind(this, 'description', 'send_msg', {
-            rawItem: item,
-            childItem: element,
-            index: index
-          })} />}</span><span id="timer" className="hide">{__.verifying}</span></div>,
+        status: <div>
+            <span id={'time' + index} className="time">{this.times.bind(this, index)}</span>
+            <span id="status" style={{display: 'flex'}}>{element.verified ? <span style={{color: '#1eb9a5', flex: '1'}}>{__.verified}</span> : <span style={{flex: '1'}}>{__.unverified}</span>}
+            {element.verified ? '' : <span id={'resend' + index} className={element.verified ? 'hide' : 'resend'} title={__.resend}><i className="glyphicon icon-notification msg" onClick={this.times.bind(this, index, element)} /></span>}</span>
+            <span id="timer" className="hide">{__.verifying}</span>
+          </div>,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_endpoint', {
           rawItem: item,
           childItem: element
