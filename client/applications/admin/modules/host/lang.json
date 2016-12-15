@@ -9,8 +9,10 @@
     "gb": "(GB)",
     "memory": "Memory ",
     "migrate_host_tip": "Migrate shuted instance(migrate randomly)",
+    "no_host": "No host available.",
     "physical_host": "Host ",
     "state": "State",
+    "tip_input_host_id": "Please enter Host ID, excluding current host.",
     "vcpu": "vCPU ",
     "virtual_machine": "Virtual Machine "
   },
@@ -24,8 +26,10 @@
     "gb": "(GB)",
     "memory": "内存",
     "migrate_host_tip": "迁移关机状态的云主机（随机指定）",
+    "no_host": "没有可用的宿主机",
     "physical_host": "宿主机",
     "state": "State",
+    "tip_input_host_id": "请输入除当前宿主机之外的宿主机ID",
     "vcpu": "vCPU",
     "virtual_machine": "虚拟机"
   }

@@ -7,7 +7,16 @@
   }, {
     "type": "select",
     "data": [],
-    "field": "migrate_to"
+    "field": "migrate_to",
+    "empty_text": {
+      "info": "no_host"
+    },
+    "checkedField": "migrate_to"
+  }, {
+    "type": "radio_input",
+    "field": "migrate_to_other",
+    "checkedField": "migrate_to",
+    "tip_info": "tip_input_host_id"
   }, {
     "type": "checkbox",
     "field": "migrate_host_tip",
