@@ -13,7 +13,7 @@
     "field": "charge",
     "has_label": true,
     "value": "0.0000",
-    "hide": false
+    "hide": true
   }, {
     "type": "tip",
     "tip_type": "error",
