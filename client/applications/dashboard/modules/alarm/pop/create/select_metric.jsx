@@ -121,7 +121,7 @@ class Modal extends React.Component {
     });
   }
 
-  onClickDropdown(e, status) {
+  onClickDropdown(status, e) {
     let type = status.key;
     if (type === 'cpu_util' || type === 'disk.read.bytes.rate' ||
         type === 'disk.write.bytes.rate' || type === 'memory.usage') {
@@ -163,7 +163,7 @@ class Modal extends React.Component {
     return (
       <div className="page select-metric">
         <div className="select-box">
-          <MultiDropdown ref="multidropdown" items={resources} onClick={this.onClickDropdown} value={dropdownValue} />
+          <MultiDropdown ref="multidropdown" items={resources} disabled={resources.length === 0} onClick={this.onClickDropdown} value={dropdownValue} />
           <ButtonGroup>
             <Button btnKey={contant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_HOUR} />
             <Button btnKey={contant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_DAY} />

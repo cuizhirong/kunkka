@@ -1,5 +1,8 @@
 @import "../../../../../style/theme.less";
 
+@multi_dropdown_disabled_border_color: @color_disabled_300;
+@multi_dropdown_disabled_bg_color: @color_disabled_200;
+@multi_dropdown_disabled_color: @color_font_400;
 @multi_dropdown_border: 1px solid @color_grey_600;
 @multi_dropdown_border_hover_color: @color_info;
 @multi_dropdown_bg_color: #fff;
@@ -116,16 +119,26 @@
               line-height: 32px;
               border: @multi_dropdown_border;
               border-radius: 2px;
-              cursor: pointer;
+              user-select: none;
 
               &:hover,
               &.active {
                 border-color: @multi_dropdown_border_hover_color;
               }
 
+              &.disabled {
+                border-color: @multi_dropdown_disabled_border_color;
+                .multi-dropdown-title {
+                  background-color: @multi_dropdown_disabled_bg_color;
+                  color: @multi_dropdown_disabled_color;
+                  cursor: not-allowed !important;
+                }
+              }
+
               .multi-dropdown-title {
                 position: relative;
                 height: 30px;
+                cursor: pointer;
 
                 > div {
                   height: 30px;
@@ -144,39 +157,100 @@
                   }
                 }
               }
+
+              .multi-dropdown-box-outer {
+                position: relative;
+                z-index: 999;
+                float: left;
+                &:not(:first-child) {
+                  left: -10px;
+                }
+              }
+
               .multi-dropdown-box {
                 position: absolute;
 
-                // > ul.multi-dropdown-column {
-                //   top: 2px !important;
-                // }
+                .multi-dropdown-column {
+                  position: relative;
+                  float: left;
+                  width: 120px;
+                  height: 176px;
+                  overflow: hidden;
+                  border: @multi_dropdown_border;
+                  background-color: @multi_dropdown_bg_color;
+                  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 
-                // ul.multi-dropdown-column {
-                //   width: 120px;
-                //   padding-bottom: 10px;
-                //   position: absolute;
-                //   left: 100%;
-                //   top: 0;
-                //   background-color: @multi_dropdown_bg_color;
-                //   box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.12);
-                //   border-radius: 2px;
+                  > ul.scroll-box {
+                    width: 135px;
+                    min-width: 135px;
+                    max-height: 176px;
+                    border-right: none;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    z-index: 8;
+                    > li {
+                      padding: 0 25px 0 10px;
+                      height: 32px;
+                      line-height: 32px;
+                      width: 100px;
+                      overflow: hidden;
 
-                //   .multi-dropdown-column {
-                //     display: none;
-                //   }
+                      &:hover {
+                        background-color: @multi_dropdown_list_hover_bg_color;
+                      }
 
-                //   > li {
-                //     padding: 0 20px;
-                //     &:hover,
-                //     &:active,
-                //     &:focus {
-                //       background-color: @multi_dropdown_list_hover_bg_color;
-                //       > .multi-dropdown-column {
-                //         display: block;
-                //       }
-                //     }
-                //   }
-                // }
+                      &.selected {
+                        background-color: @multi_dropdown_list_hover_bg_color;
+                      }
+
+                      i.resource {
+                        margin-right: 4px;
+                      }
+
+                      span {
+                        display: inline-block;
+                        width: 80px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        cursor: pointer;
+                      }
+
+                      i.arrow {
+                        float: right;
+                        margin: 12px 4px 12px 0;
+                        font-size: 8px;
+                      }
+                    }
+
+                    &::-webkit-scrollbar {
+                      display: none;
+                    }
+                  }
+
+                  > .scroll-pane {
+                    position:absolute;
+                    width:8px;
+                    right:0;
+                    top:0;
+                    bottom:0;
+                    opacity: 0;
+                    transition: .2s;
+                    border-radius: 5px;
+                    > .scroll-slider {
+                      background: rgba(0,0,0,.3);
+                      position: relative;
+                      margin : 0 1px;
+                      border-radius: 3px;
+                      cursor: default;
+                    }
+                  }
+
+                  &:hover > .scroll-pane,
+                  .scroll-pane.active {
+                    opacity: 1;
+                  }
+                }
               }
             }
           }

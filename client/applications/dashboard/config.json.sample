@@ -37,8 +37,8 @@
   }, {
     "title": "monitor",
     "items": [
-      "notification",
-      "alarm"
+      "alarm",
+      "notification"
     ]
   }],
   "default_module": "overview",

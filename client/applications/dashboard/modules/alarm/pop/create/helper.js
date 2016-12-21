@@ -13,12 +13,13 @@ let helper = {
     if (resourceType === 'instance') {
       switch (metricType) {
         case 'cpu_util':
-        case 'memory.usage':
           return '%';
+        case 'memory.usage':
+          return 'MB';
         case 'disk.read.bytes.rate':
         case 'disk.write.bytes.rate':
         default:
-          return 'b/s';
+          return 'B/s';
       }
     }
   }

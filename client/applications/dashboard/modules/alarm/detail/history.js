@@ -5,7 +5,15 @@ var moment = require('client/libs/moment');
 module.exports = {
 
   getHistoryConfig: function(data) {
-    var datas = data.map((ele, i) => {
+    var filtered = data.filter((ele, i) => {
+      if (ele.type === 'rule change') {
+        let detail = JSON.parse(ele.detail);
+        return (typeof detail.enabled === 'boolean') ? true : false;
+      }
+      return true;
+    });
+
+    var datas = filtered.map((ele, i) => {
       let type = '';
       let action = '';
       let detail = JSON.parse(ele.detail);

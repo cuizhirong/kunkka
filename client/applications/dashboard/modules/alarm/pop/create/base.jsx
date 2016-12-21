@@ -44,77 +44,43 @@ class ModalBase extends React.Component {
 
   getResourceList() {
     request.getResources().then((data) => {
-      // console.log('ins & volume list:', data);
       let items = [{
-        items: [{
-          title: __.instance,
-          key: 'instance',
-          children: []
-        }]
+        title: __.instance,
+        icon: 'instance',
+        key: 'instance',
+        layer: 1
       }];
-          // {
-          //   title: 'First',
-          //   items: [{
-          //     title: 'Associate - 1',
-          //     key: 'ip-1',
-          //     children: [{
-          //       items: [{
-          //         title: 'Sub Channel - 1',
-          //         key: 'sub-1'
-          //       }, {
-          //         title: 'Sub Channel - 2',
-          //         key: 'sub-2'
-          //       }, {
-          //         title: 'Sub Channel - 3',
-          //         key: 'sub-3'
-          //       }]
-          //     }]
-          //   }, {
-          //     title: 'Associate - 2',
-          //     key: '1'
-          //   }]
-          // }, {
-          //   title: 'Second',
-          //   items: [{
-          //     title: 'Public IP - 1',
-          //     key: 'ip-1'
-          //   }, {
-          //     title: 'Public IP - 2',
-          //     key: '1'
-          //   }]
-          // }
 
-      items[0].items[0].children = data.instance.map((ele) => {
-        return {
-          items: [{
-            title: ele.name ? ele.name : ele.id.substr(0, 8),
-            key: ele.id,
-            children: [{
-              items: [{
-                title: utils.getMetricName('cpu_util'),
-                key: 'cpu_util',
-                resourceType: 'instance',
-                resource: ele
-              }, {
-                title: utils.getMetricName('memory.usage'),
-                key: 'memory.usage',
-                resourceType: 'instance',
-                resource: ele
-              }, {
-                title: utils.getMetricName('disk.read.bytes.rate'),
-                key: 'disk.read.bytes.rate',
-                resourceType: 'instance',
-                resource: ele
-              }, {
-                title: utils.getMetricName('disk.write.bytes.rate'),
-                key: 'disk.write.bytes.rate',
-                resourceType: 'instance',
-                resource: ele
-              }]
-            }]
-          }]
-        };
-      });
+      items[0].items = data.instance.map((ele) => ({
+        title: ele.name ? ele.name : ele.id.substr(0, 8),
+        key: ele.id,
+        layer: 2,
+        items: [{
+          title: utils.getMetricName('cpu_util'),
+          key: 'cpu_util',
+          resourceType: 'instance',
+          resource: ele,
+          layer: 3
+        }, {
+          title: utils.getMetricName('memory.usage'),
+          key: 'memory.usage',
+          resourceType: 'instance',
+          resource: ele,
+          layer: 3
+        }, {
+          title: utils.getMetricName('disk.read.bytes.rate'),
+          key: 'disk.read.bytes.rate',
+          resourceType: 'instance',
+          resource: ele,
+          layer: 3
+        }, {
+          title: utils.getMetricName('disk.write.bytes.rate'),
+          key: 'disk.write.bytes.rate',
+          resourceType: 'instance',
+          resource: ele,
+          layer: 3
+        }]
+      }));
 
       if (this.props.obj) {
         let alarm = this.props.obj;
@@ -305,7 +271,7 @@ class ModalBase extends React.Component {
         break;
       case 2:
         right = {
-          value: __.create,
+          value: this.props.obj ? __.modify : __.create,
           type: 'create',
           onClick: this.onConfirm
         };
