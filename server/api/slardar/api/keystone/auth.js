@@ -1,19 +1,28 @@
 'use strict';
 
 const co = require('co');
+
+const drivers = require('drivers');
 const Base = require('../base.js');
 const config = require('config');
 const region = config('region');
 
-function Auth (app) {
+const keystoneRemote = config('keystone');
+
+const adminLogin = require('../../common/adminLogin');
+const listUsersAsync = drivers.keystone.user.listUsersAsync;
+
+
+function Auth(app) {
   this.app = app;
   Base.call(this);
 }
 
-function Obj() {}
+function Obj() {
+}
 Obj.prototype = Object.create(null);
 
-function setRemote (catalog) {
+function setRemote(catalog) {
   let remote = new Obj();
   let oneRemote;
   for (let i = 0, l = catalog.length, service = catalog[0]; i < l; i++, service = catalog[i]) {
@@ -29,7 +38,7 @@ function setRemote (catalog) {
   return remote;
 }
 
-function getCookie (req, userId) {
+function getCookie(req, userId) {
   let _cookies;
   if (!req.cookies[userId]) {
     _cookies = {
@@ -51,11 +60,33 @@ Auth.prototype = {
 
     co(function *() {
       //unscope
-      const unScopedRes = yield that.__unscopedAuthAsync({
-        username: _username,
-        password: _password,
-        domain: _domain
-      });
+      let unScopedRes;
+      try {
+        unScopedRes = yield that.__unscopedAuthAsync({
+          username: _username,
+          password: _password,
+          domain: _domain
+        });
+      } catch (e) {
+        let adminToken = yield adminLogin();
+        let user = yield listUsersAsync(
+          adminToken.token,
+          keystoneRemote,
+          {name: req.body.username}
+        );
+        if (user.body.users.length && !user.body.users[0].enabled) {
+          return Promise.reject({
+            status: 403,
+            message: {
+              message: req.i18n.__('api.keystone.unEnabled'),
+              code: 403
+            }
+          });
+        } else {
+          return Promise.reject(e);
+        }
+      }
+
       const userId = unScopedRes.body.token.user.id;
       let unScopeToken = unScopedRes.header['x-subject-token'];
       let cookies = getCookie(req, userId);
@@ -122,7 +153,7 @@ Auth.prototype = {
       } else {
         next();
       }
-    }).catch(err=> {
+    }).catch(err => {
       that.handleError(err, req, res, next);
     });
   },
@@ -169,8 +200,8 @@ Auth.prototype = {
     req.session.destroy();
     res.redirect('/');
   },
-  initRoutes: function() {
-    return this.__initRoutes( () => {
+  initRoutes: function () {
+    return this.__initRoutes(() => {
       this.app.post('/auth/login', this.authentication.bind(this));
       this.app.put('/auth/switch_region', this.swtichRegion.bind(this));
       this.app.put('/auth/switch_project', this.swtichProject.bind(this));

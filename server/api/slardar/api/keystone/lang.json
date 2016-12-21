@@ -2,11 +2,13 @@
   "en": {
     "unauthorized": "Unauthorized",
     "duplicateUser": "Duplicated user name",
-    "duplicateProject": "Duplicated project name"
+    "duplicateProject": "Duplicated project name",
+    "unEnabled":"User Not Enabled"
     },
   "zh-CN": {
     "unauthorized": "授权失效",
     "duplicateUser": "用户名重复",
-    "duplicateProject": "项目名重复"
+    "duplicateProject": "项目名重复",
+    "unEnabled":"账户未激活"
   }
 }
