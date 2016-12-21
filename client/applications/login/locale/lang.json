@@ -1,23 +1,27 @@
 {
   "en": {
     "account_placeholder": "Please enter username",
+    "activate": "Activate",
     "error_tip": "The information you entered is not correct",
     "forgotPass": "Forgot password?",
     "hasAccount": "Login with an existing account",
     "isNoAccount": "No account?",
     "login": "Login",
     "noAccount": "Register a new account",
+    "notActivate_tip": "The account is not activated ",
     "password_placeholder": "Please enter password",
     "signup": "Sign Up"
   },
   "zh-CN": {
     "account_placeholder": "请输入用户名",
+    "activate": "去激活",
     "error_tip": "用户名或密码不正确",
     "forgotPass": "忘记密码?",
     "hasAccount": "登录已有帐号",
     "isNoAccount": "没有帐号?",
     "login": "登录",
     "noAccount": "注册一个新帐号",
+    "notActivate_tip": "该账户未激活 ",
     "password_placeholder": "请输入密码",
     "signup": "注册"
   }

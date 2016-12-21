@@ -7,6 +7,8 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
+      username: '',
+      notActivate: false,
       loginError: false,
       usernameEmptyError: false,
       passwordEmptyError: false,
@@ -68,8 +70,15 @@ class Model extends React.Component {
     request.login(data).then(function(res) {
       window.location = window.location.pathname;
     }, function(err) {
+      var code = JSON.parse(err.responseText).error.code;
+      if(code === 403) {
+        that.setState({
+          username: refs.username.value
+        });
+      }
       that.setState({
         loginError: true,
+        notActivate: code === 403 ? true : false,
         isSubmitting: false
       });
     });
@@ -117,7 +126,10 @@ class Model extends React.Component {
           }
           <div className="tip-wrapper">
             <div className={'input-error' + (state.loginError ? '' : ' hide')}>
-              <i className="glyphicon icon-status-warning"></i><span>{__.error_tip}</span>
+            {
+              !state.notActivate ? <div><i className="glyphicon icon-status-warning"></i><span>{__.error_tip}</span>
+               </div> : <div><i className="glyphicon icon-status-warning"></i><span>{__.notActivate_tip}<a href={'/auth/register/success?name=' + state.username}>{__.activate}</a></span></div>
+            }
             </div>
           </div>
           <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={__.login} />
