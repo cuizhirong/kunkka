@@ -16,9 +16,10 @@ function Password(app) {
 Password.prototype = {
 
   pageForget: function (req, res, next) {
-    base.func.getTemplateObj((err, obj)=> {
+    base.func.getTemplateObj((err, obj) => {
       if (err) {
         obj.subtitle = obj.message = req.i18n.__('api.register.SystemError');
+        obj.locale = req.i18n.locale;
         res.render('single', obj);
       } else {
         obj.subtitle = req.i18n.__('api.register.RetrievePassword');
@@ -43,7 +44,7 @@ Password.prototype = {
       } else if (userExist) {
         base.func.phoneCaptchaMem(phone, memcachedClient, req, res, next);
       } else {
-        res.send({type: 'message', message: __('api.register.UserNotExist')});
+        res.status(404).send({type: 'message', message: __('api.register.UserNotExist')});
       }
     });
   },
@@ -57,7 +58,7 @@ Password.prototype = {
     }
 
     function render(result) {
-      base.func.getTemplateObj((err, obj)=> {
+      base.func.getTemplateObj((err, obj) => {
         if (err) {
           obj.subtitle = obj.message = __('api.register.SystemError');
           result.status = 500;
@@ -65,12 +66,13 @@ Password.prototype = {
           obj.subtitle = __('views.auth.forgotPass');
           obj.message = result.message;
         }
+        obj.locale = req.i18n.locale;
         res.status(result.status).render('single', obj);
       });
 
     }
 
-    memcachedClient.get(phone.toString(), (err, val)=> {
+    memcachedClient.get(phone.toString(), (err, val) => {
       if (err) {
         render({status: 500, message: __('api.register.SystemError')});
       } else {
@@ -78,10 +80,10 @@ Password.prototype = {
         try {
           val = JSON.parse(val);
         } catch (e) {
-          return render({status: 500, message: __('api.register.SystemError')});
+          return render({status: 500, message: __('api.register.CodeError')});
         }
 
-        if (parseInt(val.code, 10) !== code) {
+        if (!val || parseInt(val.code, 10) !== code) {
           render({status: 500, message: __('api.register.CodeError')});
         } else {
           base.func.verifyUser(req.admin.token, {phone: phone}, function (error, userExist, user) {
@@ -92,6 +94,7 @@ Password.prototype = {
                 if (e) {
                   render({status: e.status, message: __('api.register.SystemError')});
                 } else {
+                  memcachedClient.delete(phone.toString());
                   render({status: 200, message: __('api.register.ResetSuccess')});
                 }
               });

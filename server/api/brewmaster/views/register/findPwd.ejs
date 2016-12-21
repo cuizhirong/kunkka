@@ -42,11 +42,11 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <div class="content-wrapper">
       <h4>Find Password</h4>
-      <form id="uform" method="post" action="">
+      <form id="uform" method="post" action="/auth/password/phone/reset">
         <div>
           <input id="phone" name="phone" type="text" placeholder="please enter phone number" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -198,11 +198,11 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <div class="content-wrapper">
       <h4>找回密码</h4>
-      <form id="uform" method="post" action="">
+      <form id="uform" method="post" action="/auth/password/phone/reset">
         <div>
           <input id="phone" name="phone" type="text" placeholder="请输入手机号" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>

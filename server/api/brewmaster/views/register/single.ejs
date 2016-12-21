@@ -15,6 +15,7 @@
     .wrapper > .content > .img-wrapper { text-align: center; }
     .wrapper > .content > .img-wrapper > img { height: 50px; }
     .wrapper > .content > p { margin-top: 84px; font-size: 18px; }
+    .wrapper > .content > a {display:block;margin-top: 6px;float: right;}
     .wrapper > .footer { flex: 2; }
     .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
   </style>
@@ -24,9 +25,14 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <p><%= message %></p>
+    <% if (locale == 'en') { %>
+      <a href="/">Login</a>
+    <% } else { %>
+      <a href="/">返回登录</a>
+    <% } %>
   </div>
   <div class="footer">
     <p><%= company %></p>

@@ -6,11 +6,9 @@ function Captcha (app){
   this.app = app;
 }
 
-
 Captcha.prototype = {
 
   getCaptcha: function (req, res){
-
     let captcha = ccap({
       width: 200, //set width,default is 256
       height: 60, //set height,default is 60

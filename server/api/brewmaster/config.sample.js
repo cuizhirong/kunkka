@@ -11,25 +11,31 @@ module.exports = {
   },
   'setting': [
     {
-      app: 'login',
-      name: 'logo_url',
+      app: 'auth',
+      name: 'auth_logo_url',
       value: '/static/assets/login/logo@2x.png',
       type: 'string',
-      description: '登录界面- logo 地址'
+      description: '登录、注册界面 - logo 地址'
     }, {
-      app: 'login',
+      app: 'auth',
+      name: 'single_logo_url',
+      value: '/static/assets/nav_logo.png',
+      type: 'string',
+      description: '提示信息页面 - logo 地址'
+    }, {
+      app: 'auth',
       name: 'company',
       value: '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
       type: 'string',
       description: '登录界面-公司 copyright'
     }, {
-      app: 'login',
+      app: 'auth',
       name: 'corporation_name',
       value: 'UnitedStack 有云',
       type: 'string',
       description: '登录界面-公司名称'
     }, {
-      app: 'login',
+      app: 'auth',
       name: 'enable_domain',
       value: 'false',
       type: 'boolean',
@@ -40,38 +46,12 @@ module.exports = {
       value: 'false',
       type: 'boolean',
       description: '开启注册功能'
-    },
-    {
-      app: 'register',
-      name: 'logo_url',
-      value: '/static/assets/register/logo@2x.png',
-      type: 'string',
-      description: '注册页面- logo 地址'
     }, {
-      app: 'register',
-      name: 'company',
-      value: '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
-      type: 'string',
-      description: '登录界面-公司 copyright'
-    }, {
-      app: 'register',
-      name: 'corporation_name',
-      value: 'UnitedStack 有云',
-      type: 'string',
-      description: '登录界面-公司名称'
-    },
-    {
-      app: 'register',
+      app: 'auth',
       name: 'eula_content',
       value: '',
       type: 'string',
       description: '注册页面-用户协议页面地址'
-    }, {
-      app: 'register',
-      name: 'enable_domain',
-      value: 'false',
-      type: 'boolean',
-      description: '注册页面-支持多 domain 功能'
     }
   ]
 };

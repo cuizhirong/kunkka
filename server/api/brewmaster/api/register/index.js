@@ -1,6 +1,7 @@
 'use strict';
+
 const Promise = require('bluebird');
-const async = require('async');
+const co = require('co');
 
 const userModel = require('../../models').user;
 const drivers = require('drivers');
@@ -9,21 +10,24 @@ const config = require('config');
 const keystoneRemote = config('keystone');
 const domainName = config('domain') || 'Default';
 
-let createUser = Promise.promisify(drivers.keystone.user.createUser);
-let getUser = Promise.promisify(drivers.keystone.user.getUser);
-let updateUser = drivers.keystone.user.updateUser;
-let createProject = drivers.keystone.project.createProject;
-let listProjects = drivers.keystone.project.listProjects;
-let addRoleToUserOnProject = drivers.keystone.role.addRoleToUserOnProject;
-let listRoles = drivers.keystone.role.listRoles;
-let listDomains = Promise.promisify(drivers.keystone.domain.listDomains);
+const createUser = Promise.promisify(drivers.keystone.user.createUser);
+const getUser = Promise.promisify(drivers.keystone.user.getUser);
+const updateUser = drivers.keystone.user.updateUser;
+const listDomains = Promise.promisify(drivers.keystone.domain.listDomains);
+const getUserAsync = drivers.keystone.user.getUserAsync;
+const createProjectAsync = drivers.keystone.project.createProjectAsync;
+const listProjectsAsync = drivers.keystone.project.listProjectsAsync;
+const listRolesAsync = drivers.keystone.role.listRolesAsync;
+const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
+const assignRoleToUserOnProjectInSubtreeAsync = drivers.keystone.inherit.assignRoleToUserOnProjectInSubtreeAsync;
+const sendEmailAsync = drivers.kiki.email.sendEmailAsync;
+const updateUserAsync = drivers.keystone.user.updateUserAsync;
+let memcachedClient;
 
-let memcachedClient, memcachedGet;
-
-function User (app) {
+function User(app) {
   this.app = app;
-  memcachedClient = app.get('CacheClient');
-  memcachedGet = Promise.promisify(
+  this.memcachedClient = memcachedClient = app.get('CacheClient');
+  this.memcachedGet = Promise.promisify(
     memcachedClient.get.bind(memcachedClient),
     {multiArgs: true}
   );
@@ -37,7 +41,7 @@ User.prototype = {
     let that = this;
     const needed = ['name', 'password', 'email', 'phone', 'code'];
     const lack = [];
-    needed.forEach(item=> {
+    needed.forEach(item => {
       req.body[item] || lack.push(item);
     });
     if (lack.length) {
@@ -51,7 +55,7 @@ User.prototype = {
     }
 
     let domainId;
-    listDomains(req.admin.token, keystoneRemote, {name: domainName, enabled: true}).then((domainRes)=> {
+    listDomains(req.admin.token, keystoneRemote, {name: domainName, enabled: true}).then((domainRes) => {
       let domains = domainRes.body.domains;
       if (domains.length) {
         domainId = domainRes.body.domains[0].id;
@@ -69,7 +73,7 @@ User.prototype = {
           message: __('api.register.domainNotFound')
         });
       }
-    }).then((used)=> {
+    }).then((used) => {
       let message = [];
       for (let key in used) {
         if (used[key]) {
@@ -99,9 +103,9 @@ User.prototype = {
         });
       }
 
-      return memcachedGet(phone.toString());
+      return that.memcachedGet(phone.toString());
     })
-      .then((codeRes)=> {
+      .then((codeRes) => {
         let code = parseInt(req.body.code, 10);
         if (codeRes && codeRes[0] && JSON.parse(codeRes[0].toString()).code === code) {
 
@@ -119,15 +123,15 @@ User.prototype = {
           });
         }
       })
-      .then(result=> {
-        return Promise.map(result, (user)=> {
+      .then(result => {
+        return Promise.map(result, (user) => {
           if (user) {
             return user.destroy();
           }
         });
       })
       //Keystone
-      .then(()=> {
+      .then(() => {
         return createUser(req.admin.token, keystoneRemote, {
           user: {
             name: req.body.name,
@@ -140,7 +144,7 @@ User.prototype = {
       })
 
       //MySQL
-      .then((result)=> {
+      .then((result) => {
         let user = result.body.user;
         if (user.links) {
           user.links = JSON.stringify(user.links);
@@ -148,181 +152,61 @@ User.prototype = {
         user.phone = req.body.phone;
         user.area_code = config('phone_area_code') || '86';
 
-        return userModel.create(user);
+        userModel.create(user);
       })
 
-      //memcached
-      .then((user)=> {
-        that._sendEmail(user, req, (err)=> {
-          if (err) {
-            next(err);
-          } else {
-            res.json({type: 'message', message: __('api.register.SendSuccess')});
-          }
-        });
+      .then(() => {
+        res.json({type: 'message', message: __('api.register.SendSuccess')});
       })
-      .catch(err=> {
+      .catch(err => {
         next(err);
       });
 
   },
 
   enable: function (req, res, next) {
-    let __ = req.i18n.__.bind(req.i18n);
-    let token = req.query.token;
-    let userId = req.query.user;
+    const __ = req.i18n.__.bind(req.i18n);
+    const that = this;
+    const tokenUrl = req.query.token;
+    const id = req.query.user;
 
-    userModel.findOne({
-      where: {userId: userId}
-    }).then((user)=> {
-      if (!user) {
+    if (!id || !tokenUrl) {
+      return next({
+        customRes: true,
+        status: 400,
+        type: 'BadRequest',
+        message: __('api.register.LinkError')
+      });
+    }
+
+    co(function *() {
+
+      const userDB = yield userModel.findOne({where: {id: id}});
+      if (!userDB) {
         return Promise.reject({
           customRes: true,
           status: 404,
           type: 'NotFound',
           message: __('api.register.UserNotExist')
         });
-      } else if (user.enabled) {
-        return getUser(req.admin.token, keystoneRemote, user.id).then((userKeystone)=> {
-          if (userKeystone.body.user.enabled) {
-            return Promise.props({enabled: true});
-          } else {
-            return Promise.props({user: user, token: memcachedGet(userId)});
-          }
-        });
-      } else {
-        return Promise.props({user: user, token: memcachedGet(userId)});
       }
-    }).then((result)=> {
-      if (result && result.enabled === true) {
-        return Promise.reject({customRes: true, type: '', message: __('api.register.Enabled')});
-      }
-      let tokenGet = result.token && result.token[0] && result.token[0].toString();
-      tokenGet = JSON.parse(tokenGet).token;
-      let user = result.user;
-      if (tokenGet === token) {
 
-        async.waterfall([
-          (callback)=> {
-            async.parallel([
-              (cb)=> {
-                createProject(
-                  req.admin.token,
-                  keystoneRemote,
-                  (err, response)=> {
-
-                    if (err && err.status === 409) {
-                      listProjects(req.admin.token, keystoneRemote, (errList, projects)=> {
-                        if (errList) {
-                          cb(errList);
-                        } else {
-                          let projectExist = projects.body.projects[0];
-                          cb(null, projectExist && projectExist.id);
-                        }
-                      }, {name: user.name + '_project'});
-
-                    } else if (err) {
-                      cb(err);
-                    } else {
-                      let projectId = response.body.project.id;
-                      cb(null, projectId);
-                    }
-                  },
-                  {project: {name: user.name + '_project'}}
-                );
-              },
-              (cb)=> {
-                listRoles(req.admin.token, keystoneRemote, (err, response)=> {
-                  if (err || !response.body.roles) {
-                    cb(err || response.body);
-                  } else {
-                    let roles = response.body.roles;
-                    let roleId = '';
-                    roles.some(role=> {
-                      return (role.name === 'billing_owner') && (roleId = role.id );
-                    });
-
-                    cb(null, roleId);
-                  }
-                }, {name: 'billing_owner'});
-              }
-            ], (err, results)=> {
-              if (err) {
-                callback(err);
-              } else {
-                let projectId = results[0];
-                let roleId = results[1];
-                callback(null, projectId, roleId);
-              }
-            });
-          },
-          (projectId, roleId, cb)=> {
-            addRoleToUserOnProject(projectId,
-              user.id,
-              roleId,
-              req.admin.token,
-              keystoneRemote,
-              (err)=> {
-                if (err) {
-                  cb(err);
-                } else {
-                  cb();
-                }
-              });
-          },
-          (cb)=> {
-            updateUser(req.admin.token,
-              keystoneRemote,
-              user.id,
-              {user: {enabled: true}},
-              (err, resEnable)=> {
-                if (err) {
-                  cb(err);
-                } else {
-                  cb(null, resEnable);
-                }
-              }
-            );
-          },
-          (resultEnable, cb)=> {
-            if (resultEnable) {
-              user.enabled = true;
-              user.save().then((resultSave)=> {
-                cb(null, resultSave);
-              }).catch(cb);
-            }
-          }
-        ], (err) => {
-          if (err) {
-            base.func.getTemplateObj((errObj, obj)=> {
-              if (errObj) {
-                obj.subtitle = obj.message = __('api.register.SystemError');
-              } else {
-                obj.subtitle = __('api.register.EnableFailed');
-                if (err.customRes === true) {
-                  obj.message = err.message;
-                } else {
-                  obj.message = __('api.register.SystemError');
-                }
-              }
-              res.render('single', obj);
-            });
-          } else {
-            memcachedClient.set(user.userId, tokenGet, ()=> {
-              base.func.getTemplateObj((errObj, obj)=> {
-                if (errObj) {
-                  obj.subtitle = obj.message = __('api.register.SystemError');
-                } else {
-                  obj.subtitle = obj.message = __('api.register.EnableSuccess');
-                }
-                res.render('single', obj);
-              });
-
-            }, 1);
-          }
+      let userKeystone = yield getUserAsync(req.admin.token, keystoneRemote, userDB.id);
+      userKeystone = userKeystone.body.user;
+      if (userKeystone.enabled) {
+        return Promise.reject({
+          customRes: true,
+          type: '',
+          message: __('api.register.Enabled')
         });
+      }
 
-      } else {
+      let tokenGet = yield that.memcachedClient.getAsync(id);
+      tokenGet = tokenGet[0] && tokenGet[0].toString();
+      tokenGet = JSON.parse(tokenGet);
+      tokenGet = tokenGet && tokenGet.token;
+
+      if (tokenGet !== tokenUrl) {
         return Promise.reject({
           customRes: true,
           status: 400,
@@ -330,22 +214,93 @@ User.prototype = {
           message: __('api.register.LinkError')
         });
       }
-    }).catch(err=> {
-      base.func.getTemplateObj((errObj, obj)=> {
-        if (errObj) {
-          obj.subtitle = obj.message = __('api.register.SystemError');
+
+      //USERNAME_project
+      let projectId;
+      try {
+        let project = yield createProjectAsync(
+          req.admin.token,
+          keystoneRemote,
+          {project: {name: userKeystone.name + '_project'}}
+        );
+        projectId = project.body.project.id;
+      } catch (err) {
+        if (err.status === 409) {
+          let projects = yield listProjectsAsync(
+            req.admin.token,
+            keystoneRemote,
+            {name: userKeystone.name + '_project'}
+          );
+          projectId = projects.body.projects[0] && projects.body.projects[0].id;
         } else {
-          obj.subtitle = __('api.register.EnableFailed');
-          if (err.customRes === true) {
-            obj.message = err.message;
-          } else {
-            obj.message = __('api.register.SystemError');
-          }
+          return Promise.reject(err);
         }
-        res.render('single', obj);
+      }
+
+      //GET ROLE billing_owner, project_owner
+      let roles = yield listRolesAsync(req.admin.token, keystoneRemote, {});
+      roles = roles.body.roles;
+
+      const roleId = {
+        'billing_owner': '',
+        'project_owner': ''
+      };
+      roles.some(role => {
+        if (role.name === 'billing_owner' || role.name === 'project_owner') {
+          roleId[role.name] = role.id;
+          return roleId.billing_owner && roleId.project_owner;
+        }
       });
 
+      //Assign Role & Update User
+      yield [
+        addRoleToUserOnProjectAsync(
+          projectId,
+          userKeystone.id,
+          roleId.billing_owner,
+          req.admin.token,
+          keystoneRemote
+        ),
+        addRoleToUserOnProjectAsync(
+          projectId,
+          userKeystone.id,
+          roleId.project_owner,
+          req.admin.token,
+          keystoneRemote
+        ),
+        assignRoleToUserOnProjectInSubtreeAsync(
+          projectId,
+          userKeystone.id,
+          roleId.project_owner,
+          req.admin.token,
+          keystoneRemote
+        ),
+        updateUserAsync(
+          req.admin.token,
+          keystoneRemote,
+          userKeystone.id,
+          {user: {enabled: true, default_project_id: projectId}}
+        )
+      ];
 
+      userDB.enabled = true;
+      userDB.projectId = projectId;
+      yield userDB.save();
+      yield that.memcachedClient.deleteAsync(userDB.id);
+      base.func.render({
+        req, res, next,
+        view: 'single',
+        content: {
+          message: __('api.register.EnableSuccess')
+        }
+      });
+
+    }).catch((e) => {
+      base.func.render({
+        req, res, next, err: e,
+        code: 500,
+        view: 'single'
+      });
     });
   },
 
@@ -360,7 +315,7 @@ User.prototype = {
         email: email,
         phone: phone
       }
-    }).then(user=> {
+    }).then(user => {
       if (!user) {
         return Promise.reject({type: 'Conflict', location: 'email', message: __('api.register.UserNotExist')});
       } else {
@@ -369,20 +324,20 @@ User.prototype = {
           userDB: user
         });
       }
-    }).then(result=> {
+    }).then(result => {
       let userKeystone = result.userKeystone;
       let userDB = result.userDB;
       if (userKeystone.enabled) {
         userDB.enabled = true;
-        userDB.save().then(()=> {
+        userDB.save().then(() => {
           res.send({type: 'message', message: __('api.register.Enabled')});
-        }).catch(err=> {
+        }).catch(err => {
           next(__('api.register.SystemError'));
         });
       } else {
         userDB.enabled = false;
-        userDB.save().then(()=> {
-          that._sendEmail(userDB, req, (err)=> {
+        userDB.save().then(() => {
+          that._sendEmail(userDB, req, (err) => {
             if (err) {
               next(err);
             } else {
@@ -396,13 +351,13 @@ User.prototype = {
   },
   _sendEmail: function (user, req, cb) {
     if (typeof cb === 'function') {
-      let __ = req.i18n.__.bind(req.i18n);
+      const __ = req.i18n.__.bind(req.i18n);
 
-      base.func.emailTokenMem(user, memcachedClient, __, (e, token)=> {
+      base.func.emailTokenMem(user, this.memcachedClient, __, (e, token) => {
         if (e) {
           cb(e);
         } else {
-          let href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.userId}&token=${token}`;
+          let href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
           drivers.kiki.email.sendEmail(
             user.email,
             __('api.register.UserEnable'),
@@ -430,7 +385,7 @@ User.prototype = {
       return res.status(500).send({type: 'message', message: __('api.register.PhoneError')});
     }
 
-    base.func.verifyUser(req.admin.token, {phone: phone}, (err, used)=> {
+    base.func.verifyUser(req.admin.token, {phone: phone}, (err, used) => {
       if (err) {
         next(__('api.register.SystemError'));
       } else if (used) {
@@ -445,7 +400,7 @@ User.prototype = {
     let email = req.body.email;
     let __ = req.i18n.__.bind(req.i18n);
 
-    base.func.verifyUser(req.admin.token, {email: email}, (err, used)=> {
+    base.func.verifyUser(req.admin.token, {email: email}, (err, used) => {
       if (err) {
         next(__('api.register.SystemError'));
       } else if (used) {
@@ -459,7 +414,7 @@ User.prototype = {
   uniqueName: function (req, res, next) {
     let name = req.body.name;
     let __ = req.i18n.__.bind(req.i18n);
-    base.func.verifyByName(req.admin.token, name, (err, used)=> {
+    base.func.verifyByName(req.admin.token, name, (err, used) => {
       if (err) {
         next(__('api.register.SystemError'));
       } else if (used) {
@@ -472,54 +427,102 @@ User.prototype = {
 
   regSuccess: function (req, res, next) {
     let __ = req.i18n.__.bind(req.i18n);
-    let email = req.query.email;
-    base.func.getTemplateObj((errObj, obj)=> {
-      if (errObj) {
 
-        obj.subtitle = obj.message = __('api.register.SystemError');
-        res.status(500).render('single', obj);
-
-      } else {
-        obj.subtitle = __('api.register.registerSuccess');
-        obj.email = email;
-        obj.locale = req.i18n.locale;
-        this._checkUserNotEnabled(req.admin.token, {email: email}, (err, result)=> {
-          if (!err) {
-            res.render('sendEmail', obj);
-          } else if (err.message === 'Enabled') {
-            obj.subtitle = obj.message = __('api.register.Enabled');
-            res.status(err.code).render('single', obj);
-          } else {
-            obj.subtitle = obj.message = __('api.register.' + err.message);
-            res.status(err.code).render('single', obj);
-          }
-        });
-      }
-    });
-
-
-  },
-
-  _checkUserNotEnabled: function (token, where, cb) {
-    if (cb && typeof cb === 'function') {
-      base.func.verifyUser(token, where, function (err, userExist, user) {
-        if (err) {
-          cb({code: 500, message: 'SystemError'});
-        } else if (!userExist) {
-          cb({code: 404, message: 'UserNotExist'});
-        } else if (user) {
-          if (user.enabled === true) {
-            cb({code: 400, message: 'Enabled'});
-          } else if (user.enabled === false) {
-            cb(null, user);
-          } else {
-            cb({code: 500, message: 'SystemError'});
-          }
-        } else {
-          cb({code: 500, message: 'SystemError'});
+    let query = {};
+    Object.assign(query, req.query);
+    if (!query.email && !query.name) {
+      return base.func.render({
+        req, res,
+        err: {
+          status: 404,
+          customRes: true,
+          message: __('api.register.UserNotExist')
         }
       });
     }
+
+    co(function *() {
+      let email;
+      let userDB = yield userModel.findOne({where: query});
+      if (!userDB) {
+        return base.func.render({
+          req, res,
+          err: {
+            status: 404,
+            customRes: true,
+            message: __('api.register.UserNotExist')
+          }
+        });
+      }
+      let userKeystone;
+      try {
+        userKeystone = yield getUserAsync(req.admin.token, keystoneRemote, userDB.id);
+      } catch (e) {
+        if (e.status === 404) {
+          yield userDB.destory();
+          return base.func.render({
+            req, res,
+            err: {
+              status: 404,
+              customRes: true,
+              message: __('api.register.UserNotExist')
+            }
+          });
+        } else {
+          return Promise.reject(e);
+        }
+      }
+      userKeystone = userKeystone.body.user;
+      if (!userDB.email && !userKeystone.email) {
+        return base.func.render({
+          req, res,
+          err: {
+            customRes: true,
+            message: __('api.register.UserNotHaveEmail')
+          }
+        });
+      }
+      email = userKeystone.email || userDB.email;
+
+      if (userKeystone.enabled) {
+        return base.func.render({
+          req, res,
+          err: {
+            status: 404,
+            customRes: true,
+            message: __('api.register.Enabled')
+          }
+        });
+      }
+
+      let token;
+      try {
+        token = yield base.func.emailTokenMemAsync(userKeystone, memcachedClient, __);
+      } catch (err) {
+        return base.func.render({req, res, err});
+      }
+
+      const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${userKeystone.id}&token=${token}`;
+      yield sendEmailAsync(
+        email,
+        __('api.register.UserEnable'),
+        `
+        <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
+        <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+        <p>${href}</p>
+        `,
+        req.admin.kikiRemote,
+        req.admin.token
+      );
+      let opt = {req, res, view: 'sendEmail', content: {}};
+
+      opt.content.email = email;
+      opt.content.locale = req.i18n.locale;
+      base.func.render(opt);
+
+    }).catch(err => {
+      return base.func.render({req, res, err});
+    });
   },
 
   changeEmail: function (req, res, next) {
@@ -527,7 +530,7 @@ User.prototype = {
     let email = req.query.email;
     let msg = '';
 
-    base.func.verifyUser(req.admin.token, {email: email}, (err, used, user)=> {
+    base.func.verifyUser(req.admin.token, {email: email}, (err, used, user) => {
       if (err) {
         msg = __('api.register.SystemError');
       } else if (!used || !user) {
@@ -536,8 +539,9 @@ User.prototype = {
         msg = __('api.register.Enabled');
       }
 
-      base.func.getTemplateObj((errObj, obj)=> {
+      base.func.getTemplateObj((errObj, obj) => {
         if (msg || errObj) {
+          obj.locale = req.i18n.locale;
           obj.subtitle = obj.message = msg || __('api.register.SystemError');
           res.status(500).render('single', obj);
         } else {
@@ -549,13 +553,13 @@ User.prototype = {
     });
   },
 
-  changeEmailPhone: function (req, res, next) {
+  getPhoneCaptchaForChangeEmail: function (req, res, next) {
 
     let phone = req.body.phone;
     if (!(/^1[34578]\d{9}$/.test(phone))) {
       return res.status(500).send({type: 'message', message: __('api.register.PhoneError')});
     }
-    base.func.verifyUser(req.admin.token, {phone: phone}, (err, result, user)=> {
+    base.func.verifyUser(req.admin.token, {phone: phone}, (err, result, user) => {
       let type = '';
       if (err) {
         type = 'SystemError';
@@ -579,7 +583,7 @@ User.prototype = {
     let __ = req.i18n.__.bind(req.i18n);
     let that = this;
 
-    base.func.verifyUser(req.admin.token, {phone: phone}, (errVerify, used, u)=> {
+    base.func.verifyUser(req.admin.token, {phone: phone}, (errVerify, used, u) => {
       let msg = '';
       if (errVerify) {
         msg = __('api.register.SystemError');
@@ -590,54 +594,40 @@ User.prototype = {
       }
 
       if (msg) {
-        base.func.getTemplateObj((errObj, obj)=> {
+        base.func.getTemplateObj((errObj, obj) => {
+          obj.locale = req.i18n.locale;
           obj.subtitle = obj.message = errObj ? __('api.register.SystemError') : msg;
           res.status(500).render('single', obj);
         });
       } else {
 
-        memcachedGet(phone.toString()).then((codeRes)=> {
+        that.memcachedGet(phone.toString()).then((codeRes) => {
           if (codeRes && codeRes[0] && JSON.parse(codeRes[0].toString()).code === code) {
             return userModel.findOne({where: {phone: phone}});
           } else {
             return Promise.reject({status: 400, customRes: true, type: '', message: __('api.register.CodeError')});
           }
-        }).then(user=> {
+        }).then(user => {
 
           if (!user) {
             return Promise.reject({status: 404, customRes: true, type: '', message: __('api.register.UserNotExist')});
           } else {
             user.email = email;
-            return Promise.props({
+            Promise.props({
               db: user.save(),
               keystone: Promise.promisify(updateUser)(req.admin.token, keystoneRemote, user.id, {user: {email: email}})
             });
           }
-        }).then((result)=> {
-          return that._sendEmail(result.db, req, (errSend)=> {
-            if (errSend) {
-              return Promise.reject(errSend);
-            } else {
-              return base.func.getTemplateObj((errObj, obj)=> {
-                if (errObj) {
-                  obj.subtitle = obj.message = __('api.register.SystemError');
-                  res.status(500).render('single', obj);
-                } else {
-                  obj.locale = req.i18n.locale;
-                  obj.subtitle = __('api.register.changeEmailSuccess');
-                  obj.email = email;
-                  res.render('sendEmail', obj);
-                }
-              });
-            }
-          });
-        }).catch(err=> {
-          base.func.getTemplateObj((errObj, obj)=> {
+        }).then(() => {
+          res.redirect(`${req.protocol}://${req.hostname}/auth/register/success?email=${email}`);
+        }).catch(err => {
+          base.func.getTemplateObj((errObj, obj) => {
             if (errObj || !err.customRes) {
               obj.subtitle = obj.message = __('api.register.SystemError');
             } else {
               obj.subtitle = obj.message = err.message;
             }
+            obj.locale = req.i18n.locale;
             res.render('single', obj);
           });
         });
@@ -645,32 +635,49 @@ User.prototype = {
     });
 
   },
-  resend: function (req, res, next) {
-    let __ = req.i18n.__.bind(req.i18n);
-    let email = req.query.email;
-    let that = this;
+  resendEmail: function (req, res, next) {
+    const __ = req.i18n.__.bind(req.i18n);
+    const email = req.query.email;
+    const that = this;
+    const obj = {};
+    co(function *() {
+      const result = yield base.func.verifyUserAsync(req.admin.token, {email: email});
+      const user = result.user;
+      if (!result.exist) {
+        return Promise.reject({code: 404, message: 'UserNotExist'});
+      } else if (!user) {
+        return Promise.reject({code: 500, message: 'SystemError'});
+      } else if (user.enabled) {
+        obj.message = obj.subtitle = __('api.register.Enabled');
+        return base.func.render({req, res, next, view: 'single', content: obj, code: 400});
+      }
+      const token = yield base.func.emailTokenMemAsync(user, that.memcachedClient, __);
 
-    this._checkUserNotEnabled(req.admin.token, {email: email}, (err, user)=> {
-      base.func.getTemplateObj((errObj, obj)=> {
-        if (errObj) {
-          obj.message = obj.subtitle = __('api.register.SystemError');
-          res.status(500).render('single', obj);
-        } else if (err) {
-          obj.message = obj.subtitle = __('api.register.' + err.message);
-          res.status(err.code).render('single', obj);
-        } else {
-          that._sendEmail(user, req, (errSend)=> {
-            if (errSend) {
-              obj.subtitle = obj.message = __('api.register.SystemError');
-            } else {
-              obj.subtitle = obj.message = __('api.register.SendSuccess');
-            }
-            res.render('single', obj);
-          });
-        }
+      const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
+      yield sendEmailAsync(
+        user.email,
+        __('api.register.UserEnable'),
+        `
+        <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
+        <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+        <p>${href}</p>
+        `,
+        req.admin.kikiRemote,
+        req.admin.token
+      );
+
+      obj.subtitle = obj.message = __('api.register.SendSuccess');
+      base.func.render({req, res, next, view: 'single', content: obj});
+
+    }).catch((err) => {
+      base.func.render({
+        req, res, next,
+        view: 'single',
+        err
       });
     });
   },
+
 
   initRoutes: function () {
 
@@ -680,16 +687,16 @@ User.prototype = {
     this.app.get('/auth/register/success', this.regSuccess.bind(this));
     this.app.get('/auth/register/enable', this.enable.bind(this));
     this.app.get('/auth/register/change-email', this.changeEmail.bind(this));
-    this.app.post('/auth/register/change-email/phone', this.changeEmailPhone.bind(this));
+    this.app.post('/auth/register/change-email/phone', this.getPhoneCaptchaForChangeEmail.bind(this));
     this.app.post('/auth/register/change-email', this.changeEmailSubmit.bind(this));
-    this.app.get('/auth/register/resend-email', this.resend.bind(this));
+    this.app.get('/auth/register/resend-email', this.resendEmail.bind(this));
 
     this.app.post('/api/register', base.middleware.adminLogin, this.reg.bind(this));
     this.app.post('/api/register/*', base.middleware.adminLogin);
+
     this.app.post('/api/register/phone', this.verifyPhone.bind(this));
     this.app.post('/api/register/email', this.email.bind(this));
     this.app.post('/api/register/unique-name', this.uniqueName.bind(this));
-
     this.app.post('/api/register/unique-email', this.uniqueEmail.bind(this));
 
     this.app.use('/api/register', base.middleware.customRes);

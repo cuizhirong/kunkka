@@ -2,6 +2,7 @@
 const config = require('config');
 const region = config('region');
 const Promise = require('bluebird');
+const co = require('co');
 const uuid = require('uuid');
 const glob = require('glob');
 
@@ -17,22 +18,26 @@ const smsCodeExpire = config('reg_sms_expire') || 60 * 10;
 const adminLogin = require('api/slardar/common/adminLogin');
 const getUser = Promise.promisify(drivers.keystone.user.getUser);
 const listUsers = drivers.keystone.user.listUsers;
+const getUserAsync = drivers.keystone.user.getUserAsync;
+const listUsersAsync = drivers.keystone.user.listUsersAsync;
+
+const uskinFile = glob.sync('*.uskin.min.css', {cwd: 'client/dist/uskin'})[0];
 
 const base = {func: {}, middleware: {}};
 
 base.func.verifyUser = function (adminToken, where, cb) {
   if (cb && typeof cb === 'function') {
     let user;
-    userModel.findOne({where: where}).then(userDB=> {
+    userModel.findOne({where: where}).then(userDB => {
       user = userDB;
       if (!userDB) {
         return Promise.reject('userNotExist');
       } else {
-        return getUser(adminToken, keystoneRemote, userDB.id).then(()=> {
-          cb(null, true, user);
+        return getUser(adminToken, keystoneRemote, userDB.id).then((userKeystone) => {
+          cb(null, true, userKeystone.body.user);
         });
       }
-    }).catch(err=> {
+    }).catch(err => {
       if (err.status === 404 && user) {
         user.destroy().then(function () {
           cb(null, false);
@@ -48,7 +53,7 @@ base.func.verifyUser = function (adminToken, where, cb) {
 
 base.func.verifyByName = function (adminToken, name, cb) {
   if (typeof cb === 'function') {
-    listUsers(adminToken, keystoneRemote, (err, result)=> {
+    listUsers(adminToken, keystoneRemote, (err, result) => {
       if (err) {
         cb(err);
       } else {
@@ -93,10 +98,10 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
       if (errSet) {
         next({type: 'SystemError', err: errSet});
       } else {
-        getSettingsByApp('auth').then(settings=> {
+        getSettingsByApp('auth').then(settings => {
           let corporationName = 'UnitedStack 有云';
 
-          settings.some(setting=> {
+          settings.some(setting => {
             return setting.name === 'corporation_name' && (corporationName = setting.value);
           });
 
@@ -116,7 +121,7 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
               }
             }
           );
-        }, errSetting=> {
+        }, errSetting => {
           next({type: 'SystemError', err: errSetting});
         });
       }
@@ -125,7 +130,7 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
 };
 
 base.func.emailTokenMem = function (user, memClient, __, cb) {
-  memClient.get(user.userId, (errGet, val)=> {
+  memClient.get(user.id, (errGet, val) => {
     if (errGet) {
       return cb({status: 500, type: 'SystemError', err: errGet});
     }
@@ -147,7 +152,7 @@ base.func.emailTokenMem = function (user, memClient, __, cb) {
         time: new Date().getTime()
       };
 
-      memClient.set(user.userId, JSON.stringify(valNew), function (errSet) {
+      memClient.set(user.id, JSON.stringify(valNew), function (errSet) {
         if (errSet) {
           cb({type: 'SystemError', err: errSet});
         } else {
@@ -164,11 +169,43 @@ base.func.getTemplateObj = function (cb) {
     Promise.all([
       getSettingsByApp('global'),
       getSettingsByApp('auth')
-    ]).then(settings=>settings.forEach(setting => setting.forEach(s => sets[s.name] = s.value))).then(()=> {
-      sets.uskinFile = glob.sync('*.uskin.min.css', {cwd: 'client/dist/uskin'})[0];
+    ]).then(settings => settings.forEach(setting => setting.forEach(s => sets[s.name] = s.value))).then(() => {
+      sets.uskinFile = uskinFile;
       cb(null, sets);
     }).catch(cb);
   }
+};
+
+base.func.render = function (opt) {
+  if (opt.err && opt.err.customRes) {
+    opt.content = {
+      message: opt.err.message,
+      subtitle: ''
+    };
+  }
+  base.func.getTemplateObjAsync().then(obj => {
+    Object.assign(
+      obj,
+      {subtitle: '', message: opt.req.i18n.__('api.register.SystemError')},
+      opt.content
+    );
+
+    obj.locale = opt.req.i18n.locale;
+    opt.res.status(opt.code || 200).render(opt.view || 'single', obj);
+  }).catch(() => {
+    const obj = {
+      single_logo_url: '/static/assets/nav_logo.png',
+      favicon: '/static/login/favicon.ico',
+      title: 'UnitedStack 有云',
+      default_image_url: '',
+      company: '©2016 UnitedStack Inc. All Rights Reserved. ?ICP?13015821?',
+      corporation_name: 'UnitedStack 有云'
+    };
+
+    obj.subtitle = obj.message = opt.req.i18n.__('api.register.SystemError');
+    obj.locale = opt.req.i18n.locale;
+    opt.res.render('single', obj);
+  });
 };
 
 
@@ -196,12 +233,151 @@ base.middleware.adminLogin = function (req, res, next) {
 };
 
 base.middleware.checkLogin = function (req, res, next) {
-  if (!req.session.user) {
-    return res.status(403).json({error: 'Permission Denied'});
+  if (!req.session || !req.session.user) {
+    res.status(403).json({error: 'Permission Denied'});
   } else {
     next();
   }
 };
 
+/*** Promise ***/
+base.func.verifyByNameAsync = function (adminToken, name) {
+  return co(function*() {
+    const result = yield listUsersAsync(adminToken, keystoneRemote, {name: name});
+    const users = result.body.users;
+    if (Array.isArray(users) && users.length) {
+      return {
+        exist: true,
+        user: users[0]
+      };
+    } else {
+      yield userModel.destroy({where: {name: name}});
+      return {exist: false};
+    }
+  });
+};
+
+base.func.verifyUserAsync = function (adminToken, where) {
+
+  return co(function *() {
+    const userDB = yield userModel.findOne({where: where});
+    if (!userDB) {
+      return {
+        exist: false
+      };
+    }
+    const userKeystone = yield getUserAsync(adminToken, keystoneRemote, userDB.id);
+    return {
+      exist: true,
+      user: userKeystone.body.user
+    };
+  }).catch(e => {
+    if (e.status === 404) {
+      return userModel.destroy({where: where}).then(() => {
+        return {
+          exist: false
+        };
+      });
+    } else {
+      return Promise.reject(e);
+    }
+  });
+};
+
+
+base.func.getTemplateObjAsync = function () {
+  return co(function *() {
+    let settings = yield [
+      getSettingsByApp('global'),
+      getSettingsByApp('auth')
+    ];
+    let sets = {};
+    settings.forEach(setting => setting.forEach(s => sets[s.name] = s.value));
+    sets.uskinFile = uskinFile;
+    return sets;
+  });
+};
+
+base.func.emailTokenMemAsync = function (user, memClient, __) {
+  return co(function*() {
+    let val = yield memClient.getAsync(user.id);
+    let valOld = val[0] && val[0].toString();
+    try {
+      valOld = JSON.parse(valOld);
+    } catch (e) {
+      valOld = false;
+    }
+
+    if (valOld && new Date().getTime() - valOld.time < 60000) {
+      return Promise.reject({status: 400, customRes: true, type: '', message: __('api.register.Frequently')});
+    } else {
+      let valNew = {
+        token: uuid.v4(),
+        time: new Date().getTime()
+      };
+      yield memClient.setAsync(user.id, JSON.stringify(valNew), tokenExpire);
+      return valNew.token;
+    }
+  });
+};
+
+
+base.func.checkUserEnabled = function (adminToken, where) {
+  return co(function *() {
+    const result = yield base.func.verifyUserAsync(adminToken, where);
+    const user = result.user;
+    if (!result.exist) {
+      return Promise.reject({code: 404, message: 'UserNotExist'});
+    } else if (user) {
+      return !!user.enabled;
+    } else {
+      return Promise.reject({code: 500, message: 'SystemError'});
+    }
+  });
+};
+
+//检查token、验证码 是否频繁发送
+base.func.checkFrequentlyAsync = function (key, memClient) {
+  return co(function *() {
+    let valOld = yield memClient.getAsync(key);
+    valOld = valOld[0] && valOld[0].toString();
+    try {
+      valOld = JSON.parse(valOld);
+    } catch (e) {
+      valOld = false;
+    }
+    return valOld && (new Date().getTime() - valOld.time < 60000);
+  });
+};
+
+//检查token、验证码是否正确
+base.func.verifyEmailTokenAsync = function (userId, token, memClient) {
+  return co(function *() {
+    let memToken = yield memClient.getAsync(userId);
+    memToken = memToken[0] && memToken[0].toString();
+    memToken = JSON.parse(memToken);
+    memToken = memToken && memToken.token;
+    return memToken === token;
+  });
+};
+base.func.verifySmsCodeAsync = function (phone, code, memClient) {
+  return co(function *() {
+    let memCode = yield memClient.getAsync(phone);
+    memCode = memCode[0] && memCode[0].toString();
+    memCode = JSON.parse(memCode);
+    memCode = memCode && memCode.code;
+    return memCode === code;
+  });
+};
+
+base.func.verifyKeyValueAsync = (key, value, memClient) => {
+  return co(function *() {
+    let memValue = yield memClient.getAsync(key);
+    memValue = memValue[0] && memValue[0].toString();
+    memValue = JSON.parse(memValue);
+    memValue = memValue && memValue.value;
+    return memValue === value;
+  });
+};
 
 module.exports = base;

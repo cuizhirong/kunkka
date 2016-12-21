@@ -21,6 +21,7 @@
     .wrapper > .content > .content-wrapper > p:nth-child(4),
     .wrapper > .content > .content-wrapper > p:nth-child(5),
     .wrapper > .content > .content-wrapper > p:nth-child(6) { font-size: 12px; }
+    .wrapper > .content > .content-wrapper > a {display:block;margin-top: 6px;float: right;font-size: 12px;margin-right: 40px;}
     .wrapper > .footer { flex: 2; }
     .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
   </style>
@@ -30,7 +31,7 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <% if (locale == 'en') { %>
     <div class="content-wrapper">
@@ -40,6 +41,7 @@
       <p>Please check in the junk mail</p>
       <p>Not received yet, <a href="/auth/register/resend-email?email=<%= email %>">Resend Email</a></p>
       <p>Still not received, try <a href="/auth/register/change-email?email=<%= email %>">Change Email</a></p>
+      <a href="/">Login</a>
     </div>
     <% } else { %>
     <div class="content-wrapper">
@@ -49,6 +51,7 @@
       <p>请检查是否在垃圾邮件中</p>
       <p>如果还未收到，点此<a href="/auth/register/resend-email?email=<%= email %>">重新发送</a></p>
       <p>一直收不到，试试<a href="/auth/register/change-email?email=<%= email %>">更换邮箱</a></p>
+      <a href="/">返回登录</a>
     </div>
     <% } %>
 

@@ -23,6 +23,7 @@
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .get_captcha { display: inline-block; margin-left: 10px; width: 100px; height: 34px; line-height: 34px; background-color: #42b9e5; border-radius: 2px; color: #fff; font-size: 14px; text-align: center; cursor: pointer; }
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #bbbfc5; }
     .wrapper > .content > .content-wrapper > form > input { margin-top: 34px; width: 480px; height: 28px; font-size: 14px; border: none; background-color: #42b9e5; color: #ffffff; }
+    .wrapper > .content > .content-wrapper > a {display:block;margin-top: 6px;float: right;}
     .phone_tip,
     .captcha_tip,
     .email_tip { margin-top: 4px; color: red; font-size: 12px; display: none; }
@@ -41,7 +42,7 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <div class="content-wrapper">
       <h4>Change Email</h4>
@@ -64,6 +65,7 @@
         <span class="email_tip"></span>
         <input id="usubmit" name="usubmit" type="button" value="Submit"/>
       </form>
+      <a href="/">Login</a>
     </div>
   </div>
   <div class="footer">
@@ -179,7 +181,7 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="/static/assets/login/logo@2x_1.png"/>
+      <img src="<%= single_logo_url %>"/>
     </div>
     <div class="content-wrapper">
       <h4>更换邮箱</h4>
@@ -202,6 +204,7 @@
         <span class="email_tip"></span>
         <input id="usubmit" name="usubmit" type="button" value="提交"/>
       </form>
+      <a href="/">返回登录</a>
     </div>
   </div>
   <div class="footer">
