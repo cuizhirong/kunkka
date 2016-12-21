@@ -23,6 +23,11 @@ class Phone extends React.Component {
       state = this.state,
       __ = this.props.__;
 
+    this.setState({
+      wait: true,
+      textValue: __.sending
+    });
+
     request.getVerification(state.value).then(() => {
       this.setState({
         wait: true,
@@ -36,7 +41,7 @@ class Phone extends React.Component {
           });
         } else {
           this.setState({
-            textValue: this.props.__.getCode,
+            textValue: __.getCode,
             wait: false
           });
           clearInterval(timer);
@@ -44,8 +49,10 @@ class Phone extends React.Component {
       }, 1000);
     }).catch((err) => {
       this.setState({
+        wait: false,
         error: true,
         pass: false,
+        textValue: __.getCode,
         tipContent: getErrorMessage(err)
       });
     });

@@ -210,7 +210,8 @@ class Model extends React.Component {
         if(!regPhone.test(value)) {
           refs.phone.setState({
             error: true,
-            pass: false
+            pass: false,
+            tipContent: null
           }, canSub);
         } else {
           refs.phone.setState({
