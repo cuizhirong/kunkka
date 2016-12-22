@@ -1,6 +1,6 @@
 var React = require('react');
 var {Button, ButtonGroup} = require('client/uskin/index');
-var Chart = require('client/libs/charts/index');
+var Chart = require('echarts');
 var MultiDropdown = require('./dropdown');
 var __ = require('locale/client/dashboard.lang.json');
 var utils = require('../../utils');
@@ -24,7 +24,7 @@ class Modal extends React.Component {
   }
 
   componentDidMount() {
-    lineChart = new Chart.LineChart(document.getElementById('select_metric_chart'));
+    lineChart = Chart.init(document.getElementById('select_metric_chart'));
   }
 
   updateGraph(data, granularity) {
@@ -64,7 +64,7 @@ class Modal extends React.Component {
       }
     }
 
-    this.updateChart({ unit, title, xAxis, yAxis });
+    this.updateChart({ unit, title, xAxis, yAxis, name: utils.getMetricName(state.metricType) });
   }
 
   getDotsNumber(granularity, prev) {
@@ -97,27 +97,48 @@ class Modal extends React.Component {
     }
   }
 
-  updateChart({ unit, title, xAxis, yAxis }) {
+  loadingChart() {
+    lineChart.clear();
+    lineChart.showLoading('default', {
+      text: __.loading,
+      color: '#00afc8',
+      textColor: '#252f3d',
+      maskColor: 'rgba(255, 255, 255, 0.8)',
+      zlevel: 0
+    });
+  }
+
+  updateChart({ unit, title, xAxis, yAxis, name }) {
+    lineChart.hideLoading();
     lineChart.setOption({
-      unit: unit,
-      title: title,
+      title: {
+        text: title
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
       xAxis: {
-        color: '#f2f3f4',
+        type: 'category',
+        boundaryGap: false,
         data: xAxis
       },
       yAxis: {
-        color: '#f2f3f4',
-        tickPeriod: 1000,
-        tickColor: '#939ba3'
+        type: 'value'
       },
       series: [{
-        color: '#1797c6',
-        data: yAxis,
-        opacity: 0.05,
-        type: 'sharp'
+        name: name,
+        type:'line',
+        stack: '总量',
+        data: yAxis
       }],
-      period: 1600,
-      easing: 'easeOutCubic'
+      animation: false,
+      color: ['#00afc8']
     });
   }
 
@@ -126,6 +147,7 @@ class Modal extends React.Component {
     if (type === 'cpu_util' || type === 'disk.read.bytes.rate' ||
         type === 'disk.write.bytes.rate' || type === 'memory.usage') {
       this.unfoldDropdown(false);
+      this.loadingChart();
 
       this.props.onChangeState('resource', status.resource);
       this.props.onChangeState('resourceType', status.resourceType);
@@ -134,6 +156,7 @@ class Modal extends React.Component {
   }
 
   onClickPeriod(e, granularity) {
+    this.loadingChart();
     this.props.onChangeState('measureGranularity', granularity);
   }
 
