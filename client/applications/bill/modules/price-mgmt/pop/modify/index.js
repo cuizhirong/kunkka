@@ -78,42 +78,27 @@ function pop(obj, parent, callback) {
       }
     },
     onAction: function(field, state, refs) {
+      var disable = refs.name.state.error || refs.base_price.state.error || !refs.name.state.value || !refs.base_price.state.value;
       switch(field) {
         case 'name':
-          var nameRegex = /^[a-zA-Z0-9_.]{1,}$/;
-          if(nameRegex.exec(state.value)) {
-            refs.name.setState({
-              error: false
-            });
+          var nameRegex = /^[a-zA-Z0-9_.:+]{1,}$/;
+          refs.name.setState({
+            error: !nameRegex.test(state.value)
+          }, () => {
             refs.btn.setState({
-              disabled: false
+              disabled: disable
             });
-          } else {
-            refs.name.setState({
-              error: true
-            });
-            refs.btn.setState({
-              disabled: true
-            });
-          }
+          });
           break;
         case 'base_price':
           var priceRegex = /^[0-9.]{1,}$/;
-          if(priceRegex.exec(state.value)) {
-            refs.base_price.setState({
-              error: false
-            });
+          refs.base_price.setState({
+            error: !priceRegex.test(state.value)
+          }, () => {
             refs.btn.setState({
-              disabled: false
+              disabled: disable
             });
-          } else {
-            refs.base_price.setState({
-              error: true
-            });
-            refs.btn.setState({
-              disabled: true
-            });
-          }
+          });
           break;
         default:
           break;

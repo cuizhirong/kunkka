@@ -169,7 +169,7 @@ class StageInput extends React.Component {
           <div className="price-table">
             <Table
               __={__}
-              datakey="count"
+              dataKey="count"
               column={columns}
               data={this.state.data}
             />
