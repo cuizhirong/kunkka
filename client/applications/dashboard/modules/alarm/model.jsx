@@ -6,6 +6,7 @@ var { Button } = require('client/uskin/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var DetailMiniTable = require('client/components/detail_minitable/index');
+var LineChart = require('client/components/line_chart/index');
 var description = require('./detail/description');
 var history = require('./detail/history');
 
@@ -194,7 +195,66 @@ class Model extends Main {
             );
 
             update(contents);
+
           });
+        }
+        break;
+      case 'monitor':
+        if (isSingle) {
+          syncUpdate = false;
+
+
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+
+            //open detail without delaying
+            contents[tabKey] = (<div />);
+            update(contents, true);
+          }
+
+          let rule = rows[0].gnocchi_resources_threshold_rule;
+          let tabItems = [{
+            name: __.three_hours,
+            key: '300'
+          }, {
+            name: __.one_day,
+            key: '900'
+          }, {
+            name: __.one_week,
+            key: '3600'
+          }, {
+            name: __.one_month,
+            key: '21600'
+          }];
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+
+          request.getReousrceMeasures(rule.resource_id, rule.metric, granularity).then((res) => {
+
+            let that = this;
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                metricType={[rule.metric]}
+                resourceType={rule.resource_type}
+                data={[res]}
+                granularity={rule.granularity}
+                tabItems={tabItems}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('monitor', refs, {
+                    rows: rows,
+                    granularity: tab.key
+                  });
+                }} />
+            );
+
+            update(contents);
+
+          });
+
         }
         break;
       case 'history':

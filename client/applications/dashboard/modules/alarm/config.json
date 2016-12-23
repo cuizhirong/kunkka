@@ -79,6 +79,9 @@
         "key": "description",
         "default": true
       }, {
+        "name": ["monitor"],
+        "key": "monitor"
+      }, {
         "name": ["history"],
         "key": "history"
       }]

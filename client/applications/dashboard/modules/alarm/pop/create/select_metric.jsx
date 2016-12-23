@@ -4,7 +4,7 @@ var Chart = require('echarts');
 var MultiDropdown = require('./dropdown');
 var __ = require('locale/client/dashboard.lang.json');
 var utils = require('../../utils');
-var contant = require('./constant');
+var constant = require('./constant');
 var helper = require('./helper');
 
 let lineChart;
@@ -37,9 +37,20 @@ class Modal extends React.Component {
     let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let yAxis = [];
     let xAxis = [];
+    function fixMeasure(num) {
+      return Math.round(num * 100) / 100;
+    }
 
     data.forEach((ele) => {
-      yAxis.push(ele[1]);
+      switch (state.metricType) {
+        case 'cpu_util':
+          yAxis.push(fixMeasure(ele[2] * 100));
+          break;
+        default:
+          yAxis.push(fixMeasure(ele[2]));
+          break;
+      }
+
       let date = new Date(ele[0]);
       xAxis.push(helper.getDateStr(date));
     });
@@ -69,13 +80,13 @@ class Modal extends React.Component {
 
   getDotsNumber(granularity, prev) {
     switch (granularity) {
-      case contant.GRANULARITY_HOUR:
+      case constant.GRANULARITY_HOUR:
         return 36;
-      case contant.GRANULARITY_DAY:
+      case constant.GRANULARITY_DAY:
         return 96;
-      case contant.GRANULARITY_WEEK:
+      case constant.GRANULARITY_WEEK:
         return 168;
-      case contant.GRANULARITY_MONTH:
+      case constant.GRANULARITY_MONTH:
         let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
         return 4 * date.getDate();
       default:
@@ -85,13 +96,13 @@ class Modal extends React.Component {
 
   getNextPeriodDate(prev, granularity) {
     switch (granularity) {
-      case contant.GRANULARITY_HOUR:
+      case constant.GRANULARITY_HOUR:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
-      case contant.GRANULARITY_DAY:
+      case constant.GRANULARITY_DAY:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
-      case contant.GRANULARITY_WEEK:
+      case constant.GRANULARITY_WEEK:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
-      case contant.GRANULARITY_MONTH:
+      case constant.GRANULARITY_MONTH:
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }
@@ -171,10 +182,10 @@ class Modal extends React.Component {
     let granularity = state.measureGranularity;
     let { resource, resources, resourceType, metricType } = state;
 
-    let recentHour = __.recent_hours.replace('{0}', contant.RECENT_HOUR);
-    let recentDay = __.recent_day.replace('{0}', contant.RECENT_DAY);
-    let recentWeek = __.recent_week.replace('{0}', contant.RECENT_WEEK);
-    let recentMonth = __.recent_month.replace('{0}', contant.RECENT_MONTH);
+    let recentHour = __.recent_hours.replace('{0}', constant.RECENT_HOUR);
+    let recentDay = __.recent_day.replace('{0}', constant.RECENT_DAY);
+    let recentWeek = __.recent_week.replace('{0}', constant.RECENT_WEEK);
+    let recentMonth = __.recent_month.replace('{0}', constant.RECENT_MONTH);
 
     let dropdownValue = '';
     if (state.resource) {
@@ -188,10 +199,10 @@ class Modal extends React.Component {
         <div className="select-box">
           <MultiDropdown ref="multidropdown" items={resources} disabled={resources.length === 0} onClick={this.onClickDropdown} value={dropdownValue} />
           <ButtonGroup>
-            <Button btnKey={contant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_HOUR} />
-            <Button btnKey={contant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_DAY} />
-            <Button btnKey={contant.GRANULARITY_WEEK} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_WEEK} />
-            <Button btnKey={contant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === contant.GRANULARITY_MONTH} />
+            <Button btnKey={constant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_HOUR} />
+            <Button btnKey={constant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_DAY} />
+            <Button btnKey={constant.GRANULARITY_WEEK} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_WEEK} />
+            <Button btnKey={constant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_MONTH} />
           </ButtonGroup>
         </div>
         <div id="select_metric_chart" className="chart-box" />
