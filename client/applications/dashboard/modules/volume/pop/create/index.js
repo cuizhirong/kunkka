@@ -118,8 +118,9 @@ function pop(obj, parent, callback) {
           });
         };
 
+        var volumeType = overview.volume_types.length > 0 ? overview.volume_types[0] : null;
         if (ENABLE_CHARGE) {
-          request.getVolumePrice('volume.size', selectedMin).then((res) => {
+          request.getVolumePrice(volumeType + '.volume.size', selectedMin).then((res) => {
             setFields();
             refs.charge.setState({
               value: res.unit_price,
