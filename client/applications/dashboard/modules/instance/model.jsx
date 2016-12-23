@@ -31,6 +31,7 @@ var detachVolume = require('./pop/detach_volume/index');
 var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
 var deleteInstance = require('./pop/delete/index');
+var createAlarm = require('../alarm/pop/create/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -584,8 +585,7 @@ class Model extends React.Component {
 
           var resourceId = rows[0].id,
             metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-            granularity = '300',
-            _data = [], chartData = [], _time = [], chartTime = [];
+            granularity = '300';
           var tabItems = [{
             name: __.three_hours,
             key: '300',
@@ -600,61 +600,56 @@ class Model extends React.Component {
             name: __.one_month,
             key: '21600'
           }];
+
           request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
-            res.forEach((_d, i) => {
-              _data = [];
-              _d.forEach(d => {
-                _time.push(moment(d[0]).month() + '-' + moment(d[0]).date() + ' ' + moment(d[0]).hour() + ':' + moment(d[0]).minute() + '0');
-                if (i === 0 || i === 1) {
-                  _data.push(d[2].toFixed(2) * 100);
-                } else {
-                  _data.push(d[2].toFixed(2));
-                }
-              });
-              chartData.push(_data);
-              chartTime.push(_time);
-              _time = [];
-            });
             contents[asyncMonitorTabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
-                title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
-                unit={['%', '%', 'B/s', 'B/s']}
-                data={chartData}
-                chartTime={chartTime}
+                metricType={metricType}
+                resourceType={'instance'}
+                data={res}
                 granularity={granularity}
                 tabItems={tabItems}
                 clickTabs={this.clickTabs.bind(this)}>
-                <Button value={__.create}/>
+                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm')}/>
               </LineChart>
             );
-            updateDetailMonitor(contents);
-          }, () => {
-            contents[asyncMonitorTabKey] = (<LineChart
-              __={__}
-              item={rows[0]}
-              title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
-              unit={['%', '%', 'B/s', 'B/s']}
-              data={[[], [], [], []]}
-              chartTime={chartTime}
-              granularity={granularity}
-              tabItems={tabItems}
-              clickTabs={this.clickTabs.bind(this)}/>);
             updateDetailMonitor(contents);
           });
         }
         break;
       case 'alarm':
         if (isAvailableView(rows)) {
-          var alarmItems = this.getAlarmItems(rows[0]);
-          contents[tabKey] = (
-            <DetailMinitable
-              __={__}
-              title={__.alarm}
-              defaultUnfold={true}
-              tableConfig={alarmItems ? alarmItems : []} />
-          );
+          syncUpdate = false;
+          var asyncAlarmKey = tabKey;
+
+          var updateDetailAlarm = function(newContents) {
+            detail.setState({
+              contents: newContents,
+              loading: false
+            });
+          };
+
+          //open detail without delaying
+          detail.setState({
+            loading: true
+          });
+          request.getAlarmList(rows[0].id).then(res => {
+            var alarmItems = this.getAlarmItems(res);
+            contents[asyncAlarmKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.alarm}
+                defaultUnfold={true}
+                tableConfig={alarmItems ? alarmItems : []} />
+            );
+            updateDetailAlarm(contents);
+          }, () => {
+            contents[asyncAlarmKey] = (<div />);
+            updateDetailAlarm(contents);
+          });
+
         }
         break;
       default:
@@ -684,8 +679,7 @@ class Model extends React.Component {
       resourceId = item.id,
       tabItems = [],
       metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-      granularity = tabItem.key,
-      _data = [], chartData = [], _time = [], chartTime = [];
+      granularity = tabItem.key;
 
     tabItems = [{
       name: __.three_hours,
@@ -704,32 +698,17 @@ class Model extends React.Component {
     this.changeDefaultTab(tabItems, tabItem);
 
     request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
-      res.forEach((data, i) => {
-        _data = [];
-        data.forEach(d => {
-          _time.push(moment(d[0]).month() + '-' + moment(d[0]).date() + ' ' + moment(d[0]).hour() + ':' + moment(d[0]).minute() + '0');
-          if (i === 0 || i === 1) {
-            _data.push(d[2].toFixed(2) * 100);
-          } else {
-            _data.push(d[2].toFixed(2));
-          }
-        });
-        chartData.push(_data);
-        chartTime.push(_time);
-        _time = [];
-      });
       contents[monitor] = (
         <LineChart
           __={__}
           item={item}
-          title={['cpu_util', 'memory_utils', 'disk_read', 'disk_write']}
-          unit={['%', '%', 'B/s', 'B/s']}
-          data={chartData}
-          chartTime={chartTime}
+          metricType={metricType}
+          resourceType={'instance'}
+          data={res}
           tabItems={tabItems}
           granularity={granularity}
           clickTabs={this.clickTabs.bind(this)}>
-          <Button value={__.create}/>
+          <Button value={__.create + __.alarm}/>
         </LineChart>
       );
       detail.setState({
@@ -741,11 +720,11 @@ class Model extends React.Component {
 
   getAlarmItems(item) {
     var tableContent = [];
-    item.alarm.forEach((element, index) => {
-      if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance_disk') {
+    item.forEach((element, index) => {
+      if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance') {
         var dataObj = {
           id: index + 1,
-          name: item.name,
+          name: element.name,
           enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
           state: element.state === 'insufficient data' ? getStatusIcon('insufficient_data') : getStatusIcon(element.state),
           created_at: getTime(element.timestamp, true)
@@ -1076,6 +1055,9 @@ class Model extends React.Component {
             cb(true);
           }
         });
+        break;
+      case 'create_alarm':
+        createAlarm();
         break;
       default:
         break;
