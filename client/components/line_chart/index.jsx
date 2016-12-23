@@ -1,5 +1,6 @@
 require('./style/index.less');
-var Chart = require('client/libs/charts/index');
+//var Chart = require('client/libs/charts/index');
+var Echarts = require('echarts');
 var React = require('react');
 var {Tab} = require('client/uskin/index');
 
@@ -11,9 +12,10 @@ class ChartLine extends React.Component {
       data: props.data,
       granularity: props.granularity,
       item: props.item,
-      chartTime: props.chartTime || [],
       tabItems: props.tabItems ? props.tabItems : [],
-      unit: props.unit || []
+      resourceType: props.resourceType,
+      metricType: props.metricType,
+      title: []
     };
     this.lineChart;
   }
@@ -23,9 +25,9 @@ class ChartLine extends React.Component {
       data: nextProps.data,
       granularity: nextProps.granularity,
       item: nextProps.item,
-      chartTime: nextProps.chartTime || [],
       tabItems: nextProps.tabItems,
-      unit: nextProps.unit || []
+      resourceType: nextProps.resourceType,
+      metricType: nextProps.metricType
     });
   }
 
@@ -33,41 +35,112 @@ class ChartLine extends React.Component {
     this.renderLineChart(this.state.data, this.state.granularity);
   }
 
-  renderLineChart(data, granularity, period) {
-    data ? data.forEach((d, i) => {
-      var ele = document.getElementById('line-chart' + i),
-        eleChild = ele.getElementsByTagName('canvas');
-      if (eleChild.length !== 0) {
-        ele.removeChild(eleChild[0]);
-        ele.removeChild(eleChild[0]);
+  getChartData(data, i) {
+    var _data = [];
+    data.forEach((d) => {
+      if (i === 0 || i === 1) {
+        _data.push(d[2].toFixed(2) * 100);
+      } else {
+        _data.push(d[2].toFixed(2));
       }
+    });
+    return _data;
+  }
 
-      var lineChart = new Chart.LineChart(document.getElementById('line-chart' + i));
-      let unit = this.state.unit[i] || 'b';
-      let title = this.props.__.unit + '(' + unit + '), ' + this.props.__.interval + granularity + 's';
-      lineChart.setOption({
-        unit: unit,
-        title: title,
-        num: i,
-        xAxis: {
-          color: '#f2f3f4',
-          data: this.state.chartTime[i] || []
+  getXaxis(data) {
+    var xAxis = [];
+    data.forEach((d) => {
+      let date = new Date(d[0]);
+      xAxis.push(this.getDateStr(date));
+    });
+    return xAxis;
+  }
+
+  getTitle(resourceType, metricType) {
+    if (resourceType === 'instance') {
+      switch(metricType) {
+        case 'cpu_util':
+          return this.props.__.cpu_util;
+        case 'memory.usage':
+          return this.props.__.memory_utils;
+        case 'disk.read.bytes.rate':
+          return this.props.__.disk_read;
+        case 'disk.write.bytes.rate':
+          return this.props.__.disk_write;
+        default:
+          return 'B/s';
+      }
+    }
+  }
+
+  getUnit(resourceType, metricType) {
+    if (resourceType === 'instance') {
+      switch(metricType) {
+        case 'cpu_util':
+        case 'memory.usage':
+          return '%';
+        case 'disk.read.bytes.rate':
+        case 'disk.write.bytes.rate':
+        default:
+          return 'B/s';
+      }
+    }
+  }
+
+  getDateStr(date) {
+    function format(num) {
+      return (num < 10 ? '0' : '') + num;
+    }
+
+    return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
+      ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
+  }
+
+  renderLineChart(data, granularity, period) {
+    var title = this.state.metricType.map(type => {
+      return this.getTitle(this.state.resourceType, type);
+    });
+    var unit = this.state.metricType.map(u => {
+      return this.getUnit(this.state.resourceType, u);
+    });
+    data ? data.forEach((d, i) => {
+      var myChart = Echarts.init(document.getElementById('line-chart' + i));
+      let chartData = this.getChartData(d, i);
+      let xAxis = this.getXaxis(d);
+      let subText = this.props.__.unit + '(' + unit[i] + '), ' + this.props.__.interval + granularity + 's';
+
+      var option = {
+        title: {
+          text: title[i],
+          subtext: subText
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis:  {
+          type: 'category',
+          boundaryGap: false,
+          data: xAxis
         },
         yAxis: {
-          color: '#f2f3f4',
-          tickPeriod: unit === '%' ? 10 : 1000,
-          tickMarginLeft: 30,
-          tickColor: '#939ba3'
+          type: 'value'
         },
         series: [{
-          color: '#1797c6',
-          data: d,
-          opacity: 0.05,
-          type: 'sharp' // sharp, curve, curve by default
+          type: 'line',
+          smooth: true,
+          data: chartData
         }],
-        period: 100,
-        easing: 'easeOutCubic'
-      });
+        animation: false,
+        color: ['#00afc8']
+      };
+
+      myChart.setOption(option);
     }) : '';
   }
 
@@ -90,9 +163,6 @@ class ChartLine extends React.Component {
               {this.state.data.map((_d, i) => {
                 return (
                   <div id={'line-chart' + i} key={i} className="chart">
-                    <div className="chart-title">
-                      {__[this.props.title[i]]}
-                    </div>
                     <div className="legendWp" id="legendWp">
                       <span className="circle"></span>
                       <label>{this.state.item.name}</label>
