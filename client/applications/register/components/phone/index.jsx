@@ -13,7 +13,8 @@ class Phone extends React.Component {
       pass: false,
       error: false,
       wait: false,
-      tipContent: null
+      tipContent: null,
+      sysError: false
     };
   }
 
@@ -48,7 +49,9 @@ class Phone extends React.Component {
         }
       }, 1000);
     }).catch((err) => {
+      var code = err.status;
       this.setState({
+        sysError: code >= 500 ? true : false,
         wait: false,
         error: true,
         pass: false,
@@ -70,15 +73,7 @@ class Phone extends React.Component {
     let props = this.props,
       state = this.state,
       __ = this.props.__,
-      isDisabled = function() {
-        if(!state.wait) {
-          if(state.pass) {
-            return '';
-          }
-          return 'disabled';
-        }
-        return 'disabled';
-      };
+      isDisabled = state.wait || (!state.wait && !state.pass && !state.sysError);
 
     return (
       <div className="phone-number">
@@ -87,7 +82,7 @@ class Phone extends React.Component {
         </div>
         <input type="text" className={state.error ? 'error' : ''} ref="phone" name="phone" placeholder={__.phone_placeholder} autoComplete="off" onChange={this.onChange.bind(this, props.name)} />
         <i className={state.pass ? 'glyphicon icon-active-yes show' : ''}></i>
-        <input ref="send" type="button" disabled={isDisabled()} value={state.textValue} onClick={this.onClick.bind(this)} />
+        <input ref="send" type="button" disabled={isDisabled ? 'disabled' : ''} value={state.textValue} onClick={this.onClick.bind(this)} />
       </div>
     );
   }
