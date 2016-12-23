@@ -35,15 +35,17 @@ class ChartLine extends React.Component {
     this.renderLineChart(this.state.data, this.state.granularity);
   }
 
-  getChartData(data, i) {
+  getChartData(resourceType, data, metric) {
     var _data = [];
-    data.forEach((d) => {
-      if (i === 0 || i === 1) {
-        _data.push(d[2].toFixed(2) * 100);
-      } else {
-        _data.push(d[2].toFixed(2));
-      }
-    });
+    if (resourceType === 'instance') {
+      data.forEach((d) => {
+        if (metric === 'cpu_util' || metric === 'memory.usage') {
+          _data.push(d[2].toFixed(2) * 100);
+        } else {
+          _data.push(d[2].toFixed(2));
+        }
+      });
+    }
     return _data;
   }
 
@@ -58,18 +60,21 @@ class ChartLine extends React.Component {
 
   getTitle(resourceType, metricType) {
     if (resourceType === 'instance') {
-      switch(metricType) {
-        case 'cpu_util':
-          return this.props.__.cpu_util;
-        case 'memory.usage':
-          return this.props.__.memory_utils;
-        case 'disk.read.bytes.rate':
-          return this.props.__.disk_read;
-        case 'disk.write.bytes.rate':
-          return this.props.__.disk_write;
-        default:
-          return 'B/s';
+      if (metricType) {
+        switch (metricType) {
+          case 'disk.read.bytes.rate':
+            return this.props.__.disk_read_rate;
+          case 'disk.write.bytes.rate':
+            return this.props.__.disk_write_rate;
+          case 'cpu_util':
+            return this.props.__.cpu_utilization;
+          case 'memory.usage':
+            return this.props.__.memory_usage;
+          default:
+            return metricType;
+        }
       }
+      return '';
     }
   }
 
@@ -92,55 +97,79 @@ class ChartLine extends React.Component {
       return (num < 10 ? '0' : '') + num;
     }
 
-    return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
+    return format(date.getMonth()) + '-' + format(date.getDate()) +
       ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
   }
 
   renderLineChart(data, granularity, period) {
-    var title = this.state.metricType.map(type => {
+    var title = this.state.metricType ? this.state.metricType.map(type => {
       return this.getTitle(this.state.resourceType, type);
-    });
-    var unit = this.state.metricType.map(u => {
+    }) : '';
+    var unit = this.state.metricType ? this.state.metricType.map(u => {
       return this.getUnit(this.state.resourceType, u);
-    });
+    }) : 'B/s';
     data ? data.forEach((d, i) => {
-      var myChart = Echarts.init(document.getElementById('line-chart' + i));
-      let chartData = this.getChartData(d, i);
-      let xAxis = this.getXaxis(d);
-      let subText = this.props.__.unit + '(' + unit[i] + '), ' + this.props.__.interval + granularity + 's';
+      if (d.length !== 0) {
+        var myChart = Echarts.init(document.getElementById('line-chart' + i));
+        let chartData = this.getChartData(this.state.resourceType, d, this.state.metricType[i]);
+        let xAxis = this.getXaxis(d);
+        let subText = this.props.__.unit + '(' + unit[i] + '), ' + this.props.__.interval + granularity + 's';
 
-      var option = {
-        title: {
-          text: title[i],
-          subtext: subText
-        },
-        tooltip: {
-          trigger: 'axis'
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            saveAsImage: {}
-          }
-        },
-        xAxis:  {
-          type: 'category',
-          boundaryGap: false,
-          data: xAxis
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [{
-          type: 'line',
-          smooth: true,
-          data: chartData
-        }],
-        animation: false,
-        color: ['#00afc8']
-      };
+        var option = {
+          title: {
+            text: title[i],
+            subtext: subText
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'line',
+              lineStyle: {
+                color: '#939ba3',
+                width: 2
+              }
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis:  {
+            type: 'category',
+            boundaryGap: false,
+            data: xAxis,
+            axisLine: {
+              lineStyle: {
+                color: ['#939ba3']
+              }
+            }
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              lineStyle: {
+                color: ['#939ba3']
+              }
+            }
+          },
+          series: [{
+            name: '总量',
+            type: 'line',
+            smooth: true,
+            data: chartData
+          }],
+          animation: false,
+          color: ['#f2994b'],
+          textStyle: {
+            fontFamily: 'Helvetica,arial'
+          },
+          backgroundColor: ['#f5fdfe']
+        };
 
-      myChart.setOption(option);
+        myChart.setOption(option);
+      }
     }) : '';
   }
 
@@ -164,8 +193,6 @@ class ChartLine extends React.Component {
                 return (
                   <div id={'line-chart' + i} key={i} className="chart">
                     <div className="legendWp" id="legendWp">
-                      <span className="circle"></span>
-                      <label>{this.state.item.name}</label>
                       {
                         _d.length === 0 ? <label className="no-data">{__.no_monitor_data}</label> : ''
                       }
