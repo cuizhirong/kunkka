@@ -2,6 +2,9 @@
   "en": {
     "account_placeholder": "Please enter username",
     "activate": "Activate",
+    "code_placeholder": "Enter code",
+    "changeCode": "Change",
+    "captchaError": "Wrong Code",
     "error_tip": "The information you entered is not correct",
     "forgotPass": "Forgot password?",
     "hasAccount": "Login with an existing account",
@@ -15,6 +18,9 @@
   "zh-CN": {
     "account_placeholder": "请输入用户名",
     "activate": "去激活",
+    "code_placeholder": "请输入验证码",
+    "changeCode": "换一张",
+    "captchaError": "验证码错误",
     "error_tip": "用户名或密码不正确",
     "forgotPass": "忘记密码?",
     "hasAccount": "登录已有帐号",

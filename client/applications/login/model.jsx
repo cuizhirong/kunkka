@@ -8,10 +8,12 @@ class Model extends React.Component {
 
     this.state = {
       username: '',
+      errorTip: '',
       notActivate: false,
       loginError: false,
       usernameEmptyError: false,
       passwordEmptyError: false,
+      captchaEmptyError: false,
       isSubmitting: false,
       domains: (props.HALO.settings.domains.indexOf('Default') > -1 ? 'Default' : props.HALO.settings.domains[0])
     };
@@ -25,7 +27,9 @@ class Model extends React.Component {
     e.preventDefault();
     let refs = this.refs,
       that = this,
-      state = that.state;
+      state = that.state,
+      __ = this.props.__,
+      captcha = HALO.settings.enable_login_captcha;
 
     if (state.isSubmitting) {
       return;
@@ -38,6 +42,10 @@ class Model extends React.Component {
         password: password
       };
 
+    if(captcha) {
+      data.captcha = refs.code.value;
+    }
+
     if(HALO.settings.enable_domain) {
       data.domain = refs.domains.value;
     }
@@ -45,10 +53,11 @@ class Model extends React.Component {
     that.setState({
       loginError: false,
       usernameEmptyError: false,
-      passwordEmptyError: false
+      passwordEmptyError: false,
+      captchaEmptyError: false
     });
 
-    let isEmpty = !username || !password;
+    let isEmpty = !username || !password || captcha ? (!refs.code.value) : false;
     if (isEmpty) {
       if (!username) {
         that.setState({
@@ -60,9 +69,15 @@ class Model extends React.Component {
           passwordEmptyError: true
         });
       }
+      if(captcha) {
+        if(!refs.code.value) {
+          that.setState({
+            captchaEmptyError: true
+          });
+        }
+      }
       return;
     }
-
     that.setState({
       isSubmitting: true
     });
@@ -71,9 +86,17 @@ class Model extends React.Component {
       window.location = window.location.pathname;
     }, function(err) {
       var code = JSON.parse(err.responseText).error.code;
-      if(code === 403) {
+      if(code === 400) {
         that.setState({
-          username: refs.username.value
+          errorTip: __.captchaError
+        });
+      } else if(code === 403) {
+        that.setState({
+          username: __.captchaError
+        });
+      } else {
+        that.setState({
+          errorTip: __.error_tip
         });
       }
       that.setState({
@@ -96,6 +119,11 @@ class Model extends React.Component {
       default:
         break;
     }
+  }
+
+  onClick(e) {
+    e.preventDefault();
+    this.refs.captcha.src = '/api/captcha?' + Math.random();
   }
 
   render() {
@@ -124,10 +152,19 @@ class Model extends React.Component {
                 <a href="/auth/password"> {__.forgotPass}</a>
               </div> : null
           }
+          {
+            HALO.settings.enable_login_captcha ? <div className="code-wrapper">
+              <input type="text" ref="code" name="code" className={state.captchaEmptyError ? 'error' : ''} placeholder={__.code_placeholder} />
+              <div className="img-wrapper">
+                <img ref="captcha" src="/api/captcha" />
+              </div>
+              <a onClick={this.onClick.bind(this)} >{__.changeCode}</a>
+            </div> : null
+          }
           <div className="tip-wrapper">
             <div className={'input-error' + (state.loginError ? '' : ' hide')}>
             {
-              !state.notActivate ? <div><i className="glyphicon icon-status-warning"></i><span>{__.error_tip}</span>
+              !state.notActivate ? <div><i className="glyphicon icon-status-warning"></i><span>{state.errorTip}</span>
                </div> : <div><i className="glyphicon icon-status-warning"></i><span>{__.notActivate_tip}<a href={'/auth/register/success?name=' + state.username}>{__.activate}</a></span></div>
             }
             </div>
