@@ -1,6 +1,5 @@
 'use strict';
 
-const async = require('async');
 const co = require('co');
 
 const SlardarBase = require('../api/base');
@@ -11,7 +10,7 @@ const adminUsername = config('admin_username');
 const adminPassword = config('admin_password');
 const adminProjectId = config('admin_projectId');
 
-function setRemote (catalog) {
+function setRemote(catalog) {
   let remote = {};
   let oneRemote;
   for (let i = 0, l = catalog.length, service = catalog[0]; i < l; i++, service = catalog[i]) {
@@ -29,57 +28,30 @@ function setRemote (catalog) {
 
 module.exports = function (callback) {
   if (callback && typeof callback === 'function') {
-    async.waterfall(
-      [
-        (cb) => {
-          SlardarBase.prototype.__unscopedAuth.call(this, {
-            username: adminUsername,
-            password: adminPassword,
-            domain: domain
-          }, (err, response) => {
-            if (err) {
-              cb(err);
-            } else {
-              cb(null, response.header['x-subject-token']);
-            }
-          });
-        },
-        (token, cb) => {
-          SlardarBase.prototype.__scopedAuth.call(this, {
-            projectId: adminProjectId,
-            token: token
-          }, (err, response) => {
-            if (err) {
-              cb(err);
-            } else {
-              cb(null, response.header['x-subject-token'], response);
-            }
-          });
-        }
-      ],
-      (err, token, response) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null, {
-            token: token,
-            response: response,
-            remote: setRemote(response.body.token.catalog)
-          });
-        }
+    SlardarBase.prototype.__scopedAuthByPassword({
+      username: adminUsername,
+      password: adminPassword,
+      domain: domain,
+      projectId: adminProjectId
+    }, (err, response) => {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, {
+          token: response.header['x-subject-token'],
+          response: response,
+          remote: setRemote(response.body.token.catalog)
+        });
       }
-    );
+    });
   } else {
     return new Promise((resolve, reject) => {
       co(function *() {
-        const unsopedAuthObj = yield SlardarBase.prototype.__unscopedAuthAsync({
+        const scopedAuthObj = yield SlardarBase.prototype.__scopedAuthByPasswordAsync({
           username: adminUsername,
           password: adminPassword,
-          domain: domain
-        });
-        const scopedAuthObj = yield SlardarBase.prototype.__scopedAuthAsync({
           projectId: adminProjectId,
-          token: unsopedAuthObj.header['x-subject-token']
+          domain: domain
         });
         const tokenObj = {
           token: scopedAuthObj.header['x-subject-token'],

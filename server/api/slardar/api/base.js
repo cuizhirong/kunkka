@@ -57,6 +57,9 @@ API.prototype = {
   __scopedAuth: function (objVar, callback) {
     driver.keystone.authAndToken.scopedAuth(objVar.projectId, objVar.token, keystoneRemote, asyncHandlerOrigin.bind(undefined, callback));
   },
+  __scopedAuthByPassword: function (objVar, callback) {
+    return driver.keystone.authAndToken.scopedAuthByPassword(objVar.username, objVar.password, objVar.domain, objVar.projectId, keystoneRemote, callback);
+  },
   __userProjects: function (objVar, callback) {
     driver.keystone.project.getUserProjects(objVar.userId, objVar.token, keystoneRemote, asyncHandler.bind(undefined, callback));
   },
@@ -256,6 +259,9 @@ API.prototype = {
   },
   __scopedAuthAsync: function (objVar) {
     return driver.keystone.authAndToken.scopedAuthAsync(objVar.projectId, objVar.token, keystoneRemote);
+  },
+  __scopedAuthByPasswordAsync: function (objVar) {
+    return driver.keystone.authAndToken.scopedAuthByPasswordAsync(objVar.username, objVar.password, objVar.domain, objVar.projectId, keystoneRemote);
   },
   __userProjectsAsync: function (objVar) {
     return driver.keystone.project.getUserProjectsAsync(objVar.userId, objVar.token, keystoneRemote);
