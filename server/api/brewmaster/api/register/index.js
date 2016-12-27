@@ -284,7 +284,7 @@ User.prototype = {
       ];
 
       userDB.enabled = true;
-      userDB.projectId = projectId;
+      userDB.default_project_id = projectId;
       yield userDB.save();
       yield that.memcachedClient.deleteAsync(userDB.id);
       base.func.render({

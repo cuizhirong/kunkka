@@ -8,22 +8,58 @@ const glob = require('glob');
 
 const drivers = require('drivers');
 const userModel = require('../models').user;
-const getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
-
 const regionId = (region && region[0] && region[0].id) || 'RegionOne';
+
 const keystoneRemote = config('keystone');
 const tokenExpire = config('reg_token_expire') || 60 * 60 * 24;
 const smsCodeExpire = config('reg_sms_expire') || 60 * 10;
-
 const adminLogin = require('api/slardar/common/adminLogin');
+
 const getUser = Promise.promisify(drivers.keystone.user.getUser);
 const listUsers = drivers.keystone.user.listUsers;
 const getUserAsync = drivers.keystone.user.getUserAsync;
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
-
 const uskinFile = glob.sync('*.uskin.min.css', {cwd: 'client/dist/uskin'})[0];
 
 const base = {func: {}, middleware: {}};
+
+
+base.__getUserAsync = function (objVar) {
+  return drivers.keystone.user.getUserAsync(objVar.token, keystoneRemote, objVar.userId);
+};
+base.__unscopedAuthAsync = function (objVar) {
+  return drivers.keystone.authAndToken.unscopedAuthAsync(objVar.username, objVar.password, objVar.domain, keystoneRemote);
+};
+base.__scopedAuthAsync = function (objVar) {
+  return drivers.keystone.authAndToken.scopedAuthAsync(objVar.projectId, objVar.token, keystoneRemote);
+};
+base.__userProjectsAsync = function (objVar) {
+  return drivers.keystone.project.getUserProjectsAsync(objVar.userId, objVar.token, keystoneRemote);
+};
+base.__listUsersAsync = function (objVar) {
+  return drivers.keystone.user.listUsersAsync(objVar.token, keystoneRemote, objVar.query);
+};
+
+base._getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
+
+base.getVars = function (req, extra) {
+  let objVar = {
+    token: req.session.user.token,
+    endpoint: req.session.endpoint,
+    region: req.headers.region,
+    query: req.query
+  };
+  /* general user to delete tenant_id. */
+  if (!req.session.user.isAdmin && objVar.query.tenant_id) {
+    delete objVar.query.tenant_id;
+  }
+  if (extra) {
+    extra.forEach(e => {
+      objVar[e] = req.params[e];
+    });
+  }
+  return objVar;
+};
 
 base.func.verifyUser = function (adminToken, where, cb) {
   if (cb && typeof cb === 'function') {
@@ -98,7 +134,7 @@ base.func.phoneCaptchaMem = function (phone, memClient, req, res, next) {
       if (errSet) {
         next({type: 'SystemError', err: errSet});
       } else {
-        getSettingsByApp('auth').then(settings => {
+        base._getSettingsByApp('auth').then(settings => {
           let corporationName = 'UnitedStack 有云';
 
           settings.some(setting => {
@@ -167,8 +203,8 @@ base.func.getTemplateObj = function (cb) {
   if (typeof cb === 'function') {
     let sets = {};
     Promise.all([
-      getSettingsByApp('global'),
-      getSettingsByApp('auth')
+      base._getSettingsByApp('global'),
+      base._getSettingsByApp('auth')
     ]).then(settings => settings.forEach(setting => setting.forEach(s => sets[s.name] = s.value))).then(() => {
       sets.uskinFile = uskinFile;
       cb(null, sets);
@@ -288,8 +324,8 @@ base.func.verifyUserAsync = function (adminToken, where) {
 base.func.getTemplateObjAsync = function () {
   return co(function *() {
     let settings = yield [
-      getSettingsByApp('global'),
-      getSettingsByApp('auth')
+      base._getSettingsByApp('global'),
+      base._getSettingsByApp('auth')
     ];
     let sets = {};
     settings.forEach(setting => setting.forEach(s => sets[s.name] = s.value));

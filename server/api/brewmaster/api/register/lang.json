@@ -30,7 +30,8 @@
     "VerificationCode": "校验码是 ",
     "clickHereToEnableYourAccount": "点击此处以激活您的账户",
     "LinkFailedCopyTheHref": "如果跳转失败，复制下面的链接到浏览器地址栏中并打开：",
-    "domainNotFound": "domain找不到"
+    "domainNotFound": "domain找不到",
+    "unEnabled": "账户未激活"
   },
   "en": {
     "Name": "The Username",
@@ -62,6 +63,7 @@
     "VerificationCode": "Verification Code is ",
     "clickHereToEnableYourAccount": "Click here to enable your account",
     "LinkFailedCopyTheHref": "If failed to link, copy the link below and open it in your the browser :",
-    "domainNotFound": "Domain Not Found"
+    "domainNotFound": "Domain Not Found",
+    "unEnabled": "User Not Enabled"
   }
 }

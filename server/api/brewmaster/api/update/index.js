@@ -12,7 +12,6 @@ let updateUser = drivers.keystone.user.updateUser;
 
 function Update (app){
   this.app = app;
-
 }
 
 

@@ -52,6 +52,12 @@ module.exports = {
       value: '',
       type: 'string',
       description: '注册页面-用户协议页面地址'
+    }, {
+      app: 'auth',
+      name: 'enable_login_captcha',
+      value: 'false',
+      type: 'boolean',
+      description: '登录页面图形验证码'
     }
   ]
 };
