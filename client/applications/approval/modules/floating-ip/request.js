@@ -23,7 +23,7 @@ module.exports = {
           return false;
         });
         if (f.association.type) {
-          f.status = 'active';
+          f.status = 'ACTIVE';
         }
       });
       return data.floatingip;
