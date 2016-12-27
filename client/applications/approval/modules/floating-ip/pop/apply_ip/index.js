@@ -120,6 +120,11 @@ function pop(parent, callback) {
     },
     onAction: function(field, state, refs) {
       switch (field) {
+        case 'bandwidth':
+          refs.btn.setState({
+            disabled: state.error
+          });
+          break;
         /*case 'bandwidth':
           if (enableCharge) {
             var sliderEvent = state.eventType === 'mouseup';
