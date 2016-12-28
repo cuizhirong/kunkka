@@ -58,27 +58,8 @@ class Model extends Main {
     });
   }
 
-  getTableData(forceUpdate, detailRefresh) {
-    request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
-      table.data = res;
-      table.loading = false;
-
-      var detail = this.refs.dashboard.refs.detail;
-      if (detail && detail.state.loading) {
-        detail.setState({
-          loading: false
-        });
-      }
-
-      this.setState({
-        config: config
-      }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
-        }
-      });
-    });
+  getList(forceUpdate, detailRefresh) {
+    return request.getList(forceUpdate);
   }
 
   onClickBtnList(key, refs, data) {

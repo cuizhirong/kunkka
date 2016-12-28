@@ -43,9 +43,9 @@ class Modal extends React.Component {
 
     data.forEach((ele) => {
       switch (state.metricType) {
-        case 'cpu_util':
-          yAxis.push(fixMeasure(ele[2] * 100));
-          break;
+        // case 'cpu_util':
+          // yAxis.push(fixMeasure(ele[2] * 100));
+          // break;
         default:
           yAxis.push(fixMeasure(ele[2]));
           break;
