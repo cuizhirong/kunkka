@@ -50,17 +50,16 @@ class DetailIndex extends React.Component {
   }
 
   times(i, sub) {
-    var that = this;
+    this.countDown(i, this.wait);
     request.resendVerify(sub.uuid).then(() => {
-      that.countDown(i, this.wait);
     }).catch(error => {
       getErrorMessage(error);
     });
   }
 
   countDown(i, wait) {
-    time = document.getElementById('time' + i);
-    resend = document.getElementById('resend' + i);
+    time = document.getElementById('time_detail' + i);
+    resend = document.getElementById('resend_detail' + i);
     resend && resend.classList.add('hide');
     time && time.classList.remove('hide');
     wait--;
@@ -85,9 +84,9 @@ class DetailIndex extends React.Component {
           : element.protocol.toUpperCase(),
         endpoint: element.endpoint,
         status: <div>
-            <span id={'time' + index} className="time">{this.times.bind(this, index)}</span>
+            <span id={'time_detail' + index} className="time">{this.times.bind(this, index)}</span>
             <span id="status" style={{display: 'flex'}}>{element.verified ? <span style={{color: '#1eb9a5', flex: '1'}}>{__.verified}</span> : <span style={{flex: '1'}}>{__.unverified}</span>}
-            {element.verified ? '' : <span id={'resend' + index} className={element.verified ? 'hide' : 'resend'} title={__.resend}><i className="glyphicon icon-notification msg" onClick={this.times.bind(this, index, element)} /></span>}</span>
+            {element.verified ? '' : <span id={'resend_detail' + index} className={element.verified ? 'hide' : 'resend'} title={__.resend}><i className="glyphicon icon-notification msg" onClick={this.times.bind(this, index, element)} /></span>}</span>
             <span id="timer" className="hide">{__.verifying}</span>
           </div>,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_endpoint', {

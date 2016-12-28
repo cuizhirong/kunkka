@@ -69,9 +69,8 @@ class AddEndpoint extends React.Component {
   }
 
   times(i, sub) {
-    var that = this;
+    this.countDown(i, this.wait);
     request.resendVerify(sub.uuid).then(() => {
-      that.countDown(i, this.wait);
     }).catch(error => {
       getErrorMessage(error);
     });
