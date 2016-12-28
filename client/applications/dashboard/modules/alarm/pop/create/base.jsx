@@ -18,12 +18,17 @@ class ModalBase extends React.Component {
   constructor(props) {
     super(props);
 
-    if (props.obj) {
-      this.state = initialState.getModifiedState(props.obj);
-      title = __.modify + __.alarm;
-    } else {
-      this.state = initialState.getInitializedState();
-      title = __.create + __.alarm;
+    switch(props.obj.type) {
+      case 'alarm':
+        this.state = initialState.getAlarmState(props.obj.item);
+        title = __.modify + __.alarm;
+        break;
+      case 'instance':
+      case 'create':
+      default:
+        this.state = initialState.getInitialState();
+        title = __.create + __.alarm;
+        break;
     }
 
     ['onPrevPage', 'onNextPage', 'onChangeState', 'createNotification', 'onConfirm'].forEach((func) => {
@@ -35,23 +40,32 @@ class ModalBase extends React.Component {
     this.getResourceList();
     this.getNofications();
 
-    if (this.props.obj) {
-      let resourceId = this.props.obj.gnocchi_resources_threshold_rule.resource_id;
-      const state = this.state;
-      this.getMeasureData(resourceId, state.metricType, state.measureGranularity);
+    const state = this.state;
+    const obj = this.props.obj;
+    switch(obj.type) {
+      case 'alarm':
+        let resourceId = obj.item.gnocchi_resources_threshold_rule.resource_id;
+        this.getMeasureData(resourceId, state.metricType, state.measureGranularity);
+        break;
+      case 'instance':
+      case 'create':
+      default:
+        break;
     }
   }
 
   getResourceList() {
     request.getResources().then((data) => {
-      let items = [{
+      const obj = this.props.obj;
+      let items = [];
+
+      let allItems = [{
         title: __.instance,
         icon: 'instance',
         key: 'instance',
         layer: 1
       }];
-
-      items[0].items = data.instance.map((ele) => ({
+      allItems[0].items = data.instance.map((ele) => ({
         title: ele.name ? ele.name : ele.id.substr(0, 8),
         key: ele.id,
         layer: 2,
@@ -82,21 +96,60 @@ class ModalBase extends React.Component {
         }]
       }));
 
-      if (this.props.obj) {
-        let alarm = this.props.obj;
-        let resourceId = alarm.gnocchi_resources_threshold_rule.resource_id;
+      switch(obj.type) {
+        case 'instance':
+          items = [{
+            title: utils.getMetricName('cpu_util'),
+            key: 'cpu_util',
+            resourceType: 'instance',
+            resource: obj.item,
+            layer: 3
+          }, {
+            title: utils.getMetricName('memory.usage'),
+            key: 'memory.usage',
+            resourceType: 'instance',
+            resource: obj.item,
+            layer: 3
+          }, {
+            title: utils.getMetricName('disk.read.bytes.rate'),
+            key: 'disk.read.bytes.rate',
+            resourceType: 'instance',
+            resource: obj.item,
+            layer: 3
+          }, {
+            title: utils.getMetricName('disk.write.bytes.rate'),
+            key: 'disk.write.bytes.rate',
+            resourceType: 'instance',
+            resource: obj.item,
+            layer: 3
+          }];
 
-        let instance = data.instance.find((ele) => ele.id === resourceId);
-        if (!instance) {
-          instance = {
-            id: resourceId,
-            name: '(' + resourceId.slice(0, 8) + ')'
-          };
-        }
+          this.setState({
+            resource: obj.item,
+            resourceType: 'instance'
+          });
+          break;
+        case 'alarm':
+          items = allItems;
 
-        this.setState({
-          resource: instance
-        });
+          let resourceId = obj.item.gnocchi_resources_threshold_rule.resource_id;
+
+          let insResource = data.instance.find((ele) => ele.id === resourceId);
+          if (!insResource) {
+            insResource = {
+              id: resourceId,
+              name: '(' + resourceId.slice(0, 8) + ')'
+            };
+          }
+
+          this.setState({
+            resource: insResource
+          });
+          break;
+        case 'create':
+        default:
+          items = allItems;
+          break;
       }
 
       this.setState({
@@ -178,6 +231,7 @@ class ModalBase extends React.Component {
       disabled: true
     });
 
+    const obj = this.props.obj;
     const state = this.state;
     const notifyList = state.notificationLists;
     let urlPrefix = HALO.configs.kiki_url + '/v1/topics/';
@@ -197,7 +251,10 @@ class ModalBase extends React.Component {
       urlPrefix + ele.notification + '/alarm'
     );
 
-    let data = this.props.obj ? this.props.obj : {};
+    let data = {};
+    if (obj.type === 'alarm') {
+      data = obj.item;
+    }
     data.name = state.name;
     data.description = state.descrition;
     data.alarm_actions = alarmActions;
@@ -215,36 +272,42 @@ class ModalBase extends React.Component {
       threshold: state.threshold
     };
 
-    if (this.props.obj) {
-      request.updateAlarm(data.alarm_id, data).then((res) => {
-        this.setState({
-          visible: false
-        });
+    switch(obj.type) {
+      case 'instance':
+      case 'create':
+        request.createAlarm(data).then((res) => {
+          this.setState({
+            visible: false
+          });
 
-        let cb = this.props.callback;
-        cb && cb(res);
-      }).catch((err) => {
-        this.setState({
-          disabled: false,
-          hideError: false,
-          errorMsg: getErrorMessage(err)
+          let cb = this.props.callback;
+          cb && cb(res);
+        }).catch((err) => {
+          this.setState({
+            disabled: false,
+            hideError: false,
+            errorMsg: getErrorMessage(err)
+          });
         });
-      });
-    } else {
-      request.createAlarm(data).then((res) => {
-        this.setState({
-          visible: false
-        });
+        break;
+      case 'alarm':
+        request.updateAlarm(data.alarm_id, data).then((res) => {
+          this.setState({
+            visible: false
+          });
 
-        let cb = this.props.callback;
-        cb && cb(res);
-      }).catch((err) => {
-        this.setState({
-          disabled: false,
-          hideError: false,
-          errorMsg: getErrorMessage(err)
+          let cb = this.props.callback;
+          cb && cb(res);
+        }).catch((err) => {
+          this.setState({
+            disabled: false,
+            hideError: false,
+            errorMsg: getErrorMessage(err)
+          });
         });
-      });
+        break;
+      default:
+        break;
     }
 
   }
@@ -271,7 +334,7 @@ class ModalBase extends React.Component {
         break;
       case 2:
         right = {
-          value: this.props.obj ? __.modify : __.create,
+          value: this.props.obj.type === 'alarm' ? __.modify : __.create,
           type: 'create',
           onClick: this.onConfirm
         };
@@ -284,7 +347,7 @@ class ModalBase extends React.Component {
     return (
       <div>
         <div className="left-side">
-          {state.page > 0 ? <Button {...left} /> : null}
+          {state.page > 0 ? <Button {...left} disabled={state.page === 2 && state.disabled} /> : null}
         </div>
         <div className="right-side">
           <Button {...right} disabled={disabled} />

@@ -85,7 +85,9 @@ class Model extends Main {
     let rows = data.rows;
     switch (key) {
       case 'create':
-        createAlarm(null, null, () => {
+        createAlarm({
+          type: 'create'
+        }, null, () => {
           this.refreshForce();
         });
         break;
@@ -100,7 +102,10 @@ class Model extends Main {
         });
         break;
       case 'modify':
-        createAlarm(rows[0], null, () => {
+        createAlarm({
+          type: 'alarm',
+          item: rows[0]
+        }, null, () => {
           this.refreshForce();
         });
         break;

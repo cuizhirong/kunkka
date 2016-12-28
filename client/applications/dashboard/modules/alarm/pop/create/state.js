@@ -2,7 +2,8 @@ var utils = require('../../utils');
 
 let initialState = {
 
-  getInitializedState: function() {
+  getInitialState: function() {
+
     let state = {
       visible: true,
       page: 0,
@@ -36,9 +37,10 @@ let initialState = {
     };
 
     return state;
+
   },
 
-  getModifiedState: function(alarm) {
+  getAlarmState: function(alarm) {
 
     let rule = alarm.gnocchi_resources_threshold_rule;
     let notificationLists = [];
@@ -102,6 +104,7 @@ let initialState = {
     };
 
     return state;
+
   }
 
 };

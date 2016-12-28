@@ -613,7 +613,7 @@ class Model extends React.Component {
                 granularity={granularity}
                 tabItems={tabItems}
                 clickTabs={this.clickTabs.bind(this)}>
-                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm')}/>
+                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
               </LineChart>
             );
             updateDetailMonitor(contents);
@@ -1061,7 +1061,10 @@ class Model extends React.Component {
         });
         break;
       case 'create_alarm':
-        createAlarm();
+        createAlarm({
+          type: 'instance',
+          item: data.rawItem
+        });
         break;
       default:
         break;
