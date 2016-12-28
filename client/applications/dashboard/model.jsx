@@ -35,18 +35,54 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
-    var _moduleName = pathList[1],
-      modules = this.state.modules;
-    if (modules.indexOf(_moduleName) === -1) {
-      modules = modules.concat(_moduleName);
+    if (this.isValidPath(pathList)) {
+      var _moduleName = pathList[1],
+        modules = this.state.modules;
+      if (modules.indexOf(_moduleName) === -1) {
+        modules = modules.concat(_moduleName);
+      }
+
+      this.setState({
+        modules: modules,
+        selectedModule: pathList[1],
+        selectedMenu: this._filterMenu(_moduleName),
+        params: pathList
+      });
+    } else {
+      router.replaceState('/dashboard/overview');
+    }
+  }
+
+  isValidPath(pathList) {
+    let isValid = true;
+
+    if (pathList.length > 1) {
+      isValid = this.menuKeys.some((ele) => ele === pathList[1]);
     }
 
-    this.setState({
-      modules: modules,
-      selectedModule: pathList[1],
-      selectedMenu: this._filterMenu(_moduleName),
-      params: pathList
+    return isValid;
+  }
+
+  getMenuKeys() {
+    let menuKeys = [];
+
+    this.props.menus.forEach((ele) => {
+
+      if (ele.title !== 'monitor') {
+        ele.items.forEach((item) => {
+          menuKeys.push(item);
+        });
+      } else {
+        if (HALO.settings.enable_dashboard_alarm) {
+          ele.items.forEach((item) => {
+            menuKeys.push(item);
+          });
+        }
+      }
+
     });
+
+    return menuKeys;
   }
 
   _filterMenu(item) {
@@ -62,6 +98,7 @@ class Model extends React.Component {
   }
 
   componentDidMount() {
+    this.menuKeys = this.getMenuKeys();
     this.loadRouter();
   }
 
@@ -109,12 +146,22 @@ class Model extends React.Component {
           selected: n === state.selectedMenu ? true : false
         });
       });
+
       menus.push({
         title: __[m.title],
         key: m.title || 'overview',
         submenu: submenu
       });
     });
+
+    if (!HALO.settings.enable_dashboard_alarm) {
+      let index = -1;
+      menus.some((ele, i) => ele.key === 'monitor' ? (index = i, true) : false);
+
+      if (index > -1) {
+        menus.splice(index, 1);
+      }
+    }
 
     return (
       <div id="wrapper">
