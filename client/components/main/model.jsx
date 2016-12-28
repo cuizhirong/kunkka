@@ -61,8 +61,20 @@ class Module extends React.Component {
       this.setState({
         config: _config
       }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
+        if (detail) {
+          if (detail.state.visible) {
+            detail.refresh();
+          }
+
+          if (router.getPathList().length > 2) {
+            var path = router.getPathList()[2];
+            var key = _config.table.dataKey;
+            var shouldClose = !data.some((ele) => ele[key] === path);
+
+            if (shouldClose) {
+              detail.onClose();
+            }
+          }
         }
       });
     });
