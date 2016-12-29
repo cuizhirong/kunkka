@@ -27,6 +27,12 @@ class Modal extends React.Component {
     lineChart = Chart.init(document.getElementById('select_metric_chart'));
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.state.loadingChart) {
+      this.loadingChart();
+    }
+  }
+
   updateGraph(data, granularity) {
     this.updateChartData(data, granularity);
   }
@@ -120,6 +126,8 @@ class Modal extends React.Component {
   }
 
   updateChart({ unit, title, xAxis, yAxis, name }) {
+    this.props.onChangeState('loadingChart', false);
+
     lineChart.hideLoading();
     lineChart.setOption({
       title: {
@@ -158,8 +166,8 @@ class Modal extends React.Component {
     if (type === 'cpu_util' || type === 'disk.read.bytes.rate' ||
         type === 'disk.write.bytes.rate' || type === 'memory.usage') {
       this.unfoldDropdown(false);
-      this.loadingChart();
 
+      this.props.onChangeState('loadingChart', true);
       this.props.onChangeState('resource', status.resource);
       this.props.onChangeState('resourceType', status.resourceType);
       this.props.onChangeState('metricType', status.key);
@@ -167,7 +175,7 @@ class Modal extends React.Component {
   }
 
   onClickPeriod(e, granularity) {
-    this.loadingChart();
+    this.props.onChangeState('loadingChart', true);
     this.props.onChangeState('measureGranularity', granularity);
   }
 

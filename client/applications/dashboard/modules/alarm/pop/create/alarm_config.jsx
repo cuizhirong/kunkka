@@ -1,7 +1,7 @@
 var React = require('react');
-var Chart = require('client/libs/charts/index');
+var Chart = require('echarts');
 var __ = require('locale/client/dashboard.lang.json');
-var Utils = require('../../utils');
+var utils = require('../../utils');
 var contant = require('./constant');
 var helper = require('./helper');
 
@@ -14,7 +14,13 @@ class Modal extends React.Component {
   }
 
   componentDidMount() {
-    lineChart = new Chart.LineChart(document.getElementById('alarm_config_chart'));
+    lineChart = Chart.init(document.getElementById('alarm_config_chart'));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.state.loadingChart) {
+      this.loadingChart();
+    }
   }
 
   updateGraph(data, granularity, threshold) {
@@ -27,9 +33,12 @@ class Modal extends React.Component {
     let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let measures = [];
     let xAxis = [];
+    function fixMeasure(num) {
+      return Math.round(num * 100) / 100;
+    }
 
     data.forEach((ele) => {
-      measures.push(ele[1]);
+      measures.push(fixMeasure(ele[2]));
       let date = new Date(ele[0]);
       xAxis.push(helper.getDateStr(date));
     });
@@ -59,7 +68,7 @@ class Modal extends React.Component {
       thresholds[i] = threshold;
     }
 
-    this.updateChart({ unit, title, xAxis, measures, thresholds });
+    this.updateChart({ unit, title, xAxis, measures, thresholds, name: utils.getMetricName(state.metricType) });
   }
 
   getDotsNumber(granularity, prev) {
@@ -92,31 +101,53 @@ class Modal extends React.Component {
     }
   }
 
-  updateChart({ unit, title, xAxis, measures, thresholds }) {
+  loadingChart() {
+    lineChart.clear();
+    lineChart.showLoading('default', {
+      text: __.loading,
+      color: '#00afc8',
+      textColor: '#252f3d',
+      maskColor: 'rgba(255, 255, 255, 0.8)',
+      zlevel: 0
+    });
+  }
+
+  updateChart({ unit, title, xAxis, measures, thresholds, name }) {
+    this.props.onChangeState('loadingChart', false);
+
+    lineChart.hideLoading();
     lineChart.setOption({
-      unit: unit,
-      title: title,
+      title: {
+        text: title
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
       xAxis: {
-        color: '#f2f3f4',
+        type: 'category',
+        boundaryGap: false,
         data: xAxis
       },
       yAxis: {
-        color: '#f2f3f4',
-        tickPeriod: 1000,
-        tickColor: '#939ba3'
+        type: 'log'
       },
       series: [{
-        color: '#1797c6',
-        data: measures,
-        opacity: 0.05,
-        type: 'sharp'
+        name: name,
+        type:'line',
+        data: measures
       }, {
-        color: '#e05c69',
-        data: thresholds,
-        opacity: 0,
-        type: 'sharp'
+        name: __.threshold,
+        type:'line',
+        data: thresholds
       }],
-      period: 1600
+      animation: false,
+      color: ['#00afc8', '#e05c69']
     });
   }
 
@@ -162,7 +193,7 @@ class Modal extends React.Component {
             <div className="row">
               <div className="modal-label">
                 <strong>* </strong>
-                {Utils.getMetricName(metricType)}
+                {utils.getMetricName(metricType)}
               </div>
               <div className="modal-data modal-data-utilization">
                 <select value={state.comparisonOperator} onChange={this.onChange.bind(this, 'comparisonOperator')}>

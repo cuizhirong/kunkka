@@ -8,6 +8,7 @@ let initialState = {
       visible: true,
       page: 0,
       disabled: false,
+      loadingChart: false,
 
       //selct metric
       resource: null,
@@ -79,6 +80,7 @@ let initialState = {
       visible: true,
       page: 1,
       disabled: false,
+      loadingChart: true,
 
       //selct metric
       resource: null, //after update
