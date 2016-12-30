@@ -16,7 +16,8 @@ class ChartLine extends React.Component {
       tabItems: props.tabItems ? props.tabItems : [],
       resourceType: props.resourceType,
       metricType: props.metricType,
-      title: []
+      title: [],
+      loading: props.loading
     };
     count ++;
   }
@@ -33,7 +34,8 @@ class ChartLine extends React.Component {
       item: nextProps.item,
       tabItems: nextProps.tabItems,
       resourceType: nextProps.resourceType,
-      metricType: nextProps.metricType
+      metricType: nextProps.metricType,
+      loading: nextProps.loading
     });
   }
 
@@ -199,24 +201,24 @@ class ChartLine extends React.Component {
     var tabItems = this.state.tabItems;
     return (
       <div className="halo-com-line-chart">
-        {
-          this.state.data ?
-            <div>
-              <div className="tabs_sm">
-                {this.props.children}
-                <Tab items={tabItems} type="sm" onClick={this.clickTabs.bind(this)}/>
-              </div>
-              {this.state.data.map((_d, i) => {
+        <div>
+          <div className="tabs_sm">
+            {this.props.children}
+            <Tab items={tabItems} type="sm" onClick={this.clickTabs.bind(this)}/>
+          </div>
+          {
+            !this.state.loading ?
+              this.state.data && this.state.data.map((_d, i) => {
                 return (
                   <div id={'line-chart' + i + count} key={i} className="chart">
                   </div>
                 );
-              })}
-            </div>
-          : <div className="detail-loading">
-              <i className="glyphicon icon-loading" />
-            </div>
-        }
+              })
+            : <div className="detail-loading">
+                <i className="glyphicon icon-loading" />
+              </div>
+          }
+        </div>
       </div>
     );
   }
