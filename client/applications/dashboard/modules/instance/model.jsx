@@ -114,9 +114,9 @@ class Model extends React.Component {
   }
 
   getImageLabel(item) {
-    var style = null,
+    let style = null,
       label = '';
-    var imgURL = HALO.settings.default_image_url;
+    let imgURL = HALO.settings.default_image_url;
     if (imgURL) {
       style = {
         background: `url("${imgURL}") 0 0 no-repeat`,
@@ -125,16 +125,21 @@ class Model extends React.Component {
     }
 
     if(item.image && item.image.id) {
-      label = item.image.image_label ? item.image.image_label.toLowerCase() : '';
+      let image = item.image,
+        ownerMatch = image.visibility === 'private' ? image.owner === HALO.user.projectId : true;
+      label = image.image_label ? image.image_label.toLowerCase() : '';
 
       return (
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
-          <a data-type="router" href={'/dashboard/image/' + item.image.id}>{item.image.name}</a>
+          {ownerMatch ?
+            <a data-type="router" href={'/dashboard/image/' + image.id}>{image.name}</a>
+            : <span>{image.name}</span>
+          }
         </div>
       );
-    } else if(item.volume[0] && item.volume[0].volume_image_metadata) {
-      var imageData = item.volume[0].volume_image_metadata;
+    } else if(item.volume[0] && item.volume[0].volume_image_metadata) {//bootable volume created server
+      let imageData = item.volume[0].volume_image_metadata;
       label = imageData.image_label ? imageData.image_label.toLowerCase() : '';
 
       return (
