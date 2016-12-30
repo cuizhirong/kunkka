@@ -50,6 +50,13 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
+    var enableAlarm = HALO.settings.enable_dashboard_alarm;
+    if (!enableAlarm) {
+      let detail = config.table.detail.tabs;
+      delete detail[3];
+      delete detail[4];
+    }
+
     moment.locale(HALO.configs.lang);
 
     this.state = {
@@ -717,7 +724,7 @@ class Model extends React.Component {
           tabItems={tabItems}
           granularity={granularity}
           clickTabs={this.clickTabs.bind(this)}>
-          <Button value={__.create + __.alarm}/>
+          <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
         </LineChart>
       );
       detail.setState({
