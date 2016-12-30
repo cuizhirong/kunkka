@@ -32,7 +32,7 @@ function pop(obj, parent, actionModify, callback) {
         value: initValue
       });
       if (enableCharge) {
-        request.getPrice('listener', initValue).then((res) => {
+        request.getPrice('listener', actionModify ? obj.connection_limit : initValue).then((res) => {
           refs.charge.setState({
             value: res.unit_price
           });
