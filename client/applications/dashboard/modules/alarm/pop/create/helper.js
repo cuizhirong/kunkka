@@ -22,6 +22,8 @@ let helper = {
           return 'B/s';
       }
     }
+
+    return '';
   }
 
 };

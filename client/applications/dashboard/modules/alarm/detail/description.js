@@ -1,5 +1,6 @@
 var React = require('react');
-var Utils = require('../utils');
+var utils = require('../utils');
+var helper = require('../pop/create/helper');
 var __ = require('locale/client/dashboard.lang.json');
 var getStatusIcon = require('../../../utils/status_icon');
 var request = require('../request');
@@ -12,14 +13,17 @@ module.exports = {
 
     if (rule) {
       let metric = rule ? rule.metric : null;
-      let type = Utils.getMetricName(metric);
-      let comparison = Utils.getComparisionName(rule.comparison_operator);
+      let type = utils.getMetricName(metric);
+      let comparison = utils.getComparisionName(rule.comparison_operator);
 
-      return __.alarm_policy_desc.replace('{type}', type)
+      let policy = __.alarm_policy_desc.replace('{type}', type)
       .replace('{comparison}', comparison)
       .replace('{threshold}', rule.threshold)
+      .replace('{unit}', helper.getMetricUnit(rule.resource_type, rule.metric))
       .replace('{period}', rule.evaluation_periods)
       .replace('{granularity}', rule.granularity);
+
+      return policy;
     }
 
     return null;
@@ -28,9 +32,9 @@ module.exports = {
   getBasicPropsItems: function(item) {
     let rule = item.gnocchi_resources_threshold_rule;
     let metric = rule ? rule.metric : null;
-    let metricName = Utils.getMetricName(metric);
+    let metricName = utils.getMetricName(metric);
 
-    let resourceName = Utils.getResourceComponent(item);
+    let resourceName = utils.getResourceComponent(item);
     let policyDesc = this.getAlarmPolicyDesc(item);
 
     let items = [{
@@ -81,7 +85,7 @@ module.exports = {
         id: notficationId,
         name: notficationName
       }],
-      iconType: 'monitor',
+      iconType: 'notification',
       onDelete: function(_data, cb) {
         let index = -1;
         let actions = alarm[alarmType + '_actions'];
