@@ -3,6 +3,7 @@ require('./style/index.less');
 var Echarts = require('echarts');
 var React = require('react');
 var {Tab} = require('client/uskin/index');
+let count = 0;
 
 class ChartLine extends React.Component {
   constructor(props) {
@@ -17,10 +18,15 @@ class ChartLine extends React.Component {
       metricType: props.metricType,
       title: []
     };
-    this.lineChart;
+    count ++;
+  }
+
+  componentDidMount() {
+    this.state.data ? this.renderLineChart(this.state.data, this.state.granularity) : '';
   }
 
   componentWillReceiveProps(nextProps) {
+    count ++;
     this.setState({
       data: nextProps.data,
       granularity: nextProps.granularity,
@@ -96,8 +102,7 @@ class ChartLine extends React.Component {
     function format(num) {
       return (num < 10 ? '0' : '') + num;
     }
-
-    return format(date.getMonth()) + '-' + format(date.getDate()) +
+    return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
       ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
   }
 
@@ -110,7 +115,8 @@ class ChartLine extends React.Component {
     }) : 'B/s';
     data ? data.forEach((d, i) => {
       if (d.length !== 0) {
-        var myChart = Echarts.init(document.getElementById('line-chart' + i));
+        let chart = document.getElementById('line-chart' + i + count);
+        let myChart = Echarts.init(chart);
         let chartData = this.getChartData(this.state.resourceType, d, this.state.metricType[i]);
         let xAxis = this.getXaxis(d);
         let subText = this.props.__.unit + '(' + unit[i] + '), ' + this.props.__.interval + granularity + 's';
@@ -169,6 +175,18 @@ class ChartLine extends React.Component {
         };
 
         myChart.setOption(option);
+      } else {
+        var charts = document.getElementById('line-chart' + i + count);
+        while(charts.hasChildNodes()) {
+          charts.removeChild(charts.firstChild);
+        }
+        var legendWp = document.createElement('div');
+        var label = document.createElement('label');
+        label.className = 'no-data';
+        label.innerHTML = this.props.__.no_monitor_data;
+        legendWp.appendChild(label);
+        legendWp.className = 'legendWp';
+        charts.appendChild(legendWp);
       }
     }) : '';
   }
@@ -178,8 +196,7 @@ class ChartLine extends React.Component {
   }
 
   render() {
-    var __ = this.props.__,
-      tabItems = this.state.tabItems;
+    var tabItems = this.state.tabItems;
     return (
       <div className="halo-com-line-chart">
         {
@@ -191,12 +208,7 @@ class ChartLine extends React.Component {
               </div>
               {this.state.data.map((_d, i) => {
                 return (
-                  <div id={'line-chart' + i} key={i} className="chart">
-                    <div className="legendWp" id="legendWp">
-                      {
-                        _d.length === 0 ? <label className="no-data">{__.no_monitor_data}</label> : ''
-                      }
-                    </div>
+                  <div id={'line-chart' + i + count} key={i} className="chart">
                   </div>
                 );
               })}
