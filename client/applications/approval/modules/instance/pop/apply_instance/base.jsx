@@ -116,13 +116,13 @@ class ModalBase extends React.Component {
     var images = [];
     var snapshots = [];
 
-    //sort image and snapshot, and only show visiblilty 'public' image
+    //sort image and snapshot
     res.image.forEach((ele) => {
       let type = ele.image_type;
-      let visibility = ele.visibility;
-      if (type === 'distribution' && visibility === 'public') {
+      let ownerMatch = ele.visibility === 'private' ? ele.owner === HALO.user.projectId : true;
+      if (type === 'distribution' && ownerMatch) {
         images.push(ele);
-      } else if (type === 'snapshot') {
+      } else if (type === 'snapshot' && ownerMatch) {
         snapshots.push(ele);
       }
     });
@@ -156,13 +156,12 @@ class ModalBase extends React.Component {
     var obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
-      if (obj.image_type === 'distribution' && obj.visibility === 'public') {
+      let ownerMatch = obj.visibility === 'private' ? obj.owner === HALO.user.projectId : true;
+      if (obj.image_type === 'distribution' && ownerMatch) {
         image = obj;
-      } else if (obj.visibility === 'private') {
-        if(obj.image_type === 'snapshot') {
-          snapshot = obj;
-          imageType = 'snapshot';
-        }
+      } else if (obj.image_type === 'snapshot' && ownerMatch) {
+        snapshot = obj;
+        imageType = 'snapshot';
       }
     }
     this.setFlavor(currentImage, 'all');
@@ -323,9 +322,9 @@ class ModalBase extends React.Component {
     if (objImage) {
       let flavor;
       let expectedSize;
-      if (objImage.image_type === 'distribution' && objImage.visibility === 'public') {//image
+      if (objImage.image_type === 'distribution') {//image type
         expectedSize = Number(objImage.expected_size);
-      } else if (objImage.image_type === 'snapshot') {//snapshot
+      } else if (objImage.image_type === 'snapshot') {
         expectedSize = Number(objImage.min_disk);
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
