@@ -585,16 +585,16 @@ class Model extends React.Component {
           syncUpdate = false;
           var asyncMonitorTabKey = tabKey;
 
-          var updateDetailMonitor = function(newContents) {
+          var updateDetailMonitor = function(newContents, loading) {
             detail.setState({
               contents: newContents,
-              loading: false
+              loading: loading
             });
           };
 
           //open detail without delaying
-          contents[asyncMonitorTabKey] = <LineChart/>;
-          updateDetailMonitor(contents);
+          contents[asyncMonitorTabKey] = (<div/>);
+          updateDetailMonitor(contents, true);
 
           var resourceId = rows[0].id,
             metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
@@ -613,6 +613,10 @@ class Model extends React.Component {
             name: __.one_month,
             key: '21600'
           }];
+
+          detail.setState({
+            loading: true
+          });
 
           request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
             contents[asyncMonitorTabKey] = (
@@ -693,9 +697,6 @@ class Model extends React.Component {
       tabItems = [],
       metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
       granularity = tabItem.key;
-    detail.setState({
-      loading: true
-    });
 
     tabItems = [{
       name: __.three_hours,
@@ -712,6 +713,24 @@ class Model extends React.Component {
     }];
 
     this.changeDefaultTab(tabItems, tabItem);
+
+    contents[monitor] = (
+      <LineChart
+        __={__}
+        item={item}
+        metricType={metricType}
+        resourceType={'instance'}
+        data={[]}
+        tabItems={tabItems}
+        granularity={granularity}
+        loading={true}
+        clickTabs={this.clickTabs.bind(this)}>
+        <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
+      </LineChart>
+    );
+    detail.setState({
+      contents: contents
+    });
 
     request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
       contents[monitor] = (

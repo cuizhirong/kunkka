@@ -188,7 +188,7 @@ class Model extends Main {
       case 'monitor':
         if (isSingle) {
           syncUpdate = false;
-
+          let that = this;
 
           let granularity = '';
           if (data.granularity) {
@@ -216,10 +216,23 @@ class Model extends Main {
             key: '21600'
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
-
+          contents[tabKey] = (<LineChart
+            __={__}
+            item={rows[0]}
+            metricType={[rule.metric]}
+            resourceType={rule.resource_type}
+            data={[]}
+            granularity={rule.granularity}
+            tabItems={tabItems}
+            loading={true}
+            clickTabs={(e, tab, item) => {
+              that.onClickDetailTabs('monitor', refs, {
+                rows: rows,
+                granularity: tab.key
+              });
+            }} />);
+          update(contents);
           request.getReousrceMeasures(rule.resource_id, rule.metric, granularity).then((res) => {
-
-            let that = this;
             contents[tabKey] = (
               <LineChart
                 __={__}
