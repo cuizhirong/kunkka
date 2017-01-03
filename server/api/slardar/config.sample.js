@@ -78,6 +78,12 @@ module.exports = {
       type: 'boolean',
       description: 'dashboard页面-开启 ipsec'
     }, {
+      app: 'dashboard',
+      name: 'enable_dashboard_alarm',
+      value: 'false',
+      type: 'boolean',
+      description: '监控报警开关'
+    }, {
       app: 'admin',
       name: 'commercial_storage',
       value: 0,

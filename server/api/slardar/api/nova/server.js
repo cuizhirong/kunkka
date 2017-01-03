@@ -229,7 +229,7 @@ Instance.prototype = {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let url = payload.console.url;
+        let url = payload.console.url + '&title=' + req.params.serverId;
         res.redirect(url);
       }
     });
