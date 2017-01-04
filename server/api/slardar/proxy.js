@@ -8,7 +8,7 @@ const csv = require('./csv');
 
 module.exports = (app) => {
 
-  app.get('/proxy/csv/*', (req, res, next)=>{
+  app.get('/proxy/csv/*', (req, res, next) => {
     let remote = req.session.endpoint;
     let region = req.session.user.regionId;
     let service = req.path.split('/')[3];
@@ -31,10 +31,11 @@ module.exports = (app) => {
     //   }
     // }
     let remote = req.session.endpoint;
-    let region = req.headers.region;
+    let region = req.headers.region || req.session.user.regionId;
     let service = req.path.split('/')[2];
     let target = remote[service][region] + '/' + req.path.split('/').slice(3).join('/');
     let method = req.method.toLowerCase();
+
     if (noBodyMethodList.indexOf(method) !== -1) {
       request[method](target + getQueryString(req.query))
         .set(req.headers)
