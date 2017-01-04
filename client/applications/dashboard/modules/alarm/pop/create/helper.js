@@ -5,7 +5,7 @@ let helper = {
       return (num < 10 ? '0' : '') + num;
     }
 
-    return format(date.getMonth()) + '-' + format(date.getDate()) +
+    return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
       ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
   },
 

@@ -82,6 +82,10 @@ class Model extends React.Component {
 
     });
 
+    configs.routers.forEach(r => {
+      menuKeys.push(r.key);
+    });
+
     return menuKeys;
   }
 
