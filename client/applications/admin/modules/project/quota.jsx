@@ -63,6 +63,10 @@ class ResourceQuota extends React.Component {
     }, {
       title: __.storage,
       items: [{
+        title: __.volume + __.gigabyte,
+        key: 'gigabytes',
+        link: 'gigabytes'
+      }, {
         title: __.ssd + __.volume,
         key: 'volumes_ssd',
         link: 'volume'
