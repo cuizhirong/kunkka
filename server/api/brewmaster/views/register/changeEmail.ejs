@@ -161,7 +161,7 @@
       enable_captcha = false;
     }
     //email
-    if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
+    if (/^([a-zA-Z0-9.+_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
       email_tip.style.display = 'none';
       enable_email = true;
     } else {
@@ -300,7 +300,7 @@
       enable_captcha = false;
     }
     //email
-    if (/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
+    if (/^([a-zA-Z0-9.+_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/.test(email.value)) {
       email_tip.style.display = 'none';
       enable_email = true;
     } else {
