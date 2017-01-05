@@ -6,6 +6,7 @@ module.exports = {
   getList: function(forced) {
     return storage.getList(['alarm', 'instance', 'notification'], forced).then(function(data) {
       data.alarm.forEach((alarm) => {
+        // name format
         if (alarm.gnocchi_resources_threshold_rule) {
           let rule = alarm.gnocchi_resources_threshold_rule;
           data.instance.some((ins) => {
@@ -17,6 +18,7 @@ module.exports = {
           });
         }
 
+        // state format
         switch (alarm.state) {
           case 'insufficient data':
             alarm.status = 'data_insufficient';
@@ -28,6 +30,10 @@ module.exports = {
             alarm.status = alarm.state;
             break;
         }
+
+        // time format
+        alarm.state_timestamp = alarm.state_timestamp.split('.')[0] + 'Z';
+
       });
 
       return data.alarm;

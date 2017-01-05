@@ -210,7 +210,7 @@ class Modal extends React.Component {
               </div>
               <div className="modal-data">
                 <select value={state.granularity} onChange={this.onChange.bind(this, 'granularity')}>
-                  <option value="60">1 min</option>
+                  {/*<option value="60">1 min</option>*/}
                   <option value="300">5 min</option>
                   <option value="900">15 min</option>
                   <option value="1800">30 min</option>

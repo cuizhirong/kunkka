@@ -222,7 +222,7 @@ class Model extends Main {
             metricType={[rule.metric]}
             resourceType={rule.resource_type}
             data={[]}
-            granularity={rule.granularity}
+            granularity={granularity}
             tabItems={tabItems}
             loading={true}
             clickTabs={(e, tab, item) => {
@@ -240,7 +240,7 @@ class Model extends Main {
                 metricType={[rule.metric]}
                 resourceType={rule.resource_type}
                 data={[res]}
-                granularity={rule.granularity}
+                granularity={granularity}
                 tabItems={tabItems}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
