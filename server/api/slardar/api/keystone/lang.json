@@ -12,7 +12,7 @@
     "duplicateUser": "用户名重复",
     "duplicateProject": "项目名重复",
     "unEnabled": "账户未激活",
-    "confirmError": "验证失败",
+    "confirmError": "邮件验证失败",
     "confirmSuccess": "邮件验证成功"
   }
 }
