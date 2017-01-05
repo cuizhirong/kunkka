@@ -123,7 +123,7 @@ class Model extends React.Component {
 
     switch(type) {
       case 'email':
-        let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/;
+        let regEmail = /^([a-zA-Z0-9.+_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/;
         if(!regEmail.test(value)) {
           if(this.state.timer) {
             clearTimeout(this.state.timer);
