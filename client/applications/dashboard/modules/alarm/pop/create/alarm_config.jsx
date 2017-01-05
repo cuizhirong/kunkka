@@ -135,7 +135,7 @@ class Modal extends React.Component {
         data: xAxis
       },
       yAxis: {
-        type: 'log'
+        type: 'value'
       },
       series: [{
         name: name,
