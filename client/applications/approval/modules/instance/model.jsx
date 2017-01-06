@@ -77,7 +77,7 @@ class Model extends React.Component {
             if (shouldRefresh(data)) {
               this.refresh({
                 detailRefresh: true
-              }, false);
+              }, true);
             }
 
             if (data.action.indexOf('delete') > -1 && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
