@@ -92,7 +92,7 @@ class Model extends React.Component {
         });
       } else if(code === 403) {
         that.setState({
-          username: __.captchaError
+          username: username
         });
       } else {
         that.setState({
