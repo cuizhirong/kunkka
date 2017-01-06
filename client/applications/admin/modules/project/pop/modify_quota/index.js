@@ -16,7 +16,8 @@ function pop(obj, parent, callback) {
       refs.quota.setState({
         renderer: resourceQuota,
         overview: obj[0],
-        rawItem: obj[1]
+        rawItem: obj[1],
+        types: obj[2]
       });
     },
     onConfirm: function(refs, cb) {

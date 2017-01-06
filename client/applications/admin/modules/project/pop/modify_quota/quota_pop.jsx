@@ -18,6 +18,7 @@ class QuotaPop extends React.Component {
   }
 
   componentWillMount() {
+    var types = this.props.types;
     var quota = [{
       title: __.compute,
       items: [{
@@ -64,36 +65,26 @@ class QuotaPop extends React.Component {
       }]
     }, {
       title: __.storage,
-      items: [{
-        title: __.volume + __.gigabyte,
-        key: 'gigabytes',
-        link: 'gigabytes'
-      }, {
-        title: __.ssd + __.volume,
-        key: 'volumes_ssd',
-        link: 'volume'
-      }, {
-        title: __.sata + __.volume,
-        key: 'volumes_sata',
-        link: 'volume'
-      }, {
-        title: __.ssd + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_ssd',
-        link: 'volume'
-      }, {
-        title: __.sata + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_sata',
-        link: 'volume'
-      }, {
-        title: __.ssd + __.snapshot,
-        key: 'snapshots_ssd',
-        link: 'snapshot'
-      }, {
-        title: __.sata + __.snapshot,
-        key: 'snapshots_sata',
-        link: 'snapshot'
-      }]
+      items: []
     }];
+
+    types.forEach((item) => {
+      quota[2].items.push({
+        title: __[item] + __.volume,
+        key: 'volumes_' + item,
+        link: 'volume'
+      });
+      quota[2].items.push({
+        title: __[item] + __.volume + __.gigabyte + __.unit_gb,
+        key: 'gigabytes_' + item,
+        link: 'volume'
+      });
+      quota[2].items.push({
+        title: __[item] + __.snapshot,
+        key: 'snapshots_' + item,
+        link: 'snapshot'
+      });
+    });
 
     this.setState({
       quota: quota

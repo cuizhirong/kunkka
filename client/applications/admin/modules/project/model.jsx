@@ -388,7 +388,7 @@ class Model extends React.Component {
         break;
       case 'modify_quota':
         request.getQuotas(rows[0].id).then((res) => {
-          modifyQuota([res.overview_usage, rows[0]], null, () => {});
+          modifyQuota([res.overview_usage, rows[0], res.volume_types], null, () => {});
         });
         break;
       case 'delete':
@@ -524,9 +524,10 @@ class Model extends React.Component {
           syncUpdate = false;
           request.getQuotas(rows[0].id).then((res) => {
             var quotaItems = res.overview_usage;
+            var volumeTypes = res.volume_types;
             contents[tabKey] = (
               <div className="right-side">
-                <ResourceQuota overview={quotaItems} />
+                <ResourceQuota overview={quotaItems} types={volumeTypes} />
               </div>
             );
             detail.setState({
