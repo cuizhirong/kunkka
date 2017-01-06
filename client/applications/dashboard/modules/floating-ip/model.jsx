@@ -385,11 +385,11 @@ class Model extends React.Component {
       }
     };
     var type = {}, status;
-    if (item.status === 'active') {
+    if (item.status.toLowerCase() === 'active') {
       type.icon = 'light';
       type.status = 'in-use';
       status = 'in-use';
-    } else if (item.status === 'down') {
+    } else if (item.status.toLowerCase() === 'down') {
       type.icon = 'light';
       type.status = 'active';
       status = 'available';
