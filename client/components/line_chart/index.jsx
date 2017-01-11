@@ -3,6 +3,7 @@ require('./style/index.less');
 var Echarts = require('echarts');
 var React = require('react');
 var {Tab} = require('client/uskin/index');
+var constant = require('./constant');
 let count = 0;
 
 class ChartLine extends React.Component {
@@ -43,27 +44,89 @@ class ChartLine extends React.Component {
     this.renderLineChart(this.state.data, this.state.granularity);
   }
 
-  getChartData(resourceType, data, metric) {
+  getChartData(resourceType, data, metric, granularity) {
     var _data = [];
     if (resourceType === 'instance') {
       data.forEach((d) => {
-        if (metric === 'cpu_util' || metric === 'memory.usage') {
-          _data.push(d[2].toFixed(2) * 100);
-        } else {
-          _data.push(d[2].toFixed(2));
-        }
+        _data.push(d[2].toFixed(2));
       });
+    }
+    let prev;
+    if (data.length > 0) {
+      prev = new Date(data[0][0]);
+    } else {
+      prev = new Date();
+    }
+
+    const DOTS_NUM = this.getDotsNumber(granularity, prev);
+
+    if (data.length < DOTS_NUM) {
+      let length = DOTS_NUM - data.length;
+
+      while (length > 0) {
+        prev = this.getNextPeriodDate(prev, granularity);
+        _data.unshift(0);
+        length--;
+      }
     }
     return _data;
   }
 
-  getXaxis(data) {
+  getXaxis(data, granularity) {
     var xAxis = [];
     data.forEach((d) => {
       let date = new Date(d[0]);
       xAxis.push(this.getDateStr(date));
     });
+
+    let prev;
+    if (data.length > 0) {
+      prev = new Date(data[0][0]);
+    } else {
+      prev = new Date();
+    }
+
+    const DOTS_NUM = this.getDotsNumber(granularity, prev);
+
+    if (data.length < DOTS_NUM) {
+      let length = DOTS_NUM - data.length;
+      while (length > 0) {
+        prev = this.getNextPeriodDate(prev, granularity);
+        xAxis.unshift(this.getDateStr(prev));
+        length--;
+      }
+    }
     return xAxis;
+  }
+
+  getDotsNumber(granularity, prev) {
+    switch (Number(granularity)) {
+      case constant.GRANULARITY_HOUR:
+        return 36;
+      case constant.GRANULARITY_DAY:
+        return 96;
+      case constant.GRANULARITY_WEEK:
+        return 168;
+      case constant.GRANULARITY_MONTH:
+        let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
+        return 4 * date.getDate();
+      default:
+        return 0;
+    }
+  }
+
+  getNextPeriodDate(prev, granularity) {
+    switch (Number(granularity)) {
+      case constant.GRANULARITY_HOUR:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
+      case constant.GRANULARITY_DAY:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
+      case constant.GRANULARITY_WEEK:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
+      case constant.GRANULARITY_MONTH:
+      default:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
+    }
   }
 
   getTitle(resourceType, metricType) {
@@ -119,8 +182,8 @@ class ChartLine extends React.Component {
       if (d.length !== 0) {
         let chart = document.getElementById('line-chart' + i + count);
         let myChart = Echarts.init(chart);
-        let chartData = this.getChartData(this.state.resourceType, d, this.state.metricType[i]);
-        let xAxis = this.getXaxis(d);
+        let chartData = this.getChartData(this.state.resourceType, d, this.state.metricType[i], granularity);
+        let xAxis = this.getXaxis(d, granularity);
         let subText = this.props.__.unit + '(' + unit[i] + '), ' + this.props.__.interval + granularity + 's';
 
         var option = {
