@@ -86,6 +86,10 @@ class Model extends React.Component {
       menuKeys.push(r.key);
     });
 
+    configs.hidden.forEach(h => {
+      menuKeys.push(h);
+    });
+
     return menuKeys;
   }
 

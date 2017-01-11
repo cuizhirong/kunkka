@@ -157,7 +157,9 @@ class AddEndpoint extends React.Component {
           msg: this.state.msg,
           renderValue: ''
         });
-        this.countDown(this.state.subs.length - 1, this.wait);
+        if (!res.verified) {
+          this.countDown(this.state.subs.length - 1, this.wait);
+        }
       });
     }
   }
