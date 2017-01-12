@@ -82,8 +82,12 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
-    if (params[2]) {
-      this.getFlavorById(params[2]);
+    if (params) {
+      if (params[2]) {
+        this.getFlavorById(params[2]);
+      } else {
+        this.getInitialListData();
+      }
     } else {
       this.getInitialListData();
     }
@@ -136,16 +140,26 @@ class Model extends React.Component {
     });
   }
 
-//request: search request
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
-      var flavorID = data.text;
-
       this.loadingTable();
-      if (flavorID) {
-        this.getFlavorById(flavorID);
+
+      if(data.text) {
+        request.getList().then(res => {
+          var flavors = res.flavors;
+          var newFlavors = flavors.filter((flavor) => {
+            return flavor.name === data.text || flavor.name.includes(data.text);
+          });
+          var newConfig = this.state.config;
+          newConfig.table.data = newFlavors;
+          newConfig.table.loading = false;
+
+          this.setState({
+            config: newConfig
+          });
+        });
       } else {
-        this.getList();
+        this.onInitialize();
       }
     }
   }

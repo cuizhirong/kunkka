@@ -4,6 +4,7 @@
     "extra_specs": "Extra Specs",
     "flavor_name_tip": "Only in letter, number, dot and underscore",
     "flavor_id": "Flavor ID",
+    "flavor_name": "Flavor Name",
     "memory_gb": "Memory (GB)",
     "set_enable": "Set Enable",
     "price_tip": "Please Add The Price To The Price Management In Bill"
@@ -13,6 +14,7 @@
     "extra_specs": "额外配置",
     "flavor_name_tip": "仅限字母、数字、点和下划线",
     "flavor_id": "配置ID",
+    "flavor_name": "配置名称",
     "memory_gb": "内存 (GB)",
     "set_enable": "设置为启用",
     "price_tip": "请到计费的价格管理中添加价格"
