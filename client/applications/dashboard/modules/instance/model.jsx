@@ -569,7 +569,7 @@ class Model extends React.Component {
           request.getVncConsole(rows[0]).then((res) => {
             contents[asyncTabKey] = (
               <VncConsole
-                src={res.console.url}
+                src={res.console.url + '&title=' + rows[0].id}
                 data-id={rows[0].id}
                 loading={false} />
             );
