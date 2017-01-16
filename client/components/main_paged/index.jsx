@@ -104,9 +104,11 @@ class Main extends React.Component {
           this.closeDetail();
         } else {
           let detail = this.refs.detail;
-          detail.setState({
-            visible: false
-          });
+          if (detail) {
+            detail.setState({
+              visible: false
+            });
+          }
         }
       }
     }
