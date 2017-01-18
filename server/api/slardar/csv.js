@@ -12,16 +12,18 @@ const objects = [
         label: 'api.cinder.snapshot.name',
         value: 'name'
       }, {
-        label: 'api.cinder.size',
+        label: 'api.cinder.snapshot.size',
         value: 'size'
       }, {
-        label: 'api.cinder.volume_id',
+        label: 'api.cinder.snapshot.project_id',
+        value: 'os-extended-snapshot-attributes:project_id'
+      }, {
+        label: 'api.cinder.snapshot.volume_id',
         value: 'volume_id'
       }, {
-        label: 'api.cinder.status',
+        label: 'api.cinder.snapshot.status',
         value: 'status'
       }
-
     ]
   },
   {

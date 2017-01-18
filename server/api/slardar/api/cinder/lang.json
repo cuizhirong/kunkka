@@ -3,6 +3,7 @@
     "snapshot": {
       "name": "Name",
       "volume_id": "Volume ID",
+      "project_id": "Project ID",
       "size": "Size(GB)",
       "status": "Status"
     },
@@ -25,6 +26,7 @@
     "snapshot": {
       "name": "名称",
       "volume_id": "硬盘ID",
+      "project_id": "项目ID",
       "size": "容量(GB)",
       "status": "状态"
     },
@@ -44,3 +46,4 @@
     }
   }
 }
+
