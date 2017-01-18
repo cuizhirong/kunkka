@@ -25,8 +25,7 @@ module.exports = function (mysql, DataTypes) {
       allowNull: false
     },
     explain: {
-      type: DataTypes.TEXT,
-      defaultValue: ''
+      type: DataTypes.TEXT
     },
     level: {
       type: DataTypes.INTEGER,
