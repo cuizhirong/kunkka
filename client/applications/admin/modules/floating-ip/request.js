@@ -77,12 +77,19 @@ module.exports = {
         var port = res.port;
         if(port.device_owner.indexOf('compute') === 0) {
           item.server_id = port.device_id;
-          deferredList.push(fetch.get({
-            url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + port.device_id
-          }).then((inst) => {
-            var server = inst.server;
-            item.server_name = server.name;
-          }));
+          return port.device_id;
+        }
+      }).then((res) => {
+        if(res) {
+          return fetch.get({
+            url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + res
+          });
+        }
+      }
+      ).then((inst) => {
+        if(inst) {
+          var server = inst.server;
+          item.server_name = server.name;
         }
       }));
     }
