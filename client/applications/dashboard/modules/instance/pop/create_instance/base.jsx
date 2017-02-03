@@ -730,6 +730,16 @@ class ModalBase extends React.Component {
       if (state.credential === 'keypair') {
         data.key_name = state.keypairName;
       } else {
+        if(selectedImage.image_label === 'Windows') {
+          data.metadata = {
+            admin_pass: state.pwd
+          };
+        } else {
+          //store pwd for linux
+          var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
+          userData = userData.replace(/\{0\}/g, state.pwd);
+          data.user_data = window.btoa(userData);
+        }
         data.adminPass = state.pwd;
       }
 
