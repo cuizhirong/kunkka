@@ -388,7 +388,11 @@ class Model extends React.Component {
         break;
       case 'modify_quota':
         request.getQuotas(rows[0].id).then((res) => {
-          modifyQuota([res.overview_usage, rows[0], res.volume_types], null, () => {});
+          modifyQuota({
+            overview: res.overview_usage,
+            rawItem: rows[0],
+            types: res.volume_types
+          }, null, () => {});
         });
         break;
       case 'delete':

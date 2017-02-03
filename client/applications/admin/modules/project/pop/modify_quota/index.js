@@ -15,19 +15,32 @@ function pop(obj, parent, callback) {
     onInitialize: function(refs) {
       refs.quota.setState({
         renderer: resourceQuota,
-        overview: obj[0],
-        rawItem: obj[1],
-        types: obj[2]
+        overview: obj.overview,
+        rawItem: obj.rawItem,
+        types: obj.types
       });
     },
     onConfirm: function(refs, cb) {
       var data = refs.quota.state.overview;
-      request.modifyQuota(data, obj[1].id).then((res) => {
-        callback && callback();
-        cb(true);
-      }).catch(error => {
-        cb(false, getErrorMessage(error));
-      });
+      function getTotalVolumes() {
+        var t = 0;
+        for(var o in data) {
+          if(o.indexOf('volumes_') > -1) {
+            t += data[o].total;
+          }
+        }
+        return t;
+      }
+      if(data.volumes.total < getTotalVolumes()) {
+        cb(false, __.small_than_total);
+      } else {
+        request.modifyQuota(data, obj.rawItem.id).then((res) => {
+          callback && callback();
+          cb(true);
+        }).catch(error => {
+          cb(false, getErrorMessage(error));
+        });
+      }
     },
     onAction: function(field, status, refs) {
     }

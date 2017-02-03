@@ -49,6 +49,18 @@ class ResourceQuota extends React.Component {
         key: 'floatingip',
         link: 'floating-ip'
       }, {
+        title: __.loadbalancer,
+        key: 'loadbalancer',
+        link: 'loadbalancer'
+      }, {
+        title: __.listener,
+        key: 'listener',
+        link: 'listener'
+      }, {
+        title: __.pool,
+        key: 'pool',
+        link: 'pool'
+      }, {
         title: __.port,
         key: 'port',
         link: 'port'
@@ -63,7 +75,11 @@ class ResourceQuota extends React.Component {
       }]
     }, {
       title: __.storage,
-      items: []
+      items: [{
+        title: __.all_volumes,
+        key: 'volumes',
+        link: 'volumes'
+      }]
     }];
 
     types.forEach((item) => {

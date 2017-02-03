@@ -51,6 +51,18 @@ class QuotaPop extends React.Component {
         key: 'floatingip',
         link: 'floating-ip'
       }, {
+        title: __.loadbalancer,
+        key: 'loadbalancer',
+        link: 'loadbalancer'
+      }, {
+        title: __.listener,
+        key: 'listener',
+        link: 'listener'
+      }, {
+        title: __.pool,
+        key: 'pool',
+        link: 'pool'
+      }, {
         title: __.port,
         key: 'port',
         link: 'port'
@@ -65,7 +77,11 @@ class QuotaPop extends React.Component {
       }]
     }, {
       title: __.storage,
-      items: []
+      items: [{
+        title: __.all_volumes,
+        key: 'volumes',
+        link: 'volumes'
+      }]
     }];
 
     types.forEach((item) => {
@@ -100,7 +116,8 @@ class QuotaPop extends React.Component {
   }
 
   onChange(key, e) {
-    var total = this.state.overview[key].total;
+    var overview = this.state.overview;
+    var total = overview[key].total;
     var newNumber = Number(e.target.value);
     if (!e.target.value) {
       this.state.itemName[key].total = total;
