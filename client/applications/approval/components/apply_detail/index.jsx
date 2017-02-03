@@ -240,7 +240,8 @@ class ApplyDetail extends React.Component {
                 {createDetail.map((create, i) =>
                   <div className="item-info" key={'create' + i}>
                     {Object.keys(create).map((k, j) => {
-                      return (create[k] ? <div className="info-box" key={'create' + i + j}>
+                      let showDetail = create[k] && k !== 'user_data';
+                      return (showDetail ? <div className="info-box" key={'create' + i + j}>
                         {this.fieldRender(create, k) + ': '}
                         {this.contentRender(create, k)}
                       </div> : null);

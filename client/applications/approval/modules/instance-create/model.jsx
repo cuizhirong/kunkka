@@ -991,72 +991,78 @@ class Model extends React.Component {
 
     //get all volume types
     let types = [];
-    overview.volume_types.forEach(t => {
-      volumeTypesSetting.forEach(type => {
-        if(type === t) {types.push(t);}
+    if(volumeTypesSetting) {
+      overview.volume_types.forEach(t => {
+        volumeTypesSetting.forEach(type => {
+          if(type === t) {types.push(t);}
+        });
       });
-    });
+    } else {
+      types = overview.volume_types;
+    }
+
     this.setState({
       volumeTypes: types
     });
-    //select the first volume type
+
+    //if has avaliable types select type and set price
     if(types.length > 0) {
       this.setState({
         volumeType: types[0]
       });
-    }
 
-    //capacity of all types
-    var allCapacity = overview.overview_usage.gigabytes;
+      //capacity of all types
+      var allCapacity = overview.overview_usage.gigabytes;
 
-    //capacity set by front-end
-    var defaultTotal = 1000;
-    var singleMax = 1000;
+      //capacity set by front-end
+      var defaultTotal = 1000;
+      var singleMax = 1000;
 
-    types.forEach(t => {
-      //capacity of current type
-      state.typeCapacity[t] = overview.overview_usage['gigabytes_' + t];
-      var capacity = overview.overview_usage['gigabytes_' + t];
+      types.forEach(t => {
+        //capacity of current type
+        state.typeCapacity[t] = overview.overview_usage['gigabytes_' + t];
+        var capacity = overview.overview_usage['gigabytes_' + t];
 
-      var min = 1, max, total, used;
+        var min = 1, max, total, used;
 
-      if(capacity.total < 0) {
-        if(allCapacity.total < 0) {
-          total = defaultTotal;
+        if(capacity.total < 0) {
+          if(allCapacity.total < 0) {
+            total = defaultTotal;
+          } else {
+            total = allCapacity.total;
+          }
+          used = allCapacity.used;
         } else {
-          total = allCapacity.total;
+          total = capacity.total;
+          used = allCapacity.used;
         }
-        used = allCapacity.used;
-      } else {
-        total = capacity.total;
-        used = allCapacity.used;
-      }
 
-      max = total - used;
-      if(max > singleMax) {
-        max = singleMax;
-      }
-      if(max <= 0) {
-        max = 0;
-        min = 0;
-      }
+        max = total - used;
+        if(max > singleMax) {
+          max = singleMax;
+        }
+        if(max <= 0) {
+          max = 0;
+          min = 0;
+        }
 
-      state.typeCapacity[t].max = max;
-      state.typeCapacity[t].min = min;
-    });
+        state.typeCapacity[t].max = max;
+        state.typeCapacity[t].min = min;
+      });
 
-    var selected = state.typeCapacity[overview.volume_types[0]],
-      selectedMax = selected.max,
-      selectedMin = selected.min,
-      lackOfSize = selectedMin > selectedMax;
+      var selected = state.typeCapacity[overview.volume_types[0]],
+        selectedMax = selected.max,
+        selectedMin = selected.min,
+        lackOfSize = selectedMin > selectedMax;
 
-    this.setState({
-      min: selectedMin,
-      max: selectedMax,
-      sliderValue: selectedMin,
-      sliderInputValue: selectedMin,
-      sliderDisabled: lackOfSize || selectedMax <= 0
-    });
+      this.setState({
+        min: selectedMin,
+        max: selectedMax,
+        sliderValue: selectedMin,
+        sliderInputValue: selectedMin,
+        sliderDisabled: lackOfSize || selectedMax <= 0
+      });
+    }
   }
 
   renderVolume(props, state) {
@@ -1366,10 +1372,10 @@ class Model extends React.Component {
               <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'fip')} checked={this.state.fipChecked} />
               <label onClick={this.onChangeCheckbox.bind(this, 'fip')}>{__.checkbox_tip_attach_fip}</label>
             </div> : ''}
-            <div className="row-checkbox">
+            {state.volumeTypes.length > 0 ? <div className="row-checkbox">
               <input type="checkbox" onChange={this.onChangeCheckbox.bind(this, 'volume')} checked={this.state.volumeChecked} />
               <label onClick={this.onChangeCheckbox.bind(this, 'volume')}>{__.checkbox_tip_attach_volume}</label>
-            </div>
+            </div> : ''}
             {(state.volumeChecked) ? this.renderVolume(props, state) : ''}
           </div>
         </div>
