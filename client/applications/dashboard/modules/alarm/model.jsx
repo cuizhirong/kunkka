@@ -21,6 +21,7 @@ var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var utils = require('./utils');
+var timeUtils = require('../../utils/utils');
 
 class Model extends Main {
 
@@ -200,20 +201,25 @@ class Model extends Main {
             contents[tabKey] = (<div />);
             update(contents, true);
           }
+          let time = data.time;
 
           let rule = rows[0].gnocchi_resources_threshold_rule;
           let tabItems = [{
             name: __.three_hours,
-            key: '300'
+            key: '300',
+            time: 'hour'
           }, {
             name: __.one_day,
-            key: '900'
+            key: '900',
+            time: 'day'
           }, {
             name: __.one_week,
-            key: '3600'
+            key: '3600',
+            time: 'week'
           }, {
             name: __.one_month,
-            key: '21600'
+            key: '21600',
+            time: 'month'
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
           contents[tabKey] = (<LineChart
@@ -228,11 +234,12 @@ class Model extends Main {
             clickTabs={(e, tab, item) => {
               that.onClickDetailTabs('monitor', refs, {
                 rows: rows,
-                granularity: tab.key
+                granularity: tab.key,
+                time: tab.time
               });
             }} />);
           update(contents);
-          request.getReousrceMeasures(rule.resource_id, rule.metric, granularity).then((res) => {
+          request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((res) => {
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -245,7 +252,8 @@ class Model extends Main {
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
-                    granularity: tab.key
+                    granularity: tab.key,
+                    time: tab.time
                   });
                 }} />
             );

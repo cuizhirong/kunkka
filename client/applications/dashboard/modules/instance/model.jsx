@@ -44,6 +44,7 @@ var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
 var getTime = require('client/utils/time_unification');
 var utils = require('../alarm/utils');
+var timeUtils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -618,7 +619,7 @@ class Model extends React.Component {
             loading: true
           });
 
-          request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
+          request.getResourceMeasures(resourceId, metricType, granularity, timeUtils.getTime('hour')).then((res) => {
             contents[asyncMonitorTabKey] = (
               <LineChart
                 __={__}
@@ -698,6 +699,25 @@ class Model extends React.Component {
       metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
       granularity = tabItem.key;
 
+    var time;
+    switch(tabItem.key) {
+      case '300':
+        time = timeUtils.getTime('hour');
+        break;
+      case '900':
+        time = timeUtils.getTime('day');
+        break;
+      case '3600':
+        time = timeUtils.getTime('week');
+        break;
+      case '21600':
+        time = timeUtils.getTime('month');
+        break;
+      default:
+        time = timeUtils.getTime('hour');
+        break;
+    }
+
     tabItems = [{
       name: __.three_hours,
       key: '300'
@@ -732,7 +752,7 @@ class Model extends React.Component {
       contents: contents
     });
 
-    request.getReousrceMeasures(resourceId, metricType, granularity).then((res) => {
+    request.getResourceMeasures(resourceId, metricType, granularity, time).then((res) => {
       contents[monitor] = (
         <LineChart
           __={__}

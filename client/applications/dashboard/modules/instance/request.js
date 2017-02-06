@@ -240,11 +240,11 @@ module.exports = {
       return alarm;
     });
   },
-  getReousrceMeasures: function(resourceId, type, granularity) {
+  getResourceMeasures: function(resourceId, type, granularity, start) {
     var deferredList = [];
     type.forEach((t) => {
       deferredList.push(fetch.get({
-        url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity
+        url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity + '&start=' + start
       }));
     });
     return RSVP.all(deferredList);

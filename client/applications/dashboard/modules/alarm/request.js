@@ -60,9 +60,9 @@ module.exports = {
       return notifications;
     });
   },
-  getReousrceMeasures: function(resourceId, type, granularity) {
+  getResourceMeasures: function(resourceId, type, granularity, start) {
     return fetch.get({
-      url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + type + '/measures?granularity=' + granularity
+      url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + type + '/measures?granularity=' + granularity + '&start=' + start
     }).then(function(data) {
       return data;
     });
