@@ -11,7 +11,9 @@
     "flavor": "",
     "image": "",
     "admin_pass": "",
-    "metadata": ""
+    "metadata": "",
+    "user_data": "",
+    "user_data_format": ""
   },
   "createVolume": {
     "type": "OS::Cinder::Volume",
