@@ -95,14 +95,7 @@ module.exports = {
     }
     return RSVP.all(deferredList);
   },
-  allocateFloatingIP: function(floatingIP, floatingNetworkID, tenantID) {
-    var data = {
-      'floatingip': {
-        'floating_network_id': floatingNetworkID,
-        'tenant_id': tenantID,
-        'floating_ip_address': floatingIP
-      }
-    };
+  allocateFloatingIP: function(data) {
     return fetch.post({
       url: '/proxy/neutron/v2.0/floatingips',
       data: data

@@ -17,7 +17,17 @@ function pop(parent, callback) {
       request.getExternalNetwork(projectId).then((res) => {
         networkID = res.networks[0].id;
       }).then(() => {
-        request.allocateFloatingIP(floatingIP, networkID, projectId).then(() => {
+        let data = {
+          'floatingip': {
+            'floating_network_id': networkID,
+            'tenant_id': projectId,
+            'floating_ip_address': floatingIP
+          }
+        };
+        if(HALO.settings.enable_floatingip_bandwidth) {
+          data.floatingip.rate_limit = 1024;
+        }
+        request.allocateFloatingIP(data).then(() => {
           callback && callback();
           cb(true);
         });
