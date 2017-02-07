@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
+var Modal = require('client/uskin/index').Modal;
 
 var forceDelete = require('./pop/delete/index');
 
@@ -11,6 +12,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
+var getErrorMessage = require('../../utils/error_message');
 
 class Model extends React.Component {
 
@@ -279,6 +281,11 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var {rows} = data;
+    var props = {
+      title: __.tip,
+      content: __.please_refresh,
+      okText: __.ok
+    };
 
     var that = this;
     function refresh() {
@@ -297,6 +304,12 @@ class Model extends React.Component {
         this.loadingTable();
         request.restore(rows[0].id).then((res) => {
           refresh();
+          Modal.warning(props);
+        }).catch((err) => {
+          refresh();
+          var t = getErrorMessage(err);
+          props.content = t;
+          Modal.danger(props);
         });
         break;
       case 'delete':

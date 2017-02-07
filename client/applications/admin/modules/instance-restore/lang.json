@@ -3,12 +3,18 @@
     "confirm_force_delete": "Agree with force delete",
     "deleted": "Deleted ",
     "delete_instance_text": "Do you want to delete the instance? This action can not be restored.",
-    "restore": "Restore"
+    "restore": "Restore",
+    "tip": "Tip",
+    "please_refresh": "To update status, please refresh this page later.",
+    "ok": "Ok"
   },
   "zh-CN": {
     "confirm_force_delete": "确认强制删除",
     "deleted": "删除",
     "delete_instance_text": "此操作将无法撤销，确认要删除该云主机？",
-    "restore": "还原"
+    "restore": "还原",
+    "tip": "提示",
+    "please_refresh": "请稍后刷新页面以更新状态",
+    "ok": "确定"
   }
 }
