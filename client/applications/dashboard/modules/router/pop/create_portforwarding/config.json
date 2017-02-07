@@ -1,0 +1,36 @@
+{
+  "title": ["add_", "port_forwarding"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router"
+  }, {
+    "type": "select",
+    "field": "protocol"
+  }, {
+    "type": "icon_label",
+    "field": "source_ip"
+  }, {
+    "type": "input",
+    "field": "source_port",
+    "required": true,
+    "tip_info": "source_port_tip"
+  }, {
+    "type": "select",
+    "field": "target_ip",
+    "data": [],
+    "empty_text": {
+      "info": "target_ip_empty"
+    }
+  }, {
+    "type": "input",
+    "field": "target_port",
+    "required": true,
+    "tip_info": "target_port_tip"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

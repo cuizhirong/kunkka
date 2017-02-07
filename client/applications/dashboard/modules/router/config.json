@@ -80,6 +80,9 @@
         "key": "description",
         "default": true
       }, {
+        "name": ["port_forwarding"],
+        "key": "port_forwarding"
+      }, {
         "name": ["ipsec", "tunnel"],
         "key": "ipsec"
       }]

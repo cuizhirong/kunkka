@@ -188,5 +188,22 @@ module.exports = {
     return fetch.delete({
       url: url
     });
+  },
+  getPortForwarding: function(routerId) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/routers/' + routerId + '/get_router_portforwarding'
+    });
+  },
+  createPortForwarding: function(routerId, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/routers/' + routerId + '/add_router_portforwarding',
+      data: data
+    });
+  },
+  deletePortForwarding: function(routerId, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/routers/' + routerId + '/remove_router_portforwarding',
+      data: data
+    });
   }
 };

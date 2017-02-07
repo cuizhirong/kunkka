@@ -2,11 +2,12 @@ require('./style/index.less');
 
 var React = require('react');
 var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
+var {Button, Tip} = require('client/uskin/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
-var IpsecTable = require('./ipsec_table/index');
+var portforwarding = require('./detail/port_forwarding');
+var IpsecTable = require('./detail/ipsec_table/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createRouter = require('./pop/create_router/index');
@@ -17,6 +18,7 @@ var detachSubnet = require('./pop/detach_subnet/index');
 var createVpnService = require('./pop/create_vpn_service/index');
 var createTunnel = require('./pop/create_tunnel/index');
 var editTunnel = require('./pop/edit_tunnel/index');
+var createPortForwarding = require('./pop/create_portforwarding/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -286,6 +288,48 @@ class Model extends React.Component {
               </DetailMinitable>
             </div>
           );
+        }
+        break;
+      case 'port_forwarding':
+        if (isAvailableView(rows)) {
+          detail.setState({
+            loading: true
+          });
+
+          var routerId = rows[0].id;
+          request.getPortForwarding(routerId).then((portFrwds) => {
+            var tableconfig = portforwarding.getTableConfig(rows[0], portFrwds, this);
+            var tipStyle = {
+              marginBottom: '10px'
+            };
+
+            contents[tabKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.port_forwarding}
+                defaultUnfold={true}
+                tableConfig={tableconfig} >
+                <div style={tipStyle}>
+                  <Tip
+                    title={__.port_forwarding}
+                    content={__.port_forwarding_tip}
+                    type="info" />
+                </div>
+                <div>
+                  <Button type="create"
+                    value={__.add_ + __.port_forwarding}
+                    onClick={this.onDetailAction.bind(this, 'port_forwarding', 'create', {
+                      rawItem: rows[0]
+                    })} />
+                </div>
+              </DetailMinitable>
+            );
+
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
         }
         break;
       case 'ipsec':
@@ -573,6 +617,9 @@ class Model extends React.Component {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
+      case 'port_forwarding':
+        this.onPortForwardingAction(actionType, data);
+        break;
       case 'ipsec':
         this.onIpsecAction(actionType, data);
         break;
@@ -592,6 +639,31 @@ class Model extends React.Component {
         break;
       case 'detach_subnet':
         detachSubnet(data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onPortForwardingAction(actionType, data) {
+    switch(actionType) {
+      case 'create':
+        createPortForwarding(data.rawItem, () => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      case 'delete':
+        let routerId = data.router.id;
+        let portData = {
+          id: data.portFrwd.id
+        };
+        request.deletePortForwarding(routerId, portData).then((res) => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
         break;
       default:
         break;
