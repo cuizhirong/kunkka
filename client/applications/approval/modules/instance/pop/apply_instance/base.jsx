@@ -653,6 +653,17 @@ class ModalBase extends React.Component {
         if (state.credential === 'keypair') {
           createItem.key_name = state.keypairName;
         } else {
+          if(state.image.image_label === 'Windows') {
+            createItem.metadata = {
+              admin_pass: state.pwd
+            };
+          } else {
+            //add user_data to store root pwd
+            var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
+            userData = userData.replace(/\{0\}/g, state.pwd);
+            createItem.user_data = userData;
+            createItem.user_data_format = 'RAW';
+          }
           createItem.admin_pass = state.pwd;
         }
       }

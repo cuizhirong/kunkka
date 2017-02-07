@@ -248,7 +248,7 @@ class ApplyDetail extends React.Component {
                 {createDetail.map((create, i) =>
                   <div className="item-info" key={'create' + i}>
                     {Object.keys(create).map((k, j) => {
-                      let showDetail = create[k] && k !== 'user_data';
+                      let showDetail = create[k] && k !== 'user_data' && k !== 'user_data_format';
                       return (showDetail ? <div className="info-box" key={'create' + i + j}>
                         {this.fieldRender(create, k) + ': '}
                         {this.contentRender(create, k)}
