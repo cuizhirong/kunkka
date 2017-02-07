@@ -30,6 +30,12 @@ module.exports = {
       type: 'boolean',
       description: '显示回收站'
     }, {
+      app: 'global',
+      name: 'enable_floatingip_bandwidth',
+      value: 'false',
+      type: 'boolean',
+      description: '开启floatingip带宽'
+    }, {
       app: 'dashboard',
       name: 'total_gigabytes',
       value: 5000,
@@ -61,12 +67,6 @@ module.exports = {
       description: 'dashboard页面-最大监听器数量'
     }, {
       app: 'dashboard',
-      name: 'enable_floatingip_bandwidth',
-      value: 'false',
-      type: 'boolean',
-      description: 'dashboard页面-开启 floatingip 带宽'
-    }, {
-      app: 'dashboard',
       name: 'view.css',
       value: '',
       type: 'text',
@@ -83,6 +83,12 @@ module.exports = {
       value: 'false',
       type: 'boolean',
       description: '监控报警开关'
+    }, {
+      app: 'dashboard',
+      name: 'enable_router_portforwarding',
+      value: 'false',
+      type: 'boolean',
+      description: 'dashboard页面-路由端口转发开关'
     }, {
       app: 'admin',
       name: 'commercial_storage',
