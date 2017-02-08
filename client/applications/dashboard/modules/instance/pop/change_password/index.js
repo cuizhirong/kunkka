@@ -38,6 +38,9 @@ function pop(obj, parent, callback) {
           var pwd1 = refs.password.state.value;
           var pwd2 = refs.confirm_pwd.state.value;
 
+          refs.confirm_pwd.setState({
+            error: (pwd1 !== pwd2) || invalidPwd(pwd1) || invalidPwd(pwd2)
+          });
           refs.btn.setState({
             disabled: (pwd1 !== pwd2) || invalidPwd(pwd1) || invalidPwd(pwd2)
           });
