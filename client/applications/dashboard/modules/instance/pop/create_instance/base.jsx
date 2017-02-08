@@ -812,6 +812,15 @@ class ModalBase extends React.Component {
     );
 
     var selectedKey = state.imageType;
+    var style = null;
+
+    var imgURL = HALO.settings.default_image_url;
+    if (imgURL) {
+      style = {
+        background: `url("${imgURL}") 0 0 no-repeat`,
+        backgroundSize: '20px 20px'
+      };
+    }
     var Images = (
       <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
         {
@@ -825,7 +834,7 @@ class ModalBase extends React.Component {
           state.images.map((ele) =>
             <a key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
               onClick={state.image.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
-              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
+              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())} style={style}></i>
                 {ele.name}
             </a>
           )
