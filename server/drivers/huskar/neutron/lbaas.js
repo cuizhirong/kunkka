@@ -35,6 +35,31 @@ driver.createResourcePool = function (theBody, token, remote, callback) {
     theBody
   );
 };
+driver.listLoadBalancers = (token, remote, callback, query) => {
+  return driver.getMethod(
+    remote + '/v2.0/lbaas/loadbalancers',
+    token,
+    callback,
+    query
+  );
+};
+driver.listListeners = (token, remote, callback, query) => {
+  return driver.getMethod(
+    remote + '/v2.0/lbaas/listeners',
+    token,
+    callback,
+    query
+  );
+};
+driver.listPools = (token, remote, callback, query) => {
+  return driver.getMethod(
+    remote + '/v2.0/lbaas/pools',
+    token,
+    callback,
+    query
+  );
+};
+
 
 /*** Promise ***/
 
@@ -64,6 +89,27 @@ driver.createResourcePoolAsync = function (theBody, token, remote) {
     remote + '/v2.0/lbaas/pools',
     token,
     theBody
+  );
+};
+driver.listLoadBalancersAsync = (token, remote, query) => {
+  return driver.getMethodAsync(
+    remote + '/v2.0/lbaas/loadbalancers',
+    token,
+    query
+  );
+};
+driver.listListenersAsync = (token, remote, query) => {
+  return driver.getMethodAsync(
+    remote + '/v2.0/lbaas/listeners',
+    token,
+    query
+  );
+};
+driver.listPoolsAsync = (token, remote, query) => {
+  return driver.getMethodAsync(
+    remote + '/v2.0/lbaas/pools',
+    token,
+    query
   );
 };
 
