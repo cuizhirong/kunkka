@@ -195,6 +195,18 @@ API.prototype = {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.subnet.listSubnets(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
+  __loadBalancers: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.lbaas.listLoadBalancers(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __listeners: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.lbaas.listListeners(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
+  __pools: function (objVar, callback) {
+    let remote = objVar.endpoint.neutron[objVar.region];
+    driver.neutron.lbaas.listPools(objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+  },
   __neutronQuota: function (objVar, callback) {
     let remote = objVar.endpoint.neutron[objVar.region];
     driver.neutron.quota.getQuota(objVar.projectId, objVar.targetId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);

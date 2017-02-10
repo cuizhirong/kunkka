@@ -6,7 +6,7 @@ const Base = require('../base.js');
 function Overview(app) {
   this.app = app;
   this.arrQuotaObject = ['novaQuota', 'cinderQuota', 'neutronQuota'];
-  this.arrListObject = ['servers', 'flavors', 'volumeTypes', 'security_groups', 'routers', 'subnets', 'floatingips', 'snapshots', 'keypairs', 'networks', 'ports'];
+  this.arrListObject = ['servers', 'flavors', 'volumeTypes', 'security_groups', 'routers', 'subnets', 'floatingips', 'snapshots', 'keypairs', 'networks', 'ports', 'loadBalancers', 'listeners', 'pools'];
   this.arrServiceObject = this.arrQuotaObject.concat(this.arrListObject);
   Base.call(this, this.arrServiceObject);
 }
@@ -36,6 +36,9 @@ Overview.prototype = {
             network        : { total: obj.neutronQuota.network },
             floatingip     : { total: obj.neutronQuota.floatingip },
             security_group : { total: obj.neutronQuota.security_group },
+            loadbalancer   : { total: obj.neutronQuota.loadbalancer },
+            listener       : { total: obj.neutronQuota.listener },
+            pool           : { total: obj.neutronQuota.pool },
 
             volumes        : { total: obj.cinderQuota.volumes.limit },
             gigabytes      : { total: obj.cinderQuota.gigabytes.limit },
@@ -92,6 +95,9 @@ Overview.prototype = {
             network        : { total: obj.neutronQuota.network, used: Object.keys(obj.networks).length },
             floatingip     : { total: obj.neutronQuota.floatingip, used: Object.keys(obj.floatingips).length },
             security_group : { total: obj.neutronQuota.security_group, used: Object.keys(obj.security_groups).length },
+            loadbalancer   : { total: obj.neutronQuota.loadbalancer, used: Object.keys(obj.loadBalancers).length },
+            listener       : { total: obj.neutronQuota.listener, used: Object.keys(obj.listeners).length },
+            pool           : { total: obj.neutronQuota.pool, used: Object.keys(obj.pools).length },
 
             volumes        : { total: obj.cinderQuota.volumes.limit, used: obj.cinderQuota.volumes.in_use },
             gigabytes      : { total: obj.cinderQuota.gigabytes.limit, used: obj.cinderQuota.gigabytes.in_use },
@@ -150,7 +156,7 @@ Overview.prototype = {
     let objVar = this.getVars(req, ['projectId', 'targetId']);
     let novaItems = ['ram', 'cores', 'instances', 'key_pairs'];
     let cinderItems = ['volumes', 'gigabytes', 'snapshots'];
-    let neutronItems = ['port', 'subnet', 'router', 'network', 'floatingip', 'security_group'];
+    let neutronItems = ['port', 'subnet', 'router', 'network', 'floatingip', 'security_group', 'loadbalancer', 'listener', 'pool'];
     let body = req.body;
     let tasks = [];
     this.__volumeTypes(objVar, (err, types) => {
