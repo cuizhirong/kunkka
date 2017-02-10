@@ -26,6 +26,7 @@ var resources = [
     arch: [0, 294],
     coreos: [0, 336],
     gentoo: [0, 378],
+    rhel: [0, 420],
     cirros: [0, 0]
   },
   statusMap = {
