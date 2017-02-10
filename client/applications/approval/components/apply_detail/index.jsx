@@ -81,8 +81,16 @@ class ApplyDetail extends React.Component {
     switch(field) {
       case 'image':
         let image = this.getResByID(item, field);
+        var style = null;
+        var imgURL = HALO.settings.default_image_url;
+        if (imgURL) {
+          style = {
+            background: `url("${imgURL}") 0 0 no-repeat`,
+            backgroundSize: '20px 20px'
+          };
+        }
         return image.id ? <span>
-          <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} />
+          <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} style={style}/>
           <span>{image.name}</span>
         </span> : <span>{item[field]}</span>;
       case 'flavor':
