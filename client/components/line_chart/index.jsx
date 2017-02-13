@@ -24,7 +24,15 @@ class ChartLine extends React.Component {
   }
 
   componentDidMount() {
+    var that = this;
     this.state.data ? this.renderLineChart(this.state.data, this.state.granularity) : '';
+    try {
+      window.onresize = function() {
+        that.state.data ? that.renderLineChart(that.state.data, that.state.granularity) : '';
+      };
+    } catch (e) {
+      return;
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -153,8 +161,9 @@ class ChartLine extends React.Component {
     if (resourceType === 'instance') {
       switch(metricType) {
         case 'cpu_util':
-        case 'memory.usage':
           return '%';
+        case 'memory.usage':
+          return 'MB';
         case 'disk.read.bytes.rate':
         case 'disk.write.bytes.rate':
         default:
