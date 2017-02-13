@@ -14,14 +14,16 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      overview: {}
+      overview: {},
+      types: []
     };
   }
 
   componentWillMount() {
     request.getOverview().then((res) => {
       this.setState({
-        overview: res.overview_usage
+        overview: res.overview_usage,
+        types: res.volume_types
       });
     });
   }
@@ -50,6 +52,7 @@ class Model extends React.Component {
     }];
 
     var overview = this.state.overview;
+    var types = this.state.types;
 
     return (
       <div className="halo-module-overview" style={this.props.style}>
@@ -60,7 +63,7 @@ class Model extends React.Component {
             <ResourceInfo overview={overview} />
           </div>
           <div className="right-side">
-            <ResourceQuota overview={overview} />
+            <ResourceQuota overview={overview} types={types} />
           </div>
         </div>
       </div>
