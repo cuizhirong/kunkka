@@ -220,7 +220,7 @@ Instance.prototype = {
   },
   getVNCConsole: function(req, res, next) {
     let objVar = {};
-    objVar.region = req.query.region;
+    objVar.region = req.session.user.regionId;
     objVar.endpoint = req.session.endpoint;
     objVar.token = req.session.user.token;
     objVar.projectId = req.params.projectId;
@@ -229,7 +229,7 @@ Instance.prototype = {
       if (err) {
         this.handleError(err, req, res, next);
       } else {
-        let url = payload.console.url + '&title=' + req.params.serverId;
+        let url = payload.console.url + `&title=${req.query.server_name}(${req.params.serverId})`;
         res.redirect(url);
       }
     });
