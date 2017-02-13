@@ -48,6 +48,18 @@ class ResourceQuota extends React.Component {
         key: 'floatingip',
         link: 'floating-ip'
       }, {
+        title: __.loadbalancer,
+        key: 'loadbalancer',
+        link: 'loadbalancer'
+      }, {
+        title: __.listener,
+        key: 'listener',
+        link: 'listener'
+      }, {
+        title: __.resource_pool,
+        key: 'pool',
+        link: 'pool'
+      }, {
         title: __.port,
         key: 'port',
         link: 'port'
@@ -63,29 +75,9 @@ class ResourceQuota extends React.Component {
     }, {
       title: __.storage,
       items: [{
-        title: __.ssd + __.volume,
-        key: 'volumes_ssd',
-        link: 'volume'
-      }, {
-        title: __.sata + __.volume,
-        key: 'volumes_sata',
-        link: 'volume'
-      }, {
-        title: __.ssd + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_ssd',
-        link: 'volume'
-      }, {
-        title: __.sata + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_sata',
-        link: 'volume'
-      }, {
-        title: __.ssd + __.snapshot,
-        key: 'snapshots_ssd',
-        link: 'snapshot'
-      }, {
-        title: __.sata + __.snapshot,
-        key: 'snapshots_sata',
-        link: 'snapshot'
+        title: __.all_volumes,
+        key: 'volumes',
+        link: 'volumes'
       }]
     }];
 
@@ -94,9 +86,35 @@ class ResourceQuota extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    var quota = this.state.quota;
+
+    nextProps.types.forEach((item) => {
+      quota[2].items.push({
+        title: __[item] + __.volume,
+        key: 'volumes_' + item,
+        link: 'volume'
+      });
+      quota[2].items.push({
+        title: __[item] + __.volume + __.gigabyte + __.unit_gb,
+        key: 'gigabytes_' + item,
+        link: 'volume'
+      });
+      quota[2].items.push({
+        title: __[item] + __.snapshot,
+        key: 'snapshots_' + item,
+        link: 'snapshot'
+      });
+    });
+
+    this.setState({
+      quota: quota
+    });
+  }
+
   render() {
-    var quota = this.state.quota,
-      overview = this.props.overview;
+    var overview = this.props.overview,
+      quota = this.state.quota;
 
     return (
       <div className="resource-quota">
