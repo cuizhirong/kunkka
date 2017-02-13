@@ -279,7 +279,7 @@ class Model extends React.Component {
         createInstance();
         break;
       case 'vnc_console':
-        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?region=' + HALO.current_region;
+        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?server_name=' + rows[0].name;
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
@@ -570,7 +570,7 @@ class Model extends React.Component {
           request.getVncConsole(rows[0]).then((res) => {
             contents[asyncTabKey] = (
               <VncConsole
-                src={res.console.url + '&title=' + rows[0].id}
+                src={res.console.url + '&title=' + rows[0].name + '(' + rows[0].id + ')'}
                 data-id={rows[0].id}
                 loading={false} />
             );
