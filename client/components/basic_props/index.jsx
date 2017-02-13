@@ -5,6 +5,7 @@ var React = require('react');
 var EditContent = require('./edit_content');
 var moment = require('client/libs/moment');
 var getTime = require('client/utils/time_unification');
+const copy = require('clipboard-plus');
 
 class BasicProps extends React.Component {
 
@@ -33,16 +34,28 @@ class BasicProps extends React.Component {
     });
   }
 
+  onClick(id) {
+    copy(id);
+  }
+
   onAction(actionType, data) {
     this.props.onAction && this.props.onAction(this.props.tabKey, actionType, data);
   }
 
   getItemContent(item, rawItem) {
+    var copyId;
+    if(item.title.toLowerCase() === 'id') {
+      copyId = item.content;
+      return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
+    }
     switch(item.type) {
       case 'editable':
         return <EditContent item={item} rawItem={rawItem} onAction={this.onAction.bind(this)} />;
       case 'time':
         return getTime(item.content);
+      case 'copy':
+        copyId = item.content;
+        return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
       default:
         return item.content;
     }

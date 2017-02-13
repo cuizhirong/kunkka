@@ -7,6 +7,8 @@
 @edit-confirm-icon-color: @color_font_700;
 @edit-confirm-icon-hover-color: @color_info;
 @edit-cancel-icon-hover-color: @color_delete;
+@copyid-color: @color_font_800;
+@copyid-hover-color: @color_info_700;
 
 .halo-com-basic-props {
   .content-loading {
@@ -55,6 +57,16 @@
             cursor: pointer;
             &:hover {
               color: @edit-name-icon-hover-color;
+            }
+          }
+          &.copyid {
+            font-size: 14px;
+            margin-top: -1px;
+            margin-left: 4px;
+            color: @copyid-color;
+            cursor: pointer;
+            &:hover {
+              color: @copyid-hover-color;
             }
           }
           &.edit-confirm, &.edit-cancel {
