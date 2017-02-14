@@ -8,6 +8,7 @@ let initialState = {
       visible: true,
       page: 0,
       disabled: false,
+      loadingList: true,
       loadingChart: false,
 
       //selct metric
@@ -16,6 +17,7 @@ let initialState = {
       metricType: undefined,
       resources: [],
       measureGranularity: 300,
+      searchResource: '',
 
       //alarm config
       name: '',
@@ -80,7 +82,8 @@ let initialState = {
       visible: true,
       page: 1,
       disabled: false,
-      loadingChart: true,
+      loadingList: true,
+      loadingChart: false,
 
       //selct metric
       resource: null, //after update
@@ -88,6 +91,7 @@ let initialState = {
       metricType: rule.metric,
       resources: [], //after update
       measureGranularity: 300,
+      searchResource: '',
 
       //alarm config
       name: alarm.name,

@@ -1,7 +1,7 @@
 var React = require('react');
 var {Button, ButtonGroup} = require('client/uskin/index');
 var Chart = require('echarts');
-var MultiDropdown = require('./dropdown');
+var SelectTable = require('./select_table');
 var __ = require('locale/client/dashboard.lang.json');
 var utils = require('../../utils');
 var constant = require('./constant');
@@ -19,7 +19,7 @@ class Modal extends React.Component {
       granularity: 300
     };
 
-    ['onClickPeriod', 'onClickDropdown', 'unfoldDropdown'].forEach((func) => {
+    ['onClickPeriod', 'onClickResource', 'onChangeSearch'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
@@ -190,61 +190,56 @@ class Modal extends React.Component {
     });
   }
 
-  onClickDropdown(status, e) {
-    let type = status.key;
-    if (type === 'cpu_util' || type === 'disk.read.bytes.rate' ||
-        type === 'disk.write.bytes.rate' || type === 'memory.usage') {
-      this.unfoldDropdown(false);
+  onClickResource(item, e) {
+    let setState = this.props.onChangeState;
 
-      this.props.onChangeState('loadingChart', true);
-      this.props.onChangeState('resource', status.resource);
-      this.props.onChangeState('resourceType', status.resourceType);
-      this.props.onChangeState('metricType', status.key);
-    }
+    setState('loadingChart', true);
+    setState('resource', item.resource);
+    setState('resourceType', item.resourceType);
+    setState('metricType', item.metricType);
   }
 
   onClickPeriod(e, granularity) {
-    this.props.onChangeState('loadingChart', true);
+    if (this.props.state.resource) {
+      this.props.onChangeState('loadingChart', true);
+    }
     this.props.onChangeState('measureGranularity', granularity);
   }
 
-  unfoldDropdown(unfold) {
-    this.refs.multidropdown.setState({
-      unfold: unfold
-    });
+  onChangeSearch(text, isClicked) {
+    let setState = this.props.onChangeState;
+
+    setState('searchResource', text.trim());
   }
 
   render() {
     const state = this.props.state;
     let granularity = state.measureGranularity;
-    let { resource, resources, resourceType, metricType } = state;
+    let {resources} = state;
 
     let recentHour = __.recent_hours.replace('{0}', constant.RECENT_HOUR);
     let recentDay = __.recent_day.replace('{0}', constant.RECENT_DAY);
     let recentWeek = __.recent_week.replace('{0}', constant.RECENT_WEEK);
     let recentMonth = __.recent_month.replace('{0}', constant.RECENT_MONTH);
 
-    let dropdownValue = '';
-    if (state.resource) {
-      dropdownValue = __[resourceType] + ' / ' + (resource.name ? resource.name : resource.id.substr(0, 8)) + ' / ' + utils.getMetricName(metricType);
-    } else {
-      dropdownValue = __.pls_select_resource_type;
-    }
-
     return (
       <div className="page select-metric">
         <div className="select-box">
-          <MultiDropdown ref="multidropdown" items={resources} disabled={resources.length === 0} onClick={this.onClickDropdown} value={dropdownValue} />
-          <ButtonGroup>
-            <Button btnKey={constant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_HOUR} />
-            <Button btnKey={constant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_DAY} />
-            <Button btnKey={constant.GRANULARITY_WEEK} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_WEEK} />
-            <Button btnKey={constant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_MONTH} />
-          </ButtonGroup>
+          <SelectTable state={state} items={resources} onClick={this.onClickResource} onChangeSearch={this.onChangeSearch} />
         </div>
         <div className="chart-box">
-          <div id="select_metric_chart_no_data" className="no-data-msg" />
-          <div id="select_metric_chart" />
+          <div className="granularity-box">
+            <ButtonGroup>
+              <Button btnKey={constant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_HOUR} />
+              <Button btnKey={constant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_DAY} />
+              <Button btnKey={constant.GRANULARITY_WEEK} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_WEEK} />
+              <Button btnKey={constant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_MONTH} />
+            </ButtonGroup>
+          </div>
+          <div className="chart-content">
+            <div id="select_metric_chart_no_data" className="no-data-msg" />
+            <div id="select_metric_chart" />
+          </div>
         </div>
       </div>
     );

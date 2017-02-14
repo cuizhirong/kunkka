@@ -23,14 +23,22 @@ module.exports = {
   getMetricName: function(metric) {
     if (metric) {
       switch (metric) {
-        case 'disk.read.bytes.rate':
-          return __.disk_read_rate;
-        case 'disk.write.bytes.rate':
-          return __.disk_write_rate;
         case 'cpu_util':
           return __.cpu_utilization;
+        case 'disk.read.bytes.rate':
+          return __.disk_read_rate;
+        case 'disk.read.requests.rate':
+          return __.disk_read_requests_rate;
+        case 'disk.write.bytes.rate':
+          return __.disk_write_rate;
+        case 'disk.write.requests.rate':
+          return __.disk_write_requests_rate;
         case 'memory.usage':
           return __.memory_usage;
+        case 'network.incoming.bytes.rate':
+          return __.network_incoming_bytes_rate;
+        case 'network.outgoing.bytes.rate':
+          return __.network_outgoing_bytes_rate;
         default:
           return metric;
       }
@@ -55,20 +63,48 @@ module.exports = {
     if (item.gnocchi_resources_threshold_rule) {
       let rule = item.gnocchi_resources_threshold_rule;
 
-      return (
-        <span>
-          <i className="glyphicon icon-instance" />
-          {
-            rule.resource_name ?
-              <a data-type="router" href={'/dashboard/instance/' + rule.resource_id}>
-                {rule.resource_name}
-              </a>
-            : <span>
-                {'(' + rule.resource_id.substr(0, 8) + ')'}
+      switch (rule.resource_type) {
+        case 'instance_network_interface':
+          if (rule._port_id) {
+            let portShortId = '(' + rule._port_id.substr(0, 8) + ')';
+
+            return (
+              <span>
+                <i className="glyphicon icon-port" />
+                {
+                  rule._port_exist ?
+                    <a data-type="router" href={'/dashboard/port/' + rule._port_id}>
+                      {rule._port_name ? rule._port_name : portShortId }
+                    </a>
+                  : <span>{portShortId}</span>
+                }
               </span>
+            );
           }
-        </span>
-      );
+          return (
+            <span>
+              <i className="glyphicon icon-port" />
+              <span>{'-'}</span>
+            </span>
+          );
+        case 'instance':
+        case 'volume':
+          return (
+            <span>
+              <i className={'glyphicon icon-' + rule.resource_type} />
+              {
+                rule.resource_name ?
+                  <a data-type="router" href={'/dashboard/' + rule.resource_type + '/' + rule.resource_id}>
+                    {rule.resource_name}
+                  </a>
+                : <span>{'(' + rule.resource_id.substr(0, 8) + ')'}</span>
+              }
+            </span>
+          );
+        default:
+          break;
+      }
+
     }
     return null;
   }

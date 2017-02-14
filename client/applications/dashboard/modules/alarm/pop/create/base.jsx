@@ -4,8 +4,8 @@ var SelectMetric = require('./select_metric');
 var AlarmConfig = require('./alarm_config');
 var SetNotification = require('./set_notification');
 var __ = require('locale/client/dashboard.lang.json');
-var utils = require('../../utils');
 var request = require('../../request');
+var resourceList = require('./resources');
 var initialState = require('./state');
 var createNotification = require('../../../notification/pop/modal/index');
 var getErrorMessage = require('../../../../utils/error_message');
@@ -24,8 +24,9 @@ class ModalBase extends React.Component {
         this.state = initialState.getAlarmState(props.obj.item);
         title = __.modify + __.alarm;
         break;
-      case 'instance':
       case 'create':
+      case 'instance':
+      case 'volume':
       default:
         this.state = initialState.getInitialState();
         title = __.create + __.alarm;
@@ -41,121 +42,52 @@ class ModalBase extends React.Component {
     this.getResourceList();
     this.getNofications();
 
-    const state = this.state;
-    const obj = this.props.obj;
-    switch(obj.type) {
-      case 'alarm':
-        let resourceId = obj.item.gnocchi_resources_threshold_rule.resource_id;
-        this.getMeasureData(resourceId, state.metricType, state.measureGranularity);
-        break;
-      case 'instance':
-      case 'create':
-      default:
-        break;
-    }
+    this.InsPortMap = {};
   }
 
   getResourceList() {
     request.getResources().then((data) => {
       const obj = this.props.obj;
       let items = [];
-
-      let allItems = [{
-        title: __.instance,
-        icon: 'instance',
-        key: 'instance',
-        layer: 1
-      }];
-      allItems[0].items = data.instance.map((ele) => ({
-        title: ele.name ? ele.name : ele.id.substr(0, 8),
-        key: ele.id,
-        layer: 2,
-        items: [{
-          title: utils.getMetricName('cpu_util'),
-          key: 'cpu_util',
-          resourceType: 'instance',
-          resource: ele,
-          layer: 3
-        }, {
-          title: utils.getMetricName('memory.usage'),
-          key: 'memory.usage',
-          resourceType: 'instance',
-          resource: ele,
-          layer: 3
-        }, {
-          title: utils.getMetricName('disk.read.bytes.rate'),
-          key: 'disk.read.bytes.rate',
-          resourceType: 'instance',
-          resource: ele,
-          layer: 3
-        }, {
-          title: utils.getMetricName('disk.write.bytes.rate'),
-          key: 'disk.write.bytes.rate',
-          resourceType: 'instance',
-          resource: ele,
-          layer: 3
-        }]
-      }));
+      let update = (resources) => {
+        this.setState({
+          loadingList: false,
+          resources: resources
+        });
+      };
 
       switch(obj.type) {
-        case 'instance':
-          items = [{
-            title: utils.getMetricName('cpu_util'),
-            key: 'cpu_util',
-            resourceType: 'instance',
-            resource: obj.item,
-            layer: 3
-          }, {
-            title: utils.getMetricName('memory.usage'),
-            key: 'memory.usage',
-            resourceType: 'instance',
-            resource: obj.item,
-            layer: 3
-          }, {
-            title: utils.getMetricName('disk.read.bytes.rate'),
-            key: 'disk.read.bytes.rate',
-            resourceType: 'instance',
-            resource: obj.item,
-            layer: 3
-          }, {
-            title: utils.getMetricName('disk.write.bytes.rate'),
-            key: 'disk.write.bytes.rate',
-            resourceType: 'instance',
-            resource: obj.item,
-            layer: 3
-          }];
-
-          this.setState({
-            resource: obj.item,
-            resourceType: 'instance'
-          });
-          break;
         case 'alarm':
-          items = allItems;
-
-          let resourceId = obj.item.gnocchi_resources_threshold_rule.resource_id;
-
-          let insResource = data.instance.find((ele) => ele.id === resourceId);
-          if (!insResource) {
-            insResource = {
-              id: resourceId,
-              name: '(' + resourceId.slice(0, 8) + ')'
-            };
-          }
-
-          this.setState({
-            resource: insResource
+          items = resourceList.getInitialList(data);
+          resourceList.getOriginalResource(obj.item).then((resource) => {
+            this.setState({
+              loadingList: false,
+              resources: items
+            });
+            if (resource) {
+              this.setState({
+                loadingChart: true
+              });
+              this.onChangeState('resource', resource);
+            }
           });
           break;
         case 'create':
+          items = resourceList.getInitialList(data);
+          update(items);
+          break;
+        case 'instance':
+          items = resourceList.getInstanceList(obj.item);
+          update(items);
+          break;
+        case 'volume':
+          items = resourceList.getVolumeList(obj.item);
+          update(items);
+          break;
         default:
-          items = allItems;
           break;
       }
 
-      this.setState({
-        resources: items
-      });
     });
   }
 
@@ -178,8 +110,7 @@ class ModalBase extends React.Component {
         break;
     }
 
-    request.getResourceMeasures(resourceId, metricType, measureGranularity, startTime)
-    .then((data) => {
+    request.getResourceMeasures(resourceId, metricType, measureGranularity, startTime).then((data) => {
       measureData = data;
 
       this.refs.select_metric.updateGraph(data, measureGranularity);
@@ -218,8 +149,46 @@ class ModalBase extends React.Component {
       switch (field) {
         case 'measureGranularity':
         case 'resource':
-          if (this.state.resource) {
-            this.getMeasureData(st.resource.id, st.metricType, st.measureGranularity);
+          if (st.resource && st.measureGranularity) {
+            let resourceType = this.state.resourceType;
+
+            if (resourceType === 'instance') {
+              let resourceID = st.resource.id;
+
+              this.getMeasureData(resourceID, st.metricType, st.measureGranularity);
+            } if (resourceType === 'volume') {
+              let attch = st.resource.attachments[0];
+              let resourceID = attch && attch.server_id;
+
+              this.getMeasureData(resourceID, st.metricType, st.measureGranularity);
+            } else if (resourceType === 'instance_network_interface') {
+              let resource = st.resource;
+              let instanceId = resource.device_id;
+              let portId = resource.id;
+              let update = (ports) => {
+                let portMeasure = this.findPortMeasures(ports, portId);
+                if (portMeasure) {
+                  this.getMeasureData(portMeasure.id, st.metricType, st.measureGranularity);
+
+                  if (!resource._measureId) {
+                    resource._measureId = portMeasure.id;
+                    this.setState({
+                      resource: resource
+                    });
+                  }
+                }
+              };
+
+              const map = this.InsPortMap;
+              if (map[instanceId]) {
+                update(map[instanceId]);
+              } else {
+                request.getNetworkResources(instanceId).then((ports) => {
+                  map[instanceId] = ports;
+                  update(map[instanceId]);
+                });
+              }
+            }
           }
           break;
         case 'threshold':
@@ -229,6 +198,10 @@ class ModalBase extends React.Component {
           break;
       }
     });
+  }
+
+  findPortMeasures(ports, portId) {
+    return ports.find((port) => port.name === ('tap' + portId.substr(0, 11)));
   }
 
   createNotification(id, e) {
@@ -292,14 +265,15 @@ class ModalBase extends React.Component {
       evaluation_periods: state.evaluationPeriods,
       granularity: state.granularity,
       metric: state.metricType,
-      resource_id: state.resource.id,
+      resource_id: state.resourceType === 'instance_network_interface' ? state.resource._measureId : state.resource.id,
       resource_type: state.resourceType,
       threshold: state.threshold
     };
 
     switch(obj.type) {
-      case 'instance':
       case 'create':
+      case 'instance':
+      case 'volume':
         request.createAlarm(data).then((res) => {
           this.setState({
             visible: false

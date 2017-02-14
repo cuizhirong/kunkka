@@ -57,6 +57,7 @@ class Model extends Main {
           break;
       }
     });
+
   }
 
   getList(forceUpdate, detailRefresh) {
@@ -147,6 +148,13 @@ class Model extends Main {
         loading: loading
       });
     };
+    const detailLoading = () => {
+      contents[tabKey] = (<div />);
+      detail.setState({
+        contents: contents,
+        loading: true
+      });
+    };
 
     switch(tabKey) {
       case 'description':
@@ -155,33 +163,67 @@ class Model extends Main {
 
           request.getNofitications().then((notifications) => {
 
-            let basicPropsItem = description.getBasicPropsItems(rows[0]);
-            let notificationConfig = description.getNotificationConfig(rows[0], notifications, this.refreshForce);
+            let item = rows[0];
+            let rule = item.gnocchi_resources_threshold_rule;
+            const updateContent = (resourceItem) => {
+              let basicPropsItem = description.getBasicPropsItems(resourceItem);
+              let notificationConfig = description.getNotificationConfig(resourceItem, notifications, this.refreshForce);
 
-            contents[tabKey] = (
-              <div>
-                <BasicProps
-                  title={__.basic + __.properties}
-                  defaultUnfold={true}
-                  tabKey={'description'}
-                  items={basicPropsItem ? basicPropsItem : []}
-                  rawItem={rows[0]}
-                  onAction={this.onDetailAction.bind(this)} />
-                <DetailMiniTable
-                  __={__}
-                  title={__.alarm_notification}
-                  defaultUnfold={true}
-                  tableConfig={notificationConfig}
-                >
-                  <Button value={__.add + __.alarm_notification}
-                    onClick={this.onDetailAction.bind(this, 'description', 'add_alarm_notification', {
-                      rawItem: rows[0]
-                    })} />
-                </DetailMiniTable>
-              </div>
-            );
+              contents[tabKey] = (
+                <div>
+                  <BasicProps
+                    title={__.basic + __.properties}
+                    defaultUnfold={true}
+                    tabKey={'description'}
+                    items={basicPropsItem ? basicPropsItem : []}
+                    rawItem={resourceItem}
+                    onAction={this.onDetailAction.bind(this)} />
+                  <DetailMiniTable
+                    __={__}
+                    title={__.alarm_notification}
+                    defaultUnfold={true}
+                    tableConfig={notificationConfig}
+                  >
+                    <Button value={__.add + __.alarm_notification}
+                      onClick={this.onDetailAction.bind(this, 'description', 'add_alarm_notification', {
+                        rawItem: resourceItem
+                      })} />
+                  </DetailMiniTable>
+                </div>
+              );
 
-            update(contents);
+              update(contents);
+            };
+
+            if (rule.resource_type === 'instance_network_interface' && !rule._port_id) {
+              detailLoading();
+
+              request.getOriginalPort(rule.resource_id).then((args) => {
+                const ports = args[0];
+                const resource = args[1];
+                let originalPortId = resource.original_resource_id.slice(-11);
+
+                ports.some((port) => {
+                  let portId = port.id.substr(0, 11);
+
+                  if (originalPortId === portId) {
+                    rule._port_id = port.id;
+                    rule._port_name = port.name;
+                    rule._port_exist = true;
+                    return true;
+                  }
+                  return false;
+                });
+
+                if (!rule._port_exist) {
+                  rule._port_id = originalPortId;
+                }
+
+                updateContent(item);
+              });
+            } else {
+              updateContent(item);
+            }
 
           });
         }
@@ -196,10 +238,7 @@ class Model extends Main {
             granularity = data.granularity;
           } else {
             granularity = '300';
-
-            //open detail without delaying
-            contents[tabKey] = (<div />);
-            update(contents, true);
+            detailLoading();
           }
           let time = data.time;
 
@@ -222,34 +261,18 @@ class Model extends Main {
             time: 'month'
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
-          contents[tabKey] = (<LineChart
-            __={__}
-            item={rows[0]}
-            metricType={[rule.metric]}
-            resourceType={rule.resource_type}
-            data={[]}
-            granularity={granularity}
-            tabItems={tabItems}
-            loading={true}
-            clickTabs={(e, tab, item) => {
-              that.onClickDetailTabs('monitor', refs, {
-                rows: rows,
-                granularity: tab.key,
-                time: tab.time
-              });
-            }} />);
-          update(contents);
-          request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((res) => {
-
+          let updateContents = (arr, loading) => {
             contents[tabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
                 metricType={[rule.metric]}
                 resourceType={rule.resource_type}
-                data={[res]}
+                data={arr}
                 granularity={granularity}
                 tabItems={tabItems}
+                loading={loading}
+                start={timeUtils.getTime(time)}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
@@ -260,32 +283,29 @@ class Model extends Main {
             );
 
             update(contents);
+          };
 
-          }).catch((err) => {
-
-            contents[tabKey] = (
-              <LineChart
-                __={__}
-                item={rows[0]}
-                metricType={[rule.metric]}
-                resourceType={rule.resource_type}
-                data={[]}
-                granularity={granularity}
-                tabItems={tabItems}
-                status={404}
-                clickTabs={(e, tab, item) => {
-                  that.onClickDetailTabs('monitor', refs, {
-                    rows: rows,
-                    granularity: tab.key,
-                    time: tab.time
-                  });
-                }} />
-            );
-
-            update(contents);
-
-          });
-
+          if (rule.resource_type === 'volume') {
+            request.getVolume().then((_data) => {
+              let vol = _data.volume.find((ele) => ele.id === rule.resource_id);
+              let attch = vol.attachments[0];
+              if (attch && attch.server_id) {
+                request.getResourceMeasures(attch.server_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
+                  updateContents([measures]);
+                }).catch((err) => {
+                  updateContents([]);
+                });
+              } else {
+                updateContents([]);
+              }
+            });
+          } else {
+            request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
+              updateContents([measures]);
+            }).catch((err) => {
+              updateContents([]);
+            });
+          }
         }
         break;
       case 'history':

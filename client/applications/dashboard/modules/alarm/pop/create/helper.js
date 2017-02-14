@@ -1,3 +1,5 @@
+var __ = require('locale/client/dashboard.lang.json');
+
 let helper = {
 
   getDateStr: function(date) {
@@ -10,20 +12,22 @@ let helper = {
   },
 
   getMetricUnit: function(resourceType, metricType) {
-    if (resourceType === 'instance') {
-      switch (metricType) {
-        case 'cpu_util':
-          return '%';
-        case 'memory.usage':
-          return 'MB';
-        case 'disk.read.bytes.rate':
-        case 'disk.write.bytes.rate':
-        default:
-          return 'B/s';
-      }
+    switch (metricType) {
+      case 'cpu_util':
+        return '%';
+      case 'disk.read.bytes.rate':
+      case 'disk.write.bytes.rate':
+      case 'network.incoming.bytes.rate':
+      case 'network.outgoing.bytes.rate':
+        return 'B/s';
+      case 'disk.read.requests.rate':
+      case 'disk.write.requests.rate':
+        return __.request_per_second;
+      case 'memory.usage':
+        return 'MB';
+      default:
+        return '';
     }
-
-    return '';
   }
 
 };

@@ -1,21 +1,39 @@
 var storage = require('client/applications/dashboard/cores/storage');
 var fetch = require('client/applications/dashboard/cores/fetch');
-// var RSVP = require('rsvp');
+var RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['alarm', 'instance', 'notification'], forced).then(function(data) {
+    return storage.getList(['alarm', 'instance', 'volume', 'notification', 'port'], forced).then(function(data) {
       data.alarm.forEach((alarm) => {
         // name format
         if (alarm.gnocchi_resources_threshold_rule) {
           let rule = alarm.gnocchi_resources_threshold_rule;
-          data.instance.some((ins) => {
-            if (ins.id === rule.resource_id) {
-              rule.resource_name = ins.name ? ins.name : ins.id.substr(0, 8);
-              return true;
-            }
-            return false;
-          });
+
+          switch(rule.resource_type) {
+            case 'instance':
+              data.instance.some((ins) => {
+                if (ins.id === rule.resource_id) {
+                  rule.resource_name = ins.name ? ins.name : ins.id.substr(0, 8);
+                  return true;
+                }
+                return false;
+              });
+              break;
+            case 'volume':
+              data.volume.some((vol) => {
+                if (vol.id === rule.resource_id) {
+                  rule.resource_name = vol.name ? vol.name : vol.id.substr(0, 8);
+                  return true;
+                }
+                return false;
+              });
+              break;
+            case 'instance_network_interface':
+              break;
+            default:
+              break;
+          }
         }
 
         // state format
@@ -40,9 +58,13 @@ module.exports = {
     });
   },
   getResources: function() {
-    return storage.getList(['instance']).then(function(data) {
-      return data;
-    });
+    return storage.getList(['instance', 'volume']);
+  },
+  getInstance: function() {
+    return storage.getList(['instance']);
+  },
+  getVolume: function() {
+    return storage.getList(['volume']);
   },
   getAlarmHistory: function(id) {
     return fetch.get({
@@ -66,6 +88,34 @@ module.exports = {
     }).then(function(data) {
       return data;
     });
+  },
+  getNetworkResources: function(instanceId) {
+    let data = {
+      '=': {
+        instance_id: instanceId
+      }
+    };
+    return fetch.post({
+      url: '/proxy/gnocchi/v1/search/resource/instance_network_interface',
+      data: data
+    });
+  },
+  getOriginalMeasureId: function(resourceId) {
+    return fetch.get({
+      url: '/proxy/gnocchi/v1/resource/generic/' + resourceId
+    });
+  },
+  getPorts: function(forced) {
+    return storage.getList(['port'], forced).then(function(data) {
+      return data.port;
+    });
+  },
+  getOriginalPort: function(resourceId) {
+    let list = [];
+    list.push(this.getPorts());
+    list.push(this.getOriginalMeasureId(resourceId));
+
+    return RSVP.all(list);
   },
   createAlarm: function(data) {
     return fetch.post({
