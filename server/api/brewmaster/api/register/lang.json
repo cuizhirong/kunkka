@@ -27,7 +27,7 @@
     "changeEmail": "更换邮箱",
     "changeEmailSuccess": "更换邮箱成功",
     "registerSuccess": "注册成功",
-    "VerificationCode": "校验码是 ",
+    "VerificationCode": "验证码是 ",
     "clickHereToEnableYourAccount": "点击此处以激活您的账户",
     "LinkFailedCopyTheHref": "如果跳转失败，复制下面的链接到浏览器地址栏中并打开：",
     "domainNotFound": "domain找不到",
