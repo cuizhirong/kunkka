@@ -187,21 +187,23 @@ Application.prototype = {
       req.body.stack = applyDetail;
       let serverName;
       co(function* () {
-        let instanceResource, volumeResource;
-        applyDetail.create.forEach(resource => {
-          if (resource._type === 'Instance') {
-            instanceResource = resource;
-          } else if (resource._type === 'Volume') {
-            volumeResource = resource;
-          }
-        });
-        if (instanceResource && !(instanceResource.name)) {
-          let serverInfo = yield [serverNameDao.getNewServerName(), tusk.getSettingsByApp('approval')];
-          let prefix;
-          serverInfo[1].some(setting => setting.name === 'server_name_prefix' && (prefix = setting.value));
-          instanceResource.name = serverName = `${prefix}-${serverInfo[0].id}`;
-          if (volumeResource && !(volumeResource.name)) {
-            volumeResource.name = serverName;
+        if(applyDetail.create && applyDetail.create.length){
+          let instanceResource, volumeResource;
+          applyDetail.create.forEach(resource => {
+            if (resource._type === 'Instance') {
+              instanceResource = resource;
+            } else if (resource._type === 'Volume') {
+              volumeResource = resource;
+            }
+          });
+          if (instanceResource && !(instanceResource.name)) {
+            let serverInfo = yield [serverNameDao.getNewServerName(), tusk.getSettingsByApp('approval')];
+            let prefix;
+            serverInfo[1].some(setting => setting.name === 'server_name_prefix' && (prefix = setting.value));
+            instanceResource.name = serverName = `${prefix}-${serverInfo[0].id}`;
+            if (volumeResource && !(volumeResource.name)) {
+              volumeResource.name = serverName;
+            }
           }
         }
 
