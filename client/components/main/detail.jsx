@@ -24,9 +24,16 @@ class Detail extends React.Component {
   componentWillReceiveProps(nextProps, nextState) {}
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.visible && (Object.keys(nextState.contents).length === 0)) {
-      return false;
+    if (nextState.visible) {
+      if (!nextState.loading && (Object.keys(nextState.contents).length === 0)) {
+        return false;
+      }
+    } else {
+      if (!this.state.visible) {
+        return false;
+      }
     }
+
     return true;
   }
 
