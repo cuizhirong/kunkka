@@ -400,6 +400,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.ip + __.address,
+      type: 'copy',
       content: item.floating_ip_address
     }, {
       title: __.associate_gl + __.resource,

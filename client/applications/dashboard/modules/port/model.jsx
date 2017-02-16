@@ -405,7 +405,7 @@ class Model extends React.Component {
       content:
         <div>{
           item.fixed_ips.map((ritem, i) =>
-            <span key={i}>{ritem.ip_address}</span>)
+            <span key={i}>{ritem.ip_address + (i === item.fixed_ips.length - 1 ? '' : ' / ')}</span>)
         }</div>
     }, {
       title: 'MAC' + __.address,
