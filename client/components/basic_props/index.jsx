@@ -45,7 +45,7 @@ class BasicProps extends React.Component {
   getItemContent(item, rawItem) {
     var copyId;
     if(item.title.toLowerCase() === 'id') {
-      copyId = item.content;
+      copyId = String(item.content);
       return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
     }
     switch(item.type) {
@@ -54,7 +54,7 @@ class BasicProps extends React.Component {
       case 'time':
         return getTime(item.content);
       case 'copy':
-        copyId = item.content;
+        copyId = String(item.content);
         return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
       default:
         return item.content;
