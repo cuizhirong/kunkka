@@ -301,6 +301,7 @@ class Model extends React.Component {
   getBasicPropsItems(item) {
     var items = [{
       title: __.floating_ip + __.address,
+      type: 'copy',
       content: item.floating_ip_address
     }, {
       title: __.id,
@@ -331,6 +332,7 @@ class Model extends React.Component {
       content: getStatusIcon(item.status)
     }, {
       title: __.project + __.id,
+      type: 'copy',
       content: item.tenant_id
     }];
 

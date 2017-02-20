@@ -713,6 +713,7 @@ class Model extends React.Component {
       content: item.description
     }, {
       title: __.domain,
+      type: 'copy',
       content: item.domain_id
     }];
 

@@ -719,9 +719,11 @@ class Model extends React.Component {
       content: item._floatingIP.length ? item._floatingIP.join(', ') : '-'
     }, {
       title: __.user + __.id,
+      type: 'copy',
       content: item.user_id
     }, {
       title: __.project,
+      type: 'copy',
       content: item.tenant_id
     }, {
       title: __.status,

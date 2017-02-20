@@ -474,9 +474,11 @@ class Model extends React.Component {
       content: volume.volume_type === 'sata' ? __.performance_type : __.capacity_type
     }, {
       title: __.project + __.id,
+      type: 'copy',
       content: item['os-extended-snapshot-attributes:project_id']
     }, {
       title: __.user + __.id,
+      type: 'copy',
       content: volume.user_id
     }, {
       title: __.status,

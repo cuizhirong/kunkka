@@ -529,9 +529,11 @@ class Model extends React.Component {
       content: utils.getVolumeType(item)
     }, {
       title: __.project + __.id,
+      type: 'copy',
       content: item['os-vol-tenant-attr:tenant_id']
     }, {
       title: __.user + __.id,
+      type: 'copy',
       content: item.user_id
     }, {
       title: __.attributes,

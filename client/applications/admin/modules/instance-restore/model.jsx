@@ -413,9 +413,11 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.user + __.id,
+      type: 'copy',
       content: item.user_id
     }, {
       title: __.project + __.id,
+      type: 'copy',
       content: item.tenant_id
     }, {
       title: __.deleted + __.time,
