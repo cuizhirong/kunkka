@@ -32,10 +32,21 @@ class Model extends React.Component {
 
   constructor(props) {
     super(props);
-    var enableIpsec = HALO.settings.enable_ipsec;
-    if (!enableIpsec) {
-      let detail = config.table.detail.tabs;
-      delete detail[1];
+
+    let tabs = config.table.detail.tabs;
+    let enableIpsec = HALO.settings.enable_ipsec;
+    let enablePortFrwd = HALO.settings.enable_router_portforwarding;
+    if (enablePortFrwd) {
+      tabs.push({
+        name: ['port_forwarding'],
+        key: 'port_forwarding'
+      });
+    }
+    if (enableIpsec) {
+      tabs.push({
+        name: ['ipsec', 'tunnel'],
+        key: 'ipsec'
+      });
     }
 
     this.state = {
