@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 var React = require('react');
-var Main = require('client/components/main_paged/index');
+var Main = require('client/components/main/index');
 
 //detail component
 var BasicProps = require('client/components/basic_props/index');
