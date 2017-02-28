@@ -1,0 +1,12 @@
+{
+  "title": [],
+  "fields": [{
+    "type": "text",
+    "field": "comfirm_enable_alarm",
+    "info": ""
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": false
+  }
+}

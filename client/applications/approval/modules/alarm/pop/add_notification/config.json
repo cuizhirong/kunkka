@@ -1,0 +1,18 @@
+{
+  "title": ["add", "alarm_notification"],
+  "fields": [{
+    "type": "select",
+    "field": "trigger"
+  }, {
+    "type": "select",
+    "field": "notification_list",
+    "data": [],
+    "empty_text": {
+      "info": "no_notification_list"
+    }
+  }],
+  "btn": {
+    "value": "add_",
+    "disabled": false
+  }
+}

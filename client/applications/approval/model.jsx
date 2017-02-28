@@ -31,7 +31,8 @@ class Model extends React.Component {
     var approval = HALO.configs.approval,
       enableApply = approval.showApply,
       showMyApply = approval.showMyApplication,
-      showMgmtApply = approval.showManageApplication;
+      showMgmtApply = approval.showManageApplication,
+      showAlarm = HALO.settings.enable_alarm;
 
     if (pathList.length <= 1) {
       if(enableApply) {
@@ -42,7 +43,7 @@ class Model extends React.Component {
     } else {
       if(!enableApply) {
         //admin user won't see dashboard regular modules in approval
-        ['compute', 'network', 'storage'].forEach(title => {
+        ['compute', 'network', 'storage', 'monitor'].forEach(title => {
           var modules = configs.modules;
           modules.some(obj => {
             if(obj.title === title) {
@@ -77,6 +78,14 @@ class Model extends React.Component {
             pathList[1] = configs.default_module;
           }
         });
+      }
+
+      if (!showAlarm) {
+        if(enableApply) {
+          pathList[1] = configs.default_module;
+        } else {
+          pathList[1] = 'apply-approval';
+        }
       }
     }
     router.replaceState('/approval/' + pathList.slice(1).join('/'), null, null, true);
@@ -137,6 +146,8 @@ class Model extends React.Component {
         return 'applications';
       case 'image-snapshot':
         return 'snapshot';
+      case 'alarm':
+        return 'monitor';
       default:
         return name;
     }
@@ -152,7 +163,8 @@ class Model extends React.Component {
     var approval = HALO.configs.approval,
       enableApply = approval.showApply,
       showMyApply = approval.showMyApplication,
-      showMgmtApply = approval.showManageApplication;
+      showMgmtApply = approval.showManageApplication,
+      showAlarm = HALO.settings.enable_alarm;
 
     props.menus.forEach((m) => {
       if(!enableApply) {
@@ -160,6 +172,7 @@ class Model extends React.Component {
           case 'compute':
           case 'network':
           case 'storage':
+          case 'monitor':
             return;
           default:
             break;
@@ -181,6 +194,9 @@ class Model extends React.Component {
           case 'apply-approval':
           case 'approved':
             if(!showMgmtApply) { return; }
+            break;
+          case 'alarm':
+            if (!showAlarm) { return; }
             break;
           default:
             break;
