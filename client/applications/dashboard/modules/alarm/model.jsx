@@ -272,6 +272,7 @@ class Model extends Main {
                 data={[]}
                 granularity={granularity}
                 tabItems={tabItems}
+                status={404}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,

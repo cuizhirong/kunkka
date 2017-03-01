@@ -642,6 +642,7 @@ class Model extends React.Component {
                 metricType={metricType}
                 resourceType={'instance'}
                 data={[]}
+                status={404}
                 granularity={granularity}
                 tabItems={tabItems}
                 clickTabs={this.clickTabs.bind(this)}>
@@ -797,6 +798,7 @@ class Model extends React.Component {
             tabItems={tabItems}
             granularity={granularity}
             loading={true}
+            status={404}
             clickTabs={this.clickTabs.bind(this)}>
             <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
           </LineChart>
