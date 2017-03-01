@@ -9,6 +9,7 @@ var request = require('../../request');
 var initialState = require('./state');
 var createNotification = require('../../../notification/pop/modal/index');
 var getErrorMessage = require('../../../../utils/error_message');
+var {getTime} = require('../../../../utils/utils');
 
 let title;
 let measureData = [];
@@ -159,11 +160,35 @@ class ModalBase extends React.Component {
   }
 
   getMeasureData(resourceId, metricType, measureGranularity) {
-    request.getReousrceMeasures(resourceId, metricType, measureGranularity).then((data) => {
+    let startTime;
+    switch(measureGranularity) {
+      case 300:
+        startTime = getTime('hour');
+        break;
+      case 900:
+        startTime = getTime('day');
+        break;
+      case 3600:
+        startTime = getTime('week');
+        break;
+      case 21600:
+        startTime = getTime('month');
+        break;
+      default:
+        break;
+    }
+
+    request.getResourceMeasures(resourceId, metricType, measureGranularity, startTime)
+    .then((data) => {
       measureData = data;
 
       this.refs.select_metric.updateGraph(data, measureGranularity);
       this.refs.alarm_config.updateGraph(data, measureGranularity, this.state.threshold);
+    }).catch((err) => {
+      let noData = [];
+
+      this.refs.select_metric.updateGraph(noData, measureGranularity);
+      this.refs.alarm_config.updateGraph(noData, measureGranularity, this.state.threshold);
     });
   }
 

@@ -240,6 +240,7 @@ class Model extends Main {
             }} />);
           update(contents);
           request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((res) => {
+
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -247,6 +248,28 @@ class Model extends Main {
                 metricType={[rule.metric]}
                 resourceType={rule.resource_type}
                 data={[res]}
+                granularity={granularity}
+                tabItems={tabItems}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('monitor', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} />
+            );
+
+            update(contents);
+
+          }).catch((err) => {
+
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                metricType={[rule.metric]}
+                resourceType={rule.resource_type}
+                data={[]}
                 granularity={granularity}
                 tabItems={tabItems}
                 clickTabs={(e, tab, item) => {

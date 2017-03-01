@@ -247,7 +247,8 @@ class Modal extends React.Component {
             {__.alarm_preview}
           </div>
           <div className="alarm-config-content">
-            <div id="alarm_config_chart" className="chart-box" />
+            {/*<div id="alarm_config_chart_no_data" className="no-data-msg" />*/}
+            <div id="alarm_config_chart" />
           </div>
         </div>
       </div>

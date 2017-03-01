@@ -8,6 +8,7 @@ var constant = require('./constant');
 var helper = require('./helper');
 
 let lineChart;
+let lineChartMsg;
 
 class Modal extends React.Component {
 
@@ -25,16 +26,44 @@ class Modal extends React.Component {
 
   componentDidMount() {
     lineChart = Chart.init(document.getElementById('select_metric_chart'));
+    lineChartMsg = document.getElementById('select_metric_chart_no_data');
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.state.loadingChart) {
+      this.hideChartMsg();
       this.loadingChart();
     }
   }
 
   updateGraph(data, granularity) {
-    this.updateChartData(data, granularity);
+    if (data.length > 0) {
+      this.hideChartMsg();
+
+      this.updateChartData(data, granularity);
+    } else {
+      this.showChartMsg();
+      this.updateChartMsg(__.there_is_no + __.data);
+
+      this.props.onChangeState('loadingChart', false);
+      lineChart.hideLoading();
+    }
+  }
+
+  showChartMsg() {
+    if (lineChartMsg.classList.contains('hide')) {
+      lineChartMsg.classList.remove('hide');
+    }
+  }
+
+  hideChartMsg() {
+    if (!lineChartMsg.classList.contains('hide')) {
+      lineChartMsg.classList.add('hide');
+    }
+  }
+
+  updateChartMsg(msg) {
+    lineChartMsg.innerHTML = msg;
   }
 
   updateChartData(data, granularity) {
@@ -213,7 +242,10 @@ class Modal extends React.Component {
             <Button btnKey={constant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_MONTH} />
           </ButtonGroup>
         </div>
-        <div id="select_metric_chart" className="chart-box" />
+        <div className="chart-box">
+          <div id="select_metric_chart_no_data" className="no-data-msg" />
+          <div id="select_metric_chart" />
+        </div>
       </div>
     );
   }
