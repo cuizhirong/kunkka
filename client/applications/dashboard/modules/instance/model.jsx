@@ -634,6 +634,21 @@ class Model extends React.Component {
               </LineChart>
             );
             updateDetailMonitor(contents);
+          }).catch(error => {
+            contents[asyncMonitorTabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                metricType={metricType}
+                resourceType={'instance'}
+                data={[]}
+                granularity={granularity}
+                tabItems={tabItems}
+                clickTabs={this.clickTabs.bind(this)}>
+                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
+              </LineChart>
+            );
+            updateDetailMonitor(contents, false);
           });
         }
         break;
@@ -770,6 +785,27 @@ class Model extends React.Component {
         contents: contents,
         loading: false
       });
+    }).catch(error => {
+      if (error.status === 404) {
+        contents[monitor] = (
+          <LineChart
+            __={__}
+            item={item}
+            metricType={metricType}
+            resourceType={'instance'}
+            data={[]}
+            tabItems={tabItems}
+            granularity={granularity}
+            loading={true}
+            clickTabs={this.clickTabs.bind(this)}>
+            <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
+          </LineChart>
+        );
+        detail.setState({
+          contents: contents,
+          loading: false
+        });
+      }
     });
   }
 
