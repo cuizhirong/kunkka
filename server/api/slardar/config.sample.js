@@ -36,6 +36,12 @@ module.exports = {
       type: 'boolean',
       description: '开启floatingip带宽'
     }, {
+      app: 'global',
+      name: 'enable_alarm',
+      value: 'false',
+      type: 'boolean',
+      description: '监控报警开关'
+    }, {
       app: 'dashboard',
       name: 'total_gigabytes',
       value: 5000,
@@ -77,12 +83,6 @@ module.exports = {
       value: 'false',
       type: 'boolean',
       description: 'dashboard页面-开启 ipsec'
-    }, {
-      app: 'dashboard',
-      name: 'enable_dashboard_alarm',
-      value: 'false',
-      type: 'boolean',
-      description: '监控报警开关'
     }, {
       app: 'dashboard',
       name: 'enable_router_portforwarding',
