@@ -21,7 +21,8 @@ class ChartLine extends React.Component {
       title: [],
       loading: props.loading,
       portData: props.portData,
-      start: props.start
+      start: props.start,
+      status: props.status
     };
     count ++;
   }
@@ -51,7 +52,8 @@ class ChartLine extends React.Component {
       metricType: nextProps.metricType,
       loading: nextProps.loading,
       portData: nextProps.portData,
-      start: nextProps.start
+      start: nextProps.start,
+      status: nextProps.status
     });
     let title = this.state.metricType ? this.state.metricType.map(type => {
       return utils.getTitle(this.state.resourceType, type, this.props.__);
@@ -66,6 +68,7 @@ class ChartLine extends React.Component {
       type: 'obj',
       ele: 'line-chart' + count
     };
+
     if (nextProps.data.length === 0) {
       this.loadingChart(obj);
       this.props.portData ? this.props.portData.forEach((d, i) => {
@@ -275,7 +278,7 @@ class ChartLine extends React.Component {
                 <div id={'line-chart' + count + i} key={i} className="chart">
                 </div>
               );
-            }) : this.state.metricType && this.state.metricType.map((_d, i) => {
+            }) : this.state.metricType && this.state.status === 404 && this.state.metricType.map((_d, i) => {
               return (
                 <div id={'line-chart' + count + i} key={i} className="chart">
                   <label className="no-monitor-data">{this.props.__.no_monitor_data}</label>
@@ -290,7 +293,7 @@ class ChartLine extends React.Component {
                   <div id={'port1' + i} key={'1' + i} className="chart"></div>
                 </div>
               );
-            }) : this.state.portMetricType && this.state.portMetricType.map((_d, i) => {
+            }) : this.state.portMetricType && this.state.status === 404 && this.state.portMetricType.map((_d, i) => {
               return (
                 <div key={i}>
                   <div className="port-name">{this.props.__.port + ': ' + this.state.portData[i].name}</div>
