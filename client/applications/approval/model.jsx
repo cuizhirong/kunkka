@@ -57,8 +57,8 @@ class Model extends React.Component {
           });
         });
 
-        //admin user won't see instanc-create module in approval
-        if(pathList[1] === 'overview' || pathList[1] === 'instanc-create') {
+        //admin user won't see instance-create module in approval
+        if(pathList[1] === 'overview' || pathList[1] === 'instance-create') {
           pathList[1] = 'apply-approval';
         }
       }
@@ -194,11 +194,14 @@ class Model extends React.Component {
           selected: n === state.selectedMenu ? true : false
         });
       });
-      menus.push({
-        title: __[m.title],
-        key: m.title || 'instance',
-        submenu: submenu
-      });
+
+      if(submenu.length > 0) {
+        menus.push({
+          title: __[m.title],
+          key: m.title || 'overview',
+          submenu: submenu
+        });
+      }
     });
 
     return (
