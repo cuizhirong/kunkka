@@ -73,7 +73,7 @@ class Model extends React.Component {
           menuKeys.push(item);
         });
       } else {
-        if (HALO.settings.enable_dashboard_alarm) {
+        if (HALO.settings.enable_alarm) {
           ele.items.forEach((item) => {
             menuKeys.push(item);
           });
@@ -162,7 +162,7 @@ class Model extends React.Component {
       });
     });
 
-    if (!HALO.settings.enable_dashboard_alarm) {
+    if (!HALO.settings.enable_alarm) {
       let index = -1;
       menus.some((ele, i) => ele.key === 'monitor' ? (index = i, true) : false);
 

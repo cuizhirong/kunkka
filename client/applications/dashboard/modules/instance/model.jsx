@@ -51,7 +51,7 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    var enableAlarm = HALO.settings.enable_dashboard_alarm;
+    var enableAlarm = HALO.settings.enable_alarm;
     if (!enableAlarm) {
       let detail = config.table.detail.tabs;
       delete detail[3];
