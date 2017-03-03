@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
-var resourceQuota = require('./quota_pop');
-var getErrorMessage = require('../../../../utils/error_message');
+let commonModal = require('client/components/modal_common/index');
+let config = require('./config.json');
+let __ = require('locale/client/admin.lang.json');
+let request = require('../../request');
+let resourceQuota = require('./quota_pop');
+let getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -21,18 +21,29 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = refs.quota.state.overview;
+      let data = refs.quota.state.overview;
       function getTotalVolumes() {
-        var t = 0;
-        for(var o in data) {
+        let t = 0;
+        for(let o in data) {
           if(o.indexOf('volumes_') > -1) {
             t += data[o].total;
           }
         }
         return t;
       }
+      function getTotalGigabytes() {
+        let t = 0;
+        for(let o in data) {
+          if(o.indexOf('gigabytes_') > -1) {
+            t += data[o].total;
+          }
+        }
+        return t;
+      }
       if(data.volumes.total < getTotalVolumes()) {
-        cb(false, __.small_than_total);
+        cb(false, __.volumes_small_than_total);
+      } else if(data.gigabytes.total < getTotalGigabytes()) {
+        cb(false, __.gigabytes_small_than_total);
       } else {
         request.modifyQuota(data, obj.rawItem.id).then((res) => {
           callback && callback();

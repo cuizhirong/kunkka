@@ -79,6 +79,10 @@ class ResourceQuota extends React.Component {
         title: __.all_volumes,
         key: 'volumes',
         link: 'volumes'
+      }, {
+        title: __.all_gigabytes,
+        key: 'gigabytes',
+        link: 'gigabytes'
       }]
     }];
 

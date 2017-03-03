@@ -1,6 +1,7 @@
 {
   "en": {
     "all_volumes": "All Volumes",
+    "all_gigabytes": "All Volumes Gigabytes",
     "add": "Add ",
     "cpu": "CPU",
     "compute": "Compute",
@@ -22,11 +23,13 @@
     "security_group": "Security Group",
     "sata": "SATA ",
     "ssd": "SSD ",
-    "small_than_total": "Total volumes cannot be smaller than the sum of quota of each type",
+    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type",
+    "gigabytes_small_than_total": "Total gigabytes cannot be smaller than the sum of quota of each type",
     "unit_gb": "(GB)"
   },
   "zh-CN": {
     "all_volumes": "云硬盘总数",
+    "all_gigabytes": "云硬盘容量总数",
     "add": "添加",
     "cpu": "CPU",
     "compute": "计算",
@@ -48,7 +51,8 @@
     "security_group": "安全组",
     "sata": "容量型",
     "ssd": "性能型",
-    "small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和",
+    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和",
+    "gigabytes_small_than_total": "云硬盘容量总数不能小于所有类型云硬盘容量额度之和",
     "unit_gb": "(GB)"
   }
 }
