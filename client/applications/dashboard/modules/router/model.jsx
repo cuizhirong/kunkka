@@ -340,6 +340,17 @@ class Model extends React.Component {
               contents: contents,
               loading: false
             });
+          }).catch((err) => {
+            contents[tabKey] = (
+              <div className="no-data-desc">
+                <p>{__.view_is_unavailable}</p>
+              </div>
+            );
+
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
           });
         }
         break;
