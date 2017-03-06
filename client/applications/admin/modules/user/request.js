@@ -19,7 +19,7 @@ module.exports = {
     return this.getDomains().then((domains) => {
       var currentDomain = HALO.configs.domain.toLowerCase();
       var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '&domain_id=default';
 
       var url = '/api/v1/users?limit=' + pageLimit + urlParam;
       return fetch.get({
