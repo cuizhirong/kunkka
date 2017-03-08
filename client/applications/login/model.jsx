@@ -139,7 +139,7 @@ class Model extends React.Component {
           <input type="password" ref="password" name="password" className={state.passwordEmptyError ? 'error' : ''} placeholder={__.password_placeholder} autoComplete="off" />
           {
 
-            HALO.settings.enable_domain ? <select ref="domains" value={state.domains} onChange={this.onChange.bind(this, 'domains', '')}>
+            HALO.settings.enable_domain ? <select ref="domains" defaultValue={HALO.settings.default_domain} onChange={this.onChange.bind(this, 'domains', '')}>
               {
                 HALO.settings.domains.map((domain) => {
                   return <option key={domain} value={domain}>{domain}</option>;
