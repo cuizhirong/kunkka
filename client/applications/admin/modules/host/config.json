@@ -33,10 +33,21 @@
     "icon": "refresh",
     "disabled": true
   }],
-  "search": {
-    "placeholder": ["pls_enter", "host", "id"],
-    "width": 200
-  },
+  "filter": [{
+    "group_key": "host",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "host", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "host", "name"]
+    }]
+  }],
   "table": {
     "checkbox": true,
     "dataKey": "id",

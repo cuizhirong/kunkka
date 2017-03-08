@@ -26,6 +26,15 @@ function migrateInactivateServer(id, hostID) {
   });
 }
 
+function getAllHypervisors() {
+  let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail';
+  return fetch.get({
+    url: url
+  }).then((res) => {
+    return res;
+  });
+}
+
 module.exports = {
   getHypervisorList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
@@ -56,6 +65,27 @@ module.exports = {
     }).then((res) => {
       res._url = nextUrl;
       return res;
+    });
+  },
+  getListByName: function(name) {
+
+    return getAllHypervisors().then((res) => {
+      var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + name + '/search';
+      return fetch.get({
+        url: url
+      }).then((r) => {
+        let filterlist = res.hypervisors.filter((h) => {
+          return r.hypervisors.some((i) => {
+            return i.id === h.id;
+          });
+        });
+        res.hypervisors = filterlist;
+        res._url = url;
+        return res;
+      }).catch((result) => {
+        result._url = url;
+        return result;
+      });
     });
   },
   disableHost: function(data) {

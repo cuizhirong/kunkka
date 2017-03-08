@@ -249,8 +249,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'search':
-        this.onClickSearch(actionType, refs, data);
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -346,12 +346,29 @@ class Model extends React.Component {
     }
   }
 
-  onClickSearch(actionType, refs, data) {
-    if (actionType === 'click') {
+  //request: get filtered list
+  getFilterList(name) {
+    this.clearState();
+
+    request.getListByName(name).then((res) => {
+      var table = this.processTableData(this.state.config.table, res);
+      this.stores.hosts = res.hypervisors;
+      this.updateTableData(table, res._url);
+    });
+  }
+
+  //request: filter request
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
       this.loadingTable();
 
-      if (data.text) {
-        this.getHypervisorById(data.text);
+      var hostID = data.host ? data.host.id : null,
+        allTenant = data.all_tenant;
+
+      if (hostID) {
+        this.getHypervisorById(hostID);
+      } else if (allTenant) {
+        this.getFilterList(allTenant.name);
       } else {
         this.getHypervisorList();
       }
