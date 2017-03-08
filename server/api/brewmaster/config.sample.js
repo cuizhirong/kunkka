@@ -41,6 +41,12 @@ module.exports = {
       type: 'boolean',
       description: '登录界面-支持多 domain 功能'
     }, {
+      app: 'auth',
+      name: 'default_domain',
+      value: 'Default',
+      type: 'string',
+      description: '登录界面-选中默认 domain 功能'
+    }, {
       app: 'global',
       name: 'enable_register',
       value: 'false',
