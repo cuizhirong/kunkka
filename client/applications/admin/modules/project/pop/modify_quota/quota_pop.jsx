@@ -123,9 +123,7 @@ class QuotaPop extends React.Component {
       this.state.itemName[key].total = total;
     } else {
       if (key === 'ram') {
-        if (newNumber > 0) {
-          newNumber *= 1024;
-        }
+        newNumber *= 1024;
       }
       this.state.itemName[key].total = Number(total) + newNumber;
     }
