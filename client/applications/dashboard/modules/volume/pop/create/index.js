@@ -185,7 +185,7 @@ function pop(obj, parent, callback) {
           break;
         case 'type':
           if(ENABLE_CHARGE) {
-            request.getVolumePrice(volType + '.volume.size', state.value).then((res) => {
+            request.getVolumePrice(volType + '.volume.size', refs.capacity_size.state.value).then((res) => {
               refs.charge.setState({
                 value: res.unit_price
               });
