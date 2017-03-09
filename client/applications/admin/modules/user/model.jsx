@@ -22,7 +22,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
-var router = require('client/utils/router');
+// var router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -114,10 +114,10 @@ class Model extends React.Component {
       }
       this.setPagination(table, res);
       this.initializeFilter(filter);
-      this.updateTableData(table, res._url, true, () => {
+      this.updateTableData(table, res._url/*, true, () => {
         var pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-      });
+      }*/);
     }).catch((res) => {
       table.data = [];
       table.pagination = null;
@@ -168,7 +168,7 @@ class Model extends React.Component {
         table.data = [];
       }
       this.setPagination(table, res);
-      this.updateTableData(table, res._url, refreshDetail);
+      this.updateTableData(table, res._url/*, refreshDetail*/);
     }).catch((res) => {
       table.data = [];
       table.pagination = null;
@@ -208,7 +208,7 @@ class Model extends React.Component {
     }
   }
 
-  updateTableData(table, currentUrl, refreshDetail, callback) {
+  updateTableData(table, currentUrl/*, refreshDetail, callback*/) {
     var newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -221,10 +221,10 @@ class Model extends React.Component {
 
         var detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
-        if (detail && refreshDetail && params.length > 2) {
+        if (detail && /*refreshDetail &&*/ params.length > 2) {
           detail.refresh();
         }
-        callback && callback();
+        // callback && callback();
       }
     });
   }
