@@ -63,20 +63,23 @@ Host.prototype = {
       } else {
         let __ = req.i18n.__.bind(req.i18n);
         let fields = [{
-          label:__('api.nova.server.name'),
-          value:'hypervisor_hostname'
+          label: __('api.nova.server.name'),
+          value: 'hypervisor_hostname'
         }, {
           label: 'IP',
           value: 'host_ip'
         }, {
           label: 'vCPU',
-          value: row => row.vcpus_used + '/' + row.vcpus
+          value: row => row.vcpus_used + '/' + row.vcpus,
+          name: 'vcpus'
         }, {
           label: __('api.nova.memory'),
-          value: row => (row.memory_mb_used / 1024).toFixed(2) + '/' + (row.memory_mb / 1024).toFixed(2)
+          value: row => (row.memory_mb_used / 1024).toFixed(2) + '/' + (row.memory_mb / 1024).toFixed(2),
+          name: 'memory'
         }, {
           label: __('api.nova.disk'),
-          value: row => row.local_gb_used + '/' + row.local_gb
+          value: row => row.local_gb_used + '/' + row.local_gb,
+          name: 'disk'
         }, {
           label: __('api.nova.vms'),
           value: 'running_vms'
@@ -90,6 +93,25 @@ Host.prototype = {
           label: 'State',
           value: 'state'
         }];
+        let customFields = req.query.fields ? req.query.fields.split(',').filter(f => f) : [];
+        let finalFields = [];
+        if (customFields.length) {
+          fields.forEach(field => {
+            if (customFields.indexOf(typeof field.value === 'string' ? field.value : field.name) > -1) {
+              finalFields.push({
+                label: __(field.label),
+                value: field.value
+              });
+            }
+          });
+        } else {
+          fields.forEach(field => {
+            finalFields.push({
+              label: __(field.label),
+              value: field.value
+            });
+          });
+        }
         res.setHeader('Content-Description', 'File Transfer');
         res.setHeader('Content-Type', 'application/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename=hosts.csv');
@@ -98,7 +120,7 @@ Host.prototype = {
         try {
           let output = csv({
             data: payload.hypervisors,
-            fields: fields
+            fields: finalFields
           });
           res.send(output);
         } catch (e) {
@@ -107,7 +129,7 @@ Host.prototype = {
       }
     });
   },
-  initRoutes: function() {
+  initRoutes: function () {
     return this.__initRoutes(() => {
       this.app.get('/api/v1/:projectId/os-hypervisors/detail', this.getHostList.bind(this));
       this.app.get('/api/v1/:projectId/os-hypervisors/csv', this.getHostCSV.bind(this));

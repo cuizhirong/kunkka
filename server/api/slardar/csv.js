@@ -1,203 +1,218 @@
 'use strict';
-
+const co = require('co');
+const request = require('superagent');
 const csv = require('json2csv');
 
-const objects = [
-  {
-    pathRegExp: /\/proxy\/csv\/cinder\/v2\/[a-z0-9]*\/snapshots\/detail/,
-    service: 'cinder',
-    name: 'snapshots',
-    fields: [
-      {
-        label: 'api.cinder.snapshot.name',
-        value: 'name'
-      }, {
-        label: 'api.cinder.snapshot.size',
-        value: 'size'
-      }, {
-        label: 'api.cinder.snapshot.project_id',
-        value: 'os-extended-snapshot-attributes:project_id'
-      }, {
-        label: 'api.cinder.snapshot.volume_id',
-        value: 'volume_id'
-      }, {
-        label: 'api.cinder.snapshot.status',
-        value: 'status'
-      }
-    ]
+const getQueryString = require('helpers/getQueryString.js');
+const csvElements = require('./csv.elements');
+const drivers = require('drivers');
+const extraRequests = {
+  project: (session) => {
+    return drivers.keystone.project.listProjectsAsync(
+      session.user.token,
+      session.endpoint.keystone[session.user.regionId]
+    );
   },
-  {
-    pathRegExp: /\/proxy\/csv\/cinder\/v2\/[a-z0-9]*\/volumes\/detail/,
-    service: 'cinder',
-    name: 'volumes',
-    fields: [
-      {
-        label: 'api.cinder.volume.name',
-        value: 'name'
-      },
-      {
-        label: 'api.cinder.volume.size',
-        value: 'size'
-      },
-      {
-        label: 'api.cinder.volume.type',
-        value: 'volume_type'
-      },
-      {
-        label: 'api.cinder.volume.projectID',
-        value: 'os-vol-tenant-attr:tenant_id'
-      },
-      {
-        label: 'api.cinder.volume.userID',
-        value: 'user_id'
-      },
-      {
-        label: 'api.cinder.volume.shared',
-        value: 'api.cinder.volume.multiattach'
-      },
-      {
-        label: 'api.cinder.volume.attribute',
-        value: 'metadata.attached_mode'
-      },
-      {
-        label: 'api.cinder.volume.status',
-        value: 'status'
-      }
-    ]
+  user: (session) => {
+    return drivers.keystone.user.listUsersAsync(
+      session.user.token,
+      session.endpoint.keystone[session.user.regionId]
+    );
   },
-  {
-    pathRegExp: /\/proxy\/csv\/nova\/v2.1\/[a-z0-9]*\/servers\/detail/,
-    service: 'nova',
-    name: 'servers',
-    fields: [
-      {
-        label: 'api.nova.server.name',
-        value: 'name'
-      },
-      {
-        label: 'api.nova.server.host',
-        value: 'OS-EXT-SRV-ATTR:host'
-      },
-      {
-        label: 'api.nova.server.flavor',
-        value: 'flavor.id'
-      },
-      {
-        label: 'api.nova.server.image',
-        value: 'image.id'
-      },
-      {
-        label: 'api.nova.server.floatingIp',
-        value: function (row) {
-          let ips = [];
-          for (let key in row.addresses) {
-            ips = ips.concat(row.addresses[key]);
-          }
-          let floatingIp;
-          ips.some(ip=> {
-            return ip['OS-EXT-IPS:type'] === 'floating' && (floatingIp = ip.addr);
-          });
-          return floatingIp;
-        }
-      },
-      {
-        label: 'api.nova.server.fixedIp',
-        value: function (row) {
+  flavor: (session) => {
+    return drivers.nova.flavor.listFlavorsAsync(
+      session.user.projectId,
+      session.user.token,
+      session.endpoint.nova[session.user.regionId]
+    );
+  },
+  image: (session) => {
+    return drivers.glance.image.listImagesAsync(
+      session.user.token,
+      session.endpoint.glance[session.user.regionId]
+    );
+  },
+  volume: (session) => {
+    return drivers.cinder.volume.listVolumesAsync(
+      session.user.projectId,
+      session.user.token,
+      session.endpoint.cinder[session.user.regionId],
+      {all_tenants: 1}
+    );
+  }
+};
 
-          let ips = [];
-          for (let key in row.addresses) {
-            ips = ips.concat(row.addresses[key]);
+module.exports.fields = (req, res, next) => {
+  let fields, path = req.path.slice(17);
+  const __ = req.i18n.__.bind(req.i18n);
+  csvElements.some(o => path === o.name && (fields = o.fields));
+  if (!fields) {
+    res.status(404).send({error: 'Not Found'});
+  } else {
+    res.send({
+      fields: fields.map(f => {
+        return typeof f.value === 'string'
+          ? {label: __(f.label), name: f.value}
+          : {label: __(f.label), name: f.name};
+      })
+    });
+  }
+};
+
+/**
+ * all_tenants=1
+ * tenant_id=
+ * start_time=
+ * end_time=
+ * user_id=
+ * fields=name,size,value
+ * filename
+ */
+module.exports.data = (req, res, next) => {
+  co(function *() {
+    const __ = req.i18n.__.bind(req.i18n);
+    const path = req.path.slice(10);
+    const remote = req.session.endpoint;
+    const region = req.session.user.regionId;
+    const service = req.path.split('/')[3];
+    const target = remote[service][region] + '/' + req.path.split('/').slice(4).join('/');
+    const query = req.query;
+    let queryFields = query.fields;
+    delete query.fields;
+
+    const requests = {
+      major: request.get(target + getQueryString(req.query)).set('X-Auth-Token', req.session.user.token)
+    };
+    //custom fields
+    queryFields = queryFields ? queryFields.split(',').filter(f => f) : [];
+    //final fields
+    const fields = [];
+
+    let obj;
+    csvElements.some(o => ((o.pathRegExp.test(path)) && (obj = o)));
+    if (!obj) {
+      return Promise.reject({status: 404, message: 'Not Found'});
+    }
+    if (queryFields.length) {
+      obj.fields.forEach(field => {
+        if (queryFields.indexOf(typeof field.value === 'string' ? field.value : field.name) > -1) {
+          fields.push({
+            label: __(field.label),
+            value: field.value
+          });
+          if (field.extra) {
+            field.extra.forEach(e => {
+              fields.push({
+                label: __(e.label),
+                value: e.value
+              });
+              if (!requests[e.name]) {
+                requests[e.name] = {
+                  idKey: field.value,
+                  data: extraRequests[e.name](req.session)
+                };
+              }
+            });
           }
-          let fixedIp = [];
-          ips.forEach(ip=> {
-            if (ip['OS-EXT-IPS:type'] === 'fixed') {
-              fixedIp.push(ip.addr);
+        }
+      });
+    } else {
+      obj.fields.forEach(field => {
+        fields.push({
+          label: __(field.label),
+          value: field.value
+        });
+        if (field.extra) {
+          field.extra.forEach(e => {
+            fields.push({
+              label: __(e.label),
+              value: e.value
+            });
+            if (!requests[e.name]) {
+              requests[e.name] = {
+                idKey: field.value,
+                data: extraRequests[e.name](req.session)
+              };
             }
           });
-          return fixedIp.join(';');
         }
-      },
-      {
-        label: 'api.nova.server.userID',
-        value: 'user_id'
-      },
-      {
-        label: 'api.nova.server.projectID',
-        value: 'tenant_id'
-      },
-      {
-        label: 'api.nova.server.status',
-        value: 'status'
-      }
-    ]
-  },
-  {
-    pathRegExp: /\/proxy\/csv\/glance\/v2\/images/,
-    service: 'glance',
-    name: 'images',
-    fields: [
-      {
-        label: 'api.glance.image.name',
-        value: 'name'
-      }, {
-        label: 'api.glance.image.type',
-        value: 'image_type'
-      }, {
-        label: 'api.glance.image.size',
-        value: row=> (row.size / Math.pow(2, 30)).toFixed(2)
-      }, {
-        label: 'api.glance.image.status',
-        value: 'status'
-      }
-    ]
-  },
-  {
-    pathRegExp: /\/proxy\/csv\/neutron\/v2.0\/floatingips/,
-    service: 'neutron',
-    name: 'floatingips',
-    fields: [
-      {
-        label: 'api.neutron.floatingip.floating_ip_address',
-        value: 'floating_ip_address'
-      },
-      {
-        label: 'api.neutron.floatingip.tenant_id',
-        value: 'tenant_id'
-      },
-      {
-        label: 'api.neutron.floatingip.fixed_ip_address',
-        value: 'fixed_ip_address'
-      },
-      {
-        label: 'api.neutron.floatingip.status',
-        value: 'status'
-      }
-    ]
-  }
-];
+      });
+    }
 
+    const results = yield requests,
+      extraData = {},
+      extraKeys = Object.keys(results).filter(key => key !== 'major' && (extraData[key] = {}));
 
-module.exports = (req, res, next) => {
-  let obj = {};
-  let __ = req.i18n.__.bind(req.i18n);
-  objects.some(o=> ((o.pathRegExp.test(req.path)) && (obj = o)));
-  obj.fields.forEach(field=> {
-    field.label = __(field.label);
-  });
-
-  res.setHeader('Content-Description', 'File Transfer');
-  res.setHeader('Content-Type', 'application/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename=' + obj.name + '.csv');
-  res.setHeader('Expires', '0');
-  res.setHeader('Cache-Control', 'must-revalidate');
-
-  try {
-    let output = csv({
-      data: res.payload[obj.name],
-      fields: obj.fields
+    extraKeys.forEach(key => {
+      results[key].data.body[key + 's'].forEach(d => {
+        extraData[key][d.id] = d;
+      });
     });
-    res.send(output);
-  } catch (e) {
-    next(e);
-  }
+
+    let majorData = results.major.body[obj.dataName || obj.name];
+    if (query.start_time || query.end_time || query.user_id) {
+      let start = query.start_time ? new Date(parseInt(query.start_time, 10)).getTime() : -Infinity;
+      let end = query.end_time ? new Date(parseInt(query.end_time, 10)).getTime() : Infinity;
+      majorData = majorData.filter(d => {
+        if (d.created_at || d.created) {
+          let time = new Date(d.created_at || d.created).getTime();
+          if (time < start || time > end) {
+            return false;
+          }
+        }
+        return !(query.user_id && d.user_id && query.user_id !== d.user_id);
+      });
+    }
+    if (extraKeys.length) {
+      majorData.forEach(d => {
+        if (extraData.project) {
+          try {
+            d.tenantName = extraData.project[d[results.project.idKey]].name;
+          } catch (e) {
+            d.tenantName = '';
+          }
+        }
+        if (extraData.user) {
+          try {
+            d.userName = extraData.user[d.user_id].name;
+          } catch (e) {
+            d.userName = '';
+          }
+        }
+        if (extraData.image) {
+          try {
+            d.imageName = extraData.image[d.image.id].name;
+          } catch (e) {
+            d.imageName = '';
+          }
+        }
+        if (extraData.volume) {
+
+          let volumes = d['os-extended-volumes:volumes_attached'];
+          let volumeNew = [];
+          d.volumeCount = volumes.length;
+          d.volumeSize = 0;
+          volumes.forEach(v => {
+            v = extraData.volume[v.id];
+            volumeNew.push(v);
+            d.volumeSize += v.size;
+          });
+          d.volumeSize += ' GB';
+          d['os-extended-volumes:volumes_attached'] = JSON.stringify(volumeNew);
+        }
+        if (extraData.flavor) {
+          let flavor = extraData.flavor[d.flavor.id];
+          d.flavorName = flavor.name;
+          d.flavorCPU = flavor.vcpus;
+          d.flavorRAM = (parseInt(flavor.ram, 10) / 1024).toFixed(2) + ' GB';
+        }
+      });
+    }
+    res.setHeader('Content-Description', 'File Transfer');
+    res.setHeader('Content-Type', 'application/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename=' + (query.filename || obj.name) + '.csv');
+    res.setHeader('Expires', '0');
+    res.setHeader('Cache-Control', 'must-revalidate');
+    res.send(csv({data: majorData, fields}));
+  }).catch(next);
 };

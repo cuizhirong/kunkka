@@ -52,23 +52,24 @@ module.exports = (app) => {
       return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
     }
   });
-
-  app.get('/proxy/csv/*', (req, res, next) => {
-    let remote = req.session.endpoint;
-    let region = req.session.user.regionId;
-    let service = req.path.split('/')[3];
-    let target = remote[service][region] + '/' + req.path.split('/').slice(4).join('/');
-    request.get(target + getQueryString(req.query))
-      .set('X-Auth-Token', req.session.user.token)
-      .end((err, payload) => {
-        if (err) {
-          next(err);
-        } else {
-          res.payload = payload.body;
-          next();
-        }
-      });
-  }, csv);
+  /**
+   * /proxy/csv-field/os-hypervisors
+   * /proxy/csv-field/floatingips
+   * /proxy/csv-field/images
+   * /proxy/csv-field/servers
+   * /proxy/csv-field/volumes
+   * /proxy/csv-field/snapshots
+   */
+  app.get('/proxy/csv-field/*', csv.fields);
+  /**
+   * /proxy/csv/cinder/v2/{}/snapshots/detail
+   * /proxy/csv/cinder/v2/{}/volumes/detail
+   * /proxy/csv/nova/v2.1/{}/servers/detail
+   * /proxy/csv/nova/v2.1/{}/os-hypervisors/detail
+   * /proxy/csv/neutron/v2.0/floatingips
+   * /proxy/csv/glance/v2/images
+   */
+  app.get('/proxy/csv/*', csv.data);
   app.all('/proxy/*', (req, res, next) => {
     // if (req.body) {
     //   if (req.body.forceDelete !== undefined) {
