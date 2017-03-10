@@ -83,6 +83,8 @@ function pop(obj, parent, callback) {
             error: hostFail
           });
           break;
+        case 'migrate_host_tip':
+          return;
         default:
           break;
       }
