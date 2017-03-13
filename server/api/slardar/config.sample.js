@@ -19,8 +19,8 @@ module.exports = {
     },
     'port': 5678,
     'admin_username': 'admin',
-    'admin_password': 'dffcb42eb3a0c8795cbea277',
-    'admin_projectId': '54e33c0ea7c24c06aeac8c3036d95ab5'
+    'admin_password': 'da2d728652d52ec8b09ca1be',
+    'admin_projectId': '1f3a2befce114130a121632782adec42'
   },
   'setting': [
     {
