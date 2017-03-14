@@ -16,6 +16,12 @@ class ResourceQuota extends React.Component {
   }
 
   componentWillMount() {
+    this.setState({
+      quota: this.initQuota()
+    });
+  }
+
+  initQuota() {
     var quota = [{
       title: __.compute,
       items: [{
@@ -78,37 +84,42 @@ class ResourceQuota extends React.Component {
         title: __.all_volumes,
         key: 'volumes',
         link: 'volumes'
+      }, {
+        title: __.all_gigabytes,
+        key: 'gigabytes',
+        link: 'gigabytes'
       }]
     }];
-
-    this.setState({
-      quota: quota
-    });
+    return quota;
   }
 
   componentWillReceiveProps(nextProps) {
-    var quota = this.state.quota;
-
-    nextProps.types.forEach((item) => {
-      quota[2].items.push({
-        title: __[item] + __.volume,
-        key: 'volumes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: __[item] + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: __[item] + __.snapshot,
-        key: 'snapshots_' + item,
-        link: 'snapshot'
-      });
-    });
-
+    var quota;
     this.setState({
-      quota: quota
+      quota: this.initQuota()
+    }, () => {
+      quota = this.state.quota;
+      nextProps.types.forEach((item) => {
+        quota[2].items.push({
+          title: __[item] + __.volume,
+          key: 'volumes_' + item,
+          link: 'volume'
+        });
+        quota[2].items.push({
+          title: __[item] + __.volume + __.gigabyte + __.unit_gb,
+          key: 'gigabytes_' + item,
+          link: 'volume'
+        });
+        quota[2].items.push({
+          title: __[item] + __.snapshot,
+          key: 'snapshots_' + item,
+          link: 'snapshot'
+        });
+      });
+
+      this.setState({
+        quota: quota
+      });
     });
   }
 

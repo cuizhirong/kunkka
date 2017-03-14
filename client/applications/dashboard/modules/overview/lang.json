@@ -1,6 +1,7 @@
 {
   "en": {
     "all_volumes": "All Volumes",
+    "all_gigabytes": "All Volumes Gigabytes",
     "infinity": "Infinity",
     "information": " Information",
     "gigabyte": " Gigabyte",
@@ -10,6 +11,7 @@
   },
   "zh-CN": {
     "all_volumes": "云硬盘总数",
+    "all_gigabytes": "云硬盘容量总数",
     "infinity": "无限",
     "quota": "配额",
     "information": "信息",
