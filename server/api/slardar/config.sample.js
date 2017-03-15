@@ -42,6 +42,12 @@ module.exports = {
       type: 'boolean',
       description: '监控报警开关'
     }, {
+      app: 'global',
+      name: 'enable_ldap',
+      value: 'false',
+      type: 'boolean',
+      description: 'LDAP开关'
+    }, {
       app: 'dashboard',
       name: 'total_gigabytes',
       value: 5000,
