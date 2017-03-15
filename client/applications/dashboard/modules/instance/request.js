@@ -248,5 +248,42 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  getMeasures: function(id, granularity, start) {
+    var url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
+    return fetch.get({
+      url: url
+    });
+  },
+  getNetworkResourceId: function(id) {
+    let url = '/proxy/gnocchi/v1/search/resource/instance_network_interface',
+      data = {
+        '=': {
+          instance_id: id
+        }
+      };
+    return fetch.post({
+      url: url,
+      data: data
+    });
+  },
+  getNetworkResource: function(granularity, start, _data, resourceData) {
+    const addresses = _data.addresses;
+    let ids = [], deferredList = [];
+    for (let key in addresses) {
+      addresses[key].filter((addr) => addr['OS-EXT-IPS:type'] === 'fixed').some((addrItem) => {
+        resourceData.forEach(_portData => {
+          if (addrItem.port.id.substr(0, 11) === _portData.name.substr(3)) {
+            ids.push(_portData.metrics['network.incoming.bytes.rate']);
+            ids.push(_portData.metrics['network.outgoing.bytes.rate']);
+            ids.forEach(_id => {
+              deferredList.push(this.getMeasures(_id, granularity, start));
+            });
+            ids = [];
+          }
+        });
+      });
+    }
+    return RSVP.all(deferredList);
   }
 };

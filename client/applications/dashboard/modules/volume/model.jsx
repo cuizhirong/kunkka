@@ -5,6 +5,9 @@ var Main = require('client/components/main/index');
 
 var BasicProps = require('client/components/basic_props/index');
 var RelatedSnapshot = require('client/components/related_snapshot/index');
+var LineChart = require('client/components/line_chart/index');
+var {Button} = require('client/uskin/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createModal = require('./pop/create/index');
@@ -15,6 +18,7 @@ var setRead = require('./pop/set_read/index');
 var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
 var notify = require('../../utils/notify');
+var createAlarm = require('../alarm/pop/create/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -22,13 +26,21 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
+var getTime = require('client/utils/time_unification');
 var utils = require('../../utils/utils');
+var alarmUtils = require('../alarm/utils');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
+    var enableAlarm = HALO.settings.enable_alarm;
+    if (!enableAlarm) {
+      let detail = config.table.detail.tabs;
+      delete detail[1];
+      delete detail[2];
+    }
     this.state = {
       config: config
     };
@@ -343,6 +355,143 @@ class Model extends React.Component {
           );
         }
         break;
+      case 'console':
+        if (isAvailableView(rows)) {
+          let that = this;
+
+          var updateDetailMonitor = function(newContents, loading) {
+            detail.setState({
+              contents: newContents,
+              loading: loading
+            });
+          };
+
+          let time = data.time;
+
+          //open detail without delaying
+          contents[tabKey] = (<div/>);
+          updateDetailMonitor(contents, true);
+
+          var metricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+          var tabItems = [{
+            name: __.three_hours,
+            key: '300',
+            time: 'hour'
+          }, {
+            name: __.one_day,
+            key: '900',
+            time: 'day'
+          }, {
+            name: __.one_week,
+            key: '3600',
+            time: 'week'
+          }, {
+            name: __.one_month,
+            key: '21600',
+            time: 'month'
+          }];
+
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+            contents[tabKey] = (<div/>);
+            updateDetailMonitor(contents, true);
+          }
+
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+
+          let updateContents = (arr, xAxisData) => {
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                data={arr}
+                granularity={granularity}
+                tabItems={tabItems}
+                start={utils.getTime(time)}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('console', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} >
+                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
+              </LineChart>
+            );
+
+            updateDetailMonitor(contents);
+          };
+          if (data.granularity) {
+            updateContents([]);
+          }
+          //rows[0].attachments[0].server_id
+          if (rows[0].attachments[0]) {
+            let device = rows[0].attachments[0].device.split('/'), ids = [],
+              resourceId = rows[0].attachments[0].server_id + '-' + device[device.length - 1];
+            request.getNetworkResourceId(resourceId, granularity).then(res => {
+              metricType.forEach(type => {
+                res[0] && ids.push(res[0].metrics[type]);
+              });
+              if (res.length !== 0) {
+                request.getMeasures(ids, granularity, utils.getTime(time)).then((_r) => {
+                  var arr = _r.map((r, index) => ({
+                    title: alarmUtils.getMetricName(metricType[index]),
+                    unit: alarmUtils.getUnit('volume', metricType[index]),
+                    yAxisData: alarmUtils.getChartData(r, granularity, utils.getTime(time), 'volume'),
+                    xAxis: alarmUtils.getChartData(r, granularity, utils.getTime(time))
+                  }));
+                  updateContents(arr);
+                });
+              } else {
+                updateContents([{}]);
+              }
+            }).catch(error => {
+              updateContents([{}]);
+            });
+          } else {
+            contents[tabKey] = (
+              <div className="no-data-desc">
+                <p>{__.volume + (rows[0].name ? rows[0].name : '(' + rows[0].id.substr(0, 8) + ')') + __.no_data + __.comma + __.view_is_unavailable}</p>
+              </div>
+            );
+            updateDetailMonitor(contents, false);
+          }
+        }
+        break;
+      case 'alarm':
+        if (isAvailableView(rows)) {
+          var asyncAlarmKey = tabKey;
+
+          var updateDetailAlarm = function(newContents) {
+            detail.setState({
+              contents: newContents,
+              loading: false
+            });
+          };
+
+          //open detail without delaying
+          detail.setState({
+            loading: true
+          });
+          request.getAlarmList(rows[0].id).then(res => {
+            var alarmItems = this.getAlarmItems(res);
+            contents[asyncAlarmKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.alarm}
+                defaultUnfold={true}
+                tableConfig={alarmItems ? alarmItems : []} />
+            );
+            updateDetailAlarm(contents);
+          }, () => {
+            contents[asyncAlarmKey] = (<div />);
+            updateDetailAlarm(contents);
+          });
+        }
+        break;
       default:
         break;
     }
@@ -350,6 +499,47 @@ class Model extends React.Component {
     detail.setState({
       contents: contents
     });
+  }
+
+  getAlarmItems(item) {
+    var tableContent = [];
+    item.forEach((element, index) => {
+      if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'volume') {
+        var dataObj = {
+          id: index + 1,
+          name: element.name,
+          enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
+          state: utils.getStateName(element.state),
+          created_at: getTime(element.timestamp, true)
+        };
+        tableContent.push(dataObj);
+      }
+    });
+
+    var tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.enable + __.status,
+        key: 'enabled',
+        dataIndex: 'enabled'
+      }, {
+        title: __.status,
+        key: 'state',
+        dataIndex: 'state'
+      }, {
+        title: __.create + __.time,
+        key: 'created_at',
+        dataIndex: 'created_at'
+      }],
+      data: tableContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getBasicProps(item) {
@@ -506,6 +696,12 @@ class Model extends React.Component {
             request.deleteSnapshot(data.childItem);
             cb(true);
           }
+        });
+        break;
+      case 'create_alarm':
+        createAlarm({
+          type: 'volume',
+          item: data.rawItem
         });
         break;
       default:

@@ -64,7 +64,7 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction', 'changeDefaultTab'].forEach((m) => {
+    ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -279,7 +279,7 @@ class Model extends React.Component {
         createInstance();
         break;
       case 'vnc_console':
-        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?server_name=' + rows[0].name;
+        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?region=' + HALO.current_region;
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
@@ -570,7 +570,7 @@ class Model extends React.Component {
           request.getVncConsole(rows[0]).then((res) => {
             contents[asyncTabKey] = (
               <VncConsole
-                src={res.console.url + '&title=' + rows[0].name + '(' + rows[0].id + ')'}
+                src={res.console.url + '&title=' + rows[0].id}
                 data-id={rows[0].id}
                 loading={false} />
             );
@@ -584,7 +584,7 @@ class Model extends React.Component {
       case 'console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          var asyncMonitorTabKey = tabKey;
+          let that = this;
 
           var updateDetailMonitor = function(newContents, loading) {
             detail.setState({
@@ -592,64 +592,101 @@ class Model extends React.Component {
               loading: loading
             });
           };
-
-          //open detail without delaying
-          contents[asyncMonitorTabKey] = (<div/>);
-          updateDetailMonitor(contents, true);
+          let time = data.time;
 
           var resourceId = rows[0].id,
-            metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-            granularity = '300';
+            instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
           var tabItems = [{
             name: __.three_hours,
             key: '300',
-            default: true
+            time: 'hour'
           }, {
             name: __.one_day,
-            key: '900'
+            key: '900',
+            time: 'day'
           }, {
             name: __.one_week,
-            key: '3600'
+            key: '3600',
+            time: 'week'
           }, {
             name: __.one_month,
-            key: '21600'
+            key: '21600',
+            time: 'month'
           }];
 
-          detail.setState({
-            loading: true
-          });
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+            contents[tabKey] = (<div/>);
+            updateDetailMonitor(contents, true);
+          }
 
-          request.getResourceMeasures(resourceId, metricType, granularity, timeUtils.getTime('hour')).then((res) => {
-            contents[asyncMonitorTabKey] = (
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+
+          let updateContents = (arr, xAxisData) => {
+            contents[tabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
-                metricType={metricType}
-                resourceType={'instance'}
-                data={res}
+                data={arr}
                 granularity={granularity}
                 tabItems={tabItems}
-                clickTabs={this.clickTabs.bind(this)}>
+                start={timeUtils.getTime(time)}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('console', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} >
                 <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
               </LineChart>
             );
+
             updateDetailMonitor(contents);
+          };
+          if (data.granularity) {
+            updateContents([]);
+          }
+          request.getResourceMeasures(resourceId, instanceMetricType, granularity, timeUtils.getTime(time)).then((res) => {
+            var arr = res.map((r, index) => ({
+              title: utils.getMetricName(instanceMetricType[index]),
+              unit: utils.getUnit('instance', instanceMetricType[index]),
+              yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), 'instance'),
+              xAxis: utils.getChartData(r, granularity, timeUtils.getTime(time))
+            }));
+            request.getNetworkResourceId(resourceId).then(_data => {
+              const addresses = rows[0].addresses;
+              let ips = [], _datas = [];
+              for (let key in addresses) {
+                addresses[key].filter((addr) => addr['OS-EXT-IPS:type'] === 'fixed').some((addrItem) => {
+                  _data.forEach(_portData => {
+                    if (addrItem.port.id.substr(0, 11) === _portData.name.substr(3)) {
+                      ips.push(addrItem.port.fixed_ips[0].ip_address);
+                      _datas.push(_portData);
+                    }
+                  });
+                });
+              }
+              request.getNetworkResource(granularity, timeUtils.getTime(time), rows[0], _datas).then(resourceData => {
+                var portArr = resourceData.map((_rd, index) => ({
+                  title: utils.getMetricName(portMetricType[index % 2], ips[parseInt(index / 2, 10)]),
+                  unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
+                  yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), 'instance'),
+                  xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time))
+                }));
+                updateContents(arr.concat(portArr));
+              }).catch(error => {
+                updateContents([{}]);
+              });
+            }).catch(error => {
+              updateContents([{}]);
+            });
           }).catch(error => {
-            contents[asyncMonitorTabKey] = (
-              <LineChart
-                __={__}
-                item={rows[0]}
-                metricType={metricType}
-                resourceType={'instance'}
-                data={[]}
-                status={404}
-                granularity={granularity}
-                tabItems={tabItems}
-                clickTabs={this.clickTabs.bind(this)}>
-                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
-              </LineChart>
-            );
-            updateDetailMonitor(contents, false);
+            updateContents([{}]);
           });
         }
         break;
@@ -683,7 +720,6 @@ class Model extends React.Component {
             contents[asyncAlarmKey] = (<div />);
             updateDetailAlarm(contents);
           });
-
         }
         break;
       default:
@@ -696,119 +732,6 @@ class Model extends React.Component {
         loading: false
       });
     }
-  }
-
-  changeDefaultTab(tabs, tab) {
-    tabs.forEach((t) => {
-      t.default = (t.key === tab.key) ? true : false;
-    });
-
-    return tabs;
-  }
-
-  clickTabs(e, tabItem, item) {
-    var detail = this.refs.dashboard.refs.detail,
-      contents = detail.state.contents,
-      monitor = 'console',
-      resourceId = item.id,
-      tabItems = [],
-      metricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-      granularity = tabItem.key;
-
-    var time;
-    switch(tabItem.key) {
-      case '300':
-        time = timeUtils.getTime('hour');
-        break;
-      case '900':
-        time = timeUtils.getTime('day');
-        break;
-      case '3600':
-        time = timeUtils.getTime('week');
-        break;
-      case '21600':
-        time = timeUtils.getTime('month');
-        break;
-      default:
-        time = timeUtils.getTime('hour');
-        break;
-    }
-
-    tabItems = [{
-      name: __.three_hours,
-      key: '300'
-    }, {
-      name: __.one_day,
-      key: '900'
-    }, {
-      name: __.one_week,
-      key: '3600'
-    }, {
-      name: __.one_month,
-      key: '21600'
-    }];
-
-    this.changeDefaultTab(tabItems, tabItem);
-
-    contents[monitor] = (
-      <LineChart
-        __={__}
-        item={item}
-        metricType={metricType}
-        resourceType={'instance'}
-        data={[]}
-        tabItems={tabItems}
-        granularity={granularity}
-        loading={true}
-        clickTabs={this.clickTabs.bind(this)}>
-        <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
-      </LineChart>
-    );
-    detail.setState({
-      contents: contents
-    });
-
-    request.getResourceMeasures(resourceId, metricType, granularity, time).then((res) => {
-      contents[monitor] = (
-        <LineChart
-          __={__}
-          item={item}
-          metricType={metricType}
-          resourceType={'instance'}
-          data={res}
-          tabItems={tabItems}
-          granularity={granularity}
-          clickTabs={this.clickTabs.bind(this)}>
-          <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
-        </LineChart>
-      );
-      detail.setState({
-        contents: contents,
-        loading: false
-      });
-    }).catch(error => {
-      if (error.status === 404) {
-        contents[monitor] = (
-          <LineChart
-            __={__}
-            item={item}
-            metricType={metricType}
-            resourceType={'instance'}
-            data={[]}
-            tabItems={tabItems}
-            granularity={granularity}
-            loading={true}
-            status={404}
-            clickTabs={this.clickTabs.bind(this)}>
-            <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: item })}/>
-          </LineChart>
-        );
-        detail.setState({
-          contents: contents,
-          loading: false
-        });
-      }
-    });
   }
 
   getAlarmItems(item) {
