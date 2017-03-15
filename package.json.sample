@@ -40,7 +40,7 @@
     "connect-redis": "^3.0.1",
     "co": "^4.6.0",
     "cookie-parser": "^1.4.0",
-    "clipboard-plus": "^0.3.0",
+    "clipboard-plus": "^1.0.0",
     "echarts": "^3.3.2",
     "ejs": "^2.3.4",
     "errorhandler": "^1.4.2",
