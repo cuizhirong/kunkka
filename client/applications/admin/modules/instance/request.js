@@ -134,5 +134,64 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
     });
+  },
+  getMeasures: function(id, granularity, start) {
+    var url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
+    return fetch.get({
+      url: url
+    });
+  },
+  getResourceMeasures: function(resourceId, type, granularity, start) {
+    var deferredList = [];
+    type.forEach((t) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity + '&start=' + start
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  getNetworkResourceId: function(id) {
+    let url = '/proxy/gnocchi/v1/search/resource/instance_network_interface',
+      data = {
+        '=': {
+          instance_id: id
+        }
+      };
+    return fetch.post({
+      url: url,
+      data: data
+    });
+  },
+  getNetworkResource: function(granularity, start, _data, resourceData) {
+    let ids = [], deferredList = [];
+    resourceData.forEach(_portData => {
+      ids.push(_portData.metrics['network.incoming.bytes.rate']);
+      ids.push(_portData.metrics['network.outgoing.bytes.rate']);
+      ids.forEach(_id => {
+        deferredList.push(this.getMeasures(_id, granularity, start));
+      });
+      ids = [];
+    });
+    return RSVP.all(deferredList);
+  },
+  getPort: function(data) {
+    var url = '/proxy/neutron/v2.0/ports?all_tenants=1', ips = [], datas = [];
+    return fetch.get({
+      url: url
+    }).then(res => {
+      res.ports.forEach(port => {
+        data.forEach((d, index) => {
+          if (port.id.substr(0, 11) === d.name.substr(3)) {
+            ips.push(port.fixed_ips[0].ip_address);
+            datas.push(d);
+          }
+        });
+      });
+      var _data = {
+        ips: ips,
+        datas: datas
+      };
+      return _data;
+    });
   }
 };

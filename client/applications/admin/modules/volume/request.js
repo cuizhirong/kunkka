@@ -102,5 +102,26 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + data.serverId + '/os-volume_attachments/' + data.attachmentId
     });
+  },
+  getMeasures: function(ids, granularity, start) {
+    var deferredList = [];
+    ids.forEach((id) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  getNetworkResourceId: function(id, granularity) {
+    let url = '/proxy/gnocchi/v1/search/resource/instance_disk',
+      data = {
+        '=': {
+          original_resource_id: id
+        }
+      };
+    return fetch.post({
+      url: url,
+      data: data
+    });
   }
 };
