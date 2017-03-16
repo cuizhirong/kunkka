@@ -3,9 +3,7 @@ const co = require('co');
 
 const base = require('../base.js');
 const paginate = require('helpers/paginate.js');
-const async = require('async');
 const drivers = require('drivers');
-
 const userModel = require('../../models').user;
 
 // due to User is reserved word
@@ -28,92 +26,70 @@ User.prototype = {
     }).catch(next);
   },
   createUser: function (req, res, next) {
-    let token = req.session.user.token;
-    let remote = req.session.endpoint.keystone[req.headers.region];
-    let isCreateProject = req.body.is_create_project;
-    let userObj = {};
-    userObj.name = req.body.name;
-    userObj.password = req.body.password;
-    userObj.domain_id = req.body.domain_id;
-    userObj.description = req.body.description;
-    userObj.email = req.body.email;
-    if (!isCreateProject) {
-      drivers.keystone.user.createUser(token, remote, {user: userObj}, function (err, data) {
-        if (err) {
-          res.status(err.status).json(err);
-        } else {
-          res.json(data);
-        }
-      });
-    } else {
-      let projectName = req.body.project_name;
-      let role = req.body.role;
-      async.parallel([
-        function (callback) {
-          drivers.keystone.user.listUsers(token, remote, function (err, data) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(null, data);
-            }
-          }, {name: userObj.name});
-        },
-        function (callback) {
-          drivers.keystone.project.listProjects(token, remote, function (err, data) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(null, data);
-            }
-          }, {name: projectName});
-        }
-      ], function (err, results) {
-        if (err) {
-          res.status(500).json(err.response.text);
-        } else {
-          if (results[0].body.users.length > 0) {
-            res.status(404).json({error: req.i18n.__('api.keystone.duplicateUser')});
-          } else if (results[1].body.projects.length > 0) {
-            res.status(404).json({error: req.i18n.__('api.keystone.duplicateProject')});
+    co(function *() {
+      let token = req.session.user.token;
+      let remote = req.session.endpoint.keystone[req.headers.region];
+      let isCreateProject = req.body.is_create_project;
+      let userObj = {};
+      userObj.name = req.body.name;
+      userObj.password = req.body.password;
+      userObj.domain_id = req.body.domain_id;
+      userObj.description = req.body.description;
+      userObj.email = req.body.email;
+
+
+      if (!isCreateProject) {
+        let result;
+        try {
+          result = yield drivers.keystone.user.createUserAsync(token, remote, {user: userObj});
+        } catch (e) {
+          if (e.status === 409) {
+            return res.status(409).json({error: req.i18n.__('api.keystone.duplicateUser')});
           } else {
-            async.parallel([
-              function (callback) {
-                drivers.keystone.user.createUser(token, remote, {user: userObj}, function (_err, data) {
-                  if (_err) {
-                    callback(_err);
-                  } else {
-                    callback(null, data);
-                  }
-                });
-              },
-              function (callback) {
-                drivers.keystone.project.createProject(token, remote, function (_err, data) {
-                  if (_err) {
-                    callback(_err);
-                  } else {
-                    callback(null, data);
-                  }
-                }, {project: {domain_id: req.body.domain_id, name: projectName}});
-              }
-            ], function (_err, _results) {
-              if (_err) {
-                res.status(_err.status).json(_err.response.text);
-              } else {
-                let user = _results[0].body.user;
-                let project = _results[1].body.project;
-                drivers.keystone.role.addRoleToUserOnProject(project.id, user.id, role, token, remote, function (error, data) {
-                  if (error) {
-                    res.status(error.status).json(error.response.text);
-                  } else {
-                    res.json(data.text);
-                  }
-                });
-              }
-            });
+            throw e;
           }
         }
-      });
-    }
+        if (result) {
+          res.send(result.body);
+        }
+      } else {
+        let projectName = req.body.project_name;
+        let role = req.body.role;
+        let userQuery = {name: userObj.name};
+        let settings = yield base._getSettingsByApp('global');
+        let enableLdap = false;
+        settings.some(s => {
+          if (s.name === 'enable_ldap') {
+            enableLdap = s.value;
+            return true;
+          }
+        });
+        if (enableLdap) {
+          userQuery.domain_id = req.body.domain_id;
+        }
+        let results = yield {
+          users: drivers.keystone.user.listUsersAsync(token, remote, userQuery),
+          projects: drivers.keystone.project.listProjectsAsync(token, remote, {name: projectName})
+        };
+
+        if (results.users.body.users.length) {
+          return res.status(404).json({error: req.i18n.__('api.keystone.duplicateUser')});
+        }
+        if (results.users.body.projects.length) {
+          return res.status(404).json({error: req.i18n.__('api.keystone.duplicateProject')});
+        }
+
+        let user = yield drivers.keystone.user.createUserAsync(token, remote, {user: userObj});
+        let project = yield drivers.keystone.project.createProjectAsync(token, remote,
+          {project: {domain_id: req.body.domain_id, name: projectName}}
+        );
+        user = user.body.user;
+        project = project.body.project;
+
+        yield drivers.keystone.role.addRoleToUserOnProjectAsync(project.id, user.id, role, token, remote);
+        res.send({user, project});
+      }
+    }).catch(next);
   },
   getUser: function (req, res, next) {
     co(function *() {
