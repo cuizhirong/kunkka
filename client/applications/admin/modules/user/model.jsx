@@ -181,6 +181,8 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters) {
+    let enableLdap = HALO.settings.enable_ldap;
+    config.filter[1].items[1].default = enableLdap ? 'Defalut' : __.all + __.domain;
     var domains = [];
     this.state.domains.forEach((item) => {
       domains.push({

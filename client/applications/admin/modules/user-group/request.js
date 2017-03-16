@@ -18,8 +18,9 @@ module.exports = {
 
     return this.getDomains().then((domains) => {
       var currentDomain = HALO.configs.domain;
+      var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
       var domainID = domains.find((ele) => ele.name === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
       var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + urlParam;
       return fetch.get({

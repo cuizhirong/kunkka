@@ -174,13 +174,19 @@ module.exports = {
   },
   getAllUsers: function() {
     var deferredList = [];
-    deferredList.push(fetch.get({
-      url: '/proxy/keystone/v3/users'
-    }));
-    deferredList.push(fetch.get({
-      url: '/proxy/keystone/v3/roles'
-    }));
-    return RSVP.all(deferredList);
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain;
+      var defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
+      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+      var urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
+      deferredList.push(fetch.get({
+        url: '/proxy/keystone/v3/users' + urlParam
+      }));
+      deferredList.push(fetch.get({
+        url: '/proxy/keystone/v3/roles'
+      }));
+      return RSVP.all(deferredList);
+    });
   },
   addUser: function(projectID, userID, roleID) {
     var deferredList = [];
