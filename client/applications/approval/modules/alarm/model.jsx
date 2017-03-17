@@ -262,17 +262,21 @@ class Model extends Main {
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
 
-          let updateContents = (arr, loading) => {
+          let updateContents = (resourceType, metricType, arr) => {
+            let graphs = [{
+              title: utils.getMetricName(metricType),
+              unit: utils.getUnit(resourceType, metricType),
+              yAxisData: utils.getChartData(arr, granularity, timeUtils.getTime(time), resourceType),
+              xAxis: utils.getChartData(arr, granularity, timeUtils.getTime(time))
+            }];
+
             contents[tabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
-                metricType={[rule.metric]}
-                resourceType={rule.resource_type}
-                data={arr}
+                data={graphs}
                 granularity={granularity}
                 tabItems={tabItems}
-                loading={loading}
                 start={timeUtils.getTime(time)}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
@@ -285,7 +289,10 @@ class Model extends Main {
 
             update(contents);
           };
-          updateContents([], true);
+
+          if (data.granularity) {
+            updateContents(rule.resource_type, rule.metric, []);
+          }
 
           if (rule.resource_type === 'volume') {
             request.getVolume().then((_data) => {
@@ -293,22 +300,21 @@ class Model extends Main {
               let attch = vol.attachments[0];
               if (attch && attch.server_id) {
                 request.getResourceMeasures(attch.server_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-                  updateContents([measures]);
+                  updateContents(rule.resource_type, rule.metric, [measures]);
                 }).catch((err) => {
-                  updateContents([]);
+                  updateContents(rule.resource_type, rule.metric, [{}]);
                 });
               } else {
-                updateContents([]);
+                updateContents(rule.resource_type, rule.metric, [{}]);
               }
             });
           } else {
             request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-              updateContents([measures]);
+              updateContents(rule.resource_type, rule.metric, [measures]);
             }).catch((err) => {
-              updateContents([]);
+              updateContents(rule.resource_type, rule.metric, []);
             });
           }
-
         }
         break;
       case 'history':

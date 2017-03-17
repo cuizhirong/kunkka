@@ -38,6 +38,12 @@
       "volume",
       "snapshot"
     ]
+  }, {
+    "title": "monitor",
+    "items": [
+      "alarm",
+      "notification"
+    ]
   }],
   "default_module": "overview",
   "languages": [
