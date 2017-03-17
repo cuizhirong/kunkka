@@ -4,6 +4,7 @@ var React = require('react');
 var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
+var LineChart = require('client/components/line_chart/index');
 
 var detachInstance = require('./pop/detach_instance/index');
 
@@ -21,6 +22,12 @@ class Model extends React.Component {
     super(props);
 
     moment.locale(HALO.configs.lang);
+
+    var enableAlarm = HALO.settings.enable_alarm;
+    if (!enableAlarm) {
+      let detail = config.table.detail.tabs;
+      delete detail[1];
+    }
 
     this.state = {
       config: config
@@ -472,6 +479,19 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
@@ -489,16 +509,119 @@ class Model extends React.Component {
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
             </div>
           );
+          detail.setState({
+            contents: contents,
+            loading: false
+          });
+        }
+        break;
+      case 'monitor':
+        if (isAvailableView(rows)) {
+          let that = this;
+
+          var updateDetailMonitor = function(newContents, loading) {
+            detail.setState({
+              contents: newContents,
+              loading: loading
+            });
+          };
+
+          let time = data.time;
+
+          //open detail without delaying
+          contents[tabKey] = (<div/>);
+          updateDetailMonitor(contents, true);
+
+          var metricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+          var tabItems = [{
+            name: __.three_hours,
+            key: '300',
+            time: 'hour'
+          }, {
+            name: __.one_day,
+            key: '900',
+            time: 'day'
+          }, {
+            name: __.one_week,
+            key: '3600',
+            time: 'week'
+          }, {
+            name: __.one_month,
+            key: '21600',
+            time: 'month'
+          }];
+
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+            contents[tabKey] = (<div/>);
+            updateDetailMonitor(contents, true);
+          }
+
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+
+          let updateContents = (arr, xAxisData) => {
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                data={arr}
+                granularity={granularity}
+                tabItems={tabItems}
+                start={utils.getTime(time)}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('monitor', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} />
+            );
+
+            updateDetailMonitor(contents);
+          };
+          if (data.granularity) {
+            updateContents([]);
+          }
+          //rows[0].attachments[0].server_id
+          if (rows[0].attachments[0]) {
+            let device = rows[0].attachments[0].device.split('/'), ids = [],
+              resourceId = rows[0].attachments[0].server_id + '-' + device[device.length - 1];
+            request.getNetworkResourceId(resourceId, granularity).then(res => {
+              metricType.forEach(type => {
+                res[0] && ids.push(res[0].metrics[type]);
+              });
+              if (res.length !== 0) {
+                request.getMeasures(ids, granularity, utils.getTime(time)).then((_r) => {
+                  var arr = _r.map((r, index) => ({
+                    title: utils.getMetricName(metricType[index]),
+                    unit: utils.getUnit('volume', metricType[index]),
+                    yAxisData: utils.getChartData(r, granularity, utils.getTime(time), 'volume'),
+                    xAxis: utils.getChartData(r, granularity, utils.getTime(time))
+                  }));
+                  updateContents(arr);
+                });
+              } else {
+                updateContents([{}]);
+              }
+            }).catch(error => {
+              updateContents([{}]);
+            });
+          } else {
+            contents[tabKey] = (
+              <div className="no-data-desc">
+                <p>{__.volume + (rows[0].name ? rows[0].name : '(' + rows[0].id.substr(0, 8) + ')') + __.no_data + __.comma + __.view_is_unavailable}</p>
+              </div>
+            );
+            updateDetailMonitor(contents, false);
+          }
         }
         break;
       default:
         break;
     }
-
-    detail.setState({
-      contents: contents,
-      loading: false
-    });
   }
 
   getBasicPropsItems(item, server) {

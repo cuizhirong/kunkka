@@ -3,6 +3,7 @@ require('./style/index.less');
 var React = require('react');
 var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
+var LineChart = require('client/components/line_chart/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var dissociateFIP = require('./pop/dissociate_fip/index');
@@ -23,6 +24,12 @@ class Model extends React.Component {
     super(props);
 
     moment.locale(HALO.configs.lang);
+
+    var enableAlarm = HALO.settings.enable_alarm;
+    if (!enableAlarm) {
+      let detail = config.table.detail.tabs;
+      delete detail[1];
+    }
 
     this.updateConfig();
     this.state = {
@@ -636,6 +643,19 @@ class Model extends React.Component {
     var detail = refs.detail;
     var contents = detail.state.contents;
 
+    var isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
     switch (tabKey) {
       case 'description':
         if (rows.length === 1) {
@@ -653,16 +673,111 @@ class Model extends React.Component {
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
             </div>
           );
+          detail.setState({
+            contents: contents,
+            loading: false
+          });
+        }
+        break;
+      case 'monitor':
+        if (isAvailableView(rows)) {
+          let that = this;
+
+          var updateDetailMonitor = function(newContents, loading) {
+            detail.setState({
+              contents: newContents,
+              loading: loading
+            });
+          };
+          let time = data.time;
+
+          var resourceId = rows[0].id,
+            instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
+          var tabItems = [{
+            name: __.three_hours,
+            key: '300',
+            time: 'hour'
+          }, {
+            name: __.one_day,
+            key: '900',
+            time: 'day'
+          }, {
+            name: __.one_week,
+            key: '3600',
+            time: 'week'
+          }, {
+            name: __.one_month,
+            key: '21600',
+            time: 'month'
+          }];
+
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+            contents[tabKey] = (<div/>);
+            updateDetailMonitor(contents, true);
+          }
+
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+
+          let updateContents = (arr) => {
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                data={arr}
+                granularity={granularity}
+                tabItems={tabItems}
+                start={utils.getTime(time)}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('monitor', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} />
+            );
+
+            updateDetailMonitor(contents);
+          };
+          if (data.granularity) {
+            updateContents([]);
+          }
+          request.getResourceMeasures(resourceId, instanceMetricType, granularity, utils.getTime(time)).then((res) => {
+            var arr = res.map((r, index) => ({
+              title: utils.getMetricName(instanceMetricType[index]),
+              unit: utils.getUnit('instance', instanceMetricType[index]),
+              xAxis: utils.getChartData(r, granularity, utils.getTime(time)),
+              yAxisData: utils.getChartData(r, granularity, utils.getTime(time), 'instance')
+            }));
+            request.getNetworkResourceId(resourceId).then(_data => {
+              request.getPort(_data).then(datas => {
+                request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
+                  var portData = resourceData.map((_rd, index) => ({
+                    title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
+                    unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
+                    yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), 'instance'),
+                    xAxis: utils.getChartData(_rd, granularity, utils.getTime(time))
+                  }));
+                  updateContents(arr.concat(portData));
+                }).catch(error => {
+                  updateContents([{}]);
+                });
+              });
+            }).catch(error => {
+              updateContents([{}]);
+            });
+          }).catch(error => {
+            updateContents([{}]);
+          });
         }
         break;
       default:
         break;
     }
-
-    detail.setState({
-      contents: contents,
-      loading: false
-    });
   }
 
   getBasicPropsItems(item) {
