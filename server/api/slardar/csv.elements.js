@@ -2,7 +2,7 @@
 
 module.exports = [
   {
-    pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/snapshots\/detail/,
+    pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/snapshots\/detail/i,
     service: 'cinder',
     name: 'snapshots',
     fields: [
@@ -26,7 +26,7 @@ module.exports = [
     ]
   },
   {
-    pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/volumes\/detail/,
+    pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/volumes\/detail/i,
     service: 'cinder',
     name: 'volumes',
     fields: [
@@ -67,7 +67,7 @@ module.exports = [
     ]
   },
   {
-    pathRegExp: /\/nova\/v2.1\/[a-z0-9]*\/servers\/detail/,
+    pathRegExp: /\/nova\/v2.1\/[a-z0-9]*\/servers\/detail/i,
     service: 'nova',
     name: 'servers',
     fields: [
@@ -165,7 +165,7 @@ module.exports = [
     ]
   },
   {
-    pathRegExp: /\/glance\/v2\/images/,
+    pathRegExp: /\/glance\/v2\/images/i,
     service: 'glance',
     name: 'images',
     fields: [
@@ -186,7 +186,7 @@ module.exports = [
     ]
   },
   {
-    pathRegExp: /\/neutron\/v2.0\/floatingips/,
+    pathRegExp: /\/neutron\/v2.0\/floatingips/i,
     service: 'neutron',
     name: 'floatingips',
     fields: [
@@ -210,7 +210,7 @@ module.exports = [
     ]
   },
   {
-    pathRegExp: /\/nova\/v2.1\/[a-z0-9]*\/os-hypervisors\/detail/,
+    pathRegExp: /\/nova\/v2.1\/[a-z0-9]*\/os-hypervisors\/detail/i,
     service: 'nova',
     name: 'os-hypervisors',
     dataName: 'hypervisors',

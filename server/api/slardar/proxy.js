@@ -45,7 +45,7 @@ module.exports = (app) => {
     });
   });
   // check session
-  app.use(['/api/v1/', '/proxy/'], function (req, res, next) {
+  app.use(['/api/v1/', '/proxy/', '/proxy-search/'], function (req, res, next) {
     if (req.session.user) {
       next();
     } else {
@@ -70,6 +70,7 @@ module.exports = (app) => {
    * /proxy/csv/glance/v2/images
    */
   app.get('/proxy/csv/*', csv.data);
+  app.get('/proxy-search/*', require('./proxy.search'));
   app.all('/proxy/*', (req, res, next) => {
     // if (req.body) {
     //   if (req.body.forceDelete !== undefined) {
