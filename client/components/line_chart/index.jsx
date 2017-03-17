@@ -14,10 +14,7 @@ class ChartLine extends React.Component {
       granularity: props.granularity,
       item: props.item,
       tabItems: props.tabItems ? props.tabItems : [],
-      unit: props.unit,
-      start: props.start,
-      title: props.title,
-      xAxis: props.xAxis
+      start: props.start
     };
     count ++;
   }
@@ -48,18 +45,12 @@ class ChartLine extends React.Component {
       granularity: nextProps.granularity,
       item: nextProps.item,
       tabItems: nextProps.tabItems,
-      start: nextProps.start,
-      title: nextProps.title,
-      unit: nextProps.unit,
-      xAxis: nextProps.xAxis
+      start: nextProps.start
     });
 
     if (nextProps.data.length === 0) {
       let obj = {
-        title: this.state.title,
-        unit: this.state.unit,
-        data: this.props.data,
-        xAxis: this.props.xAxis
+        data: this.props.data
       };
       this.loadingChart(obj);
     }
@@ -74,7 +65,7 @@ class ChartLine extends React.Component {
     obj.data.forEach((ds, i) => {
       let chart = document.getElementById('line-chart' + i + count);
       let myChart = Echarts.init(chart);
-      let subText = this.props.__.unit + '(' + obj.unit[i] + '), ' + this.props.__.interval + this.state.granularity + 's';
+      let subText = this.props.__.unit + '(' + ds.unit + '), ' + this.props.__.interval + this.state.granularity + 's';
       myChart.showLoading('default', {
         text: this.props.__.loading,
         color: '#00afc8',
@@ -82,28 +73,22 @@ class ChartLine extends React.Component {
         maskColor: 'rgba(255, 255, 255, 0.8)',
         zlevel: 0
       });
-      let option = this.chart(obj.title[i], subText, [], ds, true);
+      let option = this.chart(ds.title, subText, [], ds.yAxisData, true);
 
       myChart.setOption(option);
     });
   }
 
   renderLineChart(data, granularity) {
-    var xAxis = this.state.xAxis,
-      title = this.state.title;
     if (data.length !== 0) {
       data.forEach((datas, i) => {
-        this.renderChart(datas, xAxis[i], 'line-chart' + i + count, this.state.unit[i], granularity, this.state.title[i]);
-      });
-    } else {
-      title.forEach((ts, i) => {
-        this.renderChart(data, [], 'line-chart' + i + count);
+        this.renderChart(datas.yAxisData, datas.xAxis, 'line-chart' + i + count, datas.unit, granularity, datas.title);
       });
     }
   }
 
   renderChart(data, xAxis, ele, unit, granularity, title, i) {
-    if (data.length !== 0) {
+    if (data && data.length !== 0) {
       let chart = document.getElementById(ele);
       let myChart = Echarts.init(chart);
       let subText = this.props.__.unit + '(' + unit + '), ' + this.props.__.interval + granularity + 's';
@@ -187,15 +172,8 @@ class ChartLine extends React.Component {
   }
 
   render() {
-    var tabItems = this.state.tabItems, chartData = [],
-      title = this.state.title,
-      data = this.state.data;
-
-    if (this.state.data.length === 0) {
-      chartData = title;
-    } else {
-      chartData = data;
-    }
+    var tabItems = this.state.tabItems,
+      chartData = this.state.data;
 
     return (
       <div className="halo-com-line-chart">
