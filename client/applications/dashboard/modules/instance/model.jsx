@@ -673,7 +673,7 @@ class Model extends React.Component {
               }
               request.getNetworkResource(granularity, timeUtils.getTime(time), rows[0], _datas).then(resourceData => {
                 var portArr = resourceData.map((_rd, index) => ({
-                  title: utils.getMetricName(portMetricType[index % 2], ips[parseInt(index / 2, 10)]),
+                  title: ips[parseInt(index / 2, 10)] + ' ' + utils.getMetricName(portMetricType[index % 2]),
                   unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
                   yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), 'instance'),
                   xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time))

@@ -89,6 +89,11 @@ module.exports = {
       return data;
     });
   },
+  getVolumeMeasures: function(volResourceId, granularity, start) {
+    return fetch.get({
+      url: '/proxy/gnocchi/v1/metric/' + volResourceId + '/measures?granularity=' + granularity + '&start=' + start
+    });
+  },
   getNetworkResources: function(instanceId) {
     let data = {
       '=': {
@@ -97,6 +102,17 @@ module.exports = {
     };
     return fetch.post({
       url: '/proxy/gnocchi/v1/search/resource/instance_network_interface',
+      data: data
+    });
+  },
+  getVolumeResourceId: function(volumeId) {
+    let data = {
+      '=': {
+        original_resource_id: volumeId
+      }
+    };
+    return fetch.post({
+      url: '/proxy/gnocchi/v1/search/resource/instance_disk',
       data: data
     });
   },

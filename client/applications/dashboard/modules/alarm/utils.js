@@ -26,28 +26,24 @@ module.exports = {
       switch (metric) {
         case 'cpu_util':
           return __.cpu_utilization;
-        case 'disk.read.bytes.rate':
-          return __.disk_read_rate;
-        case 'disk.read.requests.rate':
-          return __.disk_read_requests_rate;
-        case 'disk.write.bytes.rate':
-          return __.disk_write_rate;
-        case 'disk.write.requests.rate':
-          return __.disk_write_requests_rate;
-        case 'memory.usage':
-          return __.memory_usage;
-        case 'network.incoming.bytes.rate':
-          return ip + ' ' + __.network_incoming_bytes_rate;
-        case 'network.outgoing.bytes.rate':
-          return ip + ' ' + __.network_outgoing_bytes_rate;
         case 'disk.device.read.bytes.rate':
           return __.disk_device_read_rate;
         case 'disk.device.write.bytes.rate':
           return __.disk_device_write_rate;
         case 'disk.device.read.requests.rate':
-          return __.disk_read_raquests;
+          return __.disk_device_read_requests_rate;
         case 'disk.device.write.requests.rate':
-          return __.disk_write_raquests;
+          return __.disk_device_write_requests_rate;
+        case 'disk.read.bytes.rate':
+          return __.disk_read_rate;
+        case 'disk.write.bytes.rate':
+          return __.disk_write_rate;
+        case 'memory.usage':
+          return __.memory_usage;
+        case 'network.incoming.bytes.rate':
+          return __.network_incoming_bytes_rate;
+        case 'network.outgoing.bytes.rate':
+          return __.network_outgoing_bytes_rate;
         default:
           return metric;
       }
@@ -85,7 +81,7 @@ module.exports = {
   getChartData(data, granularity, startTime, resourceType) {
     var _data = [];
     if (data.length !== 0) {
-      if (resourceType && (resourceType === 'instance' || resourceType === 'volume')) {
+      if (resourceType /*&& (resourceType === 'instance' || resourceType === 'volume')*/) {
         data.forEach((d) => {
           _data.push(d[2].toFixed(2));
         });
@@ -121,30 +117,23 @@ module.exports = {
   },
 
   getUnit: function(resourceType, metricType) {
-    if (resourceType === 'instance') {
-      switch(metricType) {
-        case 'cpu_util':
-          return '%';
-        case 'memory.usage':
-          return 'MB/s';
-        case 'disk.read.bytes.rate':
-        case 'disk.write.bytes.rate':
-        case 'network.incoming.bytes.rate':
-        case 'network.outgoing.bytes.rate':
-        default:
-          return 'B/s';
-      }
-    } else if (resourceType === 'volume') {
-      switch(metricType) {
-        case 'disk.device.read.bytes.rate':
-        case 'disk.device.write.bytes.rate':
-          return 'B/s';
-        case 'disk.device.read.requests.rate':
-        case 'disk.device.write.requests.rate':
-          return 'Requests/s';
-        default:
-          return 'B/s';
-      }
+    switch(metricType) {
+      case 'cpu_util':
+        return '%';
+      case 'memory.usage':
+        return 'MB/s';
+      case 'disk.device.read.requests.rate':
+      case 'disk.device.write.requests.rate':
+        return 'Requests/s';
+      case 'disk.device.read.bytes.rate':
+      case 'disk.device.write.bytes.rate':
+      case 'disk.read.bytes.rate':
+      case 'disk.write.bytes.rate':
+      case 'network.incoming.bytes.rate':
+      case 'network.outgoing.bytes.rate':
+        return 'B/s';
+      default:
+        return '';
     }
   },
 
@@ -216,7 +205,6 @@ module.exports = {
             </span>
           );
         case 'instance':
-        case 'volume':
           return (
             <span>
               <i className={'glyphicon icon-' + rule.resource_type} />
@@ -229,8 +217,17 @@ module.exports = {
               }
             </span>
           );
+        case 'instance_disk':
+          return (
+            <span>
+              <i className="glyphicon icon-volume" />
+              <span>{'(' + rule.resource_id.substr(0, 8) + ')'}</span>
+            </span>
+          );
         default:
-          break;
+          return (
+            <span>{'(' + rule.resource_id.substr(0, 8) + ')'}</span>
+          );
       }
 
     }

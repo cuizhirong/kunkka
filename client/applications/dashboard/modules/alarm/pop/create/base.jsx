@@ -43,6 +43,7 @@ class ModalBase extends React.Component {
     this.getNofications();
 
     this.InsPortMap = {};
+    this.VolumeResourceMap = {};
   }
 
   getResourceList() {
@@ -91,36 +92,24 @@ class ModalBase extends React.Component {
     });
   }
 
-  getMeasureData(resourceId, metricType, measureGranularity) {
-    let startTime;
-    switch(measureGranularity) {
+  updateGraph(data, measureGranularity) {
+    this.refs.select_metric.updateGraph(data, measureGranularity);
+    this.refs.alarm_config.updateGraph(data, measureGranularity, this.state.threshold);
+  }
+
+  getStartTime(granularity) {
+    switch(granularity) {
       case 300:
-        startTime = getTime('hour');
-        break;
+        return getTime('hour');
       case 900:
-        startTime = getTime('day');
-        break;
+        return getTime('day');
       case 3600:
-        startTime = getTime('week');
-        break;
+        return getTime('week');
       case 21600:
-        startTime = getTime('month');
-        break;
+        return getTime('month');
       default:
-        break;
+        return granularity;
     }
-
-    request.getResourceMeasures(resourceId, metricType, measureGranularity, startTime).then((data) => {
-      measureData = data;
-
-      this.refs.select_metric.updateGraph(data, measureGranularity);
-      this.refs.alarm_config.updateGraph(data, measureGranularity, this.state.threshold);
-    }).catch((err) => {
-      let noData = [];
-
-      this.refs.select_metric.updateGraph(noData, measureGranularity);
-      this.refs.alarm_config.updateGraph(noData, measureGranularity, this.state.threshold);
-    });
   }
 
   getNofications() {
@@ -154,13 +143,44 @@ class ModalBase extends React.Component {
 
             if (resourceType === 'instance') {
               let resourceID = st.resource.id;
+              let startTime = this.getStartTime(st.measureGranularity);
 
-              this.getMeasureData(resourceID, st.metricType, st.measureGranularity);
+              request.getResourceMeasures(resourceID, st.metricType, st.measureGranularity, startTime).then((data) => {
+                measureData = data;
+                this.updateGraph(data, st.measureGranularity);
+              }).catch((err) => {
+                this.updateGraph([], st.measureGranularity);
+              });
+
             } if (resourceType === 'volume') {
-              let attch = st.resource.attachments[0];
-              let resourceID = attch && attch.server_id;
+              let update = (volResource) => {
+                let volResourceId = volResource.metrics[st.metricType];
+                if (volResourceId) {
+                  let startTime = this.getStartTime(st.measureGranularity);
+                  request.getVolumeMeasures(volResourceId, st.measureGranularity, startTime).then((data) => {
+                    this.updateGraph(data, st.measureGranularity);
+                  }).catch((err) => {
+                    this.updateGraph([], st.measureGranularity);
+                  });
+                } else {
+                  this.updateGraph([], st.measureGranularity);
+                }
+              };
 
-              this.getMeasureData(resourceID, st.metricType, st.measureGranularity);
+              let volume = st.resource;
+              let volumeId = volume.id;
+              let attch = volume.attachments[0];
+              let originalId = attch.server_id + '-' + attch.device.split('/')[2];
+
+              let map = this.VolumeResourceMap;
+              if (map[volumeId]) {
+                update(map[volumeId][0]);
+              } else {
+                request.getVolumeResourceId(originalId).then((resources) => {
+                  map[volumeId] = resources;
+                  update(map[volumeId][0]);
+                });
+              }
             } else if (resourceType === 'instance_network_interface') {
               let resource = st.resource;
               let instanceId = resource.device_id;
@@ -168,7 +188,13 @@ class ModalBase extends React.Component {
               let update = (ports) => {
                 let portMeasure = this.findPortMeasures(ports, portId);
                 if (portMeasure) {
-                  this.getMeasureData(portMeasure.id, st.metricType, st.measureGranularity);
+                  let startTime = this.getStartTime(st.measureGranularity);
+
+                  request.getResourceMeasures(portMeasure.id, st.metricType, st.measureGranularity, startTime).then((data) => {
+                    this.updateGraph(data, st.measureGranularity);
+                  }).catch((err) => {
+                    this.updateGraph([], st.measureGranularity);
+                  });
 
                   if (!resource._measureId) {
                     resource._measureId = portMeasure.id;
@@ -179,7 +205,7 @@ class ModalBase extends React.Component {
                 }
               };
 
-              const map = this.InsPortMap;
+              let map = this.InsPortMap;
               if (map[instanceId]) {
                 update(map[instanceId]);
               } else {
@@ -253,6 +279,24 @@ class ModalBase extends React.Component {
     if (obj.type === 'alarm') {
       data = obj.item;
     }
+
+    let resourceId = '';
+    let resourceType = state.resourceType;
+    switch(state.resourceType) {
+      case 'instance':
+        resourceId = state.resource.id;
+        break;
+      case 'instance_network_interface':
+        resourceId = state.resource._measureId;
+        break;
+      case 'volume':
+        resourceId = this.VolumeResourceMap[state.resource.id][0].id;
+        resourceType = 'instance_disk';
+        break;
+      default:
+        break;
+    }
+
     data.name = state.name;
     data.description = state.descrition;
     data.alarm_actions = alarmActions;
@@ -265,8 +309,8 @@ class ModalBase extends React.Component {
       evaluation_periods: state.evaluationPeriods,
       granularity: state.granularity,
       metric: state.metricType,
-      resource_id: state.resourceType === 'instance_network_interface' ? state.resource._measureId : state.resource.id,
-      resource_type: state.resourceType,
+      resource_id: resourceId,
+      resource_type: resourceType,
       threshold: state.threshold
     };
 

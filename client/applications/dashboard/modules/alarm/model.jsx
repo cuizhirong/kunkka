@@ -261,17 +261,15 @@ class Model extends Main {
             time: 'month'
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
-          let updateContents = (arr, loading) => {
+
+          let updateContents = (graphs) => {
             contents[tabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
-                metricType={[rule.metric]}
-                resourceType={rule.resource_type}
-                data={arr}
+                data={graphs}
                 granularity={granularity}
                 tabItems={tabItems}
-                loading={loading}
                 start={timeUtils.getTime(time)}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
@@ -285,27 +283,21 @@ class Model extends Main {
             update(contents);
           };
 
-          if (rule.resource_type === 'volume') {
-            request.getVolume().then((_data) => {
-              let vol = _data.volume.find((ele) => ele.id === rule.resource_id);
-              let attch = vol.attachments[0];
-              if (attch && attch.server_id) {
-                request.getResourceMeasures(attch.server_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-                  updateContents([measures]);
-                }).catch((err) => {
-                  updateContents([]);
-                });
-              } else {
-                updateContents([]);
-              }
-            });
-          } else {
-            request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-              updateContents([measures]);
-            }).catch((err) => {
-              updateContents([]);
-            });
+          if (data.granularity) {
+            updateContents([]);
           }
+
+          request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
+            let graphs = [measures].map((arr) => ({
+              title: utils.getMetricName(rule.metric),
+              unit: utils.getUnit(rule.resource_type, rule.metric),
+              yAxisData: utils.getChartData(arr, granularity, timeUtils.getTime(time), rule.resource_type),
+              xAxis: utils.getChartData(arr, granularity, timeUtils.getTime(time))
+            }));
+            updateContents(graphs);
+          }).catch((err) => {
+            updateContents([{}]);
+          });
         }
         break;
       case 'history':
