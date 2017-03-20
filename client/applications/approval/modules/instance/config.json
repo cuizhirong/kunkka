@@ -152,6 +152,12 @@
       }, {
         "name": ["vnc_console"],
         "key": "vnc_console"
+      }, {
+        "name": ["console"],
+        "key": "console"
+      }, {
+        "name": ["alarm"],
+        "key": "alarm"
       }]
     }
   }

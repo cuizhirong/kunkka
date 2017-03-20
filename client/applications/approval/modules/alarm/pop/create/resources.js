@@ -55,27 +55,27 @@ function getInstanceResource(instance) {
 
 function getVolumeResource(volume) {
   let item = [{
-    name: utils.getMetricName('disk.read.bytes.rate'),
-    metricType: 'disk.read.bytes.rate',
-    key: 'disk.read.bytes.rate',
+    name: utils.getMetricName('disk.device.read.bytes.rate'),
+    metricType: 'disk.device.read.bytes.rate',
+    key: 'disk.device.read.bytes.rate',
     resourceType: 'volume',
     resource: volume
   }, {
-    name: utils.getMetricName('disk.write.bytes.rate'),
-    metricType: 'disk.write.bytes.rate',
-    key: 'disk.write.bytes.rate',
+    name: utils.getMetricName('disk.device.write.bytes.rate'),
+    metricType: 'disk.device.write.bytes.rate',
+    key: 'disk.device.write.bytes.rate',
     resourceType: 'volume',
     resource: volume
   }, {
-    name: utils.getMetricName('disk.read.requests.rate'),
-    metricType: 'disk.read.requests.rate',
-    key: 'disk.read.requests.rate',
+    name: utils.getMetricName('disk.device.read.requests.rate'),
+    metricType: 'disk.device.read.requests.rate',
+    key: 'disk.device.read.requests.rate',
     resourceType: 'volume',
     resource: volume
   }, {
-    name: utils.getMetricName('disk.write.requests.rate'),
-    metricType: 'disk.write.requests.rate',
-    key: 'disk.write.requests.rate',
+    name: utils.getMetricName('disk.device.write.requests.rate'),
+    metricType: 'disk.device.write.requests.rate',
+    key: 'disk.device.write.requests.rate',
     resourceType: 'volume',
     resource: volume
   }];

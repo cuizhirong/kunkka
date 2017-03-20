@@ -262,14 +262,7 @@ class Model extends Main {
           }];
           tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
 
-          let updateContents = (resourceType, metricType, arr) => {
-            let graphs = [{
-              title: utils.getMetricName(metricType),
-              unit: utils.getUnit(resourceType, metricType),
-              yAxisData: utils.getChartData(arr, granularity, timeUtils.getTime(time), resourceType),
-              xAxis: utils.getChartData(arr, granularity, timeUtils.getTime(time))
-            }];
-
+          let updateContents = (graphs) => {
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -291,30 +284,20 @@ class Model extends Main {
           };
 
           if (data.granularity) {
-            updateContents(rule.resource_type, rule.metric, []);
+            updateContents([]);
           }
 
-          if (rule.resource_type === 'volume') {
-            request.getVolume().then((_data) => {
-              let vol = _data.volume.find((ele) => ele.id === rule.resource_id);
-              let attch = vol.attachments[0];
-              if (attch && attch.server_id) {
-                request.getResourceMeasures(attch.server_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-                  updateContents(rule.resource_type, rule.metric, [measures]);
-                }).catch((err) => {
-                  updateContents(rule.resource_type, rule.metric, [{}]);
-                });
-              } else {
-                updateContents(rule.resource_type, rule.metric, [{}]);
-              }
-            });
-          } else {
-            request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-              updateContents(rule.resource_type, rule.metric, [measures]);
-            }).catch((err) => {
-              updateContents(rule.resource_type, rule.metric, []);
-            });
-          }
+          request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
+            let graphs = [measures].map((arr) => ({
+              title: utils.getMetricName(rule.metric),
+              unit: utils.getUnit(rule.resource_type, rule.metric),
+              yAxisData: utils.getChartData(arr, granularity, timeUtils.getTime(time), rule.resource_type),
+              xAxis: utils.getChartData(arr, granularity, timeUtils.getTime(time))
+            }));
+            updateContents(graphs);
+          }).catch((err) => {
+            updateContents([{}]);
+          });
         }
         break;
       case 'history':

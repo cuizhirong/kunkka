@@ -123,6 +123,12 @@
         "name": ["description"],
         "key": "description",
         "default": true
+      }, {
+        "name": ["console"],
+        "key": "console"
+      }, {
+        "name": ["alarm"],
+        "key": "alarm"
       }]
     }
   }

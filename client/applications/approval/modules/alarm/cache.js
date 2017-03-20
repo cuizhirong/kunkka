@@ -2,8 +2,9 @@ var fetch = require('client/applications/approval/cores/fetch');
 
 module.exports = {
   getAlarmList: function() {
+    let userId = HALO.user.userId;
     return fetch.get({
-      url: '/proxy/aodh/v2/alarms?q.field=user_id&q.op=eq&q.value=fc56c4e01a1844ab8f508c5191553f69'
+      url: '/proxy/aodh/v2/alarms?q.field=user_id&q.op=eq&q.value=' + userId
     }).then(function(data) {
       return data;
     });

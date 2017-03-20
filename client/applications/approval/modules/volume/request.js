@@ -150,5 +150,40 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + volumeId + '/metadata',
       data: data
     });
+  },
+  getAlarmList(id) {
+    var alarm = [], rule = '';
+    return fetch.get({
+      url: '/proxy/aodh/v2/alarms'
+    }).then(function(data) {
+      data && data.forEach(a => {
+        rule = a.gnocchi_resources_threshold_rule;
+        if (rule.resource_type === 'volume' && rule.resource_id === id) {
+          alarm.push(a);
+        }
+      });
+      return alarm;
+    });
+  },
+  getMeasures: function(ids, granularity, start) {
+    var deferredList = [];
+    ids.forEach((id) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  getNetworkResourceId: function(id, granularity) {
+    let url = '/proxy/gnocchi/v1/search/resource/instance_disk',
+      data = {
+        '=': {
+          original_resource_id: id
+        }
+      };
+    return fetch.post({
+      url: url,
+      data: data
+    });
   }
 };

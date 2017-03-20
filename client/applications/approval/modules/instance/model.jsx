@@ -11,6 +11,9 @@ var RelatedSnapshot = require('client/components/related_snapshot/index');
 var ConsoleOutput = require('../../components/console_output/index');
 var applyInstance = require('./pop/apply_instance/index');
 var VncConsole = require('../../components/vnc_console/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
+var LineChart = require('client/components/line_chart/index');
+var {Button} = require('client/uskin/index');
 
 //pop modals
 var deleteModal = require('client/components/modal_delete/index');
@@ -29,6 +32,7 @@ var resizeInstance = require('./pop/resize/index');
 var deleteInstance = require('./pop/delete/index');
 var changeOwner = require('./pop/change_owner/index');
 var changeUsage = require('./pop/change_usage/index');
+var createAlarm = require('../alarm/pop/create/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -39,6 +43,8 @@ var msgEvent = require('client/applications/approval/cores/msg_event');
 var notify = require('client/applications/approval/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
+var utils = require('../alarm/utils');
+var timeUtils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -46,6 +52,12 @@ class Model extends React.Component {
     super(props);
 
     moment.locale(HALO.configs.lang);
+    var enableAlarm = HALO.settings.enable_alarm;
+    if (!enableAlarm) {
+      let detail = config.table.detail.tabs;
+      delete detail[3];
+      delete detail[4];
+    }
 
     this.state = {
       config: config
@@ -558,6 +570,146 @@ class Model extends React.Component {
           });
         }
         break;
+      case 'console':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          let that = this;
+
+          var updateDetailMonitor = function(newContents, loading) {
+            detail.setState({
+              contents: newContents,
+              loading: loading
+            });
+          };
+          let time = data.time;
+
+          var resourceId = rows[0].id,
+            instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
+          var tabItems = [{
+            name: __.three_hours,
+            key: '300',
+            time: 'hour'
+          }, {
+            name: __.one_day,
+            key: '900',
+            time: 'day'
+          }, {
+            name: __.one_week,
+            key: '3600',
+            time: 'week'
+          }, {
+            name: __.one_month,
+            key: '21600',
+            time: 'month'
+          }];
+
+          let granularity = '';
+          if (data.granularity) {
+            granularity = data.granularity;
+          } else {
+            granularity = '300';
+            contents[tabKey] = (<div/>);
+            updateDetailMonitor(contents, true);
+          }
+
+          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+          let updateContents = (arr) => {
+            contents[tabKey] = (
+              <LineChart
+                __={__}
+                item={rows[0]}
+                data={arr}
+                granularity={granularity}
+                tabItems={tabItems}
+                start={timeUtils.getTime(time)}
+                clickTabs={(e, tab, item) => {
+                  that.onClickDetailTabs('console', refs, {
+                    rows: rows,
+                    granularity: tab.key,
+                    time: tab.time
+                  });
+                }} >
+                <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
+              </LineChart>
+            );
+
+            updateDetailMonitor(contents);
+          };
+          if (data.granularity) {
+            updateContents([]);
+          }
+          request.getResourceMeasures(resourceId, instanceMetricType, granularity, timeUtils.getTime(time)).then((res) => {
+            var arr = res.map((r, index) => ({
+              title: utils.getMetricName(instanceMetricType[index]),
+              unit: utils.getUnit('instance', instanceMetricType[index]),
+              yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), 'instance'),
+              xAxis: utils.getChartData(r, granularity, timeUtils.getTime(time))
+            }));
+            request.getNetworkResourceId(resourceId).then(_data => {
+              const addresses = rows[0].addresses;
+              let ips = [], _datas = [];
+              for (let key in addresses) {
+                addresses[key].filter((addr) => addr['OS-EXT-IPS:type'] === 'fixed').some((addrItem) => {
+                  _data.forEach(_portData => {
+                    if (addrItem.port.id.substr(0, 11) === _portData.name.substr(3)) {
+                      ips.push(addrItem.port.fixed_ips[0].ip_address);
+                      _datas.push(_portData);
+                    }
+                  });
+                });
+              }
+              request.getNetworkResource(granularity, timeUtils.getTime(time), rows[0], _datas).then(resourceData => {
+                var portArr = resourceData.map((_rd, index) => ({
+                  title: ips[parseInt(index / 2, 10)] + ' ' + utils.getMetricName(portMetricType[index % 2]),
+                  unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
+                  yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), 'instance'),
+                  xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time))
+                }));
+                updateContents(arr.concat(portArr));
+              }).catch(error => {
+                updateContents([{}]);
+              });
+            }).catch(error => {
+              updateContents([{}]);
+            });
+          }).catch(error => {
+            updateContents([{}]);
+          });
+        }
+        break;
+      case 'alarm':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          var asyncAlarmKey = tabKey;
+
+          var updateDetailAlarm = function(newContents) {
+            detail.setState({
+              contents: newContents,
+              loading: false
+            });
+          };
+
+          //open detail without delaying
+          detail.setState({
+            loading: true
+          });
+          request.getAlarmList(rows[0].id).then(res => {
+            var alarmItems = this.getAlarmItems(res);
+            contents[asyncAlarmKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.alarm}
+                defaultUnfold={true}
+                tableConfig={alarmItems ? alarmItems : []} />
+            );
+            updateDetailAlarm(contents);
+          }, () => {
+            contents[asyncAlarmKey] = (<div />);
+            updateDetailAlarm(contents);
+          });
+        }
+        break;
       default:
         break;
     }
@@ -854,6 +1006,12 @@ class Model extends React.Component {
             });
             cb(true);
           }
+        });
+        break;
+      case 'create_alarm':
+        createAlarm({
+          type: 'instance',
+          item: data.rawItem
         });
         break;
       default:

@@ -196,6 +196,7 @@ class Model extends React.Component {
             if(!showMgmtApply) { return; }
             break;
           case 'alarm':
+          case 'notification':
             if (!showAlarm) { return; }
             break;
           default:
