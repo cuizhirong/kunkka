@@ -4,6 +4,7 @@ const co = require('co');
 const base = require('../base.js');
 const paginate = require('helpers/paginate.js');
 const drivers = require('drivers');
+const DKS = drivers.keystone;
 const userModel = require('../../models').user;
 
 // due to User is reserved word
@@ -104,10 +105,86 @@ User.prototype = {
       res.send(user);
     }).catch(next);
   },
+  getRoleAssignments: (req, res, next) => {
+    co(function *() {
+      const query = req.query;
+      Object.keys(query).forEach(key => {
+        query[key] = query[key] ? query[key].trim() : '';
+      });
+      const token = req.session.user.token;
+      const remote = req.session.endpoint.keystone[req.session.user.regionId];
+      const result = yield DKS.role.roleAssignmentsAsync(token, remote, req.query);
+      if (Object.prototype.hasOwnProperty.call(query, 'include_names') && query.include_names !== '0') {
+        const assignments = result.body.role_assignments;
+        const metadata = {domain: {}, project: {}, group: {}, role: {}, user: {}};
+        const reqs = {list: {}, get: {}};
+        if (query['role.id']) {
+          reqs.get.role = DKS.role.getRoleAsync(token, remote, query['role.id']);
+        } else {
+          reqs.list.role = DKS.role.listRolesAsync(token, remote);
+        }
+
+        if (query['user.id']) {
+          reqs.get.user = DKS.user.getUserAsync(token, remote, query['user.id']);
+        } else if (query['group.id']) {
+          reqs.get.group = DKS.group.getGroupAsync(token, remote, query['group.id']);
+        } else {
+          reqs.list.user = DKS.user.listUsersAsync(token, remote);
+          reqs.list.group = DKS.group.listGroupsAsync(token, remote);
+        }
+
+        if (query['scope.project.id']) {
+          reqs.get.project = DKS.project.getProjectAsync(token, remote, query['scope.project.id']);
+        } else if (query['scope.domain.id']) {
+          reqs.get.domain = DKS.domain.getDomainAsync(token, remote, query['scope.domain.id']);
+        } else {
+          reqs.list.project = DKS.project.listProjectsAsync(token, remote);
+          reqs.list.domain = DKS.domain.listDomainsAsync(token, remote);
+        }
+        const results = yield reqs;
+        Object.keys(results.list).forEach(key => {
+          results.list[key].body[key + 's'].forEach(d => {
+            metadata[key][d.id] = d;
+          });
+        });
+        Object.keys(results.get).forEach(key => {
+          metadata[key][results.get[key].body[key].id] = results.get[key].body[key];
+        });
+
+        assignments.forEach(a => {
+          if (a.user) {
+            a.user.name = metadata.user[a.user.id].name;
+            a.user.domain = {
+              id: metadata.user[a.user.id].domain_id,
+              name: metadata.domain[metadata.user[a.user.id].domain_id].name
+            };
+          } else if (a.group) {
+            a.group.name = metadata.group[a.group.id].name;
+            a.group.domain = {
+              id: metadata.group[a.group.id].domain_id,
+              name: metadata.domain[metadata.group[a.group.id].domain_id].name
+            };
+          }
+          if (a.scope.project) {
+            a.scope.project.name = metadata.project[a.scope.project.id].name;
+            a.scope.project.domain = {
+              id: metadata.project[a.scope.project.id].domain_id,
+              name: metadata.domain[metadata.project[a.scope.project.id].domain_id].name
+            };
+          } else if (a.scope.domain) {
+            a.scope.domain.name = metadata.domain[a.scope.domain.id];
+          }
+          a.role.name = metadata.role[a.role.id].name;
+        });
+      }
+      res.send(result.body);
+    }).catch(next);
+  },
   initRoutes: function () {
     this.app.get('/api/v1/user/:userId', this.getUser.bind(this));
     this.app.get('/api/v1/users', this.getUserList.bind(this));
     this.app.post('/api/v1/users', this.createUser.bind(this));
+    this.app.get('/api/v1/role_assignments', base.middleware.checkLogin, this.getRoleAssignments.bind(this));
   }
 };
 
