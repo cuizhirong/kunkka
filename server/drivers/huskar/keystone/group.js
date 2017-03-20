@@ -19,4 +19,12 @@ driver.listUsersInGroupAsync = (token, remote, groupId) => {
   );
 };
 
+driver.listGroupsAsync = (token, remote, query) => {
+  return driver.getMethodAsync(
+    `${remote}/v3/groups`,
+    token,
+    query
+  );
+};
+
 module.exports = driver;
