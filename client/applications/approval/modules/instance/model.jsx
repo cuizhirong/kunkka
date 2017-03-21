@@ -43,6 +43,7 @@ var msgEvent = require('client/applications/approval/cores/msg_event');
 var notify = require('client/applications/approval/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
+var getTime = require('client/utils/time_unification');
 var utils = require('../alarm/utils');
 var timeUtils = require('../../utils/utils');
 
@@ -720,6 +721,47 @@ class Model extends React.Component {
         loading: false
       });
     }
+  }
+
+  getAlarmItems(item) {
+    var tableContent = [];
+    item.forEach((element, index) => {
+      if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance') {
+        var dataObj = {
+          id: index + 1,
+          name: element.name,
+          enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
+          state: utils.getStateName(element.state),
+          created_at: getTime(element.timestamp, true)
+        };
+        tableContent.push(dataObj);
+      }
+    });
+
+    var tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.enable + __.status,
+        key: 'enabled',
+        dataIndex: 'enabled'
+      }, {
+        title: __.status,
+        key: 'state',
+        dataIndex: 'state'
+      }, {
+        title: __.create + __.time,
+        key: 'created_at',
+        dataIndex: 'created_at'
+      }],
+      data: tableContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getBasicPropsItems(item) {
