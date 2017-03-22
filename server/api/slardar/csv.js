@@ -2,6 +2,7 @@
 const co = require('co');
 const request = require('superagent');
 const csv = require('json2csv');
+const _ = require('lodash');
 
 const getQueryString = require('helpers/getQueryString.js');
 const csvElements = require('./csv.elements');
@@ -68,6 +69,7 @@ module.exports.fields = (req, res, next) => {
  * fields=name,size,value
  * filename
  */
+const customFields = ['filename', 'fields', 'user_id', 'start_time', 'end_time', 'tenant_id'];
 module.exports.data = (req, res, next) => {
   co(function *() {
     const __ = req.i18n.__.bind(req.i18n);
@@ -77,11 +79,11 @@ module.exports.data = (req, res, next) => {
     const service = req.path.split('/')[3];
     const target = remote[service][region] + '/' + req.path.split('/').slice(4).join('/');
     const query = req.query;
+    const paramsToOpenStack = _.omit(query, customFields);
     let queryFields = query.fields;
     delete query.fields;
-
     const requests = {
-      major: request.get(target + getQueryString(req.query)).set('X-Auth-Token', req.session.user.token)
+      major: request.get(target + getQueryString(paramsToOpenStack)).set('X-Auth-Token', req.session.user.token)
     };
     //custom fields
     queryFields = queryFields ? queryFields.split(',').filter(f => f) : [];
