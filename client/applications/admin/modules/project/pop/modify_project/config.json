@@ -3,19 +3,20 @@
   "fields": [{
     "type": "input",
     "field": "name",
-    "required": true,
-    "value": ""
+    "required": true
   }, {
     "type": "select",
     "field": "domain"
   }, {
     "type": "textarea",
-    "field": "describe",
-    "value": ""
+    "field": "describe"
+  }, {
+    "type": "checkbox",
+    "field": "activate",
+    "has_label": true
   }],
   "btn": {
-    "value": "create",
-    "type": "create",
-    "disabled": true
+    "value": "modify",
+    "disabled": false
   }
 }

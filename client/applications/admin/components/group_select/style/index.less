@@ -1,0 +1,96 @@
+@import "../../../style/theme.less";
+
+@input_hover_border_color: @color_info;
+@select_content_border: @color_grey;
+@select_item_hover_color: @color_info_100;
+
+.halo-admin-com-group-select {
+  width: 100%;
+  height: 32px;
+  background-color: #fff;
+  overflow: visible;
+  &:hover {
+    .group-select-content {
+      display: block;
+    }
+  }
+  &.select {
+    .group-select-wrapper {
+      border-color: @input_hover_border_color;
+      background-position: right -46px;
+    }
+    .group-select-content {
+      display: block;
+    }
+  }
+  .group-select-wrapper {
+    width: 100%;
+    height: 32px;
+    padding: 4px 10px;
+    border: 1px solid #e3e4e5;
+    border-radius: 2px;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 20px;
+    line-height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .group-select-wrapper {
+    background: url("/static/assets/admin/input.png") no-repeat -20px 0;
+    background-position: right -71px;
+    &:hover {
+      background-position: right -46px;
+    }
+  }
+  @media screen and (-webkit-min-device-pixel-ratio: 2),
+  screen and (-moz-min-device-pixel-ratio: 2),
+  screen and (min-device-pixel-ratio: 2) {
+    .group-select-wrapper {
+      background: url("/static/assets/admin/input@x2.png") no-repeat -20px 0;
+      background-size: 96px 90px;
+      background-position: right -71px;
+      &:hover {
+        background-position: right -46px;
+      }
+    }
+  }
+
+  .group-select-content {
+    display: none;
+    box-sizing: border-box;
+    border: 1px solid @select_content_border;
+    width: 100%;
+    max-height: 260px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #fff;
+    .item-wrapper {
+      display: flex;
+      align-items: center;
+      padding-left: 6px;
+      box-sizing: border-box;
+      border-top: 1px solid #fff;
+      border-bottom: 1px solid @select_content_border;
+      width: 100%;
+      height: 30px;
+      background-color: #fff;
+      cursor: pointer;
+      p {
+        box-sizing: border-box;
+        flex: 1;
+        line-height: 30px;
+        padding-left: 10px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      &:hover {
+        background-color: @select_item_hover_color;
+      }
+    }
+  }
+}
