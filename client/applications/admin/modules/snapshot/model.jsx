@@ -11,8 +11,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var exportCSV = utils.exportCSV;
+var csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -317,8 +316,9 @@ class Model extends React.Component {
 
     switch(key) {
       case 'export_csv':
-        let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1';
-        exportCSV(url);
+        request.getFieldsList().then((res) => {
+          csv(res);
+        });
         break;
       case 'delete':
         deleteModal({

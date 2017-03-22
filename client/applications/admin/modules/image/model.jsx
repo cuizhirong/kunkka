@@ -14,8 +14,7 @@ var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var unitConverter = require('client/utils/unit_converter');
-var utils = require('../../utils/utils');
-var exportCSV = utils.exportCSV;
+var csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -363,8 +362,9 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/proxy/csv/glance/v2/images';
-        exportCSV(url);
+        request.getFieldsList().then((res) => {
+          csv(res);
+        });
         break;
       case 'delete':
         deleteModal({

@@ -1,5 +1,14 @@
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
+
+function getParameters(fields) {
+  let ret = '';
+  for(let f in fields) {
+    ret += '&' + f + '=' + fields[f];
+  }
+  return ret;
+}
 
 module.exports = {
   getList: function(pageLimit) {
@@ -104,6 +113,24 @@ module.exports = {
   getExternalNetwork: function(projectId) {
     return fetch.get({
       url: '/proxy/neutron/v2.0/networks?router:external=true'
+    });
+  },
+  getFieldsList: function() {
+    return fetch.get({
+      url: '/proxy/csv-field/floatingips'
+    });
+  },
+  exportCSV(fields) {
+    let url = '/proxy/csv/neutron/v2.0/floatingips?all_tenants=1' + getParameters(fields);
+    function ret() {
+      var linkNode = document.createElement('a');
+      linkNode.href = url;
+      linkNode.click();
+      linkNode = null;
+      return 1;
+    }
+    return new Promise((resolve, reject) => {
+      resolve(ret());
     });
   }
 };

@@ -1,0 +1,21 @@
+{
+  "title": ["export", "csv"],
+  "fields": [{
+    "type": "input",
+    "field": "exp_title",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "exp_filter"
+  }, {
+    "type": "input",
+    "field": "project_id"
+  }, {
+    "type": "input",
+    "field": "user_id"
+  }],
+  "btn": {
+    "value": "export",
+    "disabled": false
+  }
+}

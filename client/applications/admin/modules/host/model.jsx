@@ -12,8 +12,7 @@ var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var exportCSV = utils.exportCSV;
+var csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -330,8 +329,9 @@ class Model extends React.Component {
         });
         break;
       case 'export_csv':
-        let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/csv';
-        exportCSV(url);
+        request.getCSVField().then((res) => {
+          csv(res);
+        });
         break;
       case 'refresh':
         this.refresh({
