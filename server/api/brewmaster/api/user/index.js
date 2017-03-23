@@ -76,7 +76,7 @@ User.prototype = {
         if (results.users.body.users.length) {
           return res.status(404).json({error: req.i18n.__('api.keystone.duplicateUser')});
         }
-        if (results.users.body.projects.length) {
+        if (results.projects.body.projects.length) {
           return res.status(404).json({error: req.i18n.__('api.keystone.duplicateProject')});
         }
 
