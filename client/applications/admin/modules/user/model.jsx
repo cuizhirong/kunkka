@@ -637,13 +637,13 @@ class Model extends React.Component {
     for (var key in pRoles) {
       var element = pRoles[key];
       var dataObj = {
-        id: key,
-        name: <a data-type="router" href={'/admin/project/' + key}>{'(' + key.substring(0, 8) + ')'}</a>,
-        role: <div>{getRoles(element)}</div>,
+        id: element.id,
+        name: <a data-type="router" href={'/admin/project/' + element.id}>{key}</a>,
+        role: <div>{getRoles(element.roles)}</div>,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_project_role', {
           rawItem: item,
-          childItem: element,
-          project_id: key
+          childItem: element.roles,
+          project_id: element.id
         })} />
       };
       dataContent.push(dataObj);

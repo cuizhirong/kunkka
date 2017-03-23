@@ -139,7 +139,7 @@ module.exports = {
   },
   getRoleAssignments: function(user) {
     return fetch.get({
-      url: '/proxy/keystone/v3/role_assignments?user.id=' + user.id
+      url: '/api/v1/role_assignments?user.id=' + user.id + '&include_names=1'
     }).then((res) => {
       var domainRoles = [],
         projectRoles = [];
@@ -198,8 +198,11 @@ module.exports = {
           var domainId = domainRoles[i].scope.domain.id;
           dRoles[domainId] = res[i].roles;
         } else {
+          var projectName = projectRoles[i - domainRoles.length].scope.project.name;
           var projectId = projectRoles[i - domainRoles.length].scope.project.id;
-          pRoles[projectId] = res[i].roles;
+          pRoles[projectName] = {};
+          pRoles[projectName].id = projectId;
+          pRoles[projectName].roles = res[i].roles;
         }
       }
       return {
