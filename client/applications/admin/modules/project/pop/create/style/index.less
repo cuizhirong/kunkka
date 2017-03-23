@@ -1,0 +1,289 @@
+@import "../../../../../style/theme.less";
+
+@strong_color: @color_delete;
+@empty_text_label_color: @color_grey_800;
+
+@textarea_border: 1px solid @color_grey;
+@textarea_hover_border_color: @color_info;
+@textarea_error_border_color: @color_delete;
+
+@tab_bg_color: @color_grey;
+@tab_hover_bg_color: @color_info_100;
+@tab_selected_bg_color: @color_info_200;
+@tab_font_color: @color_font_800;
+
+@num_row_arrow_bg_color: @color_grey;
+@num_row_arrow_hover_bg_color: @color_grey_800;
+@num_row_arrow_color: @color_font_800;
+@input_hover_border_color: @color_info;
+
+@dropdown_border_color: @color_grey;
+@dropdown_overview_border_hover_color: @color_info;
+
+@account_color: @color_warning;
+@account_gray_color: @color_grey_700;
+
+@psw_input_danger_border_color: @color_delete;
+@psw_input_border_color: @color_info;
+@psw_eye_color: @color_grey_700;
+@psw_eye_selected_color: @color_grey_800;
+
+@tip_warning_color: @color_warning;
+@loading-color: @color_font_800;
+
+.modal-bd.halo-com-modal-create-project {
+  padding: 10px 30px !important;
+  box-sizing: border-box;
+  max-height: 484px;
+  width: 100%;
+  overflow: hidden;
+  line-height: 18px;
+
+  .loading-data {
+    width: 36px;
+    height: 150px;
+    margin: 0 auto;
+    position: relative;
+    i.icon-loading {
+      position: absolute;
+      top: 50%;
+      margin-top: -18px;
+      width: 36px;
+      color: @loading-color;
+      animation: spin 1.28s linear .28s infinite;
+      font-size: 36px !important;
+    }
+  }
+
+  .content-wrapper {
+    .select-tab {
+      width: 100%;
+    }
+
+    .modal-content {
+      width: 100%;
+      height: auto;
+
+      .project-info {
+        margin-top: 20px;
+        .modal-row {
+          display: flex;
+          align-items: center;
+          padding-left: 36px;
+
+          &:not(:first-child) {
+            margin-top: 18px;
+          }
+
+          &.label-row {
+            padding-left: 0;
+
+            >div:first-child {
+              .fixed-width(40px);
+              text-align: right;
+              margin-right: 12px;
+
+              >strong {
+                color: @strong_color;
+              }
+            }
+            >div:last-child {
+              flex: 1;
+            }
+
+          }
+
+          &.hide {
+            display: none;
+          }
+
+          &.input-row {
+            align-items: baseline;
+            input {
+              width: 100%;
+              box-sizing: border-box;
+              height: 32px;
+            }
+            .short-tip-row {
+              padding-left: 0;
+            }
+          }
+
+          &.select-row {
+            >div:last-child {
+              display: flex;
+              select {
+                width: 100%;
+              }
+            }
+          }
+
+          &.textarea-row {
+            align-items: flex-start;
+            height: 100px;
+
+            >div:first-child {
+              padding-top: 5px;
+            }
+            textarea {
+              height: 100px;
+              line-height: 22px;
+              width: 100%;
+              border: @textarea_border;
+              padding: 4px 10px;
+              overflow: auto;
+              box-sizing: border-box;
+              resize: none;
+
+              &:hover,
+              &:focus {
+                border-color: @textarea_hover_border_color;
+              }
+
+              &.error {
+                border-color: @textarea_error_border_color
+              }
+            }
+            .short-tip-row {
+              padding-left: 0;
+            }
+          }
+        }
+
+        .checkbox-wrapper {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 20px;
+          padding-left: 52px;
+          margin: 10px 0 20px 0;
+        }
+      }
+
+      .user-wrapper {
+        height: auto;
+        overflow: hidden;
+        .user-header {
+          width: 100%;
+          height: 32px;
+          margin-top: 10px;
+          display: flex;
+          .user-type {
+            width: 50px;
+          }
+          .user-input {
+            width: 170px;
+            margin-left: 10px;
+          }
+          .user-role {
+            z-index: 9999999;
+            min-width: 130px;
+            max-width: 130px;
+            margin-left: 10px;
+            margin-right: 10px;
+          }
+
+        }
+        .user-content {
+          margin-top: 10px;
+          width: 100%;
+          min-height: 200px;
+          max-height: 400px;
+          overflow-x: hidden;
+          overflow-y: auto;
+          .table {
+            .table-body {
+              .row {
+                .remove-user-from-project {
+                  font-size: 16px;
+                  font-weight: bold;
+                  color: @strong_color;
+                  cursor: pointer;
+                  &:hover {
+                    color: darken(@strong_color, 10%);
+                  }
+                }
+              }
+            }
+          }
+        }
+        .tip-wrapper {
+          width: 100%;
+          margin-top: 10px;
+          &.hide {
+            display: none;
+          }
+        }
+      }
+
+      .user-group-wrapper {
+        height: auto;
+        overflow: hidden;
+        .user-group-header {
+          width: 100%;
+          height: 32px;
+          margin-top: 10px;
+          display: flex;
+          .user-group-items {
+            width: 180px;
+          }
+          .user-group-role {
+            z-index: 9999999;
+            min-width: 200px;
+            max-width: 200px;
+            margin-left: 10px;
+            margin-right: 10px;
+          }
+        }
+        .user-group-content {
+          margin-top: 10px;
+          width: 100%;
+          min-height: 200px;
+          max-height: 400px;
+          overflow-x: hidden;
+          overflow-y: auto;
+          .table {
+            .table-body {
+              .row {
+                .remove-user-from-project {
+                  font-size: 16px;
+                  font-weight: bold;
+                  color: @strong_color;
+                  cursor: pointer;
+                  &:hover {
+                    color: darken(@strong_color, 10%);
+                  }
+                }
+              }
+            }
+          }
+        }
+        .tip-wrapper {
+          width: 100%;
+          margin-top: 10px;
+          &.hide {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .project-error-wrapper {
+      width: 100%;
+      margin-top: 10px;
+      &.hide {
+        display: none;
+      }
+    }
+  }
+}
+
+.modal-ft.halo-com-modal-create-project {
+
+  .right-side {
+    > * {
+      clear: both;
+      margin-right: 10px;
+    }
+  }
+}

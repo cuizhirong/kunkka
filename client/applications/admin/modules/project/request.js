@@ -197,6 +197,15 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
+  addUserGroups: function(projectID, userGroupID, roleID) {
+    var deferredList = [];
+    roleID.forEach((id) => {
+      deferredList.push(fetch.put({
+        url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + userGroupID + '/roles/' + id
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
   removeUser: function(projectID, userID, roles) {
     var deferredList = [];
     roles.forEach((role) => {
@@ -205,5 +214,64 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  getUserGroups: function() {
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain;
+      var defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
+      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+      var urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
+
+      var url = '/proxy/keystone/v3/groups' + urlParam;
+      return fetch.get({
+        url: url
+      }).then((res) => {
+        res._url = url;
+        res.domains = domains;
+        return res;
+      });
+    });
+  },
+  getAllRoles: function() {
+    var url = '/proxy/keystone/v3/roles';
+    return fetch.get({
+      url: url
+    });
+  },
+  getUserGroupsAndRoles: function() {
+    let requestList = [];
+    requestList.push(this.getUserGroups());
+    requestList.push(this.getAllRoles());
+    return RSVP.all(requestList);
+  },
+  // check if user name or id is available
+  queryUserId: function(data) {
+    if(data.type === 'name') {
+      return fetch.get({
+        url: '/api/v1/users?name=' + data.value
+      });
+    } else if(data.type === 'id') {
+      return fetch.get({
+        url: '/proxy/keystone/v3/users/' + data.value
+      });
+    } else {
+      return null;
+    }
+  },
+  addUserAndUserGroup(projectID, users, groups) {
+    let requestList = [];
+    let that = this;
+    if(users && users.length > 0) {
+      users.forEach((user) => {
+        requestList.push(that.addUser(projectID, user.id, user.roleIDs));
+      });
+    }
+    if(groups && groups.length > 0) {
+      groups.forEach((group) => {
+        requestList.push(that.addUserGroups(projectID, group.id, group.roleIDs));
+      });
+    }
+    return RSVP.all(requestList);
   }
+
 };

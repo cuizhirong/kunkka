@@ -9,6 +9,7 @@ var ResourceQuota = require('./quota');
 
 var deleteModal = require('client/components/modal_delete/index');
 var createProject = require('./pop/create/index');
+var modifyProject = require('./pop/modify_project/index');
 var activateProject = require('./pop/activate/index');
 var deactivateProject = require('./pop/deactivate/index');
 var addUser = require('./pop/add_user/index');
@@ -355,6 +356,17 @@ class Model extends React.Component {
     var that = this;
     switch(key) {
       case 'create':
+        // request.getUserGroupsAndRoles().then((res) => {
+        //   createProject({
+        //     userGroups: res[0],
+        //     roles: res[1]
+        //   }, null, function() {
+        //     that.refresh({
+        //       refreshList: true,
+        //       refreshDetail: true
+        //     });
+        //   });
+        // });
         createProject(null, null, function() {
           that.refresh({
             refreshList: true,
@@ -363,7 +375,7 @@ class Model extends React.Component {
         });
         break;
       case 'modify_project':
-        createProject(rows[0], null, function() {
+        modifyProject(rows[0], null, () => {
           that.refresh({
             refreshList: true,
             refreshDetail: true
