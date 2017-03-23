@@ -1,0 +1,15 @@
+{
+  "title": ["export", "csv"],
+  "fields": [{
+    "type": "input",
+    "field": "exp_title",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "exp_filter"
+  }],
+  "btn": {
+    "value": "export",
+    "disabled": false
+  }
+}

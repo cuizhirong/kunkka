@@ -1,5 +1,14 @@
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
+
+function getParameters(fields) {
+  let ret = '';
+  for(let f in fields) {
+    ret += '&' + f + '=' + fields[f];
+  }
+  return ret;
+}
 
 module.exports = {
   getSnapshotByID: function(snapshotID) {
@@ -79,5 +88,23 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  getFieldsList: function() {
+    return fetch.get({
+      url: '/proxy/csv-field/snapshots'
+    });
+  },
+  exportCSV(fields) {
+    let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1' + getParameters(fields);
+    function ret() {
+      var linkNode = document.createElement('a');
+      linkNode.href = url;
+      linkNode.click();
+      linkNode = null;
+      return 1;
+    }
+    return new Promise((resolve, reject) => {
+      resolve(ret());
+    });
   }
 };

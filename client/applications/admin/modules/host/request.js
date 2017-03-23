@@ -1,4 +1,6 @@
 var fetch = require('../../cores/fetch');
+var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
 
 function migrateLiveServer(id, hostID) {
   var data = {
@@ -33,6 +35,14 @@ function getAllHypervisors() {
   }).then((res) => {
     return res;
   });
+}
+
+function getParameters(fields) {
+  let ret = '';
+  for(let f in fields) {
+    ret += '&' + f + '=' + fields[f];
+  }
+  return ret;
 }
 
 module.exports = {
@@ -112,6 +122,24 @@ module.exports = {
           migrateInactivateServer(server.id, dest);
         }
       });
+    });
+  },
+  getCSVField: function() {
+    return fetch.get({
+      url: '/proxy/csv-field/os-hypervisors'
+    });
+  },
+  exportCSV(fields) {
+    let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/detail?all_tenants=1' + getParameters(fields);
+    function ret() {
+      var linkNode = document.createElement('a');
+      linkNode.href = url;
+      linkNode.click();
+      linkNode = null;
+      return 1;
+    }
+    return new Promise((resolve, reject) => {
+      resolve(ret());
     });
   }
 };

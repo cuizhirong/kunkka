@@ -1,6 +1,15 @@
 var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
 var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
+
+function getParameters(fields) {
+  let ret = '';
+  for(let f in fields) {
+    ret += '&' + f + '=' + fields[f];
+  }
+  return ret;
+}
 
 module.exports = {
   getFilterOptions: function(forced) {
@@ -122,6 +131,24 @@ module.exports = {
     return fetch.post({
       url: url,
       data: data
+    });
+  },
+  getFieldsList: function() {
+    return fetch.get({
+      url: '/proxy/csv-field/volumes'
+    });
+  },
+  exportCSV(fields) {
+    let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + getParameters(fields);
+    function ret() {
+      var linkNode = document.createElement('a');
+      linkNode.href = url;
+      linkNode.click();
+      linkNode = null;
+      return 1;
+    }
+    return new Promise((resolve, reject) => {
+      resolve(ret());
     });
   }
 };

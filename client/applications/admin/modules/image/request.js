@@ -1,4 +1,6 @@
 var fetch = require('../../cores/fetch');
+var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
 
 function requestParams(obj) {
   var str = '';
@@ -7,6 +9,16 @@ function requestParams(obj) {
   }
 
   return str;
+}
+
+function getParams(fields) {
+  var ret = '';
+  var flag = true;
+  for(let f in fields) {
+    ret += (flag ? '?' : '&') + f + '=' + fields[f];
+    flag = false;
+  }
+  return ret;
 }
 
 module.exports = {
@@ -66,6 +78,24 @@ module.exports = {
   delete: function(id) {
     return fetch.delete({
       url: '/proxy/glance/v2/images/' + id
+    });
+  },
+  getFieldsList: function() {
+    return fetch.get({
+      url: '/proxy/csv-field/images'
+    });
+  },
+  exportCSV(fields) {
+    let url = '/proxy/csv/glance/v2/images' + getParams(fields);
+    function ret() {
+      var linkNode = document.createElement('a');
+      linkNode.href = url;
+      linkNode.click();
+      linkNode = null;
+      return 1;
+    }
+    return new Promise((resolve, reject) => {
+      resolve(ret());
     });
   }
 };
