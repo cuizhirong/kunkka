@@ -1,7 +1,7 @@
 'use strict';
 
-var Base = require('../base.js');
-var driver = new Base();
+const Base = require('../base.js');
+const driver = new Base();
 
 driver.listDomains = (token, remote, query, callback) => {
   return driver.getMethod(
@@ -18,6 +18,13 @@ driver.listDomainsAsync = (token, remote, query) => {
     `${remote}/v3/domains`,
     token,
     query
+  );
+};
+
+driver.getDomainAsync = (token, remote, domainId) => {
+  return driver.getMethodAsync(
+    `${remote}/v3/domains/${domainId}`,
+    token
   );
 };
 

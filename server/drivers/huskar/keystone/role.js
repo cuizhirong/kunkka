@@ -82,5 +82,11 @@ driver.createRoleAsync = function (token, remote, body) {
     body
   );
 };
+driver.getRoleAsync = function (token, remote, roleId) {
+  return driver.getMethodAsync(
+    `${remote}/v3/roles/${roleId}`,
+    token
+  );
+};
 
 module.exports = driver;
