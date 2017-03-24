@@ -101,8 +101,8 @@ class Model extends React.Component {
     var table = this.state.config.table;
     var filter = this.state.config.filter;
     request.getProjectByID(id).then((res) => {
-      if (res.project) {
-        table.data = [res.project];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -125,7 +125,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
     var filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
-      table.data = res.projects;
+      table.data = res.list;
       this.setPagination(table, res);
       this.initializeFilter(filter);
       this.updateTableData(table, res._url, () => {
@@ -155,7 +155,7 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
-      table.data = res.projects;
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url, () => {
         var pathList = router.getPathList();
@@ -171,10 +171,8 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.projects) {
-        table.data = res.projects;
-      } else if (res.project) {
-        table.data = [res.project];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -226,15 +224,18 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {};
+    var pagination = {},
+      next = res.links.next ? res.links.next : null;
 
-    res.projects_links && res.projects_links.forEach((link) => {
-      if (link.rel === 'prev') {
-        pagination.prevUrl = link.href;
-      } else if (link.rel === 'next') {
-        pagination.nextUrl = link.href;
-      }
-    });
+    if (next) {
+      pagination.nextUrl = next;
+    }
+
+    var history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
     table.pagination = pagination;
 
     return table;

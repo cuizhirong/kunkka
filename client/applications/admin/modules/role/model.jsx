@@ -75,8 +75,8 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getRoleByID(id).then((res) => {
-      if (res.role) {
-        table.data = [res.role];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -92,7 +92,7 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getList(table.limit).then((res) => {
-      table.data = res.roles;
+      table.data = res.list;
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
@@ -105,7 +105,7 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
-      table.data = res.roles;
+      table.data = res.list;
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
@@ -116,10 +116,8 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.roles) {
-        table.data = res.roles;
-      } else if (res.role) {
-        table.data = [res.role];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -160,7 +158,7 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       if (currentUrl) {
-        this.stores.urls.push(currentUrl.split('/v3/')[1]);
+        this.stores.urls.push(currentUrl);
 
         var detail = this.refs.dashboard.refs.detail,
           params = this.props.params;

@@ -12,7 +12,7 @@ function getParameters(fields) {
 
 module.exports = {
   getSnapshotByID: function(snapshotID) {
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/' + snapshotID;
+    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?id=' + snapshotID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -25,7 +25,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&limit=' + pageLimit;
+    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -34,7 +34,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/cinder/v2/' + nextUrl;
+    var url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -50,13 +50,17 @@ module.exports = {
     function requestParams(obj) {
       var str = '';
       for(let key in obj) {
-        str += ('&' + key + '=' + obj[key]);
+        if(key === 'name') {
+          str += ('&search=' + obj[key]);
+        } else {
+          str += ('&' + key + '=' + obj[key]);
+        }
       }
 
       return str;
     }
 
-    var url = '/proxy/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {

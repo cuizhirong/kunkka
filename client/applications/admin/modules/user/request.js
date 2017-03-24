@@ -4,7 +4,11 @@ var RSVP = require('rsvp');
 function requestParams(obj) {
   var str = '';
   for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
+    if(key === 'name') {
+      str += ('&search=' + obj[key]);
+    } else {
+      str += ('&' + key + '=' + obj[key]);
+    }
   }
 
   return str;
@@ -22,7 +26,7 @@ module.exports = {
       var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
       var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
-      var url = '/api/v1/users?limit=' + pageLimit + urlParam;
+      var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + urlParam;
       return fetch.get({
         url: url
       }).then((res) => {
@@ -37,7 +41,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/users?limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -57,7 +61,7 @@ module.exports = {
     });
   },
   getUserByID: function(userID) {
-    var url = '/proxy/keystone/v3/users/' + userID;
+    var url = '/proxy-search/keystone/v3/users?id=' + userID;
     return fetch.get({
       url: url
     }).then((res) => {

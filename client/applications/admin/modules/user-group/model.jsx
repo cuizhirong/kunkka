@@ -93,8 +93,8 @@ class Model extends React.Component {
     var table = this.state.config.table;
     var filter = this.state.config.filter;
     request.getGroupByID(id).then((res) => {
-      if (res.group) {
-        table.data = [res.group];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -115,7 +115,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
     var filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
-      table.data = res.groups;
+      table.data = res.list;
       this.initializeFilter(filter);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -142,7 +142,7 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
-      table.data = res.groups;
+      table.data = res.list;
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
@@ -153,10 +153,8 @@ class Model extends React.Component {
   getNextListData(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.groups) {
-        table.data = res.groups;
-      } else if (res.group) {
-        table.data = [res.group];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -253,7 +251,7 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       if (currentUrl) {
-        this.stores.urls.push(currentUrl.split('/v3/')[1]);
+        this.stores.urls.push(currentUrl);
 
         var detail = this.refs.dashboard.refs.detail,
           params = this.props.params;

@@ -113,7 +113,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
 
     request.getSnapshotByID(snapshotID).then((res) => {
-      table.data = [res.snapshot];
+      table.data = res.list;
       table.pagination = null;
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -130,7 +130,7 @@ class Model extends React.Component {
     var pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
-      table.data = res.snapshots;
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -143,10 +143,8 @@ class Model extends React.Component {
   getNextListData(url) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.snapshots) {
-        table.data = res.snapshots;
-      } else if (res.snapshot) {
-        table.data = [res.snapshot];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -164,7 +162,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
 
     request.filterFromAll(data, table.limit).then((res) => {
-      table.data = res.snapshots;
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -201,7 +199,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v2/')[1]);
+      this.stores.urls.push(currentUrl);
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
@@ -213,10 +211,10 @@ class Model extends React.Component {
 
   setPagination(table, res) {
     var pagination = {},
-      next = res.snapshots_links ? res.snapshots_links[0] : null;
+      next = res.links.next ? res.links.next : null;
 
-    if (next && next.rel === 'next') {
-      pagination.nextUrl = next.href.split('/v2/')[1];
+    if (next) {
+      pagination.nextUrl = next;
     }
 
     var history = this.stores.urls;

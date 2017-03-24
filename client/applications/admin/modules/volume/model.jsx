@@ -149,7 +149,7 @@ class Model extends React.Component {
     var pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
-      table.data = res.volumes;
+      table.data = res.list;
       this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -166,7 +166,7 @@ class Model extends React.Component {
     var pageLimit = table.limit;
 
     request.getVolumeByID(volumeID, pageLimit).then((res) => {
-      table.data = [res.volume];
+      table.data = res.list;
       this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -180,7 +180,7 @@ class Model extends React.Component {
     var table = this.state.config.table;
 
     request.getNextList(url).then((res) => {
-      table.data = res.volumes;
+      table.data = res.list;
       this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -195,7 +195,7 @@ class Model extends React.Component {
     var pageLimit = table.limit;
 
     request.filterFromAll(data, pageLimit).then((res) => {
-      table.data = res.volumes;
+      table.data = res.list;
       this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -232,7 +232,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v2/')[1]);
+      this.stores.urls.push(currentUrl);
 
       var dashboard = this.refs.dashboard,
         detail = dashboard.refs.detail,
@@ -246,10 +246,10 @@ class Model extends React.Component {
 
   setPaginationData(table, res) {
     var pagination = {},
-      next = res.volumes_links ? res.volumes_links[0] : null;
+      next = res.links.next ? res.links.next : null;
 
-    if (next && next.rel === 'next') {
-      pagination.nextUrl = next.href.split('/v2/')[1];
+    if (next) {
+      pagination.nextUrl = next;
     }
 
     var history = this.stores.urls;

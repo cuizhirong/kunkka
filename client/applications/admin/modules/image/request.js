@@ -5,7 +5,11 @@ var Promise = RSVP.Promise;
 function requestParams(obj) {
   var str = '';
   for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
+    if(key === 'name') {
+      str += ('&search=' + obj[key]);
+    } else {
+      str += ('&' + key + '=' + obj[key]);
+    }
   }
 
   return str;
@@ -27,7 +31,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/glance/v2/images?limit=' + pageLimit;
+    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -36,7 +40,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    var url = '/proxy/glance/v2/images/' + id;
+    var url = '/proxy-search/glance/v2/images?id=' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -45,7 +49,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/glance/v2/' + nextUrl;
+    var url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -58,7 +62,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/glance/v2/images?limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {

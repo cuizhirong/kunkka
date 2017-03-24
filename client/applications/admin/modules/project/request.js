@@ -4,7 +4,11 @@ var RSVP = require('rsvp');
 function requestParams(obj) {
   var str = '';
   for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
+    if(key === 'name') {
+      str += ('&search=' + obj[key]);
+    } else {
+      str += ('&' + key + '=' + obj[key]);
+    }
   }
 
   return str;
@@ -16,7 +20,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/projects?limit=' + pageLimit;
+    var url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -25,7 +29,7 @@ module.exports = {
     });
   },
   getProjectByID: function(projectID) {
-    var url = '/proxy/keystone/v3/projects/' + projectID;
+    var url = '/proxy-search/keystone/v3/projects?id=' + projectID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -41,7 +45,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/projects?limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {

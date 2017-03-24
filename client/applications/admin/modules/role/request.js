@@ -4,7 +4,11 @@ var RSVP = require('rsvp');
 function requestParams(obj) {
   var str = '';
   for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
+    if(key === 'name') {
+      str += ('&search=' + obj[key]);
+    } else {
+      str += ('&' + key + '=' + obj[key]);
+    }
   }
 
   return str;
@@ -16,7 +20,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/roles';
+    var url = '/proxy-search/keystone/v3/roles';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -28,7 +32,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/keystone/v3/' + nextUrl;
+    var url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -44,7 +48,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/roles?limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/keystone/v3/roles?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -53,7 +57,7 @@ module.exports = {
     });
   },
   getRoleByID: function(roleID) {
-    var url = '/proxy/keystone/v3/roles/' + roleID;
+    var url = '/proxy-search/keystone/v3/roles?id=' + roleID;
     return fetch.get({
       url: url
     }).then((res) => {

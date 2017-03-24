@@ -136,7 +136,7 @@ class Model extends React.Component {
 
     var table = this.state.config.table;
     request.getSingle(id).then((res) => {
-      table.data = [res];
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
         var pathList = router.getPathList();
@@ -157,7 +157,7 @@ class Model extends React.Component {
       pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
-      table.data = res.images;
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
@@ -171,10 +171,8 @@ class Model extends React.Component {
   getNextList(url, refreshDetail) {
     var table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.images) {
-        table.data = res.images;
-      } else if (res.id) {
-        table.data = [res];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -197,7 +195,7 @@ class Model extends React.Component {
     this.setState({
       config: newConfig
     }, () => {
-      this.stores.urls.push(currentUrl.split('/v2/')[1]);
+      this.stores.urls.push(currentUrl);
 
       var detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
@@ -212,10 +210,10 @@ class Model extends React.Component {
 //set pagination
   setPagination(table, res) {
     var pagination = {},
-      next = res.next ? res.next : null;
+      next = res.links.next ? res.links.next : null;
 
     if (next) {
-      pagination.nextUrl = next.split('/v2/')[1];
+      pagination.nextUrl = next;
     }
 
     var history = this.stores.urls;
@@ -418,7 +416,7 @@ class Model extends React.Component {
         let pageLimit = this.state.config.table.limit;
         request.filter(typeData, pageLimit).then((res) => {
           var table = this.state.config.table;
-          table.data = res.images;
+          table.data = res.list;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
         });

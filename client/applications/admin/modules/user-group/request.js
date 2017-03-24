@@ -4,7 +4,11 @@ var RSVP = require('rsvp');
 function requestParams(obj) {
   var str = '';
   for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
+    if(key === 'name') {
+      str += ('&search=' + obj[key]);
+    } else {
+      str += ('&' + key + '=' + obj[key]);
+    }
   }
 
   return str;
@@ -22,7 +26,7 @@ module.exports = {
       var domainID = domains.find((ele) => ele.name === currentDomain).id;
       var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
-      var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + urlParam;
+      var url = '/proxy-search/keystone/v3/groups?limit=' + pageLimit + urlParam;
       return fetch.get({
         url: url
       }).then((res) => {
@@ -37,7 +41,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/groups?limit=' + pageLimit + requestParams(data);
+    var url = '/proxy-search/keystone/v3/groups?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -46,7 +50,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/keystone/v3/' + nextUrl;
+    var url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -58,7 +62,7 @@ module.exports = {
     });
   },
   getGroupByID: function(groupID) {
-    var url = '/proxy/keystone/v3/groups/' + groupID;
+    var url = '/proxy-search/keystone/v3/groups?id=' + groupID;
     return fetch.get({
       url: url
     }).then((res) => {
