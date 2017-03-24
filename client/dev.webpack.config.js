@@ -23,15 +23,18 @@ apps.forEach(function(m) {
 config.entry = entry;
 
 config.watch = true;
-config.keepAlive = true;
+// config.keepAlive = true;
 config.devtool = 'cheap-source-map';
-config.debug = true;
+// config.debug = true;
 
-config.output.path = 'dist';
+config.output.path = path.resolve(__dirname, './dist');
 config.output.filename = language + '.[name].min.js';
 config.output.chunkFilename = language + '.[id].bundle.js';
 config.plugins = [
-  new ExtractTextPlugin('[name].min.css')
+  new ExtractTextPlugin({filename: '[name].min.css'}),
+  new webpack.LoaderOptionsPlugin({
+    debug: true
+  })
 ];
 
 module.exports = config;

@@ -26,45 +26,61 @@ module.exports = {
   entry: entry,
 
   output: {
-    path: 'client/dist',
+    path: path.resolve(__dirname, './dist'),
     filename: '[hash:6].' + language + '.[name].min.js',
     publicPath: '/client/dist',
     chunkFilename: '[hash:6].' + language + '.[id].bundle.js'
   },
 
   module: {
-    loaders: [{
-      test: /\.js(.*)$/,
+    rules: [{
+      test: /\.jsx?$/,
       exclude: /node_modules|moment/,
-      loader: 'babel',
-      query: {
-        cacheDirectory: process.env.NODE_ENV !== 'production'
+      use: {
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: process.env.NODE_ENV !== 'production'
+        }
       }
     }, {
-      test: /\.json$/,
-      loader: 'json-loader'
-    }, {
       test: /\.less$/,
-      loader: ExtractTextPlugin.extract(
-        'css!postcss-loader!less'
-      )
+      use: ExtractTextPlugin.extract({
+        use: [{
+          loader: 'css-loader',
+        }, {
+          loader: 'postcss-loader',
+          options: {
+            plugins: function() {
+              return [autoprefixer];
+            }
+          }
+        }, {
+          loader: 'less-loader',
+        }]
+      })
     }, {
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract(
-        'css!postcss-loader'
-      )
+      use: ExtractTextPlugin.extract({
+        use: [{
+          loader: 'css-loader',
+        }, {
+          loader: 'postcss-loader',
+          options: {
+            plugins: function() {
+              return [autoprefixer];
+            }
+          }
+        }]
+      })
     }],
     noParse: [
       /moment/g
     ]
   },
 
-  postcss: function() {
-    return [autoprefixer];
-  },
-
   plugins: [
-    new ExtractTextPlugin('[hash:6].[name].min.css', {
+    new ExtractTextPlugin({
+      filename: '[hash:6].[name].min.css',
       allChunks: true
     }),
     new webpack.optimize.UglifyJsPlugin(),
@@ -76,8 +92,11 @@ module.exports = {
   ],
 
   resolve: {
-    extensions: ['', '.jsx', '.js'],
-    root: path.resolve('../'),
+    extensions: ['.jsx', '.js', 'json'],
+    modules: [
+      path.resolve(__dirname, '../'),
+      'node_modules'
+    ],
     alias: {
       'uskin': 'client/uskin',
       'react': 'node_modules/react',
