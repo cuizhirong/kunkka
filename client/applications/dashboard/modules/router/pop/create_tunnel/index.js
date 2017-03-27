@@ -67,7 +67,7 @@ function pop(obj, parent, callback) {
             createIkePolicy(refs.modal, (res) => {
               refs.ike_policy.refs.select.setState({
                 data: obj.ikepolicies.concat(res.ikepolicy),
-                value: obj.ikepolicies[0] ? obj.ikepolicies[0].id : res.id,
+                value: obj.ikepolicies[0] ? obj.ikepolicies[0].id : res.ikepolicy.id,
                 clicked: false,
                 renderer: popSelect
               });
@@ -82,7 +82,7 @@ function pop(obj, parent, callback) {
             createIpsecPolicy(refs.modal, (res) => {
               refs.ipsec_policy.refs.select.setState({
                 data: obj.ipsecpolicies.concat(res.ipsecpolicy),
-                value: obj.ipsecpolicies[0] ? obj.ipsecpolicies[0].id : res.id,
+                value: obj.ipsecpolicies[0] ? obj.ipsecpolicies[0].id : res.ipsecpolicy.id,
                 clicked: false,
                 renderer: popSelect
               });
