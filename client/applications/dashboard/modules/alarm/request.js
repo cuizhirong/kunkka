@@ -50,7 +50,7 @@ module.exports = {
         }
 
         // time format
-        alarm.state_timestamp = alarm.state_timestamp.split('.')[0] + 'Z';
+        alarm.timestamp = alarm.timestamp.split('.')[0] + 'Z';
 
       });
 

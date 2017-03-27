@@ -68,7 +68,7 @@
       "key": "status"
     }, {
       "title": ["create", "time"],
-      "dataIndex": "state_timestamp",
+      "dataIndex": "timestamp",
       "key": "created",
       "type": "time"
     }],

@@ -64,7 +64,7 @@ module.exports = {
       content: getStatusIcon(item.status)
     }, {
       title: __.create + __.time,
-      content: item.state_timestamp,
+      content: item.timestamp,
       type: 'time'
     }];
 
