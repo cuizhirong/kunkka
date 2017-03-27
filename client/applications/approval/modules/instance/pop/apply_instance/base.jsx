@@ -2,7 +2,6 @@ var React = require('react');
 var {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
 var __ = require('locale/client/approval.lang.json');
 var createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
-var createKeypairPop = require('client/applications/approval/modules/keypair/pop/create_keypair/index');
 var request = require('../../request');
 var unitConverter = require('client/utils/unit_converter');
 var priceConverter = require('../../../../utils/price');
@@ -28,9 +27,6 @@ class ModalBase extends React.Component {
     }];
 
     var credentials = [{
-      key: 'keypair',
-      value: __.keypair
-    }, {
       key: 'psw',
       value: __.password
     }];
@@ -64,14 +60,11 @@ class ModalBase extends React.Component {
       usageError: false,
       applyDescription: '',
       descriptionError: false,
-      hideKeypair: false,
       securityGroups: [],
       securityGroup: {},
       sgUnfold: false,
       credentials: credentials,
       credential: credentials[0].key,
-      keypairs: [],
-      keypairName: '',
       username: '',
       pwd: '',
       pwdVisible: false,
@@ -89,10 +82,10 @@ class ModalBase extends React.Component {
     ['initialize', 'onPaging', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
-    'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
+   'onChangeNumber', 'pwdVisibleControl',
     'onChangePwd', 'onFocusPwd', 'onBlurPwd',
     'confirmPwdVisibleControl', 'onChangeConfirmPwd',
-    'createNetwork', 'createKeypair', 'onConfirm',
+    'createNetwork', 'onConfirm',
     'onChangeUsage', 'onChangeApplyDescription'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
@@ -165,18 +158,14 @@ class ModalBase extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = true;
     // var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
-    var credential = hideKeypair ? 'psw' : 'keypair';
+    var credential = 'psw';
 
     var networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
     });
 
     var sg = res.securitygroup;
-
-    var keypairs = res.keypair;
-    var selectedKeypair = selectDefault(keypairs);
 
     this.setState({
       ready: true,
@@ -190,10 +179,7 @@ class ModalBase extends React.Component {
       network: selectDefault(networks),
       securityGroups: sg,
       securityGroup: {},
-      keypairs: keypairs,
-      keypairName: selectedKeypair ? selectedKeypair.name : null,
       username: username,
-      hideKeypair: hideKeypair,
       credential: credential
     });
 
@@ -291,10 +277,6 @@ class ModalBase extends React.Component {
       objImage = snapshot;
     }
 
-    var hideKeypair = false;
-    if (objImage) {
-      hideKeypair = objImage.image_label.toLowerCase() === 'windows';
-    }
     this.setFlavor(objImage, 'all');
 
     this.setState({
@@ -302,8 +284,7 @@ class ModalBase extends React.Component {
       image: image,
       snapshot: snapshot,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -369,15 +350,11 @@ class ModalBase extends React.Component {
     var meta = JSON.parse(item.image_meta);
     username = meta.os_username;
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
-
     this.setFlavor(item, 'all');
     this.setState({
       image: item,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -389,15 +366,11 @@ class ModalBase extends React.Component {
     var meta = JSON.parse(item.image_meta);
     username = meta.os_username;
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
-
     this.setFlavor(item, 'all');
     this.setState({
       snapshot: item,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -475,13 +448,6 @@ class ModalBase extends React.Component {
     });
   }
 
-  onChangeKeypair(e) {
-    var name = e.target.value;
-
-    this.setState({
-      keypairName: name
-    });
-  }
 
   checkPsw(pwd) {
     return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
@@ -534,17 +500,6 @@ class ModalBase extends React.Component {
       this.setState({
         networks: [network],
         network: network
-      });
-    });
-
-    this.stopSliding();
-  }
-
-  createKeypair() {
-    createKeypairPop(this.refs.modal, (keypair) => {
-      this.setState({
-        keypairs: [keypair],
-        keypairName: keypair.name
       });
     });
 
@@ -629,11 +584,7 @@ class ModalBase extends React.Component {
 
     var enable = (nameRequired ? state.name : true) && state.flavor && state.network && state.number && state.usage && state.applyDescription;
     if(showCredentials) {
-      if (state.credential === 'keypair') {
-        enable = enable && state.keypairName;
-      } else {
-        enable = enable && !state.pwdError;
-      }
+      enable = enable && !state.pwdError;
     }
 
     if (enable) {
@@ -650,22 +601,18 @@ class ModalBase extends React.Component {
         }
       };
       if(showCredentials) {
-        if (state.credential === 'keypair') {
-          createItem.key_name = state.keypairName;
+        if(state.image.image_label === 'Windows') {
+          createItem.metadata = {
+            admin_pass: state.pwd
+          };
         } else {
-          if(state.image.image_label === 'Windows') {
-            createItem.metadata = {
-              admin_pass: state.pwd
-            };
-          } else {
-            //add user_data to store root pwd
-            var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
-            userData = userData.replace(/\{0\}/g, state.pwd);
-            createItem.user_data = userData;
-            createItem.user_data_format = 'RAW';
-          }
-          createItem.admin_pass = state.pwd;
+          //add user_data to store root pwd
+          var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
+          userData = userData.replace(/\{0\}/g, state.pwd);
+          createItem.user_data = userData;
+          createItem.user_data_format = 'RAW';
         }
+        createItem.admin_pass = state.pwd;
       }
       configCreate.push(createItem);
 
@@ -976,14 +923,8 @@ class ModalBase extends React.Component {
 
   renderCredentials(props, state) {
     var selected = state.credential;
-    var isKeypair = selected === 'keypair';
 
     var credentials = state.credentials;
-    var hideKeypair = state.hideKeypair;
-
-    if (hideKeypair) {
-      credentials = [credentials[1]];
-    }
 
     var Types = (
       <div className="row row-tab row-tab-credential" key="types">
@@ -1004,33 +945,8 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var keypair = state.keypairName;
-    var Keypairs = (
-      <div className={'row row-select credential-sub' + (isKeypair ? '' : ' hide')} key="keypairs">
-        <div className="modal-label">
-          {__.keypair}
-        </div>
-        <div className="modal-data">
-          {
-            state.keypairName ?
-              <select value={keypair} onChange={this.onChangeKeypair}>
-                {
-                  state.keypairs.map((ele) =>
-                    <option key={ele.name} value={ele.name}>{ele.name}</option>
-                  )
-                }
-              </select>
-            : <div className="empty-text-label" onClick={this.createKeypair}>
-                {__.no_keypair + ' '}
-                <a>{__.create + __.keypair}</a>
-              </div>
-          }
-        </div>
-      </div>
-    );
-
     var Psw = (
-      <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
+      <div className={'row row-select credential-sub'} key="psw">
         <div className="modal-data">
           <div className="input-user">
             <label>{__.user_name}</label>
@@ -1075,7 +991,6 @@ class ModalBase extends React.Component {
 
     var ret = [];
     ret.push(Types);
-    ret.push(Keypairs);
     ret.push(Psw);
     ret.push(CrdTips);
 
@@ -1151,11 +1066,7 @@ class ModalBase extends React.Component {
     } else if(page === 2) {
       let enable = state.flavor && state.network && state.number;
       if(showCredentials) {
-        if (state.credential === 'keypair') {
-          enable = enable && state.keypairName;
-        } else {
-          enable = enable && !state.pwdError && !state.confirmPwdError;
-        }
+        enable = enable && !state.pwdError && !state.confirmPwdError;
       }
 
       return (
