@@ -5,7 +5,6 @@ var uskin = require('client/uskin/index');
 var {Tab, Button, Tooltip, Slider} = uskin;
 
 var createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
-var createKeypairPop = require('client/applications/approval/modules/keypair/pop/create_keypair/index');
 var createApplication = require('./pop/create_application/index');
 
 var __ = require('locale/client/approval.lang.json');
@@ -30,9 +29,6 @@ class Model extends React.Component {
     }];
 
     var credentials = [{
-      key: 'keypair',
-      value: __.keypair
-    }, {
       key: 'psw',
       value: __.password
     }];
@@ -57,14 +53,11 @@ class Model extends React.Component {
       volume: null,
       networks: [],
       network: null,
-      hideKeypair: false,
       securityGroups: [],
       securityGroup: {},
       sgUnfold: false,
       credentials: credentials,
       credential: credentials[0].key,
-      keypairs: [],
-      keypairName: '',
       username: '',
       pwd: '',
       pwdVisible: false,
@@ -98,10 +91,10 @@ class Model extends React.Component {
     ['initialize', 'initializeVolume', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
-    'onChangeKeypair', 'pwdVisibleControl', 'onChangePwd',
+    'pwdVisibleControl', 'onChangePwd',
     'onFocusPwd', 'onBlurPwd',
     'confirmPwdVisibleControl', 'onChangeConfirmPwd',
-    'createNetwork', 'createKeypair', 'onSliderChange',
+    'createNetwork', 'onSliderChange',
     'onChangeVolumeName', 'onVolumeCapacityChange'].forEach(func => {
       this[func] = this[func].bind(this);
     });
@@ -160,9 +153,8 @@ class Model extends React.Component {
     var imageType = 'image';
 
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = true;
     // var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
-    var credential = hideKeypair ? 'psw' : 'keypair';
+    var credential = 'psw';
 
     var networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
@@ -173,8 +165,6 @@ class Model extends React.Component {
     var hasRouter = network ? network.subnets.some(sub => (sub.router && sub.router.external_gateway_info)) : false;
 
     var sg = res.securitygroup;
-    var keypairs = res.keypair;
-    var selectedKeypair = selectDefault(keypairs);
 
     this.setState({
       ready: true,
@@ -188,10 +178,7 @@ class Model extends React.Component {
       network: network,
       securityGroups: sg,
       securityGroup: {},
-      keypairs: keypairs,
-      keypairName: selectedKeypair ? selectedKeypair.name : null,
       username: username,
-      hideKeypair: hideKeypair,
       credential: credential,
       fipDisabled: !hasRouter
     });
@@ -432,10 +419,6 @@ class Model extends React.Component {
       objImage = snapshot;
     }
 
-    var hideKeypair = false;
-    if (objImage) {
-      hideKeypair = objImage.image_label.toLowerCase() === 'windows';
-    }
     this.setFlavor(objImage, 'all');
 
     this.setState({
@@ -443,8 +426,7 @@ class Model extends React.Component {
       image: image,
       snapshot: snapshot,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -456,15 +438,11 @@ class Model extends React.Component {
     var meta = JSON.parse(item.image_meta);
     username = meta.os_username;
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
-
     this.setFlavor(item, 'all');
     this.setState({
       image: item,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -476,15 +454,11 @@ class Model extends React.Component {
     var meta = JSON.parse(item.image_meta);
     username = meta.os_username;
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
-
     this.setFlavor(item, 'all');
     this.setState({
       snapshot: item,
       username: username,
-      hideKeypair: hideKeypair,
-      credential: hideKeypair ? 'psw' : 'keypair',
+      credential: 'psw',
       pwdError: true,
       pwd: '',
       pwdVisible: false
@@ -782,14 +756,8 @@ class Model extends React.Component {
 
   renderCredentials(props, state) {
     var selected = state.credential;
-    var isKeypair = selected === 'keypair';
 
     var credentials = state.credentials;
-    var hideKeypair = state.hideKeypair;
-
-    if (hideKeypair) {
-      credentials = [credentials[1]];
-    }
 
     var Types = (
       <div className="row row-tab row-tab-credential" key="types">
@@ -810,33 +778,8 @@ class Model extends React.Component {
       </div>
     );
 
-    var keypair = state.keypairName;
-    var Keypairs = (
-      <div className={'row row-select credential-sub' + (isKeypair ? '' : ' hide')} key="keypairs">
-        <div className="row-label">
-          {__.keypair}
-        </div>
-        <div className="row-data">
-          {
-            state.keypairName ?
-              <select value={keypair} onChange={this.onChangeKeypair}>
-                {
-                  state.keypairs.map((ele) =>
-                    <option key={ele.name} value={ele.name}>{ele.name}</option>
-                  )
-                }
-              </select>
-            : <div className="empty-text-label" onClick={this.createKeypair}>
-                {__.no_keypair + ' '}
-                <a>{__.create + __.keypair}</a>
-              </div>
-          }
-        </div>
-      </div>
-    );
-
     var Psw = (
-      <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
+      <div className={'row row-select credential-sub'} key="psw">
         <div className="row-data">
           <div className="input-user">
             <label>{__.user_name}</label>
@@ -846,7 +789,7 @@ class Model extends React.Component {
             <label>{__.password}</label>
             <div className="psw-tip-box">
               {
-                state.page === 2 && state.showPwdTip ?
+                state.showPwdTip ?
                   <Tooltip content={__.pwd_tip} width={214} shape="top-left" type={'error'} hide={!state.pwdError} />
                 : null
               }
@@ -881,7 +824,6 @@ class Model extends React.Component {
 
     var ret = [];
     ret.push(Types);
-    ret.push(Keypairs);
     ret.push(Psw);
     ret.push(CrdTips);
 
@@ -894,23 +836,6 @@ class Model extends React.Component {
       pwdError: true,
       pwd: '',
       pwdVisible: false
-    });
-  }
-
-  onChangeKeypair(e) {
-    let name = e.target.value;
-
-    this.setState({
-      keypairName: name
-    });
-  }
-
-  createKeypair() {
-    createKeypairPop(this.refs.modal, (keypair) => {
-      this.setState({
-        keypairs: [keypair],
-        keypairName: keypair.name
-      });
     });
   }
 
@@ -946,7 +871,6 @@ class Model extends React.Component {
 
   onFocusPwd(e) {
     var isError = this.checkPsw(this.state.pwd);
-
     this.setState({
       showPwdTip: isError
     });
@@ -1183,22 +1107,18 @@ class Model extends React.Component {
     };
 
     if(showCredentials) {
-      if(state.credential === 'keypair') {
-        createItem.key_name = state.keypairName;
+      if(state.image.image_label === 'Windows') {
+        createItem.metadata = {
+          admin_pass: state.pwd
+        };
       } else {
-        if(state.image.image_label === 'Windows') {
-          createItem.metadata = {
-            admin_pass: state.pwd
-          };
-        } else {
-          //add user_data to store root pwd
-          var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
-          userData = userData.replace(/\{0\}/g, state.pwd);
-          createItem.user_data = userData;
-          createItem.user_data_format = 'RAW';
-        }
-        createItem.admin_pass = state.pwd;
+        //add user_data to store root pwd
+        var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
+        userData = userData.replace(/\{0\}/g, state.pwd);
+        createItem.user_data = userData;
+        createItem.user_data_format = 'RAW';
       }
+      createItem.admin_pass = state.pwd;
     }
     configCreate.push(createItem);
 
@@ -1277,14 +1197,9 @@ class Model extends React.Component {
     }];
 
     var credentials = [{
-      key: 'keypair',
-      value: __.keypair
-    }, {
       key: 'psw',
       value: __.password
     }];
-
-    let hideKeypair = true;
 
     this.setState({
       name: '',
@@ -1306,14 +1221,11 @@ class Model extends React.Component {
       volume: null,
       networks: [],
       network: null,
-      hideKeypair: hideKeypair,
       securityGroups: [],
       securityGroup: {},
       sgUnfold: false,
       credentials: credentials,
       credential: credentials[0].key,
-      keypairs: [],
-      keypairName: '',
       username: '',
       pwd: '',
       pwdVisible: false,
@@ -1355,7 +1267,7 @@ class Model extends React.Component {
     let tab = [{name: __['instance-create'], key: 'instance-create'}];
 
     let hasServerName = nameRequired ? !!state.name : true;
-    let hasAdminPass = (state.credential === 'keypair' && state.keypairName) || (state.credential === 'psw' && state.pwd && !state.pwdError && !state.confirmPwdError);
+    let hasAdminPass = (state.credential === 'psw' && state.pwd && !state.pwdError && !state.confirmPwdError);
     let credentialPass = showCredentials ? hasAdminPass : true;
     let hasVolumeName = state.volumeChecked ? (!nameRequired || state.volumeName) : true;
     let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
