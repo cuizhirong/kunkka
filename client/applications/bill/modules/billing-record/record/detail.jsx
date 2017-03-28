@@ -49,12 +49,12 @@ class Detail extends React.Component {
           break;
         case 'start_time':
           column.render = (col, item, i) => {
-            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD HH:mm:ss');
           };
           break;
         case 'end_time':
           column.render = (col, item, i) => {
-            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD HH:mm:ss');
           };
           break;
         case 'resource_type':
