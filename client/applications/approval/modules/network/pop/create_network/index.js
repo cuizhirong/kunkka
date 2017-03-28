@@ -49,29 +49,21 @@ function pop(parent, callback) {
       data.description = refs.apply_description.state.value;
 
       if(refs.apply_subnet.state.checked) {
-        var netAddr = refs.net_address.state.value,
-          testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
-        if(!testAddr.test(netAddr)) {
-          refs.net_address.setState({
-            error: true
-          });
-        } else {
-          var subCreateItem = {};
-          subCreateItem = {
-            _type: 'Subnet',
-            _identity: 'subnet',
-            ip_version: 4,
-            name: refs.subnet_name.state.value,
-            network_id: {get_resource: '_net'},
-            cidr: refs.net_address.state.value,
-            enable_dhcp: true
-          };
-          configCreate.push(subCreateItem);
-          request.createApplication(data).then((res) => {
-            callback && callback(res.network);
-            cb(true);
-          });
-        }
+        var subCreateItem = {};
+        subCreateItem = {
+          _type: 'Subnet',
+          _identity: 'subnet',
+          ip_version: 4,
+          name: refs.subnet_name.state.value,
+          network_id: {get_resource: '_net'},
+          cidr: refs.net_address.state.value,
+          enable_dhcp: true
+        };
+        configCreate.push(subCreateItem);
+        request.createApplication(data).then((res) => {
+          callback && callback(res.network);
+          cb(true);
+        });
       } else {
         request.createApplication(data).then((res) => {
           callback && callback(res.network);
@@ -98,10 +90,32 @@ function pop(parent, callback) {
           });
           break;
         case 'net_address':
-          if(netState.error === true && netState.value === '') {
-            refs.net_address.setState({
-              error: false
-            });
+          var testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
+          if(refs.apply_subnet.state.checked) {
+            if(!testAddr.test(netState.value)) {
+              if(netState.value !== '') {
+                refs.net_address.setState({
+                  error: true
+                });
+                refs.btn.setState({
+                  disabled: true
+                });
+              } else {
+                refs.net_address.setState({
+                  error: false
+                });
+                refs.btn.setState({
+                  disabled: true
+                });
+              }
+            } else {
+              refs.net_address.setState({
+                error: false
+              });
+              refs.btn.setState({
+                disabled: false
+              });
+            }
           }
           break;
         default:
