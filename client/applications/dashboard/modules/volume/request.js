@@ -178,6 +178,7 @@ module.exports = {
       data.alarm.forEach(a => {
         rule = a.gnocchi_resources_threshold_rule;
         if (rule.resource_type === 'volume' && rule.resource_id === id) {
+          a.timestamp = a.timestamp.split('.')[0] + 'Z';
           alarm.push(a);
         }
       });

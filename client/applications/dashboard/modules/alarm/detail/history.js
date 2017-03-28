@@ -10,6 +10,7 @@ module.exports = {
       let type = '';
       let action = '';
       let detail = JSON.parse(ele.detail);
+      let timestamp = ele.timestamp.split('.')[0] + 'Z';
 
       switch (ele.type) {
         case 'creation':
@@ -37,7 +38,7 @@ module.exports = {
       }
 
       return {
-        timestamp: moment(ele.timestamp).format('YYYY-MM-DD hh:mm:ss'),
+        timestamp: moment(timestamp).format('YYYY-MM-DD HH:mm:ss'),
         type: type,
         action: action,
         id: i
