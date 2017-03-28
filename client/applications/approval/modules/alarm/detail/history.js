@@ -37,7 +37,7 @@ module.exports = {
       }
 
       return {
-        timestamp: moment(ele.timestamp).format('YYYY-MM-DD hh:mm:ss'),
+        timestamp: moment(ele.timestamp.split('.')[0] + 'Z').format('YYYY-MM-DD HH:mm:ss'),
         type: type,
         action: action,
         id: i
