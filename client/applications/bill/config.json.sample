@@ -2,6 +2,7 @@
   "modules": [{
     "title": "account_bill",
     "items": [
+      "bill-overview",
       "billing-record",
       "account-charge",
       "charge-record"
@@ -14,7 +15,7 @@
       "global-record"
     ]
   }],
-  "default_module": "billing-record",
+  "default_module": "bill-overview",
   "languages": [
     "en",
     "zh-CN"

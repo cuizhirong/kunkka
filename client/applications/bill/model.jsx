@@ -82,6 +82,8 @@ class Model extends React.Component {
         return 'flavor-setting';
       case 'global-record':
         return 'global';
+      case 'bill-overview':
+        return 'overview';
       default:
         return name;
     }

@@ -7,6 +7,7 @@ var request = require('./request');
 var config = require('./config.json');
 var moment = require('client/libs/moment');
 var getStatusIcon = require('../../utils/status_icon');
+var router = require('client/utils/router');
 
 var __ = require('locale/client/bill.lang.json');
 
@@ -35,11 +36,13 @@ class Model extends React.Component {
     this.onInitialize();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.style.display === 'none' && nextProps.style.display === 'none') {
-      return false;
+  componentWillReceiveProps(nextProps) {
+    let path = router.getPathList();
+    if(nextProps.style.display === 'flex' && this.props.style.display === 'none') {
+      if(path[2]) {
+        this.onInitialize();
+      }
     }
-    return true;
   }
 
   tableColRender(columns) {
@@ -71,13 +74,10 @@ class Model extends React.Component {
 
   onInitialize() {
     this.getFilters();
-
-    var current = 1;
-    var limit = this.state.config.table.limit;
-    this.getSales(current, limit);
   }
 
-  getFilters() {
+  getFilters(cb) {
+    let path = router.getPathList();
     var projects = Object.assign([], HALO.user.projects);
     projects.unshift({
       id: 'all',
@@ -113,11 +113,25 @@ class Model extends React.Component {
     var selectList = this.refs.record.refs.select_list;
     selectList.setState({
       projects: projects,
-      project: projects[0],
       regions: regions,
       region: regions[0],
       statuses: status,
       status: status[0]
+    }, () => {
+      var current = 1;
+      var limit = this.state.config.table.limit;
+      if(path[2]) {
+        let project = {
+          id: path[2]
+        };
+        selectList.setState({
+          project: project
+        }, () => {
+          this.getSales(current, limit);
+        });
+      } else {
+        this.getSales(current, limit);
+      }
     });
   }
 
@@ -149,8 +163,7 @@ class Model extends React.Component {
     if (current < 1) {
       current = 1;
     }
-
-    var state = this.refs.record.refs.select_list.state;
+    let state = this.refs.record.refs.select_list.state;
     var data = {};
     if (state.project.id && state.project.id !== 'all') {
       data.project_id = state.project.id;
@@ -195,6 +208,7 @@ class Model extends React.Component {
 
         var current = 1;
         var limit = this.state.config.table.limit;
+        router.replaceState('/bill/billing-record', null, null, true);
         this.getSales(current, limit);
         break;
       default:
@@ -253,6 +267,7 @@ class Model extends React.Component {
 
   onNextPage(refs, page) {
     var limit = this.state.config.table.limit;
+    router.replaceState('/bill/billing-record', null, null, true);
     this.getSales(page, limit);
   }
 

@@ -2,6 +2,7 @@
   "en": {
     "account_bill": "Account Bill",
     "account-charge": "Account Charge",
+    "bill-overview": "Bill Overview",
     "charge-record": "Charge Record",
     "all": "All ",
     "application_name": "Bill",
@@ -35,6 +36,7 @@
   "zh-CN": {
     "account_bill": "账户消费",
     "account-charge": "账户充值",
+    "bill-overview": "消费概览",
     "charge-record": "充值记录",
     "all": "所有",
     "application_name": "计费",

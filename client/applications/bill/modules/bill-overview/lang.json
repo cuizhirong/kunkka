@@ -1,0 +1,24 @@
+{
+  "en": {
+    "bill_balance": "Bill Balance",
+    "consumption": "Total Consumption",
+    "consumption_estimate": "Consumption Estimate",
+    "consumption_each_day": "Consumption each day",
+    "consumption_each_hour": "Consumption each hour",
+    "created_at": "Created At",
+    "day": "Day",
+    "user_consumption": "User Consumption",
+    "project_consumption": "Project Consumption"
+  },
+  "zh-CN": {
+    "bill_balance": "账户余额",
+    "consumption": "累计支付金额",
+    "consumption_estimate": "消费剩余天数",
+    "consumption_each_day": "每日消费金额",
+    "consumption_each_hour": "每小时消费金额",
+    "created_at": "创建时间",
+    "day": "天",
+    "user_consumption": "我的支付金额",
+    "project_consumption": "项目支付金额"
+  }
+}

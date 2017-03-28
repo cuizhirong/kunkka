@@ -17,8 +17,9 @@ module.exports = {
 
     return this.getDomains().then((domains) => {
       var currentDomain = HALO.configs.domain.toLowerCase();
+      var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
       var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : '';
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
       var url = '/api/v1/users?limit=' + pageLimit + urlParam;
       return fetch.get({
