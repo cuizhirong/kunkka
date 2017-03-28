@@ -91,6 +91,33 @@ module.exports = {
       return users;
     });
   },
+  getUserGrpIds: function(projectID) {
+    var userGrps = [];
+    return fetch.get({
+      url: '/proxy/keystone/v3/role_assignments?scope.project.id=' + projectID
+    }).then((res) => {
+      res.role_assignments.forEach((role) => {
+        if (role.group) {
+          userGrps.push(role);
+        }
+      });
+
+      let grps = [],
+        roleMapping = {};
+
+      userGrps.forEach(ele => {
+        let id = ele.group.id,
+          roleID = ele.role.id;
+        if(!roleMapping[id]) {
+          roleMapping[id] = []; //init mapping group
+          grps.push(id); //clean duplicated group in userGrps
+        }
+        roleMapping[id].push(roleID);//record role
+      });
+
+      return {grps, roleMapping};
+    });
+  },
   addRole: function (domainID, userID, roleID) {
     return fetch.put({
       url: '/proxy/keystone/v3/projects/' + domainID + '/users/' + userID + '/roles/' + roleID
@@ -127,6 +154,43 @@ module.exports = {
         users.push(res[i].user);
       }
       return users;
+    });
+  },
+  getGrps: function(grpIds, roleMappings) {
+    var deferredList = [];
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/roles'
+    }));
+    grpIds.forEach(id => {
+      deferredList.push(fetch.get({
+        url: '/proxy/keystone/v3/groups/' + id
+      }));
+    });
+
+    return RSVP.all(deferredList).then(res => {
+      let roles = res[0].roles,
+        groups = [];
+
+      res.forEach(ele => {
+        if(ele.group) {
+          groups.push(ele.group);
+        }
+      });
+
+      groups.forEach(grp => {//add roles data in each group
+        grp.roles = [];
+        roleMappings[grp.id].forEach(roleID => {
+          roles.some(r => {
+            if(r.id === roleID) {
+              grp.roles.push(r);
+              return true;
+            }
+            return false;
+          });
+        });
+      });
+
+      return groups;
     });
   },
   getQuotas: function(projectID) {
@@ -276,6 +340,28 @@ module.exports = {
       });
     }
     return RSVP.all(requestList);
+  },
+  addUserGroup: function(projectID, groupID, roleID) {
+    var deferredList = [];
+    roleID.forEach((id) => {
+      deferredList.push(fetch.put({
+        url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + groupID + '/roles/' + id
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  getRoles: function(group) {
+    return fetch.get({
+      url: '/proxy/keystone/v3/roles'
+    });
+  },
+  removeUserGroup: function(projectID, groupID, roles) {
+    var deferredList = [];
+    roles.forEach((r) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + groupID + '/roles/' + r
+      }));
+    });
+    return RSVP.all(deferredList);
   }
-
 };

@@ -5,16 +5,14 @@ var __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
-
   var props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getAllUsers().then((res) => {
-        var users = res[0].users,
-          roles = res[1].roles;
-        if (users.length > 0 && roles.length > 0) {
+      request.getRoles().then(res => {
+        var roles = res.roles;
+        if (roles.length > 0) {
           refs.role.setState({
             data: roles,
             hide: false
@@ -23,21 +21,28 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var roles = [];
-      refs.role.state.data.forEach(function(ele) {
+      let roles = [];
+      refs.role.state.data.forEach(ele => {
         if (ele.selected) {
           roles.push(ele.id);
         }
       });
-      if(roles[0]) {
-        request.addUser(obj.id, refs.user_id.state.value, roles).then(() => {
-          callback && callback();
+      if (roles[0]) {
+        request.addUserGroup(obj.id, refs.user_grp_id.state.value, roles).then(res => {
+          callback && callback(res);
           cb(true);
         });
       }
     },
     onAction: function(field, status, refs) {
       switch(field) {
+        case 'user_grp_id':
+          if (refs.role.state.value) {
+            refs.btn.setState({
+              disabled: !refs.user_grp_id.state.value
+            });
+          }
+          break;
         case 'role':
           var hasRole = status.data.some(item => {
             if (item.selected) {
@@ -45,16 +50,9 @@ function pop(obj, parent, callback) {
             }
             return false;
           });
-          if(refs.user_id.state.value) {
+          if (refs.user_grp_id.state.value) {
             refs.btn.setState({
               disabled: !hasRole
-            });
-          }
-          break;
-        case 'user_id':
-          if(refs.role.state.value) {
-            refs.btn.setState({
-              disabled: !refs.user_id.state.value
             });
           }
           break;

@@ -3,8 +3,9 @@
     "add": "Add ",
     "all_gigabytes": "All Volumes Gigabytes",
     "all_volumes": "All Volumes",
-    "compute": "Compute",
+    "add_user_grp": "Add User Group",
     "cpu": "CPU",
+    "compute": "Compute",
     "create_project_fail": "Create project failed",
     "create_project_success_but_user_fail": "Create project success but add user or user group failed",
     "de_project_info": "Are you sure to deactivate project {0}?",
@@ -28,8 +29,9 @@
     "quota": "Quota",
     "ram": "RAM",
     "remove": "Remove ",
-    "sata": "SATA ",
+    "rm_user_grp": "Remove User Group",
     "security_group": "Security Group",
+    "sata": "SATA ",
     "ssd": "SSD ",
     "unit_gb": "(GB)",
     "user_already_exist": "This user already exist",
@@ -37,12 +39,16 @@
     "user_group_name": "User Group Name",
     "user_id_not_exist": "The ID you entered is not exist",
     "user_name_not_exist": "The name you entered is not exist",
-    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type"
+    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type",
+    "user_grp_name": "User Group Name",
+    "user_grp_id": "User Group ID"
   },
   "zh-CN": {
     "add": "添加",
     "all_gigabytes": "云硬盘容量总数",
     "all_volumes": "云硬盘总数",
+    "add_user_grp": "添加用户组",
+    "cpu": "CPU",
     "compute": "计算",
     "cpu": "CPU",
     "create_project_fail": "创建项目失败",
@@ -68,8 +74,9 @@
     "quota": "配额",
     "ram": "内存",
     "remove": "移除",
-    "sata": "容量型",
+    "rm_user_grp": "移除用户组",
     "security_group": "安全组",
+    "sata": "容量型",
     "ssd": "性能型",
     "unit_gb": "(GB)",
     "user_already_exist": "该用户已经存在",
@@ -77,6 +84,8 @@
     "user_group_name": "用户组名称",
     "user_id_not_exist": "你输入的ID不存在",
     "user_name_not_exist": "你输入的用户名不存在",
-    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和"
+    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和",
+    "user_grp_name": "用户组名称",
+    "user_grp_id": "用户组ID"
   }
 }

@@ -15,6 +15,7 @@ var deactivateProject = require('./pop/deactivate/index');
 var addUser = require('./pop/add_user/index');
 var removeUser = require('./pop/remove_user/index');
 var modifyQuota = require('./pop/modify_quota/index');
+var UserGroup = require('./detail/user_grp');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -528,6 +529,34 @@ class Model extends React.Component {
                 </div>
               );
 
+              detail.setState({
+                contents: contents,
+                loading: false
+              });
+            });
+          });
+        }
+        break;
+      case 'user-grp':
+        if(rows.length === 1) {
+          syncUpdate = false;
+          let that = this;
+          let callback = function() {
+            that.refresh({
+              loadingDetail: true,
+              refreshList: true,
+              refreshDetail: true
+            });
+          };
+          request.getUserGrpIds(rows[0].id).then((res) => {
+            request.getGrps(res.grps, res.roleMapping).then(groups => {
+              contents[tabKey] = (
+                <UserGroup
+                  __={__}
+                  groups={groups}
+                  refresh={callback}
+                  rawItem={rows[0]} />
+              );
               detail.setState({
                 contents: contents,
                 loading: false

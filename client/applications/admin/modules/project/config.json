@@ -85,6 +85,9 @@
         "name": ["user"],
         "key": "user"
       }, {
+        "name": ["user-group"],
+        "key": "user-grp"
+      }, {
         "name": ["quota"],
         "key": "quota"
       }]
