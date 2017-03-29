@@ -24,7 +24,10 @@ module.exports = (e) => {
 
   e.on('applicant_message', (data) => {
     co(function *() {
-      const isSend = yield _isSend(), {req, status, apply} = data;
+      const isSend = yield _isSend();
+      let req = data.req;
+      let status = data.status;
+      let apply = data.apply;
       if (!isSend || !req || !apply || !status) return;
       const __ = req.i18n.__.bind(req.i18n);
       const adminToken = (yield adminLogin()).token;
@@ -42,7 +45,10 @@ module.exports = (e) => {
 
   }).on('approver_message', (data) => {
     co(function *() {
-      const isSend = yield _isSend(), {role, req, apply} = data;
+      const isSend = yield _isSend();
+      let role = data.role;
+      let req = data.req;
+      let apply = data.apply;
       if (!isSend || !role || !req) return;
 
       const kikiRemote = req.session.endpoint.kiki[req.session.user.regionId];
