@@ -194,34 +194,70 @@ class Model extends Main {
 
               update(contents);
             };
+            if (rule.resource_type === 'instance_network_interface') {
+              if (!rule._port_id) {
+                detailLoading();
 
-            if (rule.resource_type === 'instance_network_interface' && !rule._port_id) {
-              detailLoading();
+                request.getOriginalPort(rule.resource_id).then((args) => {
+                  const ports = args[0];
+                  const resource = args[1];
+                  let originalPortId = resource.original_resource_id.slice(-11);
 
-              request.getOriginalPort(rule.resource_id).then((args) => {
-                const ports = args[0];
-                const resource = args[1];
-                let originalPortId = resource.original_resource_id.slice(-11);
+                  ports.some((port) => {
+                    let portId = port.id.substr(0, 11);
 
-                ports.some((port) => {
-                  let portId = port.id.substr(0, 11);
+                    if (originalPortId === portId) {
+                      rule._port_id = port.id;
+                      rule._port_name = port.name;
+                      rule._port_exist = true;
+                      return true;
+                    }
+                    return false;
+                  });
 
-                  if (originalPortId === portId) {
-                    rule._port_id = port.id;
-                    rule._port_name = port.name;
-                    rule._port_exist = true;
-                    return true;
+                  if (!rule._port_exist) {
+                    rule._port_id = originalPortId;
                   }
-                  return false;
+
+                  updateContent(item);
                 });
-
-                if (!rule._port_exist) {
-                  rule._port_id = originalPortId;
-                }
-
+              } else {
                 updateContent(item);
-              });
-            } else {
+              }
+            } else if (rule.resource_type === 'instance_disk') {
+              if (!rule._volume_id) {
+                detailLoading();
+
+                request.getOriginalVolume(rule.resource_id).then((args) => {
+                  const instances = args[0].instance;
+                  const resource = args[1];
+
+                  let instanceId = resource.original_resource_id.slice(0, -4);
+                  let volumeMark = resource.original_resource_id.slice(-4).split('-')[1]; //vda, vdb ...
+                  let instance = instances.find((ins) => ins.id === instanceId);
+
+                  if (instance) {
+                    instance.volume.some((vol) => {
+                      let attch = vol.attachments[0];
+                      if (attch) {
+                        if (attch.device.split('/')[2] === volumeMark) {
+                          rule._volume_id = vol.id;
+                          rule._volume_name = vol.name;
+                          rule._volume_exist = true;
+
+                          return true;
+                        }
+                        return false;
+                      }
+                      return false;
+                    });
+                  }
+                  updateContent(item);
+                });
+              } else {
+                updateContent(item);
+              }
+            } else { //rule.resource_type === 'instance'
               updateContent(item);
             }
 
