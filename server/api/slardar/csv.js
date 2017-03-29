@@ -1,4 +1,5 @@
 'use strict';
+const qs = require('querystring');
 const co = require('co');
 const request = require('superagent');
 const csv = require('json2csv');
@@ -42,6 +43,17 @@ const extraRequests = {
     );
   }
 };
+function listImageRecursive(query, marker, token, remote, images) {
+  return co(function *() {
+    query = query || {};
+    marker ? query.marker = marker : delete query.marker;
+    let result = (yield drivers.glance.image.listImagesAsync(token, remote, query)).body;
+    images.push.apply(images, result.images);
+    if (result.next) {
+      yield listImageRecursive(query, qs.parse(result.next.split('?')[1]).marker, token, remote, images);
+    }
+  });
+}
 
 module.exports.fields = (req, res, next) => {
   let fields, path = req.path.slice(17);
@@ -76,15 +88,21 @@ module.exports.data = (req, res, next) => {
     const path = req.path.slice(10);
     const remote = req.session.endpoint;
     const region = req.session.user.regionId;
-    const service = req.path.split('/')[3];
-    const target = remote[service][region] + '/' + req.path.split('/').slice(4).join('/');
+    const pathSplit = req.path.split('/');
+    const service = pathSplit[3];
+    const target = remote[service][region] + '/' + pathSplit.slice(4).join('/');
     const query = req.query;
     const paramsToOpenStack = _.omit(query, customFields);
     let queryFields = query.fields;
     delete query.fields;
-    const requests = {
-      major: request.get(target + getQueryString(paramsToOpenStack)).set('X-Auth-Token', req.session.user.token)
-    };
+    const requests = {major: null};
+    if (pathSplit[5] === 'images') {
+      paramsToOpenStack.limit = 9999;
+      requests.major = {body: {images: []}};
+      yield listImageRecursive(paramsToOpenStack, '', req.session.user.token, remote[service][region], requests.major.body.images);
+    } else {
+      requests.major = request.get(target + getQueryString(paramsToOpenStack)).set('X-Auth-Token', req.session.user.token);
+    }
     //custom fields
     queryFields = queryFields ? queryFields.split(',').filter(f => f) : [];
     //final fields
