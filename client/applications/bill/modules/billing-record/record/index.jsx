@@ -52,7 +52,7 @@ class Main extends React.Component {
           break;
         case 'time':
           column.render = (col, item, i) => {
-            return moment(item[col.dataIndex]).format('YYYY-MM-DD hh:mm:ss');
+            return moment(item[col.dataIndex]).format('YYYY-MM-DD HH:mm:ss');
           };
           break;
         default:
