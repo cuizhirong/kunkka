@@ -615,7 +615,7 @@ class Model extends React.Component {
     return (
       <div className="row row-select">
         <div className="row-label">
-          {__.network}
+          <strong>* </strong>{__.network}
         </div>
         <div className="row-data">
           {
@@ -1272,7 +1272,8 @@ class Model extends React.Component {
     let hasVolumeName = state.volumeChecked ? (!nameRequired || state.volumeName) : true;
     let hasImage = (state.imageType === 'image' && state.image) || (state.imageType === 'snapshot' && state.snapshot);
     let hasFip = !state.fipChecked ? state.network : true;
-    let enable = hasServerName && hasAdminPass && credentialPass && hasVolumeName && hasImage && hasFip;
+    let hasNetwork = !state.network ? !!state.network : true;
+    let enable = hasServerName && hasNetwork && hasAdminPass && credentialPass && hasVolumeName && hasImage && hasFip;
 
     return (
       <div className="halo-module-instance-create" style={this.props.style}>
