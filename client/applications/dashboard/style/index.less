@@ -115,3 +115,19 @@ i.icon-image-default {
 .table i[class^="icon-image-"] {
   top: -2px;
 }
+
+#tooltip_holder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  .tip-wrapper {
+    position: relative;
+    min-height: 36px;
+    max-height: 36px;
+    .tooltip {
+      box-sizing: border-box;
+      word-wrap: break-word;
+      bottom: 40px;
+    }
+  }
+}
