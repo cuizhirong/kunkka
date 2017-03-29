@@ -12,8 +12,9 @@ const Promise = require('bluebird');
 const stack = require('api/slardar/api/heat/stack');
 const token = require('api/slardar/common/token');
 const driver = require('server/drivers');
-const emitter = require('helpers/emitter');
 const tusk = require('api/tusk/dao');
+const emitter = require('helpers/emitter');
+require('./bindListener')(emitter);
 
 function Application (app) {
   Base.call(this);
@@ -34,7 +35,7 @@ Application.prototype = {
     let projectName = '';
     let projects = req.session.user.projects;
     if (projects && Array.isArray(projects)) {
-      projects.some(project=> {
+      projects.some(project => {
         return (project.id === projectId ) && ( projectName = project.name);
       });
     }
@@ -68,12 +69,11 @@ Application.prototype = {
       detail: detail,
       role: currentRole,
       approvals: _approvals
-    // }).then(res.json.bind(res), next);
     }).then(data => {
       res.json(data);
       let role = flow[flow.indexOf(currentRole) + 1];
       // send notification message to approver
-      emitter.emit('approver_message', {role, projectId});
+      emitter.emit('approver_message', {role, req, apply: data});
     }).catch(next);
   },
   approveApplication: function (req, res, next) {
@@ -141,8 +141,7 @@ Application.prototype = {
           Promise.all(arrSave).then(result => {
             res.json(result);
             let role = flow[flow.indexOf(currentRole) + 1];
-            let projectId = apply.projectId;
-            emitter.emit('approver_message', {role, projectId});
+            emitter.emit('approver_message', {role, req, apply});
           }).catch(next);
         }
 
@@ -150,14 +149,10 @@ Application.prototype = {
         Promise.all([
           apply.approvals[currentIndex].save(),
           apply.save()
-        // ]).then(res.json.bind(res));
         ]).then(result => {
           res.json(result);
-        // send notification message to applicant
-          emitter.emit('applicant_message', {
-            username: apply.username,
-            status: 'reject'
-          });
+          // send notification message to applicant
+          emitter.emit('applicant_message', {apply, status: 'reject', req});
         });
       }
     }).catch(next);
@@ -165,10 +160,7 @@ Application.prototype = {
   createResource: function(req, res, next, apply, approvals, currentIndex) {
     req.params.projectId = apply.projectId;
     let applyDetail = JSON.parse(apply.detail);
-    let messageData = {
-      username: apply.username,
-      status: 'pass'
-    };
+    let messageData = {apply, req, status: 'pass'};
     if (applyDetail.type === 'direct') {
       this.directCreate(req, res, next, apply, applyDetail, function(e) {
         if (e) {
@@ -288,7 +280,7 @@ Application.prototype = {
             name: metaData.name,
             volume_id: metaData.volume_id,
             force: true,
-            metadata : metaData.metadata
+            metadata: metaData.metadata
           }
         };
         driver.cinder.snapshot.createSnapshot(projectId, _token, remote, _data, (err) => callback(err));

@@ -1,20 +1,28 @@
 {
-  "zh-CN":{
-    "limitedAuthority":"权限不足。",
-    "hadBeenApproved":"此申请已经被审批过。",
-    "unopened":"审批未开放。",
-    "approvedError":"审批异常。",
-    "UnsupportedParameter":"参数有误",
-    "handled":"申请已经开始处理",
-    "notFound":"申请不存在"
+  "zh-CN": {
+    "limitedAuthority": "权限不足。",
+    "hadBeenApproved": "此申请已经被审批过。",
+    "unopened": "审批未开放。",
+    "approvedError": "审批异常。",
+    "UnsupportedParameter": "参数有误",
+    "handled": "申请已经开始处理",
+    "notFound": "申请不存在",
+    "yourApplication": "您的申请被",
+    "rejected": "拒绝",
+    "approved": "批准",
+    "newApplication": "您有新的待审批"
   },
-  "en":{
-    "limitedAuthority":"Limited authority",
-    "hadBeenApproved":"This application had been approved",
-    "unopened":"Unopened",
-    "approveError":"Approve error",
-    "UnsupportedParameter":"Unsupported Parameter",
-    "handled":"This application is on handled",
-    "notFound":"Not Found"
+  "en": {
+    "limitedAuthority": "Limited authority",
+    "hadBeenApproved": "This application had been approved",
+    "unopened": "Unopened",
+    "approveError": "Approve error",
+    "UnsupportedParameter": "Unsupported Parameter",
+    "handled": "This application is on handled",
+    "notFound": "Not Found",
+    "yourApplication": "Your application has been ",
+    "rejected": "rejected",
+    "approved": "approved",
+    "newApplication": "You have a new application to approve"
   }
 }

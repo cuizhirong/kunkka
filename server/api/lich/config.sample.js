@@ -44,5 +44,11 @@ module.exports = {
     value: 'op',
     type: 'string',
     description: '审批面板-虚拟机名称前缀'
+  }, {
+    app: 'approval',
+    name: 'send_notification_email',
+    value: 'false',
+    type: 'boolean',
+    description: '审批发送通知邮件'
   }]
 };
