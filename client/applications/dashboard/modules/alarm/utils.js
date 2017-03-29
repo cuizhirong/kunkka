@@ -218,10 +218,26 @@ module.exports = {
             </span>
           );
         case 'instance_disk':
+          if (rule._volume_id) {
+            let volumeShortId = '(' + rule._volume_id.substr(0, 8) + ')';
+
+            return (
+              <span>
+                <i className="glyphicon icon-volume" />
+                {
+                  rule._volume_exist ?
+                    <a data-type="router" href={'/dashboard/volume/' + rule._volume_id}>
+                      {rule._volume_name ? rule._volume_name : volumeShortId }
+                    </a>
+                  : <span>{volumeShortId}</span>
+                }
+              </span>
+            );
+          }
           return (
             <span>
               <i className="glyphicon icon-volume" />
-              <span>{'(' + rule.resource_id.substr(0, 8) + ')'}</span>
+              <span>{'-'}</span>
             </span>
           );
         default:
