@@ -141,7 +141,10 @@ class Model extends React.Component {
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
           {ownerMatch ?
-            <a data-type="router" href={'/dashboard/image/' + image.id}>{image.name}</a>
+            <a data-type="router"
+              href={'/dashboard/' + (image.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + image.id}>
+              {image.name}
+            </a>
             : <span>{image.name}</span>
           }
         </div>
@@ -153,7 +156,10 @@ class Model extends React.Component {
       return (
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
-          <a data-type="router" href={'/dashboard/image/' + imageData.image_id}>{imageData.image_name}</a>
+          <a data-type="router"
+            href={'/dashboard/' + (imageData.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + imageData.image_id}>
+            {imageData.image_name}
+          </a>
         </div>
       );
     }
