@@ -37,7 +37,7 @@ module.exports = (e) => {
       const subject = __('api.application.yourApplication') + __(`api.application.${status === 'pass' ? 'approved' : 'rejected'}`);
       const url = `${req.protocol}://${req.hostname}/approval/apply/${apply.id}`;
       const content = `<h2>${subject}</h2><p><a href="${url}">${url}</a></p>`;
-      sendEmailAsync(user.email, subject, content, kikiRemote, adminToken);
+      yield sendEmailAsync(user.email, subject, content, kikiRemote, adminToken);
     }).catch(console.log);
 
   }).on('approver_message', (data) => {
@@ -94,7 +94,7 @@ module.exports = (e) => {
       const content = `<h2>${subject}</h2> <p><a href="${url}">${url}</a></p>`;
       users.forEach(u => {
         if (userDictionary[u].email) {
-          sendEmailAsync(userDictionary[u].email, subject, content, kikiRemote, adminToken);
+          sendEmailAsync(userDictionary[u].email, subject, content, kikiRemote, adminToken).then();
         }
       });
     }).catch(console.log);
