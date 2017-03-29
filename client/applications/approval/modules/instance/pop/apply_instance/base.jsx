@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
 var {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
 var __ = require('locale/client/approval.lang.json');
 var createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
@@ -12,6 +13,8 @@ const TITLE = __.apply_ + __.instance;
 const halo = HALO.settings;
 const showCredentials = halo.enable_apply_instance_credential;
 const nameRequired = halo.enable_apply_instance_name;
+
+var tooltipHolder;
 
 class ModalBase extends React.Component {
 
@@ -89,6 +92,13 @@ class ModalBase extends React.Component {
     'onChangeUsage', 'onChangeApplyDescription'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
+    try {
+      tooltipHolder = document.createElement('div');
+      tooltipHolder.id = 'tooltip_holder';
+      document.body.appendChild(tooltipHolder);
+    } catch(e) {
+      return;
+    }
   }
 
   componentWillMount() {
@@ -667,6 +677,25 @@ class ModalBase extends React.Component {
     ) : null;
   }
 
+  onMouseOverItem(content, e) {
+    let ct = e.currentTarget;
+    if(ct.scrollWidth > ct.clientWidth && content) {
+      let style = {
+        top: ct.getBoundingClientRect().top + 'px',
+        left: ct.getBoundingClientRect().left + 'px'
+      };
+      ReactDOM.render(<div className="tip-wrapper" style={style}>
+        <Tooltip content={content} width={ct.offsetWidth} shape="top"/>
+      </div>, tooltipHolder);
+    }
+  }
+
+  onMouseLeaveItem() {
+    if(tooltipHolder.childNodes.length > 0) {
+      ReactDOM.unmountComponentAtNode(tooltipHolder);
+    }
+  }
+
   renderImages(props, state) {
     var Types = (
       <div className="row row-tab row-tab-single" key="types">
@@ -699,7 +728,7 @@ class ModalBase extends React.Component {
         }
         {
           state.images.map((ele) =>
-            <a key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
+            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
               onClick={state.image.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
               <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
                 {ele.name}
@@ -726,7 +755,7 @@ class ModalBase extends React.Component {
         }
         {
           state.snapshots.map((ele) =>
-            <a key={ele.id} className={state.snapshot.id === ele.id ? 'selected' : ''}
+            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} className={state.snapshot.id === ele.id ? 'selected' : ''}
               onClick={state.snapshot.id === ele.id ? null : this.onChangeSnapshot.bind(this, ele)}>
               <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
                 {ele.name}
