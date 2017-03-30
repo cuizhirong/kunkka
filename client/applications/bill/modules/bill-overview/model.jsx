@@ -84,11 +84,11 @@ class Model extends React.Component {
       let data = res[0].accounts[0];
       this.setState({
         ready: true,
-        balance: parseInt(data.balance, 10).toFixed(2),
-        consumption: parseInt(data.consumption, 10).toFixed(2),
+        balance: parseFloat(data.balance).toFixed(2),
+        consumption: parseFloat(data.consumption).toFixed(2),
         remaining_day: data.remaining_day,
-        price_per_day: parseInt(data.price_per_day, 10).toFixed(2),
-        price_per_hour: (parseInt(data.price_per_day, 10) / 24).toFixed(2),
+        price_per_day: parseFloat(data.price_per_day).toFixed(2),
+        price_per_hour: (parseFloat(data.price_per_day) / 24).toFixed(2),
         data: res[1]
       });
     });
@@ -117,6 +117,15 @@ class Model extends React.Component {
       dataIndex: 'created_at',
       key: 'created_at'
     }];
+    function displayRemainingDay(data) {
+      if(data === -1) {
+        return __.full;
+      } else if(data === -2) {
+        return __.owed;
+      } else {
+        return data + __.day;
+      }
+    }
     this.tableColRender(columm);
 
     var state = this.state;
@@ -130,7 +139,7 @@ class Model extends React.Component {
                 <div className="overview-item">
                   <div className="item">
                     <div className="title">{__.bill_balance}<a data-type="router" href="/bill/account-charge">充值</a></div>
-                    <div className="content blue">
+                    <div className={'content' + (state.balance >= 0 ? ' blue' : ' red')}>
                       ¥&nbsp;{state.balance}
                     </div>
                   </div>
@@ -147,7 +156,7 @@ class Model extends React.Component {
                   <div className="item">
                     <div className="title">{__.consumption_estimate}</div>
                     <div className="content green">
-                      {state.remaining_day + ' ' + __.day}
+                      {displayRemainingDay(state.remaining_day)}
                     </div>
                   </div>
                 </div>
@@ -180,8 +189,13 @@ class Model extends React.Component {
                 data={state.data}
                 dataKey={'project_id'}
                 hover={true}
-                striped={true}
+                striped={false}
                 />
+                {
+                  state.data && state.data.length === 0 ? <div className="no-data">
+                    {__.noData}
+                  </div> : null
+                }
             </div>
           </div> : <div className="loading-data"><i className="glyphicon icon-loading"></i></div>
         }
