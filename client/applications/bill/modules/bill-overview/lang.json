@@ -7,8 +7,11 @@
     "consumption_each_hour": "Consumption each hour",
     "created_at": "Created At",
     "day": "Day",
-    "user_consumption": "User Consumption",
-    "project_consumption": "Project Consumption"
+    "full": "Full",
+    "noData": "no billing data",
+    "owed": "Owed",
+    "project_consumption": "Project Consumption",
+    "user_consumption": "User Consumption"
   },
   "zh-CN": {
     "bill_balance": "账户余额",
@@ -18,7 +21,10 @@
     "consumption_each_hour": "每小时消费金额",
     "created_at": "创建时间",
     "day": "天",
-    "user_consumption": "我的支付金额",
-    "project_consumption": "项目支付金额"
+    "full": "充足",
+    "noData": "无计费信息",
+    "owed": "欠费",
+    "project_consumption": "项目支付金额",
+    "user_consumption": "我的支付金额"
   }
 }
