@@ -89,7 +89,11 @@ module.exports = (e) => {
         });
       });
 
-      let listUsers = yield drivers.keystone.user.listUsersAsync(adminToken, keystoneRemote);
+      const domainId = req.query.domain_id;
+      let listUsers = yield drivers.keystone.user.listUsersAsync(
+        adminToken, keystoneRemote,
+        domainId ? {domain_id: domainId} : {}
+      );
       listUsers = listUsers.body.users;
       let userDictionary = {};
       listUsers.forEach(u => {
