@@ -40,13 +40,19 @@ module.exports = {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain;
+      var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
+      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
+      var url = '/proxy-search/keystone/v3/groups?limit=' + pageLimit + requestParams(data) + urlParam;
 
-    var url = '/proxy-search/keystone/v3/groups?limit=' + pageLimit + requestParams(data);
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
+      return fetch.get({
+        url: url
+      }).then((res) => {
+        res._url = url;
+        return res;
+      });
     });
   },
   getNextList: function(nextUrl) {

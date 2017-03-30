@@ -41,12 +41,19 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + requestParams(data);
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain.toLowerCase();
+      var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
+      var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
+      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
+      var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + requestParams(data) + urlParam;
+
+      return fetch.get({
+        url: url
+      }).then((res) => {
+        res._url = url;
+        return res;
+      });
     });
   },
   getNextList: function(nextUrl) {
@@ -244,26 +251,31 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getGroups: function(userID) {
-    var deferredList = [];
-    deferredList.push(fetch.get({
-      url: '/proxy/keystone/v3/groups'
-    }));
-    deferredList.push(fetch.get({
-      url: '/proxy/keystone/v3/users/' + userID + '/groups'
-    }));
-    return RSVP.all(deferredList).then((res) => {
-      var allGroups = res[0].groups,
-        joinedGroups = res[1].groups;
-      joinedGroups.forEach((i) => {
-        allGroups.some((j) => {
-          if (i.id === j.id) {
-            j.disabled = true;
-            return true;
-          }
-          return false;
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain.toLowerCase();
+      var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
+
+      var deferredList = [];
+      deferredList.push(fetch.get({
+        url: '/proxy/keystone/v3/groups?domain_id=' + domainID
+      }));
+      deferredList.push(fetch.get({
+        url: '/proxy/keystone/v3/users/' + userID + '/groups'
+      }));
+      return RSVP.all(deferredList).then((res) => {
+        var allGroups = res[0].groups,
+          joinedGroups = res[1].groups;
+        joinedGroups.forEach((i) => {
+          allGroups.some((j) => {
+            if (i.id === j.id) {
+              j.disabled = true;
+              return true;
+            }
+            return false;
+          });
         });
+        return allGroups;
       });
-      return allGroups;
     });
   },
   joinGroup: function(userID, groupID) {

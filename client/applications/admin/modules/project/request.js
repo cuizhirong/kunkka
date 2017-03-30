@@ -315,8 +315,12 @@ module.exports = {
   // check if user name or id is available
   queryUserId: function(data) {
     if(data.type === 'name') {
-      return fetch.get({
-        url: '/api/v1/users?name=' + data.value
+      return this.getDomains().then((domains) => {
+        var currentDomain = HALO.configs.domain;
+        var domainID = domains.find((ele) => ele.name === currentDomain).id;
+        return fetch.get({
+          url: '/api/v1/users?name=' + data.value + '&domain_id=' + domainID
+        });
       });
     } else if(data.type === 'id') {
       return fetch.get({

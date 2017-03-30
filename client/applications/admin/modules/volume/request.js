@@ -143,16 +143,36 @@ module.exports = {
     });
   },
   exportCSV(fields) {
-    let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + getParameters(fields);
-    function ret() {
-      var linkNode = document.createElement('a');
-      linkNode.href = url;
-      linkNode.click();
-      linkNode = null;
-      return 1;
-    }
-    return new Promise((resolve, reject) => {
-      resolve(ret());
+    return this.getDomains().then((domains) => {
+      var currentDomain = HALO.configs.domain;
+      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+
+      let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + getParameters(fields) + '&domain_id=' + domainID;
+      function ret() {
+        var linkNode = document.createElement('a');
+        linkNode.href = url;
+        linkNode.click();
+        linkNode = null;
+        return 1;
+      }
+      return new Promise((resolve, reject) => {
+        resolve(ret());
+      });
+    });
+  },
+  getDomains: function() {
+    return fetch.get({
+      url: '/proxy/keystone/v3/domains'
+    }).then((res) => {
+      var domains = [];
+      res.domains.forEach((domain) => {
+        if (domain.id === 'defult') {
+          domain.unshift(domain);
+        } else {
+          domains.push(domain);
+        }
+      });
+      return domains;
     });
   }
 };
