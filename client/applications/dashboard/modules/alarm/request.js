@@ -133,6 +133,13 @@ module.exports = {
 
     return RSVP.all(list);
   },
+  getOriginalVolume: function(resourceId) {
+    let list = [];
+    list.push(this.getInstance());
+    list.push(this.getOriginalMeasureId(resourceId));
+
+    return RSVP.all(list);
+  },
   createAlarm: function(data) {
     return fetch.post({
       url: '/proxy/aodh/v2/alarms',
