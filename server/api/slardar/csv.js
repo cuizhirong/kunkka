@@ -208,7 +208,7 @@ module.exports.data = (req, res, next) => {
         }
         if (extraData.volume) {
 
-          let volumes = d['os-extended-volumes:volumes_attached'];
+          let volumes = d['os-extended-volumes:volumes_attached'] || [];
           let volumeNew = [];
           d.volumeCount = volumes.length;
           d.volumeSize = 0;
@@ -220,7 +220,7 @@ module.exports.data = (req, res, next) => {
           d.volumeSize += ' GB';
           d['os-extended-volumes:volumes_attached'] = JSON.stringify(volumeNew);
         }
-        if (extraData.flavor) {
+        if (extraData.flavor && d.flavor && extraData.flavor[d.flavor.id]) {
           let flavor = extraData.flavor[d.flavor.id];
           d.flavorName = flavor.name;
           d.flavorCPU = flavor.vcpus;
