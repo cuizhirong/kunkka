@@ -108,6 +108,8 @@ User.prototype = {
   getRoleAssignments: (req, res, next) => {
     co(function *() {
       const query = req.query;
+      const domainId = query.domain_id;
+      delete query.domain_id;
       Object.keys(query).forEach(key => {
         query[key] = query[key] ? query[key].trim() : '';
       });
@@ -129,8 +131,8 @@ User.prototype = {
         } else if (query['group.id']) {
           reqs.get.group = DKS.group.getGroupAsync(token, remote, query['group.id']);
         } else {
-          reqs.list.user = DKS.user.listUsersAsync(token, remote);
-          reqs.list.group = DKS.group.listGroupsAsync(token, remote);
+          reqs.list.user = DKS.user.listUsersAsync(token, remote, domainId ? {domain_id: domainId} : {});
+          reqs.list.group = DKS.group.listGroupsAsync(token, remote, domainId ? {domain_id: domainId} : {});
         }
 
         if (query['scope.project.id']) {
@@ -150,22 +152,21 @@ User.prototype = {
         Object.keys(results.get).forEach(key => {
           metadata[key][results.get[key].body[key].id] = results.get[key].body[key];
         });
-
         assignments.forEach(a => {
-          if (a.user) {
+          if (a.user && metadata.user[a.user.id]) {
             a.user.name = metadata.user[a.user.id].name;
             a.user.domain = {
               id: metadata.user[a.user.id].domain_id,
               name: metadata.domain[metadata.user[a.user.id].domain_id].name
             };
-          } else if (a.group) {
+          } else if (a.group && metadata.group[a.group.id]) {
             a.group.name = metadata.group[a.group.id].name;
             a.group.domain = {
               id: metadata.group[a.group.id].domain_id,
               name: metadata.domain[metadata.group[a.group.id].domain_id].name
             };
           }
-          if (a.scope.project) {
+          if (a.scope.project && metadata.project[a.scope.project.id]) {
             a.scope.project.name = metadata.project[a.scope.project.id].name;
             a.scope.project.domain = {
               id: metadata.project[a.scope.project.id].domain_id,
@@ -174,7 +175,7 @@ User.prototype = {
           } else if (a.scope.domain) {
             a.scope.domain.name = metadata.domain[a.scope.domain.id];
           }
-          a.role.name = metadata.role[a.role.id].name;
+          a.role.name = metadata.role[a.role.id] && metadata.role[a.role.id].name;
         });
       }
       res.send(result.body);
