@@ -54,7 +54,7 @@ module.exports = [
       },
       {
         label: 'api.cinder.volume.shared',
-        value: 'api.cinder.volume.multiattach'
+        value: 'multiattach'
       },
       {
         label: 'api.cinder.volume.attribute',

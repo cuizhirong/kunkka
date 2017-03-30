@@ -15,10 +15,11 @@ const extraRequests = {
       session.endpoint.keystone[session.user.regionId]
     );
   },
-  user: (session) => {
+  user: (session, domainId) => {
     return drivers.keystone.user.listUsersAsync(
       session.user.token,
-      session.endpoint.keystone[session.user.regionId]
+      session.endpoint.keystone[session.user.regionId],
+      domainId ? {domain_id: domainId} : {}
     );
   },
   flavor: (session) => {
@@ -92,6 +93,8 @@ module.exports.data = (req, res, next) => {
     const service = pathSplit[3];
     const target = remote[service][region] + '/' + pathSplit.slice(4).join('/');
     const query = req.query;
+    const domainId = query.domain_id;
+    delete query.domain_id;
     const paramsToOpenStack = _.omit(query, customFields);
     let queryFields = query.fields;
     delete query.fields;
@@ -129,7 +132,7 @@ module.exports.data = (req, res, next) => {
               if (!requests[e.name]) {
                 requests[e.name] = {
                   idKey: field.value,
-                  data: extraRequests[e.name](req.session)
+                  data: extraRequests[e.name](req.session, domainId)
                 };
               }
             });
@@ -151,7 +154,7 @@ module.exports.data = (req, res, next) => {
             if (!requests[e.name]) {
               requests[e.name] = {
                 idKey: field.value,
-                data: extraRequests[e.name](req.session)
+                data: extraRequests[e.name](req.session, domainId)
               };
             }
           });
@@ -214,11 +217,11 @@ module.exports.data = (req, res, next) => {
           d.volumeSize = 0;
           volumes.forEach(v => {
             v = extraData.volume[v.id];
-            volumeNew.push(v);
+            volumeNew.push(v.name || v.id);
             d.volumeSize += v.size;
           });
           d.volumeSize += ' GB';
-          d['os-extended-volumes:volumes_attached'] = JSON.stringify(volumeNew);
+          d['os-extended-volumes:volumes_attached'] = volumeNew.join();
         }
         if (extraData.flavor && d.flavor && extraData.flavor[d.flavor.id]) {
           let flavor = extraData.flavor[d.flavor.id];
