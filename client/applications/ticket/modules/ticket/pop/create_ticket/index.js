@@ -46,7 +46,17 @@ function pop(obj, parent, callback) {
         cb(false, getErrorMessage(error));
       });
     },
-    onAction: function(field, state, refs) {},
+    onAction: function(field, state, refs) {
+      if (refs.title.state.value && refs.description.state.value) {
+        refs.btn.setState({
+          disabled: false
+        });
+      } else {
+        refs.btn.setState({
+          disabled: true
+        });
+      }
+    },
     onLinkClick: function() {}
   };
 
