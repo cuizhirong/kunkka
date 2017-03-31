@@ -98,7 +98,8 @@ View.prototype = {
     return {
       configs: {
         lang: locale,
-        domain: this.domain
+        domain: user.domainName || this.domain,
+        domainId: user.domainId
       },
       user: {
         projectId: user.projectId,
