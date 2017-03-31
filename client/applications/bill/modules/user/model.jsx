@@ -53,7 +53,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'balance':
           column.render = (col, item, i) => {
-            return item.balance;
+            return <span className="orange">{item.balance}</span>;
           };
           break;
         default:

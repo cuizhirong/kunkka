@@ -1,5 +1,6 @@
 @import "../../../style/theme.less";
 
+@orange: @color_warning;
 @text_gray: @color_font_700;
 
 .halo-module-price-mgmt {
@@ -10,6 +11,19 @@
   .halo-module-price-mgmt-price {
     span {
       color: @text_gray;
+    }
+  }
+
+  .table {
+    .table-body {
+      .row {
+        div {
+          .orange {
+            color: @orange;
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
 }

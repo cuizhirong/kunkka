@@ -43,6 +43,11 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'total_cny':
+          column.render = (col, item, i) => {
+            return <span className="orange">{item.value}</span>;
+          };
+          break;
         case 'charge-type':
           column.render = (col, item, i) => {
             return __[item.type];

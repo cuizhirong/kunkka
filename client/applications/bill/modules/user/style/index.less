@@ -1,5 +1,22 @@
+@import "../../../style/theme.less";
+
+@orange: @color_warning;
+
 .halo-module-user {
   flex: 1;
   display: flex;
   overflow: hidden;
+
+  .table {
+    .table-body {
+      .row {
+        div {
+          .orange {
+            color: @orange;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
 }

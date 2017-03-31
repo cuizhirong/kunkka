@@ -52,7 +52,7 @@ class Model extends React.Component {
         case 'base_price':
           column.render = (col, item, i) => {
             var basePrice = item.unit_price.price.base_price;
-            return basePrice;
+            return <span className="orange">{basePrice}</span>;
           };
           break;
         case 'price':
@@ -61,7 +61,7 @@ class Model extends React.Component {
             if(price.segmented) {
               return (
                 <div className="halo-module-price-mgmt-price">
-                  {item.unit_price.price.segmented[0].price}
+                  <span className="orange">{item.unit_price.price.segmented[0].price}</span>
                   <span>{' (' + price.segmented.length + ')'}</span>
                 </div>
               );
