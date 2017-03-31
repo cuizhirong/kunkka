@@ -10,9 +10,6 @@
   }, {
     "type": "input",
     "field": "project_id"
-  }, {
-    "type": "input",
-    "field": "user_id"
   }],
   "btn": {
     "value": "export",

@@ -20,6 +20,7 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       let filter = refs.exp_filter.state.value;
+      let projectId = refs.project_id.state.value;
       let filename = refs.exp_title.state.value;
       let startTime = filter.startTime;
       let endTime = filter.endTime;
@@ -27,6 +28,9 @@ function pop(obj, parent, callback) {
       let data = {
         filename: filename
       };
+      if(projectId) {
+        data.tenant_id = projectId;
+      }
       if(startTime) {
         data.start_time = startTime;
       }

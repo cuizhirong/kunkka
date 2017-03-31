@@ -21,12 +21,20 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       let filter = refs.exp_filter.state.value;
       let filename = refs.exp_title.state.value;
+      let projectId = refs.project_id.state.value;
+      let userId = refs.user_id.state.value;
       let startTime = filter.startTime;
       let endTime = filter.endTime;
       let fields = filter && filter.fields.length > 0 ? filter.fields.join(',') : '';
       let data = {
         filename: filename
       };
+      if(projectId) {
+        data.tenant_id = projectId;
+      }
+      if(userId) {
+        data.user_id = userId;
+      }
       if(startTime) {
         data.start_time = startTime;
       }

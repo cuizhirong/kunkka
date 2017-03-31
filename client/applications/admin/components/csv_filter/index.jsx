@@ -47,7 +47,7 @@ class Filter extends React.Component {
 
   onChangeEndTime(time) {
     let date = new Date(time.year + '-' + time.month + '-' + time.date);
-    let et = date.getTime();
+    let et = date.getTime() + 24 * 60 * 60 * 1000;
     let value = this.state.value;
     value.endTime = et;
     this.setState({

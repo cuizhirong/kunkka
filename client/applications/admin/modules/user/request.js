@@ -46,7 +46,7 @@ module.exports = {
       var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
       var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
       var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
-      var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + requestParams(data) + urlParam;
+      var url = '/proxy-search/keystone/v3/users?limit=' + pageLimit + requestParams(data) + (data.domain_id ? '' : urlParam);
 
       return fetch.get({
         url: url
