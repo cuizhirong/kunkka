@@ -41,7 +41,7 @@ module.exports = (e) => {
       const url = `${req.protocol}://${req.hostname}/approval/apply/${apply.id}`;
       const content = `<h2>${subject}</h2><p><a href="${url}">${url}</a></p>`;
       yield sendEmailAsync(user.email, subject, content, kikiRemote, adminToken);
-    }).catch(console.log);
+    }).catch(console.error);
 
   }).on('approver_message', (data) => {
     co(function *() {
@@ -89,10 +89,9 @@ module.exports = (e) => {
         });
       });
 
-      const domainId = req.query.domain_id;
       let listUsers = yield drivers.keystone.user.listUsersAsync(
         adminToken, keystoneRemote,
-        domainId ? {domain_id: domainId} : {}
+        {domain_id: req.session.user.domainId}
       );
       listUsers = listUsers.body.users;
       let userDictionary = {};
@@ -107,6 +106,6 @@ module.exports = (e) => {
           sendEmailAsync(userDictionary[u].email, subject, content, kikiRemote, adminToken).then();
         }
       });
-    }).catch(console.log);
+    }).catch(console.error);
   });
 };
