@@ -5,6 +5,7 @@ module.exports = [
     pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/snapshots\/detail/i,
     service: 'cinder',
     name: 'snapshots',
+    tenantKey: 'os-extended-snapshot-attributes:project_id',
     fields: [
       {
         label: 'api.cinder.snapshot.name',
@@ -29,6 +30,7 @@ module.exports = [
     pathRegExp: /\/cinder\/v2\/[a-z0-9]*\/volumes\/detail/i,
     service: 'cinder',
     name: 'volumes',
+    tenantKey: 'os-vol-tenant-attr:tenant_id',
     fields: [
       {
         label: 'api.cinder.volume.name',
@@ -70,6 +72,7 @@ module.exports = [
     pathRegExp: /\/nova\/v2.1\/[a-z0-9]*\/servers\/detail/i,
     service: 'nova',
     name: 'servers',
+    tenantKey: 'tenant_id',
     fields: [
       {
         label: 'api.nova.server.UUID',
@@ -115,7 +118,7 @@ module.exports = [
         label: 'api.nova.server.floatingIp',
         value: function (row) {
           let ips = [];
-          for (let key in row.addresses) {
+          for (let key in row.addresses){
             ips = ips.concat(row.addresses[key]);
           }
           let floatingIp;
@@ -131,7 +134,7 @@ module.exports = [
         value: function (row) {
 
           let ips = [];
-          for (let key in row.addresses) {
+          for (let key in row.addresses){
             ips = ips.concat(row.addresses[key]);
           }
           let fixedIp = [];
@@ -174,7 +177,8 @@ module.exports = [
         value: 'name'
       }, {
         label: 'api.glance.image.type',
-        value: 'image_type'
+        value: row => ((row.image_type === 'distribution') ? 'image' : row.image_type),
+        name: 'image_type'
       }, {
         label: 'api.glance.image.size',
         value: row => (row.size / Math.pow(2, 30)).toFixed(2),
@@ -189,6 +193,7 @@ module.exports = [
     pathRegExp: /\/neutron\/v2.0\/floatingips/i,
     service: 'neutron',
     name: 'floatingips',
+    tenantKey: 'tenant_id',
     fields: [
       {
         label: 'api.neutron.floatingip.floating_ip_address',

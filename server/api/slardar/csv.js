@@ -173,7 +173,7 @@ module.exports.data = (req, res, next) => {
     });
 
     let majorData = results.major.body[obj.dataName || obj.name];
-    if (query.start_time || query.end_time || query.user_id) {
+    if (query.start_time || query.end_time || query.user_id || query.tenant_id) {
       let start = query.start_time ? new Date(parseInt(query.start_time, 10)).getTime() : -Infinity;
       let end = query.end_time ? new Date(parseInt(query.end_time, 10)).getTime() : Infinity;
       majorData = majorData.filter(d => {
@@ -183,7 +183,13 @@ module.exports.data = (req, res, next) => {
             return false;
           }
         }
-        return !(query.user_id && d.user_id && query.user_id !== d.user_id);
+        if(query.user_id && d.user_id && query.user_id !== d.user_id){
+          return false;
+        }
+        if(query.tenant_id && d[obj.tenantKey] && query.tenant_id !== d[obj.tenantKey]){
+          return false;
+        }
+        return true;
       });
     }
     if (extraKeys.length) {
