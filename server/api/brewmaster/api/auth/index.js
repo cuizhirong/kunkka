@@ -71,19 +71,13 @@ Auth.prototype = {
           if (req.body.captcha.toString().toLowerCase() !== req.session.captcha.toString().toLowerCase()) {
             return Promise.reject({
               status: 400,
-              message: {
-                message: req.i18n.__('api.register.CaptchaError'),
-                code: 400
-              }
+              message: {message: req.i18n.__('api.register.CaptchaError'), code: 400}
             });
           }
         } else {
           return Promise.reject({
             status: 400,
-            message: {
-              message: req.i18n.__('api.register.CaptchaError'),
-              code: 400
-            }
+            message: {message: req.i18n.__('api.register.CaptchaError'), code: 400}
           });
         }
       }
@@ -91,6 +85,8 @@ Auth.prototype = {
       let _username = req.body.username;
       let _password = req.body.password;
       let _domain = req.body.domain || config('domain') || 'Default';
+
+      let adminToken = yield adminLogin();
 
       let unScopedRes;
       try {
@@ -100,7 +96,6 @@ Auth.prototype = {
           domain: _domain
         });
       } catch (e) {
-        let adminToken = yield adminLogin();
         let user = yield listUsersAsync(
           adminToken.token,
           keystoneRemote,
@@ -109,10 +104,7 @@ Auth.prototype = {
         if (user.body.users.length && !user.body.users[0].enabled) {
           return Promise.reject({
             status: 403,
-            message: {
-              message: req.i18n.__('api.register.unEnabled'),
-              code: 403
-            }
+            message: {message: req.i18n.__('api.register.unEnabled'), code: 403}
           });
         } else {
           return Promise.reject(e);
@@ -124,12 +116,12 @@ Auth.prototype = {
       let cookies = getCookie(req, userId);
 
       //projects
-      const projectRes = yield base.__userProjectsAsync({
-        userId: userId,
-        token: unScopeToken
-      });
-      const projects = projectRes.body.projects;
-      let projectId;
+      const results = yield {
+        project: base.__userProjectsAsync({userId: userId, token: unScopeToken}),
+        domain: drivers.keystone.domain.listDomainsAsync(adminToken.token, keystoneRemote, {name: _domain})
+      };
+      let projectId, domainId;
+      const projects = results.project.body.projects;
       if (projects.length < 1) {
         return Promise.reject({error: 'no project'});
       } else {
@@ -139,6 +131,12 @@ Auth.prototype = {
             return (p.id === cookies.project) && (projectId = cookies.project);
           });
         }
+      }
+      const domains = results.domain.body.domains;
+      if (!domains.length) {
+        return Promise.reject({error: 'no domain'});
+      } else {
+        domainId = domains[0].id;
       }
 
       //scope
@@ -170,6 +168,8 @@ Auth.prototype = {
         return role.name;
       });
       req.session.user = {
+        'domainName': _domain,
+        domainId: domainId,
         'regionId': regionId,
         'projectId': projectId,
         'userId': userId,
