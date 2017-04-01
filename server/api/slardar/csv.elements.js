@@ -101,14 +101,23 @@ module.exports = [
       },
       {
         label: 'api.nova.server.image',
-        value: 'image.id',
+        value: function (row) {
+          if (row.image) {
+            return row.image.id;
+          } else if (row['os-extended-volumes:volumes_attached'].length) {
+            return row['os-extended-volumes:volumes_attached'][0].id;
+          } else {
+            return '';
+          }
+        },
+        name: 'image',
         extra: [
           {name: 'image', value: 'imageName', label: 'api.nova.server.imageName'}
         ]
       },
       {
         label: 'api.nova.server.volume',
-        value: 'os-extended-volumes:volumes_attached',
+        value: 'os-extended-volumes:volumes_attached-string',
         extra: [
           {name: 'volume', value: 'volumeSize', label: 'api.nova.server.volumeSize'},
           {name: 'volume', value: 'volumeCount', label: 'api.nova.server.volumeCount'}
@@ -118,7 +127,7 @@ module.exports = [
         label: 'api.nova.server.floatingIp',
         value: function (row) {
           let ips = [];
-          for (let key in row.addresses){
+          for (let key in row.addresses) {
             ips = ips.concat(row.addresses[key]);
           }
           let floatingIp;
@@ -134,7 +143,7 @@ module.exports = [
         value: function (row) {
 
           let ips = [];
-          for (let key in row.addresses){
+          for (let key in row.addresses) {
             ips = ips.concat(row.addresses[key]);
           }
           let fixedIp = [];
@@ -177,7 +186,7 @@ module.exports = [
         value: 'name'
       }, {
         label: 'api.glance.image.type',
-        value: row => ((row.image_type === 'distribution') ? 'image' : row.image_type),
+        value: row => ((row.visibility === 'private') ? 'snapshot' : 'image'),
         name: 'image_type'
       }, {
         label: 'api.glance.image.size',

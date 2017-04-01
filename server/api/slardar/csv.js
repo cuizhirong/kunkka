@@ -116,6 +116,7 @@ module.exports.data = (req, res, next) => {
     if (!obj) {
       return Promise.reject({status: 404, message: 'Not Found'});
     }
+    let hasImage = false, imageIdKey;
     if (queryFields.length) {
       obj.fields.forEach(field => {
         if (queryFields.indexOf(typeof field.value === 'string' ? field.value : field.name) > -1) {
@@ -129,7 +130,10 @@ module.exports.data = (req, res, next) => {
                 label: __(e.label),
                 value: e.value
               });
-              if (!requests[e.name]) {
+              if (e.name === 'image') {
+                hasImage = true;
+                imageIdKey = field.name;
+              } else if (!requests[e.name]) {
                 requests[e.name] = {
                   idKey: field.value,
                   data: extraRequests[e.name](req.session, domainId)
@@ -151,7 +155,10 @@ module.exports.data = (req, res, next) => {
               label: __(e.label),
               value: e.value
             });
-            if (!requests[e.name]) {
+            if (e.name === 'image') {
+              hasImage = true;
+              imageIdKey = field.value;
+            } else if (!requests[e.name]) {
               requests[e.name] = {
                 idKey: field.value,
                 data: extraRequests[e.name](req.session, domainId)
@@ -161,11 +168,13 @@ module.exports.data = (req, res, next) => {
         }
       });
     }
-
-    const results = yield requests,
-      extraData = {},
-      extraKeys = Object.keys(results).filter(key => key !== 'major' && (extraData[key] = {}));
-
+    const results = yield requests;
+    if (hasImage) {
+      results.image = {idKey: imageIdKey, data: {body: {images: []}}};
+      yield listImageRecursive({limit: 9999}, '', req.session.user.token, req.session.endpoint.glance[req.session.user.regionId], results.image.data.body.images);
+    }
+    const extraData = {};
+    const extraKeys = Object.keys(results).filter(key => key !== 'major' && (extraData[key] = {}));
     extraKeys.forEach(key => {
       results[key].data.body[key + 's'].forEach(d => {
         extraData[key][d.id] = d;
@@ -183,10 +192,10 @@ module.exports.data = (req, res, next) => {
             return false;
           }
         }
-        if(query.user_id && d.user_id && query.user_id !== d.user_id){
+        if (query.user_id && d.user_id && query.user_id !== d.user_id) {
           return false;
         }
-        if(query.tenant_id && d[obj.tenantKey] && query.tenant_id !== d[obj.tenantKey]){
+        if (query.tenant_id && d[obj.tenantKey] && query.tenant_id !== d[obj.tenantKey]) {
           return false;
         }
         return true;
@@ -210,7 +219,13 @@ module.exports.data = (req, res, next) => {
         }
         if (extraData.image) {
           try {
-            d.imageName = extraData.image[d.image.id].name;
+            if (d.image) {
+              d.imageName = extraData.image[d.image.id].name;
+            } else if (d['os-extended-volumes:volumes_attached'].length) {
+              d.imageName = d['os-extended-volumes:volumes_attached'][0].id;
+            } else {
+              d.imageName = '';
+            }
           } catch (e) {
             d.imageName = '';
           }
@@ -227,7 +242,7 @@ module.exports.data = (req, res, next) => {
             d.volumeSize += v.size;
           });
           d.volumeSize += ' GB';
-          d['os-extended-volumes:volumes_attached'] = volumeNew.join();
+          d['os-extended-volumes:volumes_attached-string'] = volumeNew.join();
         }
         if (extraData.flavor && d.flavor && extraData.flavor[d.flavor.id]) {
           let flavor = extraData.flavor[d.flavor.id];
