@@ -99,7 +99,7 @@ class ModalBase extends React.Component {
       return;
     }
 
-    this.setState({
+    this.refs.btn.setState({
       disabled: true
     });
     this.props.onConfirm && this.props.onConfirm(refs, (success, errorMessage) => {
@@ -115,11 +115,13 @@ class ModalBase extends React.Component {
       } else {
         if (errorMessage) {
           this.setState({
-            errorMessage: errorMessage,
+            errorMessage: errorMessage
+          });
+          this.refs.btn.setState({
             disabled: false
           });
         } else {
-          this.setState({
+          this.refs.btn.setState({
             disabled: false
           });
         }
