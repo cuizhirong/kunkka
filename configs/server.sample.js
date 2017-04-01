@@ -14,7 +14,9 @@ var config = {
   },
   'websocket': {
     'RegionOne': ':5679'
-  }
+  },
+  'port': 5678,
+  'hostname': ''
 };
 
 module.exports = config;
