@@ -134,21 +134,23 @@ class Filter extends React.Component {
         }
         </div>
         <div className="hr"></div>
-        <div className="select-filter">
-          <div className="title">请根据条件进行过滤</div>
-          <div className="filter">
-            <div className="label">起始时间</div>
-            <div className="content">
-              <Calendar onChange={this.onChangeStartTime} hasScreen={true} unfold={false} placeholder={__.please_select_time} />
+        {
+          props.noCalendar ? null : <div className="select-filter">
+            <div className="title">请根据条件进行过滤</div>
+            <div className="filter">
+              <div className="label">起始时间</div>
+              <div className="content">
+                <Calendar onChange={this.onChangeStartTime} hasScreen={true} unfold={false} placeholder={__.please_select_time} />
+              </div>
+            </div>
+            <div className="filter">
+              <div className="label">结束时间</div>
+              <div className="content">
+                <Calendar onChange={this.onChangeEndTime} hasScreen={true} unfold={false} placeholder={__.please_select_time} />
+              </div>
             </div>
           </div>
-          <div className="filter">
-            <div className="label">结束时间</div>
-            <div className="content">
-              <Calendar onChange={this.onChangeEndTime} hasScreen={true} unfold={false} placeholder={__.please_select_time} />
-            </div>
-          </div>
-        </div>
+        }
       </div>
     );
   }

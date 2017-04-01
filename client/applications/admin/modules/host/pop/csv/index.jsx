@@ -15,7 +15,8 @@ function pop(obj, parent, callback) {
     onInitialize: function(refs) {
       refs.exp_filter.setState({
         renderer: Filter,
-        fields: obj.fields
+        fields: obj.fields,
+        noCalendar: true
       });
     },
     onConfirm: function(refs, cb) {
