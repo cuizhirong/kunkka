@@ -105,6 +105,9 @@
         "name": ["description"],
         "key": "description",
         "default": true
+      }, {
+        "name": ["instance"],
+        "key": "instance"
       }]
     }
   }
