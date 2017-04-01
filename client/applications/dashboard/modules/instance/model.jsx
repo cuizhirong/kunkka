@@ -746,7 +746,9 @@ class Model extends React.Component {
       if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance') {
         var dataObj = {
           id: index + 1,
-          name: element.name,
+          name: <a data-type="router" href={'/dashboard/alarm/' + element.alarm_id}>
+              {element.name}
+            </a>,
           enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
           state: utils.getStateName(element.state),
           created_at: getTime(element.timestamp, true)
