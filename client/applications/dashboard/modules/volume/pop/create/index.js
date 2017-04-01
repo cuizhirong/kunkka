@@ -151,13 +151,6 @@ function pop(obj, parent, callback) {
         callback && callback(res);
         cb(true);
       }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
-
-        refs.error.setState({
-          value: tip,
-          hide: false
-        });
         cb(false, getErrorMessage(err));
       });
     },
