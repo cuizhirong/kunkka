@@ -17,6 +17,12 @@ try {
   fs.mkdirSync(clientAppDir);
 }
 
+if (env === 'dev') {
+  let haloDir = path.join(__dirname, '..');
+  execSync(`git fetch origin && git rebase origin/master`, {'cwd': haloDir});
+  console.log('halo now is latest in master branch');
+}
+
 config.applications.forEach(a => {
   let appDir = path.join(__dirname, a.directory, a.name);
   let rootDir = path.join(__dirname, '..');
