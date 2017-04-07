@@ -142,7 +142,7 @@ module.exports = {
         case 'cpu_util':
           return '%';
         case 'memory.usage':
-          return 'MB/s';
+          return 'MB';
         case 'disk.read.bytes.rate':
         case 'disk.write.bytes.rate':
         case 'network.incoming.bytes.rate':

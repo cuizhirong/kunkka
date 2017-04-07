@@ -141,5 +141,13 @@ module.exports = {
     return new Promise((resolve, reject) => {
       resolve(ret());
     });
+  },
+  getInstances() {
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
+    return fetch.get({
+      url: url
+    }).then(res => {
+      return res.servers;
+    });
   }
 };
