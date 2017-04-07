@@ -6,7 +6,7 @@ var getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   if (HALO.settings.enable_charge) {
-    config.fields[5].hide = false;
+    config.fields[6].hide = false;
   }
   var props = {
     __: __,
