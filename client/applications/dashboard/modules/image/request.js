@@ -54,5 +54,10 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
       data: data
     });
+  },
+  getInstances: function() {
+    return storage.getList(['instance'], false).then(data => {
+      return data.instance;
+    });
   }
 };
