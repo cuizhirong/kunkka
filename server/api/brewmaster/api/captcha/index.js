@@ -2,13 +2,12 @@
 
 const ccap = require('ccap');
 
-function Captcha (app){
-  this.app = app;
-}
+class Captcha {
+  constructor(app) {
+    this.app = app;
+  }
 
-Captcha.prototype = {
-
-  getCaptcha: function (req, res){
+  static getCaptcha(req, res) {
     let captcha = ccap({
       width: 200, //set width,default is 256
       height: 60, //set height,default is 60
@@ -20,11 +19,11 @@ Captcha.prototype = {
     let ary = captcha.get();
     req.session.captcha = ary[0];
     res.send(ary[1]);
-  },
-
-  initRoutes: function (){
-    this.app.get('/api/captcha', this.getCaptcha.bind(this));
   }
-};
+
+  initRoutes() {
+    this.app.get('/api/captcha', Captcha.getCaptcha);
+  }
+}
 
 module.exports = Captcha;

@@ -53,6 +53,14 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    full_name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    company: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     paranoid: false,

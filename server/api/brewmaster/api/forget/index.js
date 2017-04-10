@@ -1,117 +1,85 @@
 'use strict';
+const co = require('co');
 
-let base = require('../base');
+const base = require('../base');
 const drivers = require('drivers');
 const config = require('config');
 const keystoneRemote = config('keystone');
-let updateUser = drivers.keystone.user.updateUser;
-let memcachedClient;
+const updateUserAsync = drivers.keystone.user.updateUserAsync;
 
 function Password(app) {
   this.app = app;
-  memcachedClient = app.get('CacheClient');
+  this.memClient = app.get('CacheClient');
 }
-
 
 Password.prototype = {
 
-  pageForget: function (req, res, next) {
-    base.func.getTemplateObj((err, obj) => {
-      if (err) {
-        obj.subtitle = obj.message = req.i18n.__('api.register.SystemError');
-        obj.locale = req.i18n.locale;
-        res.render('single', obj);
-      } else {
-        obj.subtitle = req.i18n.__('api.register.RetrievePassword');
-        obj.locale = req.i18n.locale;
-        res.render('findPwd', obj);
-      }
-    });
-
+  pageForget: (req, res, next) => {
+    next({customRes: true, status: 200, view: 'findPwd'});
   },
   sendCaptcha: function (req, res, next) {
-
-    let __ = req.i18n.__.bind(req.i18n);
-
-    let phone = req.body.phone;
-    if (!(/^1[34578]\d{9}$/.test(phone))) {
-      res.status(500).send(__('api.register.PhoneError'));
-      return false;
-    }
-    base.func.verifyUser(req.admin.token, {phone: phone}, function (err, userExist, user) {
-      if (err) {
-        next({type: 'SystemError', err: err});
-      } else if (userExist) {
-        base.func.phoneCaptchaMem(phone, memcachedClient, req, res, next);
-      } else {
-        res.status(404).send({type: 'message', message: __('api.register.UserNotExist')});
+    const that = this;
+    co(function *() {
+      let phone = req.body.phone;
+      if (!(/^1[34578]\d{9}$/.test(phone))) {
+        return next({msg: 'PhoneError', customRes: true, status: 400});
       }
-    });
+
+      let user = yield base.func.verifyUserAsync(req.admin.token, {phone});
+      if (!user) {
+        next({msg: 'UserNotExist', customRes: true, status: 400});
+      } else {
+        base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
+      }
+
+    }).catch(next);
   },
   resetViaPhone: function (req, res, next) {
-    let __ = req.i18n.__.bind(req.i18n);
-    let phone = req.body.phone;
-    let code = parseInt(req.body.captcha, 10);
-    let password = req.body.pwd;
-    if (!(/^1[34578]\d{9}$/.test(phone))) {
-      return next({message: __('api.register.PhoneError'), type: 'message'});
-    }
-
-    function render(result) {
-      base.func.getTemplateObj((err, obj) => {
-        if (err) {
-          obj.subtitle = obj.message = __('api.register.SystemError');
-          result.status = 500;
-        } else {
-          obj.subtitle = __('views.auth.forgotPass');
-          obj.message = result.message;
-        }
-        obj.locale = req.i18n.locale;
-        res.status(result.status).render('single', obj);
-      });
-
-    }
-
-    memcachedClient.get(phone.toString(), (err, val) => {
-      if (err) {
-        render({status: 500, message: __('api.register.SystemError')});
-      } else {
-        val = val && val.toString();
-        try {
-          val = JSON.parse(val);
-        } catch (e) {
-          return render({status: 500, message: __('api.register.CodeError')});
-        }
-
-        if (!val || parseInt(val.code, 10) !== code) {
-          render({status: 500, message: __('api.register.CodeError')});
-        } else {
-          base.func.verifyUser(req.admin.token, {phone: phone}, function (error, userExist, user) {
-            if (error) {
-              render({status: 500, message: __('api.register.SystemError')});
-            } else if (userExist) {
-              updateUser(req.admin.token, keystoneRemote, user.id, {user: {password: password}}, function (e, r) {
-                if (e) {
-                  render({status: e.status, message: __('api.register.SystemError')});
-                } else {
-                  memcachedClient.delete(phone.toString());
-                  render({status: 200, message: __('api.register.ResetSuccess')});
-                }
-              });
-            } else {
-              render({status: 500, message: __('api.register.UserNotExist')});
-            }
-          });
-        }
-
+    const that = this;
+    co(function *() {
+      let phone = req.body.phone;
+      let code = parseInt(req.body.captcha, 10);
+      let password = req.body.pwd;
+      if (!(/^1[34578]\d{9}$/.test(phone))) {
+        return next({msg: 'PhoneError', customRes: true, status: 400});
       }
-    });
+
+      let isCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      if (!isCorrect) {
+        return next({msg: 'CodeError', customRes: true, status: 400});
+      }
+
+      let user = yield yield base.func.verifyUserAsync(req.admin.token, {phone});
+      if (!user) {
+        return next({customRes: true, status: 400, msg: 'UserNotExist'});
+      }
+      yield [
+        updateUserAsync(req.admin.token, keystoneRemote, user.id, {user: {password}}),
+        that.memClient.deleteAsync(phone.toString())
+      ];
+
+      next({msg: 'ResetSuccess', customRes: true, status: 200});
+    }).catch(next);
   },
 
   initRoutes: function () {
-    this.app.get('/auth/password', this.pageForget.bind(this));
-    this.app.post('/api/password/phone/captcha', base.middleware.adminLogin, this.sendCaptcha.bind(this));
-    this.app.post('/auth/password/phone/reset', base.middleware.adminLogin, this.resetViaPhone.bind(this));
+    this.app.get(
+      '/auth/password',
+      this.pageForget.bind(this),
+      base.middleware.customResPage
+    );
+    this.app.post(
+      '/api/password/phone/captcha',
+      base.middleware.adminLogin,
+      this.sendCaptcha.bind(this),
+      base.middleware.customResApi
+    );
+    this.app.post(
+      '/auth/password/phone/reset',
+      base.middleware.adminLogin,
+      this.resetViaPhone.bind(this),
+      base.middleware.customResPage
+    );
   }
 };
 

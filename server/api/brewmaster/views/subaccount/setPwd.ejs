@@ -42,11 +42,11 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="<%= single_logo_url %>"/>
+      <img src="/static/assets/login/logo@2x_1.png"/>
     </div>
     <div class="content-wrapper">
-      <h4>Find Password</h4>
-      <form id="uform" method="post" action="/auth/password/phone/reset">
+      <h4>Set Password</h4>
+      <form id="uform" method="post" action="/auth/sub/account/enable">
         <div>
           <input id="phone" name="phone" type="text" placeholder="please enter phone number" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -59,7 +59,7 @@
         </div>
         <span class="captcha_tip"></span>
         <div>
-          <input id="pwd" name="pwd" type="password" placeholder="please enter new password"/>
+          <input id="pwd" name="pwd" type="password" placeholder="please enter password"/>
           <div class="brewmaster_icon icon_pwd"></div>
         </div>
         <span class="pwd_tip"></span>
@@ -70,7 +70,6 @@
         <span class="confirm_pwd_tip"></span>
         <input id="usubmit" name="usubmit" type="button" value="submit"/>
       </form>
-      <a href="/">Login</a>
     </div>
   </div>
   <div class="footer">
@@ -95,6 +94,14 @@
           enable_pwd = false,
           enable_confirm_pwd = false,
           timer = null;
+  function getQueryString(name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return unescape(r[2]);
+    }
+    return null;
+  }
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -117,7 +124,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/api/password/phone/captcha", true);
+        req.open("POST", "/api/register/phone", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -137,7 +144,7 @@
                 }
               }, 1000);
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              phone_tip.innerHTML = JSON.parse(req.responseText).message ? JSON.parse(req.responseText).message : 'this is an error occured';
               phone_tip.style.display = 'block';
             }
           }
@@ -187,6 +194,17 @@
       enable_confirm_pwd = false;
     }
     if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
+      var userid = null;
+      var uid = document.createElement("input");
+      uid.setAttribute("type", "hidden");
+      uid.setAttribute("name", "user");
+      uid.setAttribute("value", getQueryString("user"));
+      var tk = document.createElement("input");
+      tk.setAttribute("type", "hidden");
+      tk.setAttribute("name", "token");
+      tk.setAttribute("value", getQueryString("token"));
+      uform.appendChild(uid);
+      uform.appendChild(tk);
       uform.submit();
     }
   }
@@ -198,11 +216,11 @@
   <div class="header"></div>
   <div class="content">
     <div class="img-wrapper">
-      <img src="<%= single_logo_url %>"/>
+      <img src="/static/assets/login/logo@2x_1.png"/>
     </div>
     <div class="content-wrapper">
-      <h4>找回密码</h4>
-      <form id="uform" method="post" action="/auth/password/phone/reset">
+      <h4>设置密码</h4>
+      <form id="uform" method="post" action="/auth/sub/account/enable">
         <div>
           <input id="phone" name="phone" type="text" placeholder="请输入手机号" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -215,7 +233,7 @@
         </div>
         <span class="captcha_tip"></span>
         <div>
-          <input id="pwd" name="pwd" type="password" placeholder="请输入新密码"/>
+          <input id="pwd" name="pwd" type="password" placeholder="请输入密码"/>
           <div class="brewmaster_icon icon_pwd"></div>
         </div>
         <span class="pwd_tip"></span>
@@ -226,7 +244,6 @@
         <span class="confirm_pwd_tip"></span>
         <input id="usubmit" name="usubmit" type="button" value="提交"/>
       </form>
-      <a href="/">返回登录</a>
     </div>
   </div>
   <div class="footer">
@@ -251,6 +268,15 @@
           enable_pwd = false,
           enable_confirm_pwd = false,
           timer = null;
+
+  function getQueryString(name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return unescape(r[2]);
+    }
+    return null;
+  }
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -273,7 +299,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/api/password/phone/captcha", true);
+        req.open("POST", "/api/register/phone", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -293,7 +319,7 @@
                 }
               }, 1000);
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              phone_tip.innerHTML = JSON.parse(req.responseText).message ? JSON.parse(req.responseText).message : 'this is an error occured';
               phone_tip.style.display = 'block';
             }
           }
@@ -343,6 +369,17 @@
       enable_confirm_pwd = false;
     }
     if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
+      var userid = null;
+      var uid = document.createElement("input");
+      uid.setAttribute("type", "hidden");
+      uid.setAttribute("name", "user");
+      uid.setAttribute("value", getQueryString("user"));
+      var tk = document.createElement("input");
+      tk.setAttribute("type", "hidden");
+      tk.setAttribute("name", "token");
+      tk.setAttribute("value", getQueryString("token"));
+      uform.appendChild(uid);
+      uform.appendChild(tk);
       uform.submit();
     }
   }

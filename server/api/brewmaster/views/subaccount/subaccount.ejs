@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <title><%= title %></title>
+  <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
+  <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
+  <link href="/static/dist/<%= mainCssFile %>" rel="stylesheet">
+  <script>
+    window.HALO =<%- HALO %>;
+  </script>
+</head>
+<body>
+<div id="container"><%- modelTmpl %></div>
+<script src="/static/dist/<%= mainJsFile %>"></script>
+</body>
+</html>

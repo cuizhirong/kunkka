@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="renderer" content="webkit">
-  <title><%= title %> - <%= subtitle %></title>
+  <title><%= title %></title>
   <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
   <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
   <style>
@@ -109,7 +109,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/auth/register/change-email/phone", true);
+        req.open("POST", "/api/register/change-email/phone", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -248,7 +248,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/auth/register/change-email/phone", true);
+        req.open("POST", "/api/register/change-email/phone", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {

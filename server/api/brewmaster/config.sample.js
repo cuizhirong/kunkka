@@ -64,6 +64,12 @@ module.exports = {
       value: 'false',
       type: 'boolean',
       description: '登录页面图形验证码'
+    }, {
+      app: 'global',
+      name: 'enable_subaccount',
+      value: 'false',
+      type: 'boolean',
+      description: '开启子账户功能'
     }
   ]
 };

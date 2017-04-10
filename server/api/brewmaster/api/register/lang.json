@@ -4,6 +4,7 @@
     "Email": "邮箱",
     "Phone": "手机",
     "Used": "已被占用",
+    "emailUsed": "邮箱已被占用",
     "Available": "可用",
     "UserNotExist": "用户不存在",
     "UserNotHaveEmail": "用户没有绑定邮箱",
@@ -31,13 +32,15 @@
     "clickHereToEnableYourAccount": "点击此处以激活您的账户",
     "LinkFailedCopyTheHref": "如果跳转失败，复制下面的链接到浏览器地址栏中并打开：",
     "domainNotFound": "domain找不到",
-    "unEnabled": "账户未激活"
+    "unEnabled": "账户未激活",
+    "noDefaultProject": "你没有默认项目"
   },
   "en": {
     "Name": "The Username",
     "Email": "The email",
     "Phone": "The Phone",
     "Used": "had been used",
+    "emailUsed": "The email had been used",
     "Available": " is available",
     "UserNotExist": "User is not exist",
     "UserNotHaveEmail": "User doesn't have a email bound",
@@ -64,6 +67,7 @@
     "clickHereToEnableYourAccount": "Click here to enable your account",
     "LinkFailedCopyTheHref": "If failed to link, copy the link below and open it in your the browser :",
     "domainNotFound": "Domain Not Found",
-    "unEnabled": "User Not Enabled"
+    "unEnabled": "User Not Enabled",
+    "noDefaultProject": "You don't have the default project."
   }
 }
