@@ -1,4 +1,4 @@
 [gerrit]
-host=review.ustack.com
+host=gerrit.ustack.com
 port=29418
-project=ustack/lion.git
+project=ued/lion.git
