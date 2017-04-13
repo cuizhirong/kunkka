@@ -13,7 +13,6 @@
   }, {
     "value": ["modify", "price"],
     "key": "modify",
-    "type": "modify",
     "icon": "edit",
     "disabled": true
   }, {
@@ -56,6 +55,10 @@
       "title": ["type"],
       "dataIndex": "type",
       "key": "type"
+    }, {
+      "title": ["region"],
+      "dataIndex": "region",
+      "key": "region"
     }, {
       "title": ["description"],
       "dataIndex": "description",

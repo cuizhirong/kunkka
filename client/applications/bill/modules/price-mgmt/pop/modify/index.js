@@ -5,20 +5,24 @@ var __ = require('locale/client/bill.lang.json');
 var stageInput = require('./stageInput.jsx');
 var getErrorMessage = require('../../../../utils/error_message');
 
+var regionList = HALO.region_list;
+
 function pop(obj, parent, callback) {
+  config.fields[4].data = regionList;
   if (obj) {
     config.title = ['modify', 'price'];
     config.fields[0].value = obj.name;
     config.fields[1].value = obj.unit_price.price.base_price;
     config.fields[3].value = obj.service;
-    config.fields[4].value = obj.description;
+    config.fields[4].value = obj.region_id;
+    config.fields[5].value = obj.description;
     config.btn.value = 'modify';
-    config.btn.type = 'update';
   } else {
     config.title = ['create', 'price'];
     config.fields[0].value = '';
     config.fields[1].value = '';
-    config.fields[4].value = '';
+    config.fields[4].value = HALO.current_region;
+    config.fields[5].value = '';
     config.btn.value = 'create';
     config.btn.type = 'create';
   }
@@ -48,7 +52,7 @@ function pop(obj, parent, callback) {
       var updateData = {
         name: refs.name.state.value,
         service: refs.service.state.value,
-        region_id: HALO.current_region,
+        region_id: refs.region.state.value,
         description: refs.description.state.value,
         unit_price: {
           price: {
@@ -58,11 +62,17 @@ function pop(obj, parent, callback) {
           }
         }
       };
+      refs.btn.setState({
+        disabled: true
+      });
       if(obj) {
         request.updatePriceById(obj.id, updateData).then((res) => {
           callback && callback();
           cb(true);
         }).catch((error) => {
+          refs.btn.setState({
+            disabled: false
+          });
           cb(false, getErrorMessage('error'));
         });
       } else {
@@ -73,6 +83,9 @@ function pop(obj, parent, callback) {
           callback && callback();
           cb(true);
         }).catch((error) => {
+          refs.btn.setState({
+            disabled: false
+          });
           cb(false, getErrorMessage(error));
         });
       }
@@ -81,7 +94,7 @@ function pop(obj, parent, callback) {
       var disable = refs.name.state.error || refs.base_price.state.error || !refs.name.state.value || !refs.base_price.state.value;
       switch(field) {
         case 'name':
-          var nameRegex = /^[a-zA-Z0-9_.:+]{1,}$/;
+          var nameRegex = /^[a-zA-Z0-9_.:+-/\\\(\)\{\}]{1,}$/;
           refs.name.setState({
             error: !nameRegex.test(state.value)
           }, () => {

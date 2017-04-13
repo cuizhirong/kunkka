@@ -36,6 +36,10 @@
       "id": "share"
     }]
   }, {
+    "type": "select",
+    "field": "region",
+    "data": []
+  }, {
     "type": "textarea",
     "field": "description",
     "value": ""

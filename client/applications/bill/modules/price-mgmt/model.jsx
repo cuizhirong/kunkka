@@ -79,6 +79,13 @@ class Model extends React.Component {
             }
           };
           break;
+        case 'region':
+          column.render = (col, item, i) => {
+            let regions = HALO.region_list;
+            let regionName = regions.find((n) => n.id === item.region_id).name;
+            return regionName;
+          };
+          break;
         default:
           break;
       }
@@ -422,6 +429,7 @@ class Model extends React.Component {
 
     var price = <Table
         __={__}
+        dataKey={tableConfig.dataKey}
         column={tableConfig.column}
         data={tableConfig.data}
       />;
@@ -437,6 +445,9 @@ class Model extends React.Component {
     }, {
       title: __.type,
       content: (type === 'segmented') ? __.gradient_charge : '-'
+    }, {
+      title: __.region,
+      content: HALO.region_list.find((n) => n.id === item.region_id).name
     }, {
       title: __.description,
       content: item.description ? item.description : '-'
