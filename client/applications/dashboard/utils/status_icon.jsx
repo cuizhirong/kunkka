@@ -36,6 +36,7 @@ module.exports = (str, option) => {
         type.status = 'in-use';
         break;
       case 'paused':
+      case 'suspended':
         type.icon = 'paused';
         type.status = 'paused';
         break;

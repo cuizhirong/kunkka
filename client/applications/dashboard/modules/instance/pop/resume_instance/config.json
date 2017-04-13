@@ -1,0 +1,11 @@
+{
+  "title": ["resume", "instance"],
+  "fields": [{
+    "type": "data_list",
+    "field": "instance",
+    "icon": "instance"
+  }],
+  "btn": {
+    "value": "ok"
+  }
+}

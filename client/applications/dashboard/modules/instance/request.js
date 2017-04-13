@@ -286,5 +286,73 @@ module.exports = {
       });
     }
     return RSVP.all(deferredList);
+  },
+  lockIntance: function(ids, data) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  unlockIntance: function(ids, data) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  suspendedIntance: function(ids, data) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  pauseInstance: function(ids, data) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  resumeInstance: function(ids, data) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  rescueInstance: function(id, data) {
+    console.log(data);
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+      data: data
+    });
+  },
+  rebuildInstance: function(id, data) {
+    return fetch.post({
+      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + id + '/action',
+      data: data
+    });
+  },
+  getImages: function() {
+    return storage.getList(['image']).then((data) => {
+      return data.image;
+    });
   }
 };

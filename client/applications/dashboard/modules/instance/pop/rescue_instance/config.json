@@ -1,0 +1,27 @@
+{
+  "title": ["rescue", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": ""
+  }, {
+    "type": "input_pwd",
+    "field": "password"
+  }, {
+    "type": "group_select",
+    "field": "image",
+    "empty_text": {
+      "info": "no_image"
+    },
+    "data": []
+  }, {
+    "type": "tip",
+    "tip_type": "success",
+    "field": "rescue_tip"
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}

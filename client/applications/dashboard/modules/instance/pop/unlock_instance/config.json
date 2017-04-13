@@ -1,0 +1,12 @@
+{
+  "title": ["unlock", "instance"],
+  "fields": [{
+    "type": "data_list",
+    "field": "instance",
+    "icon": "instance",
+    "hasStatus": true
+  }],
+  "btn": {
+    "value": "unlock"
+  }
+}
