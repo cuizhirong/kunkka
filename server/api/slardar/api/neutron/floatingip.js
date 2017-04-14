@@ -50,7 +50,7 @@ Floatingip.prototype = {
     );
   },
   getFloatingipDetails: function (req, res, next) {
-    let objVar = this.getVars(req, ['floatingipId']);
+    let objVar = this.getVars(req, ['projectId', 'floatingipId']);
     async.parallel(
       [this.__floatingipDetail.bind(this, objVar)].concat(this.arrAsync(objVar)),
       (err, results) => {
