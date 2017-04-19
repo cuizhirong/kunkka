@@ -363,6 +363,9 @@ Application.prototype = {
     let user = req.session.user;
     let allowToReturn = false;
     applicationDao.findOneById(applicationId).then(result => {
+      if (!result) {
+        return res.status(404).end();
+      }
       if (!req.query.status && result.userId === user.userId) {
         allowToReturn = true;
       } else {
@@ -381,9 +384,7 @@ Application.prototype = {
       } else {
         return res.status(404).end();
       }
-    }).catch(err => {
-      next(err);
-    });
+    }).catch(next);
   },
 
   //get applications that I have approved.
