@@ -89,7 +89,7 @@ class ModalBase extends React.Component {
       <Select ref="domain" onAction={this.onChangeDomain.bind(this)} label={__.domain} data={domains} value={domains[0].id} />
       <Textarea ref="describe" onAction={this.onChangeTextArea.bind(this)} label={__.describe} />
       <div className="checkbox-wrapper">
-        <input ref="activate" defaultChecked={false} type="checkbox" />&nbsp;{__.activate}
+        <input ref="activate" defaultChecked={true} type="checkbox" />&nbsp;{__.activate}
       </div>
     </div>;
   }
