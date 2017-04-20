@@ -59,5 +59,10 @@ module.exports = {
     return storage.getList(['instance'], false).then(data => {
       return data.instance;
     });
+  },
+  getImageMember: function(id) {
+    return fetch.get({
+      url: '/proxy/glance/v2/image/' + id + '/members'
+    });
   }
 };
