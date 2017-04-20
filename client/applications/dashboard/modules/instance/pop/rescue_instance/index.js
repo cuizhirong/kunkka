@@ -33,7 +33,6 @@ function pop(obj, parent, callback) {
     return imageGroup;
   }
   config.fields[0].text = obj.name;
-  config.fields[2].text = __.confirm_inst_action.replace('{0}', __.ins_action_reboot);
 
   var props = {
     __: __,

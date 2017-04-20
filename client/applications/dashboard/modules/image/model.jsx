@@ -12,6 +12,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var createInstance = require('../instance/pop/create_instance/index');
 var createVolume = require('./pop/create_volume/index');
 var RelatedInstance = require('../image/detail/related_instance');
+var image = require('./pop/image/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -176,6 +177,16 @@ class Model extends React.Component {
       case 'create_volume':
         createVolume(rows[0]);
         break;
+      case 'create_image':
+        image();
+        break;
+      case 'edit_image':
+        image(rows[0], null, () => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -232,6 +243,9 @@ class Model extends React.Component {
         case 'delete':
           let hasPublicImage = rows.some((ele) => ele.visibility === 'public');
           btns[key].disabled = (rows.length === 0 || hasPublicImage) ? true : false;
+          break;
+        case 'edit_image':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         default:
           break;

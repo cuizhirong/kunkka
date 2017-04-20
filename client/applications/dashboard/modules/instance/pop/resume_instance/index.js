@@ -6,7 +6,7 @@ var isPaused;
 
 function pop(obj, parent, callback) {
   config.fields[0].data = obj;
-  isPaused = obj[0].status === 'paused';
+  isPaused = obj[0].status.toLowerCase() === 'paused';
 
   var props = {
     __: __,

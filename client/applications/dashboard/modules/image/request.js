@@ -60,9 +60,16 @@ module.exports = {
       return data.instance;
     });
   },
-  getImageMember: function(id) {
-    return fetch.get({
-      url: '/proxy/glance/v2/image/' + id + '/members'
+  updateImage: function(imageID, data) {
+    return fetch.patch({
+      url: '/api/v1/images/' + imageID,
+      data: data
+    });
+  },
+  createImage(data) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images',
+      data: data
     });
   }
 };

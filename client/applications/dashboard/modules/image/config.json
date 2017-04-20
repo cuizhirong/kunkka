@@ -5,6 +5,16 @@
     "default": true
   }],
   "btns": [{
+    "value": ["create", "image"],
+    "key": "create_image",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["edit", "image"],
+    "key": "edit_image",
+    "icon": "edit",
+    "disabled": true
+  }, {
     "value": ["create", "instance"],
     "key": "create",
     "type": "create",
