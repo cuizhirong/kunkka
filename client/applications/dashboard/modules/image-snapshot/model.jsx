@@ -18,8 +18,7 @@ class Model extends ImageModel {
 
       var table = config.table;
       var data = res.filter((ele) => {
-        let ownerMatch = ele.visibility === 'private' ? ele.owner === HALO.user.projectId : true;
-        return ele.image_type === 'snapshot' && ownerMatch;
+        return ele.image_type === 'snapshot';
       });
       table.data = data;
       table.loading = false;

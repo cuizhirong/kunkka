@@ -126,11 +126,9 @@ class ModalBase extends React.Component {
     //sort image and snapshot
     res.image.forEach((ele) => {
       let type = ele.image_type;
-      let visibility = ele.visibility;
-      let ownerMatch = visibility === 'private' ? ele.owner === HALO.user.projectId : true;
-      if (type === 'distribution' && ownerMatch) {
+      if (type === 'distribution') {
         images.push(ele);
-      } else if (type === 'snapshot' && ownerMatch) {
+      } else if (type === 'snapshot') {
         snapshots.push(ele);
       }
     });
