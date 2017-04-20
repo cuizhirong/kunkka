@@ -73,7 +73,7 @@ module.exports = {
       return res;
     });
   },
-  editName: function(imageID, data) {
+  updateImage: function(imageID, data) {
     return fetch.patch({
       url: '/api/v1/images/' + imageID,
       data: data
@@ -108,6 +108,12 @@ module.exports = {
       url: url
     }).then(res => {
       return res.servers;
+    });
+  },
+  createImage(data) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images',
+      data: data
     });
   }
 };
