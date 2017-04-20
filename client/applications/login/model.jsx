@@ -42,7 +42,7 @@ class Model extends React.Component {
         password: password
       };
 
-    if(captcha) {
+    if(captcha || typeof captcha === 'undefined') {
       data.captcha = refs.code.value;
     }
 
@@ -153,7 +153,7 @@ class Model extends React.Component {
               </div> : null
           }
           {
-            HALO.settings.enable_login_captcha ? <div className="code-wrapper">
+            HALO.settings.enable_login_captcha || typeof HALO.settings.enable_login_captcha === 'undefined' ? <div className="code-wrapper">
               <input type="text" ref="code" name="code" className={state.captchaEmptyError ? 'error' : ''} placeholder={__.code_placeholder} />
               <div className="img-wrapper">
                 <img ref="captcha" src="/api/captcha" />
