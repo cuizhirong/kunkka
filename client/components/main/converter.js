@@ -15,6 +15,17 @@ module.exports = {
     }
   },
 
+  getSubItem(lang, children) {
+    children.forEach((child) => {
+      child.items.forEach((childItem) => {
+        childItem.title = this.getLangValue(lang, childItem.title);
+        if (childItem.children) {
+          this.getSubItem(lang, childItem.children);
+        }
+      });
+    });
+  },
+
   convertLang(lang, config) {
     if (config.tabs) {
       config.tabs.forEach((item) => {
@@ -29,6 +40,9 @@ module.exports = {
             btn.dropdown.items.forEach((item) => {
               item.items.forEach((subitem) => {
                 subitem.title = this.getLangValue(lang, subitem.title);
+                if (subitem.children) {
+                  this.getSubItem(lang, subitem.children);
+                }
               });
             });
           }
