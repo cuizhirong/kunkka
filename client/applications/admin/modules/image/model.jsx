@@ -6,7 +6,7 @@ var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
 var RelatedInstance = require('./detail/related_instance');
 
-var editName = require('./pop/edit_name/index');
+var image = require('./pop/create/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -353,8 +353,16 @@ class Model extends React.Component {
 
     var that = this;
     switch(key) {
-      case 'edit_name':
-        editName(rows[0], null, (res) => {
+      case 'create':
+        image(null, null, (res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'edit_image':
+        image(rows[0], null, (res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true
@@ -449,13 +457,14 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'edit_name':
+        case 'edit_image':
           btns[key].disabled = sole ? false : true;
           break;
         case 'export_csv':
           btns[key].disabled = false;
           break;
         case 'delete':
-          btns[key].disabled = (sole && sole.image_type === 'snapshot') ? false : true;
+          btns[key].disabled = (sole && sole.image_type === 'snapshot' && !sole.protected) ? false : true;
           break;
         default:
           break;

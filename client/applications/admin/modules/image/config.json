@@ -5,8 +5,13 @@
     "default": true
   }],
   "btns": [{
-    "value": ["edit", "name"],
-    "key": "edit_name",
+    "value": ["create", "image"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["edit", "image"],
+    "key": "edit_image",
     "icon": "edit",
     "disabled": true
   }, {
