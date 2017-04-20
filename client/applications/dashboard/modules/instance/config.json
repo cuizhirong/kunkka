@@ -32,10 +32,6 @@
       "width": 160,
       "items": [{
         "items": [{
-          "title": ["reboot"],
-          "key": "reboot",
-          "disabled": true
-        }, {
           "title": ["take_instance", "snapshot"],
           "key": "instance_snapshot",
           "disabled": true
@@ -43,6 +39,46 @@
           "title": ["resize"],
           "key": "resize",
           "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["reboot"],
+          "key": "reboot",
+          "disabled": true
+        }, {
+          "title": ["more", "operation"],
+          "key": "more_operation",
+          "children": [{
+            "items": [{
+              "title": ["lock", "instance"],
+              "key": "lock",
+              "disabled": true
+            }, {
+              "title": ["unlock", "instance"],
+              "key": "unlock",
+              "disabled": true
+            }, {
+              "title": ["suspended", "instance"],
+              "key": "suspended",
+              "disabled": true
+            }, {
+              "title": ["paused", "instance"],
+              "key": "paused",
+              "disabled": true
+            }, {
+              "title": ["resume", "instance"],
+              "key": "resume",
+              "disabled": true
+            }, {
+              "title": ["rebuild", "instance"],
+              "key": "rebuild",
+              "disabled": true
+            }, {
+              "title": ["rescue", "instance"],
+              "key": "rescue",
+              "disabled": true
+            }]
+          }]
         }]
       }, {
         "items": [{
