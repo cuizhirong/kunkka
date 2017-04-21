@@ -46,7 +46,7 @@ class ImageBase extends React.Component {
       disabled: true
     });
     let callback = this.props.callback;
-    let refs = this.refs, data = {};
+    let refs = this.refs, data = [];
     if (this.props.obj) {
       data = [{
         op: 'replace',
@@ -106,8 +106,7 @@ class ImageBase extends React.Component {
         name: refs.name.state.value,
         disk_format: refs.format.state.value,
         image_url: refs.url.state.value,
-        source_type: 'url',
-        is_copying: true
+        source_type: 'url'
       };
       if (refs.describe.state.value) {
         data.description = refs.describe.state.value;
@@ -146,7 +145,7 @@ class ImageBase extends React.Component {
         'architecture', 'container_format', 'disk_format', 'created_at',
         'owner', 'size', 'id', 'status', 'updated_at', 'checksum', 'source_type',
         'visibility', 'name', 'is_public', 'protected', 'min_disk',
-        'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size', 'is_copying',
+        'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
         'kernel_id', 'ramdisk_id', 'image_url', 'direct_url', 'self', 'description'
       ];
 
