@@ -107,8 +107,7 @@ class ImageBase extends React.Component {
         disk_format: refs.format.state.value,
         description: refs.describe.state.value,
         image_url: refs.url.state.value,
-        source_type: 'url',
-        is_copying: true
+        source_type: 'url'
       };
       if (this.state.checked) {
         data.min_disk = parseInt(refs.min_disk.state.value, 10) || 0;
@@ -143,7 +142,7 @@ class ImageBase extends React.Component {
       var _attrs = [
         'architecture', 'container_format', 'disk_format', 'created_at',
         'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
-        'visibility', 'name', 'is_public', 'protected', 'min_disk', 'is_copying',
+        'visibility', 'name', 'is_public', 'protected', 'min_disk',
         'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
         'kernel_id', 'ramdisk_id', 'image_url', 'direct_url', 'self'
       ];
