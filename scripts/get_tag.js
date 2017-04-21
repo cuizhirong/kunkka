@@ -62,8 +62,8 @@ function compare (v1, v2) {
 const len = applications.length;
 for (let i = 0; i < len; i++) {
   let opt = {
-    host: 'git.ustack.com',
-    path: `/api/v3/projects/ustack%2F${applications[i].project}/repository/tags`,
+    host: 'gitlab.ustack.com',
+    path: `/api/v3/projects/ued%2F${applications[i].project}/repository/tags`,
     headers: {
       'PRIVATE-TOKEN': token
     }
@@ -91,8 +91,8 @@ for (let i = 0; i < len; i++) {
 
 // get halo tag
 let haloOpt = {
-  host: 'git.ustack.com',
-  path: `/api/v3/projects/ustack%2Fhalo/repository/tags`,
+  host: 'gitlab.ustack.com',
+  path: `/api/v3/projects/ued%2Fhalo/repository/tags`,
   headers: {
     'PRIVATE-TOKEN': token
   }
