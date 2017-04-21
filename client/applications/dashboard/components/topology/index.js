@@ -547,7 +547,7 @@ class Topology {
         }
         (function(n) {
           event.bind({
-            left: n.x,
+            left: _x,
             top: n.y,
             width: n.w,
             height: n.h
