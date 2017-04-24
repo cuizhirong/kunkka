@@ -82,7 +82,7 @@ class Model extends React.Component {
         case 'region':
           column.render = (col, item, i) => {
             let regions = HALO.region_list;
-            let regionName = regions.find((n) => n.id === item.region_id).name;
+            let regionName = regions.find((n) => n.id === item.region_id) ? regions.find((n) => n.id === item.region_id).name : item.region_id;
             return regionName;
           };
           break;
@@ -447,7 +447,7 @@ class Model extends React.Component {
       content: (type === 'segmented') ? __.gradient_charge : '-'
     }, {
       title: __.region,
-      content: HALO.region_list.find((n) => n.id === item.region_id).name
+      content: HALO.region_list.find((n) => n.id === item.region_id) ? HALO.region_list.find((n) => n.id === item.region_id).name : item.region_id
     }, {
       title: __.description,
       content: item.description ? item.description : '-'
