@@ -143,8 +143,8 @@ class ModalBase extends React.Component {
     images.sort(imageSort);
     snapshots.sort(imageSort);
     var selectedImage = selectDefault(images);
-    var username = '';
-    if (selectedImage) {
+    var username = 'root';
+    if (selectedImage.image_meta) {
       let meta = JSON.parse(selectedImage.image_meta);
       username = meta.os_username;
     }
