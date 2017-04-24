@@ -20,6 +20,8 @@ class ImageBase extends React.Component {
       errorMessage: ''
     };
 
+    this.id = 0;
+
     this.mask = document.querySelector('.modal-mask');
 
     ['onCancel', 'onCreateImage', 'onSwitchTab', 'renderImageInfo', 'renderMetaData', 'onChangeName', 'onAddUserToTable'].forEach((func) => {
@@ -46,7 +48,7 @@ class ImageBase extends React.Component {
       disabled: true
     });
     let callback = this.props.callback;
-    let refs = this.refs, data = [];
+    let refs = this.refs, data = {};
     if (this.props.obj) {
       data = [{
         op: 'replace',
@@ -102,33 +104,42 @@ class ImageBase extends React.Component {
         });
       });
     } else {
-      data = {
-        name: refs.name.state.value,
-        disk_format: refs.format.state.value,
-        description: refs.describe.state.value,
-        image_url: refs.url.state.value,
-        source_type: 'url'
+      var imageData = {
+        'x-glance-api-copy-from': refs.url.state.value
       };
-      if (this.state.checked) {
-        data.min_disk = parseInt(refs.min_disk.state.value, 10) || 0;
-        data.min_ram = parseInt(refs.min_ram.state.value, 10) || 0;
-        data.protected = refs.protected.state.value;
+      data = {
+        'x-image-meta-name': refs.name.state.value,
+        'x-image-meta-disk_format': refs.format.state.value,
+        'x-image-meta-container_format': 'bare'
+      };
+      if (refs.describe.state.value) {
+        imageData['x-image-meta-property-description'] = refs.describe.state.value;
       }
       if (HALO.user.roles.indexOf('admin') > -1) {
-        data.visibility = 'public';
+        data['x-image-meta-property-visibility'] = 'public';
       } else {
-        data.visibility = 'private';
+        data['x-image-meta-property-visibility'] = 'private';
       }
-      if (this.state.checked && refs.architecture.state.value !== __.no_architecture) {
-        data.architecture = refs.architecture.state.value;
+      if (this.state.checked) {
+        data['x-image-meta-min_disk'] = parseInt(refs.min_disk.state.value, 10) || 0;
+        data['x-image-meta-min_ram'] = parseInt(refs.min_ram.state.value, 10) || 0;
+        data['x-image-meta-protected'] = refs.protected.state.value === 'true';
+      }
+      if (this.state.checked && refs.architecture.state.value !== 'no') {
+        imageData['x-image-meta-property-architecture'] = refs.architecture.state.value;
       }
       for(let i in this.state.metaData) {
-        data[this.state.metaData[i].key] = this.state.metaData[i].value;
+        imageData['x-image-meta-property-' + this.state.metaData[i].key] = this.state.metaData[i].value;
       }
       request.createImage(data).then(res => {
-        this.onCancel();
-        callback && callback();
+        request.uploadImage(res.image.id, imageData).then(_res => {
+          this.onCancel();
+          callback && callback();
+        });
       }).catch(err => {
+        this.refs.btn.setState({
+          disabled: false
+        });
         this.setState({
           errorMessage: getErrorMessage(err)
         });
@@ -141,22 +152,24 @@ class ImageBase extends React.Component {
     if (status.key === '1') {
       var _attrs = [
         'architecture', 'container_format', 'disk_format', 'created_at',
-        'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
+        'owner', 'size', 'id', 'status', 'updated_at', 'checksum', 'source_type',
         'visibility', 'name', 'is_public', 'protected', 'min_disk',
         'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
-        'kernel_id', 'ramdisk_id', 'image_url', 'direct_url', 'self'
+        'kernel_id', 'ramdisk_id', 'image_url', 'direct_url', 'self', 'description'
       ];
 
-      let singleData;
-      if (this.state.metaData.length === 0) {
+      let singleData, id;
+      if (this.state.metaData.length === 0 && this.state.removeMetaData.length === 0) {
         this.state.metaData = [];
 
         for(let key in obj) {
           if (_attrs.indexOf(key) === -1) {
+            id = this.id ++;
             singleData = {
               key: key,
+              id: id,
               value: obj[key],
-              op: <i onClick={this.removeUserData.bind(this, key)} className="glyphicon icon-remove remove-user-from-project"></i>
+              op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
             };
             this.state.metaData.push(singleData);
           }
@@ -202,29 +215,33 @@ class ImageBase extends React.Component {
     let addMetaData = this.state.addMetaData;
     let metaKey = this.refs.metaKey.value;
     let metaValue = this.refs.metaValue.value;
-
-    let singleData = {
-      key: metaKey,
-      value: metaValue,
-      op: <i onClick={this.removeUserData.bind(this, metaKey)} className="glyphicon icon-remove remove-user-from-project"></i>
-    };
-    addMetaData.push({metaKey, metaValue});
-    metaData.push(singleData);
-    this.setState({
-      metaData: metaData,
-      addMetaData: addMetaData
-    }, () => {
-      this.refs.metaKey.value = '';
-      this.refs.metaValue.value = '';
-    });
+    let singleData, id;
+    if (metaKey) {
+      id = this.id ++;
+      singleData = {
+        key: metaKey,
+        id: id,
+        value: metaValue,
+        op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+      };
+      addMetaData.push({metaKey, metaValue});
+      metaData.push(singleData);
+      this.setState({
+        metaData: metaData,
+        addMetaData: addMetaData
+      }, () => {
+        this.refs.metaKey.value = '';
+        this.refs.metaValue.value = '';
+      });
+    }
   }
 
-  removeUserData(key) {
+  removeUserData(id) {
     let metaData = this.state.metaData,
       removeMetaData = this.state.removeMetaData;
     metaData.forEach((data, index) => {
-      if (data.key === key) {
-        removeMetaData.push(key);
+      if (data.id === id) {
+        removeMetaData.push(data.key);
         metaData.splice(index, 1);
       }
     });
@@ -344,7 +361,7 @@ class ImageBase extends React.Component {
         <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
       </div>
       <div className="meta-content">
-        <Table column={columns} dataKey={'key'} data={state.metaData} striped={true} hover={true} />
+        <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
       </div>
     </div>;
   }

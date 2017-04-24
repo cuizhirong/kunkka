@@ -7,6 +7,7 @@ module.exports = {
     return storage.getList(['notification'], forced).then(function(data) {
       data.notification.forEach(notify => {
         notify.id = notify.uuid;
+        notify.created_at = notify.created_at.split('.')[0] + 'Z';
       });
       return data.notification;
     });
