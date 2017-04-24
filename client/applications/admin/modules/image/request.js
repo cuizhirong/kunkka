@@ -112,8 +112,14 @@ module.exports = {
   },
   createImage(data) {
     return fetch.post({
-      url: '/proxy/glance/v2/images',
-      data: data
+      url: '/proxy/glance/v1/images',
+      headers: data
+    });
+  },
+  uploadImage(id, data) {
+    return fetch.put({
+      url: '/proxy/glance/v1/images/' + id,
+      headers: data
     });
   }
 };

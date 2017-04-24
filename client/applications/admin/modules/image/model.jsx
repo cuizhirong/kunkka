@@ -88,6 +88,7 @@ class Model extends React.Component {
         case 'size':
           column.render = (col, item, i) => {
             var size = unitConverter(item.size);
+            size.num = typeof size.num === 'number' ? size.num : 0;
             return size.num + ' ' + size.unit;
           };
           break;
