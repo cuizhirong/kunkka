@@ -256,6 +256,10 @@ Sub.prototype = {
 
 
   delAccount: function (req, res, next) {
+    if (req.params.userId === req.session.user.userId) {
+      return next({customRes: true, status: 400, msg: 'cannotDeleteYourself'});
+    }
+
     const that = this;
     co(function *() {
       yield [
@@ -458,6 +462,8 @@ Sub.prototype = {
         keystoneRemote
       );
 
+      let projects = yield base.__userProjectsAsync({userId: req.session.user.userId, token: req.session.user.token});
+      req.session.user.projects = projects.body.projects;
       res.send(project);
 
     }).catch(next);
@@ -519,7 +525,8 @@ Sub.prototype = {
             keystoneRemote
           );
         });
-
+        let projects = yield base.__userProjectsAsync({userId: req.session.user.userId, token: req.session.user.token});
+        req.session.user.projects = projects.body.projects;
         res.send(arrRes[0].body.project);
       } else {
         const projectRes = yield that.operation.project.update(
@@ -528,6 +535,8 @@ Sub.prototype = {
           req.params.projectId,
           {project}
         );
+        let projects = yield base.__userProjectsAsync({userId: req.session.user.userId, token: req.session.user.token});
+        req.session.user.projects = projects.body.projects;
         res.send(projectRes.body.project);
       }
 
@@ -535,13 +544,21 @@ Sub.prototype = {
     }).catch(next);
   },
   delProject: function (req, res, next) {
-    this.operation.project.del(
-      req.session.user.token,
-      keystoneRemote,
-      req.params.projectId
-    ).then(() => {
+    if (req.params.projectId === req.session.user.defaultProjectId) {
+      return next({customRes: true, status: 400, msg: 'cannotDeleteDefaultProject'});
+    }
+    const that = this;
+    co(function *() {
+      yield that.operation.project.del(
+        req.session.user.token,
+        keystoneRemote,
+        req.params.projectId
+      );
+      let projects = yield base.__userProjectsAsync({userId: req.session.user.userId, token: req.session.user.token});
+      req.session.user.projects = projects.body.projects;
       res.status(204).end();
-    }, next);
+    }).catch(next);
+
   },
   getProject: function (req, res, next) {
     this.operation.project.get(

@@ -33,7 +33,9 @@
     "LinkFailedCopyTheHref": "如果跳转失败，复制下面的链接到浏览器地址栏中并打开：",
     "domainNotFound": "domain找不到",
     "unEnabled": "账户未激活",
-    "noDefaultProject": "你没有默认项目"
+    "noDefaultProject": "你没有默认项目",
+    "cannotDeleteDefaultProject": "禁止删除默认项目",
+    "cannotDeleteYourself": "不能删除你自己"
   },
   "en": {
     "Name": "The Username",
@@ -68,6 +70,8 @@
     "LinkFailedCopyTheHref": "If failed to link, copy the link below and open it in your the browser :",
     "domainNotFound": "Domain Not Found",
     "unEnabled": "User Not Enabled",
-    "noDefaultProject": "You don't have the default project."
+    "noDefaultProject": "You don't have the default project.",
+    "cannotDeleteDefaultProject": "You cannot delete the Default Project.",
+    "cannotDeleteYourself": "You cannot delete yourself."
   }
 }
