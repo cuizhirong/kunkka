@@ -156,8 +156,8 @@ class ModalBase extends React.Component {
     bootableVolumes.sort(bootableVolumes);
 
     var selectedImage = selectDefault(images);
-    var username = '';
-    if (selectedImage) {
+    var username = 'root';
+    if (selectedImage.image_meta) {
       let meta = JSON.parse(selectedImage.image_meta);
       username = meta.os_username;
     }
@@ -183,7 +183,7 @@ class ModalBase extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = currentImage ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    var hideKeypair = currentImage && currentImage.image_label ? currentImage.image_label.toLowerCase() === 'windows' : false;
     var credential = hideKeypair ? 'psw' : 'keypair';
 
     var networks = res.network.filter((ele) => {
