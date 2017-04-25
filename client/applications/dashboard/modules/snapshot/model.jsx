@@ -268,7 +268,9 @@ class Model extends React.Component {
       content: item.volume ?
         <span>
           <i className="glyphicon icon-volume" />
-          <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>{item.volume.name}</a>
+          <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
+            {item.volume.name ? item.volume.name : '(' + item.volume.id.substr(0, 8) + ')'}
+          </a>
         </span>
         : '-'
     }, {
