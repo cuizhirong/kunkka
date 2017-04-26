@@ -85,6 +85,7 @@ class Model extends React.Component {
         case 'size':
           col.render = (rcol, ritem, rindex) => {
             var size = unitConverter(ritem.size);
+            size.num = typeof size.num === 'number' ? size.num : 0;
             return size.num + ' ' + size.unit;
           };
           break;
