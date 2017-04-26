@@ -363,6 +363,9 @@ class Model extends React.Component {
       that.setState({
         files: that.state.files.concat(res)
       });
+      that.refs.upload.refs.child.setState({
+        attachments: []
+      });
       if (_data.content) {
         request.createReply(id, _data).then((_res) => {
           that.refs.reply.value = '';
