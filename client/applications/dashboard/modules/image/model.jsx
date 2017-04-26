@@ -195,7 +195,7 @@ class Model extends React.Component {
           type: 'image',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteImage(rows).then((res) => {
+            request.deleteImage(rows[0].id).then((res) => {
               cb(true);
             });
           }
@@ -241,12 +241,11 @@ class Model extends React.Component {
         case 'create_volume':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'active' && rows[0].image_type) ? false : true;
           break;
-        case 'delete':
-          let hasPublicImage = rows.some((ele) => ele.visibility === 'public');
-          btns[key].disabled = (rows.length === 0 || hasPublicImage) ? true : false;
-          break;
         case 'edit_image':
           btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
           break;
         default:
           break;

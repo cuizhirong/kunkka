@@ -10,22 +10,34 @@
     "type": "create",
     "icon": "create"
   }, {
-    "value": ["edit", "image"],
-    "key": "edit_image",
-    "icon": "edit",
-    "disabled": true
-  }, {
     "value": ["create", "instance"],
     "key": "create",
     "type": "create",
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["create", "volume"],
-    "key": "create_volume",
-    "type": "create",
-    "icon": "create",
-    "disabled": true
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["edit_image"],
+          "key": "edit_image",
+          "disabled": true
+        }, {
+          "title": ["create", "volume"],
+          "key": "create_volume",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
   }, {
     "key": "refresh",
     "icon": "refresh"

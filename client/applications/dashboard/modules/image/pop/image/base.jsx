@@ -115,11 +115,7 @@ class ImageBase extends React.Component {
       if (refs.describe.state.value) {
         imageData['x-image-meta-property-description'] = refs.describe.state.value;
       }
-      if (HALO.user.roles.indexOf('admin') > -1) {
-        data['x-image-meta-property-visibility'] = 'public';
-      } else {
-        data['x-image-meta-property-visibility'] = 'private';
-      }
+      data['x-image-meta-property-visibility'] = 'private';
       if (this.state.checked) {
         data['x-image-meta-min_disk'] = parseInt(refs.min_disk.state.value, 10) || 0;
         data['x-image-meta-min_ram'] = parseInt(refs.min_ram.state.value, 10) || 0;
