@@ -162,19 +162,10 @@ base.middleware.checkLogin = function (req, res, next) {
 /*** Promise ***/
 base.func.verifyUserByNameAsync = function (adminToken, name) {
   return co(function*() {
-    const result = [
-      yield listUsersAsync(adminToken, keystoneRemote, {name}),
-      yield userModel.findOne({where: {name}})
-    ];
-    const users = result[0].body.users;
-    const userDB = result[1];
+    const result = yield listUsersAsync(adminToken, keystoneRemote, {name});
+    const users = result.body.users;
     if (Array.isArray(users) && users.length) {
-      let user = users[0];
-      if (!userDB) {
-        user.links = JSON.stringify(user.links);
-        yield userModel.create(user);
-      }
-      return user;
+      return users[0];
     } else {
       yield userModel.destroy({where: {name}});
       return false;
@@ -186,10 +177,7 @@ base.func.verifyUserByIdAsync = (adminToken, userId) => {
   return co(function *() {
     let result;
     try {
-      result = [
-        yield getUserAsync(adminToken, keystoneRemote, userId),
-        yield userModel.findOne({where: {id: userId}})
-      ];
+      result = yield getUserAsync(adminToken, keystoneRemote, userId);
     } catch (e) {
       if (e.statusCode === 404) {
         yield userModel.destroy({where: {id: userId}, force: true});
@@ -198,13 +186,7 @@ base.func.verifyUserByIdAsync = (adminToken, userId) => {
         return Promise.reject(e);
       }
     }
-    let user = result[0].body.user;
-    if (!result[1] && user) {
-      user.links = JSON.stringify(user.links);
-      yield userModel.create(user);
-    }
-    return user;
-
+    return result.body.user;
   });
 };
 
