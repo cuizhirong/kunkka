@@ -1,11 +1,13 @@
 {
   "en": {
     "checksum": "Checksum",
+    "edit_image": "Edit Image",
     "related_instance": "Related Instance",
     "saving": "Saving"
   },
   "zh-CN": {
     "checksum": "校验和",
+    "edit_image": "修改镜像",
     "related_instance": "关联云主机",
     "saving": "保存中"
   }
