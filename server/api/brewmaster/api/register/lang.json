@@ -35,7 +35,8 @@
     "unEnabled": "账户未激活",
     "noDefaultProject": "你没有默认项目",
     "cannotDeleteDefaultProject": "禁止删除默认项目",
-    "cannotDeleteYourself": "不能删除你自己"
+    "cannotDeleteYourself": "不能删除当前账户",
+    "cannotDisableYourself": "不能禁用当前账户"
   },
   "en": {
     "Name": "The Username",
@@ -72,6 +73,7 @@
     "unEnabled": "User Not Enabled",
     "noDefaultProject": "You don't have the default project.",
     "cannotDeleteDefaultProject": "You cannot delete the Default Project.",
-    "cannotDeleteYourself": "You cannot delete yourself."
+    "cannotDeleteYourself": "You cannot delete the current account.",
+    "cannotDisableYourself": "You cannot disable the current account."
   }
 }

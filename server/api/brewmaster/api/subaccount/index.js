@@ -257,7 +257,7 @@ Sub.prototype = {
 
   delAccount: function (req, res, next) {
     if (req.params.userId === req.session.user.userId) {
-      return next({customRes: true, status: 400, msg: 'cannotDeleteYourself'});
+      return next({customRes: true, status: 403, msg: 'cannotDeleteYourself'});
     }
 
     const that = this;
@@ -342,6 +342,9 @@ Sub.prototype = {
   },
   setAccountEnabled: function (req, res, next) {
     const that = this;
+    if (req.params.userId === req.session.user.userId) {
+      return next({customRes: true, status: 403, msg: 'cannotDisableYourself'});
+    }
     let arr = req.path.split('/'), enabled;
     if (arr[arr.length - 1] === 'enable') {
       enabled = true;
