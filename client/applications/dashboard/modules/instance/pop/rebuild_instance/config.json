@@ -1,12 +1,6 @@
 {
   "title": ["rebuild", "instance"],
   "fields": [{
-    "type": "input",
-    "field": "name"
-  }, {
-    "type": "input_pwd",
-    "field": "password"
-  }, {
     "type": "group_select",
     "field": "image",
     "empty_text": {

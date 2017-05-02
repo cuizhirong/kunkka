@@ -43,12 +43,6 @@ function pop(obj, parent, callback) {
           imageRef: refs.image.state.value
         }
       };
-      if (refs.name.state.value) {
-        data.rebuild.name = refs.name.state.value;
-      }
-      if (refs.password.state.value) {
-        data.rebuild.adminPass = refs.password.state.value;
-      }
       request.rebuildInstance(obj.id, data).then(res => {
         cb(true);
         callback && callback();
