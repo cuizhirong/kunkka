@@ -66,16 +66,7 @@
     }, {
       "title": ["type"],
       "key": "image_type",
-      "dataIndex": "image_type",
-      "filter": [{
-        "name": ["snapshot_type"],
-        "key": "snapshot",
-        "filterBy": "snapshot"
-      }, {
-        "name": ["image"],
-        "key": "distribution",
-        "filterBy": "distribution"
-      }]
+      "dataIndex": "image_type"
     }, {
       "title": ["status"],
       "dataIndex": "status",

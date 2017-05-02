@@ -42,6 +42,26 @@ class Model extends React.Component {
     var column = this.state.config.table.column;
     this.tableColRender(column);
     this.initializeFilter(this.state.config.filter);
+
+    column.some((col) => {
+      if (col.key === 'image_type') {
+        col.filter = [{
+          name: __.snapshot_type,
+          key: 'snapshot',
+          filterBy: function(item) {
+            return item.image_type === 'snapshot';
+          }
+        }, {
+          name: __.image,
+          key: 'distribution',
+          filterBy: function(item) {
+            return item.image_type !== 'snapshot';
+          }
+        }];
+        return true;
+      }
+      return false;
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
