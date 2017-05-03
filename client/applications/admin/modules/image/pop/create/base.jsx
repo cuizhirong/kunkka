@@ -105,37 +105,35 @@ class ImageBase extends React.Component {
       });
     } else {
       var imageData = {
-        'x-glance-api-copy-from': refs.url.state.value
-      };
-      data = {
-        'x-image-meta-name': refs.name.state.value,
-        'x-image-meta-disk_format': refs.format.state.value,
-        'x-image-meta-container_format': 'bare'
+        type: 'import',
+        input: {
+          import_from: refs.url.state.value,
+          import_from_format: refs.format.state.value,
+          image_properties: {
+            name: refs.name.state.value,
+            disk_format: refs.format.state.value,
+            container_format: 'bare'
+          }
+        }
       };
       if (refs.describe.state.value) {
-        imageData['x-image-meta-property-description'] = refs.describe.state.value;
+        imageData.input.image_properties.description = refs.describe.state.value;
       }
-      if (HALO.user.roles.indexOf('admin') > -1) {
-        data['x-image-meta-property-visibility'] = 'public';
-      } else {
-        data['x-image-meta-property-visibility'] = 'private';
-      }
+      imageData.input.image_properties.visibility = 'public';
       if (this.state.checked) {
-        data['x-image-meta-min_disk'] = parseInt(refs.min_disk.state.value, 10) || 0;
-        data['x-image-meta-min_ram'] = parseInt(refs.min_ram.state.value, 10) || 0;
-        data['x-image-meta-protected'] = refs.protected.state.value === 'true';
+        imageData.input.image_properties.min_disk = parseInt(refs.min_disk.state.value, 10) || 0;
+        imageData.input.image_properties.min_ram = parseInt(refs.min_ram.state.value, 10) || 0;
+        imageData.input.image_properties.protected = refs.protected.state.value === 'true';
       }
       if (this.state.checked && refs.architecture.state.value !== 'no') {
-        imageData['x-image-meta-property-architecture'] = refs.architecture.state.value;
+        imageData.input.image_properties.architecture = refs.architecture.state.value;
       }
       for(let i in this.state.metaData) {
-        imageData['x-image-meta-property-' + this.state.metaData[i].key] = this.state.metaData[i].value;
+        imageData.input.image_properties[this.state.metaData[i].key] = this.state.metaData[i].value;
       }
-      request.createImage(data).then(res => {
-        request.uploadImage(res.image.id, imageData).then(_res => {
-          this.onCancel();
-          callback && callback();
-        });
+      request.createTask(imageData).then(_res => {
+        this.onCancel();
+        callback && callback();
       }).catch(err => {
         this.refs.btn.setState({
           disabled: false
@@ -152,10 +150,10 @@ class ImageBase extends React.Component {
     if (status.key === '1') {
       var _attrs = [
         'architecture', 'container_format', 'disk_format', 'created_at',
-        'owner', 'size', 'id', 'status', 'updated_at', 'checksum', 'source_type',
+        'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
         'visibility', 'name', 'is_public', 'protected', 'min_disk',
         'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
-        'kernel_id', 'ramdisk_id', 'image_url', 'direct_url', 'self', 'description'
+        'kernel_id', 'ramdisk_id', 'direct_url', 'self', 'description'
       ];
 
       let singleData, id;
@@ -325,7 +323,7 @@ class ImageBase extends React.Component {
     return <div className={'image-info' + (key === '0' ? '' : ' hide')}>
       <Input ref="name" value={obj ? obj.name : ''} label={__.name} onAction={this.onChangeName} required={true} />
       <Input ref="describe" value={obj ? obj.description : ''} label={__.describe} onAction={this.onChangeName} />
-      <Input ref="url" disabled={obj ? true : false} value={obj ? obj.image_url : ''} label={__.url} onAction={this.onChangeName} required={true} />
+      <Input ref="url" disabled={obj ? true : false} value={obj ? obj.direct_url : ''} label={__.url} onAction={this.onChangeName} required={true} />
       <Select ref="format" disabled={obj ? true : false} onAction={this.onChangeFormat.bind(this)} label={__.format} data={formatData} value={obj ? obj.disk_format : formatData[0].id} />
       <div className="checkbox-wrapper">
         <input ref="more" checked={state.checked} onChange={this.onCheckbox.bind(this)} type="checkbox" />&nbsp;{__.more}
