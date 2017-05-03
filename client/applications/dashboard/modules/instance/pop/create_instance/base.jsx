@@ -126,9 +126,9 @@ class ModalBase extends React.Component {
     //sort image and snapshot
     res.image.forEach((ele) => {
       let type = ele.image_type;
-      if (type === 'distribution') {
+      if (type !== 'snapshot') {
         images.push(ele);
-      } else if (type === 'snapshot') {
+      } else {
         snapshots.push(ele);
       }
     });
@@ -141,9 +141,22 @@ class ModalBase extends React.Component {
     });
 
     var imageSort = (a, b) => {
+      if (a.image_label_order) {
+        a.image_label_order = 9999;
+      }
+      if (b.image_label_order) {
+        b.image_label_order = 9999;
+      }
+
       var aLabel = Number(a.image_label_order);
       var bLabel = Number(b.image_label_order);
       if (aLabel === bLabel) {
+        if (a.image_name_order) {
+          a.image_name_order = 9999;
+        }
+        if (b.image_name_order) {
+          b.image_name_order = 9999;
+        }
         var aName = Number(a.image_name_order);
         var bName = Number(b.image_name_order);
         return aName - bName;
@@ -157,6 +170,7 @@ class ModalBase extends React.Component {
 
     var selectedImage = selectDefault(images);
     var username = 'root';
+
     if (selectedImage.image_meta) {
       let meta = JSON.parse(selectedImage.image_meta);
       username = meta.os_username;
@@ -173,13 +187,11 @@ class ModalBase extends React.Component {
     var obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
-      if (obj.image_type === 'distribution') {//image type
+      if (obj.image_type !== 'snapshot') {//image type
         image = obj;
       } else if (obj.image_type === 'snapshot') {
-        if(obj.image_type === 'snapshot') {
-          snapshot = obj;
-          imageType = 'snapshot';
-        }
+        snapshot = obj;
+        imageType = 'snapshot';
       }
     }
     this.setFlavor(currentImage, 'all');
@@ -296,7 +308,7 @@ class ModalBase extends React.Component {
     var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
     var bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
 
-    var username = '';
+    var username = 'root';
     var objImage = null;
     switch(key) {
       case 'image':
@@ -312,7 +324,7 @@ class ModalBase extends React.Component {
       default:
         break;
     }
-    if (objImage) {
+    if (objImage && objImage.image_meta) {
       let meta = JSON.parse(objImage.image_meta);
       username = meta.os_username;
     }
@@ -349,11 +361,15 @@ class ModalBase extends React.Component {
 
     if (objImage) {
       let flavor;
-      let expectedSize;
-      if (objImage.image_type === 'distribution') {//image and bootableVolume type
-        expectedSize = Number(objImage.expected_size);
-      } else if (objImage.image_type === 'snapshot') {
-        expectedSize = Number(objImage.min_disk);
+      let expectedSize = 0;
+      if (objImage.expected_size || objImage.min_disk) {
+        if (objImage.expected_size) {
+          expectedSize = Number(objImage.expected_size);
+        }
+        if (objImage.min_disk) {
+          let minDisk = Number(objImage.min_disk);
+          expectedSize = minDisk > expectedSize ? minDisk : expectedSize;
+        }
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
@@ -393,12 +409,16 @@ class ModalBase extends React.Component {
   }
 
   onChangeImage(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
+    var hideKeypair = false;
+    if (item.image_label) {
+      hideKeypair = item.image_label.toLowerCase() === 'windows';
+    }
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -413,12 +433,16 @@ class ModalBase extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
-    var label = item.image_label.toLowerCase();
-    var hideKeypair = label === 'windows';
+    var hideKeypair = false;
+    if (item.image_label) {
+      hideKeypair = item.image_label.toLowerCase() === 'windows';
+    }
 
     this.setFlavor(item, 'all');
     this.setState({
