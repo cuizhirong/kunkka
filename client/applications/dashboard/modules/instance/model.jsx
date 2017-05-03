@@ -140,20 +140,16 @@ class Model extends React.Component {
     }
 
     if(item.image && item.image.id) {
-      let image = item.image,
-        ownerMatch = image.visibility === 'private' ? image.owner === HALO.user.projectId : true;
+      let image = item.image;
       label = image.image_label ? image.image_label.toLowerCase() : '';
 
       return (
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
-          {ownerMatch ?
-            <a data-type="router"
-              href={'/dashboard/' + (image.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + image.id}>
-              {image.name}
-            </a>
-            : <span>{image.name}</span>
-          }
+          <a data-type="router"
+            href={'/dashboard/' + (image.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + image.id}>
+            {image.name}
+          </a>
         </div>
       );
     } else if(item.volume[0] && item.volume[0].volume_image_metadata) {//bootable volume created server

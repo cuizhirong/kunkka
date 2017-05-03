@@ -101,7 +101,13 @@ class ModalBase extends React.Component {
   setFlavor(_flavors) {
     var obj = this.props.obj;
     var objImage = obj.image;
-    var expectedSize = Number(objImage.expected_size);
+
+    var expectedSize = 0;
+    if (objImage.expected_size) {
+      expectedSize = Number(objImage.expected_size);
+    } else if (objImage.min_disk) {
+      expectedSize = objImage.min_disk;
+    }
     var flavors = _flavors.filter((ele) => ele.disk >= expectedSize);
 
     var objFlavor = obj.flavor;

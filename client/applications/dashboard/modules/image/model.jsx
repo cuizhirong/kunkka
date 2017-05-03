@@ -129,7 +129,7 @@ class Model extends React.Component {
 
       var table = _config.table;
       var data = res.filter((ele) => {
-        return ele.image_type === 'distribution';
+        return ele.image_type !== 'snapshot';
       });
       table.data = data;
       table.loading = false;
@@ -239,7 +239,7 @@ class Model extends React.Component {
       switch (key) {
         case 'create':
         case 'create_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active' && rows[0].image_type) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
           break;
         case 'edit_image':
           btns[key].disabled = (rows.length === 1) ? false : true;
