@@ -16,18 +16,30 @@ module.exports = {
     }
 
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain.toLowerCase();
-      var defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
-      var domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
+      var domainID = 'default';
+      if (HALO.configs.domain) {
+        let domainName = HALO.configs.domain.toLowerCase();
+        let domainIndex = domains.findIndex((ele) => ele.name.toLowerCase() === domainName);
 
-      var url = '/api/v1/users?limit=' + pageLimit + urlParam;
+        if (domainIndex > -1) {
+          domainID = domains[domainIndex].id;
+
+          domains.unshift(domains[domainIndex]);
+          domains.splice(domainIndex + 1, 1);
+        }
+      }
+
+      var url = '/api/v1/users?limit=' + pageLimit;
+      if (HALO.settings.enable_ldap) {
+        url += '&domain_id=' + domainID;
+      }
+
       return fetch.get({
         url: url
-      }).then((res) => {
-        res._url = url;
+      }).then((users) => {
+        users._url = url;
         return this.getCharge().then((charges) => {
-          res.users.map((user) => {
+          users.users.map((user) => {
             charges.accounts.map((account) => {
               if (account.user_id === user.id) {
                 user.balance = account.balance;
@@ -35,9 +47,9 @@ module.exports = {
               }
               return false;
             });
-            return res;
+            return [users, domains];
           });
-          return res;
+          return [users, domains];
         });
       });
     });

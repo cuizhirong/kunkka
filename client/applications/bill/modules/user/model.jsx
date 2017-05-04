@@ -67,14 +67,28 @@ class Model extends React.Component {
     this.getList();
   }
 
+  initializeFilter(filters, domains) {
+    let domainFilter = filters[0].items[1];
+    domainFilter.data = domains;
+
+    if (!HALO.settings.enable_ldap) {
+      domainFilter.default = __.all + __.domain;
+    }
+  }
+
   getList() {
     this.clearState();
 
     var table = this.state.config.table;
     request.getList(table.limit).then((res) => {
-      table.data = res.users;
-      this.setPagination(table, res);
-      this.updateTableData(table, res._url);
+      const users = res[0];
+      const domains = res[1];
+
+      table.data = users.users;
+      this.setPagination(table, users);
+      this.updateTableData(table, users._url);
+
+      this.initializeFilter(this.state.config.filter, domains);
     }).catch((res) => {
       table.data = [];
       table.pagination = null;

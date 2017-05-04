@@ -20,6 +20,9 @@
       "type": "input",
       "key": "name",
       "placeholder": ["pls_enter", "user_name"]
+    }, {
+      "type": "select",
+      "key": "domain_id"
     }]
   }],
   "table": {

@@ -1,5 +1,6 @@
 {
   "en": {
+    "domain": "Domain",
     "email": "Email",
     "user_name": "User Name",
     "password": "Password",
@@ -17,6 +18,7 @@
     "balance": "Balance"
   },
   "zh-CN": {
+    "domain": "域",
     "email": "邮箱",
     "user_name": "用户名",
     "password": "密码",
