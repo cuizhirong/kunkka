@@ -48,7 +48,11 @@ class Detail extends React.Component {
       filter.items.forEach((item) => {
         var itemKey = filter.group_key + '_' + item.key;
         if(item.type === 'select') {
-          refs[itemKey].value = 'defaultValue';
+          if (item.default) {
+            refs[itemKey].value = 'defaultValue';
+          } else {
+            refs[itemKey].value = item.data[0].id;
+          }
         } else if(item.type === 'input') {
           refs[itemKey].value = '';
         }
@@ -102,7 +106,11 @@ class Detail extends React.Component {
         if(item.type === 'select') {
           perGroup.push(
             <select defaultValue={item.default} key={item.key} ref={filter.group_key + '_' + item.key}>
-              <option key={item.default} value="defaultValue">{item.default}</option>
+              {
+                item.default ?
+                  <option key={item.default} value="defaultValue">{item.default}</option>
+                : null
+              }
               {item.data && item.data.map((ele) =>
                 <option key={ele.id} value={ele.id}>{ele.name}</option>
               )}
