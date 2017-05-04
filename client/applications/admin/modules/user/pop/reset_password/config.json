@@ -9,7 +9,8 @@
     "type": "input",
     "field": "password",
     "input_type": "password",
-    "required": true
+    "required": true,
+    "tip_info": "pwd_tip"
   }, {
     "type": "input",
     "field": "confirm_password",

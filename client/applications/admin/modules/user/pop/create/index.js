@@ -107,8 +107,25 @@ function pop(obj, parent, callback) {
     },
     onAction: function(field, status, refs) {
       switch(field) {
-        case 'name':
         case 'password':
+          var pwd = refs.password.state.value;
+          refs.password.setState({
+            error: pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd)
+          });
+          var _name = refs.name.state.value;
+          if(obj) {
+            refs.btn.setState({
+              disabled: !_name
+            });
+          } else {
+            var _rePsw = refs.confirm_password.state.value;
+            var _valid = _name && pwd && (pwd === _rePsw);
+            refs.btn.setState({
+              disabled: !_valid
+            });
+          }
+          break;
+        case 'name':
         case 'confirm_password':
           var name = refs.name.state.value;
           if(obj) {

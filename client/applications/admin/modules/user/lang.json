@@ -12,6 +12,7 @@
     "no_group": "No available group",
     "crt_user_project": "Create a new project",
     "project_name": "Project Name",
+    "pwd_tip": "Password must start with a number or letter, containing both uppercase and lowercase letters and numbers, and the length ranges from 8 to 20.",
     "user_tip": "Number only"
   },
   "zh-CN": {
@@ -27,6 +28,7 @@
     "no_group": "没有可用用户组",
     "crt_user_project": "创建项目",
     "project_name": "项目名称",
+    "pwd_tip": "密码要求必须以数字或字母开头，同时包含大写字母、小写字母、数字，并且长度在8-20位字符之间。",
     "user_tip": "仅限数字"
   }
 }

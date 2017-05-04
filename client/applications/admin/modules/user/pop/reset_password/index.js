@@ -34,9 +34,22 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'password':
-        case 'confirm_password':
+          var pwd = refs.password.state.value;
+          refs.password.setState({
+            error: pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd)
+          });
+          var _rePsw = refs.confirm_password.state.value;
+          var _valid = pwd && (pwd === _rePsw);
           refs.btn.setState({
-            disabled: !status.value
+            disabled: !_valid
+          });
+          break;
+        case 'confirm_password':
+          var psw = refs.password.state.value;
+          var rePsw = refs.confirm_password.state.value;
+          var valid = psw && (psw === rePsw);
+          refs.btn.setState({
+            disabled: !valid
           });
           break;
         default:
