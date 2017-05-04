@@ -123,16 +123,32 @@ class ModalBase extends React.Component {
     res.image.forEach((ele) => {
       let type = ele.image_type;
       let ownerMatch = ele.visibility === 'private' ? ele.owner === HALO.user.projectId : true;
-      if (type === 'distribution' && ownerMatch) {
-        images.push(ele);
-      } else if (type === 'snapshot' && ownerMatch) {
-        snapshots.push(ele);
+      if (ownerMatch) {
+        if (type === 'snapshot') {
+          snapshots.push(ele);
+        } else {
+          images.push(ele);
+        }
       }
     });
     var imageSort = (a, b) => {
+      if (a.image_label_order) {
+        a.image_label_order = 9999;
+      }
+      if (b.image_label_order) {
+        b.image_label_order = 9999;
+      }
+
       var aLabel = Number(a.image_label_order);
       var bLabel = Number(b.image_label_order);
       if (aLabel === bLabel) {
+        if (a.image_name_order) {
+          a.image_name_order = 9999;
+        }
+        if (b.image_name_order) {
+          b.image_name_order = 9999;
+        }
+
         var aName = Number(a.image_name_order);
         var bName = Number(b.image_name_order);
         return aName - bName;
@@ -160,11 +176,13 @@ class ModalBase extends React.Component {
     if (typeof obj !== 'undefined') {
       currentImage = obj;
       let ownerMatch = obj.visibility === 'private' ? obj.owner === HALO.user.projectId : true;
-      if (obj.image_type === 'distribution' && ownerMatch) {
-        image = obj;
-      } else if (obj.image_type === 'snapshot' && ownerMatch) {
-        snapshot = obj;
-        imageType = 'snapshot';
+      if (ownerMatch) {
+        if (obj.image_type === 'snapshot') {
+          snapshot = obj;
+          imageType = 'snapshot';
+        } else {
+          image = obj;
+        }
       }
     }
     this.setFlavor(currentImage, 'all');
@@ -273,9 +291,9 @@ class ModalBase extends React.Component {
     var image = state.images.length > 0 ? state.images[0] : null;
     var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
 
-    var username = '';
+    var username = 'root';
     var obj = (key === 'snapshot') ? snapshot : image;
-    if (obj) {
+    if (obj && obj.image_meta) {
       let meta = JSON.parse(image.image_meta);
       username = meta.os_username;
     }
@@ -312,12 +330,18 @@ class ModalBase extends React.Component {
 
     if (objImage) {
       let flavor;
-      let expectedSize;
-      if (objImage.image_type === 'distribution') {//image type
-        expectedSize = Number(objImage.expected_size);
-      } else if (objImage.image_type === 'snapshot') {
-        expectedSize = Number(objImage.min_disk);
+      let expectedSize = 0;
+
+      if (objImage.expected_size || objImage.min_disk) {
+        if (objImage.expected_size) {
+          expectedSize = Number(objImage.expected_size);
+        }
+        if (objImage.min_disk) {
+          let minDisk = Number(objImage.min_disk);
+          expectedSize = minDisk > expectedSize ? minDisk : expectedSize;
+        }
       }
+
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
       var inArray = function(item, arr) {
@@ -356,9 +380,11 @@ class ModalBase extends React.Component {
   }
 
   onChangeImage(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -372,9 +398,11 @@ class ModalBase extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
     this.setFlavor(item, 'all');
     this.setState({

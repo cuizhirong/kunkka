@@ -124,7 +124,7 @@ class Model extends React.Component {
 
       var table = _config.table;
       var data = res.filter((ele) => {
-        let ownerMatch = ele.visibility === 'private' ? ele.owner === HALO.user.projectId : true;
+        let ownerMatch = ele.image_type !== 'snapshot' ? ele.owner === HALO.user.projectId : true;
         return ele.visibility === 'public' && ownerMatch;
       });
       table.data = data;
