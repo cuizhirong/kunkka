@@ -79,7 +79,7 @@
     "verify_resize": "Resize ",
     "vnc_console": "VNC Console",
     "ensure_shutdown": "Do you want to shudown instance {0} ？",
-    "user_name": "User Name",
+    "user_name": "Username",
     "resize_instance": "Change will lead to restart the instance, please be careful to operate"
   },
   "zh-CN": {

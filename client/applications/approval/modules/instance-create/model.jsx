@@ -128,16 +128,34 @@ class Model extends React.Component {
       let type = ele.image_type;
       let visibility = ele.visibility;
       let ownerMatch = visibility === 'private' ? ele.owner === HALO.user.projectId : true;
-      if (type === 'distribution' && ownerMatch) {
-        images.push(ele);
-      } else if (type === 'snapshot' && ownerMatch) {
-        snapshots.push(ele);
+
+      if (ownerMatch) {
+        if (type === 'snapshot') {
+          snapshots.push(ele);
+        } else {
+          images.push(ele);
+        }
       }
     });
+
     var imageSort = (a, b) => {
+      if (a.image_label_order) {
+        a.image_label_order = 9999;
+      }
+      if (b.image_label_order) {
+        b.image_label_order = 9999;
+      }
+
       var aLabel = Number(a.image_label_order);
       var bLabel = Number(b.image_label_order);
       if (aLabel === bLabel) {
+        if (a.image_name_order) {
+          a.image_name_order = 9999;
+        }
+        if (b.image_name_order) {
+          b.image_name_order = 9999;
+        }
+
         var aName = Number(a.image_name_order);
         var bName = Number(b.image_name_order);
         return aName - bName;
@@ -386,11 +404,16 @@ class Model extends React.Component {
 
     if (objImage) {
       let flavor;
-      let expectedSize;
-      if (objImage.image_type === 'distribution') {//image type
-        expectedSize = Number(objImage.expected_size);
-      } else if (objImage.image_type === 'snapshot') {
-        expectedSize = Number(objImage.min_disk);
+      let expectedSize = 0;
+
+      if (objImage.expected_size || objImage.min_disk) {
+        if (objImage.expected_size) {
+          expectedSize = Number(objImage.expected_size);
+        }
+        if (objImage.min_disk) {
+          let minDisk = Number(objImage.min_disk);
+          expectedSize = minDisk > expectedSize ? minDisk : expectedSize;
+        }
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
@@ -434,9 +457,9 @@ class Model extends React.Component {
     var image = state.images.length > 0 ? state.images[0] : null;
     var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
 
-    var username = '';
+    var username = 'root';
     var obj = (key === 'snapshot') ? snapshot : image;
-    if (obj) {
+    if (obj && obj.image_meta) {
       let meta = JSON.parse(image.image_meta);
       username = meta.os_username;
     }
@@ -463,9 +486,11 @@ class Model extends React.Component {
   }
 
   onChangeImage(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -479,9 +504,11 @@ class Model extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    var username = '';
-    var meta = JSON.parse(item.image_meta);
-    username = meta.os_username;
+    var username = 'root';
+    if (item.image_meta) {
+      var meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -830,7 +857,8 @@ class Model extends React.Component {
                 onChange={this.onChangePwd}
                 onFocus={this.onFocusPwd}
                 onBlur={this.onBlurPwd}
-                placeholder={__.pwd_placeholder} />
+                placeholder={__.pwd_placeholder}
+                width={100} />
               <i className={'glyphicon icon-eye' + (state.confirmPwdVisible ? ' selected' : '')}
                 onClick={this.confirmPwdVisibleControl}/>
               <input type={state.confirmPwdVisible ? 'text' : 'password'}
