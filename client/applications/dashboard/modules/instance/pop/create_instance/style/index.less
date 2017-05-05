@@ -322,18 +322,20 @@
             width: 257px;
           }
           label {
-            margin-right: 16px;
+            margin-right: 8px;
             &:not(:first-child) {
-              margin-left: 16px;
+              margin-left: 8px;
             }
           }
-          .input-user >input {
-            width: 235px;
-          }
+          .input-user,
           .input-psw {
-            margin-top: 4px;
-            >label {
-              padding-left: 12px;
+            margin-bottom: 6px;
+            > label {
+              display: inline-block;
+              width: 60px;
+            }
+            > input {
+              width: 218px;
             }
           }
           .psw-tip-box {
@@ -356,7 +358,7 @@
               }
             }
             i.icon-eye-first {
-              left: 222px;
+              left: 206px;
               width: 15px;
             }
             .icon-eye:hover + input {
@@ -366,7 +368,7 @@
               border-color: @psw_input_danger_border_color;
             }
             input {
-              width: 216px;
+              width: 200px;
               padding-right: 28px;
             }
             input:last-child {
