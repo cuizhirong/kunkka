@@ -121,6 +121,12 @@ class Model extends React.Component {
     }
   }
 
+  toggleVisibility() {
+    this.setState({
+      visible: !this.state.visible
+    });
+  }
+
   onClick(e) {
     e.preventDefault();
     this.refs.captcha.src = '/api/captcha?' + Math.random();
@@ -136,7 +142,8 @@ class Model extends React.Component {
       <div id="container">
         <form method="POST" onSubmit={this.onSubmit}>
           <input type="text" ref="username" name="username" className={state.usernameEmptyError ? 'error' : ''} placeholder={__.account_placeholder} autoFocus="autofocus" autoComplete="off" />
-          <input type="password" ref="password" name="password" className={state.passwordEmptyError ? 'error' : ''} placeholder={__.password_placeholder} autoComplete="off" />
+          <i className={'glyphicon icon-eye password' + (state.visible ? ' selected' : '')} onClick={this.toggleVisibility.bind(this)}/>
+          <input type={state.visible ? 'text' : 'password'} ref="password" name="password" className={state.passwordEmptyError ? 'error' : ''} placeholder={__.password_placeholder} autoComplete="off" />
           {
 
             HALO.settings.enable_domain ? <select ref="domains" defaultValue={HALO.settings.default_domain} onChange={this.onChange.bind(this, 'domains', '')}>
