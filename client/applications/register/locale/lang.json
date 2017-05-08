@@ -1,7 +1,7 @@
 {
   "en": {
     "confirm_password_placeholder": "Please enter password again",
-    "code_placeholder": "Please enter verification code",
+    "code_placeholder": "Verification code",
     "email_placeholder": "Please enter email",
     "email_tip": "Please enter mail in the correct format",
     "email_exist_tip": "This email already exists",
@@ -23,7 +23,7 @@
   },
   "zh-CN": {
     "confirm_password_placeholder": "确认密码",
-    "code_placeholder": "请输入验证码",
+    "code_placeholder": "验证码",
     "email_placeholder": "请输入邮箱",
     "email_tip": "请按正确格式输入邮箱",
     "email_exist_tip": "该邮箱已注册",

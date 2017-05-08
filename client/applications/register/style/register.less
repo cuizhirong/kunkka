@@ -1,14 +1,16 @@
 @line_bg_gray: @color_grey;
 @line_text_gray: @color_grey_700;
+@input_bg_color: @color_disabled_400;
 @input_border: @color_grey_700;
 @input_border_active: @color_info;
+@input_font_size: @color_font_700;
 @submit_active: lighten(@color_info, 5%);
 @width: 1366px;
 
 body {
   width: 100%;
   height: 100%;
-  background: url(/static/assets/login/login_bg.jpg) center center no-repeat;
+  background: url(/static/assets/login/login_bg.png) center center no-repeat;
   background-size: cover;
   -webkit-tap-highlight-color: transparent;
 }
@@ -32,23 +34,23 @@ body {
   }
   @media screen and (min-width: @width) {
     .content {
-      width: 380px;
+      width: 450px;
       .img-wrapper {
-        margin-top: 30px;
+        margin-top: 18px;
       }
       .input-wrapper {
-        margin-top: 40px;
+        margin-top: 16px;
       }
     }
   }
   @media screen and (max-width: @width) {
     .content {
-      width: 326px;
+      width: 420px;
       .img-wrapper {
         margin-top: 18px;
       }
       .input-wrapper {
-        margin-top: 28px;
+        margin-top: 16px;
       }
     }
   }
@@ -71,53 +73,55 @@ body {
     padding: 0 50px;
     @media screen and (min-width: @width) {
       input {
-        width: 280px;
+        width: 328px;
         height: 28px;
         line-height: 24px;
         font-size: 14px;
       }
       input[type="submit"] {
-        margin-top: 30px;
-        height: 32px;
-        line-height: 22px;
-        border-radius: 16px;
+        margin-top: 22px;
+        height: 40px;
+        line-height: 2px;
+        border-radius: 4px;
         font-size: 16px;
       }
     }
     @media screen and (max-width: @width) {
       input {
-        width: 226px;
+        width: 298px;
         height: 24px;
         line-height: 18px;
         font-size: 14px;
       }
       input[type="submit"] {
         height: 28px;
-        line-height: 18px;
-        border-radius: 14px;
+        line-height: 2px;
+        border-radius: 4px;
         font-size: 14px;
       }
     }
     input {
       display: block;
-      padding-right: 20px;
-      box-sizing: border-box;
-      border: none;
-      border-bottom: 1px solid @input_border;
+      padding: 4px 10px;
+      border: 1px solid @input_border;
       outline: none;
       &:-webkit-autofill {
         -webkit-box-shadow: 0 0 0px 1000px white inset !important;
       }
       &:hover,
       &:focus {
-        border-bottom: 1px solid @input_border_active;
+        border: 1px solid @input_border_active;
       }
       &.error {
-        border-bottom: 1px solid #ef5665;
+        border: 1px solid #ef5665;
       }
       &:not(first-child) {
-        margin-top: 20px;
+        margin-top: 14px;
+        height: 26px;
       }
+    }
+    input::-webkit-input-placeholder {
+      color: @input_border;
     }
     input[type="submit"] {
       background: none;
@@ -129,9 +133,10 @@ body {
         color: @submit_active;
       }
       &.disabled {
-        color: @input_border;
-        border-color: @input_border;
+        color: @input_font_size;
+        border-color: @input_bg_color;
         cursor: not-allowed;
+        background-color: @input_bg_color;
       }
     }
     .checkbox {
@@ -152,22 +157,20 @@ body {
 
     @media screen and (min-width: @width) {
       .link {
-        width: 380px;
-        margin-top: 32px;
+        margin: 14px 0 28px;
       }
     }
     @media screen and (max-width: @width) {
       .link {
-        width: 326px;
-        margin-top: 24px;
+        width: 320px;
+        margin: 14px 0 20px;
       }
     }
 
     .link {
-      margin-left: -50px;
       height: 44px;
       line-height: 44px;
-      background-color: @line_bg_gray;
+      border-top: 1px solid @line_text_gray;
       text-align: center;
       color: @line_text_gray;
       a {

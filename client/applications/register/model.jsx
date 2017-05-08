@@ -252,7 +252,6 @@ class Model extends React.Component {
           <Input input_type="password" ref="password" name="password" __={__} tip={true} placeholder={__.password_placeholder} onChange={this.onChange} />
           <Input input_type="password" ref="confirm_password" name="confirm_password" onChange={this.onChange} placeholder={__.confirm_password_placeholder} />
           <Phone ref="phone" name="phone" __={__} onChange={this.onChange} />
-          <Input input_type="text" ref="code" name="code" __={__} tip={true} placeholder={__.code_placeholder} onChange={this.onChange} />
           <div key="checkbox" className="checkbox">
             {
               HALO.settings.eula_content ? <div>
