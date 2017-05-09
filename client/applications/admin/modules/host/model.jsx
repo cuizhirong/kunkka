@@ -14,6 +14,7 @@ var __ = require('locale/client/admin.lang.json');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var getTime = require('client/utils/time_unification');
+var utils = require('../../utils/utils');
 var csv = require('./pop/csv/index');
 
 class Model extends React.Component {
@@ -38,6 +39,15 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    this.state.config.table.column.find((col) => {
+      if (col.key === 'ip') {
+        col.sortBy = function(item1, item2) {
+          var a = item1.host_ip,
+            b = item2.host_ip;
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
   }
 

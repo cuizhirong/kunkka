@@ -46,7 +46,8 @@
     }, {
       "title": ["ip", "address"],
       "dataIndex": "fixed_ip_address",
-      "key": "ip_address"
+      "key": "ip_address",
+      "sort": true
     }, {
       "title": ["status"],
       "dataIndex": "status",

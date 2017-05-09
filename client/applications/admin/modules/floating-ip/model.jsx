@@ -12,6 +12,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 var csv = require('./pop/csv/index');
 
 class Model extends React.Component {
@@ -35,6 +36,23 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    var a = '', b = '';
+
+    this.state.config.table.column.forEach((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          a = item1.floating_ip_address;
+          b = item2.floating_ip_address;
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      } else if (col.key === 'ip_address') {
+        col.sortBy = function(item1, item2) {
+          a = item1.fixed_ip_address || '';
+          b = item2.fixed_ip_address || '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
   }
 

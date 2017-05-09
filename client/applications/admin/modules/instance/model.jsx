@@ -36,7 +36,7 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction', 'tableColRender'].forEach((m) => {
+    ['onInitialize', 'onAction', 'tableColRender', 'getFloatingIp', 'getFixedIp'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
 
@@ -54,7 +54,48 @@ class Model extends React.Component {
     }
   }
 
+  getFloatingIp(item) {
+    var floatingIP = [];
+    Object.keys(item.addresses).forEach((key) =>
+      item.addresses[key].forEach((element) => {
+        if (element['OS-EXT-IPS:type'] === 'floating') {
+          floatingIP.push(element.addr);
+        }
+      })
+    );
+    return floatingIP;
+  }
+
+  getFixedIp(item) {
+    var ips = item.addresses, ret = [];
+    Object.keys(ips).forEach((key) => {
+      ips[key].forEach((ele) => {
+        if (ele['OS-EXT-IPS:type'] === 'fixed') {
+          ret.push(ele.addr);
+        }
+      });
+    });
+    return ret;
+  }
+
   componentWillMount() {
+    var that = this, a = '', b = '';
+
+    this.state.config.table.column.forEach((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          a = that.getFloatingIp(item1)[0] || '';
+          b = that.getFloatingIp(item2)[0] || '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      } else if (col.key === 'fixed_ip') {
+        col.sortBy = function(item1, item2) {
+          a = that.getFixedIp(item1)[0] || '';
+          b = that.getFixedIp(item2)[0] || '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
   }
 

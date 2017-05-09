@@ -11,6 +11,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -33,6 +34,15 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    this.state.config.table.column.find((col) => {
+      if (col.key === 'ip_address') {
+        col.sortBy = function(item1, item2) {
+          var a = item1.fixed_ips[0] ? item1.fixed_ips[0].ip_address : '',
+            b = item2.fixed_ips[0] ? item2.fixed_ips[0].ip_address : '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
   }
 

@@ -122,10 +122,12 @@
       "key": "image"
     }, {
       "title": ["floating_ip"],
-      "key": "floating_ip"
+      "key": "floating_ip",
+      "sort": true
     }, {
       "title": ["fixed_ip"],
-      "key": "fixed_ip"
+      "key": "fixed_ip",
+      "sort": true
     }, {
       "title": ["user", "id"],
       "dataIndex": "user_id",
