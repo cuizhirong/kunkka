@@ -22,6 +22,7 @@ var __ = require('locale/client/dashboard.lang.json');
 var request = require('./request');
 var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 var notify = require('client/applications/dashboard/utils/notify');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 
@@ -40,8 +41,24 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var columns = this.state.config.table.column;
-    this.tableColRender(columns);
+    var a = '', b = '';
+
+    this.state.config.table.column.forEach((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          a = item1.floatingip ? item1.floatingip.floating_ip_address : '';
+          b = item2.floatingip ? item2.floatingip.floating_ip_address : '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      } else if (col.key === 'ip_address') {
+        col.sortBy = function(item1, item2) {
+          a = item1.vip_address;
+          b = item2.vip_address;
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
+    this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', data => {
       if(this.props.style.display !== 'none') {

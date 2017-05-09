@@ -77,7 +77,8 @@
     }, {
       "title": ["cidr"],
       "dataIndex": "cidr",
-      "key": "cidr"
+      "key": "cidr",
+      "sort": true
     }, {
       "title": ["enable", "dhcp"],
       "key": "enable_dhcp"

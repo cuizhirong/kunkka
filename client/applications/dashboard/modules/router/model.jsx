@@ -27,6 +27,7 @@ var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+var utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -53,12 +54,23 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction'].forEach((m) => {
+    ['onInitialize', 'onAction', 'getFloatingIp'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
 
   componentWillMount() {
+    var that = this;
+
+    this.state.config.table.column.find((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          var a = that.getFloatingIp(item1),
+            b = that.getFloatingIp(item2);
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
@@ -76,6 +88,20 @@ class Model extends React.Component {
         }
       }
     });
+  }
+
+  _getFloatingIp(item) {
+    var fip = '';
+    if(item.external_gateway_info) {
+      item.external_gateway_info.external_fixed_ips.some((ip) => {
+        if (ip.ip_address.indexOf(':') < 0) {
+          fip = ip.ip_address;
+          return true;
+        }
+        return false;
+      });
+    }
+    return fip;
   }
 
   shouldComponentUpdate(nextProps, nextState) {

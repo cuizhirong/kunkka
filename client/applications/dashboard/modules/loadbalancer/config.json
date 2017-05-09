@@ -60,10 +60,12 @@
     }, {
       "title": ["ip_address"],
       "dataIndex": "vip_address",
-      "key": "ip_address"
+      "key": "ip_address",
+      "sort": true
     }, {
       "title": ["floating_ip"],
-      "key": "floating_ip"
+      "key": "floating_ip",
+      "sort": true
     }, {
       "title": ["desc"],
       "key": "desc",

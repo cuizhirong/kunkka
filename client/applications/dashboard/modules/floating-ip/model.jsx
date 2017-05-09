@@ -18,6 +18,7 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
@@ -42,6 +43,18 @@ class Model extends React.Component {
 
   componentWillMount() {
     //In case of having 2 or more external network, show the floating_network of the floating ip.
+
+    this.state.config.table.column.find((col) => {
+      if (col.key === 'ip_adrs') {
+        col.sortBy = function(item1, item2) {
+          var a = item1.floating_ip_address,
+            b = item2.floating_ip_address;
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
+    this.tableColRender(this.state.config.table.column);
+
     request.getNetworks().then(networks => {
       var exNetworks = networks.filter(n => n['router:external']);
       if(exNetworks.length > 1) {

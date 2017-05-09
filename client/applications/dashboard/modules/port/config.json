@@ -60,7 +60,8 @@
       "title": ["ip", "address"],
       "dataIndex": "",
       "key": "ip_adrs",
-      "type": ""
+      "type": "",
+      "sort": true
     }, {
       "title": ["subnet"],
       "dataIndex": "",
@@ -68,7 +69,8 @@
     }, {
       "title": ["floating_ip"],
       "dataIndex": "",
-      "key": "floating_ip"
+      "key": "floating_ip",
+      "sort": true
     }, {
       "title": ["related", "resource"],
       "dataIndex": "",

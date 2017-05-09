@@ -18,6 +18,7 @@ var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
+var utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -34,6 +35,23 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
+    var a = '', b = '';
+
+    this.state.config.table.column.forEach((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          a = item1.floatingip.floating_ip_address || '';
+          b = item2.floatingip.floating_ip_address || '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      } else if (col.key === 'ip_adrs') {
+        col.sortBy = function(item1, item2) {
+          a = item1.fixed_ips[0] ? item1.fixed_ips[0].ip_address : '';
+          b = item2.fixed_ips[0] ? item2.fixed_ips[0].ip_address : '';
+          return utils.ipFormat(a) - utils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {

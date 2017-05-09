@@ -84,6 +84,23 @@ class Model extends React.Component {
       return true;
     }
 
+    var a = '', b = '';
+
+    this.state.config.table.column.forEach((col) => {
+      if (col.key === 'floating_ip') {
+        col.sortBy = function(item1, item2) {
+          a = item1.floating_ip ? item1.floating_ip.floating_ip_address : '';
+          b = item2.floating_ip ? item2.floating_ip.floating_ip_address : '';
+          return timeUtils.ipFormat(a) - timeUtils.ipFormat(b);
+        };
+      } else if (col.key === 'ip_address') {
+        col.sortBy = function(item1, item2) {
+          a = item1.fixed_ips[0] ? item1.fixed_ips[0] : '';
+          b = item2.fixed_ips[0] ? item2.fixed_ips[0] : '';
+          return timeUtils.ipFormat(a) - timeUtils.ipFormat(b);
+        };
+      }
+    });
     this.tableColRender(this.state.config.table.column);
 
     msgEvent.on('dataChange', (data) => {
