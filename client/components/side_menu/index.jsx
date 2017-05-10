@@ -262,26 +262,34 @@ class SideMenu extends React.Component {
     }
     return (
       <div ref="halo_com_menu" className="halo-com-menu" style={style}>
-        <ul className="top-menu">
-          {
-            apps.map((m) => {
-              var k = Object.keys(m)[0];
-              return (
-                <li key={k} onClick={this.onSwitch.bind(this, k)} className={currentApp === k ? 'selected' : null}>
-                  <i className={'glyphicon icon-g-' + k}></i>
-                  <span>{m[k]}</span>
-                </li>
-              );
-            })
-          }
-          <div ref="halo_scroll_left_pane" className="scroll-left-pane">
-            <div ref="halo_scroll_left_slider" className="scroll-left-slider"></div>
+        <div className="top-menu">
+          <ul>
+            {
+              apps.map((m) => {
+                var k = Object.keys(m)[0];
+                return (
+                  <li key={k} onClick={this.onSwitch.bind(this, k)} className={currentApp === k ? 'selected' : null}>
+                    <i className={'glyphicon icon-g-' + k}></i>
+                    <span>{m[k]}</span>
+                  </li>
+                );
+              })
+            }
+          </ul>
+          <div ref="halo_scroll_left_pane" className="scroll-pane">
+            <div ref="halo_scroll_left_slider" className="scroll-slider" />
           </div>
-        </ul>
-        {props.items ? <Menu items={props.items} /> : null}
-        {props.items ? (<div ref="halo_scroll_pane" className="scroll-pane">
-          <div ref="halo_scroll_slider" className="scroll-slider"></div>
-        </div>) : null}
+        </div>
+        {
+          props.items ?
+            <div className="sub-menu">
+              <Menu items={props.items} />
+              <div ref="halo_scroll_pane" className="scroll-pane">
+                <div ref="halo_scroll_slider" className="scroll-slider"></div>
+              </div>
+            </div>
+          : null
+        }
       </div>
     );
   }

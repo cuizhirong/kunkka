@@ -67,7 +67,7 @@ class Regions extends React.Component{
 
   render() {
     return (
-      <ul className="region-dropdown">
+      <ul>
         { this.state.initialize ? this.renderRegion() : null}
       </ul>
     );

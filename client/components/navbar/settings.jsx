@@ -36,7 +36,7 @@ class Settings extends React.Component {
       case 'en':
         window.location = '/?lang=en';
         break;
-      case 'cn':
+      case 'zh-CN':
         window.location = '/?lang=zh-CN';
         break;
       case 'logout':
@@ -77,13 +77,9 @@ class Settings extends React.Component {
     return config.map((item, index) => {
       if (item.key === 'lang') {
         return (
-          <li className="lang" key={index}>
+          <li className="lang" key={index} onClick={this.onClick.bind(null, currtLang === 'en' ? 'zh-CN' : 'en')}>
             <i className={'glyphicon icon-' + item.icon} />
-            <a className={currtLang === 'en' ? 'disabled' : 'active'}
-              onClick={currtLang === 'en' ? null : this.onClick.bind(null, 'en')}>English</a>
-            <span>|</span>
-            <a className={currtLang === 'zh-CN' ? 'disabled' : 'active'}
-              onClick={currtLang === 'zh-CN' ? null : this.onClick.bind(null, 'cn')}>中文</a>
+            <span>{currtLang === 'en' ? '中文' : 'English'}</span>
           </li>
         );
       } else {

@@ -1,143 +1,28 @@
 @import "../../../style/index.less";
 
-@menu_font_color: #d7dadd;
-@menu_font_hover_color: #fff;
+@top_menu_bg_color: #3c4649;
+@top_menu_item_hover_bg_color: #343d40;
+@top_menu_item_selected_bg_color: #00afc8;
+@sub_menu_bg_color: #f6f6f6;
 
 .halo-com-menu {
   display: flex;
   position: relative;
   flex: 1;
-  overflow: -moz-hidden-unscrollable;
-  .fixed-width(296px);
-  > .top-menu {
-    float: left;
-    width: 114px;
-    min-width: 114px;
-    background-size: 114px auto;
-    background-color: #0d1b2e;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    z-index: 5;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    > .scroll-left-pane {
-      position:absolute;
-      width:8px;
-      right:200px;
-      top:0;
-      bottom:0;
-      opacity: 0;
-      transition: .2s;
-      border-radius: 5px;
-      z-index: 100;
-      > .scroll-left-slider {
-        background: rgba(255,255,255,.5);
-        position: relative;
-        margin : 0 1px;
-        border-radius: 3px;
-        cursor: default;
-      }
-    }
-    &:hover > .scroll-left-pane,
-    .scroll-left-pane.active {
-      opacity: 1;
-    }
-    > li {
-      position: relative;
-      width: 96px;
-      height: 56px;
-      text-align: center;
-      color: @menu_font_color;
-      cursor: pointer;
-      padding: 12px 0;
-      > i {
-        display: block;
-        width: 32px;
-        height: 32px;
-        line-height: 32px;
-        text-align: center;
-        margin: 0 auto;
-        border-radius: 2px;
-        font-size: 32px;
-      }
-      > span {
-        display: block;
-        line-height: 24px;
-        width: 96px;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      &::after{
-        display: block;
-        width: 74px;
-        height: 9px;
-        margin: 2px auto 0px;
-        line-height: 8px;
-        content: '';
-        border-bottom: 1px solid #303f51;
-      }
-      &:hover,
-      &.selected {
-        background-color: rgba(41,159,203,0.3);
-        > i {
-          color: @menu_font_hover_color;
-        }
-        span {
-          color: @menu_font_hover_color;
-        }
-        &::before{
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 4px;
-          height: 80px;
-          content: '';
-          background-color: #2d84a6;
-        }
-      }
-    }
-  }
-  > .menu {
-    float: left;
-    margin-left: -16px;
-    width: 215px;
-    min-width: 215px;
-    border-right: none;
-    overflow: scroll;
-    overflow-x: hidden;
-    z-index: 8;
-    > li {
-      li.selected {
-        position: relative;
-        z-index: 9;
-        overflow: visible;
-        width: 181px;
-      }
-    }
-  }
-}
+  .fixed-width(300px);
 
-.halo-com-menu {
-  > .menu {
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  > .scroll-pane {
-    position:absolute;
-    width:8px;
-    right:0;
-    top:0;
-    bottom:0;
+  .scroll-pane {
+    position: absolute;
+    width: 8px;
+    right: 0;
+    top: 0;
+    bottom: 0;
     opacity: 0;
     transition: .2s;
     border-radius: 5px;
     z-index: 100;
     > .scroll-slider {
-      background: rgba(0,0,0,.3);
+      background: rgba(255,255,255,.5);
       position: relative;
       margin : 0 1px;
       border-radius: 3px;
@@ -145,8 +30,79 @@
     }
   }
 
-  &:hover > .scroll-pane,
-  .scroll-pane.active {
-    opacity: 1;
+  > .top-menu {
+    float: left;
+    position: relative;
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+    color: #fff;
+    background-color: @top_menu_bg_color;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 5;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    &:hover > .scroll-pane,
+    .scroll-pane.active {
+      opacity: 1;
+    }
+
+    > ul {
+      > li {
+        height: 44px;
+        line-height: 44px;
+        font-size: 14px;
+        padding: 0 0 0 16px;
+
+        > i {
+          margin-right: 8px;
+        }
+
+        &:hover {
+          background-color: @top_menu_item_hover_bg_color;
+          cursor: pointer;
+        }
+        &.selected {
+          background-color: @top_menu_item_selected_bg_color;
+          cursor: default;
+        }
+      }
+    }
   }
+
+  > .sub-menu {
+    position: relative;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    > .scroll-pane {
+      > .scroll-slider {
+        background: rgba(0,0,0,.3);
+      }
+    }
+
+    &:hover > .scroll-pane,
+    .scroll-pane.active {
+      opacity: 1;
+    }
+
+    > ul.menu {
+      background-color: @sub_menu_bg_color;
+      border: 0;
+      .menu-item-selected {
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+      }
+    }
+  }
+
 }

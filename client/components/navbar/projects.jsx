@@ -68,7 +68,7 @@ class Projects extends React.Component{
 
   render() {
     return (
-      <ul className="region-dropdown">
+      <ul>
         { this.state.initialize ? this.renderProject() : null}
       </ul>
     );

@@ -44,38 +44,35 @@ class NavBar extends React.Component {
     return (
       <div className="halo-com-navbar">
         <div className="logo" style={logo}></div>
-        <div className="region-wp">
-          <div className="region-name">
-            <div className="name-label">
+        <ul className="links">
+          <li>
+            <div className="link-title">
               <i className="glyphicon icon-region"></i>
               <span ref="name">{currentRegionName}</span>
             </div>
-            <div ref="settingBtn" className="settings-btn"></div>
-          </div>
-          <div className="region">
-            <Regions />
-          </div>
-        </div>
-        <div className="project-wp">
-          <div className="region-name">
-            <div className="name-label">
+            <div className="link-dropdown">
+              <Regions />
+            </div>
+          </li>
+          <li>
+            <div className="link-title">
               <i className="glyphicon icon-project"></i>
               <span ref="name">{currentProjectName}</span>
             </div>
-            <div ref="settingBtn" className="settings-btn"></div>
-          </div>
-          <div className="region">
-            <Projects />
-          </div>
-        </div>
-        <div className="user-info">
-          <i className="glyphicon icon-avatar"></i>
-          <span className="user-name">{HALO.user.username}</span>
-          <div ref="settingBtn" className="settings-btn"></div>
-          <div className="settings">
-            <Settings __={this.props.__} />
-          </div>
-        </div>
+            <div className="link-dropdown">
+              <Projects />
+            </div>
+          </li>
+          <li>
+            <div className="link-title">
+              <i className="glyphicon icon-avatar"></i>
+              <span className="user-name">{HALO.user.username}</span>
+            </div>
+            <div className="link-dropdown">
+              <Settings __={this.props.__} />
+            </div>
+          </li>
+        </ul>
       </div>
     );
   }
