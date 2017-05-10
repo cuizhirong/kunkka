@@ -16,6 +16,7 @@ class NavBar extends React.Component {
 
   render() {
     var HALO = this.props.HALO;
+    var { hideRegion, hideProject, hideSetting } = this.props;
 
     var currentProjectId = HALO.user.projectId,
       currentProjectName;
@@ -45,33 +46,45 @@ class NavBar extends React.Component {
       <div className="halo-com-navbar">
         <div className="logo" style={logo}></div>
         <ul className="links">
-          <li>
-            <div className="link-title">
-              <i className="glyphicon icon-region"></i>
-              <span ref="name">{currentRegionName}</span>
-            </div>
-            <div className="link-dropdown">
-              <Regions />
-            </div>
-          </li>
-          <li>
-            <div className="link-title">
-              <i className="glyphicon icon-project"></i>
-              <span ref="name">{currentProjectName}</span>
-            </div>
-            <div className="link-dropdown">
-              <Projects />
-            </div>
-          </li>
-          <li>
-            <div className="link-title">
-              <i className="glyphicon icon-avatar"></i>
-              <span className="user-name">{HALO.user.username}</span>
-            </div>
-            <div className="link-dropdown">
-              <Settings __={this.props.__} />
-            </div>
-          </li>
+          {
+            hideRegion ?
+              null
+            : <li>
+                <div className="link-title">
+                  <i className="glyphicon icon-region"></i>
+                  <span ref="name">{currentRegionName}</span>
+                </div>
+                <div className="link-dropdown">
+                  <Regions />
+                </div>
+              </li>
+          }
+          {
+            hideProject ?
+              null
+            : <li>
+                <div className="link-title">
+                  <i className="glyphicon icon-project"></i>
+                  <span ref="name">{currentProjectName}</span>
+                </div>
+                <div className="link-dropdown">
+                  <Projects />
+                </div>
+              </li>
+          }
+          {
+            hideSetting ?
+              null
+            : <li>
+                <div className="link-title">
+                  <i className="glyphicon icon-avatar"></i>
+                  <span className="user-name">{HALO.user.username}</span>
+                </div>
+                <div className="link-dropdown">
+                  <Settings __={this.props.__} />
+                </div>
+              </li>
+          }
         </ul>
       </div>
     );
