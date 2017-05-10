@@ -1,5 +1,5 @@
 var React = require('react');
-var NavBar = require('./components/navbar/index');
+var NavBar = require('client/components/navbar/index');
 var SideMenu = require('client/components/side_menu/index');
 var router = require('client/utils/router');
 
@@ -122,7 +122,7 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar HALO={HALO} __={__} />
+          <NavBar HALO={HALO} __={__} hideRegion={true} hideProject={true} />
         </div>
         <div id="main-wrapper">
           <SideMenu items={menus} application={HALO.application} />
