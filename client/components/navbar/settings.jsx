@@ -14,23 +14,22 @@ class Settings extends React.Component {
   onClick(key, e) {
     switch (key) {
       case 'settings':
-        var haloMenu = document.getElementsByClassName('halo-com-menu')[0],
-          menu = document.getElementsByClassName('menu')[0];
-        ['maxWidth', 'width', 'minWidth'].forEach(m => {
-          haloMenu.style[m] = '100px';
-          menu.style[m] = '26px';
-        });
+        var setWidth = (node, width) => {
+          ['maxWidth', 'width', 'minWidth'].forEach((w) => {
+            node.style[w] = width;
+            node.style.overflowX = 'hidden';
+          });
+        };
+        var haloMenu = document.getElementsByClassName('halo-com-menu')[0];
+        setWidth(haloMenu, '120px');
+        document.getElementById('main').style.display = 'none';
+
         var wrapper = document.getElementById('main-wrapper');
         var div = document.createElement('div');
         div.setAttribute('class', 'pwd');
         div.setAttribute('style', ['flex: 1']);
         wrapper.appendChild(div);
-        document.getElementById('main').style.display = 'none';
-        document.getElementsByClassName('scroll-pane')[0].style.display = 'none';
-        var li = document.getElementsByClassName('menu')[0].getElementsByTagName('li');
-        for(var i = 0; i < li.length; i++) {
-          li[i].style.display = 'none';
-        }
+
         ReactDOM.render(<Password __={this.props.__}/>, document.getElementsByClassName('pwd')[0]);
         break;
       case 'en':

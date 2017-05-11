@@ -44,17 +44,12 @@ class Model extends React.Component {
   back() {
     document.getElementById('main').style.display = 'block';
     document.getElementsByClassName('pwd')[0].style.display = 'none';
-    document.getElementsByClassName('scroll-pane')[0].style.display = 'block';
-    var li = document.getElementsByClassName('menu')[0].getElementsByTagName('li');
-    for(var i = 0; i < li.length; i++) {
-      li[i].style.display = 'block';
-    }
-    var haloMenu = document.getElementsByClassName('halo-com-menu')[0],
-      menu = document.getElementsByClassName('menu')[0];
-    ['maxWidth', 'width', 'minWidth'].forEach(m => {
-      haloMenu.style[m] = '296px';
-      menu.style[m] = '215px';
-    });
+
+    var haloMenu = document.getElementsByClassName('halo-com-menu')[0];
+    haloMenu.style.width = '';
+    haloMenu.style.minWidth = '';
+    haloMenu.style.maxWidth = '';
+    haloMenu.style.overflowX = '';
   }
 
   modify() {
