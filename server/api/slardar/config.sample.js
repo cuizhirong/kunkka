@@ -49,6 +49,12 @@ module.exports = {
       description: 'LDAP开关'
     }, {
       app: 'dashboard',
+      name: 'enable_quick_deploy',
+      value: 'false',
+      type: 'boolean',
+      description: 'dashboard页面-快速部署开关'
+    }, {
+      app: 'dashboard',
       name: 'total_gigabytes',
       value: 5000,
       type: 'number',
