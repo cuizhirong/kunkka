@@ -192,6 +192,9 @@
       }, {
         "name": ["alarm"],
         "key": "alarm"
+      }, {
+        "name": ["action_log"],
+        "key": "action_log"
       }]
     }
   }

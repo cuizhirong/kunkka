@@ -580,6 +580,13 @@ class Model extends React.Component {
       }
     };
 
+    var updateDetail = function(newContents) {
+      detail.setState({
+        contents: newContents,
+        loading: false
+      });
+    };
+
     var itemStatus = rows[0].status.toLowerCase();
     switch (tabKey) {
       case 'description':
@@ -651,13 +658,6 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           syncUpdate = false;
           var asyncTabKey = tabKey;
-
-          var updateDetail = function(newContents) {
-            detail.setState({
-              contents: newContents,
-              loading: false
-            });
-          };
 
           //open detail without delaying
           contents[asyncTabKey] = <VncConsole />;
@@ -791,13 +791,6 @@ class Model extends React.Component {
           syncUpdate = false;
           var asyncAlarmKey = tabKey;
 
-          var updateDetailAlarm = function(newContents) {
-            detail.setState({
-              contents: newContents,
-              loading: false
-            });
-          };
-
           //open detail without delaying
           detail.setState({
             loading: true
@@ -811,10 +804,34 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tableConfig={alarmItems ? alarmItems : []} />
             );
-            updateDetailAlarm(contents);
+            updateDetail(contents);
           }, () => {
             contents[asyncAlarmKey] = (<div />);
-            updateDetailAlarm(contents);
+            updateDetail(contents);
+          });
+        }
+        break;
+      case 'action_log':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+
+          detail.setState({
+            loading: true
+          });
+
+          request.getActionLog(rows[0].id).then(res => {
+            var actionItems = this.getActionLogs(res.instanceActions);
+            contents[tabKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.action_log}
+                defaultUnfold={true}
+                tableConfig={actionItems ? actionItems : []} />
+            );
+            updateDetail(contents);
+          }, () => {
+            contents[tabKey] = (<div />);
+            updateDetail(contents);
           });
         }
         break;
@@ -828,6 +845,48 @@ class Model extends React.Component {
         loading: false
       });
     }
+  }
+
+  getActionLogs(item) {
+    var tableContent = [];
+    item.forEach((ele, index) => {
+      var dataObj = {
+        request_id: ele.request_id,
+        action: __[ele.action],
+        start_time: getTime(ele.start_time, true),
+        user_id: ele.user_id,
+        message: ele.message || '-'
+      };
+      tableContent.push(dataObj);
+    });
+    var tableConfig = {
+      column: [{
+        title: __.request_id,
+        key: 'request_id',
+        dataIndex: 'request_id'
+      }, {
+        title: __.action,
+        key: 'action',
+        dataIndex: 'action'
+      }, {
+        title: __.start_time,
+        key: 'start_time',
+        dataIndex: 'start_time'
+      }, {
+        title: __.user_id,
+        key: 'user_id',
+        dataIndex: 'user_id'
+      }, {
+        title: __.message,
+        key: 'message',
+        dataIndex: 'message'
+      }],
+      data: tableContent,
+      dataKey: 'request_id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getAlarmItems(item) {
