@@ -58,8 +58,7 @@
     }, {
       "title": ["floating_ip"],
       "dataIndex": "floatingip",
-      "key": "floating_ip",
-      "sort": true
+      "key": "floating_ip"
     }, {
       "title": ["ext_gatway"],
       "key": "ext_gw"

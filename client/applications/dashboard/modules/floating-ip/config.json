@@ -60,8 +60,7 @@
       "title": ["ip", "address"],
       "dataIndex": "floating_ip_address",
       "key": "ip_adrs",
-      "type": "captain",
-      "sort": true
+      "type": "captain"
     }, {
       "title": ["associate_gl", "resource"],
       "key": "assc_resource"
