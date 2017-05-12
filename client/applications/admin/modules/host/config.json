@@ -62,8 +62,7 @@
     }, {
       "title": ["ip"],
       "dataIndex": "host_ip",
-      "key": "ip",
-      "sort": true
+      "key": "ip"
     }, {
       "title": ["vcpu"],
       "key": "vcpu"

@@ -37,8 +37,7 @@
       "dataIndex": "floating_ip_address",
       "key": "floating_ip",
       "type": "captain",
-      "width": 130,
-      "sort": true
+      "width": 130
     }, {
       "title": ["project", "id"],
       "dataIndex": "tenant_id",
@@ -46,8 +45,7 @@
     }, {
       "title": ["ip", "address"],
       "dataIndex": "fixed_ip_address",
-      "key": "ip_address",
-      "sort": true
+      "key": "ip_address"
     }, {
       "title": ["status"],
       "dataIndex": "status",
