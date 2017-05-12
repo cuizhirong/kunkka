@@ -25,10 +25,10 @@ class SideMenu extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.items) {
-      this.haloScroller('menu');
-    }
-    this.haloLeftScroller('top_menu');
+    // if (this.props.items) {
+    //   this.haloScroller('menu');
+    // }
+    // this.haloLeftScroller('top_menu');
   }
 
   haloScroller(name) {
@@ -276,17 +276,17 @@ class SideMenu extends React.Component {
               })
             }
           </ul>
-          <div ref="halo_scroll_left_pane" className="scroll-pane">
+          {/*<div ref="halo_scroll_left_pane" className="scroll-pane">
             <div ref="halo_scroll_left_slider" className="scroll-slider" />
-          </div>
+          </div>*/}
         </div>
         {
           props.items ?
             <div className="sub-menu">
               <Menu items={props.items} />
-              <div ref="halo_scroll_pane" className="scroll-pane">
+              {/*<div ref="halo_scroll_pane" className="scroll-pane">
                 <div ref="halo_scroll_slider" className="scroll-slider"></div>
-              </div>
+              </div>*/}
             </div>
           : null
         }
