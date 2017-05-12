@@ -167,6 +167,9 @@
       }, {
         "name": ["monitor"],
         "key": "monitor"
+      }, {
+        "name": ["action_log"],
+        "key": "action_log"
       }]
     }
   }

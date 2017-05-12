@@ -4,6 +4,7 @@ var React = require('react');
 var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 var LineChart = require('client/components/line_chart/index');
+var DetailMinitable = require('client/components/detail_minitable/index');
 
 var deleteModal = require('client/components/modal_delete/index');
 var dissociateFIP = require('./pop/dissociate_fip/index');
@@ -17,6 +18,7 @@ var router = require('client/utils/router');
 var getStatusIcon = require('../../utils/status_icon');
 var utils = require('../../utils/utils');
 var csv = require('./pop/csv/index');
+var getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 
@@ -817,9 +819,72 @@ class Model extends React.Component {
           });
         }
         break;
+      case 'action_log':
+        if (isAvailableView(rows)) {
+          detail.setState({
+            loading: true
+          });
+          request.getActionLog(rows[0].id).then(res => {
+            var actionItems = this.getActionLogs(res.instanceActions);
+            contents[tabKey] = (
+              <DetailMinitable
+                __={__}
+                title={__.action_log}
+                defaultUnfold={true}
+                tableConfig={actionItems ? actionItems : []} />
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
+        }
+        break;
       default:
         break;
     }
+  }
+
+  getActionLogs(item) {
+    var tableContent = [];
+    item.forEach((ele, index) => {
+      var dataObj = {
+        request_id: ele.request_id,
+        action: __[ele.action],
+        start_time: getTime(ele.start_time, true),
+        user_id: ele.user_id,
+        message: ele.message || '-'
+      };
+      tableContent.push(dataObj);
+    });
+    var tableConfig = {
+      column: [{
+        title: __.request_id,
+        key: 'request_id',
+        dataIndex: 'request_id'
+      }, {
+        title: __.action,
+        key: 'action',
+        dataIndex: 'action'
+      }, {
+        title: __.start_time,
+        key: 'start_time',
+        dataIndex: 'start_time'
+      }, {
+        title: __.user_id,
+        key: 'user_id',
+        dataIndex: 'user_id'
+      }, {
+        title: __.message,
+        key: 'message',
+        dataIndex: 'message'
+      }],
+      data: tableContent,
+      dataKey: 'request_id',
+      hover: true
+    };
+
+    return tableConfig;
   }
 
   getBasicPropsItems(item) {

@@ -240,5 +240,10 @@ module.exports = {
       });
       return domains;
     });
+  },
+  getActionLog: function(id) {
+    return fetch.get({
+      url: '/proxy/nova/v2.1/servers/' + id + '/os-instance-actions'
+    });
   }
 };
