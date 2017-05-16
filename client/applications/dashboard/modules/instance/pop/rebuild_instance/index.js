@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   function getImageGroup(imageArray) {
@@ -46,6 +47,8 @@ function pop(obj, parent, callback) {
       request.rebuildInstance(obj.id, data).then(res => {
         cb(true);
         callback && callback();
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
     onAction: function(field, state, refs) {}

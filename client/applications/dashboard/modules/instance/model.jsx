@@ -32,13 +32,9 @@ var detachNetwork = require('./pop/detach_network/index');
 var resizeInstance = require('./pop/resize/index');
 var deleteInstance = require('./pop/delete/index');
 var createAlarm = require('../alarm/pop/create/index');
-var lockIntance = require('./pop/lock_intance/index');
-var unlockInstance = require('./pop/unlock_instance/index');
-var suspendedInstance = require('./pop/suspended_instance/index');
-var pausedInstance = require('./pop/paused_instance/index');
-var resumeInstance = require('./pop/resume_instance/index');
 var rebuildInstance = require('./pop/rebuild_instance/index');
 var rescueInstance = require('./pop/rescue_instance/index');
+var changeAction = require('./pop/change_action/index');
 
 var request = require('./request');
 var config = require('./config.json');
@@ -421,50 +417,43 @@ class Model extends React.Component {
       case 'terminate':
         deleteInstance(rows);
         break;
-      case 'lock':
-        lockIntance(rows);
-        break;
-      case 'unlock':
-        unlockInstance(rows);
-        break;
-      case 'suspended':
-        suspendedInstance(rows, null, (res) => {
-          rows.forEach((ele) => {
-            ele.status = 'suspending';
-          });
-
-          this.setState({
-            config: this.state.config
-          });
-        });
-        break;
-      case 'paused':
-        pausedInstance(rows, null, (res) => {
-          rows.forEach((ele) => {
-            ele.status = 'pausing';
-          });
-
-          this.setState({
-            config: this.state.config
-          });
-        });
-        break;
-      case 'resume':
-        resumeInstance(rows, null, (res) => {
-          rows.forEach((ele) => {
-            ele.status = 'resuming';
-          });
-
-          this.setState({
-            config: this.state.config
-          });
-        });
-        break;
       case 'rebuild':
         rebuildInstance(rows[0]);
         break;
       case 'rescue':
         rescueInstance(rows[0]);
+        break;
+      case 'pause':
+      case 'unpause':
+      case 'suspend':
+      case 'resume':
+      case 'lock':
+      case 'unlock':
+      case 'unrescue':
+        const action = key;
+        const nextStatus = {
+          pause: 'pausing',
+          unpause: 'unpausing',
+          suspend: 'suspending',
+          resume: 'resuming'
+        };
+
+        changeAction({
+          action: action,
+          instances: rows
+        }, null, (res) => {
+          if (nextStatus[action]) {
+            rows.forEach((ele) => {
+              ele.status = nextStatus[action];
+            });
+
+            this.setState({
+              config: this.state.config
+            });
+
+            this.onClickTableCheckbox(this.refs.dashboard.refs, { rows: rows });
+          }
+        });
         break;
       default:
         break;
@@ -489,42 +478,18 @@ class Model extends React.Component {
       allActive = allActive && thisState;
     });
 
+    var isSingle = rows.length === 1;
     var status;
     if (rows.length > 0) {
       status = rows[0].status.toLowerCase();
     }
 
     for (let key in btns) {
-      if (btns[key].children) {
-        btns[key].children[0].items.forEach((item) => {
-          switch (item.key) {
-            case 'lock':
-            case 'unlock':
-              item.disabled = (rows.length > 0) ? false : true;
-              break;
-            case 'resume':
-              item.disabled = (rows.length > 0 && (!rows.some(ele => ele.status.toLowerCase() !== 'suspended') || !rows.some(ele => ele.status.toLowerCase() !== 'paused'))) ? false : true;
-              break;
-            case 'rescue':
-              item.disabled = (rows.length === 1) ? false : true;
-              break;
-            case 'rebuild':
-              item.disabled = (rows.length === 1 && !(!rows[0].image && rows[0].volume.length > 0)) ? false : true;
-              break;
-            case 'suspended':
-            case 'paused':
-              item.disabled = (rows.length > 0 && !(rows.some(ele => ele.status.toLowerCase() === 'suspended') || rows.some(ele => ele.status.toLowerCase() === 'paused'))) ? false : true;
-              break;
-            default:
-              break;
-          }
-        });
-      }
       switch (key) {
         case 'vnc_console':
         case 'chg_security_grp':
         case 'chg_pwd':
-          btns[key].disabled = (rows.length === 1 && status === 'active') ? false : true;
+          btns[key].disabled = !(isSingle && status === 'active');
           break;
         case 'power_on':
           btns[key].disabled = rows.length > 0 && !rows.some((ele) => ele.status.toLowerCase() !== 'shutoff') ? false : true;
@@ -536,22 +501,45 @@ class Model extends React.Component {
         case 'instance_snapshot':
         case 'resize':
         case 'join_ntw':
-          btns[key].disabled = (rows.length === 1 && (status === 'active' || status === 'shutoff')) ? false : true;
+          btns[key].disabled = !(isSingle && (status === 'active' || status === 'shutoff'));
           break;
         case 'assc_floating_ip':
-          btns[key].disabled = (rows.length === 1 && status === 'active' && !rows[0].floating_ip) ? false : true;
+          btns[key].disabled = !(isSingle && status === 'active' && !rows[0].floating_ip);
           break;
         case 'dssc_floating_ip':
-          btns[key].disabled = (rows.length === 1 && rows[0].floating_ip) ? false : true;
+          btns[key].disabled = !(isSingle && rows[0].floating_ip);
           break;
         case 'rmv_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].volume.length !== 0) ? false : true;
+          btns[key].disabled = !(isSingle && rows[0].volume.length !== 0);
           break;
         case 'add_volume':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = !isSingle;
           break;
         case 'terminate':
-          btns[key].disabled = (rows.length > 0) ? false : true;
+          btns[key].disabled = !(rows.length > 0);
+          break;
+        case 'pause':
+        case 'suspend':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() !== 'active'));
+          break;
+        case 'unpause':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() !== 'paused'));
+          break;
+        case 'resume':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() !== 'suspended'));
+          break;
+        case 'lock':
+        case 'unlock':
+          btns[key].disabled = !(rows.length > 0);
+          break;
+        case 'rescue':
+          btns[key].disabled = !(isSingle && (status === 'active' || status === 'shutoff'));
+          break;
+        case 'unrescue':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() !== 'rescue'));
+          break;
+        case 'rebuild':
+          btns[key].disabled = !(isSingle && !(!rows[0].image && rows[0].volume.length > 0));
           break;
         default:
           break;

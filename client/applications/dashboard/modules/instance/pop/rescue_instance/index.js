@@ -2,6 +2,11 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+
+function isIncorrectPwd(pwd) {
+  return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
+}
 
 function pop(obj, parent, callback) {
   function getImageGroup(imageArray) {
@@ -72,13 +77,29 @@ function pop(obj, parent, callback) {
           }
         };
       }
-      console.log(data);
+
       request.rescueInstance(obj.id, data).then(res => {
         cb(true);
         callback && callback(res);
+      }).catch((error) => {
+        cb(false, getErrorMessage(error));
       });
     },
-    onAction: function(field, state, refs) {}
+    onAction: function(field, state, refs) {
+      switch (field) {
+        case 'password':
+          let isError = isIncorrectPwd(state.value);
+          refs.btn.setState({
+            disabled: isError
+          });
+          refs.password.setState({
+            error: isError
+          });
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   commonModal(props);

@@ -48,37 +48,55 @@
         }, {
           "title": ["more", "operation"],
           "key": "more_operation",
-          "children": [{
-            "items": [{
-              "title": ["lock", "instance"],
-              "key": "lock",
-              "disabled": true
+          "children": [
+            {
+              "items": [{
+                "title": ["pause", "instance"],
+                "key": "pause",
+                "disabled": true
+              }, {
+                "title": ["unpause", "instance"],
+                "key": "unpause",
+                "disabled": true
+              }]
             }, {
-              "title": ["unlock", "instance"],
-              "key": "unlock",
-              "disabled": true
+              "items": [{
+                "title": ["suspend", "instance"],
+                "key": "suspend",
+                "disabled": true
+              }, {
+                "title": ["resume", "instance"],
+                "key": "resume",
+                "disabled": true
+              }]
             }, {
-              "title": ["suspended", "instance"],
-              "key": "suspended",
-              "disabled": true
+              "items": [{
+                "title": ["lock", "instance"],
+                "key": "lock",
+                "disabled": true
+              }, {
+                "title": ["unlock", "instance"],
+                "key": "unlock",
+                "disabled": true
+              }]
             }, {
-              "title": ["paused", "instance"],
-              "key": "paused",
-              "disabled": true
+              "items": [{
+                "title": ["rescue", "instance"],
+                "key": "rescue",
+                "disabled": true
+              }, {
+                "title": ["unrescue", "instance"],
+                "key": "unrescue",
+                "disabled": true
+              }]
             }, {
-              "title": ["resume", "instance"],
-              "key": "resume",
-              "disabled": true
-            }, {
-              "title": ["rebuild", "instance"],
-              "key": "rebuild",
-              "disabled": true
-            }, {
-              "title": ["rescue", "instance"],
-              "key": "rescue",
-              "disabled": true
-            }]
-          }]
+              "items": [{
+                "title": ["rebuild", "instance"],
+                "key": "rebuild",
+                "disabled": true
+              }]
+            }
+          ]
         }]
       }, {
         "items": [{

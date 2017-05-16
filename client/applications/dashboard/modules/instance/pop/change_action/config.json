@@ -1,5 +1,5 @@
 {
-  "title": ["paused", "instance"],
+  "title": ["instance"],
   "fields": [{
     "type": "text",
     "field": "text"
@@ -8,11 +8,6 @@
     "icon": "instance",
     "field": "list",
     "info": "list"
-  }, {
-    "type": "tip",
-    "tip_type": "error",
-    "field": "error",
-    "hide": true
   }],
   "btn": {
     "value": "ok",
