@@ -180,6 +180,7 @@
     }
 
     &.input-password-row {
+      align-items: baseline;
       position: relative;
       input {
         width: 100%;
@@ -205,6 +206,9 @@
       }
       .icon-eye:hover + input.error {
         border-color: @psw_input_danger_border_color;
+      }
+      .short-tip-row {
+        padding-left: 0;
       }
     }
 

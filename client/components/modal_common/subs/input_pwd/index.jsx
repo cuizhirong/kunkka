@@ -1,4 +1,5 @@
 var React = require('react');
+var ShortTip = require('../short_tip/index');
 
 class InputPassword extends React.Component {
   constructor(props) {
@@ -69,10 +70,14 @@ class InputPassword extends React.Component {
               : null
             }
             <input type={state.visible ? 'text' : 'password'}
+              autoComplete="off"
               className={this.state.error ? 'error' : ''}
               value={state.value}
               onChange={this.onChange}
               disabled={state.disabled}/>
+            {
+              props.tip_info && <ShortTip label={props.__[props.tip_info]} />
+            }
           </div>
         </div>
       </div>

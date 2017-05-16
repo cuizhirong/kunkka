@@ -22,12 +22,29 @@ class Detail extends React.Component {
 
   formateBtns(btns) {
     var formatedBtns = {};
+
+    var traverseChildren = (item, arr = []) => {
+      let newArr = arr;
+      if (item.children) {
+        item.children.forEach((child) => {
+          child.items.forEach((ele) => {
+            arr = traverseChildren(ele, []);
+            newArr.push(ele);
+          });
+        });
+      }
+      return newArr;
+    };
+
     btns.forEach((btn) => {
       if (btn.dropdown) {
         btn.dropdown.items.forEach((item) => {
           item.items.forEach((_item) => {
             _item.type = 'dropdown';
             formatedBtns[_item.key] = _item;
+            traverseChildren(_item).forEach((ele) => {
+              formatedBtns[ele.key] = ele;
+            });
           });
         });
       } else {
