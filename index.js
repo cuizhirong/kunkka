@@ -14,7 +14,7 @@ const app = boot();
 
 console.log('%s booted in %dms - port: %s', pkg.name, (Date.now()) - start, port);
 
-const server = http.createServer(app, hostname);
-server.listen(port);
+const server = http.createServer(app);
+server.listen(port, hostname);
 
 module.exports = server;
