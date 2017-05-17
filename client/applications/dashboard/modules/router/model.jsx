@@ -90,7 +90,7 @@ class Model extends React.Component {
     });
   }
 
-  _getFloatingIp(item) {
+  getFloatingIp(item) {
     var fip = '';
     if(item.external_gateway_info) {
       item.external_gateway_info.external_fixed_ips.some((ip) => {
