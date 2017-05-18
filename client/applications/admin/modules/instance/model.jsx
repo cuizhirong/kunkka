@@ -704,6 +704,7 @@ class Model extends React.Component {
       case 'description':
         if (rows.length === 1) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var falutDetails = this.getFalutDetails(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -715,6 +716,18 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+              {
+                rows[0].fault ?
+                  <BasicProps
+                    title={__.fault_info}
+                    defaultUnfold={true}
+                    tabKey={'description'}
+                    items={falutDetails}
+                    rawItem={rows[0]}
+                    onAction={this.onDetailAction.bind(this)}
+                    dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                : null
+              }
             </div>
           );
           detail.setState({
@@ -955,6 +968,26 @@ class Model extends React.Component {
       type: 'time',
       content: item.created
     }];
+
+    return items;
+  }
+
+  getFalutDetails(item) {
+    let items = [];
+    if (item.fault) {
+      const fault = item.fault;
+      items = [{
+        title: __.fault_code,
+        content: fault.code
+      }, {
+        title: __.message,
+        content: fault.message
+      }, {
+        title: __.create + __.time,
+        type: 'time',
+        content: fault.created
+      }];
+    }
 
     return items;
   }
