@@ -260,18 +260,22 @@ class Model extends React.Component {
             var pool = rows[0];
             request.getMembers(pool.id).then(r => {
               pool.members = r.members;
-              r.members.forEach(mem => {
+              r.members.forEach(member => {
                 var servers = res.instance;
-                servers.some(s => {
-                  if(mem.address === s.fixed_ips[0]) {
-                    mem.name = s.name;
-                    mem.server_id = s.id;
+                servers.some((server) => {
+                  for (let addr in server.addresses) {
+                    for (let subnet of server.addresses[addr]) {
+                      if (subnet.addr === member.address && subnet.subnet.id === member.subnet_id) {
+                        member.name = server.name;
+                        member.server_id = server.id;
+                      }
+                    }
                   }
                 });
               });
 
               var basicPropsItem = this.getBasicPropsItems(rows[0]),
-                resourceListConfig = this.getDetailTableConfig(rows[0]),
+                resourceListConfig = this.getResourceListConfig(rows[0]),
                 btnConfig = this.getBtnConfig();
 
               contents[tabKey] = (
@@ -413,7 +417,7 @@ class Model extends React.Component {
     }
   }
 
-  getDetailTableConfig(pool) {
+  getResourceListConfig(pool) {
     var dataContent = [];
     pool.members.forEach(m => {
       var dataObj = {
