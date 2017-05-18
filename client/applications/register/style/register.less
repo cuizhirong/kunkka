@@ -4,7 +4,8 @@
 @input_border: @color_grey_700;
 @input_border_active: @color_info;
 @input_font_size: @color_font_700;
-@submit_active: lighten(@color_info, 5%);
+@input_submit_bg: @color_info;
+@input_submit_active_bg: darken(@input_submit_bg, 3%);
 @width: 1366px;
 
 body {
@@ -124,13 +125,13 @@ body {
       color: @input_border;
     }
     input[type="submit"] {
-      background: none;
-      border: 1px solid @input_border_active;
-      color: @input_border_active;
+      color: #fff;
+      background-color: @input_submit_bg;
+      border-color: @input_submit_bg;
       letter-spacing: 1px;
       &:hover {
-        border-color: @submit_active;
-        color: @submit_active;
+        background-color: @input_submit_active_bg;
+        border-color: @input_submit_bg;
       }
       &.disabled {
         color: @input_font_size;

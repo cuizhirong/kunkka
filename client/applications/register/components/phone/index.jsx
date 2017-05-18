@@ -10,6 +10,7 @@ class Phone extends React.Component {
 
     this.state = {
       textValue: this.props.__.getCode,
+      code: '',
       pass: false,
       error: false,
       wait: false,
@@ -69,6 +70,14 @@ class Phone extends React.Component {
     this.props.onChange && this.props.onChange(type, value);
   }
 
+  onChangeCode(e) {
+    let value = e.target.value;
+    this.setState({
+      code: value
+    });
+    this.props.onChange && this.props.onChange('code', value);
+  }
+
   render() {
     let props = this.props,
       state = this.state,
@@ -82,7 +91,7 @@ class Phone extends React.Component {
         </div>
         <input type="text" className={state.error ? 'error' : ''} ref="phone" name="phone" placeholder={__.phone_placeholder} autoComplete="off" onChange={this.onChange.bind(this, props.name)} />
         <i className={state.pass ? 'glyphicon icon-active-yes show' : ''}></i>
-        <input type="text" className="code-test" name="code" ref="code" placeholder={__.code_placeholder} onChange={this.onChange.bind(this, props.name)}/>
+        <input type="text" className="code-test" name="code" ref="code" placeholder={__.code_placeholder} onChange={this.onChangeCode.bind(this)} />
         <input ref="send" type="button" disabled={isDisabled ? 'disabled' : ''} value={state.textValue} onClick={this.onClick.bind(this)} />
       </div>
     );

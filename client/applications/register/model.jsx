@@ -54,7 +54,7 @@ class Model extends React.Component {
       name: refs.name.state.value,
       email: refs.email.state.value,
       phone: refs.phone.state.value,
-      code: refs.code.state.value,
+      code: refs.phone.state.code,
       password: refs.password.state.value
     };
     that.setState({
@@ -91,6 +91,7 @@ class Model extends React.Component {
       canSub = function() {
         canSubmit = refs.email.state.pass && refs.name.state.pass
           && refs.password.state.pass && refs.confirm_password.state.pass
+          && refs.phone.state.code.length === 6
           && refs.phone.state.pass && (that.props.HALO.settings.eula_content ? that.state.hasRead : true);
         that.setState({
           canSubmit: canSubmit
@@ -221,17 +222,13 @@ class Model extends React.Component {
           }, canSub);
         }
         break;
-      case 'code':
-        refs.code.setState({
-          error: false,
-          showTip: false,
-          tipContent: null
-        });
-        break;
       case 'readme':
         this.setState({
           hasRead: !this.state.hasRead
         }, canSub);
+        break;
+      case 'code':
+        this.setState({}, canSub);
         break;
       default:
         break;

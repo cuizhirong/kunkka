@@ -4,7 +4,7 @@
 @loading: @color_grey_800;
 @input_border_active: @color_info;
 @warning: @color_delete;
-@submit_active: lighten(@color_info, 5%);
+@submit_active: darken(@color_info, 3%);
 @width: 1366px;
 
 .phone-number {
@@ -20,6 +20,7 @@
     }
   }
   input[type="text"] {
+    width: 100px;
     display: inline-block;
     padding-right: 18px;
   }
@@ -27,7 +28,7 @@
     background-color: @input_border_active;
     border: none;
     color: #fff;
-    margin-left: 6px;
+    margin-left: 8px;
     padding: 5px 2px;
     display: inline-block;
     overflow: hidden;
@@ -57,7 +58,7 @@
       width: 84px;
     }
     .code-test {
-      margin-left: 6px;
+      margin-left: 8px;
       width: 80px !important;
     }
   }
@@ -69,8 +70,8 @@
       width: 78px;
     }
     .code-test {
-      margin-left: 6px;
-      width: 76px !important;
+      margin-left: 8px;
+      width: 60px !important;
     }
   }
   i {
