@@ -148,7 +148,16 @@ Auth.prototype = {
       const payload = scopedRes.body;
       let scopeToken = scopedRes.header['x-subject-token'];
       let username = payload.token.user.name;
-      let regionId = cookies.region ? cookies.region : region[0].id;
+      let regionId = region[0].id;
+      region.some(r => {
+        if (r.id === cookies.region) {
+          regionId = cookies.region;
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       let expireDate = new Date(payload.token.expires_at);
       let opt = {
         path: '/',
