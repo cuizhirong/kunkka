@@ -580,6 +580,7 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          var falutDetails = this.getFalutDetails(rows[0]);
           var relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
           var relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
           contents[tabKey] = (
@@ -592,6 +593,18 @@ class Model extends React.Component {
                 rawItem={rows[0]}
                 onAction={this.onDetailAction.bind(this)}
                 dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+              {
+                rows[0].fault ?
+                  <BasicProps
+                    title={__.fault_info}
+                    defaultUnfold={true}
+                    tabKey={'description'}
+                    items={falutDetails}
+                    rawItem={rows[0]}
+                    onAction={this.onDetailAction.bind(this)}
+                    dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                : null
+              }
               <RelatedSources
                 title={__.related + __.sources}
                 tabKey={'description'}
@@ -976,6 +989,26 @@ class Model extends React.Component {
         title: __.usage,
         content: metadata.usage ? metadata.usage : '-'
       });
+    }
+
+    return items;
+  }
+
+  getFalutDetails(item) {
+    let items = [];
+    if (item.fault) {
+      const fault = item.fault;
+      items = [{
+        title: __.fault_code,
+        content: fault.code
+      }, {
+        title: __.message,
+        content: fault.message
+      }, {
+        title: __.create + __.time,
+        type: 'time',
+        content: fault.created
+      }];
     }
 
     return items;
