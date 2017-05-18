@@ -5,7 +5,8 @@
 @input_font_size: @color_font_700;
 @psw_eye_selected_color: @color_grey_800;
 @psw_input_danger_border_color: @color_delete;
-@submit_active: lighten(@color_info, 5%);
+@login_submit_bg: @color_info;
+@login_submit_active_bg: darken(@color_info, 3%);
 
 body {
   width: 100%;
@@ -98,7 +99,8 @@ body {
     }
     input[type="submit"] {
       background: none;
-      background-color: @input_border_active;
+      background-color: @login_submit_bg;
+      border-color: @login_submit_bg;
       height: 30px;
       line-height: 2px;
       font-size: 14px;
@@ -106,7 +108,8 @@ body {
       letter-spacing: 1px;
       border-radius: 4px;
       &:hover {
-        border-color: @submit_active;
+        background-color: @login_submit_active_bg;
+        border-color: @login_submit_active_bg;
         color: #fff;
       }
       &.disabled {
