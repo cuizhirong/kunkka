@@ -91,7 +91,7 @@ class Slide extends React.Component {
         </div>
         <div>
           <div className="slidearea">
-            <Slider min={min} max={max} step={props.step} disabled={disabled} value={state.value} onChange={this.onSliderChange} />
+            <Slider min={min} max={max} step={props.step} disabled={disabled} value={state.value} onChange={this.onSliderChange} width={280} />
             <div className="range">{min + '-' + max + props.unit}</div>
           </div>
           <div className="inputarea">
