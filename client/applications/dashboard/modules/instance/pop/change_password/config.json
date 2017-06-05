@@ -3,6 +3,7 @@
   "fields": [{
     "type": "input_pwd",
     "field": "password",
+    "tip_info": "pwd_tip",
     "required": true
   }, {
     "type": "input_pwd",

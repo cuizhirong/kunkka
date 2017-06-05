@@ -54,11 +54,16 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    var enableAlarm = HALO.settings.enable_alarm;
-    if (!enableAlarm) {
-      let detail = config.table.detail.tabs;
-      delete detail[3];
-      delete detail[4];
+    let tabs = config.table.detail.tabs;
+    let enableAlarm = HALO.settings.enable_alarm;
+    if (enableAlarm) {
+      tabs.push({
+        name: ['console'],
+        key: 'console'
+      }, {
+        name: ['alarm'],
+        key: 'alarm'
+      });
     }
 
     moment.locale(HALO.configs.lang);
@@ -1031,10 +1036,9 @@ class Model extends React.Component {
     var networks = [];
     var count = 0;
     for (let key in items.addresses) {
-      let floatingIp;
+      let floatingIp = {};
       for (let item of items.addresses[key]) {
         if (item['OS-EXT-IPS:type'] === 'floating') {
-          floatingIp = {};
           floatingIp.addr = item.addr;
           floatingIp.id = items.floating_ip.id;
         }
@@ -1060,12 +1064,13 @@ class Model extends React.Component {
               </a>,
             subnet: <a data-type="router" href={'/dashboard/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
-            floating_ip: floatingIp ?
+            floating_ip: floatingIp.id ?
               <a data-type="router" href={'/dashboard/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
             __renderKey: count,
             childItem: item
           });
           count++;
+          floatingIp = {};
         }
       }
     }
