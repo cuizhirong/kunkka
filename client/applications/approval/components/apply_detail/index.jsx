@@ -89,8 +89,9 @@ class ApplyDetail extends React.Component {
             backgroundSize: '20px 20px'
           };
         }
+        let label = image.image_label ? image.image_label.toLowerCase() : '';
         return image.id ? <span>
-          <i className={'glyphicon icon-image-default ' + image.image_label.toLowerCase()} style={style}/>
+          <i className={'glyphicon icon-image-default ' + label} style={style}/>
           <span>{image.name}</span>
         </span> : <span>{item[field]}</span>;
       case 'flavor':

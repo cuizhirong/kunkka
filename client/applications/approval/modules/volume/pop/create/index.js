@@ -35,107 +35,113 @@ function pop(obj, parent, callback) {
     config: copyConfig,
     onInitialize: function(refs) {
       request.getOverview().then((overview) => {
+        if (overview.volume_types.length > 0) {
+          //capacity of all the types
+          var allCapacity = overview.overview_usage.gigabytes;
 
-        //capacity of all the types
-        var allCapacity = overview.overview_usage.gigabytes;
+          //capacity set by user
+          var settings = HALO.settings;
+          var singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
 
-        //capacity set by user
-        var settings = HALO.settings;
-        var singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
+          //capacity set by front-end side
+          var defaultTotal = 1000;
 
-        //capacity set by front-end side
-        var defaultTotal = 1000;
+          overview.volume_types.forEach((type) => {
+            typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
 
-        overview.volume_types.forEach((type) => {
-          typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
+            var min = 1, max, total, used;
 
-          var min = 1, max, total, used;
+            //capacity of the type
+            var capacity = overview.overview_usage['gigabytes_' + type];
 
-          //capacity of the type
-          var capacity = overview.overview_usage['gigabytes_' + type];
-
-          if (capacity.total < 0) {
-            if (allCapacity.total < 0) {
-              if (settings.total_gigabytes) {
-                total = settings.total_gigabytes;
+            if (capacity.total < 0) {
+              if (allCapacity.total < 0) {
+                if (settings.total_gigabytes) {
+                  total = settings.total_gigabytes;
+                } else {
+                  total = defaultTotal;
+                }
               } else {
-                total = defaultTotal;
+                total = allCapacity.total;
               }
+              used = allCapacity.used;
             } else {
-              total = allCapacity.total;
+              total = capacity.total;
+              used = capacity.used;
             }
-            used = allCapacity.used;
-          } else {
-            total = capacity.total;
-            used = capacity.used;
-          }
 
-          max = total - used;
-          if (max > singleMax) {
-            max = singleMax;
-          }
-          if (max <= 0) {
-            max = 0;
-            min = 0;
-          }
+            max = total - used;
+            if (max > singleMax) {
+              max = singleMax;
+            }
+            if (max <= 0) {
+              max = 0;
+              min = 0;
+            }
 
-          refs.warning.setState({
-            value: __.tip_volume_create_error,
-            hide: !(max <= 0)
+            refs.warning.setState({
+              value: __.tip_volume_create_error,
+              hide: !(max <= 0)
+            });
+
+            typeCapacity[type].max = max;
+            typeCapacity[type].min = min;
           });
 
-          typeCapacity[type].max = max;
-          typeCapacity[type].min = min;
-        });
+          var selected = typeCapacity[overview.volume_types[0]];
+          var selectedMax = selected.max;
+          var selectedMin = selected.min;
 
-        var selected = typeCapacity[overview.volume_types[0]];
-        var selectedMax = selected.max;
-        var selectedMin = selected.min;
-
-        var setFields = () => {
-          var overviewVolumeTypes = overview.volume_types;
-          var settingsVolumeTypes = HALO.settings.appliable_volume_types ? JSON.parse(HALO.settings.appliable_volume_types) : [];
-          overviewVolumeTypes.forEach((item) => {
-            if(settingsVolumeTypes.includes(item)) {
-              volumeTypes.push(item);
+          var setFields = () => {
+            var overviewVolumeTypes = overview.volume_types;
+            var settingsVolumeTypes = HALO.settings.appliable_volume_types ? JSON.parse(HALO.settings.appliable_volume_types) : [];
+            overviewVolumeTypes.forEach((item) => {
+              if(settingsVolumeTypes.includes(item)) {
+                volumeTypes.push(item);
+              }
+            });
+            if (volumeTypes && volumeTypes.length > 0) {
+              refs.type.setState({
+                data: volumeTypes,
+                value: volumeTypes.length > 0 ? volumeTypes[0] : null,
+                hide: false
+              });
+            } else {
+              refs.type.setState({
+                hide: false
+              });
             }
-          });
-          if (volumeTypes && volumeTypes.length > 0) {
-            refs.type.setState({
-              data: volumeTypes,
-              value: volumeTypes.length > 0 ? volumeTypes[0] : null,
+
+            if (obj) {
+              selectedMin = obj.size;
+            }
+            var lackOfSize = selectedMin > selectedMax;
+
+            refs.capacity_size.setState({
+              min: selectedMin,
+              max: selectedMax,
+              value: selectedMin,
+              inputValue: selectedMin,
+              disabled: lackOfSize || selectedMax <= 0,
               hide: false
             });
-          } else {
-            refs.type.setState({
-              hide: false
+
+            refs.btn.setState({
+              disabled: lackOfSize || selectedMax <= 0
             });
-          }
-
-          if (obj) {
-            selectedMin = obj.size;
-          }
-          var lackOfSize = selectedMin > selectedMax;
-
-          refs.capacity_size.setState({
-            min: selectedMin,
-            max: selectedMax,
-            value: selectedMin,
-            inputValue: selectedMin,
-            disabled: lackOfSize || selectedMax <= 0,
+            if(!volumeTypes || volumeTypes.length < 1) {
+              refs.btn.setState({
+                disabled: true
+              });
+            }
+          };
+          setFields();
+        } else {
+          refs.no_tip.setState({
+            value: __.no_avail_type,
             hide: false
           });
-
-          refs.btn.setState({
-            disabled: lackOfSize || selectedMax <= 0
-          });
-          if(!volumeTypes || volumeTypes.length < 1) {
-            refs.btn.setState({
-              disabled: true
-            });
-          }
-        };
-        setFields();
+        }
       });
     },
     onConfirm: function(refs, cb) {
