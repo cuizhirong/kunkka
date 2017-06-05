@@ -27,10 +27,13 @@ class Model extends React.Component {
 
     moment.locale(HALO.configs.lang);
 
-    var enableAlarm = HALO.settings.enable_alarm;
-    if (!enableAlarm) {
-      let detail = config.table.detail.tabs;
-      delete detail[1];
+    let tabs = config.table.detail.tabs;
+    let enableAlarm = HALO.settings.enable_alarm;
+    if (enableAlarm) {
+      tabs.push({
+        name: ['monitor'],
+        key: 'monitor'
+      });
     }
 
     this.updateConfig();

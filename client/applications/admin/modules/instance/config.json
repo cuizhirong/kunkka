@@ -165,9 +165,6 @@
         "key": "description",
         "default": true
       }, {
-        "name": ["monitor"],
-        "key": "monitor"
-      }, {
         "name": ["action_log"],
         "key": "action_log"
       }]

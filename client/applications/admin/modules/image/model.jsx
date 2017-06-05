@@ -114,7 +114,7 @@ class Model extends React.Component {
           break;
         case 'image_type':
           column.render = (col, item, i) => {
-            return item.visibility === 'private' ? __.snapshot_type : __.image;
+            return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
           };
           break;
         default:
