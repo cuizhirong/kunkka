@@ -73,7 +73,7 @@ module.exports = {
   },
   changeBandwidth: function(id, data) {
     return fetch.put({
-      url: '/proxy/neutron/v2.0/floatingips/' + id + '/update_floatingip_ratelimit',
+      url: '/proxy/neutron/v2.0/floatingips/' + id,
       data: data
     });
   },
