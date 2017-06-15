@@ -28,7 +28,7 @@ const tableSet = {
     type: 'char(20) not null',
     description: 'text',
     create_at: 'datetime',
-    update_at: 'timestamp'
+    update_at: 'datetime'
   },
   spec: 'UNIQUE KEY app(app, name)'
 };
@@ -55,8 +55,8 @@ const fs = require('fs');
     });
 });
 
+initSets.forEach(set=> set.create_at = set.update_at = '2011-11-11 11:11:11');
 console.log(initSets);
-
 
 let num = initSets.length;
 let count = 0;
@@ -71,7 +71,7 @@ sql.connectMysql = function connectMysql(con, next) {
 };
 
 sql.createDatabse = function createDatabse(con, database, next) {
-  con.query(`CREATE DATABASE ${database}`, function (err, result) {
+  con.query(`CREATE DATABASE IF NOT EXISTS ${database} DEFAULT CHARSET utf8 COLLATE utf8_general_ci`, function (err, result) {
     if (err) {
       if (err.errno === 1007) { // conflict
         console.log(`Databse ${database} already exists!`);
