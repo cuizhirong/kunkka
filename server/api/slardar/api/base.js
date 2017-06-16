@@ -383,6 +383,6 @@ API.prototype.deduplicate = function (list) {
   return tmpArr;
 };
 
-API.prototype.routerTypes = ['network:router_interface', 'network:router_interface_distributed'];
+API.prototype.routerTypes = ['network:router_interface', 'network:router_interface_distributed', 'network:ha_router_replicated_interface'];
 
 module.exports = API;
