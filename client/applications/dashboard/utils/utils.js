@@ -41,5 +41,18 @@ module.exports = {
     num = Number(ip[0]) * 256 * 256 * 256 + Number(ip[1]) * 256 * 256 + Number(ip[2]) * 256 + Number(ip[3]);
     num = num >>> 0;
     return num;
+  },
+
+  getResourceType(resourceType) {
+    switch(resourceType.toLowerCase()) {
+      case 'net':
+        return 'network';
+      case 'subnet':
+        return 'subnet';
+      case 'server':
+        return 'instance';
+      default:
+        break;
+    }
   }
 };

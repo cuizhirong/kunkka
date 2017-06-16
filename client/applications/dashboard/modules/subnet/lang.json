@@ -18,7 +18,7 @@
     "select_network": "Select NetWork",
     "subnet_dns1": "DNS1",
     "subnet_dns2": "DNS2",
-    "version": "version"
+    "version": "Version"
   },
   "zh-CN": {
     "allocation": "分配",

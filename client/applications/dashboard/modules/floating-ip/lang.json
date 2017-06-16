@@ -12,7 +12,7 @@
     "external_network": "External Network",
     "no_floatingip": "No available Floating IP, ",
     "release": "Release",
-    "resource": "Resource",
+    "resource": "Resource ",
     "tip_fip_has_source": "Cannot delete floating IP which has been related to source",
     "tip_info_floatingip": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT(Show More)",
     "tip_no_port_instance": "The instances with no port are excluded in the list",
