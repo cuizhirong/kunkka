@@ -14,7 +14,8 @@ class Slide extends React.Component {
       hide: !!props.hide,
       disabled: props.disabled ? props.disabled : false,
       error: false,
-      eventType: null
+      eventType: null,
+      text: props.text
     };
 
     this.onInputChange = this.onInputChange.bind(this);
@@ -92,13 +93,21 @@ class Slide extends React.Component {
         <div>
           <div className="slidearea">
             <Slider min={min} max={max} step={props.step} disabled={disabled} value={state.value} onChange={this.onSliderChange} width={280} />
-            <div className="range">{min + '-' + max + props.unit}</div>
+            <div className="range">{state.text ? state.text : (min + '-' + max + props.unit)}</div>
           </div>
           <div className="inputarea">
-            <input type="text" className={state.error ? 'error' : ''} value={state.inputValue}
-              onChange={this.onInputChange}
-              disabled={disabled} />
-            <label className="unit">{props.unit}</label>
+            {
+              !props.isHideInput ?
+                <input type="text" className={state.error ? 'error' : ''} value={state.inputValue}
+                    onChange={this.onInputChange}
+                    disabled={disabled} />
+              : null
+            }
+            {
+              !props.isHideInput ?
+                <label className="unit">{props.unit}</label>
+              : null
+            }
           </div>
         </div>
       </div>
