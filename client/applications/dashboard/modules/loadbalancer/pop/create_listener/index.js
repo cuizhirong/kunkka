@@ -3,7 +3,6 @@ var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
 var request = require('../../request');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var popSlider = require('./com_slider');
 var enableCharge = HALO.settings.enable_charge;
 
 function pop(obj, parent, actionModify, callback) {
@@ -15,8 +14,14 @@ function pop(obj, parent, actionModify, callback) {
     config.btn.value = 'create';
   }
 
+  const limitField = config.fields[3];
+  limitField.max = HALO.settings.listener_max_connection;
+  let limitFieldTextPrefix = 10000 + '~' + HALO.settings.listener_max_connection + ' / ' + __.current + ':';
+  limitField.text = limitFieldTextPrefix + limitField.value;
+
+  const chargeField = config.fields[4];
   if (enableCharge) {
-    config.fields[4].hide = false;
+    chargeField.hide = false;
   }
 
   var props = {
@@ -26,11 +31,7 @@ function pop(obj, parent, actionModify, callback) {
     cacheKey : [],
     cacheValue: [],
     onInitialize: function(refs) {
-      var initValue = 10000;
-      refs.connection_limit.setState({
-        renderer: popSlider,
-        value: initValue
-      });
+      let initValue = limitField.value;
       if (enableCharge) {
         request.getPrice('listener', actionModify ? obj.connection_limit : initValue).then((res) => {
           refs.charge.setState({
@@ -93,7 +94,7 @@ function pop(obj, parent, actionModify, callback) {
         });
       }
     },
-    onAction: function(field, status, refs) {
+    onAction: function(field, state, refs) {
       switch(field) {
         case 'protocol_port':
           var portRange = refs.protocol_port.state.value;
@@ -127,10 +128,15 @@ function pop(obj, parent, actionModify, callback) {
           }
           break;
         case 'connection_limit':
-          if (HALO.settings.enable_charge) {
-            var sliderEvent = refs.connection_limit.refs.slider.state.eventType;
-            if (sliderEvent === 'mouseup') {
-              var conValue = refs.connection_limit.state.value;
+          var isMouseUp = state.eventType === 'mouseup';
+          var conValue = refs.connection_limit.state.value;
+
+          if (isMouseUp) {
+            refs.connection_limit.setState({
+              text: limitFieldTextPrefix + conValue
+            });
+
+            if (HALO.settings.enable_charge) {
               if(this.cacheKey.includes(conValue)) {
                 refs.charge.setState({
                   value: this.cacheValue[this.cacheKey.indexOf(conValue)]
@@ -142,8 +148,7 @@ function pop(obj, parent, actionModify, callback) {
                   });
                   this.cacheKey.push(conValue);
                   this.cacheValue.push(res.unit_price);
-                }
-                ).catch((error) => {});
+                }).catch((error) => {});
               }
             }
           }
