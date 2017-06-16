@@ -492,11 +492,11 @@ class Model extends React.Component {
                 </div>
               );
             }
-          } else if (element.device_owner === 'network:router_interface' && element.router) {
+          } else if (element.device_owner === 'network:ha_router_replicated_interface' && item.router) {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
-                <a data-type="router" href={'/dashboard/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
+                <a data-type="router" href={'/dashboard/router/' + element.device_id}>{item.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
           } else {
@@ -512,7 +512,7 @@ class Model extends React.Component {
                 <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', {rawItem: element})} />
               </div>
             );
-          } else if (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:router_interface') {
+          } else if (element.device_owner !== 'network:dhcp' && element.device_owner !== 'network:ha_router_replicated_interface') {
             return (
               <div>
                 <i className="glyphicon icon-delete" onClick={_this.onDetailAction.bind(_this, 'description', 'rmv_port', {rawItem: element})} />

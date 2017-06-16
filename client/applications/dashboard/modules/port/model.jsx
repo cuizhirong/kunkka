@@ -117,7 +117,7 @@ class Model extends React.Component {
               } else if (item.server) {
                 return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
               }
-            } else if (item.device_owner === 'network:router_interface') {
+            } else if (item.device_owner === 'network:ha_router_replicated_interface') {
               if (item.router) {
                 return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
               } else {
@@ -412,7 +412,7 @@ class Model extends React.Component {
           } else if (item.server) {
             return <div><i className="glyphicon icon-instance"></i><a data-type="router" href={'/dashboard/instance/' + item.device_id}>{item.server.name}</a></div>;
           }
-        } else if (item.device_owner === 'network:router_interface') {
+        } else if (item.device_owner === 'network:ha_router_replicated_interface') {
           return <div><i className="glyphicon icon-router"></i><a data-type="router" href={'/dashboard/router/' + item.device_id}>{item.router.name || '(' + item.router.id.substr(0, 8) + ')'}</a></div>;
         } else {
           return <div>{__[item.device_owner]}</div>;

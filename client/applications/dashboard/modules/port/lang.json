@@ -6,7 +6,7 @@
     "no_port": "No associated port",
     "restrict": "Restrict",
     "network:dhcp": "DHCP",
-    "network:router_interface": "Router"
+    "network:ha_router_replicated_interface": "Router"
   },
   "zh-CN": {
     "address_ip": "IP地址",
@@ -15,6 +15,6 @@
     "no_port": "没有关联网卡",
     "restrict": "限制",
     "network:dhcp": "DHCP",
-    "network:router_interface": "路由器"
+    "network:ha_router_replicated_interface": "路由器"
   }
 }
