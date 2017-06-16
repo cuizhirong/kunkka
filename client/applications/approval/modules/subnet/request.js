@@ -9,7 +9,7 @@ module.exports = {
       subnets.forEach((subnet) => {
         subnet.port_security_enabled = subnet.network.port_security_enabled;
         subnet.ports.forEach((item) => {
-          if (item.device_owner === 'network:router_interface') {
+          if (item.device_owner === 'network:ha_router_replicated_interface') {
             data.router.some((r) => {
               if (r.id === item.device_id) {
                 item.router = r;

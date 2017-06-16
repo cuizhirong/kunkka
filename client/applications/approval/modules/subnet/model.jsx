@@ -480,11 +480,11 @@ class Model extends React.Component {
                 </div>
               );
             }
-          } else if (element.device_owner === 'network:router_interface' && element.router) {
+          } else if (element.device_owner === 'network:ha_router_replicated_interface' && item.router) {
             return (
               <div>
                 <i className="glyphicon icon-router"></i>
-                <a data-type="router" href={'/approval/router/' + element.device_id}>{element.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
+                <a data-type="router" href={'/approval/router/' + element.device_id}>{item.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
           } else {
