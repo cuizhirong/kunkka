@@ -22,8 +22,14 @@
     "required": true,
     "tip_info": "required_port_range"
   }, {
-    "type": "adapter",
-    "field": "connection_limit"
+    "type": "slider",
+    "field": "connection_limit",
+    "min": 10000,
+    "max": 10000,
+    "step": 10000,
+    "value": 10000,
+    "unit": "GB",
+    "isHideInput": true
   }, {
     "type": "charge",
     "field": "charge",
