@@ -80,36 +80,34 @@ module.exports = {
 
   getChartData(data, granularity, startTime, resourceType) {
     var _data = [];
-    if (data.length !== 0) {
-      if (resourceType /*&& (resourceType === 'instance' || resourceType === 'volume')*/) {
-        data.forEach((d) => {
-          _data.push(d[2].toFixed(2));
-        });
-      } else {
-        data.forEach((d) => {
-          let date = new Date(d[0]);
-          _data.push(this.getDateStr(date));
-        });
-      }
+    if (resourceType /*&& (resourceType === 'instance' || resourceType === 'volume')*/) {
+      data.forEach((d) => {
+        _data.push(d[2].toFixed(2));
+      });
+    } else {
+      data.forEach((d) => {
+        let date = new Date(d[0]);
+        _data.push(this.getDateStr(date));
+      });
+    }
 
-      let prev;
-      if (data.length > 0) {
-        prev = new Date(data[0][0]);
-      } else {
-        prev = new Date();
-      }
+    let prev;
+    if (data.length > 0) {
+      prev = new Date(data[0][0]);
+    } else {
+      prev = new Date();
+    }
 
-      const DOTS_NUM = this.getDotsNumber(granularity, prev);
+    const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
-      if (data.length < DOTS_NUM) {
-        let length = DOTS_NUM - data.length;
+    if (data.length < DOTS_NUM) {
+      let length = DOTS_NUM - data.length;
 
-        while (length > 0) {
-          prev = this.getNextPeriodDate(prev, granularity);
-          let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
-          _data.unshift(unData);
-          length--;
-        }
+      while (length > 0) {
+        prev = this.getNextPeriodDate(prev, granularity);
+        let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
+        _data.unshift(unData);
+        length--;
       }
     }
 
