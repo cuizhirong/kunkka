@@ -102,7 +102,7 @@ module.exports = {
 
   getChartData(data, granularity, startTime, resourceType) {
     var _data = [];
-    if (resourceType && (resourceType === 'instance' || resourceType === 'volume')) {
+    if (resourceType) {
       data.forEach((d) => {
         _data.push(d[2].toFixed(2));
       });

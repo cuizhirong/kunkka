@@ -2,6 +2,7 @@ var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
 var __ = require('locale/client/admin.lang.json');
+var getErrorMessage = require('client/applications/admin/utils/error_message');
 
 function pop(parent, callback) {
   var props = {
@@ -30,7 +31,11 @@ function pop(parent, callback) {
         request.allocateFloatingIP(data).then(() => {
           callback && callback();
           cb(true);
+        }).catch((error) => {
+          cb(false, getErrorMessage(error));
         });
+      }).catch((err) => {
+        cb(false, getErrorMessage(err));
       });
     },
     onAction: function(field, state, refs) {}
