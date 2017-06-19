@@ -17,6 +17,6 @@
   }],
   "btn": {
     "value": "allocate",
-    "disabled": false
+    "disabled": true
   }
 }
