@@ -6,7 +6,7 @@ module.exports = {
   getList: function(forced) {
     return storage.getList(['port', 'instance', 'subnet', 'securitygroup', 'router'], forced).then((data) => {
       data.port.forEach((item) => {
-        if (item.device_owner === 'network:router_interface') {
+        if (item.device_owner === 'network:ha_router_replicated_interface') {
           data.router.some((r) => {
             if (r.id === item.device_id) {
               item.router = r;
