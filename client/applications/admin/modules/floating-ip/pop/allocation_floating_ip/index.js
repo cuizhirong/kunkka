@@ -38,7 +38,18 @@ function pop(parent, callback) {
         cb(false, getErrorMessage(err));
       });
     },
-    onAction: function(field, state, refs) {}
+    onAction: function(field, state, refs) {
+      switch(field) {
+        case 'floating_ip':
+        case 'target_project_id':
+          refs.btn.setState({
+            disabled: !(refs.floating_ip.state.value && refs.target_project_id.state.value)
+          });
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   commonModal(props);
