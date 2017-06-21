@@ -14,6 +14,10 @@ module.exports = (str, option) => {
     switch(status) {
       case 'active':
       case 'create_complete':
+      case 'check_complete':
+      case 'suspend_complete':
+      case 'resume_complete':
+      case 'delete_complete':
       case 'alarm_status_ok':
         type.icon = 'active';
         type.status = 'active';
@@ -30,7 +34,11 @@ module.exports = (str, option) => {
         break;
       case 'alarm':
       case 'error':
+      case 'check_failed':
+      case 'suspend_failed':
+      case 'resume_failed':
       case 'create_failed':
+      case 'delete_failed':
         type.icon = 'warning';
         type.status = 'error';
         break;
