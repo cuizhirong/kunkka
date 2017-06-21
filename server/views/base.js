@@ -82,6 +82,9 @@ View.prototype = {
       if (req.session.endpoint.kiki) {
         HALO.configs.kiki_url = req.session.endpoint.kiki[user.regionId];
       }
+      if (req.session.endpoint.swift) {
+        HALO.configs.swift_url = req.session.endpoint.swift[user.regionId];
+      }
       if (this.plugins) {
         this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
       }
