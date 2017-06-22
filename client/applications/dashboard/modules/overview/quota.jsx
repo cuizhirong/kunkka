@@ -101,17 +101,17 @@ class ResourceQuota extends React.Component {
       quota = this.state.quota;
       nextProps.types.forEach((item) => {
         quota[2].items.push({
-          title: __[item] + __.volume,
+          title: (__[item] ? __[item] : item) + __.volume,
           key: 'volumes_' + item,
           link: 'volume'
         });
         quota[2].items.push({
-          title: __[item] + __.volume + __.gigabyte + __.unit_gb,
+          title: (__[item] ? __[item] : item) + __.volume + __.gigabyte + __.unit_gb,
           key: 'gigabytes_' + item,
           link: 'volume'
         });
         quota[2].items.push({
-          title: __[item] + __.snapshot,
+          title: (__[item] ? __[item] : item) + __.snapshot,
           key: 'snapshots_' + item,
           link: 'snapshot'
         });
