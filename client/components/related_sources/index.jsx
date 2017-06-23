@@ -4,6 +4,7 @@ require('./style/index.less');
 var React = require('react');
 var uskin = require('client/uskin/index');
 var Table = uskin.Table;
+const copy = require('clipboard-plus');
 
 class RelatedSources extends React.Component {
 
@@ -37,6 +38,10 @@ class RelatedSources extends React.Component {
     this.onAction('delete_' + key, {
       childItem: childItem
     });
+  }
+
+  onClick(id) {
+    copy(id);
   }
 
   onAction(actionType, data) {
@@ -93,6 +98,30 @@ class RelatedSources extends React.Component {
                 {__.no_associate + item.title}
               </div>
             }
+          </div>
+        );
+      case 'list':
+        return (
+          <div key={i}>
+            <div className="related-sources-title">
+              <div>{item.title}</div>
+            </div>
+            <div className="related-sources-content">
+              {item.content.length > 0 ?
+                item.content.map((ele, index) =>
+                  <div key={index} className="content-item-list">
+                    <span className="item-key">{ele.key}</span>
+                    <span className="item-data">
+                      {ele.data}
+                      {ele.type && ele.type.toLowerCase() === 'id' ? <i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, String(ele.data))} /> : ''}
+                    </span>
+                  </div>
+                )
+              : <div className="content-no-data">
+                  {__.no_associate + item.title}
+                </div>
+              }
+            </div>
           </div>
         );
       default:
