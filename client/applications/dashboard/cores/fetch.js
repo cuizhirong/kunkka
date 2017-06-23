@@ -13,7 +13,7 @@ function errHandler(err) {
 
 var fetch = {};
 
-['get', 'post', 'put', 'delete', 'patch'].forEach((m) => {
+['get', 'post', 'put', 'delete', 'patch', 'head'].forEach((m) => {
   fetch[m] = function(options) {
     var opt = Object.assign({
       dataType: 'json',

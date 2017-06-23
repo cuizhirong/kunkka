@@ -1,0 +1,99 @@
+{
+  "tabs": [{
+    "name": ["heat-list"],
+    "key": "heat-list",
+    "default": true
+  }, {
+    "name": ["resource", "type"],
+    "key": "resource-type"
+  }, {
+    "name": ["template", "version"],
+    "key": "template-version"
+  }],
+  "btns": [{
+    "value": ["create"],
+    "key": "create",
+    "type": "create",
+    "icon": "create",
+    "disabled": false
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["edit_image"],
+          "key": "edit_image",
+          "disabled": true
+        }, {
+          "title": ["create", "volume"],
+          "key": "create_volume",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "stack_name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "creation_time",
+      "key": "creation_time",
+      "type": "time"
+    }, {
+      "title": ["update"],
+      "key": "update",
+      "dataIndex": "updated_time"
+    }, {
+      "title": ["status"],
+      "dataIndex": "stack_status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "active"
+      }]
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["resource"],
+        "key": "resource"
+      }, {
+        "name": ["events"],
+        "key": "events"
+      }, {
+        "name": ["template"],
+        "key": "template"
+      }]
+    }
+  }
+}
