@@ -1,17 +1,42 @@
 'use strict';
 
 const request = require('superagent');
+const http = require('http');
 const co = require('co');
+const uuid = require('uuid');
 
 const getQueryString = require('helpers/getQueryString.js');
 const noBodyMethodList = ['get', 'head', 'delete'];
 const csv = require('./csv');
-const render = require('../brewmaster/api/base').func.render;
+const customResPage = require('../brewmaster/api/base').middleware.customResPage;
 const adminLogin = require('./common/adminLogin');
 const configRegion = require('config')('region');
 const regionId = (configRegion && configRegion[0] && configRegion[0].id) || 'RegionOne';
 
+
 module.exports = (app) => {
+  app.get('/proxy-zaqar/confirm-subscriptions/email', function (req, res, next) {
+    co(function *() {
+      const adminToken = yield adminLogin();
+      const remote = adminToken.remote.zaqar[regionId];
+      const target = remote + req.query.Paths;
+
+      request.put(target)
+        .set('X-Auth-Token', adminToken.token)
+        .set('Client-ID', uuid.v1())
+        .send({confirmed: true})
+        .end((err) => {
+          if (err) {
+            next({status:500, message: req.i18n.__('api.keystone.confirmError')});
+          } else {
+            next({message: req.i18n.__('api.keystone.confirmSuccess')});
+          }
+        });
+
+    }).catch(err => {
+      next(err);
+    });
+  }, customResPage);
 
   app.get([
     '/proxy/kiki/v1/subscriptions/:id/confirm',
@@ -26,31 +51,63 @@ module.exports = (app) => {
         .send(Object.assign({}, req.query))
         .end((err, payload) => {
           if (err) {
-            render({
-              req, res, err: {
-                status: 500,
-                customRes: true,
-                message: req.i18n.__('api.keystone.confirmError')
-              }
-            });
+            next({status:500, message: req.i18n.__('api.keystone.confirmError')});
           } else {
-            render({
-              req, res, content: {message: req.i18n.__('api.keystone.confirmSuccess')}
-            });
+            next({message: req.i18n.__('api.keystone.confirmSuccess')});
           }
         });
 
     }).catch(err => {
-      render({req, res, err});
+      next({message: req.i18n.__('api.keystone.confirmError')});
     });
-  });
+  }, customResPage);
   // check session
-  app.use(['/api/v1/', '/proxy/', '/proxy-search/'], function (req, res, next) {
+  app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/'], function (req, res, next) {
     if (req.session.user) {
       next();
     } else {
       return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
     }
+  });
+  app.patch('/proxy-zaqar/v2/queues/:queue_name', function (req, res, next) {
+    let queueName = req.params.queue_name;
+    let endpoint = req.session.endpoint;
+    let region = req.session.user.regionId;
+    let host = endpoint.zaqar[region];
+
+    const postData = JSON.stringify(req.body);
+    const options = {
+      hostname: host.split('://')[1].split(':')[0],
+      port: host.split('://')[1].split(':')[1],
+      path: '/v2/queues/' + queueName,
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/openstack-messaging-v2.0-json-patch',
+        'Content-Length': Buffer.byteLength(postData),
+        'X-Auth-Token': req.session.user.token,
+        'Client-ID': uuid.v1()
+      }
+    };
+
+    const patchReq = http.request(options, (response, www) => {
+      response.setEncoding('utf8');
+      let body;
+      response.on('data', (chunk) => {
+        body = chunk;
+      });
+      response.on('end', () => {
+        res.set(response.headers);
+        res.status(response.statusCode).json(JSON.parse(body));
+      });
+    });
+
+    patchReq.on('error', (e) => {
+      res.status(500).send(e);
+    });
+
+    patchReq.write(postData);
+    patchReq.end();
+
   });
   /**
    * /proxy/csv-field/os-hypervisors
