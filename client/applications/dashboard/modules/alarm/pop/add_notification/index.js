@@ -44,15 +44,17 @@ function pop(obj, callback) {
     onConfirm: function(refs, cb) {
 
       let alarm = Object.assign({}, obj);
+      delete alarm.status;
+      delete alarm.gnocchi_resources_threshold_rule.resource_name;
       let type = refs.trigger.state.value;
-      let id = refs.notification_list.state.value;
+      let name = refs.notification_list.state.value;
       let actions = alarm[type + '_actions'];
-      let hasNotify = actions.some((url, i) => utils.getNotificationIdByUrl(url) === id);
+      let hasNotify = actions.some((url, i) => utils.getNotificationIdByUrl(url) === name);
 
       if (hasNotify) {
         cb && cb(true);
       } else {
-        actions.push(HALO.configs.kiki_url + '/v1/topics/' + id + '/alarm');
+        actions.push('zaqar://?queue_name=' + name + '&project_id=' + HALO.user.projectId + '&paths=/messages&methods=POST&expires=' + utils.getISOTime(1));
         request.updateAlarm(alarm.alarm_id, alarm).then((res) => {
           callback && callback(res);
           cb(true);

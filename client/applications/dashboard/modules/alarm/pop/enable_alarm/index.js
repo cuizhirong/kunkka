@@ -23,8 +23,9 @@ function pop(obj, enabled, callback) {
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
       let newAlarm = Object.assign({}, obj);
+      delete newAlarm.status;
+      delete newAlarm.gnocchi_resources_threshold_rule.resource_name;
       newAlarm.enabled = enabled;
-
       request.updateAlarm(newAlarm.alarm_id, newAlarm).then((res) => {
         callback && callback(res);
         cb(true);

@@ -10,6 +10,7 @@ var initialState = require('./state');
 var createNotification = require('../../../notification/pop/modal/index');
 var getErrorMessage = require('../../../../utils/error_message');
 var {getTime} = require('../../../../utils/utils');
+var utils = require('../../utils');
 
 let title;
 let measureData = [];
@@ -251,6 +252,7 @@ class ModalBase extends React.Component {
   }
 
   onConfirm(e) {
+    let reqData = {};
     this.setState({
       disabled: true
     });
@@ -258,21 +260,21 @@ class ModalBase extends React.Component {
     const obj = this.props.obj;
     const state = this.state;
     const notifyList = state.notificationLists;
-    let urlPrefix = HALO.configs.kiki_url + '/v1/topics/';
+    let urlPrefix = 'zaqar://?queue_name={0}&project_id=' + HALO.user.projectId + '&paths=/messages&methods=POST&expires=' + utils.getISOTime(1);
     let alarmActions = notifyList.filter((ele) =>
       ele.status === 'alarm' && ele.notification !== 'none'
     ).map((ele) =>
-      urlPrefix + ele.notification + '/alarm'
+      urlPrefix.replace('{0}', ele.notification)
     );
     let okActions = notifyList.filter((ele) =>
       ele.status === 'ok' && ele.notification !== 'none'
     ).map((ele) =>
-      urlPrefix + ele.notification + '/alarm'
+      urlPrefix.replace('{0}', ele.notification)
     );
     let insufficientDataActions = notifyList.filter((ele) =>
       ele.status === 'insufficient_data' && ele.notification !== 'none'
     ).map((ele) =>
-      urlPrefix + ele.notification + '/alarm'
+      urlPrefix.replace('{0}', ele.notification)
     );
 
     let data = {};
@@ -284,10 +286,10 @@ class ModalBase extends React.Component {
     let resourceType = state.resourceType;
     switch(state.resourceType) {
       case 'instance':
-        resourceId = state.resource.id;
+        resourceId = state.resource ? state.resource.id : '';
         break;
       case 'instance_network_interface':
-        resourceId = state.resource._measureId;
+        resourceId = state.resource ? state.resource._measureId : '';
         break;
       case 'volume':
         resourceId = this.VolumeResourceMap[state.resource.id][0].id;
@@ -313,6 +315,26 @@ class ModalBase extends React.Component {
       resource_type: resourceType,
       threshold: state.threshold
     };
+    // deep Clone ORZ~
+    var cloneObj = function(ob) {
+      var str, newobj = ob.constructor === Array ? [] : {};
+      if(typeof ob !== 'object') {
+        return null;
+      } else {
+        str = JSON.stringify(ob);
+        newobj = JSON.parse(str);
+        for(var i in ob) {
+          newobj[i] = typeof ob[i] === 'object' ?
+          cloneObj(ob[i]) : ob[i];
+        }
+      }
+      return newobj;
+    };
+    reqData = cloneObj(data);
+    if(obj && obj.item) {
+      delete reqData.status;
+      reqData.gnocchi_resources_threshold_rule.resource_id = obj.item.gnocchi_resources_threshold_rule.resource_id;
+    }
 
     switch(obj.type) {
       case 'create':
@@ -334,11 +356,10 @@ class ModalBase extends React.Component {
         });
         break;
       case 'alarm':
-        request.updateAlarm(data.alarm_id, data).then((res) => {
+        request.updateAlarm(data.alarm_id, reqData).then((res) => {
           this.setState({
             visible: false
           });
-
           let cb = this.props.callback;
           cb && cb(res);
         }).catch((err) => {

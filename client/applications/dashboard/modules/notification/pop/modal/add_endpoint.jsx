@@ -1,8 +1,8 @@
 require('./style/index.less');
 
 var React = require('react');
-var {Button} = require('client/uskin/index');
 var request = require('../../request');
+var {Button} = require('client/uskin/index');
 var __ = require('locale/client/dashboard.lang.json');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 var SelectData = require('./select');
@@ -23,26 +23,29 @@ class AddEndpoint extends React.Component {
     super(props);
     this.state = {
       value: props.value ? props.value : '',
-      renderValue: '',
       data: props.data ? copyObj(props.data) : [],
       phoneData: props.phoneData ? copyObj(props.phoneData) : [],
-      msg: props.msg ? props.msg : [],
       subs: props.subs ? props.subs : [],
-      uuid: props.uuid
+      opsubs: [],
+      showsubs: [],
+      renderValue: props.renderValue ? props.renderValue : '',
+      name: props.name ? props.name : null,
+      checked: false
     };
 
     this.wait = 60;
 
-    ['onChange', 'renderData', 'renderInput', 'onConfirm', 'onInputChange', 'times', 'countDown', 'deleteSub'].forEach(m => {
+    ['onChange', 'renderData', 'renderInput', 'onInputChange', 'times', 'countDown', 'deleteSub', 'onAddSubscriber'].forEach(m => {
       this[m] = this[m].bind(this);
     });
   }
 
   componentWillMount() {
-    if (this.state.uuid) {
-      request.getNotifyById(this.state.uuid).then(res => {
+    if (this.state.name) {
+      request.getSubscriptionsByName(this.state.name).then(res => {
         this.setState({
-          subs: res.subs
+          subs: res.subscriptions,
+          showsubs: res.subscriptions
         });
       });
     }
@@ -70,7 +73,7 @@ class AddEndpoint extends React.Component {
 
   times(i, sub) {
     this.countDown(i, this.wait);
-    request.resendVerify(sub.uuid).then(() => {
+    request.resendVerify(sub).then(() => {
     }).catch(error => {
       getErrorMessage(error);
     });
@@ -125,51 +128,92 @@ class AddEndpoint extends React.Component {
     );
   }
 
-  onConfirm() {
-    var mobile = this.state.renderValue, mflag;
-    var regBox = {
-      regEmail : /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/,
-      regMobile : /^0?1[3|4|5|8][0-9]\d{8}$/
-    };
-    if (this.state.value === 'Email') {
-      mflag = regBox.regEmail.test(mobile);
-    } else {
-      mflag = regBox.regMobile.test(mobile);
-    }
-    if (!mflag) {
+  // onConfirm() {
+  //   var mobile = this.state.renderValue, mflag;
+  //   var regBox = {
+  //     regEmail : /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/,
+  //     regMobile : /^0?1[3|4|5|8][0-9]\d{8}$/
+  //   };
+  //   if (this.state.value === 'Email') {
+  //     mflag = regBox.regEmail.test(mobile);
+  //   } else {
+  //     mflag = regBox.regMobile.test(mobile);
+  //   }
+  //   if (!mflag) {
+  //     document.getElementById('input').classList.add('error');
+  //   } else {
+  //     document.getElementById('input').classList.remove('error');
+  //     var data = {
+  //       protocol: this.state.value.toLowerCase()
+  //     };
+  //     if (this.state.value.toLowerCase() === 'sms') {
+  //       data.endpoint = this.refs.select.state.phoneValue + '-' + this.state.renderValue;
+  //     } else {
+  //       data.endpoint = this.state.renderValue;
+  //     }
+
+  //     request.addEndpoint(data).then((res) => {
+  //       this.state.subs.push(res);
+  //       this.state.msg.push(res);
+  //       this.setState({
+  //         subs: this.state.subs,
+  //         msg: this.state.msg,
+  //         renderValue: ''
+  //       });
+  //       if (!res.verified) {
+  //         this.countDown(this.state.subs.length - 1, this.wait);
+  //       }
+  //     });
+  //   }
+  // }
+  onAddSubscriber() {
+    var email = this.state.renderValue;
+    var regEmail = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    if(!regEmail.test(email) || this.state.showsubs.find(s => s.subscriber === `mailto:${email}`)) {
       document.getElementById('input').classList.add('error');
     } else {
       document.getElementById('input').classList.remove('error');
       var data = {
-        protocol: this.state.value.toLowerCase()
+        type: 'Email',
+        subscriber: 'mailto:' + this.state.renderValue,
+        confirmed: false,
+        id: 'id' + Math.random() * Math.random() * Math.pow(2, 36)
       };
-      if (this.state.value.toLowerCase() === 'sms') {
-        data.endpoint = this.refs.select.state.phoneValue + '-' + this.state.renderValue;
-      } else {
-        data.endpoint = this.state.renderValue;
-      }
-
-      request.addEndpoint(data).then((res) => {
-        this.state.subs.push(res);
-        this.state.msg.push(res);
+      this.setState({
+        showsubs: this.state.showsubs.concat(data),
+        opsubs: this.state.opsubs.concat(Object.assign(data, {op: 'add'}))
+      }, () => {
         this.setState({
-          subs: this.state.subs,
-          msg: this.state.msg,
+          checked: !!this.state.showsubs.length,
           renderValue: ''
         });
-        if (!res.verified) {
-          this.countDown(this.state.subs.length - 1, this.wait);
-        }
       });
     }
   }
 
-
   deleteSub(i) {
-    this.state.subs.splice(i, 1);
-    this.setState({
-      subs: this.state.subs
-    });
+    let v = this.state.showsubs[i];
+    if(!/^id/.test(v.id)) {
+      this.state.showsubs.splice(i, 1);
+      this.setState({
+        showsubs: this.state.showsubs,
+        opsubs: this.state.opsubs.concat(Object.assign(v, {op: 'delete'}))
+      }, () => {
+        this.setState({
+          checked: !!this.state.showsubs.length
+        });
+      });
+    } else {
+      this.state.showsubs.splice(i, 1);
+      this.setState({
+        showsubs: this.state.showsubs,
+        opsubs: this.state.opsubs.filter(o => o.id !== v.id)
+      }, () => {
+        this.setState({
+          checked: !!this.state.showsubs.length
+        });
+      });
+    }
   }
 
   render() {
@@ -182,7 +226,7 @@ class AddEndpoint extends React.Component {
     if (this.props.hide) {
       className += ' hide';
     }
-    clearTimeout(t);
+    // clearTimeout(t);
 
     return (
       <div className={className}>
@@ -192,19 +236,20 @@ class AddEndpoint extends React.Component {
         </div>
         <div className="terminal">
           {
-            this.state.subs && this.state.subs.map((m, i) => {
+            this.state.showsubs && this.state.showsubs.map((m, i) => {
               return (
-                <div className="terminal-list" key={m.uuid}>
+                <div className="terminal-list" key={m.id}>
                   <span className="protocol">{
-                    m.protocol === 'email' ?
-                    m.protocol.replace(/(\w)/, function(v){return v.toUpperCase();})
-                    : m.protocol.toUpperCase()
+                    // m.protocol === 'email' ?
+                    // m.protocol.replace(/(\w)/, function(v){return v.toUpperCase();})
+                    // : m.protocol.toUpperCase()
+                    'Email'
                   }</span>
-                  <span className="endpoint">{m.endpoint}</span>
+                  <span className="endpoint">{m.subscriber.substr(7)}</span>
                   <span style={{width: '90px'}}>
-                    <span id={'time' + i} className="time">{this.times.bind(this, i)}</span>
-                    <span className={m.verified ? 'verified' : 'hide'}>{m.verified ? __.verified : ''}</span>
-                    <span id={'resend' + i} className={m.verified ? 'hide' : 'resend'} title={__.resend}>
+                    <span id={'time' + i} className="time"></span>
+                    <span className={m.confirmed ? 'verified' : 'hide'}>{m.confirmed ? __.verified : ''}</span>
+                    <span id={'resend' + i} className={m.confirmed ? 'hide' : 'resend'} title={__.resend}>
                       <i className="glyphicon icon-notification msg" onClick={this.times.bind(this, i, m)}/>
                     </span>
                   </span>
@@ -217,7 +262,7 @@ class AddEndpoint extends React.Component {
           <div className="endpoint-content">
             {this.renderData()}
             {this.renderInput()}
-            <Button value={__.send} onClick={this.onConfirm}/>
+            <Button value={__.add_} onClick={this.onAddSubscriber}/>
           </div>
         </div>
       </div>
@@ -226,7 +271,7 @@ class AddEndpoint extends React.Component {
 }
 
 function popEndpoint(config) {
-  return <AddEndpoint refs="endpoint" {...config} />;
+  return <AddEndpoint ref="endpoints" {...config} />;
 }
 
 module.exports = popEndpoint;

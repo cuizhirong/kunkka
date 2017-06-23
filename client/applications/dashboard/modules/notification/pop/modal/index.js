@@ -18,13 +18,14 @@ function pop(obj, parent, callback) {
     config.btn.disabled = false;
   } else if (obj && obj.constructor === Object) {
     config.title = ['update', 'notification'];
-    config.fields[0].type = 'input';
-    config.fields[0].value = obj.name;
+    config.fields[0].required = 'false';
+    config.fields[0].type = 'icon_label';
+    config.fields[0].text = obj.name;
+    config.fields[0].icon_type = 'notification';
     config.fields[1].value = obj.description;
     config.fields[1].hide = false;
-    config.fields[2].hide = false;
+    config.fields[2].hide = true;
     config.btn.value = 'update';
-    config.btn.type = 'update';
     config.btn.disabled = false;
   } else {
     config.title = ['create', 'notification'];
@@ -45,48 +46,44 @@ function pop(obj, parent, callback) {
       refs.endpoint.setState({
         renderer: addEndpoint,
         value: 'Email',
-        msg: obj && obj.constructor === Object ? obj.subs : [],
-        subs: [],
+        subs: obj && obj.constructor === Object ? obj.subscriptions : [],
         data: [{
           id: 1,
           name: 'Email'
-        }, {
-          id: 2,
-          name: 'SMS'
         }],
         phoneValue: '86',
-        uuid: obj && obj.constructor === Object ? obj.uuid : ''
+        renderValue: '',
+        name: obj && obj.constructor === Object ? obj.name : null
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
-        name: obj && obj.constructor === Array ? obj[0].name : refs.name.state.value
+      let ttl = Math.pow(2, 36);
+      let data = {
+        ttl: ttl
       };
-      var uuid = '';
-      if (!obj || obj.constructor === Object) {
-        data.description = refs.description.state.value;
-      }
       if (refs.add_endpoint.state.checked) {
-        data.sub_ids = [];
-        refs.endpoint.state.msg.forEach(sub => {
-          data.sub_ids.push(sub.uuid);
-        });
-        if (obj && obj.constructor === Array) {
-          obj[0].subs.forEach(sub => {
-            data.sub_ids.push(sub.uuid);
-          });
-        }
+        data.subcribers = refs.endpoint.refs.endpoints.state.opsubs;
       }
-      if (obj) {
-        uuid = obj.constructor === Array ? obj[0].uuid : obj.uuid;
-        request.updateNotify(data, uuid).then(res => {
+      if (obj && obj.constructor === Array) {
+        request.addSubscriptions(obj[0].name, data).then(res => {
+          callback && callback(res);
+          cb(true);
+        }).catch(error => {
+          cb(false, getErrorMessage(error));
+        });
+      } else if(obj && obj.constructor === Object) {
+        data.description = refs.description.state.value;
+        data.name = obj.name;
+        request.updateQueueWidthSubscriptions(data).then(res => {
           callback && callback(res);
           cb(true);
         }).catch(error => {
           cb(false, getErrorMessage(error));
         });
       } else {
-        request.addNotify(data).then(res => {
+        data.name = refs.name.state.value;
+        data.description = refs.description.state.value;
+        request.addQueueWidthSubscriptions(data).then(res => {
           callback && callback(res);
           cb(true);
         }).catch(error => {
@@ -104,56 +101,46 @@ function pop(obj, parent, callback) {
           break;
         case 'name':
           if (refs.add_endpoint.state.checked) {
-            if (refs.name.state.value) {
-              if (refs.endpoint.state.subs && refs.endpoint.state.subs.length !== 0) {
+            if(refs.endpoint.refs.endpoints.state.showsubs.length > 0) {
+              refs.btn.setState({
+                disabled: !refs.name.state.value
+              });
+            } else {
+              refs.btn.setState({
+                disabled: true
+              });
+            }
+          } else {
+            refs.btn.setState({
+              disabled: !refs.name.state.value
+            });
+          }
+          break;
+        case 'endpoint':
+          if(endpointChecked) {
+            if(obj && obj.constructor === Array) {
+              refs.btn.setState({
+                disabled: !state.checked
+              });
+            } else if(obj && obj.constructor === Object) {
+              refs.btn.setState({
+                disabled: false
+              });
+            } else {
+              if (refs.name.state.value !== '') {
                 refs.btn.setState({
-                  disabled: false
+                  disabled: !refs.endpoint.refs.endpoints.state.showsubs.length
                 });
               } else {
                 refs.btn.setState({
                   disabled: true
                 });
               }
-            } else {
-              refs.btn.setState({
-                disabled: true
-              });
             }
           } else {
-            if (refs.name.state.value) {
-              refs.btn.setState({
-                disabled: false
-              });
-            } else {
-              refs.btn.setState({
-                disabled: true
-              });
-            }
-          }
-          break;
-        case 'endpoint':
-          if (refs.add_endpoint.state.checked) {
-            if (state.subs && state.subs.length !== 0) {
-              if (refs.name.state.value !== '') {
-                refs.btn.setState({
-                  disabled: false
-                });
-              }
-            } else {
-              refs.btn.setState({
-                disabled: true
-              });
-            }
-          } else {
-            if (refs.name.state.value) {
-              refs.btn.setState({
-                disabled: false
-              });
-            } else {
-              refs.btn.setState({
-                disabled: true
-              });
-            }
+            refs.btn.setState({
+              disabled: !refs.name.state.value
+            });
           }
           break;
         default:
