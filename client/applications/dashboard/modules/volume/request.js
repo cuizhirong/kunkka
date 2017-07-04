@@ -172,7 +172,7 @@ module.exports = {
       data: data
     });
   },
-  getAlarmList(id) {
+  getAlarmList: function(id) {
     var alarm = [], rule = '';
     return storage.getList(['alarm']).then(function(data) {
       data.alarm.forEach(a => {
@@ -183,6 +183,28 @@ module.exports = {
         }
       });
       return alarm;
+    });
+  },
+  getTransferList: function() {
+    return fetch.get({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-transfer'
+    });
+  },
+  createTransfer: function(data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-transfer',
+      data: data
+    });
+  },
+  deleteTransfer: function(transferId) {
+    return fetch.delete({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-transfer/' + transferId
+    });
+  },
+  acceptTransfer: function(transferId, data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-transfer/' + transferId + '/accept',
+      data: data
     });
   }
 };

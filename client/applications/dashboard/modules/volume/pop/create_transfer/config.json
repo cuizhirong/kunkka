@@ -1,0 +1,26 @@
+{
+  "title": ["create_transfer"],
+  "fields": [{
+    "type": "input",
+    "field": "transfer_name",
+    "required": true
+  }, {
+    "type": "icon_label",
+    "field": "auth_key",
+    "hide": true
+  }, {
+    "type": "icon_label",
+    "field": "transfer_id",
+    "hide": true
+  }, {
+    "type": "tip",
+    "tip_type": "info",
+    "field": "create_transfer_tip",
+    "hide": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create",
+    "disabled": true
+  }
+}
