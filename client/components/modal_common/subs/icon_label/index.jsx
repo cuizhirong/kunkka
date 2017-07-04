@@ -5,12 +5,13 @@ class IconLabel extends React.Component {
     super(props);
 
     this.state = {
+      value: props.text,
       hide: !!props.hide
     };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.hide === nextState.hide) {
+    if (this.state.hide === nextState.hide && this.state.value === nextState.value) {
       return false;
     }
     return true;
@@ -41,7 +42,7 @@ class IconLabel extends React.Component {
           {
             props.icon_type && <i className={'glyphicon icon-' + props.icon_type}></i>
           }
-          {this.props.text}
+          {this.state.value}
         </div>
       </div>
     );
