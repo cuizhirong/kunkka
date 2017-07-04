@@ -19,6 +19,9 @@ var setReadWrite = require('./pop/set_read_write/index');
 var resizeVolume = require('./pop/resize/index');
 var notify = require('../../utils/notify');
 var createAlarm = require('../alarm/pop/create/index');
+var createTransfer = require('./pop/create_transfer');
+var deleteTransfer = require('./pop/delete_transfer');
+var acceptTransfer = require('./pop/accept_transfer');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -36,11 +39,18 @@ class Model extends React.Component {
     super(props);
 
     var enableAlarm = HALO.settings.enable_alarm;
-    if (!enableAlarm) {
+    if (enableAlarm) {
       let detail = config.table.detail.tabs;
-      delete detail[1];
-      delete detail[2];
+      detail.push({
+        name: ['console'],
+        key: 'console'
+      });
+      detail.push({
+        name: ['alarm'],
+        key: 'alarm'
+      });
     }
+
     this.state = {
       config: config
     };
@@ -241,6 +251,16 @@ class Model extends React.Component {
       case 'extd_capacity':
         resizeVolume(rows[0]);
         break;
+      case 'create_transfer':
+        createTransfer(rows[0], () => {
+          this.forceRefresh();
+        });
+        break;
+      case 'accept_transfer':
+        acceptTransfer(rows[0], () => {
+          this.forceRefresh();
+        });
+        break;
       default:
         break;
     }
@@ -268,37 +288,23 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     var len = rows.length;
-
-    for(let key in btns) {
-      switch (key) {
-        case 'create_snapshot':
-          btns[key].disabled = (len === 1 && (rows[0].status === 'available' || rows[0].status === 'in-use')) ? false : true;
-          break;
-        case 'dtch_instance':
-          btns[key].disabled = (len === 1 && rows[0].status === 'in-use') ? false : true;
-          break;
-        case 'attach_to_instance':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available' && !rows[0].attachments[0]) ? false : true;
-          break;
-        case 'extd_capacity':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available') ? false : true;
-          break;
-        case 'set_rd_only':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly !== 'True') ? false : true;
-          break;
-        case 'set_rd_wrt':
-          btns[key].disabled = (len === 1 && rows[0].status === 'available' && rows[0].metadata.readonly === 'True') ? false : true;
-          break;
-        case 'delete':
-          var hasAttach = rows.some((item) => {
-            return item.server ? true : false;
-          });
-          btns[key].disabled = (len > 0) && !hasAttach ? false : true;
-          break;
-        default:
-          break;
-      }
+    var isSingle = len === 1;
+    var single, singleStatus;
+    if (isSingle) {
+      single = rows[0];
+      singleStatus = single.status;
     }
+
+    btns.attach_to_instance.disabled = !(isSingle && singleStatus === 'available' && !single.attachments[0]);
+    btns.create_transfer.disabled = !(isSingle && singleStatus === 'available');
+    btns.create_snapshot.disabled = !(isSingle && (singleStatus === 'available' || singleStatus === 'in-use'));
+    btns.dtch_instance.disabled = !(isSingle && singleStatus === 'in-use');
+    btns.extd_capacity.disabled = !(isSingle && singleStatus === 'available');
+    btns.set_rd_only.disabled = !(isSingle && singleStatus === 'available' && single.metadata.readonly !== 'True');
+    btns.set_rd_wrt.disabled = !(isSingle && singleStatus === 'available' && single.metadata.readonly === 'True');
+
+    var hasAttach = rows.some((item) => item.server);
+    btns.delete.disabled = !(len > 0 && !hasAttach);
 
     return btns;
   }
@@ -307,6 +313,7 @@ class Model extends React.Component {
     var {rows} = data;
     var detail = refs.detail;
     var contents = detail.state.contents;
+    var isAsync = false;
 
     var isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -353,6 +360,52 @@ class Model extends React.Component {
                 }} />
             </div>
           );
+        }
+        break;
+      case 'transfer_info':
+        if (isAvailableView(rows)) {
+          detail.loading();
+          isAsync = true;
+
+          let volume = rows[0];
+          let volumeId = volume.id;
+
+          request.getTransferList().then((res) => {
+            const transfer = res.transfers.find((ele) => ele.volume_id === volumeId);
+
+            if (transfer) {
+              let transferInfos = this.getTransferInfo(transfer);
+
+              contents[tabKey] = (
+                <div>
+                  <BasicProps title={__.transfer_info}
+                    defaultUnfold={true}
+                    tabKey={'transfer_info'}
+                    items={transferInfos}
+                    rawItem={volume} />
+                  <div style={{ marginLeft: '20px' }}>
+                    <Button value={__.cancel_transfer} onClick={this.onDetailAction.bind(this, 'transfer_info', 'delete_transfer', {
+                      transfer: transfer,
+                      volume: volume
+                    })} />
+                  </div>
+                </div>
+              );
+            } else {
+              contents[tabKey] = (
+                <div className="no-data-desc">
+                  <p>{__.no_transfer_tip}</p>
+                </div>
+              );
+            }
+
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+
+          });
+
         }
         break;
       case 'console':
@@ -496,9 +549,11 @@ class Model extends React.Component {
         break;
     }
 
-    detail.setState({
-      contents: contents
-    });
+    if (!isAsync) {
+      detail.setState({
+        contents: contents
+      });
+    }
   }
 
   getAlarmItems(item) {
@@ -540,6 +595,18 @@ class Model extends React.Component {
     };
 
     return tableConfig;
+  }
+
+  getTransferInfo(transfer) {
+    var data = [{
+      title: __.transfer_id,
+      content: transfer.id
+    }, {
+      title: __.transfer_name,
+      content: transfer.name
+    }];
+
+    return data;
   }
 
   getBasicProps(item) {
@@ -665,6 +732,9 @@ class Model extends React.Component {
       case 'description':
         this.onDescriptionAction(actionType, data);
         break;
+      case 'transfer_info':
+        this.onTrasferAction(actionType, data);
+        break;
       default:
         break;
     }
@@ -707,6 +777,26 @@ class Model extends React.Component {
       default:
         break;
     }
+  }
+
+  onTrasferAction(actionType, data) {
+    switch(actionType) {
+      case 'delete_transfer':
+        deleteTransfer(data, () => {
+          this.forceRefresh();
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  forceRefresh() {
+    this.refresh({
+      tableLoading: true,
+      detailLoading: true,
+      detailRefresh: true
+    }, true);
   }
 
   render() {

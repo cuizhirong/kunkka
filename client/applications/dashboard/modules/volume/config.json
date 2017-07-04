@@ -42,6 +42,13 @@
           "title": ["set", "read_write"],
           "key": "set_rd_wrt",
           "disabled": true
+        }, {
+          "title": ["create_transfer"],
+          "key": "create_transfer",
+          "disabled": true
+        }, {
+          "title": ["accept_transfer"],
+          "key": "accept_transfer"
         }]
       }, {
         "items": [{
@@ -114,11 +121,8 @@
         "key": "description",
         "default": true
       }, {
-        "name": ["console"],
-        "key": "console"
-      }, {
-        "name": ["alarm"],
-        "key": "alarm"
+        "name": ["transfer_info"],
+        "key": "transfer_info"
       }]
     }
   }
