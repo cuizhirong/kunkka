@@ -91,6 +91,16 @@
               }]
             }, {
               "items": [{
+                "title": ["shelve", "instance"],
+                "key": "shelve",
+                "disabled": true
+              }, {
+                "title": ["unshelve", "instance"],
+                "key": "unshelve",
+                "disabled": true
+              }]
+            }, {
+              "items": [{
                 "title": ["rebuild", "instance"],
                 "key": "rebuild",
                 "disabled": true
