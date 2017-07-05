@@ -8,10 +8,11 @@ var Main = require('client/components/main/index');
 var DetailMinitable = require('client/components/detail_minitable/index');
 var RelatedSources = require('client/components/related_sources/index');
 var BasicProps = require('client/components/basic_props/index');
+var getTime = require('client/utils/time_unification');
 
 //pop modal
 var deleteModal = require('client/components/modal_delete/index');
-//var create = require('./pop/create/index');
+var checkStack = require('./pop/check_stack/index');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -19,8 +20,8 @@ var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
 var getStatusIcon = require('../../utils/status_icon');
-var getTime = require('client/utils/time_unification');
 var utils = require('../../utils/utils');
+var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -76,6 +77,11 @@ class Model extends React.Component {
   tableColRender(column) {
     column.map((col) => {
       switch (col.key) {
+        case 'update':
+          col.render = (cols, item, i) => {
+            return item.updated_time ? getTime(item.updated_time, true) : __.never;
+          };
+          break;
         default:
           break;
       }
@@ -87,28 +93,28 @@ class Model extends React.Component {
   }
 
   getTableData(forceUpdate, detailRefresh) {
-    request.getList(forceUpdate).then((res) => {
-      var _config = this.state.config;
+    //request.getList(forceUpdate).then((res) => {
+    var _config = this.state.config;
 
-      var table = _config.table;
-      table.data = res;
-      table.loading = false;
+    var table = _config.table;
+    table.data = [];
+    table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      /*var detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
         });
-      }
+      }*/
 
-      this.setState({
-        config: _config
-      }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
-        }
-      });
+    this.setState({
+      config: _config
+    }, () => {
+      /*if (detail && detailRefresh) {
+        detail.refresh();
+      }*/
     });
+    //});
   }
 
   onAction(field, actionType, refs, data) {
@@ -129,6 +135,7 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     var rows = data.rows;
+    var that = this;
     switch (key) {
       case 'create':
         //create();
@@ -137,13 +144,39 @@ class Model extends React.Component {
         deleteModal({
           __: __,
           action: 'delete',
-          type: 'image',
+          type: 'stack',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteImage(rows[0].id).then((res) => {
+            request.deleteStack(rows).then((res) => {
               cb(true);
+              that.refresh({
+                detailRefresh: true
+              }, true);
+            }).catch((error) => {
+              cb(false, getErrorMessage(error));
             });
           }
+        });
+        break;
+      case 'check':
+        checkStack({row: rows[0], type: 'check'}, null, () => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      case 'suspend':
+        checkStack({row: rows[0], type: 'suspend'}, null, () => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      case 'resume':
+        checkStack({row: rows[0], type: 'resume'}, null, () => {
+          that.refresh({
+            detailRefresh: true
+          }, true);
         });
         break;
       case 'refresh':
@@ -183,13 +216,21 @@ class Model extends React.Component {
     for (let key in btns) {
       switch (key) {
         case 'delete':
-          btns[key].disabled = rows.length >= 1 ? false : true;
+          btns[key].disabled = (rows.length >= 1 ) ? false : true;
+          break;
+        case 'check':
+          btns[key].disabled = (rows.length === 0) ? false : true;
+          break;
+        case 'suspend':
+          btns[key].disabled = (rows.length === 0) ? false : true;
+          break;
+        case 'resume':
+          btns[key].disabled = (rows.length === 0) ? false : true;
           break;
         default:
           break;
       }
     }
-
     return btns;
   }
 
@@ -533,7 +574,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-image" style={this.props.style}>
+      <div className="halo-module-heat-list" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

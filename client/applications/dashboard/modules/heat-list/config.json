@@ -11,10 +11,15 @@
     "key": "template-version"
   }],
   "btns": [{
-    "value": ["create"],
+    "value": ["create","stack"],
     "key": "create",
     "type": "create",
     "icon": "create",
+    "disabled": false
+  }, {
+    "value": ["preview","stack"],
+    "key": "preview",
+    "icon": "eye",
     "disabled": false
   }, {
     "value": ["more"],
@@ -32,7 +37,19 @@
           "key": "create_volume",
           "disabled": true
         }, {
-          "title": ["delete"],
+          "title": ["examine","stack"],
+          "key": "check",
+          "disabled": true
+        }, {
+          "title": ["suspend","stack"],
+          "key": "suspend",
+          "disabled": true
+        }, {
+          "title": ["resume","stack"],
+          "key": "resume",
+          "disabled": true
+        }, {
+          "title": ["delete","stack"],
           "key": "delete",
           "disabled": true,
           "danger": true

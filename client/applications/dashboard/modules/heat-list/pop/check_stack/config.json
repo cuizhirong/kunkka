@@ -1,0 +1,11 @@
+{
+  "title": ["examine","stack"],
+  "fields": [{
+    "type": "text",
+    "field": "set_check_stack"
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}
