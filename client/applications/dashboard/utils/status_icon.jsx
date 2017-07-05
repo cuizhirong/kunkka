@@ -51,6 +51,10 @@ module.exports = (str, option) => {
         type.icon = 'paused';
         type.status = 'paused';
         break;
+      case 'shelved_offloaded':
+        type.icon = 'warning';
+        type.status = 'paused';
+        break;
       case 'shutoff':
         type.icon = 'shutdown';
         type.status = 'shutoff';

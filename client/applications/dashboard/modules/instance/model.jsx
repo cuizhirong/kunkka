@@ -435,12 +435,16 @@ class Model extends React.Component {
       case 'lock':
       case 'unlock':
       case 'unrescue':
+      case 'shelve':
+      case 'unshelve':
         const action = key;
         const nextStatus = {
           pause: 'pausing',
           unpause: 'unpausing',
           suspend: 'suspending',
-          resume: 'resuming'
+          resume: 'resuming',
+          shelve: 'shelving',
+          unshelve: 'unshelving'
         };
 
         changeAction({
@@ -545,6 +549,12 @@ class Model extends React.Component {
           break;
         case 'rebuild':
           btns[key].disabled = !(isSingle && !(!rows[0].image && rows[0].volume.length > 0));
+          break;
+        case 'shelve':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() === 'shelved_offloaded'));
+          break;
+        case 'unshelve':
+          btns[key].disabled = !((rows.length > 0) && !rows.some((ele) => ele.status.toLowerCase() !== 'shelved_offloaded'));
           break;
         default:
           break;
