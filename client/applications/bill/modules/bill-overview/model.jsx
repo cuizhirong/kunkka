@@ -84,11 +84,11 @@ class Model extends React.Component {
       let data = res[0].accounts[0];
       this.setState({
         ready: true,
-        balance: parseFloat(data.balance).toFixed(2),
-        consumption: parseFloat(data.consumption).toFixed(2),
+        balance: parseFloat(data.balance),
+        consumption: parseFloat(data.consumption),
         remaining_day: data.remaining_day,
-        price_per_day: parseFloat(data.price_per_day).toFixed(2),
-        price_per_hour: (parseFloat(data.price_per_day) / 24).toFixed(2),
+        price_per_day: parseFloat(data.price_per_day),
+        price_per_hour: (parseFloat(data.price_per_day) / 24),
         data: res[1]
       });
     });
