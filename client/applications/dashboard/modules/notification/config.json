@@ -31,7 +31,7 @@
   },
   "table": {
     "checkbox": true,
-    "dataKey": "id",
+    "dataKey": "name",
     "limit": 10,
     "loading": true,
     "column": [{
@@ -47,16 +47,12 @@
       "key": "description"
     }, {
       "title": ["total_count"],
-      "key": "total_count"
+      "key": "total_count",
+      "dataIndex": "total_count"
     }, {
       "title": ["verified_count"],
       "dataIndex": "verified_count",
       "key": "verified_count"
-    }, {
-      "title": ["create", "time"],
-      "dataIndex": "created_at",
-      "type": "time",
-      "key": "created_at"
     }],
     "data": [],
     "detail": {

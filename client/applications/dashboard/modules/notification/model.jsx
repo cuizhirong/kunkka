@@ -12,7 +12,7 @@ var config = require('./config.json');
 var request = require('./request');
 var router = require('client/utils/router');
 var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
+//var notify = require('client/applications/dashboard/utils/notify');
 var getStatusIcon = require('../../utils/status_icon');
 var getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
@@ -72,11 +72,6 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch(column.key) {
-        case 'total_count':
-          column.render = (col, item, i) => {
-            return parseInt(item.verifing_count, 10) + parseInt(item.verified_count, 10);
-          };
-          break;
         default:
           break;
       }
@@ -205,7 +200,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch(key) {
         case 'update':
-          btns[key].disabled = (rows.length === 0) ? false : true;
+          btns[key].disabled = (rows.length >= 1) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length >= 1) ? false : true;
@@ -252,20 +247,6 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     var that = this;
     switch(actionType) {
-      case 'edit_name':
-        var {rawItem, newName} = data;
-        request.editNotifyName(rawItem, newName).then((res) => {
-          notify({
-            resource_type: 'notification',
-            stage: 'end',
-            action: 'modify',
-            resource_id: rawItem.id
-          });
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
-        break;
       case 'add_endpoint':
         modal([data.rawItem], null, () => {
           that.refresh({
@@ -275,7 +256,7 @@ class Model extends React.Component {
         });
         break;
       case 'rmv_endpoint':
-        request.deleteSub(data.childItem.uuid, data.rawItem.uuid).then(res => {
+        request.deleteSub(data.childItem.source, data.childItem.id).then(res => {
           that.refresh({
             clearState: true,
             detailRefresh: true

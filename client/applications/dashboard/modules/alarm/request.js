@@ -73,11 +73,11 @@ module.exports = {
   },
   getNofitications: function(forced) {
     return storage.getList(['notification'], forced).then(function(data) {
-      let notifications = data.notification.map((ele) => {
+      let notifications = data.notification ? data.notification.map((ele) => {
         let newEle = ele;
         ele.id = ele.uuid;
         return newEle;
-      });
+      }) : [];
 
       return notifications;
     });

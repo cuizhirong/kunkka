@@ -7,12 +7,5 @@ module.exports = {
     }).then(function(data) {
       return data;
     });
-  },
-  getNotificationList: function() {
-    return fetch.get({
-      url: '/proxy/kiki/v1/topics'
-    }).then(function(data) {
-      return data.topics;
-    });
   }
 };

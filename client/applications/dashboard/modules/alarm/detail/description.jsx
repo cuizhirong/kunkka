@@ -72,28 +72,29 @@ module.exports = {
   },
 
   getNotificationId: function(url) {
-    return url.split('/v1/topics/')[1].split('/alarm')[0];
+    return url.split('queue_name=')[1].split('&project_id')[0];
   },
 
-  removeNotification: function({item: alarm, alarmType, id: notficationId, cb: callback, name: notficationName}) {
+  removeNotification: function({item: alarm, alarmType, cb: callback, name: notficationName}) {
     let that = this;
     deleteModal({
       __: __,
       action: 'delete',
       type: 'notification_list',
       data: [{
-        id: notficationId,
+        id: notficationName,
         name: notficationName
       }],
       iconType: 'notification',
       onDelete: function(_data, cb) {
         let index = -1;
         let actions = alarm[alarmType + '_actions'];
-        actions.some((url, i) => that.getNotificationId(url) === notficationId ? (index = i, true) : false);
+        actions.some((url, i) => that.getNotificationId(url) === notficationName ? (index = i, true) : false);
         if (index > -1) {
           actions.splice(index, 1);
         }
-
+        delete alarm.status;
+        delete alarm.gnocchi_resources_threshold_rule.resource_name;
         request.updateAlarm(alarm.alarm_id, alarm).then((res) => {
           cb && cb(true);
           callback && callback();
@@ -104,22 +105,16 @@ module.exports = {
 
   getNotificationConfig: function(item, notifications, cb) {
 
-    function findNotificationName(id) {
-      let n = notifications.find((ele) => ele.id === id);
-      return n ? n.name : id.slice(0, 8);
-    }
-
     let that = this;
     let countId = 0;
-    function getRow(alarmType, trigger, id) {
-      let name = findNotificationName(id);
+    function getRow(alarmType, trigger, name) {
       return {
         id: countId++,
         type: alarmType,
         trigger: trigger,
         trigger_behavior: __.alarm_send,
         notification_list: name,
-        operation: <i className="glyphicon icon-delete" onClick={that.removeNotification.bind(that, {item, alarmType, id, cb, name})} />
+        operation: <i className="glyphicon icon-delete" onClick={that.removeNotification.bind(that, {item, alarmType, cb, name})} />
       };
     }
 

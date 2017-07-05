@@ -4,8 +4,14 @@ var constant = require('./pop/create/constant');
 
 module.exports = {
 
+  getISOTime: function(number) {
+    var date = new Date();
+    date.setDate(date.getDate() + number);
+    return date.toISOString().substr(0, 16) + 'Z';
+  },
+
   getNotificationIdByUrl: function(url) {
-    return url.split('/v1/topics/')[1].split('/alarm')[0];
+    return url.split('queue_name=')[1].split('&project_id')[0];
   },
 
   getComparisionName: function(comparision) {

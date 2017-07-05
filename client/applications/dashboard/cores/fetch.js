@@ -18,11 +18,12 @@ var fetch = {};
     var opt = Object.assign({
       dataType: 'json',
       contentType: 'application/json',
-      headers: {
-        REGION: HALO.current_region
-      }
+      headers: {}
     }, options);
 
+    if(!options.headers || !options.headers.REGION) {
+      opt.headers.REGION = HALO.current_region;
+    }
     return request[m](opt).catch(errHandler);
   };
 });

@@ -26,24 +26,16 @@ class DetailIndex extends React.Component {
   getBasicPropsItems(item) {
     var items = [{
       title: __.name,
-      type: 'editable',
       content: item.name
-    }, {
-      title: __.uuid,
-      content: item.uuid
     }, {
       title: __.description,
       content: item.description
     }, {
       title: __.total_count,
-      content: parseInt(item.verifing_count, 10) + parseInt(item.verified_count, 10)
+      content: item.total_count
     }, {
       title: __.verified_count,
       content: <span style={{color: '#00afc8'}}>{item.verified_count}</span>
-    }, {
-      title: __.create + __.time,
-      type: 'time',
-      content: item.created_at
     }];
 
     return items;
@@ -51,7 +43,7 @@ class DetailIndex extends React.Component {
 
   times(i, sub) {
     this.countDown(i, this.wait);
-    request.resendVerify(sub.uuid).then(() => {
+    request.resendVerify(sub).then(() => {
     }).catch(error => {
       getErrorMessage(error);
     });
@@ -76,17 +68,15 @@ class DetailIndex extends React.Component {
 
   getDetailTableConfig(item) {
     var dataContent = [];
-    item.subs.forEach((element, index) => {
+    item.subscriptions.forEach((element, index) => {
       var dataObj = {
         id: index + 1,
-        category: element.protocol === 'email' ?
-          element.protocol.replace(/(\w)/, function(v){return v.toUpperCase();})
-          : element.protocol.toUpperCase(),
-        endpoint: element.endpoint,
+        category: 'Email',
+        endpoint: element.subscriber.substr(7),
         status: <div>
             <span id={'time_detail' + index} className="time">{this.times.bind(this, index)}</span>
-            <span id="status" style={{display: 'flex'}}>{element.verified ? <span style={{color: '#1eb9a5', flex: '1'}}>{__.verified}</span> : <span style={{flex: '1'}}>{__.unverified}</span>}
-            {element.verified ? '' : <span id={'resend_detail' + index} className={element.verified ? 'hide' : 'resend'} title={__.resend}><i className="glyphicon icon-notification msg" onClick={this.times.bind(this, index, element)} /></span>}</span>
+            <span id="status" style={{display: 'flex'}}>{element.confirmed ? <span style={{color: '#1eb9a5', flex: '1'}}>{__.verified}</span> : <span style={{flex: '1'}}>{__.unverified}</span>}
+            {element.confirmed ? '' : <span id={'resend_detail' + index} className={element.confirmed ? 'hide' : 'resend'} title={__.resend}><i className="glyphicon icon-notification msg" onClick={this.times.bind(this, index, element)} /></span>}</span>
             <span id="timer" className="hide">{__.verifying}</span>
           </div>,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_endpoint', {
