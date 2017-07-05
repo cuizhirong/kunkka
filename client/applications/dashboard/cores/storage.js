@@ -29,9 +29,6 @@ var ikepolicy = require('../modules/ike-policy/cache');
 var ipsecpolicy = require('../modules/ipsec-policy/cache');
 var notification = require('../modules/notification/cache');
 var alarm = require('../modules/alarm/cache');
-var heat = require('../modules/heat-list/cache');
-var resourcetype = require('../modules/resource-type/cache');
-var templateversion = require('../modules/template-version/cache');
 
 var map = {
   network: ['subnet'],
@@ -91,6 +88,6 @@ Storage.prototype = {
 
 Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup,
   snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member, vpnservice, ipsec, ikepolicy,
-  ipsecpolicy, notification, alarm, heat, resourcetype, templateversion);
+  ipsecpolicy, notification, alarm);
 
 module.exports = new Storage();
