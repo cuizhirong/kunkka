@@ -1,0 +1,12 @@
+{
+  "title": ["edit", "volume_type_extra_specs"],
+  "fields": [{
+    "type": "key_value_table",
+    "field": "specs",
+    "hasOperation": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "confirm"
+  }
+}

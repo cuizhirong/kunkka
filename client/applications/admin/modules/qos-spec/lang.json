@@ -1,0 +1,10 @@
+{
+  "en": {
+    "consumer": "Consumer",
+    "specs": "Specs"
+  },
+  "zh-CN": {
+    "consumer": "消费者",
+    "specs": "规格"
+  }
+}

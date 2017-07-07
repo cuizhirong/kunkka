@@ -3,6 +3,12 @@
     "name": ["volume"],
     "key": "volume",
     "default": true
+  }, {
+    "name": ["volume-type"],
+    "key": "volume-type"
+  }, {
+    "name": ["qos-spec"],
+    "key": "qos-spec"
   }],
   "btns": [{
     "value": ["dissociate", "related"],

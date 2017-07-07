@@ -1,0 +1,66 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume"
+  }, {
+    "name": ["volume-type"],
+    "key": "volume-type"
+  }, {
+    "name": ["qos-spec"],
+    "key": "qos-spec",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "qos-spec"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["edit", "consumer"],
+    "key": "edit_consumer",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["edit", "specs"],
+    "key": "edit_specs",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["consumer"],
+      "key": "consumer",
+      "dataIndex": "consumer"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

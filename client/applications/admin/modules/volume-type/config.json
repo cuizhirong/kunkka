@@ -1,0 +1,83 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume"
+  }, {
+    "name": ["volume-type"],
+    "key": "volume-type",
+    "default": true
+  }, {
+    "name": ["qos-spec"],
+    "key": "qos-spec"
+  }],
+  "btns": [{
+    "value": ["create", "type"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["create_encryption"],
+    "key": "create_encryption",
+    "icon": "create",
+    "type": "create",
+    "disabled": true
+  }, {
+    "value": ["edit", "volume_type_extra_specs"],
+    "key": "edit_extra_specs",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["edit", "type"],
+          "key": "edit_type",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "danger": true,
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["associate_qos_spec"],
+      "key": "associate_qos_spec"
+    }, {
+      "title": ["is_public"],
+      "dataIndex": "is_public",
+      "key": "is_public"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

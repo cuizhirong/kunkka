@@ -1,0 +1,21 @@
+{
+  "title": ["create", "type"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "description"
+  }, {
+    "type": "checkbox",
+    "field": "volume_type_public",
+    "checked": true,
+    "has_label": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

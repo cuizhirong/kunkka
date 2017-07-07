@@ -1,0 +1,11 @@
+{
+  "title": ["edit", "consumer"],
+  "fields": [{
+    "type": "select",
+    "field": "consumer"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "confirm"
+  }
+}

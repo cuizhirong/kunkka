@@ -1,0 +1,33 @@
+{
+  "title": ["create", "encryption"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "name",
+    "icon_type": "volume"
+  }, {
+    "type": "input",
+    "field": "provider",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "control_location",
+    "data": [{
+      "id": "front-end",
+      "name": "front-end"
+    }, {
+      "id": "back-end",
+      "name": "back-end"
+    }]
+  }, {
+    "type": "input",
+    "field": "cipher"
+  }, {
+    "type": "input",
+    "field": "key_size"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "confirm",
+    "disabled": true
+  }
+}
