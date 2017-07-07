@@ -164,7 +164,7 @@ class Module extends React.Component {
     var props = this.props;
 
     return (
-      <div className={'halo-module' + this.className} style={props.style}>
+      <div className={'halo-module ' + this.className} style={props.style}>
         <Main
           ref="dashboard"
           visible={props.style.display === 'none' ? false : true}
@@ -174,7 +174,8 @@ class Module extends React.Component {
           config={this.state.config}
           params={props.params}
           getStatusIcon={this.getStatusIcon}
-          __={this.lang} />
+          __={this.lang}
+        />
       </div>
     );
   }

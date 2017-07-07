@@ -1,4 +1,5 @@
 require('./style/index.less');
+require('./style/model.less');
 
 var React = require('react');
 var {InputSearch, Pagination, Tab, Table} = require('client/uskin/index');

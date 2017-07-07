@@ -22,6 +22,7 @@ var DisplayBox = require('./subs/display_box/index');
 var DataList = require('./subs/data_list/index');
 var Charge = require('./subs/charge/index');
 var Adapter = require('./subs/adapter/index');
+var KeyValueTable = require('./subs/key_value_table/index');
 
 class ModalBase extends React.Component {
 
@@ -71,7 +72,8 @@ class ModalBase extends React.Component {
         'display_box': DisplayBox,
         'data_list': DataList,
         'charge': Charge,
-        'adapter': Adapter
+        'adapter': Adapter,
+        'key_value_table': KeyValueTable
       };
 
       var Sub = subComs[m.type];

@@ -39,6 +39,8 @@
 @psw_eye_color: @color_grey_700;
 @psw_eye_selected_color: @color_grey_800;
 
+@key_value_table_remove_color: @color_delete;
+
 .halo-com-modal-common {
   line-height: 18px;
   &.modal-bd {
@@ -532,6 +534,35 @@
             width: 50%;
             padding: 0 6px 0 1px;
             box-sizing: border-box;
+          }
+        }
+      }
+    }
+
+    &.key-value-table {
+      flex-direction: column;
+      align-items: initial;
+      .input-area {
+        display: flex;
+        > div {
+          flex: 1;
+          display: flex;
+          margin-right: 10px;
+          > * {
+            width: 100%;
+          }
+        }
+        margin-bottom: 10px;
+      }
+      .table-content {
+        width: 100%;
+        .table-body {
+          height: 220px;
+          i.remove-operation {
+            font-size: 16px;
+            font-weight: bold;
+            color: @key_value_table_remove_color;
+            cursor: pointer;
           }
         }
       }
