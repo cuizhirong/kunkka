@@ -8,12 +8,13 @@ var shape = require('./utils/shape');
 var CanvasEvent = require('./utils/event');
 
 var resources = [
-    '/static/assets/icon-public-network.png',
-    '/static/assets/icon-network.png',
-    '/static/assets/icon-floatingip.png',
-    '/static/assets/icon-routers.png',
-    '/static/assets/icon-status.png',
-    '/static/assets/icon_images.png'
+    '/static/assets/dashboard/icon-public-network.png',
+    '/static/assets/dashboard/icon-network.png',
+    '/static/assets/dashboard/icon-floatingip.png',
+    '/static/assets/dashboard/icon-routers.png',
+    '/static/assets/dashboard/icon-status.png',
+    '/static/assets/dashboard/icon_images.png',
+    '/static/assets/dashboard/icon-lb.png'
   ],
   imageMap = {
     'undefined': [0, 0],
@@ -53,6 +54,7 @@ var resourceReady = false,
   networkPos = [],
   routerPos = [],
   instancePos = [],
+  loadbalancerPos = [],
   placeholder = []; // Calc the used positions of instances
 
 class Topology {
@@ -76,6 +78,8 @@ class Topology {
     networkPos = [];
     routerPos = [];
     instancePos = [];
+    loadbalancerPos = [];
+
     var networks = data.network;
 
     // process router
@@ -170,9 +174,67 @@ class Topology {
       }
     });
 
-    // console.log(tmpInstancePos);
-    // console.log(routerPos);
-    // console.log(instancePos);
+    // loadbalancer
+    var tmpLoadbalancerPos = [];
+    data.loadbalancer.forEach((l, i) => {
+      tmpLoadbalancerPos[i] = {
+        name: l.name || '(' + l.id.slice(0, 8) + ')',
+        id: l.id,
+        status: l.provisioning_status,
+        vip_address: l.vip_address,
+        vip_subnet_id: l.vip_subnet_id,
+        floatingip: l.floatingip,
+        subnets: []
+      };
+
+      networks.some((network, j) => {
+        return network.subnets.some((s, m) => {
+          if (s.id === l.vip_subnet_id) {
+            tmpLoadbalancerPos[i].subnets.push({
+              networkLayer: j,
+              subnetLayer: m
+            });
+            return true;
+          }
+          return false;
+        });
+      });
+
+      tmpLoadbalancerPos[i].layer = tmpLoadbalancerPos[i].subnets[0].networkLayer;
+    });
+
+    tmpLoadbalancerPos.forEach((loadbalancer, i) => {
+      var subnets = loadbalancer.subnets;
+      loadbalancer.subnets = subnets.sort((a, b) => {
+        return a.networkLayer - b.networkLayer;
+      });
+      loadbalancer.layer = subnets[0].networkLayer;
+    });
+
+    tmpLoadbalancerPos.sort((a, b) => {
+      return a.layer - b.layer;
+    });
+
+    var cursor2;
+    tmpLoadbalancerPos.forEach((loadbalancer) => {
+      var len = loadbalancerPos.length;
+      if (loadbalancer.layer === cursor2) {
+        loadbalancerPos[len - 1].loadbalancers.push(loadbalancer);
+      } else {
+        cursor2 = loadbalancer.layer;
+        loadbalancerPos[len] = {
+          layer: cursor2,
+          loadbalancers: [loadbalancer]
+        };
+      }
+    });
+
+    // console.log('tmpLb', tmpLoadbalancerPos);
+
+    // console.log('tmpInstancePos', tmpInstancePos);
+    // console.log('routerPos', routerPos);
+    // console.log('instancePos', instancePos);
+    // console.log('loadbalancerPos', loadbalancerPos);
     return data;
   }
 
@@ -188,7 +250,8 @@ class Topology {
         x: x,
         w: w,
         name: data.name || ('(' + data.id.slice(0, 8) + ')'),
-        id: data.id
+        id: data.id,
+        maxWidth: 0 // instances' width
       };
 
       if (i === 0) {
@@ -275,7 +338,8 @@ class Topology {
 
     instancePos.forEach((instance) => {
       var layer = instance.layer,
-        instances = instance.instances;
+        instances = instance.instances,
+        mw = 0;
 
       if (layer === -1) {
         instances.forEach((ins, i) => {
@@ -291,7 +355,7 @@ class Topology {
         });
         return;
       }
-      instances.forEach((ins) => {
+      instances.forEach((ins, insindex) => {
         // 1.先计算每一个instance的实际宽度
         let up = 0,
           down = 0;
@@ -400,7 +464,14 @@ class Topology {
             }
           }
         });
+
+        if(insindex + 1 === instances.length) {
+          mw = ins.x + ins.w + 10;
+        }
       });
+      if(layer !== -1) {
+        networkPos[layer].maxWidth = mw;
+      }
 
       var lastEle = instances[instances.length - 1];
       if (lastEle.x + lastEle.w > maxWidth) {
@@ -408,8 +479,26 @@ class Topology {
       }
     });
 
+    loadbalancerPos.forEach((lo, loi) => {
+      let layer = lo.layer;
+      let _lo = networkPos[layer];
+      lo.loadbalancers.forEach((_lb, i) => {
+        _lb.w = 78;
+        _lb.y = _lo.h + _lo.y + 51.5;
+        _lb.h = 58;
+        _lb.x = _lo.maxWidth + i * (10 + 78) + (_lo.maxWidth > 0 ? 0 : 0.5);
+        // var start = (router.w - 12 * len + 10) / 2 + router.x;
+        _lb.subnets.forEach((subnet, j) => {
+          subnet.x = _lb.w / 2 + _lb.x + j * 12 - 0.5;
+          subnet.y = _lb.y + _lb.h;
+        });
+      });
+    });
+    // console.log('calcu', loadbalancerPos);
+
     // console.log('placeholder: ', placeholder);
     // console.log('instancePos: ', instancePos);
+    // console.log('networkPos', networkPos);
     if (networkPos.length === 0) {
       return 260;
     }
@@ -514,6 +603,26 @@ class Topology {
           });
         });
 
+        // 画负载均衡和子网的连线
+        loadbalancerPos.forEach((loadbalancer) => {
+          let layer = loadbalancer.layer;
+          loadbalancer.loadbalancers.forEach((_loadbalancer) => {
+            _loadbalancer.subnets.forEach((s) => {
+              if (i === s.networkLayer && j === s.subnetLayer) {
+                if (s.networkLayer === layer) {
+                  // 画上半部分link
+                  ctx.fillStyle = subnetColor;
+                  ctx.fillRect(offsetX + s.x, subnet.y + 20, 2, _loadbalancer.y - subnet.y - 20);
+                } else {
+                  // 画下半部分link
+                  ctx.fillStyle = subnetColor;
+                  ctx.fillRect(offsetX + s.x, _loadbalancer.y + 58, 2, subnet.y - _loadbalancer.y - 58);
+                }
+              }
+            });
+          });
+        });
+
         event.bind({
           left: subnet.x,
           top: subnet.y,
@@ -559,6 +668,37 @@ class Topology {
     });
 
     // draw link dots
+
+    // draw loadbalancer
+    loadbalancerPos.forEach((loadbalancer) => {
+      loadbalancer.loadbalancers.forEach((_loadbalancer) => {
+        let _x = _loadbalancer.x + offsetX;
+        shape.roundRect(ctx, _x, _loadbalancer.y, _loadbalancer.w, _loadbalancer.h, 2, borderColor, true);
+        ctx.drawImage(imageList[6], _x + _loadbalancer.w / 2 - 13.5, _loadbalancer.y + 7.5, 26, 26);
+        shape.text(ctx, _loadbalancer.name, _x + _loadbalancer.w / 2, _loadbalancer.y + 45, textColor, 'center', _loadbalancer.w);
+        // DRAW STATUS
+        let statusPos = statusMap[_loadbalancer.status];
+        if (!statusPos) {
+          statusPos = statusMap.OTHER;
+        }
+        ctx.drawImage(imageList[4], statusPos[0], statusPos[1],
+          30, 30, _x + _loadbalancer.w - 18.5, _loadbalancer.y + 3.5, 15, 15);
+        // DRAW fIP
+        if (_loadbalancer.floatingip) {
+          ctx.drawImage(imageList[2], _x + 3.5, _loadbalancer.y + 3.5, 16, 16);
+        }
+        (function(n) {
+          event.bind({
+            left: _x,
+            top: n.y,
+            width: n.w,
+            height: n.h
+          }, 0, function() {
+            routerUtil.pushState('/dashboard/loadbalancer/' + n.id);
+          });
+        })(_loadbalancer);
+      });
+    });
 
   }
 
