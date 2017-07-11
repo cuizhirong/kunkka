@@ -8,12 +8,13 @@ const readline = require('readline');
 const chalk = require('chalk');
 const config = require('../../config');
 
+let branch = process.argv[2] || 'master';
 const applications = config.applications;
 applications.push({
   'project': 'halo',
   'name': 'halo',
   'branch': {
-    'dev': 'master'
+    'dev': branch
   },
   'directory': '../../'
 });
@@ -90,15 +91,17 @@ function updateTag(apps) {
       rl.close();
       return;
     }
+    let gitCheckOut = execSync(`git checkout ${branch}`, {cwd: appDir}).toString();
+    console.log(`git checkout to ${branch}: ${gitCheckOut}`);
     console.log(chalk.green.bold(`${project} git fetch & rebase`));
-    let gitPull = execSync('git fetch origin && git rebase origin/master', {cwd: appDir}).toString();
+    let gitPull = execSync(`git fetch origin && git rebase origin/${branch}`, {cwd: appDir}).toString();
     console.log(`${project} ${gitPull}`);
     let gitDescribe = execSync('git describe', {cwd: appDir}).toString();
     if (/-g/.test(gitDescribe.toString())) {
       let currentCommitId = execSync(`git rev-parse head`, {cwd: appDir}).toString();
-      let remoteCommitId = execSync('git ls-remote origin master', {cwd: appDir}).toString();
+      let remoteCommitId = execSync(`git ls-remote origin ${branch}`, {cwd: appDir}).toString();
       if (!remoteCommitId.includes(currentCommitId.replace(/\r?\n|\r/gm, ''))) {
-        console.log(`${project} latest commit in your local work space is different with the remote master. Please commit your change first.`);
+        console.log(`${project} latest commit in your local work space is different with the remote ${branch}. Please commit your change first.`);
         rl.close();
         return;
       }
