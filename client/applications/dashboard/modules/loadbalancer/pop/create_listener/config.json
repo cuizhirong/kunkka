@@ -28,7 +28,7 @@
     "max": 10000,
     "step": 10000,
     "value": 10000,
-    "unit": "GB",
+    "unit": "",
     "isHideInput": true
   }, {
     "type": "charge",
