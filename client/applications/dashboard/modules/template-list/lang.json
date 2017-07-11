@@ -1,0 +1,20 @@
+{
+  "en": {
+    "bytes": "Bytes",
+    "content_type": "Content Type",
+    "download": "Download",
+    "hash": "Hash",
+    "last_modified": "Last Modified Time",
+    "template-list": "Template List",
+    "upload": "Upload"
+  },
+  "zh-CN": {
+    "bytes": "字节",
+    "content_type": "内容类型",
+    "download": "下载",
+    "hash": "哈希值",
+    "last_modified": "修改时间",
+    "template-list": "模板列表",
+    "upload": "上传"
+  }
+}

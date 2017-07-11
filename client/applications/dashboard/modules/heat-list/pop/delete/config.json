@@ -1,0 +1,18 @@
+{
+  "title": ["delete", "stack"],
+  "fields": [{
+    "type": "data_list",
+    "field": "heatlist",
+    "icon": "heatlist",
+    "hasStatus": true
+  }, {
+    "type": "checkbox",
+    "field": "delete_heat_list_tip",
+    "hide": true
+  }],
+  "btn": {
+    "value": "delete",
+    "type": "delete",
+    "disabled": true
+  }
+}

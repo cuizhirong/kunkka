@@ -40,6 +40,14 @@
       "alarm",
       "notification"
     ]
+  }, {
+    "title": "orchestration",
+    "items": [
+      "heat-list",
+      "template-resource",
+      "template-version",
+      "template-list"
+    ]
   }],
   "default_module": "overview",
   "languages": [
@@ -52,6 +60,12 @@
   }, {
     "key": "resource-pool",
     "link": "loadbalancer"
+  }, {
+    "key": "template-version",
+    "link": "heat-list"
+  }, {
+    "key": "template-resource",
+    "link": "heat-list"
   }],
   "hidden": [
     "ike-policy",

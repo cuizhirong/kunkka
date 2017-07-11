@@ -104,7 +104,8 @@
     "unshelve": "Unshelve ",
     "unshelving": "Unshelving ",
     "user_id": "User Id",
-    "user_name": "User Name"
+    "user_name": "User Name",
+    "resize_instance": "Change will lead to shut off the instance, potentially affecting or interrupting instance resources, please be careful to operate"
   },
   "zh-CN": {
     "account": "{0} 元",
@@ -211,6 +212,7 @@
     "unshelve": "取消搁置",
     "unshelving": "取消搁置中",
     "user_id": "用户ID",
-    "user_name": "用户名"
+    "user_name": "用户名",
+    "resize_instance": "更改配置会导致云主机关闭，有可能影响或中断云主机资源，请谨慎操作"
   }
 }

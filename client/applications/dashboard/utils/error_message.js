@@ -13,6 +13,8 @@ function getErrorMessage(error) {
         errorMessage = response.overLimit.message;
       } else if (response.msg) {
         errorMessage = response.msg;
+      } else if (response.error && response.error.constructor === Object) {
+        errorMessage = response.error.message;
       } else if (response.error) {
         errorMessage = response.error;
       } else if (response.error_message) {

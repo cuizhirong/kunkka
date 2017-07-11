@@ -1,0 +1,40 @@
+{
+  "tabs": [{
+    "name": ["heat-list"],
+    "key": "heat-list"
+  }, {
+    "name": ["resource", "type"],
+    "key": "template-resource",
+    "default": true
+  }, {
+    "name": ["template", "version"],
+    "key": "template-version"
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "type": true
+    }
+  },
+  "table": {
+    "dataKey": "type",
+    "loading": true,
+    "column": [{
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type",
+      "type": "captain"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

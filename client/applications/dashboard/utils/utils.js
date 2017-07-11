@@ -47,12 +47,16 @@ module.exports = {
     switch(resourceType.toLowerCase()) {
       case 'net':
         return 'network';
-      case 'subnet':
-        return 'subnet';
+      case 'floatingip':
+        return 'floating-ip';
       case 'server':
         return 'instance';
+      case 'container':
+        return 'template-list';
+      case 'securitygroup':
+        return 'security-group';
       default:
-        break;
+        return resourceType.toLowerCase();
     }
   }
 };

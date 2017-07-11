@@ -1,0 +1,15 @@
+{
+  "title": ["upload"],
+  "fields": [{
+    "type": "input",
+    "field": "name"
+  }, {
+    "type": "adapter",
+    "field": "upload",
+    "required": true
+  }],
+  "btn": {
+    "value": "upload",
+    "disabled": true
+  }
+}
