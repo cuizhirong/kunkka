@@ -4,6 +4,7 @@ const request = require('superagent');
 const http = require('http');
 const co = require('co');
 const uuid = require('uuid');
+const _ = require('lodash');
 
 const getQueryString = require('helpers/getQueryString.js');
 const noBodyMethodList = ['get', 'head', 'delete'];
@@ -27,7 +28,7 @@ module.exports = (app) => {
         .send({confirmed: true})
         .end((err) => {
           if (err) {
-            next({status:500, message: req.i18n.__('api.keystone.confirmError')});
+            next({status: 500, message: req.i18n.__('api.keystone.confirmError')});
           } else {
             next({message: req.i18n.__('api.keystone.confirmSuccess')});
           }
@@ -51,7 +52,7 @@ module.exports = (app) => {
         .send(Object.assign({}, req.query))
         .end((err, payload) => {
           if (err) {
-            next({status:500, message: req.i18n.__('api.keystone.confirmError')});
+            next({status: 500, message: req.i18n.__('api.keystone.confirmError')});
           } else {
             next({message: req.i18n.__('api.keystone.confirmSuccess')});
           }
@@ -62,13 +63,47 @@ module.exports = (app) => {
     });
   }, customResPage);
   // check session
-  app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/'], function (req, res, next) {
+  app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/', '/proxy-swift/'], function (req, res, next) {
     if (req.session.user) {
       next();
     } else {
       return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
     }
   });
+  app.use('/proxy-swift/', (req, res, next) => {
+    let endpoint = req.session.endpoint;
+    let region = req.session.user.regionId;
+    if (!endpoint.swift) {
+      res.status(503).json({
+        status: 503,
+        message: req.i18n.__('api.swift.unavailable')
+      });
+    }
+    let swiftHost = endpoint.swift[region];
+    const headers = _.omit(req.headers, ['cookie']);
+    headers['X-Auth-Token'] = req.session.user.token;
+    const url = '/' + req.path.split('/').slice(1).join('/') + getQueryString(req.query);
+    const options = {
+      hostname: swiftHost.split('://')[1].split(':')[0],
+      port: swiftHost.split('://')[1].split(':')[1],
+      path: url,
+      method: req.method,
+      headers: headers
+    };
+    const swiftReq = http.request(options, (response) => {
+      res.set(response.headers);
+      res.status(response.statusCode);
+      response.pipe(res);
+      response.on('end', () => {
+        res.end();
+      });
+    });
+    req.pipe(swiftReq);
+    swiftReq.on('error', (e) => {
+      res.status(500).send(e);
+    });
+  });
+
   app.patch('/proxy-zaqar/v2/queues/:queue_name', function (req, res, next) {
     let queueName = req.params.queue_name;
     let endpoint = req.session.endpoint;
