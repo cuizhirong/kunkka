@@ -6,7 +6,12 @@
     "flavor_id": "Flavor ID",
     "flavor_name": "Flavor Name",
     "memory_gb": "Memory (GB)",
+    "rx_factor": "RX/TX factor",
     "set_enable": "Set Enable",
+    "swap_disk": "Swap Disk（GB)",
+    "swap_disk_unit": "Swap Disk",
+    "temporary_disk": "Temporary Disk (GB)",
+    "temporary_disk_unit": "Temporary Disk",
     "price_tip": "Please Add The Price To The Price Management In Bill"
   },
   "zh-CN": {
@@ -16,7 +21,12 @@
     "flavor_id": "配置ID",
     "flavor_name": "配置名称",
     "memory_gb": "内存 (GB)",
+    "rx_factor": "RX/TX 因子",
     "set_enable": "设置为启用",
+    "swap_disk": "Swap磁盘（GB)",
+    "swap_disk_unit": "Swap磁盘",
+    "temporary_disk": "临时磁盘（GB)",
+    "temporary_disk_unit": "临时磁盘",
     "price_tip": "请到计费的价格管理中添加价格"
   }
 }

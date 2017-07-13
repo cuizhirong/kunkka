@@ -5,6 +5,7 @@ var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 
 var createFlavor = require('./pop/create/index');
+var modifyMetadata = require('./pop/modify/index');
 var deleteModal = require('client/components/modal_delete/index');
 
 var request = require('./request');
@@ -214,11 +215,7 @@ class Model extends React.Component {
           this.loadingTable();
         }
       }
-
-      var history = this.stores.urls,
-        url = history.pop();
-
-      this.getNextListData(url, data.refreshDetail);
+      this.getInitialListData();
     }
   }
 
@@ -311,6 +308,17 @@ class Model extends React.Component {
           refresh();
         });
         break;
+      case 'edit':
+        request.getExtraSpecs(rows[0].id).then((res) => {
+          var obj = {
+            'id': rows[0].id,
+            'res': res
+          };
+          modifyMetadata(obj, null, (_res) => {
+            refresh();
+          });
+        });
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -349,10 +357,12 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    // var sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
+        case 'edit':
+          btns[key].disabled = rows.length === 1 ? false : true;
+          break;
         case 'delete':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
@@ -421,8 +431,14 @@ class Model extends React.Component {
       title: __.enable,
       content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable
     }, {
-      title: __.extra_specs,
-      content: data ? JSON.stringify(data.extra_specs) : '-'
+      title: __.temporary_disk_unit,
+      content: item.temporary ? item.temporary + ' ' + memory.unit : '-'
+    }, {
+      title: __.swap_disk_unit,
+      content: item.swap ? item.swap + ' ' + disk.unit : '-'
+    }, {
+      title: __.rx_factor,
+      content: item.rxtx_factor
     }];
 
     return items;

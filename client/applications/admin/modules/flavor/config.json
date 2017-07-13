@@ -10,6 +10,11 @@
     "type": "create",
     "icon": "create"
   }, {
+    "value": ["edit","meta_data"],
+    "key": "edit",
+    "icon": "edit",
+    "disabled": true
+  },{
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",

@@ -1,4 +1,5 @@
 var fetch = require('../../cores/fetch');
+var RSVP = require('rsvp');
 
 module.exports = {
   getList: function() {
@@ -42,8 +43,36 @@ module.exports = {
   createExtraSpecs: function(flavorID, dataSpecs) {
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID + '/os-extra_specs',
-      data: {'extra_specs': dataSpecs}
+      data: dataSpecs
     });
+  },
+  updateExtraSpecs: function(flavorID, dataSpecs) {
+    var deferredList = [], data = {};
+    dataSpecs.forEach(ele => {
+      data = {};
+      data[ele.key] = ele.value;
+      deferredList.push(fetch.put({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID + '/os-extra_specs/' + ele.key,
+        data: data
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  deleteExtraSpecs: function(flavorID, items) {
+    var deferredList = [];
+    items.forEach((item) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/flavors/' + flavorID + '/os-extra_specs/' + item
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  createAndUpdateAndDeleteSpect: function(flavorID, updateSpecs, deleteSpecs, createSepcs) {
+    var list = [];
+    list.push(this.updateExtraSpecs(flavorID, updateSpecs));
+    list.push(this.deleteExtraSpecs(flavorID, deleteSpecs));
+    list.push(this.createExtraSpecs(flavorID, createSepcs));
+    return RSVP.all(list);
   },
   getExtraSpecs: function(flavorID) {
     return fetch.get({
