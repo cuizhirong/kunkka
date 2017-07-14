@@ -44,7 +44,7 @@ class BasicProps extends React.Component {
 
   getItemContent(item, rawItem) {
     var copyId;
-    if(item.title.toLowerCase() === 'id') {
+    if(item.title && item.title.toLowerCase() === 'id') {
       copyId = String(item.content);
       return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
     }

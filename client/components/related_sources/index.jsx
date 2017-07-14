@@ -112,8 +112,11 @@ class RelatedSources extends React.Component {
                   <div key={index} className="content-item-list">
                     <span className="item-key">{ele.key}</span>
                     <span className="item-data">
-                      {ele.data}
-                      {ele.type && ele.type.toLowerCase() === 'id' ? <i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, String(ele.data))} /> : ''}
+                      <div>
+                        {ele.data}
+                        {ele.type && ele.type.toLowerCase() === 'id' ?
+                        <i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, String(ele.data))} /> : ''}
+                      </div>
                     </span>
                   </div>
                 )
