@@ -11,7 +11,9 @@ const noBodyMethodList = ['get', 'head', 'delete'];
 const csv = require('./csv');
 const customResPage = require('../brewmaster/api/base').middleware.customResPage;
 const adminLogin = require('./common/adminLogin');
-const configRegion = require('config')('region');
+const config = require('config');
+const configRegion = config('region');
+const adminProjectId = config('admin_projectId');
 const regionId = (configRegion && configRegion[0] && configRegion[0].id) || 'RegionOne';
 
 
@@ -69,6 +71,30 @@ module.exports = (app) => {
     } else {
       return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
     }
+  });
+  app.put('/proxy-swift/init-container', (req, res, next) => {
+    co(function *() {
+      const adminToken = yield adminLogin();
+      let endpoint = req.session.endpoint;
+      let region = req.session.user.regionId;
+      if (!endpoint.swift) {
+        res.status(503).json({
+          status: 503,
+          message: req.i18n.__('api.swift.unavailable')
+        });
+      }
+      const containers = ['template', 'ticket'];
+      let swiftHost = endpoint.swift[region];
+      let projectId = req.session.user.projectId;
+      let swiftAccount = 'AUTH_' + adminProjectId;
+      yield Promise.all(containers.map(container => {
+        return request.put(`${swiftHost}/v1/${swiftAccount}/${projectId}_${container}`)
+          .set('X-Auth-Token', adminToken.token)
+          .set('X-Container-write', `${projectId}:*`)
+          .set('X-Container-read', '*:*');
+      }));
+      res.end();
+    }).catch(next);
   });
   app.use('/proxy-swift/', (req, res, next) => {
     let endpoint = req.session.endpoint;
