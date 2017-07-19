@@ -76,5 +76,10 @@ module.exports = {
       url: url,
       data: data
     });
+  },
+  initContainer: function() {
+    return fetch.put({
+      url: '/proxy-swift/init-container'
+    });
   }
 };

@@ -2,7 +2,6 @@ require('./style/index.less');
 
 var React = require('react');
 var __ = require('locale/client/ticket.lang.json');
-var request = require('../../request');
 
 class Attach extends React.Component {
   constructor(props) {
@@ -33,18 +32,21 @@ class Attach extends React.Component {
   }
 
   uploadFile(file) {
-    request.postFile(file).then((res) => {
-      this.setState({
-        attachments: this.state.attachments.concat(res.attachment_url),
-        fileNames: this.state.fileNames.concat(file.name),
-        uploadError: this.state.uploadError.concat(false)
-      });
-    }).catch((res) => {
-      this.setState({
-        fileNames: this.state.fileNames.concat('error'),
-        uploadError: this.state.uploadError.concat(true)
-      });
+    let reader = new FileReader(),
+      that = this,
+      url = '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_ticket' + '/' + file.name.replace(/\s+/g, '');
+    that.setState({
+      attachments: that.state.attachments.concat(url),
+      fileNames: that.state.fileNames.concat(file.name),
+      uploadError: that.state.uploadError.concat(false)
     });
+    reader.onloadend = function () {
+      let xhr = new XMLHttpRequest();
+
+      xhr.open('PUT', url, true);
+      xhr.send(reader.result);
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   deleteAttach(index) {

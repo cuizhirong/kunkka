@@ -81,11 +81,12 @@ class Model extends React.Component {
   getList() {
     var table = this.state.config.table,
       pageLimit = table.limit;
-
-    request.getList(pageLimit).then((res) => {
-      table.data = res.tickets;
-      this.setPagination(table, res);
-      this.updateTableData(table, res._url);
+    request.initContainer().then(_res => {
+      request.getList(pageLimit).then((res) => {
+        table.data = res.tickets;
+        this.setPagination(table, res);
+        this.updateTableData(table, res._url);
+      });
     });
   }
 
