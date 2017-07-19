@@ -91,7 +91,7 @@ module.exports = (app) => {
         return request.put(`${swiftHost}/v1/${swiftAccount}/${projectId}_${container}`)
           .set('X-Auth-Token', adminToken.token)
           .set('X-Container-write', `${projectId}:*`)
-          .set('X-Container-read', '*:*');
+          .set('X-Container-read', '.r:*,.rlistings');
       }));
       res.end();
     }).catch(next);
