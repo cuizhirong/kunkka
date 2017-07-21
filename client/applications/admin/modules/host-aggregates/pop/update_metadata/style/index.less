@@ -1,0 +1,332 @@
+@import "../../../../../style/theme.less";
+
+@loading-color: @color_font_800;
+@select_table_title_bg: @color_cancel;
+@select_table_item_hover_bg: @color_info_100;
+@select_table_item_selected_bg: @color_info_200;
+
+@btn_add: @color_info;
+@selected_item: @color_grey_700;
+@item_delete: @color_delete_700;
+
+.modal-bd.halo-com-modal-update-metadata {
+  padding: 10px 30px !important;
+  box-sizing: border-box;
+  max-height: 560px;
+  width: 100%;
+  overflow: hidden;
+  line-height: 18px;
+
+  .loading-data {
+    width: 36px;
+    height: 150px;
+    margin: 0 auto;
+    position: relative;
+    i.icon-loading {
+      position: absolute;
+      top: 50%;
+      margin-top: -18px;
+      width: 36px;
+      color: @loading-color;
+      animation: spin 1.28s linear .28s infinite;
+      font-size: 36px !important;
+    }
+  }
+
+  .content-wrapper {
+
+    .modal-content {
+      width: 100%;
+      height: auto;
+      .row-wrapper {
+        margin-top: 10px;
+        height: 456px;
+        display: flex;
+        flex-direction: column;
+        .row {
+          display: flex;
+          flex: 1;
+          margin-bottom: 10px;
+          .col-md-6 {
+            width: 50%;
+            height: 100%;
+            &:nth-child(1) {
+              padding-right: 10px;
+            }
+            &:nth-child(2) {
+              padding-left: 10px;
+            }
+            .panel {
+              display: flex;
+              flex-direction: column;
+              width: 100%;
+              height: 100%;
+              border: none;
+              .panel-heading {
+                width: 100%;
+                height: 30px;
+                line-height: 30px;
+                box-sizing: border-box;
+                padding-left: 20px;
+                font-size: 14px;
+                font-weight: bold;
+              }
+              .panel-content {
+                flex: 1;
+                overflow-x: hidden;
+                overflow-y: auto;
+                .items-wrapper {
+                  // left
+                  .custom {
+                    width: 100%;
+                    height: 40px;
+                    line-height: 40px;
+                    display: flex;
+                    input {
+                      flex: 1;
+                      margin-right: 6px;
+                    }
+                    input.error {
+                      border: 1px solid @item_delete;
+                    }
+                  }
+                  .item-wrapper {
+                    margin-top: 2px;
+                    .subs-heading {
+                      display: flex;
+                      justify-content: space-between;
+                      width: 100%;
+                      height: 40px;
+                      background-color: @select_table_title_bg;
+                      line-height: 40px;
+                      box-sizing: border-box;
+                      padding-left: 10px;
+                      cursor: pointer;
+                      user-select: none;
+                      span {
+                        margin-left: 10px;
+                      }
+                      .icon-arrow-down,
+                      .icon-arrow-up {
+                        height: 40px;
+                        line-height: 40px;
+                        margin-right: 20px;
+                      }
+                    }
+                    .subs {
+                      border-left: 1px solid @select_table_title_bg;
+                      border-right: 1px solid @select_table_title_bg;
+                      border-bottom: 1px solid @select_table_title_bg;
+                      &.fold {
+                        display: none;
+                      }
+                      .sub {
+                        padding-left: 24px;
+                        line-height: 30px;
+                        display: flex;
+                        justify-content: space-between;
+                        cursor: pointer;
+                        &:hover {
+                          background-color: @select_table_item_hover_bg;
+                        }
+                        &.selected {
+                          background-color: @select_table_item_selected_bg;
+                        }
+                        .added {
+                          margin-right: 20px;
+                        }
+                        .icon-create {
+                          height: 30px;
+                          line-height: 30px;
+                          margin-right: 18px;
+                          color: @btn_add;
+                          font-weight: 600;
+                          cursor: pointer;
+                        }
+                      }
+                    }
+                  }
+                }
+                // right
+                .number-item-wrapper,
+                .select-item-wrapper,
+                .boolean-item-wrapper,
+                .string-item-wrapper {
+                  display: flex;
+                  height: 32px;
+                  margin-bottom: 10px;
+                  .name {
+                    width: 150px;
+                    height: 32px;
+                    line-height: 32px;
+                    margin-right: 10px;
+                    padding-left: 20px;
+                    box-sizing: border-box;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  }
+                  .input-wrapper,
+                  .select-wrapper,
+                  .string-wrapper {
+                    min-width: 120px;
+                    max-width: 120px;
+                  }
+                }
+
+                .select-item-wrapper {
+                  .select-wrapper {
+                    select {
+                      width: 90px;
+                    }
+                  }
+                }
+
+                .boolean-item-wrapper {
+                  .name {
+                    width: 230px;
+                  }
+                  .boolean-wrapper {
+                    max-width: 40px;
+                    min-width: 40px;
+                    line-height: 38px;
+                  }
+                }
+
+                .string-item-wrapper {
+                  .string-wrapper {
+                    input {
+                      width: 90px;
+                    }
+                  }
+                }
+
+                .multi-select-item-wrapper {
+                  width: 100%;
+                  height: auto;
+                  border: 1px solid @select_table_title_bg;
+                  box-sizing: border-box;
+                  margin: auto;
+                  margin-bottom: 10px;
+                  .header {
+                    display: flex;
+                    width: 100%;
+                    height: 40px;
+                    line-height: 32px;
+                    padding: 4px 0;
+                    box-sizing: border-box;
+                    background-color: @select_table_title_bg;
+                    cursor: pointer;
+                    .name {
+                      padding-left: 20px;
+                      box-sizing: border-box;
+                      min-width: 270px;
+                      max-width: 270px;
+                      margin-right: 10px;
+                      flex: 1;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      i {
+                        margin-right: 6px;
+                      }
+                    }
+                  }
+                  .already-in {
+                    width: 100%;
+                    min-height: 30px;
+                    display: flex;
+                    justify-content: flex-start;
+                    flex-wrap: wrap;
+                    padding: 4px 10px;
+                    box-sizing: border-box;
+                    div {
+                      padding: 2px 6px;
+                      box-sizing: border-box;
+                      background-color: @selected_item;
+                      margin: 0 10px 6px 0;
+                      color: #fff;
+                      white-space: nowrap;
+                      border-radius: 4px;
+                      user-select: none;
+                      i {
+                        margin-left: 4px;
+                        color: @item_delete;
+                        font-weight: 600;
+                        cursor: pointer;
+                      }
+                    }
+                  }
+                  &.fold {
+                    .holder {
+                      display: none;
+                    }
+                  }
+                  .holder {
+                    width: 100%;
+                    max-height: 180px;
+                    overflow-y: auto;
+                    box-sizing: border-box;
+                    border-top: 1px solid @select_table_title_bg;
+                    border-bottom: 1px solid @select_table_title_bg;
+                    div {
+                      width: 100%;
+                      height: 30px;
+                      line-height: 30px;
+                      padding-left: 10px;
+                      box-sizing: border-box;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                      border-top: 1px solid @select_table_title_bg;
+                      border-bottom: 1px solid @select_table_title_bg;
+                      cursor: pointer;
+                      &:hover {
+                        background-color: @select_table_item_hover_bg;
+                      }
+                    }
+                  }
+                  .footer {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    width: 100%;
+                    height: 40px;
+                    background-color: @select_table_title_bg;
+                    .operator {
+                      display: flex;
+                      margin-right: 12px;
+                      .name {
+                        width: 50px;
+                        height: 30px;
+                        line-height: 30px;
+                        margin-right: 6px;
+                      }
+                      select {
+                        width: 50px;
+                        background-color: #fff;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        .tip-wrapper {
+          height: auto;
+        }
+      }
+    }
+  }
+}
+
+.modal-ft.halo-com-modal-update-metadata {
+
+  .right-side {
+    > * {
+      clear: both;
+      margin-right: 10px;
+    }
+  }
+}

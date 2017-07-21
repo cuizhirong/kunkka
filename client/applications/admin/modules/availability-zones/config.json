@@ -1,0 +1,43 @@
+{
+  "tabs": [{
+    "name": ["host-aggregates"],
+    "key": "host-aggregates"
+  }, {
+    "name": ["availability-zones"],
+    "key": "availability-zones",
+    "default": true
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": false
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "zoneName",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "zoneName",
+      "key": "zoneName",
+      "type": "captain"
+    }, {
+      "title": ["host"],
+      "dataIndex": "host",
+      "key": "host"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "tabs": [{
+    "name": ["host-aggregates"],
+    "key": "host-aggregates",
+    "default": true
+  }, {
+    "name": ["availability-zones"],
+    "key": "availability-zones"
+  }],
+  "btns": [{
+    "value": ["create", "host-aggregates"],
+    "key": "create-host-aggregates",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["modify", "host-aggregates"],
+    "key": "modify-host-aggregates",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["manage_hosts"],
+    "key": "manage_hosts",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["update_metadata"],
+    "key": "update_metadata",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "name"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain"
+    }, {
+      "title": ["availability-zones"],
+      "dataIndex": "availability-zones",
+      "key": "availability-zones"
+    }, {
+      "title": ["host"],
+      "key": "host"
+    }, {
+      "title": ["metadata"],
+      "key": "metadata"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "title": ["manage_hosts"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "manage_hosts",
+    "icon_type": "host",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "available_hosts",
+    "hide": true
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

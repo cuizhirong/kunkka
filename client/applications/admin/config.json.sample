@@ -5,6 +5,8 @@
       "host",
       "host-overview",
       "instance",
+      "host-aggregates",
+      "availability-zones",
       "instance-restore",
       "flavor",
       "image"
@@ -47,6 +49,9 @@
   }, {
     "key": "instance-restore",
     "link": "instance"
+  }, {
+    "key": "availability-zones",
+    "link": "host-aggregates"
   }],
   "theme": "default"
 }
