@@ -18,14 +18,12 @@ module.exports = {
         var lbs = data.loadbalancer,
           listeners = data.listener;
         lbs.some(lb => {
-          lb.listeners.some(listener => {
-            if(listener.id === pool.listeners[0].id) {
-              pool.loadbalancer = lb;
-            }
-          });
+          if(pool.loadbalancers[0] && lb.id === pool.loadbalancers[0].id) {
+            pool.loadbalancer = lb;
+          }
         });
         listeners.some(l => {
-          if(l.id === pool.listeners[0].id) {
+          if(pool.listeners[0] && l.id === pool.listeners[0].id) {
             pool.listener = l;
           }
         });

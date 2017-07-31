@@ -95,46 +95,53 @@ function pop(obj, parent, callback) {
         let volumeTypes = overview.volume_types;
         let volumeType = volumeTypes[0];
 
-        let cap = typeCapacity[volumeType];
-        let isError = cap.max < cap.min || cap.max <= 0;
+        if (volumeTypes.length !== 0) {
+          let cap = typeCapacity[volumeType];
+          let isError = cap.max < cap.min || cap.max <= 0;
 
-        let setTypes = () => {
-          if (obj) {
-            volumeType = obj.volume.volume_type;
-            refs.type.setState({
-              data: [volumeType],
-              value: volumeType,
-              hide: false
-            });
-          } else {
-            refs.type.setState({
-              data: volumeTypes,
-              value: volumeTypes.length > 0 ? volumeType : null,
-              hide: false
-            });
-          }
-
-        };
-
-        if (ENABLE_CHARGE) {
-          if (!isError) {
-            request.getVolumePrice(volumeType + '.volume.size', cap.min).then((res) => {
-              setTypes();
-              refs.charge.setState({
-                value: res.unit_price,
+          let setTypes = () => {
+            if (obj) {
+              volumeType = obj.volume.volume_type;
+              refs.type.setState({
+                data: [volumeType],
+                value: volumeType,
                 hide: false
               });
-            }).catch((error) => {});
+            } else {
+              refs.type.setState({
+                data: volumeTypes,
+                value: volumeTypes.length > 0 ? volumeType : null,
+                hide: false
+              });
+            }
+          };
+
+          if (ENABLE_CHARGE) {
+            if (!isError) {
+              request.getVolumePrice(volumeType + '.volume.size', cap.min).then((res) => {
+                setTypes();
+                refs.charge.setState({
+                  value: res.unit_price,
+                  hide: false
+                });
+              }).catch((error) => {});
+            } else {
+              setTypes();
+              refs.charge.setState({
+                value: DEFAULT_PRICE,
+                hide: false
+              });
+            }
           } else {
             setTypes();
-            refs.charge.setState({
-              value: DEFAULT_PRICE,
-              hide: false
-            });
           }
         } else {
-          setTypes();
+          refs.warning.setState({
+            value: __.no_avail_type,
+            hide: false
+          });
         }
+
       });
     },
     onConfirm: function(refs, cb) {
