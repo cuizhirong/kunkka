@@ -933,17 +933,19 @@ class Model extends React.Component {
     });
 
     var networks = [];
-    var count = 0;
     for (let key in items.addresses) {
-      let floatingIp = {};
+      let floatingIps = [], floatingIp = {};
       for (let item of items.addresses[key]) {
         if (item['OS-EXT-IPS:type'] === 'floating') {
-          floatingIp.addr = item.addr;
-          floatingIp.id = items.floating_ip.id;
+          floatingIps.push({
+            addr: item.addr,
+            id: items.floating_ip.id,
+            mac_addr: item['OS-EXT-IPS-MAC:mac_addr']
+          });
         }
       }
 
-      for (let item of items.addresses[key]) {
+      items.addresses[key].map((item, index) => {
         if (item['OS-EXT-IPS:type'] === 'fixed' && item.port) {
           let securityGroups = [];
           for (let i in item.security_groups) {
@@ -951,27 +953,32 @@ class Model extends React.Component {
               securityGroups.push(<span key={'dot' + i}>{', '}</span>);
             }
             securityGroups.push(
-              <span key={i}>
+              <a key={i} data-type="router" href={'/dashboard/security-group/' + item.security_groups[i].id}>
                 {item.security_groups[i].name}
-              </span>
+              </a>
             );
           }
 
+          floatingIps.forEach(ip => {
+            if (ip.mac_addr === item['OS-EXT-IPS-MAC:mac_addr']) {
+              floatingIp = ip;
+            }
+          });
+
           networks.push({
-            port: <span>
+            port: <a data-type="router" href={'/dashboard/port/' + item.port.id}>
                 {item.addr}
-              </span>,
-            subnet: <span>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</span>,
+              </a>,
+            subnet: <a data-type="router" href={'/dashboard/subnet/' + item.subnet.id}>{item.subnet.name || '(' + item.subnet.id.substring(0, 8) + ')'}</a>,
             security_group: securityGroups,
-            floating_ip: floatingIp.id ?
-              <span>{floatingIp.addr}</span> : '-',
-            __renderKey: count,
+            floating_ip: floatingIp && floatingIp.id ?
+              <a data-type="router" href={'/dashboard/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
+            __renderKey: index,
             childItem: item
           });
-          count++;
           floatingIp = {};
         }
-      }
+      });
     }
 
     var data = [{
