@@ -13,6 +13,7 @@ var config = require('./config.json');
 var moment = require('client/libs/moment');
 var __ = require('locale/client/admin.lang.json');
 var unitConverter = require('client/utils/unit_converter');
+var router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -188,35 +189,25 @@ class Model extends React.Component {
 
 //refresh: according to the given data rules
   refresh(data, params) {
-    if (!data) {
-      data = {};
-    }
-    if (!params) {
-      params = this.props.params;
-    }
-
-    if (data.initialList) {
-      if (data.loadingTable) {
-        this.loadingTable();
-      }
-      if (data.clearState) {
-        this.clearState();
-      }
-
-      this.getInitialListData();
-    } else if (data.refreshList) {
-      if (params[2]) {
+    let path = router.getPathList();
+    if (data) {
+      if (path[2]) {
         if (data.loadingDetail) {
-          this.loadingDetail();
-          this.refs.dashboard.setRefreshBtnDisabled(true);
+          this.refs.dashboard.refs.detail.loading();
         }
       } else {
         if (data.loadingTable) {
           this.loadingTable();
         }
+        if (data.clearState) {
+          this.refs.dashboard.clearState();
+        }
       }
-      this.getInitialListData();
     }
+
+    var history = this.stores.urls,
+      url = history.pop();
+    this.getNextListData(url, true);
   }
 
   loadingTable() {
