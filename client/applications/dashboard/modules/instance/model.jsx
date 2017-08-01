@@ -58,8 +58,8 @@ class Model extends React.Component {
     let enableAlarm = HALO.settings.enable_alarm;
     if (enableAlarm) {
       tabs.push({
-        name: ['console'],
-        key: 'console'
+        name: ['monitor'],
+        key: 'monitor'
       }, {
         name: ['alarm'],
         key: 'alarm'
@@ -693,7 +693,7 @@ class Model extends React.Component {
           });
         }
         break;
-      case 'console':
+      case 'monitor':
         if (isAvailableView(rows)) {
           syncUpdate = false;
           let that = this;
@@ -748,7 +748,7 @@ class Model extends React.Component {
                 tabItems={tabItems}
                 start={timeUtils.getTime(time)}
                 clickTabs={(e, tab, item) => {
-                  that.onClickDetailTabs('console', refs, {
+                  that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
                     granularity: tab.key,
                     time: tab.time
