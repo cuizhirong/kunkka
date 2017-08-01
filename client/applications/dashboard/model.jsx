@@ -126,7 +126,7 @@ class Model extends React.Component {
     switch(name) {
       case 'loadbalancer':
         return 'lb';
-      case 'image-snapshot':
+      case 'instance-snapshot':
         return 'snapshot';
       case 'alarm':
         return 'monitor';
