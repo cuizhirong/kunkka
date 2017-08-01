@@ -9,6 +9,11 @@ const chalk = require('chalk');
 const config = require('../../config');
 
 let branch = process.argv[2] || 'master';
+let tagPattern;
+if (branch === 'stable/liberty') {
+  tagPattern = '3.*.*';
+}
+
 const applications = config.applications;
 applications.push({
   'project': 'halo',
@@ -96,7 +101,8 @@ function updateTag(apps) {
     console.log(chalk.green.bold(`${project} git fetch & rebase`));
     let gitPull = execSync(`git fetch origin && git rebase origin/${branch}`, {cwd: appDir}).toString();
     console.log(`${project} ${gitPull}`);
-    let gitDescribe = execSync('git describe', {cwd: appDir}).toString();
+    let gitDescribeCmd = tagPattern ? `git describe --match ${tagPattern}` : 'git describe';
+    let gitDescribe = execSync(gitDescribeCmd, {cwd: appDir}).toString();
     if (/-g/.test(gitDescribe.toString())) {
       let currentCommitId = execSync(`git rev-parse head`, {cwd: appDir}).toString();
       let remoteCommitId = execSync(`git ls-remote origin ${branch}`, {cwd: appDir}).toString();
