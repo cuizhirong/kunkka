@@ -144,7 +144,7 @@ class Model extends React.Component {
         return 'collaboration';
       case 'apply-approval':
         return 'applications';
-      case 'image-snapshot':
+      case 'instance-snapshot':
         return 'snapshot';
       case 'alarm':
         return 'monitor';

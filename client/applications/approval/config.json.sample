@@ -16,7 +16,7 @@
     "items": [
       "instance",
       "image",
-      "image-snapshot",
+      "instance-snapshot",
       "keypair"
     ]
   }, {
