@@ -270,8 +270,7 @@ class Model extends Main {
 
     var items = [{
       title: __.name,
-      content: item.name || '(' + item.id.substr(0, 8) + ')',
-      type: 'editable'
+      content: item.name || '(' + item.id.substr(0, 8) + ')'
     }, {
       title: __.id,
       content: item.id
