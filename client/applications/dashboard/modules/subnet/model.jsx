@@ -463,6 +463,11 @@ class Model extends React.Component {
     }, {
       title: __.shared,
       content: item.network.shared ? __.yes : __.no
+    }, {
+      title: __.host + __.routes,
+      content: item.host_routes.length > 0 ? <div>{
+        item.host_routes.map((route, index) => <div key={index}>{'(' + __.cidr + ') ' + route.destination + ' - (' + __.descend + ') ' + route.nexthop}</div>)
+      }</div> : '-'
     }];
 
     return data;

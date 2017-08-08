@@ -1,6 +1,7 @@
 var commonModal = require('client/components/modal_common/index');
 var config = require('./config.json');
 var request = require('../../request');
+var addHostroutes = require('./add_hostroutes');
 var __ = require('locale/client/dashboard.lang.json');
 
 var createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
@@ -12,6 +13,11 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      refs.add_hostroutes.setState({
+        renderer: addHostroutes,
+        renderValue: '',
+        rendernexThop: ''
+      });
       request.getNetworks().then((data) => {
         if (data.length > 0) {
           var selectedItem = data[0].id;
@@ -37,7 +43,8 @@ function pop(obj, parent, callback) {
         name: refs.subnet_name.state.value,
         network_id: refs.select_network.state.value,
         cidr: refs.net_address.state.value,
-        enable_dhcp: refs.enable_dhcp.state.checked
+        enable_dhcp: refs.enable_dhcp.state.checked,
+        host_routes: []
       };
 
       var gwChecked = refs.enable_gw.state.checked;
@@ -57,7 +64,13 @@ function pop(obj, parent, callback) {
           data.dns_nameservers = dns;
         }
       }
-
+      let hostroutes = refs.add_hostroutes.refs.hostroutes.state.opsubs;
+      hostroutes.forEach((m) => {
+        data.host_routes.push({
+          destination: m.destination,
+          nexthop: m.nexthop
+        });
+      });
       request.createSubnet(data).then((res) => {
         callback && callback(res.subnet);
         cb(true);
@@ -93,6 +106,9 @@ function pop(obj, parent, callback) {
             hide: !status.checked
           });
           refs.subnet_dns2.setState({
+            hide: !status.checked
+          });
+          refs.add_hostroutes.setState({
             hide: !status.checked
           });
           break;
