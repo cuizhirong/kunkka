@@ -1,3 +1,3 @@
 [submodule "client/uskin"]
 	path = client/uskin
-	url = https://github.com/icecreamliker/uskin.git
+	url = https://github.com/unitedstack/uskin.git

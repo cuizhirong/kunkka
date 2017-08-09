@@ -1,6 +1,6 @@
 # Halo Code Convention
 
-Halo use eslint to detect errors and potential problems. The options for ESlint are stored in a [.eslintrc](./eslintrc) file.
+Halo use eslint to detect errors and potential problems. The options for ESlint are stored in a [.eslintrc](./.eslintrc) file.
 
 ## File encoding:
 
