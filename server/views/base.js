@@ -103,7 +103,8 @@ View.prototype = {
         lang: locale,
         domain: user.domainName || this.domain,
         domainId: user.domainId,
-        adminProjectId: this.config('admin_projectId')
+        adminProjectId: this.config('admin_projectId'),
+        neutron_network_vlanranges: this.config('neutron_network_vlanranges')
       },
       user: {
         projectId: user.projectId,
