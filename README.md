@@ -1,16 +1,13 @@
 # Halo
 Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do interaction between OpenStack services including Nova, Keystone, Swift and so on.
 
-Online Demo: http://10.255.0.77:5000/
-
-
-## Uage
+## Usage
 
 ### Get Started
 
 Get your code ready:
 ```
-git clone git@git.ustack.com:ustack/halo.git --recursive
+git clone git@github.com:unitedstack/halo.git --recursive
 ```
 
 Install all the dependencies
@@ -103,6 +100,7 @@ pm2 -h
 ```
 
 ### Scripts
+
 #### build the front-end code, i18n and configs
 ```
 npm run build
@@ -174,34 +172,14 @@ npm run tags
 npm run add_eslint
 ```
 
-## Code Standard
+## Code Convention
 
-### Commit message formatter
+Before development, please read over Halo [Code Convention](./CODE_CONVENTION.md).
 
-The commit message should contains at least three parts.
+## Contribution
 
-1. The summary of the commit. It should be followed by an empty row.
-2. The detail information of the commit. (It is optional.).
-3. The commit type: (BF|NF|RF|OT|BugFix|NewFeature|ReFactor|Other).
-4. The commit's JIRA issue ID.
+Halo welcome every friend who wants to contribute the code, please read over [CONTRIBUTING](./CONTRIBUTING.md) first.
 
-The maximum characters for each row should be less than 72.
+## Change Log
 
-This is an example:
-```
-Ensure setuptools is somewhat recent
-
-Due to bugs in older setuptools version parsing
-we need to set a relatively new version of setuptools
-so that parsing works better (and/or correctly).
-
-This seems especially important on 2.6 which due to
-a busted setuptools (and associated pkg_resources) seems
-to be matching against incorrect versions.
-
-Type: BF
-Jira: DEVOPS-453
-Change-Id: Ib859c7df955edef0f38c5673bd21a4767c781e4a
-```
-
-For more information, please visit: http://confluence.ustack.com/pages/viewpage.action?pageId=8753522
+Please visit [Change Log](./CHANGELOG.md).
