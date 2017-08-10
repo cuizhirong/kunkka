@@ -2,12 +2,13 @@
   "name": "halo",
   "description": "UnitedStack United Platform.",
   "version": "0.4.0",
+  "private": true,
   "contributors": [
     "majiajun <majiajun@unitedstack.com>",
     "Lee Yao <yaoli@unitedstack.com>"
   ],
   "license": "MIT",
-  "repository": "http://git.ustack.com/ustack/halo",
+  "repository": "https://github.com/unitedstack/halo",
   "keywords": [
     "OpenStack",
     "API",

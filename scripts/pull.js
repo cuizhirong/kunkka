@@ -3,7 +3,7 @@
 const chalk = require('chalk');
 const success = chalk.green.bold;
 const warn = chalk.bgYellow.white.bold(' WARNING ');
-const config = require('../../config');
+const config = require('../config');
 const execSync = require('child_process').execSync;
 const path = require('path');
 const readline = require('readline');

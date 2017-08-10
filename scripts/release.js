@@ -6,7 +6,7 @@ const path = require('path');
 const execSync = require('child_process').execSync;
 const readline = require('readline');
 const chalk = require('chalk');
-const config = require('../../config');
+const config = require('../config');
 
 let branch = process.argv[2] || 'master';
 let tagPattern;
