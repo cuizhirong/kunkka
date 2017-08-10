@@ -68,10 +68,10 @@ Strict equality checks `===` must be used in favor of abstract equality checks `
 String uses single quotes.
 
 ```javascript
-var str = 'single quote';
+const str = 'single quote';
 
 // double quotes
-var double = '<div class="test">test</div>';
+const double = '<div class="test">test</div>';
 
 /*
  * jsx - double quotes
@@ -86,7 +86,7 @@ Single line comments
 
 ```javascript
 // example
-var foo = "bar";
+const foo = "bar";
 
 ```
 
@@ -98,7 +98,7 @@ Multi-line comments
  * @returns {object}
  */
 
-var func = (something) => {
+const func = (something) => {
   // do something
 }
 
@@ -107,7 +107,7 @@ var func = (something) => {
 Inline comments
 
 ```javascript
-var func = (a, b, c/* param c */, d) => {
+const func = (a, b, c/* param c */, d) => {
   // do something
 }
 
@@ -118,8 +118,8 @@ var func = (a, b, c/* param c */, d) => {
 Using camel case with a lowercase first letter. Names should be descriptive but not excessively so. 
 
 ```javascript
-var startCount = 1;
-var endCount = 2;
+let startCount = 1;
+let endCount = 2;
 
 ```
 
