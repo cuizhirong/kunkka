@@ -15,8 +15,6 @@ Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do int
 
 ## Usage
 
-### Get Started
-
 Get your code ready:
 ```
 git clone git@github.com:unitedstack/halo.git --recursive
@@ -56,5 +54,5 @@ Please visit [Change Log](./CHANGELOG.md).
 
 For the latest releases and announcements, follow us:
 
-* Weibo: [@UnitedStack_Halo](http://weibo.com/u/6344552711?refer_flag=1001030201_&is_hot=1)
+* Weibo: [@UnitedStack_Halo](http://weibo.com/u/6344552711)
 * Twitter: @ustack_halo
