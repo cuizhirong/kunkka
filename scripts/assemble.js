@@ -6,7 +6,7 @@ const childProcess = require('child_process');
 const execSync = childProcess.execSync;
 const execFileSync = childProcess.execFileSync;
 
-const config = require('../../config');
+const config = require('../config');
 
 const env = process.argv[2] || 'dev';
 

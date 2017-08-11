@@ -2,10 +2,6 @@
 logs
 *.log
 
-# Runtime data
-pids
-*.pid
-*.seed
 client/dist
 
 # Style files
@@ -26,8 +22,6 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directory
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
 # config file.
@@ -37,7 +31,6 @@ configs/index.json
 
 # Mac file
 .DS_Store
-
 
 # Ignore the dev file script.
 dev-start.sh
@@ -65,6 +58,7 @@ server/api/**/
 server/drivers/**/
 server/plugins/**/
 package.json
+config.json
 
 client/assets/**/
 

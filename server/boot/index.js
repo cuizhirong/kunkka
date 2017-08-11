@@ -13,7 +13,7 @@ const config = require('../config'),
 
 let moduleConfig;
 try {
-  moduleConfig = require('../../../config');
+  moduleConfig = require('../../config');
 } catch (e) {
   moduleConfig = undefined;
 }

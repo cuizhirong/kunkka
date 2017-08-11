@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const config = require(path.join(__dirname, '../../config'));
+const config = require(path.join(__dirname, '../config'));
 const applications = config.applications;
 const http = require('http');
 const EventEmitter = require('events');
@@ -144,7 +144,7 @@ let count = 0;
 emitter.on('finish', () => {
   count += 1;
   if (count === len + 1) {
-    fs.writeFile(path.join(__dirname, '../../config.json'), JSON.stringify(config, null, 2), (err) => {
+    fs.writeFile(path.join(__dirname, '../config.json.sample'), JSON.stringify(config, null, 2), (err) => {
       if (err) {
         console.log(err);
       } else {
