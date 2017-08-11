@@ -1,3 +1,5 @@
+![logo](./client/assets/logo_halo@66x66.png)
+
 # Halo
 Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do interaction between OpenStack services including Nova, Keystone, Swift and so on.
 
