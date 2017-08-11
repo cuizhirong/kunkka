@@ -30,13 +30,15 @@ Start Service
 npm start
 ```
 
+Then visit `localhost:5678` to preview the effect.
+
 ## Scripts
 
 For more scripts, Please visit [http://halo.ustack.com/started/scripts.html](http://halo.ustack.com/started/scripts.html).
 
 ## Issues
 
-Please make sure to read the Issue [Reporting](./CONTRIBUTING.md#Issues) Checklist before opening an issue.
+Please make sure to read the [Issue Reporting Checklist](./CONTRIBUTING.md#Issues) before opening an issue.
 
 ## Contribution
 
