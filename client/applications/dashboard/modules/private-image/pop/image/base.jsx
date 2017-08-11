@@ -355,7 +355,7 @@ class ImageBase extends React.Component {
   renderMetaData(key) {
     let state = this.state;
     let columns = [{
-      title: __.key_value,
+      title: __.key,
       key: 'key',
       dataIndex: 'key'
     }, {
@@ -393,7 +393,7 @@ class ImageBase extends React.Component {
     }];
     return (
       <Modal refs="modal" {...props} title={props.obj.item ? __.edit + __.image : __.create + __.image} visible={state.visible}>
-        <div className="modal-bd halo-com-modal-create-image">
+        <div className="modal-bd halo-com-modal-image">
           <div className="content-wrapper">
             <div className="select-tab">
               <Tab items={items} onClick={this.onSwitchTab} />
@@ -407,7 +407,7 @@ class ImageBase extends React.Component {
             </div>
           </div>
         </div>
-        <div className="modal-ft halo-com-modal-create-image">
+        <div className="modal-ft halo-com-modal-image">
           <div className="right-side">
             <Button ref="btn" value={props.obj.item ? __.edit : __.create} disabled={true} onClick={this.onCreateImage} type="create" />
             <Button value={__.cancel} onClick={this.onCancel} type="cancel" />

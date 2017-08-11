@@ -2,7 +2,7 @@
   "en": {
     "delay": "Delay",
     "delay_tip": "Range: 2~60s",
-    "edit": "Edit",
+    "edit": "Edit ",
     "enable_pool": "{0} resource pool \"{1}\"?",
     "enable_resource": "{0} resource \"{1}\"?",
     "health": "Health",

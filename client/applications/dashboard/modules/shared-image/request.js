@@ -1,5 +1,6 @@
 let storage = require('client/applications/dashboard/cores/storage');
 let fetch = require('client/applications/dashboard/cores/fetch');
+let RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -48,21 +49,38 @@ module.exports = {
       return data.instance;
     });
   },
-  updateImage: function(imageID, data) {
-    return fetch.patch({
-      url: '/api/v1/images/' + imageID,
-      data: data
+  getShared() {
+    let that = this;
+    return fetch.get({
+      url: '/proxy/glance/v1/shared-images/' + HALO.user.projectId
+    }).then(res => {
+      let sharedImages = res.shared_images,
+        deferredList = [];
+      sharedImages.forEach(image => {
+        deferredList.push(that.getDetail(image.image_id));
+      });
+      return RSVP.all(deferredList);
     });
   },
-  createTask(data) {
-    return fetch.post({
-      url: '/proxy/glance/v2/tasks',
-      data: data
+  getDetail(imageId) {
+    return fetch.get({
+      url: '/proxy/glance/v2/images/' + imageId + '/members/' + HALO.user.projectId
     });
   },
-  deleteImage(id) {
-    return fetch.delete({
-      url: '/proxy/glance/v2/images/' + id
+  getImageDetail(members) {
+    let deferredList = [];
+    deferredList = members.map(member => {
+      return fetch.get({
+        url: '/proxy/glance/v2/images/' + member.image_id
+      });
+    });
+
+    return RSVP.all(deferredList);
+  },
+  updateMember(member, data) {
+    return fetch.put({
+      url: '/proxy/glance/v2/images/' + member.id + '/members/' + member.member_id,
+      data: data
     });
   }
 };

@@ -13,6 +13,7 @@ let createInstance = require('../instance/pop/create_instance/index');
 let createVolume = require('./pop/create_volume/index');
 let RelatedInstance = require('../image/detail/related_instance');
 let image = require('./pop/image/index');
+let sharedImage = require('./pop/shared_image/index');
 
 let config = require('./config.json');
 let __ = require('locale/client/dashboard.lang.json');
@@ -28,7 +29,7 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    if(HALO.user.roles.indexOf('admin') !== -1) {
+    if(HALO.user.roles.indexOf('admin') === -1) {
       config.btns.unshift({
         'value': ['create', 'image'],
         'key': 'create_image',
@@ -149,7 +150,7 @@ class Model extends React.Component {
 
       let table = _config.table;
       let data = res.filter((ele) => {
-        return ele.image_type !== 'snapshot' && ele.visibility === 'public';
+        return ele.image_type !== 'snapshot' && ele.visibility === 'private' && ele.owner === HALO.user.projectId;
       });
       table.data = data;
       table.loading = false;
@@ -224,6 +225,9 @@ class Model extends React.Component {
           }
         });
         break;
+      case 'share_image':
+        sharedImage(rows[0]);
+        break;
       case 'refresh':
         this.refresh({
           tableLoading: true,
@@ -269,6 +273,12 @@ class Model extends React.Component {
           break;
         case 'delete':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
+          break;
+        case 'create_member':
+          btns[key].disabled = (rows.length === 1 && rows[0].owner_id === HALO.user.projectId) ? false : true;
+          break;
+        case 'share_image':
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId) ? false : true;
           break;
         default:
           break;

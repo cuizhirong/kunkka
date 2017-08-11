@@ -1,11 +1,11 @@
 {
   "tabs": [{
     "name": ["public_image"],
-    "key": "image",
-    "default": true
+    "key": "image"
   }, {
     "name": ["shared_image"],
-    "key": "shared-image"
+    "key": "shared-image",
+    "default": true
   }, {
     "name": ["private_image"],
     "key": "private-image"
@@ -17,24 +17,15 @@
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["more"],
-    "key": "more",
-    "iconClass": "more",
-    "dropdown": {
-      "width": 160,
-      "items": [{
-        "items": [{
-          "title": ["create", "volume"],
-          "key": "create_volume",
-          "disabled": true
-        }, {
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
-        }]
-      }]
-    }
+    "value": ["create", "volume"],
+    "key": "create_volume",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["update", "status"],
+    "key": "update_status",
+    "icon": "edit"
   }, {
     "key": "refresh",
     "icon": "refresh"

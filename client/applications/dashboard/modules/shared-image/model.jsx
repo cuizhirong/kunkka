@@ -8,11 +8,10 @@ let Main = require('client/components/main/index');
 let BasicProps = require('client/components/basic_props/index');
 
 //pop modal
-let deleteModal = require('client/components/modal_delete/index');
 let createInstance = require('../instance/pop/create_instance/index');
 let createVolume = require('./pop/create_volume/index');
 let RelatedInstance = require('../image/detail/related_instance');
-let image = require('./pop/image/index');
+let updateStatus = require('./pop/update_status/index');
 
 let config = require('./config.json');
 let __ = require('locale/client/dashboard.lang.json');
@@ -27,26 +26,6 @@ class Model extends React.Component {
 
   constructor(props) {
     super(props);
-
-    if(HALO.user.roles.indexOf('admin') !== -1) {
-      config.btns.unshift({
-        'value': ['create', 'image'],
-        'key': 'create_image',
-        'type': 'create',
-        'icon': 'create'
-      });
-      config.btns.some(btn => {
-        if (btn.dropdown) {
-          btn.dropdown.items[0].items.unshift({
-            'title': ['edit', 'image'],
-            'key': 'edit_image',
-            'disabled': true
-          });
-          return true;
-        }
-        return false;
-      });
-    }
 
     this.state = {
       config: config
@@ -149,7 +128,7 @@ class Model extends React.Component {
 
       let table = _config.table;
       let data = res.filter((ele) => {
-        return ele.image_type !== 'snapshot' && ele.visibility === 'public';
+        return ele.image_type !== 'snapshot' && ele.visibility === 'private' && ele.owner !== HALO.user.projectId;
       });
       table.data = data;
       table.loading = false;
@@ -198,30 +177,11 @@ class Model extends React.Component {
       case 'create_volume':
         createVolume(rows[0]);
         break;
-      case 'create_image':
-        this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}));
-        break;
-      case 'edit_image':
-        this.state.config.tabs.forEach(tab => {
-          tab.default &&
-          image({item: rows[0], type: tab.key}, null, () => {
-            this.refresh({
-              detailRefresh: true
-            }, true);
-          });
-        });
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'image',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.deleteImage(rows[0].id).then((res) => {
-              cb(true);
-            });
-          }
+      case 'update_status':
+        updateStatus(null, null, () => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
         });
         break;
       case 'refresh':
@@ -263,12 +223,6 @@ class Model extends React.Component {
         case 'create':
         case 'create_volume':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
-          break;
-        case 'edit_image':
-          btns[key].disabled = (rows.length === 1) ? false : true;
-          break;
-        case 'delete':
-          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
           break;
         default:
           break;

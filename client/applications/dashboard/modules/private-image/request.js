@@ -64,5 +64,11 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/glance/v2/images/' + id
     });
+  },
+  createMember(imageId, id) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images/' + imageId + '/members',
+      data: {member: id}
+    });
   }
 };

@@ -1,0 +1,16 @@
+{
+  "title": ["share", "image"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "name",
+    "icon_type": "image",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "project_id"
+  }],
+  "btn": {
+    "value": "share",
+    "disabled": true
+  }
+}

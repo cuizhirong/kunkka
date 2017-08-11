@@ -1,20 +1,25 @@
 {
   "tabs": [{
     "name": ["public_image"],
-    "key": "image",
-    "default": true
+    "key": "image"
   }, {
     "name": ["shared_image"],
     "key": "shared-image"
   }, {
     "name": ["private_image"],
-    "key": "private-image"
+    "key": "private-image",
+    "default": true
   }],
   "btns": [{
     "value": ["create", "instance"],
     "key": "create",
     "type": "create",
     "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["share", "image"],
+    "key": "share_image",
+    "icon": "file-sharing",
     "disabled": true
   }, {
     "value": ["more"],

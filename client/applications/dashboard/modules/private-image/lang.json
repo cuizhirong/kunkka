@@ -1,0 +1,16 @@
+{
+  "en": {
+    "add_data": "Add",
+    "key_value": "Key",
+    "private": "Private ",
+    "private_image": "Private Image ",
+    "value": "Value"
+  },
+  "zh-CN": {
+    "add_data": "添加",
+    "key_value": "键值",
+    "private": "私有",
+    "private_image": "私有镜像",
+    "value": "值"
+  }
+}
