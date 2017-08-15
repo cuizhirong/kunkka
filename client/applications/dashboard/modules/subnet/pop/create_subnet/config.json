@@ -56,6 +56,10 @@
     "tip_type": "error",
     "field": "error",
     "hide": true
+  }, {
+    "type": "adapter",
+    "field": "add_hostroutes",
+    "hide": true
   }],
   "btn": {
     "value": "create",
