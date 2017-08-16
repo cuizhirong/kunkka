@@ -13,6 +13,8 @@ const listUsersAsync = drivers.keystone.user.listUsersAsync;
 
 const base = require('../base');
 
+const endpointType = config('endpoint_type') || 'internal';
+
 function Auth(app) {
   this.app = app;
 }
@@ -29,7 +31,7 @@ function setRemote(catalog) {
       remote[service.name] = oneRemote = new Obj();
     }
     for (let j = 0, m = service.endpoints.length, endpoint = service.endpoints[0]; j < m; j++, endpoint = service.endpoints[j]) {
-      if (endpoint.interface === 'public') {
+      if (endpoint.interface === endpointType) {
         oneRemote[endpoint.region_id] = endpoint.url.split('/').slice(0, 3).join('/');
       }
     }
