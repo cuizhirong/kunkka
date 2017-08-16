@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+let storage = require('client/applications/dashboard/cores/storage');
+let fetch = require('client/applications/dashboard/cores/fetch');
+let RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -14,7 +14,7 @@ module.exports = {
     });
   },
   editNetworkName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.network = {};
     data.network.name = newName;
 
@@ -24,7 +24,7 @@ module.exports = {
     });
   },
   deleteNetworks: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/networks/' + item.id

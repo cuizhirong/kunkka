@@ -1,24 +1,24 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
+let React = require('react');
+let Main = require('client/components/main/index');
+let {Button} = require('client/uskin/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
+let BasicProps = require('client/components/basic_props/index');
+let DetailMinitable = require('client/components/detail_minitable/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createNetwork = require('./pop/create_network/index');
-var createSubnet = require('../subnet/pop/create_subnet/index');
+let deleteModal = require('client/components/modal_delete/index');
+let createNetwork = require('./pop/create_network/index');
+let createSubnet = require('../subnet/pop/create_subnet/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var router = require('client/utils/router');
-var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+let config = require('./config.json');
+let __ = require('locale/client/dashboard.lang.json');
+let router = require('client/utils/router');
+let request = require('./request');
+let msgEvent = require('client/applications/dashboard/cores/msg_event');
+let notify = require('client/applications/dashboard/utils/notify');
+let getStatusIcon = require('../../utils/status_icon');
+let getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -76,11 +76,11 @@ class Model extends React.Component {
       switch (column.key) {
         case 'subnet':
           column.render = (col, item, i) => {
-            var listener = (subnetID) => {
+            let listener = (subnetID) => {
               router.pushState('/dashboard/subnet/' + subnetID);
             };
 
-            var subnetRender = [];
+            let subnetRender = [];
             item.subnets.map((_item, _i) => {
               if (typeof _item === 'object') {
                 _i && subnetRender.push(', ');
@@ -114,11 +114,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -152,7 +152,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     switch (key) {
       case 'create':
         createNetwork();
@@ -200,7 +200,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -210,7 +210,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var length = rows.length;
+    let length = rows.length;
 
     for(let key in btns) {
       switch (key) {
@@ -218,7 +218,7 @@ class Model extends React.Component {
           btns[key].disabled = (length === 1 && !rows[0].shared && !rows[0]['router:external']) ? false : true;
           break;
         case 'delete':
-          var disableDelete = rows.some((row) => {
+          let disableDelete = rows.some((row) => {
             return row.shared || row['router:external'];
           });
           btns[key].disabled = (length > 0 && !disableDelete) ? false : true;
@@ -232,11 +232,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -252,7 +252,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+          let basicPropsItem = this.getBasicPropsItems(rows[0]),
             subnetConfig = this.getDetailTableConfig(rows[0]);
 
           contents[tabKey] = (
@@ -299,7 +299,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editNetworkName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'network',
@@ -336,8 +336,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var networkType = item['provider:network_type'];
-    var items = [{
+    let networkType = item['provider:network_type'];
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: (item.shared || item['router:external']) ? '' : 'editable'
@@ -351,9 +351,6 @@ class Model extends React.Component {
       title: __.network_type,
       content: networkType
     }, {
-      title: __.vlan_id,
-      content: networkType === 'vlan' ? item['provider:segmentation_id'] : '-'
-    }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
         <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>
@@ -364,14 +361,25 @@ class Model extends React.Component {
       title: __.shared,
       content: item.shared ? __.yes : __.no
     }];
-
+    if (networkType === 'vlan') {
+      items.push({
+        title: __.vlan_id,
+        content: networkType === 'vlan' ? item['provider:segmentation_id'] : '-'
+      });
+    }
+    if (networkType === 'flat') {
+      items.push({
+        title: __.physical_network,
+        content: networkType === 'flat' ? item['provider:physical_network'] : '-'
+      });
+    }
     return items;
   }
 
   getDetailTableConfig(item) {
-    var dataContent = [];
+    let dataContent = [];
     item.subnets.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         name: <a data-type="router" href={'/dashboard/subnet/' + element.id}>{element.name || '(' + element.id.substring(0, 8) + ')'}</a>,
         cidr: element.cidr,
@@ -388,7 +396,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.subnet + __.name,
         key: 'name',
@@ -416,7 +424,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -435,7 +443,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

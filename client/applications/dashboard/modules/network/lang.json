@@ -8,15 +8,19 @@
     "network_name": "Network Name",
     "network_type": "Network Type",
     "no_network": "No available Virtual Network",
+    "physical_network": "Physical Network",
+    "physical_tip": "Please enter the physical network",
     "prv_network": "Network",
     "prv_info": "Network is an isolate layer 2 network brocadcast domain. User can create layer 3 network called Subnet in this network. In VDC, network is used as the container of subnets.",
+    "select_physical_network": "Physical Network",
     "show_more": "Show More Options",
     "subnet": "Subnet",
     "subnet_name": "Subnet Name",
     "shared": "Shared",
     "unmanaged": "Unmanaged ",
     "vlan_id": "Vlan ID",
-    "vlan_tip": "VLAN ID range is determined by the admin."
+    "vlan_tip": "VLAN ID range is from 1 to 100.",
+    "vlan_tip_two": "VLAN ID range is from 100 to 200."
   },
   "zh-CN": {
     "create_subnet": "创建子网",
@@ -27,14 +31,18 @@
     "network_name": "私有网络名称",
     "network_type": "网络类型",
     "no_network": "没有可用的虚拟网络",
+    "physical_network": "物理网络",
+    "physical_tip": "请输入物理网络",
     "prv_network": "私有网络",
     "prv_info": "私有网络是一个隔离的二层网络广播域，在这个二层网络中，可以创建多个三层网络，即子网。在VDC中，私有网络主要作用作为子网容器。",
+    "select_physical_network": "物理网络",
     "show_more": "显示高级选项",
     "subnet": "子网",
     "subnet_name": "子网名称",
     "shared": "共享网络",
     "unmanaged": "受管",
     "vlan_id": "Vlan ID",
-    "vlan_tip": "VLAN ID范围由系统管理员配置生成"
+    "vlan_tip": "VLAN ID范围值是1-100",
+    "vlan_tip_two": "VLAN ID范围值是100-200"
   }
 }
