@@ -123,6 +123,15 @@ let endCount = 2;
 
 ```
 
+Of course, as a key in the object you can use `_` to splice two semantic words.
+
+```javascript
+const testObject = {
+  ustack_url: 'https://www.ustack.com/'
+};
+
+```
+
 ## Class literals
 
 Class literals (whether declarations or expressions) are indented as blocks. Do not add semicolons after methods.
