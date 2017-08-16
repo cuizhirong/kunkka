@@ -6,6 +6,7 @@ module.exports = {
   },
   'config': {
     'keystone': 'http://10.0.200.37:5000',
+    'endpoint_type': 'public',
     'no_services': []
   }
 };
