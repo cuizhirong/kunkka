@@ -182,13 +182,13 @@ class Model extends React.Component {
       case 'create':
         createSubnet(rows[0]);
         break;
-      case 'cnt_rter':
+      case 'connect_router':
         connectRouter(rows[0]);
         break;
-      case 'discnt_rter':
+      case 'disconnect_router':
         disconnectRouter(rows[0]);
         break;
-      case 'add_inst':
+      case 'add_instance':
         addInstance(rows[0], false, null, function() {
           notify({
             resource_type: 'instance',
@@ -201,7 +201,7 @@ class Model extends React.Component {
           }, true);
         });
         break;
-      case 'mdfy_subnet':
+      case 'modify_subnet':
         modifySubnet(rows[0], null, function(res) {
           notify({
             resource_name: rows[0].name,
@@ -261,24 +261,24 @@ class Model extends React.Component {
       shared = rows[0] ? rows[0].network.shared : null;
     for(let key in btns) {
       switch (key) {
-        case 'cnt_rter':
+        case 'connect_router':
           if (length === 1 && !rows[0].router.id && !shared && !external && rows[0].gateway_ip) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
           }
           break;
-        case 'discnt_rter':
+        case 'disconnect_router':
           if (length === 1 && rows[0].router.id && !external) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
           }
           break;
-        case 'add_inst':
+        case 'add_instance':
           btns[key].disabled = (length === 1 && !external) ? false : true;
           break;
-        case 'mdfy_subnet':
+        case 'modify_subnet':
           btns[key].disabled = (length === 1 && !shared && !external) ? false : true;
           break;
         case 'delete':

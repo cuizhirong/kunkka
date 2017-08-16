@@ -1,11 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+let commonModal = require('client/components/modal_common/index');
+let config = require('./config.json');
+let request = require('../../request');
+let addHostroutes = require('../create_subnet/add_hostroutes');
+let getErrorMessage = require('client/applications/dashboard/utils/error_message');
+let __ = require('locale/client/dashboard.lang.json');
 
 function getField(fieldName) {
-  var res = null;
+  let res = null;
   config.fields.some((field) => {
     if (field.field === fieldName) {
       res = field;
@@ -43,11 +44,17 @@ function pop(obj, parent, callback) {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      refs.add_hostroutes.setState({
+        renderer: addHostroutes,
+        objHostRoutes: obj.host_routes
+      });
+    },
     onConfirm: function(refs, cb) {
       var data = {
         name: refs.subnet_name.state.value,
-        enable_dhcp: refs.enable_dhcp.state.checked
+        enable_dhcp: refs.enable_dhcp.state.checked,
+        host_routes: []
       };
       if (!refs.enable_gw.state.checked) {
         data.gateway_ip = null;
@@ -57,15 +64,21 @@ function pop(obj, parent, callback) {
         }
       }
 
-      var dns1 = refs.subnet_dns1.state.value;
-      var dns2 = refs.subnet_dns2.state.value;
+      let dns1 = refs.subnet_dns1.state.value;
+      let dns2 = refs.subnet_dns2.state.value;
       if (dns1 || dns2) {
         let dns = [];
         dns1 && dns.push(dns1);
         dns2 && dns.push(dns2);
         data.dns_nameservers = dns;
       }
-
+      let hostroutes = refs.add_hostroutes.refs.hostroutes.state.showsubs;
+      hostroutes.forEach((m) => {
+        data.host_routes.push({
+          destination: m.destination,
+          nexthop: m.nexthop
+        });
+      });
       request.updateSubnet(obj.id, data).then((res) => {
         callback && callback(res);
         cb(true);

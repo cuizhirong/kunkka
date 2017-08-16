@@ -1,18 +1,20 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
+let React = require('react');
+let {Button} = require('client/uskin/index');
+let __ = require('locale/client/dashboard.lang.json');
 
 class AddHostRoutes extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      showsubs: [],
+      showsubs: JSON.parse(JSON.stringify(props.objHostRoutes)) || [],
       opsubs: [],
-      renderValue: props.renderValue ? props.renderValue : '',
-      rendernexThop: props.rendernexThop ? props.rendernexThop : ''
+      renderValue: '',
+      rendernexThop: ''
     };
+
     ['renderInput', 'onInputNextChange', 'onInputChange', 'onAddSubscriber', 'deleteSub'].forEach(m => {
       this[m] = this[m].bind(this);
     });
@@ -40,7 +42,7 @@ class AddHostRoutes extends React.Component {
   }
 
   onAddSubscriber() {
-    var hostValue = this.state.renderValue,
+    let hostValue = this.state.renderValue,
       nexThop = this.state.rendernexThop,
       testDest = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/,
       testNesthop = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
@@ -51,7 +53,7 @@ class AddHostRoutes extends React.Component {
     } else {
       document.getElementById('input').classList.remove('error');
       document.getElementById('inputNext').classList.remove('error');
-      var data = {
+      let data = {
         destination: hostValue,
         nexthop: nexThop
       };
@@ -71,13 +73,13 @@ class AddHostRoutes extends React.Component {
     let v = this.state.showsubs[i];
     this.state.showsubs.splice(i, 1);
     this.setState({
-      showsubs: this.state.showsubs,
+      showsubs: this.state.showsubs.filter(o => o !== v),
       opsubs: this.state.opsubs.concat(Object.assign(v, {op: 'delete'}))
     });
   }
 
   render() {
-    var className = 'halo-pop-com-host-routes modal-row long-label-row';
+    let className = 'halo-pop-com-host-routes modal-row long-label-row';
     if (this.props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

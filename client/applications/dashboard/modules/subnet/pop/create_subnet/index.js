@@ -1,30 +1,29 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var addHostroutes = require('./add_hostroutes');
-var __ = require('locale/client/dashboard.lang.json');
+let commonModal = require('client/components/modal_common/index');
+let config = require('./config.json');
+let request = require('../../request');
+let addHostroutes = require('./add_hostroutes');
+let __ = require('locale/client/dashboard.lang.json');
 
-var createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
+let createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
 
 function pop(obj, parent, callback) {
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       refs.add_hostroutes.setState({
         renderer: addHostroutes,
-        renderValue: '',
-        rendernexThop: ''
+        objHostRoutes: []
       });
       request.getNetworks().then((data) => {
         if (data.length > 0) {
-          var selectedItem = data[0].id;
+          let selectedItem = data[0].id;
           if (obj && obj.id) {
             selectedItem = obj.id;
           }
-          var networks = [];
+          let networks = [];
           data.forEach((ele) => {
             if (!ele.shared) {
               networks.push(ele);
@@ -38,7 +37,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         ip_version: 4,
         name: refs.subnet_name.state.value,
         network_id: refs.select_network.state.value,
@@ -47,7 +46,7 @@ function pop(obj, parent, callback) {
         host_routes: []
       };
 
-      var gwChecked = refs.enable_gw.state.checked;
+      let gwChecked = refs.enable_gw.state.checked;
       if (!gwChecked) {
         data.gateway_ip = null;
       } else {
@@ -64,7 +63,7 @@ function pop(obj, parent, callback) {
           data.dns_nameservers = dns;
         }
       }
-      let hostroutes = refs.add_hostroutes.refs.hostroutes.state.opsubs;
+      let hostroutes = refs.add_hostroutes.refs.hostroutes.state.showsubs;
       hostroutes.forEach((m) => {
         data.host_routes.push({
           destination: m.destination,
@@ -75,8 +74,8 @@ function pop(obj, parent, callback) {
         callback && callback(res.subnet);
         cb(true);
       }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
+        let reg = new RegExp('"message":"(.*)","');
+        let tip = reg.exec(err.response)[1];
 
         refs.error.setState({
           value: tip,
@@ -127,7 +126,7 @@ function pop(obj, parent, callback) {
           }
           break;
         case 'net_address':
-          var netState = refs.net_address.state,
+          let netState = refs.net_address.state,
             testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
           if(!testAddr.test(netState.value)) {
             refs.net_address.setState({

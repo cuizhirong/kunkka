@@ -30,6 +30,9 @@
     "type": "input",
     "field": "subnet_dns2",
     "is_long_label": true
+  }, {
+    "type": "adapter",
+    "field": "add_hostroutes"
   }],
   "btn": {
     "value": "modify",
