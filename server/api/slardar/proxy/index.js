@@ -9,8 +9,8 @@ const _ = require('lodash');
 const getQueryString = require('helpers/getQueryString.js');
 const noBodyMethodList = ['get', 'head', 'delete'];
 const csv = require('./csv');
-const customResPage = require('../brewmaster/api/base').middleware.customResPage;
-const adminLogin = require('./common/adminLogin');
+const customResPage = require('../../brewmaster/api/base').middleware.customResPage;
+const adminLogin = require('../common/adminLogin');
 const config = require('config');
 const configRegion = config('region');
 const adminProjectId = config('admin_projectId');
@@ -65,7 +65,7 @@ module.exports = (app) => {
     });
   }, customResPage);
   // check session
-  app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/', '/proxy-swift/'], function (req, res, next) {
+  app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/', '/proxy-swift/', '/proxy-glance/'], function (req, res, next) {
     if (req.session.user) {
       next();
     } else {
@@ -96,16 +96,17 @@ module.exports = (app) => {
       res.end();
     }).catch(next);
   });
-  app.use('/proxy-swift/', (req, res, next) => {
+  app.use(['/proxy-swift/', '/proxy-glance/'], (req, res, next) => {
+    let service = req.originalUrl.split('/')[1].slice(6);
     let endpoint = req.session.endpoint;
     let region = req.session.user.regionId;
-    if (!endpoint.swift) {
+    if (!endpoint[service]) {
       res.status(503).json({
         status: 503,
-        message: req.i18n.__('api.swift.unavailable')
+        message: service + req.i18n.__('api.swift.unavailable')
       });
     }
-    let swiftHost = endpoint.swift[region];
+    let swiftHost = endpoint[service][region];
     const headers = _.omit(req.headers, ['cookie']);
     headers['X-Auth-Token'] = req.session.user.token;
     const url = '/' + req.path.split('/').slice(1).join('/') + getQueryString(req.query);
@@ -188,13 +189,8 @@ module.exports = (app) => {
    * /proxy/csv/glance/v2/images
    */
   app.get('/proxy/csv/*', csv.data);
-  app.get('/proxy-search/*', require('./proxy.search'));
+  app.get('/proxy-search/*', require('./search'));
   app.all('/proxy/*', (req, res, next) => {
-    // if (req.body) {
-    //   if (req.body.forceDelete !== undefined) {
-    //     return res.status(403).json({Error: 'Request is not allowwed!'});
-    //   }
-    // }
     let remote = req.session.endpoint;
     let region = req.headers.region || req.session.user.regionId;
     let service = req.path.split('/')[2];
