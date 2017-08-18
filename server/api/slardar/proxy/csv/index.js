@@ -6,7 +6,7 @@ const csv = require('json2csv');
 const _ = require('lodash');
 
 const getQueryString = require('helpers/getQueryString.js');
-const csvElements = require('./csv.elements');
+const csvElements = require('./elements');
 const drivers = require('drivers');
 const extraRequests = {
   project: (session) => {
