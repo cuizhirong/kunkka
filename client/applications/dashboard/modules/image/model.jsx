@@ -188,7 +188,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    let rows = data.rows;
+    let rows = data.rows,
+      that = this;
     switch (key) {
       case 'create':
         createInstance(rows[0], null, function() {
@@ -199,13 +200,19 @@ class Model extends React.Component {
         createVolume(rows[0]);
         break;
       case 'create_image':
-        this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}));
+        this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}, null, () => {
+          that.refresh({
+            detailRefresh: true,
+            tableLoading: true
+          }, true);
+        }));
         break;
       case 'edit_image':
         this.state.config.tabs.forEach(tab => {
           tab.default &&
           image({item: rows[0], type: tab.key}, null, () => {
-            this.refresh({
+            that.refresh({
+              tableLoading: true,
               detailRefresh: true
             }, true);
           });
@@ -219,6 +226,10 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteImage(rows[0].id).then((res) => {
+              that.refresh({
+                detailRefresh: true,
+                tableLoading: true
+              }, true);
               cb(true);
             });
           }
@@ -268,7 +279,7 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && !rows[0].protected) ? false : true;
           break;
         default:
           break;

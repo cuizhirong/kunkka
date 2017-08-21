@@ -54,15 +54,21 @@ module.exports = {
       data: data
     });
   },
-  createTask(data) {
+  createTask: function(data) {
     return fetch.post({
       url: '/proxy/glance/v2/tasks',
       data: data
     });
   },
-  deleteImage(id) {
+  deleteImage: function(id) {
     return fetch.delete({
       url: '/proxy/glance/v2/images/' + id
+    });
+  },
+  createImage: function(data) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images',
+      data: data
     });
   }
 };

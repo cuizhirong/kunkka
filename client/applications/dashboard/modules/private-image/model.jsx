@@ -12,7 +12,7 @@ let deleteModal = require('client/components/modal_delete/index');
 let createInstance = require('../instance/pop/create_instance/index');
 let createVolume = require('./pop/create_volume/index');
 let RelatedInstance = require('../image/detail/related_instance');
-let image = require('./pop/image/index');
+let image = require('../image/pop/image/index');
 let sharedImage = require('./pop/shared_image/index');
 
 let config = require('./config.json');
@@ -189,7 +189,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    let rows = data.rows;
+    let rows = data.rows,
+      that = this;
     switch (key) {
       case 'create':
         createInstance(rows[0], null, function() {
@@ -200,13 +201,19 @@ class Model extends React.Component {
         createVolume(rows[0]);
         break;
       case 'create_image':
-        this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}));
+        this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}, null, () => {
+          that.refresh({
+            tableLoading: true,
+            detailRefresh: true
+          }, true);
+        }));
         break;
       case 'edit_image':
         this.state.config.tabs.forEach(tab => {
           tab.default &&
           image({item: rows[0], type: tab.key}, null, () => {
             this.refresh({
+              tableLoading: true,
               detailRefresh: true
             }, true);
           });
