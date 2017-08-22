@@ -6,7 +6,6 @@
     "hasOperation": true
   }],
   "btn": {
-    "value": "confirm",
-    "type": "confirm"
+    "value": "confirm"
   }
 }

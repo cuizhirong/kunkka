@@ -5,7 +5,6 @@
     "field": "consumer"
   }],
   "btn": {
-    "value": "confirm",
-    "type": "confirm"
+    "value": "confirm"
   }
 }

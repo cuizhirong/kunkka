@@ -21,6 +21,11 @@
     "icon": "download",
     "disabled": true
   }, {
+    "value": ["manage", "volume"],
+    "key": "manage_volume",
+    "icon": "create",
+    "disabled": true
+  }, {
     "value": ["delete"],
     "key": "delete",
     "type": "delete",
@@ -60,6 +65,9 @@
       "key": "name",
       "type": "captain",
       "sort": true
+    }, {
+      "title": ["hosts"],
+      "key": "hosts"
     }, {
       "title": ["size"],
       "key": "size"

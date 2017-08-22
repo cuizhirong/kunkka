@@ -108,5 +108,4 @@ module.exports = {
       data: data
     });
   }
-
 };

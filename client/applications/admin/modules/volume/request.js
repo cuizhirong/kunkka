@@ -1,5 +1,6 @@
 var storage = require('client/applications/admin/cores/storage');
 var fetch = require('../../cores/fetch');
+var __ = require('locale/client/admin.lang.json');
 var RSVP = require('rsvp');
 var Promise = RSVP.Promise;
 
@@ -173,6 +174,44 @@ module.exports = {
         }
       });
       return domains;
+    });
+  },
+  manageVolume: function(data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-manage',
+      data: data
+    });
+  },
+  getVolumeType: function() {
+    return fetch.get({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
+    }).then(res => {
+      res.volume_types.unshift({
+        id: 'no_volume_type',
+        name: __.no_volume_type
+      });
+      return res.volume_types;
+    });
+  },
+  getAvailabilityZone: function() {
+    let url = '/proxy/nova/v2.1/os-availability-zone/detail';
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      let zones = res.availabilityZoneInfo;
+      zones.forEach(zone => {
+        zone.id = zone.name = zone.zoneName;
+      });
+
+      return zones;
+    });
+  },
+  getHostsList: function() {
+    return fetch.get({
+      url: '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail'
+    }).then(res => {
+      let hypervisors = res.hypervisors.map(hypervisor => hypervisor.hypervisor_hostname);
+      return hypervisors;
     });
   }
 };

@@ -27,7 +27,6 @@
   }],
   "btn": {
     "value": "confirm",
-    "type": "confirm",
     "disabled": true
   }
 }

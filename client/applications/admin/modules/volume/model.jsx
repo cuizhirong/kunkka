@@ -7,6 +7,7 @@ var deleteModal = require('client/components/modal_delete/index');
 var LineChart = require('client/components/line_chart/index');
 
 var detachInstance = require('./pop/detach_instance/index');
+var manageVolume = require('./pop/manage_volume/index');
 
 var config = require('./config.json');
 var moment = require('client/libs/moment');
@@ -63,6 +64,11 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'hosts':
+          column.render = (col, item, i) => {
+            return item['os-vol-host-attr:host'];
+          };
+          break;
         case 'size':
           column.render = (col, item, i) => {
             return item.size + 'GB';
@@ -373,6 +379,14 @@ class Model extends React.Component {
           csv(res);
         });
         break;
+      case 'manage_volume':
+        manageVolume(null, null, function() {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -432,6 +446,7 @@ class Model extends React.Component {
             btns[key].disabled = true;
           }
           break;
+        case 'manage_volume':
         case 'export_csv':
           btns[key].disabled = false;
           break;
@@ -633,6 +648,9 @@ class Model extends React.Component {
     }, {
       title: __.id,
       content: item.id
+    }, {
+      title: __.hosts,
+      content: item['os-vol-host-attr:host']
     }, {
       title: __.size,
       content: item.size + 'GB'

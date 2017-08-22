@@ -1,5 +1,7 @@
+require('./style/index.less');
+
 var React = require('react');
-var Main = require('client/components/main_paged/model');
+var Main = require('client/components/main_paged/index');
 var BasicProps = require('client/components/basic_props/index');
 var deleteModal = require('client/components/modal_delete/index');
 
@@ -12,7 +14,7 @@ var __ = require('locale/client/admin.lang.json');
 var request = require('./request');
 var getStatusIcon = require('../../utils/status_icon');
 
-class Model extends Main {
+class Model extends React.Component {
 
   constructor(props) {
     super(props);
@@ -21,8 +23,31 @@ class Model extends Main {
       config: config
     };
 
-    this.lang = __;
-    this.getStatusIcon = getStatusIcon;
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
+
+    this.stores = {
+      urls: []
+    };
+  }
+
+  componentWillMount() {
+    this.tableColRender(this.state.config.table.column);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
+      this.loadingTable();
+      this.onInitialize(nextProps.params);
+    }
   }
 
   tableColRender() {
@@ -39,6 +64,14 @@ class Model extends Main {
           break;
       }
     });
+  }
+
+  onInitialize(params) {
+    if (params[2]) {
+      this.getSingle(params[2]);
+    } else {
+      this.getList();
+    }
   }
 
   getList() {
@@ -84,14 +117,77 @@ class Model extends Main {
     });
   }
 
+
+  updateTableData(table, currentUrl, refreshDetail) {
+    var newConfig = this.state.config;
+    newConfig.table = table;
+    newConfig.table.loading = false;
+
+    this.setState({
+      config: newConfig
+    }, () => {
+      this.stores.urls.push(currentUrl);
+
+      var dashboard = this.refs.dashboard,
+        detail = dashboard.refs.detail,
+        params = this.props.params;
+
+      if (detail && refreshDetail && params.length > 2) {
+        detail.refresh();
+      }
+    });
+  }
+
+  setPaginationData(table, res) {
+    var pagination = {},
+      next = res.links.next ? res.links.next : null;
+
+    if (next) {
+      pagination.nextUrl = next;
+    }
+
+    var history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
+    table.pagination = pagination;
+
+    return table;
+  }
+
+  onAction(field, actionType, refs, data) {
+
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
 
+    var refresh = () => {
+      that.refresh({
+        refreshList: true,
+        refreshDetail: true
+      });
+    };
+
     switch (key) {
       case 'create':
         createQosSpec(null, null, () => {
-          this.defaultRefresh();
+          refresh();
         });
         break;
       case 'delete':
@@ -104,7 +200,7 @@ class Model extends Main {
             let ids = rows.map((ele) => ele.id);
 
             request.deleteQosSpecs(ids).then((res) => {
-              that.defaultRefresh();
+              refresh();
               cb(true);
             });
           }
@@ -112,12 +208,20 @@ class Model extends Main {
         break;
       case 'edit_consumer':
         editConsumer(rows[0], null, () => {
-          this.defaultRefresh();
+          refresh();
         });
         break;
       case 'edit_specs':
         editSpecs(rows[0], null, () => {
-          this.defaultRefresh();
+          refresh();
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
         });
         break;
       default:
@@ -252,6 +356,85 @@ class Model extends Main {
       default:
         break;
     }
+  }
+
+  refresh(data, params) {
+    if (!data) {
+      data = {};
+    }
+    if (!params) {
+      params = this.props.params;
+    }
+
+    if (data.initialList) {
+      if (data.loadingTable) {
+        this.loadingTable();
+      }
+      if (data.clearState) {
+        this.clearState();
+      }
+
+      this.getInitialListData();
+    } else if (data.refreshList) {
+      if (params[2]) {
+        if (data.loadingDetail) {
+          this.loadingDetail();
+          this.refs.dashboard.setRefreshBtnDisabled(true);
+        }
+      } else {
+        if (data.loadingTable) {
+          this.loadingTable();
+        }
+      }
+
+      var history = this.stores.urls,
+        url = history.pop();
+
+      this.getNextListData(url, data.refreshDetail);
+    }
+  }
+
+  loadingTable() {
+    var _config = this.state.config;
+    _config.table.loading = true;
+
+    this.setState({
+      config: _config
+    });
+  }
+
+  loadingDetail() {
+    this.refs.dashboard.refs.detail.loading();
+  }
+
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
+  clearState() {
+    this.clearUrls();
+
+    var dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
+  render() {
+    return (
+      <div className="halo-module-qos-spec" style={this.props.style}>
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          __={__}
+          config={this.state.config}
+          params={this.props.params}
+          getStatusIcon={getStatusIcon}
+        />
+      </div>
+    );
   }
 
 }
