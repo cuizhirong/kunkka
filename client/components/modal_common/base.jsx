@@ -23,6 +23,7 @@ var DataList = require('./subs/data_list/index');
 var Charge = require('./subs/charge/index');
 var Adapter = require('./subs/adapter/index');
 var KeyValueTable = require('./subs/key_value_table/index');
+var KeyValue = require('./subs/key_value/index');
 
 class ModalBase extends React.Component {
 
@@ -73,7 +74,8 @@ class ModalBase extends React.Component {
         'data_list': DataList,
         'charge': Charge,
         'adapter': Adapter,
-        'key_value_table': KeyValueTable
+        'key_value_table': KeyValueTable,
+        'key_value': KeyValue
       };
 
       var Sub = subComs[m.type];

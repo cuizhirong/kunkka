@@ -567,5 +567,36 @@
         }
       }
     }
+    &.key-value {
+      .input-data {
+        border-bottom: 1px solid @display_box_bg_color;
+        .item {
+          min-width: 130px;
+          max-width: 130px;
+        }
+        > div {
+          justify-content: center;
+        }
+      }
+      .input-area, .input-data {
+        display: flex;
+        .item {
+          text-align: center;
+          i:hover {
+            cursor: pointer;
+            color: @strong_color;
+          }
+        }
+        > div {
+          flex: 1;
+          display: flex;
+          margin-right: 10px;
+          > * {
+            width: 100%;
+          }
+        }
+        margin-bottom: 10px;
+      }
+    }
   }
 }

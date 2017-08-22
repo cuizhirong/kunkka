@@ -9,7 +9,8 @@ class Input extends React.Component {
       value: props.value ? props.value : '',
       disabled: !!props.disabled,
       hide: !!props.hide,
-      error: false
+      error: false,
+      tip_info: props.tip_info || ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -35,7 +36,8 @@ class Input extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    var props = this.props,
+      state = this.state;
     var className = 'modal-row input-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
@@ -57,7 +59,7 @@ class Input extends React.Component {
         <div>
           <input className={this.state.error ? 'error' : ''} type={props.input_type} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />
           {
-            props.tip_info && <ShortTip label={props.__[props.tip_info]} />
+            state.tip_info && <ShortTip label={props.__[state.tip_info]} />
           }
         </div>
       </div>
