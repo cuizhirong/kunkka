@@ -4,17 +4,35 @@
     "type": "input",
     "field": "name"
   }, {
-    "type": "tab",
-    "field": "type",
+    "type": "select",
+    "field": "volume_source"
+  }, {
+    "type": "select",
+    "field": "image",
     "data": [],
-    "value": "",
-    "hide": true
+    "hide": true,
+    "empty_text": {
+      "info": "no_image"
+    }
+  }, {
+    "type": "select",
+    "field": "volume",
+    "hide": true,
+    "data": [],
+    "empty_text": {
+      "info": "no_volume"
+    }
+  }, {
+    "type": "adapter",
+    "field": "type",
+    "hide": true,
+    "empty_text": "no_volume_type"
   }, {
     "type": "slider",
     "field": "capacity_size",
     "min": 1,
     "max": 1,
-    "value": 1,
+    "value": 20,
     "unit": "GB",
     "hide": true
   }, {

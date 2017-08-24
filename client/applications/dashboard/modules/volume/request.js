@@ -38,6 +38,11 @@ module.exports = {
       return data.instance;
     });
   },
+  getSources: function() {
+    return storage.getList(['image', 'volume']).then(function(data) {
+      return data;
+    });
+  },
   getOverview: function() {
     return fetch.get({
       url: '/api/v1/' + HALO.user.projectId + '/overview'
@@ -204,6 +209,17 @@ module.exports = {
   acceptTransfer: function(transferId, data) {
     return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/os-volume-transfer/' + transferId + '/accept',
+      data: data
+    });
+  },
+  updateBootable: function(id, bootable) {
+    let data = {
+      'os-set_bootable': {
+        bootable: bootable
+      }
+    };
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + id + '/action',
       data: data
     });
   }

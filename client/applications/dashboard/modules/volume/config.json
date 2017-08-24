@@ -21,6 +21,11 @@
     "icon": "associate",
     "disabled": true
   }, {
+    "value": ["update_bootable"],
+    "key": "update_bootable",
+    "icon": "edit",
+    "disabled": true
+  }, {
     "value": ["more"],
     "key": "more",
     "iconClass": "more",

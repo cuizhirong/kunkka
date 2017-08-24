@@ -22,6 +22,7 @@ var createAlarm = require('../alarm/pop/create/index');
 var createTransfer = require('./pop/create_transfer');
 var deleteTransfer = require('./pop/delete_transfer');
 var acceptTransfer = require('./pop/accept_transfer');
+var updateBootable = require('./pop/update_bootable');
 
 var config = require('./config.json');
 var __ = require('locale/client/dashboard.lang.json');
@@ -196,6 +197,9 @@ class Model extends React.Component {
       case 'create':
         createModal();
         break;
+      case 'update_bootable':
+        updateBootable(rows[0]);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -295,6 +299,7 @@ class Model extends React.Component {
       singleStatus = single.status;
     }
 
+    btns.update_bootable.disabled = !(isSingle && (singleStatus === 'available' || singleStatus === 'in-use'));
     btns.attach_to_instance.disabled = !(isSingle && singleStatus === 'available' && !single.attachments[0]);
     btns.create_transfer.disabled = !(isSingle && singleStatus === 'available');
     btns.create_snapshot.disabled = !(isSingle && (singleStatus === 'available' || singleStatus === 'in-use'));
