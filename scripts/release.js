@@ -75,7 +75,7 @@ function compare(v1, v2) {
 
 function updateTag(apps) {
   if (apps.length === 0) {
-    console.log('RELEASE JOB is done!!! Please wait util Gerrit pushes all new tags to gitlab, then run "npm run tags" to update config.json');
+    console.log('RELEASE JOB is done!!!');
     return;
   }
   let rl = readline.createInterface({
@@ -129,7 +129,7 @@ function updateTag(apps) {
           rl.prompt();
         }
         if (finalTag) {
-          let gitTag = execSync(`git tag -a ${finalTag} -m 'bump version' && git review -s && git push gerrit ${finalTag}`, {cwd: appDir}).toString();
+          let gitTag = execSync(`git tag -a ${finalTag} -m 'bump version' && git push origin ${finalTag}`, {cwd: appDir}).toString();
           console.log(gitTag);
           console.log(`${project} update new tag: ${finalTag}\n\n`);
           rl.close();
