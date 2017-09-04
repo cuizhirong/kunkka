@@ -43,7 +43,6 @@ class Model extends React.Component {
           this.refresh({
             detailRefresh: true
           }, false);
-
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {

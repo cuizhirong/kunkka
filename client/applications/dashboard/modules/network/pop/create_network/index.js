@@ -3,37 +3,49 @@ let config = require('./config.json');
 let request = require('../../request');
 let networkType = require('./network_type');
 let __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
+let getErrorMessage = require('../../../../utils/error_message');
 
-function chooseVlan(refs, vlanState, testVlan, testAddr, netVlanstate, subnetChecked){
-  if (!testVlan.test(vlanState.value)) {
-    refs.btn.setState({
-      disabled: true
-    });
-    refs.vlan_id.setState({
-      error: vlanState.value !== ''
-    });
-  } else if (subnetChecked) {
-    refs.vlan_id.setState({
-      error: false
-    });
-    if (vlanState.value !== '' && netVlanstate.value === ''){
+function chooseVlan(refs, vlanState, testMin, testMax, testAddr, netVlanstate, subnetChecked, vlanLength){
+  let vlanNumber = parseInt(vlanState.value, 10);
+  if (/^[0-9]*$/.test(vlanState.value)) {
+    if (!(vlanNumber >= testMin && vlanNumber <= testMax)) {
       refs.btn.setState({
         disabled: true
       });
-    } else {
-      if(testAddr.test(netVlanstate.value) && testVlan.test(vlanState.value)) {
+      refs.vlan_id.setState({
+        error: vlanState.value !== ''
+      });
+    } else if (subnetChecked) {
+      refs.vlan_id.setState({
+        error: false
+      });
+      if (vlanState.value !== '' && netVlanstate.value === ''){
         refs.btn.setState({
-          disabled: false
+          disabled: true
         });
+      } else {
+        if(testAddr.test(netVlanstate.value, 10) && (vlanNumber > testMin && vlanNumber < testMax)) {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
       }
+    } else if (!subnetChecked) {
+      refs.vlan_id.setState({
+        error: false
+      });
+      refs.btn.setState({
+        disabled: vlanState.value === ''
+      });
     }
-  } else if (!subnetChecked) {
+  } else {
     refs.vlan_id.setState({
-      error: false
+      error: true
     });
-    refs.btn.setState({
-      disabled: vlanState.value === ''
+  }
+  if (vlanLength === 1) {
+    refs.select_physical_network.setState({
+      hide: true
     });
   }
 }
@@ -84,7 +96,7 @@ function pop(parent, callback) {
       refs.enable_vlan.setState({
         renderer: networkType
       });
-      let phyNet = HALO.configs.neutron_network_vlanranges.split(',');
+      let phyNet = HALO.configs.neutron_network_vlanranges;
       let phyItem;
       let item = phyNet.map((items, index) => {
         phyItem = items.split(':');
@@ -110,21 +122,15 @@ function pop(parent, callback) {
             hide: false
           });
           let v = HALO.configs.neutron_network_vlanranges;
-          let vArr = v.split(',');
           let vId = refs.vlan_id.state.value;
           let physicalNetwork = refs.select_physical_network.state.value;
-          vArr.forEach(item => {
-            let arrItem = item.split(':');
-            if(arrItem[0] === physicalNetwork) {
-              if(!isNaN(vId) && vId > parseInt(arrItem[1], 10) && vId < parseInt(arrItem[2], 10)) {
-                data['provider:segmentation_id'] = vId;
-                data['provider:physical_network'] = physicalNetwork;
-              } else {
-                refs.btn.setState({
-                  disabled: true
-                });
-              }
-            }
+          if(v.length === 1) {
+            data['provider:physical_network'] = v[0].split(':')[0];
+          }
+          data['provider:segmentation_id'] = vId;
+          data['provider:physical_network'] = physicalNetwork;
+          refs.btn.setState({
+            disabled: true
           });
           break;
         case 'vxlan':
@@ -176,14 +182,14 @@ function pop(parent, callback) {
         enableType = refs.enable_vlan.refs.enable_type.state.selectedValue,
         testFlat = /^\w+$/;
       let phyiscalNet = refs.select_physical_network.state.value;
-      let vlanStatus = [{
-        vlanReg: /^([1-9]\d{0,1}|100)$/,
-        choosePhysicalNet: 'datacentre'
-      }, {
-        vlanReg: /^(1\d{2}|200)$/,
-        choosePhysicalNet: 'datacentre2'
-      }];
-      let testVlan;
+      let vlanLength = HALO.configs.neutron_network_vlanranges.length;
+
+      let vlanRanges = HALO.configs.neutron_network_vlanranges;
+      let vlanItem = [];
+      let testMin, testMax;
+      vlanRanges.forEach(item => {
+        vlanItem.push(item.split(':'));
+      });
       switch (field) {
         case 'create_subnet':
           refs.subnet_name.setState({
@@ -193,20 +199,26 @@ function pop(parent, callback) {
             hide: !subnetChecked
           });
           refs.btn.setState({
-            disabled: subnetChecked
+            disabled: vlanState.value === ''
           });
           break;
         case 'vlan_id':
           if (enableType === 'vlan') {
-            vlanStatus.forEach((m) => {
-              if (m.choosePhysicalNet === phyiscalNet) {
-                testVlan = m.vlanReg;
-                chooseVlan(refs, vlanState, testVlan, testAddr, netVlanstate, subnetChecked);
+            vlanItem.forEach((m) => {
+              if (m[0] === phyiscalNet) {
+                testMin = m[1];
+                testMax = m[2];
+                chooseVlan(refs, vlanState, testMin, testMax, testAddr, netVlanstate, subnetChecked, vlanLength);
               }
             });
             refs.select_physical_network.setState({
               hide: false
             });
+            if (vlanLength === 1) {
+              refs.select_physical_network.setState({
+                hide: true
+              });
+            }
           }
           break;
         case 'physical_network':
@@ -226,15 +238,19 @@ function pop(parent, callback) {
               refs.physical_network.setState({
                 hide: true
               });
-              vlanStatus.forEach((m) => {
-                if (m.choosePhysicalNet === phyiscalNet) {
-                  testVlan = m.vlanReg;
-                  chooseVlan(refs, vlanState, testVlan, testAddr, netVlanstate, subnetChecked);
+              vlanItem.forEach((m) => {
+                if (m[0] === phyiscalNet) {
+                  testMin = m[1];
+                  testMax = m[2];
+                  chooseVlan(refs, vlanState, testMin, testMax, testAddr, netVlanstate, subnetChecked);
                 }
               });
               if (!subnetChecked) {
+                refs.vlan_id.setState({
+                  error: false
+                });
                 refs.btn.setState({
-                  disabled: true
+                  disabled: vlanState.value === ''
                 });
               }
               break;
@@ -277,19 +293,14 @@ function pop(parent, callback) {
           }
           break;
         case 'select_physical_network':
-          if (phyiscalNet === 'datacentre2') {
-            refs.vlan_id.setState({
-              tip_info: 'vlan_tip_two'
-            });
-          } else if (phyiscalNet === 'datacentre') {
-            refs.vlan_id.setState({
-              tip_info: 'vlan_tip'
-            });
-          }
-          vlanStatus.forEach((m) => {
-            if (m.choosePhysicalNet === phyiscalNet) {
-              testVlan = m.vlanReg;
-              chooseVlan(refs, vlanState, testVlan, testAddr, netVlanstate, subnetChecked);
+          vlanItem.forEach((m) => {
+            if (m[0] === phyiscalNet) {
+              testMin = m[1];
+              testMax = m[2];
+              refs.vlan_id.setState({
+                tip_info: __.vlan_tip.replace('{0}', testMin).replace('{1}', testMax)
+              });
+              chooseVlan(refs, vlanState, testMin, testMax, testAddr, netVlanstate, subnetChecked);
             }
           });
           break;
@@ -320,25 +331,28 @@ function pop(parent, callback) {
                   disabled: false
                 });
               } else if (enableType === 'vlan') {
-                vlanStatus.forEach((m) => {
-                  if (m.choosePhysicalNet === phyiscalNet) {
-                    testVlan = m.vlanReg;
-                    if (!testVlan.test(vlanState.value)) {
-                      refs.vlan_id.setState({
-                        error: vlanState.value !== ''
-                      });
-                      refs.btn.setState({
-                        disabled: true
-                      });
-                    } else if (vlanState.value !== '' && netVlanstate.value === ''){
-                      refs.btn.setState({
-                        disabled: true
-                      });
-                    } else {
-                      if(netVlanstate && vlanState) {
+                vlanItem.forEach((m) => {
+                  if (m[0] === phyiscalNet) {
+                    if (m[0] === phyiscalNet) {
+                      testMin = m[1];
+                      testMax = m[2];
+                      if(!(typeof parseInt(vlanState.value, 10) === 'number' && vlanState.value >= testMin && vlanState.value <= testMax)){
                         refs.btn.setState({
-                          disabled: false
+                          disabled: true
                         });
+                        refs.vlan_id.setState({
+                          error: vlanState.value !== ''
+                        });
+                      } else if (vlanState.value !== '' && netVlanstate.value === ''){
+                        refs.btn.setState({
+                          disabled: true
+                        });
+                      } else {
+                        if(netVlanstate && vlanState) {
+                          refs.btn.setState({
+                            disabled: false
+                          });
+                        }
                       }
                     }
                   }

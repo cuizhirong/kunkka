@@ -19,8 +19,7 @@
     "shared": "Shared",
     "unmanaged": "Unmanaged ",
     "vlan_id": "Vlan ID",
-    "vlan_tip": "VLAN ID range is from 1 to 100.",
-    "vlan_tip_two": "VLAN ID range is from 100 to 200."
+    "vlan_tip": "VLAN ID range is from {0} to {1}."
   },
   "zh-CN": {
     "create_subnet": "创建子网",
@@ -42,7 +41,6 @@
     "shared": "共享网络",
     "unmanaged": "受管",
     "vlan_id": "Vlan ID",
-    "vlan_tip": "VLAN ID范围值是1-100",
-    "vlan_tip_two": "VLAN ID范围值是100-200"
+    "vlan_tip": "VLAN ID范围值是 {0} - {1}"
   }
 }
