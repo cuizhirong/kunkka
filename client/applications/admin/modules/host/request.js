@@ -59,6 +59,18 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+    var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit + getParameters(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getHypervisorById: function(str) {
     var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + str;
     return fetch.get({

@@ -45,6 +45,18 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getNextList: function(nextUrl) {
     var url = '/proxy/nova/v2.1/' + nextUrl;
     return fetch.get({

@@ -33,6 +33,19 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getNextList: function(nextUrl) {
     var url = nextUrl;
     return fetch.get({

@@ -3,7 +3,7 @@ var fetch = require('client/applications/admin/cores/fetch');
 module.exports = {
   getImageType: function() {
     return fetch.get({
-      url: '/proxy/glance/v2/images?visibility=public'
+      url: '/proxy-search/glance/v2/images'
     });
   },
   getFlavorType: function() {

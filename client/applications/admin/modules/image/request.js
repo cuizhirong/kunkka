@@ -39,6 +39,27 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    function getParameters(fields) {
+      let ret = '';
+      for(let f in fields) {
+        ret += '&' + f + '=' + fields[f];
+      }
+      return ret;
+    }
+    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit + getParameters(data);
+
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getSingle: function(id) {
     var url = '/proxy-search/glance/v2/images?id=' + id;
     return fetch.get({

@@ -205,7 +205,7 @@ class Model extends React.Component {
     };
 
     var imageTypes = [];
-    res.imageType.images.forEach((image) => {
+    res.imageType.list.forEach((image) => {
       imageTypes.push({
         id: image.id,
         name: image.name
@@ -236,7 +236,7 @@ class Model extends React.Component {
   }
 
   addTypesToStore(res) {
-    this.stores.imageTypes = res.imageType.images;
+    this.stores.imageTypes = res.imageType.list;
     this.stores.flavorTypes = res.flavorType.flavors;
     this.stores.hostTypes = res.hostType.hypervisors;
   }
@@ -539,6 +539,22 @@ class Model extends React.Component {
 
         this.loadingTable();
         this.getNextListData(url);
+        break;
+      case 'filtrate':
+        delete data.rows;
+        this.clearState();
+
+        var table = this.state.config.table;
+        request.getFilterList(data).then((res) => {
+          table.data = res.servers;
+          table = this.processTableData(table, res);
+          this.updateTableData(table, res._url);
+        }).catch((res) => {
+          table.data = [];
+          table.pagination = null;
+          this.updateTableData(table, String(res.responseURL));
+        });
+        this.loadingTable();
         break;
       default:
         break;

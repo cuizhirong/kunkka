@@ -298,6 +298,22 @@ class Model extends React.Component {
         this.loadingTable();
         this.getNextListData(url);
         break;
+      case 'filtrate':
+        delete data.rows;
+        this.clearState();
+
+        var table = this.state.config.table;
+        request.getFilterList(data).then((res) => {
+          table.data = res.servers;
+          table = this.processTableData(table, res);
+          this.updateTableData(table, res._url);
+        }).catch((res) => {
+          table.data = [];
+          table.pagination = null;
+          this.updateTableData(table, String(res.responseURL));
+        });
+        this.loadingTable();
+        break;
       default:
         break;
     }

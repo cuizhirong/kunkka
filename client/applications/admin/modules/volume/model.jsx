@@ -199,7 +199,6 @@ class Model extends React.Component {
   getFilteredList(data) {
     var table = this.state.config.table;
     var pageLimit = table.limit;
-
     request.filterFromAll(data, pageLimit).then((res) => {
       table.data = res.list;
       this.setPaginationData(table, res);
@@ -484,6 +483,23 @@ class Model extends React.Component {
 
         this.loadingTable();
         this.getNextListData(url);
+        break;
+      case 'filtrate':
+        delete data.rows;
+        this.clearState();
+        var table = this.state.config.table;
+        if (data) {
+          request.getFilterList(data).then(res => {
+            table.data = res.list;
+            this.setPaginationData(table, res);
+            this.updateTableData(table, res._url);
+          }).catch((res) => {
+            table.data = [];
+            table.pagination = null;
+            this.updateTableData(table, String(res.responseURL));
+          });
+        }
+        this.loadingTable();
         break;
       default:
         break;

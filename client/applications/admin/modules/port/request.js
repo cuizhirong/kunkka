@@ -18,6 +18,27 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+
+    function getParameters(fields) {
+      let ret = '';
+      for(let f in fields) {
+        ret += '&' + f + '=' + fields[f];
+      }
+      return ret;
+    }
+    var url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit + getParameters(data);
+
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getSubnet: function() {
     var url = '/proxy/neutron/v2.0/subnets';
     return fetch.get({

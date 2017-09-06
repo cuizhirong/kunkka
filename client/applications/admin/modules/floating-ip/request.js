@@ -27,6 +27,18 @@ module.exports = {
       return res;
     });
   },
+  getFilterList: function(data, pageLimit) {
+    if (isNaN(Number(pageLimit))) {
+      pageLimit = 10;
+    }
+    var url = '/proxy/neutron/v2.0/floatingips?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   getServerByID: function(serverID) {
     var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
     return fetch.get({
