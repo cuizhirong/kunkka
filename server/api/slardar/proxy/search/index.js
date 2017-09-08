@@ -2,7 +2,7 @@
 const co = require('co');
 const request = require('superagent');
 const getQueryString = require('helpers/getQueryString.js');
-
+const listImageRecursive = require('../listImageRecursive');
 const prefix = '/proxy-search';
 const objects = [
   {
@@ -111,8 +111,9 @@ module.exports = (req, res, next) => {
     const remote = req.session.endpoint;
     const region = req.session.user.regionId;
     const path = req.path.slice(prefix.length);
-    const service = req.path.split('/')[2];
-    const target = remote[service][region] + '/' + req.path.split('/').slice(3).join('/');
+    const pathSplit = req.path.split('/');
+    const service = pathSplit[2];
+    const target = remote[service][region] + '/' + pathSplit.slice(3).join('/');
     const searchId = req.query.id ? req.query.id.trim() : '';
     const search = req.query.search ? req.query.search.trim() : '';
     const page = toNaturalNumber(req.query.page) || 1;
@@ -166,7 +167,13 @@ module.exports = (req, res, next) => {
       delete req.query.limit;
       delete req.query.marker;
       delete req.query.id;
-      data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
+      if (pathSplit[4] === 'images') {
+        let images = [];
+        yield listImageRecursive({limit: 9999}, '', token, remote[service][region], images);
+        data = {body: {images: images}};
+      } else {
+        data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
+      }
       const re = new RegExp(search, 'i'),
         list = data.body[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
       if (limit) {
