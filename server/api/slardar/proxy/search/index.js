@@ -2,7 +2,7 @@
 const co = require('co');
 const request = require('superagent');
 const getQueryString = require('helpers/getQueryString.js');
-
+const listImageRecursive = require('../listImageRecursive');
 const prefix = '/proxy-search';
 const objects = [
   {
@@ -111,8 +111,9 @@ module.exports = (req, res, next) => {
     const remote = req.session.endpoint;
     const region = req.session.user.regionId;
     const path = req.path.slice(prefix.length);
-    const service = req.path.split('/')[2];
-    const target = remote[service][region] + '/' + req.path.split('/').slice(3).join('/');
+    const pathSplit = req.path.split('/');
+    const service = pathSplit[2];
+    const target = remote[service][region] + '/' + pathSplit.slice(3).join('/');
     const searchId = req.query.id ? req.query.id.trim() : '';
     const search = req.query.search ? req.query.search.trim() : '';
     const page = toNaturalNumber(req.query.page) || 1;
@@ -140,7 +141,7 @@ module.exports = (req, res, next) => {
           throw e;
         }
       }
-    } else if (!search) {
+    } else if (!search && !(pathSplit[4] === 'images' && req.query.image_type)) {
       data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
       data = data.body;
       delete req.query.page;
@@ -166,9 +167,49 @@ module.exports = (req, res, next) => {
       delete req.query.limit;
       delete req.query.marker;
       delete req.query.id;
-      data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
-      const re = new RegExp(search, 'i'),
+
+      const re = new RegExp(search, 'i');
+      let list;
+      if (pathSplit[4] === 'images') {
+        let images = [];
+        yield listImageRecursive({limit: 9999}, '', token, remote[service][region], images);
+
+        let imageType = req.query.image_type;
+        let isFilterSnapshot = (imageType === 'snapshot');
+        if(!search){
+          list = images.filter(image => {
+            return image.image_type === imageType;
+          });
+        }
+        if (imageType && search) {
+          if(isFilterSnapshot){
+            list = images.filter(image => {
+              return re.test(image[obj.match || 'name']) && image.image_type === 'snapshot';
+            });
+          } else {
+            list = images.filter(image => {
+              return image.image_type !== 'snapshot' && re.test(image[obj.match || 'name']);
+            });
+          }
+        } else if(!search) {
+          if(isFilterSnapshot){
+            list = images.filter(image => {
+              return image.image_type === 'snapshot';
+            });
+          } else {
+            list = images.filter(image => {
+              return image.image_type !== 'snapshot';
+            });
+          }
+        } else {
+          list = images.filter(image => {
+            return re.test(image[obj.match || 'name']);
+          });
+        }
+      } else {
+        data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
         list = data.body[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
+      }
       if (limit) {
         result = paginate(page, limit, list, path, Object.assign({search}, req.query));
       } else {

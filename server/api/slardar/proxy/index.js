@@ -13,7 +13,6 @@ const customResPage = require('../../brewmaster/api/base').middleware.customResP
 const adminLogin = require('../common/adminLogin');
 const config = require('config');
 const configRegion = config('region');
-const adminProjectId = config('admin_projectId');
 const regionId = (configRegion && configRegion[0] && configRegion[0].id) || 'RegionOne';
 
 
@@ -86,9 +85,8 @@ module.exports = (app) => {
       const containers = ['template', 'ticket'];
       let swiftHost = endpoint.swift[region];
       let projectId = req.session.user.projectId;
-      let swiftAccount = 'AUTH_' + adminProjectId;
       yield Promise.all(containers.map(container => {
-        return request.put(`${swiftHost}/v1/${swiftAccount}/${projectId}_${container}`)
+        return request.put(`${swiftHost}/${projectId}_${container}`)
           .set('X-Auth-Token', adminToken.token)
           .set('X-Container-write', `${projectId}:*`)
           .set('X-Container-read', '.r:*,.rlistings');
@@ -106,13 +104,14 @@ module.exports = (app) => {
         message: service + req.i18n.__('api.swift.unavailable')
       });
     }
-    let swiftHost = endpoint[service][region];
+    const swiftHost = endpoint[service][region];
+    const hostnameAndPort = swiftHost.split('://')[1].split('/')[0];
     const headers = _.omit(req.headers, ['cookie']);
     headers['X-Auth-Token'] = req.session.user.token;
     const url = '/' + req.path.split('/').slice(1).join('/') + getQueryString(req.query);
     const options = {
-      hostname: swiftHost.split('://')[1].split(':')[0],
-      port: swiftHost.split('://')[1].split(':')[1],
+      hostname: hostnameAndPort.split(':')[0],
+      port: hostnameAndPort.split(':')[1],
       path: url,
       method: req.method,
       headers: headers

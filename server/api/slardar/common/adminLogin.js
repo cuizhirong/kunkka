@@ -3,28 +3,12 @@
 const co = require('co');
 
 const SlardarBase = require('../api/base');
-
 const config = require('config');
 const domain = config('domain') || 'Default';
 const adminUsername = config('admin_username');
 const adminPassword = config('admin_password');
 const adminProjectId = config('admin_projectId');
-
-function setRemote(catalog) {
-  let remote = {};
-  let oneRemote;
-  for (let i = 0, l = catalog.length, service = catalog[0]; i < l; i++, service = catalog[i]) {
-    if (!remote[service.name]) {
-      remote[service.name] = oneRemote = {};
-    }
-    for (let j = 0, m = service.endpoints.length, endpoint = service.endpoints[0]; j < m; j++, endpoint = service.endpoints[j]) {
-      if (endpoint.interface === 'public') {
-        oneRemote[endpoint.region_id] = endpoint.url.split('/').slice(0, 3).join('/');
-      }
-    }
-  }
-  return remote;
-}
+const setRemote = require('./setRemote');
 
 module.exports = function (callback) {
   if (callback && typeof callback === 'function') {
@@ -59,9 +43,7 @@ module.exports = function (callback) {
           remote: setRemote(scopedAuthObj.body.token.catalog)
         };
         resolve(tokenObj);
-      }).catch(e => {
-        reject(e);
-      });
+      }).catch(reject);
     });
   }
 };
