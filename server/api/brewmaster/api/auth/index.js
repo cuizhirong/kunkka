@@ -1,42 +1,19 @@
 'use strict';
-
 const co = require('co');
 
 const drivers = require('drivers');
 const config = require('config');
 const region = config('region');
-
 const keystoneRemote = config('keystone');
+const listUsersAsync = drivers.keystone.user.listUsersAsync;
 
 const adminLogin = require('api/slardar/common/adminLogin');
-const listUsersAsync = drivers.keystone.user.listUsersAsync;
+const setRemote = require('api/slardar/common/setRemote');
 
 const base = require('../base');
 
-const endpointType = config('endpoint_type') || 'internal';
-
 function Auth(app) {
   this.app = app;
-}
-
-function Obj() {
-}
-Obj.prototype = Object.create(null);
-
-function setRemote(catalog) {
-  let remote = new Obj();
-  let oneRemote;
-  for (let i = 0, l = catalog.length, service = catalog[0]; i < l; i++, service = catalog[i]) {
-    if (!remote[service.name]) {
-      remote[service.name] = oneRemote = new Obj();
-    }
-    for (let j = 0, m = service.endpoints.length, endpoint = service.endpoints[0]; j < m; j++, endpoint = service.endpoints[j]) {
-      if (endpoint.interface === endpointType) {
-        oneRemote[endpoint.region_id] = endpoint.url.split('/').slice(0, 3).join('/');
-      }
-    }
-  }
-  return remote;
 }
 
 function getCookie(req, userId) {
@@ -54,7 +31,6 @@ function getCookie(req, userId) {
 
 Auth.prototype = {
   authentication: function (req, res, next) {
-
 
     co(function *() {
 
