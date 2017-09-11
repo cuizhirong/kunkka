@@ -141,7 +141,7 @@ module.exports = (req, res, next) => {
           throw e;
         }
       }
-    } else if (!search) {
+    } else if (!search && !(pathSplit[4] === 'images' && req.query.image_type)) {
       data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
       data = data.body;
       delete req.query.page;
@@ -167,15 +167,49 @@ module.exports = (req, res, next) => {
       delete req.query.limit;
       delete req.query.marker;
       delete req.query.id;
+
+      const re = new RegExp(search, 'i');
+      let list;
       if (pathSplit[4] === 'images') {
         let images = [];
         yield listImageRecursive({limit: 9999}, '', token, remote[service][region], images);
-        data = {body: {images: images}};
+
+        let imageType = req.query.image_type;
+        let isFilterSnapshot = (imageType === 'snapshot');
+        if(!search){
+          list = images.filter(image => {
+            return image.image_type === imageType;
+          });
+        }
+        if (imageType && search) {
+          if(isFilterSnapshot){
+            list = images.filter(image => {
+              return re.test(image[obj.match || 'name']) && image.image_type === 'snapshot';
+            });
+          } else {
+            list = images.filter(image => {
+              return image.image_type !== 'snapshot' && re.test(image[obj.match || 'name']);
+            });
+          }
+        } else if(!search) {
+          if(isFilterSnapshot){
+            list = images.filter(image => {
+              return image.image_type === 'snapshot';
+            });
+          } else {
+            list = images.filter(image => {
+              return image.image_type !== 'snapshot';
+            });
+          }
+        } else {
+          list = images.filter(image => {
+            return re.test(image[obj.match || 'name']);
+          });
+        }
       } else {
         data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
-      }
-      const re = new RegExp(search, 'i'),
         list = data.body[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
+      }
       if (limit) {
         result = paginate(page, limit, list, path, Object.assign({search}, req.query));
       } else {
