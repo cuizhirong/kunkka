@@ -1,7 +1,7 @@
 'use strict';
 
-var Base = require('../base.js');
-var driver = new Base();
+const Base = require('../base.js');
+const driver = new Base();
 const flag = (driver.noServices.indexOf('router') === -1) ? true : false;
 
 driver.listRouters = function (token, remote, callback, query) {

@@ -1,8 +1,8 @@
 'use strict';
 
-var Base = require('../base.js');
-var driver = new Base();
-var request = require('superagent');
+const Base = require('../base.js');
+const driver = new Base();
+const request = require('superagent');
 
 driver.listImages = function (token, remote, callback, query) {
   return driver.getMethod(

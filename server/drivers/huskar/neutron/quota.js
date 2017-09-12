@@ -1,7 +1,7 @@
 'use strict';
 
-var Base = require('../base.js');
-var driver = new Base();
+const Base = require('../base.js');
+const driver = new Base();
 
 driver.getQuota = function (projectId, targetId, token, remote, callback, query) {
   let pid = targetId ? ('/' + targetId) : ('/' + projectId);

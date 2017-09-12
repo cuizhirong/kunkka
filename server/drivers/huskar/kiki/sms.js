@@ -1,7 +1,7 @@
 'use strict';
 
-var Base = require('../base.js');
-var driver = new Base();
+const Base = require('../base.js');
+const driver = new Base();
 
 driver.sendSms = function (countryCode, mobileNumber, content, remote, token, callback) {
   return driver.postMethod(
