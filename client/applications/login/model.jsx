@@ -1,5 +1,5 @@
-let React = require('react');
-let request = require('./request.js');
+const React = require('react');
+const request = require('./request.js');
 
 class Model extends React.Component {
 
@@ -85,7 +85,7 @@ class Model extends React.Component {
     request.login(data).then(function(res) {
       window.location = window.location.pathname;
     }, function(err) {
-      var code = JSON.parse(err.responseText).error.code;
+      let code = JSON.parse(err.responseText).error.code;
       if(code === 400) {
         that.setState({
           errorTip: __.captchaError
