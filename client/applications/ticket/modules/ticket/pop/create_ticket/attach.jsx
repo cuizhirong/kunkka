@@ -1,7 +1,7 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/ticket.lang.json');
+const React = require('react');
+const __ = require('locale/client/ticket.lang.json');
 
 class Attach extends React.Component {
   constructor(props) {
@@ -15,13 +15,13 @@ class Attach extends React.Component {
   }
 
   uploadFileFromBrowse() {
-    var file = this.refs.myfile.files[0];
+    let file = this.refs.myfile.files[0];
 
     this.uploadFile(file);
   }
 
   getContent(content) {
-    var strBef, strAft;
+    let strBef, strAft;
     if (content.length > 14) {
       strBef = content.substring(0, 7);
       strAft = content.substring(content.length - 7, content.length);
@@ -57,7 +57,7 @@ class Attach extends React.Component {
   }
 
   render() {
-    var className = 'halo-pop-attach',
+    let className = 'halo-pop-attach',
       classNameFile = '';
     if (this.props.is_long_label) {
       className += ' label-row long-label-row';

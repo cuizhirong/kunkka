@@ -1,12 +1,12 @@
 /**
  * @func: get status icon in table and details
  */
-var React = require('react');
-var __ = require('locale/client/ticket.lang.json');
+let React = require('react');
+let __ = require('locale/client/ticket.lang.json');
 
 module.exports = (str) => {
-  var status = str.toLowerCase();
-  var type = {};
+  let status = str.toLowerCase();
+  let type = {};
 
   switch(status) {
     case 'active':
@@ -54,7 +54,7 @@ module.exports = (str) => {
       break;
   }
 
-  var className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'
+  let className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'
     : 'glyphicon icon-status-' + type.icon + ' ' + type.status;
 
   return (

@@ -1,18 +1,18 @@
-var commonModal = require('client/components/modal_common/index');
-var __ = require('locale/client/ticket.lang.json');
-var config = require('./config.json');
-var getErrorMessage = require('client/applications/ticket/utils/error_message');
-var popAttach = require('./attach');
-var request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const __ = require('locale/client/ticket.lang.json');
+const config = require('./config.json');
+const getErrorMessage = require('client/applications/ticket/utils/error_message');
+const popAttach = require('./attach');
+const request = require('../../request');
 
 function pop(obj, parent, callback) {
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      var data = [{
+      let data = [{
         id: 'breakdown',
         name: __.breakdown
       }, {
@@ -22,7 +22,7 @@ function pop(obj, parent, callback) {
         id: 'application',
         name: __.application
       }];
-      var selectedItem = data[0].id;
+      let selectedItem = data[0].id;
       refs.select_type.setState({
         data: data,
         value: selectedItem
@@ -32,7 +32,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         title: refs.title.state.value,
         description: refs.description.state.value,
         type: refs.select_type.state.value,

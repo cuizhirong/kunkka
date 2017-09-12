@@ -1,4 +1,4 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getList: function(pageLimit) {
@@ -6,7 +6,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/ticket/' + HALO.user.userId + '/self-tickets?limit=' + pageLimit + '&page=1';
+    let url = '/api/ticket/' + HALO.user.userId + '/self-tickets?limit=' + pageLimit + '&page=1';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -18,7 +18,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = nextUrl;
+    let url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -30,7 +30,7 @@ module.exports = {
     });
   },
   createTickets: function(data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets';
+    let url = '/api/ticket/' + HALO.user.userId + '/tickets';
     return fetch.post({
       url: url,
       data: data,
@@ -38,9 +38,9 @@ module.exports = {
     });
   },
   postFile: function(file) {
-    var formData = new FormData();
+    let formData = new FormData();
     formData.append('attachment', file);
-    var url = '/api/ticket/' + HALO.user.userId + '/attachments';
+    let url = '/api/ticket/' + HALO.user.userId + '/attachments';
     return fetch.post({
       url: url,
       data: formData,
@@ -49,7 +49,7 @@ module.exports = {
     });
   },
   addFile: function(ticketId, data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + ticketId + '/attachments';
+    let url = '/api/ticket/' + HALO.user.userId + '/tickets/' + ticketId + '/attachments';
 
     return fetch.post({
       url: url,
@@ -57,21 +57,21 @@ module.exports = {
     });
   },
   downloadFile: function(name) {
-    var url = '/api/ticket/' + HALO.user.userId + '/attachments/' + name;
+    let url = '/api/ticket/' + HALO.user.userId + '/attachments/' + name;
 
     return fetch.get({
       url: url
     });
   },
   createReply: function(id, data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/ticket/' + id + '/reply';
+    let url = '/api/ticket/' + HALO.user.userId + '/ticket/' + id + '/reply';
     return fetch.post({
       url: url,
       data: data
     });
   },
   updateStatus: function(id, data) {
-    var url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '/owner';
+    let url = '/api/ticket/' + HALO.user.userId + '/tickets/' + id + '/owner';
     return fetch.put({
       url: url,
       data: data

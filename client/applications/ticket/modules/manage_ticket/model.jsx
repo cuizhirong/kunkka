@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
 
-var moment = require('client/libs/moment');
-var __ = require('locale/client/ticket.lang.json');
-var config = require('./config.json');
-var router = require('client/utils/router');
-var request = require('./request');
-var getStatusIcon = require('../../utils/status_icon');
-var Detail = require('client/applications/ticket/components/detail/index');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/ticket.lang.json');
+const config = require('./config.json');
+const router = require('client/utils/router');
+const request = require('./request');
+const getStatusIcon = require('../../utils/status_icon');
+const Detail = require('client/applications/ticket/components/detail/index');
 
 class Model extends React.Component {
 
@@ -33,7 +33,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var column = this.state.config.table.column;
+    let column = this.state.config.table.column;
     this.tableColRender(column);
     if (HALO.user.roles.includes('admin')) {
       this.state.config.btns.splice(2, 1);
@@ -60,7 +60,7 @@ class Model extends React.Component {
   }
 
   setConfig(_config) {
-    var tabs = _config.tabs;
+    let tabs = _config.tabs;
     tabs[0].default = true;
     tabs[1].default = false;
     tabs[2].default = false;
@@ -86,7 +86,7 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
-    var setOption = function(key, data) {
+    let setOption = function(key, data) {
       filters.forEach((filter) => {
         filter.items.forEach((item) => {
           if (item.key === key) {
@@ -96,7 +96,7 @@ class Model extends React.Component {
       });
     };
 
-    var times = [{
+    let times = [{
       id: 'day',
       name: __.last_day
     }, {
@@ -113,7 +113,7 @@ class Model extends React.Component {
   }
 
   getSingle(id) {
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       status = '',
       key = '';
     this.state.config.tabs.map(tab => {
@@ -125,7 +125,7 @@ class Model extends React.Component {
     request.getSingle(id, status).then((res) => {
       table.data = [res];
       this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/ticket/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -136,7 +136,7 @@ class Model extends React.Component {
 
   getList() {
     this.stores.urls.length = 0;
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       pageLimit = table.limit;
 
     request.getList('pending', pageLimit).then((res) => {
@@ -148,7 +148,7 @@ class Model extends React.Component {
 
   getNextList(url, refreshDetail) {
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       if (res.tickets) {
         table.data = res.tickets;
       } else if (res.id) {
@@ -163,14 +163,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.next ? res.next : null;
 
     if (next) {
       pagination.nextUrl = res._url.split('page')[0] + '&page=' + next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -181,7 +181,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.setConfig(this.state.config);
+    let newConfig = this.setConfig(this.state.config);
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -190,7 +190,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      var detail = this.refs.ticket.refs.detail,
+      let detail = this.refs.ticket.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -236,7 +236,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -244,7 +244,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -264,7 +264,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var ticket = this.refs.ticket;
+    let ticket = this.refs.ticket;
     if (ticket) {
       ticket.clearState();
     }
@@ -299,7 +299,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var idData = data.filter_id,
+      let idData = data.filter_id,
         timeData = data.filter_type,
         start = '';
       if (idData) {
@@ -317,7 +317,7 @@ class Model extends React.Component {
           }
         }
 
-        var status = '',
+        let status = '',
           key = '';
         this.state.config.tabs.map(tab => {
           if (tab.default) {
@@ -328,13 +328,13 @@ class Model extends React.Component {
 
         let pageLimit = this.state.config.table.limit;
         request.filter(status, start, pageLimit).then((res) => {
-          var table = this.state.config.table;
+          let table = this.state.config.table;
           table.data = res.tickets;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
         });
       } else {
-        var r = {};
+        let r = {};
         r.initialList = true;
         r.loadingTable = true;
         r.clearState = true;
@@ -345,8 +345,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
-    var _data = {
+    let {rows} = data;
+    let _data = {
       status: ''
     };
     switch(key) {
@@ -411,7 +411,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
         if (data.direction === 'prev') {
           history.pop();
@@ -433,7 +433,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -443,8 +443,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var roleOwner = HALO.user.roles.includes('owner');
-    var roleAdmin = HALO.user.roles.includes('admin');
+    let roleOwner = HALO.user.roles.includes('owner');
+    let roleAdmin = HALO.user.roles.includes('admin');
     for (let key in btns) {
       switch(key) {
         case 'pending':
@@ -469,7 +469,7 @@ class Model extends React.Component {
   }
 
   submitReply(that) {
-    var _data = {
+    let _data = {
       content: that.refs.reply.value.trim()
     };
     that.refs.upload.refs.child.setState({
@@ -477,10 +477,10 @@ class Model extends React.Component {
       uploadError: []
     });
 
-    var data = {
+    let data = {
       attachments: that.refs.upload.refs.child.state.attachments
     };
-    var id = that.props.rawItem.id;
+    let id = that.props.rawItem.id;
     request.addFile(id, data).then((res) => {
       that.setState({
         files: that.state.files.concat(res)
@@ -504,14 +504,14 @@ class Model extends React.Component {
     this.dashboard.refs.detail.setState({
       visible: false
     });
-    var pathList = router.getPathList();
+    let pathList = router.getPathList();
     router.pushState('/' + pathList.slice(0, 2).join('/'));
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch (tabKey) {
       case 'description':

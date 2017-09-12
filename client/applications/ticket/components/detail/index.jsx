@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var moment = require('client/libs/moment');
-var getTime = require('client/utils/time_unification');
-var Attach = require('../../modules/ticket/pop/create_ticket/attach');
-var Adapter = require('client/components/modal_common/subs/adapter');
-var __ = require('locale/client/ticket.lang.json');
-var resources = '/static/assets/ticket/ticket_icon_2x.png';
+const React = require('react');
+const moment = require('client/libs/moment');
+const getTime = require('client/utils/time_unification');
+const Attach = require('../../modules/ticket/pop/create_ticket/attach');
+const Adapter = require('client/components/modal_common/subs/adapter');
+const __ = require('locale/client/ticket.lang.json');
+const resources = '/static/assets/ticket/ticket_icon_2x.png';
 
 class Detail extends React.Component {
   constructor(props) {
@@ -54,7 +54,7 @@ class Detail extends React.Component {
   }
 
   getContent(content) {
-    var strBef, strAft;
+    let strBef, strAft;
     if (content.length > 12) {
       strBef = content.substring(0, 7);
       strAft = content.substring(content.length - 5, content.length);
@@ -65,16 +65,16 @@ class Detail extends React.Component {
   }
 
   render() {
-    var item = this.props.rawItem,
+    let item = this.props.rawItem,
       state = this.state,
       replies = state.replies,
       files = state.files,
       id = HALO.user.userId,
       roleOwner = HALO.user.roles.includes('owner'),
       roleAdmin = HALO.user.roles.includes('admin');
-    var sortTime = function(name) {
+    let sortTime = function(name) {
       return function(o, p) {
-        var a, b;
+        let a, b;
         if (typeof o === 'object' && typeof p === 'object' && o && p) {
           a = Date.parse(o[name]);
           b = Date.parse(p[name]);
@@ -109,7 +109,7 @@ class Detail extends React.Component {
           </div>
           <div className="question-attach">
             {files && files.map((file, index) => {
-              var style = {
+              let style = {
                 background: 'url(' + file.url + ') no-repeat',
                 backgroundSize: 'cover',
                 width: '110px',
@@ -129,7 +129,7 @@ class Detail extends React.Component {
         <div className="detail-reply">
           <div>
             {replies.map((reply, index) => {
-              var classNameReply = 'reply',
+              let classNameReply = 'reply',
                 classNameMsg = 'msg';
 
               if(reply.owner === id) {

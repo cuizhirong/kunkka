@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
 
-//var BasicProps = require('client/components/basic_props/index');
-var Detail = require('client/applications/ticket/components/detail/index');
+//let BasicProps = require('client/components/basic_props/index');
+const Detail = require('client/applications/ticket/components/detail/index');
 
-var createTicket = require('./pop/create_ticket/index');
-var config = require('./config.json');
-var request = require('./request');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/ticket.lang.json');
-var router = require('client/utils/router');
-var getTime = require('client/utils/time_unification');
-var getStatusIcon = require('../../utils/status_icon');
+const createTicket = require('./pop/create_ticket/index');
+const config = require('./config.json');
+const request = require('./request');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/ticket.lang.json');
+const router = require('client/utils/router');
+const getTime = require('client/utils/time_unification');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -36,7 +36,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var column = this.state.config.table.column;
+    let column = this.state.config.table.column;
     this.tableColRender(column);
   }
 
@@ -79,7 +79,7 @@ class Model extends React.Component {
 
   //request: get list
   getList() {
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       pageLimit = table.limit;
     request.initContainer().then(_res => {
       request.getList(pageLimit).then((res) => {
@@ -92,7 +92,7 @@ class Model extends React.Component {
 
   getNextList(url, refreshDetail) {
     request.getNextList(url).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       if (res.tickets) {
         table.data = res.tickets;
       } else if (res.id) {
@@ -107,7 +107,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -116,7 +116,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      var detail = this.refs.ticket.refs.detail,
+      let detail = this.refs.ticket.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -127,14 +127,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.next ? res.next : null;
 
     if (next) {
       pagination.nextUrl = res._url.split('&')[0] + '&page=' + next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -180,7 +180,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -188,7 +188,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -208,7 +208,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var ticket = this.refs.ticket;
+    let ticket = this.refs.ticket;
     if (ticket) {
       ticket.clearState();
     }
@@ -237,7 +237,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -247,7 +247,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    let sole = rows.length === 1 ? rows[0] : null;
     for (let key in btns) {
       switch (key) {
         case 'open':
@@ -270,7 +270,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
         if (data.direction === 'prev') {
           history.pop();
@@ -292,8 +292,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
-    var _data = {
+    let {rows} = data;
+    let _data = {
       status: ''
     };
     switch(key) {
@@ -343,23 +343,23 @@ class Model extends React.Component {
     this.dashboard.refs.detail.setState({
       visible: false
     });
-    var pathList = router.getPathList();
+    let pathList = router.getPathList();
     router.pushState('/' + pathList.slice(0, 2).join('/'));
   }
 
   submitReply(that) {
-    var _data = {
+    let _data = {
       content: that.refs.reply.value.trim()
     };
 
-    var data = {
+    let data = {
       attachments: that.refs.upload.refs.child.state.attachments
     };
     that.refs.upload.refs.child.setState({
       fileNames: [],
       uploadError: []
     });
-    var id = that.props.rawItem.id;
+    let id = that.props.rawItem.id;
     request.addFile(id, data).then((res) => {
       that.setState({
         files: that.state.files.concat(res)
@@ -380,17 +380,17 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     rows[0].replies.map((reply) => {
       reply.updatedAt = getTime(reply.updatedAt);
     });
 
-    var sortTime = function(name) {
+    let sortTime = function(name) {
       return function(o, p) {
-        var a, b;
+        let a, b;
         if (typeof o === 'object' && typeof p === 'object' && o && p) {
           a = Date.parse(o[name]);
           b = Date.parse(p[name]);

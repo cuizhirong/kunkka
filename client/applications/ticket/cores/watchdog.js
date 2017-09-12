@@ -1,8 +1,8 @@
 // Used to catch unexpected errors
 
-var RSVP = require('rsvp');
-var getErrorMessage = require('../utils/error_message');
-var notification = require('client/uskin/index').Notification;
+const RSVP = require('rsvp');
+const getErrorMessage = require('../utils/error_message');
+const notification = require('client/uskin/index').Notification;
 
 RSVP.on('error', function(err) {
   if (err && err.stack) {

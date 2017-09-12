@@ -1,6 +1,6 @@
-var PendModel = require('../manage_ticket/model');
-var request = require('../manage_ticket/request');
-var config = require('./config.json');
+const PendModel = require('../manage_ticket/model');
+const request = require('../manage_ticket/request');
+const config = require('./config.json');
 
 class Model extends PendModel {
 
@@ -17,7 +17,7 @@ class Model extends PendModel {
   }
 
   setConfig(_config) {
-    var tabs = _config.tabs;
+    let tabs = _config.tabs;
     tabs[0].default = false;
     tabs[1].default = true;
     tabs[2].default = false;
@@ -27,11 +27,11 @@ class Model extends PendModel {
 
   getList() {
     this.stores.urls.length = 0;
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       pageLimit = table.limit;
 
     request.getList('proceeding', pageLimit).then((res) => {
-      var _tickets = [];
+      let _tickets = [];
       res.tickets.map((ticket) => {
         if (ticket.processor === HALO.user.userId) {
           _tickets.push(ticket);
