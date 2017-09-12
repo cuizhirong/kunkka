@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var deleteModal = require('client/components/modal_delete/index');
-var {Button} = require('uskin');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const deleteModal = require('client/components/modal_delete/index');
+const {Button} = require('uskin');
 
-var createEncryption = require('./pop/create_encryption');
-var createType = require('./pop/create');
-var editSpecs = require('./pop/edit_specs');
+const createEncryption = require('./pop/create_encryption');
+const createType = require('./pop/create');
+const editSpecs = require('./pop/edit_specs');
 
-var config = require('./config.json');
-var __ = require('locale/client/admin.lang.json');
-var request = require('./request');
-var getStatusIcon = require('../../utils/status_icon');
+const config = require('./config.json');
+const __ = require('locale/client/admin.lang.json');
+const request = require('./request');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -89,7 +89,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
 
     request.getList().then((res) => {
       table.data = res.volume_types;
@@ -103,7 +103,7 @@ class Model extends React.Component {
   getSingle(volumeTypeID) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
 
     request.getSingle(volumeTypeID).then((res) => {
       table.data = [res.volume_type];
@@ -115,7 +115,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
 
     request.getNextList(url).then((res) => {
       if (res.volume_types) {
@@ -133,7 +133,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -142,7 +142,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      var dashboard = this.refs.dashboard,
+      let dashboard = this.refs.dashboard,
         detail = dashboard.refs.detail,
         params = this.props.params;
 
@@ -153,14 +153,14 @@ class Model extends React.Component {
   }
 
   setPaginationData(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -190,7 +190,7 @@ class Model extends React.Component {
     let rows = data.rows;
     let that = this;
 
-    var refresh = () => {
+    let refresh = () => {
       that.refresh({
         refreshList: true,
         refreshDetail: true
@@ -248,7 +248,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -258,8 +258,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var len = rows.length;
-    var isSingle = (len === 1);
+    let len = rows.length;
+    let isSingle = (len === 1);
 
     btns.create_encryption.disabled = !isSingle;
     btns.delete.disabled = !(len > 0);
@@ -275,7 +275,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -299,9 +299,9 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data, server) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
@@ -368,7 +368,7 @@ class Model extends React.Component {
     let specs = item.extra_specs;
     let specsKeys = Object.keys(specs);
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substr(0, 8) + ')'
     }, {
@@ -396,7 +396,7 @@ class Model extends React.Component {
   }
 
   getEncryptionInfo(item) {
-    var items = [{
+    let items = [{
       title: __.encryption + __.id,
       content: item.encryption_id
     }, {
@@ -440,7 +440,7 @@ class Model extends React.Component {
         });
         break;
       case 'edit_name':
-        // var {rawItem, newName} = data;
+        // let {rawItem, newName} = data;
         // request.editVolumeName(rawItem, newName).then((res) => {
         //   this.refresh({
         //     refreshList: true,
@@ -503,7 +503,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -511,7 +511,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -530,7 +530,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }

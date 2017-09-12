@@ -1,7 +1,7 @@
-var storage = require('client/applications/admin/cores/storage');
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const storage = require('client/applications/admin/cores/storage');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 function getParameters(fields) {
   let ret = '';
@@ -16,14 +16,14 @@ module.exports = {
     return storage.getList(['imageType', 'flavorType', 'hostType'], forced);
   },
   getListInitialize: function(pageLimit, forced) {
-    var req = [];
+    let req = [];
     req.push(this.getList(pageLimit));
     req.push(this.getFilterOptions(forced));
 
     return RSVP.all(req);
   },
   getServerByIDInitialize: function(serverID, forced) {
-    var req = [];
+    let req = [];
     req.push(this.getServerByID(serverID));
     req.push(this.getFilterOptions(forced));
 
@@ -34,7 +34,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -49,7 +49,7 @@ module.exports = {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -58,7 +58,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/nova/v2.1/' + nextUrl;
+    let url = '/proxy/nova/v2.1/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -68,7 +68,7 @@ module.exports = {
   },
   filterFromAll: function(data) {
     function requestParams(obj) {
-      var str = '';
+      let str = '';
       for(let key in obj) {
         str += ('&' + key + '=' + obj[key]);
       }
@@ -76,7 +76,7 @@ module.exports = {
       return str;
     }
 
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1' + requestParams(data);
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1' + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -88,7 +88,7 @@ module.exports = {
     });
   },
   getServerByID: function(serverID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -97,7 +97,7 @@ module.exports = {
     });
   },
   migrate: function(id, hostID, isCool) {
-    var data = {};
+    let data = {};
     if(isCool) {
       data = {
         'migrate': null
@@ -118,7 +118,7 @@ module.exports = {
     });
   },
   poweron: function(item) {
-    var data = {};
+    let data = {};
     data['os-start'] = null;
 
     return fetch.post({
@@ -127,7 +127,7 @@ module.exports = {
     });
   },
   poweroff: function(item) {
-    var data = {};
+    let data = {};
     data['os-stop'] = null;
 
     return fetch.post({
@@ -136,7 +136,7 @@ module.exports = {
     });
   },
   reboot: function(item) {
-    var data = {};
+    let data = {};
     data.reboot = {};
     data.reboot.type = 'SOFT';
 
@@ -157,13 +157,13 @@ module.exports = {
     });
   },
   getMeasures: function(id, granularity, start) {
-    var url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
+    let url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
     return fetch.get({
       url: url
     });
   },
   getResourceMeasures: function(resourceId, type, granularity, start) {
-    var deferredList = [];
+    let deferredList = [];
     type.forEach((t) => {
       deferredList.push(fetch.get({
         url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity + '&start=' + start
@@ -196,7 +196,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getPort: function(data) {
-    var url = '/proxy/neutron/v2.0/ports?all_tenants=1', ips = [], datas = [];
+    let url = '/proxy/neutron/v2.0/ports?all_tenants=1', ips = [], datas = [];
     return fetch.get({
       url: url
     }).then(res => {
@@ -208,7 +208,7 @@ module.exports = {
           }
         });
       });
-      var _data = {
+      let _data = {
         ips: ips,
         datas: datas
       };
@@ -222,12 +222,12 @@ module.exports = {
   },
   exportCSV(fields) {
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain;
-      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+      let currentDomain = HALO.configs.domain;
+      let domainID = domains.find((ele) => ele.name === currentDomain).id;
 
       let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1' + getParameters(fields) + '&domain_id=' + domainID;
       function ret() {
-        var linkNode = document.createElement('a');
+        let linkNode = document.createElement('a');
         linkNode.href = url;
         linkNode.click();
         linkNode = null;
@@ -242,7 +242,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/domains'
     }).then((res) => {
-      var domains = [];
+      let domains = [];
       res.domains.forEach((domain) => {
         if (domain.id === 'defult') {
           domain.unshift(domain);

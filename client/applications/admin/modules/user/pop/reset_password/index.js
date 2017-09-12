@@ -1,12 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -21,7 +21,7 @@ function pop(obj, parent, callback) {
         });
         return;
       }
-      var data = {
+      let data = {
         name: obj.name,
         password: refs.password.state.value
       };
@@ -34,20 +34,20 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'password':
-          var pwd = refs.password.state.value;
+          let pwd = refs.password.state.value;
           refs.password.setState({
             error: pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd)
           });
-          var _rePsw = refs.confirm_password.state.value;
-          var _valid = pwd && (pwd === _rePsw);
+          let _rePsw = refs.confirm_password.state.value;
+          let _valid = pwd && (pwd === _rePsw);
           refs.btn.setState({
             disabled: !_valid
           });
           break;
         case 'confirm_password':
-          var psw = refs.password.state.value;
-          var rePsw = refs.confirm_password.state.value;
-          var valid = psw && (psw === rePsw);
+          let psw = refs.password.state.value;
+          let rePsw = refs.confirm_password.state.value;
+          let valid = psw && (psw === rePsw);
           refs.btn.setState({
             disabled: !valid
           });

@@ -1,8 +1,8 @@
-var storage = require('client/applications/admin/cores/storage');
-var fetch = require('../../cores/fetch');
-var __ = require('locale/client/admin.lang.json');
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const storage = require('client/applications/admin/cores/storage');
+const fetch = require('../../cores/fetch');
+const __ = require('locale/client/admin.lang.json');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 function getParameters(fields) {
   let ret = '';
@@ -17,14 +17,14 @@ module.exports = {
     return storage.getList([], forced);
   },
   getListInitialize: function(pageLimit, forced) {
-    var req = [];
+    let req = [];
     req.push(this.getList(pageLimit));
     req.push(this.getFilterOptions(forced));
 
     return RSVP.all(req);
   },
   getVolumeByIDInitialize: function(volumeID, forced) {
-    var req = [];
+    let req = [];
     req.push(this.getVolumeByID(volumeID));
     req.push(this.getFilterOptions(forced));
 
@@ -35,7 +35,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit;
+    let url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -47,7 +47,7 @@ module.exports = {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
-    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    let url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit + getParameters(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -56,7 +56,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = nextUrl;
+    let url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -65,7 +65,7 @@ module.exports = {
     });
   },
   getVolumeByID: function(volumeID) {
-    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&id=' + volumeID;
+    let url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&id=' + volumeID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -74,7 +74,7 @@ module.exports = {
     });
   },
   getServerById: function(serverID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
     return fetch.get({
       url: url
     });
@@ -85,7 +85,7 @@ module.exports = {
     }
 
     function requestParams(obj) {
-      var str = '';
+      let str = '';
       for(let key in obj) {
         if(key === 'name') {
           str += ('&search=' + obj[key]);
@@ -96,7 +96,7 @@ module.exports = {
 
       return str;
     }
-    var url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -105,7 +105,7 @@ module.exports = {
     });
   },
   editVolumeName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.volume = {};
     data.volume.name = newName;
 
@@ -115,7 +115,7 @@ module.exports = {
     });
   },
   deleteVolumes: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id
@@ -129,7 +129,7 @@ module.exports = {
     });
   },
   getMeasures: function(ids, granularity, start) {
-    var deferredList = [];
+    let deferredList = [];
     ids.forEach((id) => {
       deferredList.push(fetch.get({
         url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
@@ -156,12 +156,12 @@ module.exports = {
   },
   exportCSV(fields) {
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain;
-      var domainID = domains.find((ele) => ele.name === currentDomain).id;
+      let currentDomain = HALO.configs.domain;
+      let domainID = domains.find((ele) => ele.name === currentDomain).id;
 
       let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1' + getParameters(fields) + '&domain_id=' + domainID;
       function ret() {
-        var linkNode = document.createElement('a');
+        let linkNode = document.createElement('a');
         linkNode.href = url;
         linkNode.click();
         linkNode = null;
@@ -176,7 +176,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/domains'
     }).then((res) => {
-      var domains = [];
+      let domains = [];
       res.domains.forEach((domain) => {
         if (domain.id === 'defult') {
           domain.unshift(domain);

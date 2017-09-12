@@ -2,10 +2,10 @@
  * 对一些只需要请求一遍的数据进行缓存
  */
 
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
-var instance = require('../modules/instance/cache');
+const instance = require('../modules/instance/cache');
 
 function Storage() {
   this.cache = {};
@@ -13,7 +13,7 @@ function Storage() {
 
 Storage.prototype = {
   getList: function(typeList, forced) {
-    var that = this,
+    let that = this,
       promises = {};
 
     typeList.forEach((type) => {

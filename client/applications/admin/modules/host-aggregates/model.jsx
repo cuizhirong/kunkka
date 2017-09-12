@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var deleteModal = require('client/components/modal_delete/index');
-var manageHostsPop = require('./pop/manage_hosts/index');
-var updateMetadataPop = require('./pop/update_metadata/index');
-var createPop = require('./pop/create/index');
-var {Table} = require('client/uskin/index');
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const deleteModal = require('client/components/modal_delete/index');
+const manageHostsPop = require('./pop/manage_hosts/index');
+const updateMetadataPop = require('./pop/update_metadata/index');
+const createPop = require('./pop/create/index');
+const {Table} = require('client/uskin/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -114,11 +114,11 @@ class Model extends React.Component {
   getAggregateById(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getAggregateById(id).then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       this.updateTableData(newTable, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -130,10 +130,10 @@ class Model extends React.Component {
 //request: get Hypervisor List
   getAggregatesList(refreshDetail) {
     this.clearState();
-    var _config = this.state.config,
+    let _config = this.state.config,
       table = _config.table;
     request.getAggregatesList().then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       this.updateTableData(newTable, refreshDetail);
     });
   }
@@ -152,14 +152,14 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
     }, () => {
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -170,9 +170,9 @@ class Model extends React.Component {
   }
 
   getInitialListData(refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getAggregatesList().then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       this.updateTableData(newTable, refreshDetail);
     }).catch((res) => {
       table.data = [];
@@ -212,7 +212,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -226,7 +226,7 @@ class Model extends React.Component {
   }
 
   clearState() {
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -257,11 +257,11 @@ class Model extends React.Component {
 
       if(data.text) {
         request.getAggregatesList().then(res => {
-          var aggregates = res.aggregates;
-          var newAggregates = aggregates.filter((aggregate) => {
+          let aggregates = res.aggregates;
+          let newAggregates = aggregates.filter((aggregate) => {
             return aggregate.name === data.text || aggregate.name.includes(data.text);
           });
-          var newConfig = this.state.config;
+          let newConfig = this.state.config;
           newConfig.table.data = newAggregates;
           newConfig.table.loading = false;
 
@@ -286,9 +286,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
-    var that = this;
-    var refresh = function() {
+    let {rows} = data;
+    let that = this;
+    let refresh = function() {
       that.refresh({
         refreshList: true,
         refreshDetail: true,
@@ -342,7 +342,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -352,7 +352,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    let sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
@@ -380,14 +380,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -435,7 +435,7 @@ class Model extends React.Component {
       }
     });
 
-    var tableConfig = {
+    let tableConfig = {
       dataKey: 'key',
       column: [{
         title: 'Key',
@@ -460,14 +460,14 @@ class Model extends React.Component {
       tableConfig.data.push(data);
     });
 
-    var metadata = <Table
+    let metadata = <Table
         __={__}
         dataKey={tableConfig.dataKey}
         column={tableConfig.column}
         data={tableConfig.data}
       />;
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name
     }, {

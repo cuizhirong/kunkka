@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -33,7 +33,7 @@ function pop(obj, parent, callback) {
     config.btn.disabled = true;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -62,8 +62,8 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       request.getDomains().then((domains) => {
-        var username = refs.name.state.value;
-        var data = {
+        let username = refs.name.state.value;
+        let data = {
           name: username,
           description: refs.describe.state.value,
           email: refs.email.state.value,
@@ -78,11 +78,11 @@ function pop(obj, parent, callback) {
           });
         } else {
           data.password = refs.password.state.value;
-          var hasPrj = refs.crt_user_project.state.checked;
+          let hasPrj = refs.crt_user_project.state.checked;
           data.is_create_project = hasPrj;
 
           if (hasPrj) {
-            var prjName = refs.project_name.state.value;
+            let prjName = refs.project_name.state.value;
             prjName = prjName !== '' ? prjName : username + '_project';
             data.project_name = prjName;
             data.role = refs.role.state.value;
@@ -92,9 +92,9 @@ function pop(obj, parent, callback) {
             callback && callback(res.user);
             cb(true);
           }).catch((prjError) => {
-            var response = JSON.parse(prjError.response);
+            let response = JSON.parse(prjError.response);
 
-            var msg;
+            let msg;
             if (response.error) {
               msg = response.error;
             } else if (response.response) {
@@ -112,18 +112,18 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'password':
-          var pwd = refs.password.state.value;
+          let pwd = refs.password.state.value;
           refs.password.setState({
             error: pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd)
           });
-          var _name = refs.name.state.value;
+          let _name = refs.name.state.value;
           if(obj) {
             refs.btn.setState({
               disabled: !_name
             });
           } else {
-            var _rePsw = refs.confirm_password.state.value;
-            var _valid = _name && pwd && (pwd === _rePsw);
+            let _rePsw = refs.confirm_password.state.value;
+            let _valid = _name && pwd && (pwd === _rePsw);
             refs.btn.setState({
               disabled: !_valid
             });
@@ -131,24 +131,24 @@ function pop(obj, parent, callback) {
           break;
         case 'name':
         case 'confirm_password':
-          var name = refs.name.state.value;
+          let name = refs.name.state.value;
           if(obj) {
             refs.btn.setState({
               disabled: !name
             });
           } else {
-            var psw = refs.password.state.value;
-            var rePsw = refs.confirm_password.state.value;
-            var valid = name && psw && (psw === rePsw);
+            let psw = refs.password.state.value;
+            let rePsw = refs.confirm_password.state.value;
+            let valid = name && psw && (psw === rePsw);
             refs.btn.setState({
               disabled: !valid
             });
           }
           break;
         case 'crt_user_project':
-          var checked = status.checked;
-          var username = refs.name.state.value;
-          var prjName = refs.project_name.state.value;
+          let checked = status.checked;
+          let username = refs.name.state.value;
+          let prjName = refs.project_name.state.value;
           refs.project_name.setState({
             hide: !checked,
             value: checked ? username + '_project' : prjName

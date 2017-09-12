@@ -1,5 +1,5 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(pageLimit) {
@@ -7,7 +7,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit;
+    let url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -30,7 +30,7 @@ module.exports = {
       }
       return ret;
     }
-    var url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    let url = '/proxy/neutron/v2.0/ports?all_tenants=1&limit=' + pageLimit + getParameters(data);
 
     return fetch.get({
       url: url
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
   getSubnet: function() {
-    var url = '/proxy/neutron/v2.0/subnets';
+    let url = '/proxy/neutron/v2.0/subnets';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/neutron/v2.0/' + nextUrl;
+    let url = '/proxy/neutron/v2.0/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -60,7 +60,7 @@ module.exports = {
     });
   },
   getPortByID: function(portID) {
-    var url = '/proxy/neutron/v2.0/ports/' + portID;
+    let url = '/proxy/neutron/v2.0/ports/' + portID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -72,7 +72,7 @@ module.exports = {
     });
   },
   deletePorts: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/ports/' + item.id
@@ -81,7 +81,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   editPortName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.port = {};
     data.port.name = newName;
 
@@ -91,7 +91,7 @@ module.exports = {
     });
   },
   getDeviceById: function(item) {
-    var device = item.device_owner;
+    let device = item.device_owner;
     switch(0) {
       case device.indexOf('network:router'):
         return fetch.get({
@@ -116,7 +116,7 @@ module.exports = {
     }
   },
   getSubnetsById: function(subnets) {
-    var deferredList = [];
+    let deferredList = [];
     subnets.forEach((subnet) => {
       deferredList.push(fetch.get({
         url: '/proxy/neutron/v2.0/subnets/' + subnet.subnet_id

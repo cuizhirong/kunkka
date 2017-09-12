@@ -1,18 +1,18 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
 
 function pop(obj, parent, callback) {
   config.fields[0].info = __[config.fields[0].field].replace('{0}', obj.name);
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         enabled : false
       };
       request.editDomain(obj.id, data).then((res) => {

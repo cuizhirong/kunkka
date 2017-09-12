@@ -1,22 +1,22 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var deleteModal = require('client/components/modal_delete/index');
-var RelatedInstance = require('./detail/related_instance');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const deleteModal = require('client/components/modal_delete/index');
+const RelatedInstance = require('./detail/related_instance');
 
-var image = require('./pop/create/index');
+const image = require('./pop/create/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
-var getTime = require('client/utils/time_unification');
-var unitConverter = require('client/utils/unit_converter');
-var csv = require('./pop/csv/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
+const getTime = require('client/utils/time_unification');
+const unitConverter = require('client/utils/unit_converter');
+const csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -39,7 +39,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var column = this.state.config.table.column;
+    let column = this.state.config.table.column;
     this.tableColRender(column);
     this.initializeFilter(this.state.config.filter);
 
@@ -79,10 +79,10 @@ class Model extends React.Component {
   }
 
   getImageLabel(item) {
-    var label = item.image_label && item.image_label.toLowerCase();
-    var style = null;
+    let label = item.image_label && item.image_label.toLowerCase();
+    let style = null;
 
-    var imgURL = HALO.settings.default_image_url;
+    let imgURL = HALO.settings.default_image_url;
     if (imgURL) {
       style = {
         background: `url("${imgURL}") 0 0 no-repeat`,
@@ -107,7 +107,7 @@ class Model extends React.Component {
           break;
         case 'size':
           column.render = (col, item, i) => {
-            var size = unitConverter(item.size);
+            let size = unitConverter(item.size);
             size.num = typeof size.num === 'number' ? size.num : 0;
             return size.num + ' ' + size.unit;
           };
@@ -124,7 +124,7 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
-    var setOption = function(key, data) {
+    let setOption = function(key, data) {
       filters.forEach((filter) => {
         filter.items.forEach((item) => {
           if (item.key === key) {
@@ -134,7 +134,7 @@ class Model extends React.Component {
       });
     };
 
-    var statusTypes = [{
+    let statusTypes = [{
       id: 'snapshot',
       name: __.snapshot_type
     }, {
@@ -157,12 +157,12 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getSingle(id).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -176,7 +176,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
@@ -192,7 +192,7 @@ class Model extends React.Component {
 
 //request: get next list
   getNextList(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -211,7 +211,7 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -220,7 +220,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -232,14 +232,14 @@ class Model extends React.Component {
 
 //set pagination
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -287,7 +287,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -295,7 +295,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -315,7 +315,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -346,7 +346,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -367,7 +367,7 @@ class Model extends React.Component {
       case 'filtrate':
         delete data.rows;
         this.clearState();
-        var table = this.state.config.table;
+        let table = this.state.config.table;
 
         request.getFilterList(data).then((res) => {
           table.data = res.list;
@@ -386,9 +386,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var that = this;
+    let that = this;
     switch(key) {
       case 'create':
         image(null, null, (res) => {
@@ -445,7 +445,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var idData = data.filter_id,
+      let idData = data.filter_id,
         typeData = data.filter_type;
 
       if (idData) {
@@ -462,13 +462,13 @@ class Model extends React.Component {
 
         let pageLimit = this.state.config.table.limit;
         request.filter(typeData, pageLimit).then((res) => {
-          var table = this.state.config.table;
+          let table = this.state.config.table;
           table.data = res.list;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
         });
       } else {
-        var r = {};
+        let r = {};
         r.initialList = true;
         r.loadingTable = true;
         r.clearState = true;
@@ -479,7 +479,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -489,7 +489,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    let sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
@@ -512,15 +512,15 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -545,12 +545,12 @@ class Model extends React.Component {
               insData.push(instance);
             }
           });
-          var pagination = {
+          let pagination = {
             current: current,
             total: Math.ceil(insData.length / limit),
             total_num: insData.length
           };
-          var instanceConfig = this.getInstanceConfig(insData.slice((current - 1) * limit, current * limit), pagination);
+          let instanceConfig = this.getInstanceConfig(insData.slice((current - 1) * limit, current * limit), pagination);
           contents[tabKey] = (
             <RelatedInstance
               tableConfig={instanceConfig}
@@ -584,10 +584,10 @@ class Model extends React.Component {
   }
 
   getInstanceConfig(item, pagination) {
-    var dataContent = [];
-    for (var key in item) {
-      var element = item[key];
-      var dataObj = {
+    let dataContent = [];
+    for (let key in item) {
+      let element = item[key];
+      let dataObj = {
         name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
         id: element.id,
         status: getStatusIcon(element.status),
@@ -595,7 +595,7 @@ class Model extends React.Component {
       };
       dataContent.push(dataObj);
     }
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -623,9 +623,9 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var size = unitConverter(item.size);
+    let size = unitConverter(item.size);
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: this.getImageLabel(item)
     }, {

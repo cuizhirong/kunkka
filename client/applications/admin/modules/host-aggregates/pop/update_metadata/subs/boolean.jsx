@@ -1,5 +1,5 @@
-var React = require('react');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
 
 class BooleanItem extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class BooleanItem extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -34,8 +34,8 @@ class BooleanItem extends React.Component {
   }
 
   render() {
-    var state = this.state;
-    var checked = state.value === 'true' ? true : false;
+    let state = this.state;
+    let checked = state.value === 'true' ? true : false;
 
     return (
       <li className="boolean-item-wrapper">

@@ -1,18 +1,18 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      var ips = obj._floatingIP.map((ele) => {
+      let ips = obj._floatingIP.map((ele) => {
         return {
           id: ele,
           name: ele
@@ -25,7 +25,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.removeFloatingIp = {
         address: refs.floating_ip.state.value
       };

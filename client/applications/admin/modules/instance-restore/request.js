@@ -1,4 +1,4 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getList: function(pageLimit) {
@@ -6,7 +6,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&deleted=True&status=soft_deleted&limit=' + pageLimit;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&deleted=True&status=soft_deleted&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -15,7 +15,7 @@ module.exports = {
     });
   },
   getSingle: function(serverID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -24,7 +24,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/nova/v2.1/' + nextUrl;
+    let url = '/proxy/nova/v2.1/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -33,7 +33,7 @@ module.exports = {
     });
   },
   restore: function(id) {
-    var data = {
+    let data = {
       'restore': null
     };
     return fetch.post({
@@ -42,7 +42,7 @@ module.exports = {
     });
   },
   forceDelete: function(id) {
-    var data = {
+    let data = {
       'forceDelete': null
     };
     return fetch.post({

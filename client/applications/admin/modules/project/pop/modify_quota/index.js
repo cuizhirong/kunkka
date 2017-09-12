@@ -1,9 +1,9 @@
-let commonModal = require('client/components/modal_common/index');
-let config = require('./config.json');
-let __ = require('locale/client/admin.lang.json');
-let request = require('../../request');
-let resourceQuota = require('./quota_pop');
-let getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
+const resourceQuota = require('./quota_pop');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
 

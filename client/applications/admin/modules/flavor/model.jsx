@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var createFlavor = require('./pop/create/index');
-var modifyMetadata = require('./pop/modify/index');
-var deleteModal = require('client/components/modal_delete/index');
+const createFlavor = require('./pop/create/index');
+const modifyMetadata = require('./pop/modify/index');
+const deleteModal = require('client/components/modal_delete/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var unitConverter = require('client/utils/unit_converter');
-var router = require('client/utils/router');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const unitConverter = require('client/utils/unit_converter');
+const router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -61,13 +61,13 @@ class Model extends React.Component {
       switch (column.key) {
         case 'memory':
           column.render = (col, item, i) => {
-            var ram = unitConverter(item.ram, 'MB');
+            let ram = unitConverter(item.ram, 'MB');
             return ram.num + ' ' + ram.unit;
           };
           break;
         case 'capacity':
           column.render = (col, item, i) => {
-            var disk = unitConverter(item.disk, 'GB');
+            let disk = unitConverter(item.disk, 'GB');
             return disk.num + ' ' + disk.unit;
           };
           break;
@@ -98,7 +98,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList().then((res) => {
       table.data = res.flavors;
       this.updateTableData(table, res._url);
@@ -111,7 +111,7 @@ class Model extends React.Component {
   getFlavorById(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getFlavorById(id).then((res) => {
       table.data = [res.flavor];
       this.updateTableData(table, res._url);
@@ -126,7 +126,7 @@ class Model extends React.Component {
   }
 //request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.flavor) {
         table.data = [res.flavor];
@@ -148,11 +148,11 @@ class Model extends React.Component {
 
       if(data.text) {
         request.getList().then(res => {
-          var flavors = res.flavors;
-          var newFlavors = flavors.filter((flavor) => {
+          let flavors = res.flavors;
+          let newFlavors = flavors.filter((flavor) => {
             return flavor.name === data.text || flavor.name.includes(data.text);
           });
-          var newConfig = this.state.config;
+          let newConfig = this.state.config;
           newConfig.table.data = newFlavors;
           newConfig.table.loading = false;
 
@@ -168,7 +168,7 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -177,7 +177,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -205,13 +205,13 @@ class Model extends React.Component {
       }
     }
 
-    var history = this.stores.urls,
+    let history = this.stores.urls,
       url = history.pop();
     this.getNextListData(url, true);
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -227,7 +227,7 @@ class Model extends React.Component {
   clearState() {
     this.stores.urls = [];
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       this.refs.dashboard.clearState();
     }
@@ -260,7 +260,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev') {
@@ -284,9 +284,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var refresh = () => {
+    let refresh = () => {
       this.refresh({
         refreshList: true,
         refreshDetail: true
@@ -301,7 +301,7 @@ class Model extends React.Component {
         break;
       case 'edit':
         request.getExtraSpecs(rows[0].id).then((res) => {
-          var obj = {
+          let obj = {
             'id': rows[0].id,
             'res': res
           };
@@ -338,7 +338,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -366,14 +366,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data, extraSpecs) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0], extraSpecs);
+          let basicPropsItem = this.getBasicPropsItems(rows[0], extraSpecs);
 
           contents[tabKey] = (
             <div>
@@ -400,10 +400,10 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item, data) {
-    var memory = unitConverter(item.ram, 'MB');
-    var disk = unitConverter(item.disk, 'GB');
+    let memory = unitConverter(item.ram, 'MB');
+    let disk = unitConverter(item.disk, 'GB');
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
     }, {

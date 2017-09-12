@@ -1,5 +1,5 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(pageLimit) {
@@ -7,7 +7,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/keystone/v3/domains?limit=' + pageLimit;
+    let url = '/proxy/keystone/v3/domains?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -16,7 +16,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/keystone/v3/' + nextUrl;
+    let url = '/proxy/keystone/v3/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -28,7 +28,7 @@ module.exports = {
     });
   },
   getDomainByID: function(domainID) {
-    var url = '/proxy/keystone/v3/domains/' + domainID;
+    let url = '/proxy/keystone/v3/domains/' + domainID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/keystone/v3/domains/' + item.id

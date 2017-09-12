@@ -1,9 +1,9 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 function migrateLiveServer(id, hostID) {
-  var data = {
+  let data = {
     'os-migrateLive': {
       host: hostID,
       block_migration: false,
@@ -18,7 +18,7 @@ function migrateLiveServer(id, hostID) {
 }
 
 function migrateInactivateServer(id, hostID) {
-  var data = {
+  let data = {
     migrate: null
   };
 
@@ -51,7 +51,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit;
+    let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -63,7 +63,7 @@ module.exports = {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
-    var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit + getParameters(data);
+    let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail?limit=' + pageLimit + getParameters(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -72,7 +72,7 @@ module.exports = {
     });
   },
   getHypervisorById: function(str) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + str;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + str;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -81,7 +81,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    //var url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail' + nextUrl;
+    //let url = '/api/v1/' + HALO.user.projectId + '/os-hypervisors/detail' + nextUrl;
     return fetch.get({
       url: nextUrl
     }).then((res) => {
@@ -92,7 +92,7 @@ module.exports = {
   getListByName: function(name) {
 
     return getAllHypervisors().then((res) => {
-      var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + name + '/search';
+      let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/' + name + '/search';
       return fetch.get({
         url: url
       }).then((r) => {
@@ -127,7 +127,7 @@ module.exports = {
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&host=' + source
     }).then((res) => {
       res.servers.forEach((server) => {
-        var status = server.status.toLowerCase();
+        let status = server.status.toLowerCase();
         if (status === 'active') {
           migrateLiveServer(server.id, dest);
         } else if (status === 'shutoff' && randomly) {
@@ -144,7 +144,7 @@ module.exports = {
   exportCSV(fields) {
     let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/os-hypervisors/detail?all_tenants=1' + getParameters(fields);
     function ret() {
-      var linkNode = document.createElement('a');
+      let linkNode = document.createElement('a');
       linkNode.href = url;
       linkNode.click();
       linkNode = null;
@@ -155,7 +155,7 @@ module.exports = {
     });
   },
   getInstances() {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
     return fetch.get({
       url: url
     }).then(res => {

@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/admin.lang.json');
-var unitConverter = require('client/utils/unit_converter');
-var request = require('../../request');
+const React = require('react');
+const __ = require('locale/client/admin.lang.json');
+const unitConverter = require('client/utils/unit_converter');
+const request = require('../../request');
 
 class QuotaPop extends React.Component {
   constructor(props) {
@@ -18,8 +18,8 @@ class QuotaPop extends React.Component {
   }
 
   componentWillMount() {
-    var types = this.props.types;
-    var quota = [{
+    let types = this.props.types;
+    let quota = [{
       title: __.compute,
       items: [{
         title: __.instance,
@@ -120,9 +120,9 @@ class QuotaPop extends React.Component {
   }
 
   onChange(key, e) {
-    var overview = this.state.overview;
-    var total = overview[key].total;
-    var newNumber = Number(e.target.value);
+    let overview = this.state.overview;
+    let total = overview[key].total;
+    let newNumber = Number(e.target.value);
     if (!e.target.value) {
       this.state.itemName[key].total = total;
     } else {
@@ -138,7 +138,7 @@ class QuotaPop extends React.Component {
   }
 
   render() {
-    var quota = this.state.quota,
+    let quota = this.state.quota,
       overview = this.state.overview;
 
     return (
@@ -149,7 +149,7 @@ class QuotaPop extends React.Component {
               <h3>{ele.title}</h3>
               <ul className="quota-list">
                 {ele.items.map((item, i) => {
-                  var used, total, inUse, inUseClassName;
+                  let used, total, inUse, inUseClassName;
 
                   if (overview[item.key]) {
                     if (overview[item.key].total > -1) {

@@ -1,5 +1,5 @@
 require('./style/index.less');
-var React = require('react');
+const React = require('react');
 
 class GroupSelect extends React.Component {
   constructor(props) {
@@ -39,7 +39,7 @@ class GroupSelect extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       defaultValue = props.defaultValue;
 

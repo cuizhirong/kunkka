@@ -1,8 +1,8 @@
-let React = require('react');
-let {Button} = require('client/uskin/index');
-let DetailMinitable = require('client/components/detail_minitable/index');
-let addUserGrp = require('../pop/add_user_grp/index');
-let rmUserGrp = require('../pop/rm_user_grp/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const addUserGrp = require('../pop/add_user_grp/index');
+const rmUserGrp = require('../pop/rm_user_grp/index');
 
 class UserGroup extends React.Component {
   constructor(props) {

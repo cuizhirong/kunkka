@@ -1,9 +1,9 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 function requestParams(obj) {
-  var str = '';
+  let str = '';
   for(let key in obj) {
     if(key === 'name') {
       str += ('&search=' + obj[key]);
@@ -16,8 +16,8 @@ function requestParams(obj) {
 }
 
 function getParams(fields) {
-  var ret = '';
-  var flag = true;
+  let ret = '';
+  let flag = true;
   for(let f in fields) {
     ret += (flag ? '?' : '&') + f + '=' + fields[f];
     flag = false;
@@ -31,7 +31,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit;
+    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -51,7 +51,7 @@ module.exports = {
       }
       return ret;
     }
-    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit + getParameters(data);
+    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit + getParameters(data);
 
     return fetch.get({
       url: url
@@ -61,7 +61,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    var url = '/proxy-search/glance/v2/images?id=' + id;
+    let url = '/proxy-search/glance/v2/images?id=' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -70,7 +70,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = nextUrl;
+    let url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -83,7 +83,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/glance/v2/images?limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -113,7 +113,7 @@ module.exports = {
   exportCSV(fields) {
     let url = '/proxy/csv/glance/v2/images' + getParams(fields);
     function ret() {
-      var linkNode = document.createElement('a');
+      let linkNode = document.createElement('a');
       linkNode.href = url;
       linkNode.click();
       linkNode = null;
@@ -124,7 +124,7 @@ module.exports = {
     });
   },
   getInstances() {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
     return fetch.get({
       url: url
     }).then(res => {

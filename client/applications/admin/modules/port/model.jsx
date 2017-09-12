@@ -1,17 +1,17 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
+const deleteModal = require('client/components/modal_delete/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -37,7 +37,7 @@ class Model extends React.Component {
     this.state.config.table.column.find((col) => {
       if (col.key === 'ip_address') {
         col.sortBy = function(item1, item2) {
-          var a = item1.fixed_ips[0] ? item1.fixed_ips[0].ip_address : '',
+          let a = item1.fixed_ips[0] ? item1.fixed_ips[0].ip_address : '',
             b = item2.fixed_ips[0] ? item2.fixed_ips[0].ip_address : '';
           return utils.ipFormat(a) - utils.ipFormat(b);
         };
@@ -65,7 +65,7 @@ class Model extends React.Component {
       switch(column.key) {
         case 'ip_address':
           column.render = (col, item, i) => {
-            var arr = [];
+            let arr = [];
             item.fixed_ips.forEach((_item, index) => {
               if(_item.ip_address) {
                 index && arr.push(', ');
@@ -102,7 +102,7 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getPortByID(id).then((res) => {
       if (res.port) {
         table.data = [res.port];
@@ -121,7 +121,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList(table.limit).then((res) => {
       table.data = res.ports;
       this.setPagination(table, res);
@@ -130,7 +130,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.port) {
         table.data = [res.port];
@@ -150,7 +150,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -159,7 +159,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.0/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
 
       if (detail && refreshDetail && params.length > 2) {
@@ -171,14 +171,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.ports_links ? res.ports_links[0] : null;
 
     if(next && next.rel === 'next') {
       pagination.nextUrl = next.href.split('/v2.0/')[1];
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -218,7 +218,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -226,7 +226,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -245,7 +245,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -263,7 +263,7 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        var item = data.rows[0];
+        let item = data.rows[0];
         this.loadingDetail();
         request.getSubnetsById(item.fixed_ips).then(() => {
           if(item.device_id.indexOf('dhcp') === 0 || !item.device_id) {
@@ -292,14 +292,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if(rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -326,7 +326,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var device = item.device_owner,
+    let device = item.device_owner,
       getSourceInfo = () => {
         switch(0) {
           case device.indexOf('network:dhcp'):
@@ -360,7 +360,7 @@ class Model extends React.Component {
         }
       };
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
@@ -399,7 +399,7 @@ class Model extends React.Component {
 
     item.fixed_ips.forEach((subnet, i) => {
       if(i > 0) {
-        var obj = {
+        let obj = {
           content: <span>
             <i className="glyphicon icon-subnet" />
             <span>
@@ -428,7 +428,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editPortName(rawItem, newName).then((res) => {
           this.refresh({
             refreshList: true,
@@ -447,7 +447,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev') {
@@ -468,7 +468,7 @@ class Model extends React.Component {
       case 'filtrate':
         delete data.rows;
         this.clearState();
-        var table = this.state.config.table;
+        let table = this.state.config.table;
         request.getFilterList(data).then((res) => {
           table.data = res.ports;
           this.setPagination(table, res);
@@ -486,7 +486,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(actionType, refs, data) {
-    var rows = data.rows,
+    let rows = data.rows,
       params = this.props.params,
       table = this.state.config.table,
       that = this;
@@ -520,7 +520,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 

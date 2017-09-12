@@ -1,28 +1,28 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var {Button} = require('client/uskin/index');
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
-var ResourceQuota = require('./quota');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const {Button} = require('client/uskin/index');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const ResourceQuota = require('./quota');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createProject = require('./pop/create/index');
-var modifyProject = require('./pop/modify_project/index');
-var activateProject = require('./pop/activate/index');
-var deactivateProject = require('./pop/deactivate/index');
-var addUser = require('./pop/add_user/index');
-var removeUser = require('./pop/remove_user/index');
-var modifyQuota = require('./pop/modify_quota/index');
-var UserGroup = require('./detail/user_grp');
+const deleteModal = require('client/components/modal_delete/index');
+const createProject = require('./pop/create/index');
+const modifyProject = require('./pop/modify_project/index');
+const activateProject = require('./pop/activate/index');
+const deactivateProject = require('./pop/deactivate/index');
+const addUser = require('./pop/add_user/index');
+const removeUser = require('./pop/remove_user/index');
+const modifyQuota = require('./pop/modify_quota/index');
+const UserGroup = require('./detail/user_grp');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-var router = require('client/utils/router');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+const router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -46,7 +46,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+    let that = this;
     this.tableColRender(this.state.config.table.column);
     request.getDomains().then((res) => {
       that.setState({
@@ -99,8 +99,8 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
-    var filter = this.state.config.filter;
+    let table = this.state.config.table;
+    let filter = this.state.config.filter;
     request.getProjectByID(id).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -110,7 +110,7 @@ class Model extends React.Component {
       this.setPagination(table, res);
       this.initializeFilter(filter);
       this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -123,14 +123,14 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
-    var filter = this.state.config.filter;
+    let table = this.state.config.table;
+    let filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
       this.initializeFilter(filter);
       this.updateTableData(table, res._url, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -141,7 +141,7 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters) {
-    var domains = [];
+    let domains = [];
     this.state.domains.forEach((item) => {
       domains.push({
         id: item.id,
@@ -154,12 +154,12 @@ class Model extends React.Component {
   getFilterList(data) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -170,7 +170,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -190,7 +190,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var projectID = data.project,
+      let projectID = data.project,
         allTenant = data.all_tenant;
 
       if (projectID) {
@@ -204,7 +204,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -214,7 +214,7 @@ class Model extends React.Component {
       if (currentUrl) {
         this.stores.urls.push(currentUrl);
 
-        var detail = this.refs.dashboard.refs.detail,
+        let detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && refreshDetail && params.length > 2) {
           detail.refresh();
@@ -225,14 +225,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -271,7 +271,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -279,7 +279,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -298,7 +298,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -329,7 +329,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -353,9 +353,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var that = this;
+    let that = this;
     switch(key) {
       case 'create':
         // request.getUserGroupsAndRoles().then((res) => {
@@ -440,7 +440,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -450,8 +450,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var singleRow = rows.length === 1;
-    var status = singleRow ? rows[0].enabled : null;
+    let singleRow = rows.length === 1;
+    let status = singleRow ? rows[0].enabled : null;
 
     for(let key in btns) {
       switch (key) {
@@ -477,15 +477,15 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -504,7 +504,7 @@ class Model extends React.Component {
         if (rows.length === 1) {
           syncUpdate = false;
           request.getUserIds(rows[0].id).then((roles) => {
-            var userIds = [],
+            let userIds = [],
               assignments = {};
             roles.forEach((role) => {
               if (!assignments[role.user.id]) {
@@ -514,7 +514,7 @@ class Model extends React.Component {
               assignments[role.user.id].push(role.role.id);
             });
             request.getUsers(userIds, assignments).then((res) => {
-              var userConfig = this.getUserTableConfig(rows[0], res);
+              let userConfig = this.getUserTableConfig(rows[0], res);
               contents[tabKey] = (
                 <div>
                   <DetailMinitable
@@ -569,8 +569,8 @@ class Model extends React.Component {
         if (rows.length === 1) {
           syncUpdate = false;
           request.getQuotas(rows[0].id).then((res) => {
-            var quotaItems = res.overview_usage;
-            var volumeTypes = res.volume_types;
+            let quotaItems = res.overview_usage;
+            let volumeTypes = res.volume_types;
             contents[tabKey] = (
               <div className="right-side">
                 <ResourceQuota overview={quotaItems} types={volumeTypes} />
@@ -600,8 +600,8 @@ class Model extends React.Component {
   }
 
   getUserTableConfig(item, users) {
-    var dataContent = [];
-    var role;
+    let dataContent = [];
+    let role;
     users.forEach((element, index) => {
       role = [];
       element.role.forEach((r, i) => {
@@ -610,7 +610,7 @@ class Model extends React.Component {
         }
         role.push(<a data-type="router" key={r.id} href={'/admin/role'}>{r.name}</a>);
       });
-      var dataObj = {
+      let dataObj = {
         id: element.id,
         name: <a data-type="router" href={'/admin/user/' + element.id}>{element.name}</a>,
         email: element.email,
@@ -624,7 +624,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.user + __.name,
         key: 'name',
@@ -659,12 +659,12 @@ class Model extends React.Component {
   }
 
   getQuotaItems(item, quotas) {
-    var ram = quotas.ram.total;
+    let ram = quotas.ram.total;
     if (ram > 0) {
       ram = Math.round(ram / 1024 * 100) / 100;
     }
 
-    var items = [];
+    let items = [];
     Array.prototype.push.apply(items, [{
       title: __.instance,
       content: quotas.instances.total,
@@ -689,7 +689,7 @@ class Model extends React.Component {
       field: 'gigabytes'
     });
     Object.keys(quotas).forEach((key) => {
-      var type = key.split('gigabytes_')[1];
+      let type = key.split('gigabytes_')[1];
       if (type) {
         items.push({
           title: __.volume + (__[type] ? __[type] : ' ' + type + ' ') + __.size + '(GB)',
@@ -707,7 +707,7 @@ class Model extends React.Component {
       field: 'volumes'
     });
     Object.keys(quotas).forEach((key) => {
-      var type = key.split('volumes_')[1];
+      let type = key.split('volumes_')[1];
       if (type) {
         items.push({
           title: __.volume + (__[type] ? __[type] : ' ' + type + ' ') + __.quota,
@@ -725,7 +725,7 @@ class Model extends React.Component {
       field: 'snapshots'
     });
     Object.keys(quotas).forEach((key) => {
-      var type = key.split('snapshots_')[1];
+      let type = key.split('snapshots_')[1];
       if (type) {
         items.push({
           title: __.snapshot + (__[type] ? __[type] : ' ' + type + ' ') + __.quota,
@@ -777,10 +777,10 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var domainName = this.state.domains.find((domain) => {
+    let domainName = this.state.domains.find((domain) => {
       return domain.id === item.domain_id;
     });
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name,
       type: 'editable'
@@ -812,10 +812,10 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch(actionType) {
       case 'edit_name':
-        var {newName, rawItem} = data;
+        let {newName, rawItem} = data;
         request.editProject(rawItem.id, {
           name: newName
         }).then((res) => {

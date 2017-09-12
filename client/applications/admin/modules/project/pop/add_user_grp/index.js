@@ -1,17 +1,17 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getRoles().then(res => {
-        var roles = res.roles;
+        let roles = res.roles;
         if (roles.length > 0) {
           refs.role.setState({
             data: roles,
@@ -44,7 +44,7 @@ function pop(obj, parent, callback) {
           }
           break;
         case 'role':
-          var hasRole = status.data.some(item => {
+          let hasRole = status.data.some(item => {
             if (item.selected) {
               return true;
             }

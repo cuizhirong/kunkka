@@ -1,5 +1,5 @@
-var React = require('react');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
 
 class StringItem extends React.Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class StringItem extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -35,7 +35,7 @@ class StringItem extends React.Component {
   }
 
   render() {
-    var state = this.state;
+    let state = this.state;
 
     return (
       <li className="string-item-wrapper">

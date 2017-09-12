@@ -1,4 +1,4 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getAvailabilityZone: function() {

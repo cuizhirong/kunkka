@@ -1,8 +1,8 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 function requestParams(obj) {
-  var str = '';
+  let str = '';
   for(let key in obj) {
     if(key === 'name') {
       str += ('&search=' + obj[key]);
@@ -20,7 +20,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/keystone/v3/roles';
+    let url = '/proxy-search/keystone/v3/roles';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -32,7 +32,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = nextUrl;
+    let url = nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -48,7 +48,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/keystone/v3/roles?limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/keystone/v3/roles?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -57,7 +57,7 @@ module.exports = {
     });
   },
   getRoleByID: function(roleID) {
-    var url = '/proxy-search/keystone/v3/roles?id=' + roleID;
+    let url = '/proxy-search/keystone/v3/roles?id=' + roleID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -74,7 +74,7 @@ module.exports = {
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/keystone/v3/roles/' + item.id

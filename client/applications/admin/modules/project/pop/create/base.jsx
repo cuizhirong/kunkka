@@ -1,12 +1,12 @@
-var React = require('react');
-var {Modal, Button, Tab, Table, Tip} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
-// var getErrorMessage = require('../../../../utils/error_message');
-var Input = require('client/components/modal_common/subs/input/index');
-var Textarea = require('client/components/modal_common/subs/textarea/index');
-var GroupSelect = require('../../../../components/group_select/index');
-var Select = require('client/components/modal_common/subs/select/index');
+const React = require('react');
+const {Modal, Button, Tab, Table, Tip} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
+// let getErrorMessage = require('../../../../utils/error_message');
+const Input = require('client/components/modal_common/subs/input/index');
+const Textarea = require('client/components/modal_common/subs/textarea/index');
+const GroupSelect = require('../../../../components/group_select/index');
+const Select = require('client/components/modal_common/subs/select/index');
 
 const TITLE = __.create + __.project;
 
@@ -364,7 +364,7 @@ class ModalBase extends React.Component {
     });
     let callback = this.props.callback;
     let refs = this.refs;
-    var data = {
+    let data = {
       name: refs.name.state.value,
       description: refs.describe.state.value,
       enabled: refs.activate.checked
@@ -398,8 +398,8 @@ class ModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
     let items = [{
       name: '* ' + __.project_info,
       key: '0',

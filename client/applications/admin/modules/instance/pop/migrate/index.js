@@ -1,23 +1,23 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/admin/utils/error_message');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/admin/utils/error_message');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
-  var {row, hostTypes} = obj;
+  let {row, hostTypes} = obj;
 
   config.fields[0].text = row.name;
   config.fields[1].text = row.tenant_id;
   config.fields[2].text = row.user_id;
 
-  var hosts = [];
+  let hosts = [];
   hosts.push({
     id: 'auto',
     name: __.auto
   });
 
-  var itemStatus = row.status.toLowerCase(),
+  let itemStatus = row.status.toLowerCase(),
     isCool = false;
   if(itemStatus === 'active' || itemStatus === 'paused') {
     isCool = false;
@@ -27,7 +27,7 @@ function pop(obj, parent, callback) {
 
   if(!isCool) {
     hostTypes.forEach((host) => {
-      var name = host.service.host;
+      let name = host.service.host;
 
       if (row['OS-EXT-SRV-ATTR:host'] !== name) {
         hosts.push({
@@ -38,7 +38,7 @@ function pop(obj, parent, callback) {
     });
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -49,7 +49,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var hostID = refs.migrate_to.state.value;
+      let hostID = refs.migrate_to.state.value;
       if (hostID === 'auto') {
         hostID = null;
       }

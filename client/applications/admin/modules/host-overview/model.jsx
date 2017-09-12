@@ -1,17 +1,17 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Tab} = require('client/uskin/index');
-var Chart = require('client/libs/charts/index');
+const React = require('react');
+const {Tab} = require('client/uskin/index');
+const Chart = require('client/libs/charts/index');
 
-var request = require('./request');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var unitConverter = require('client/utils/unit_converter');
-var utils = require('../../utils/utils');
-var getCommonFactor = utils.getCommonFactor;
+const request = require('./request');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const unitConverter = require('client/utils/unit_converter');
+const utils = require('../../utils/utils');
+const getCommonFactor = utils.getCommonFactor;
 
-var tabs = [{
+const tabs = [{
   name: __.host,
   key: 'host'
 }, {
@@ -20,7 +20,7 @@ var tabs = [{
   default: true
 }];
 
-var infoColor = '#42b9e5',
+const infoColor = '#42b9e5',
   info700Color = '#097fab',
   warningColor = '#f2994b',
   dangerColor = '#ff5a67',
@@ -30,7 +30,7 @@ var infoColor = '#42b9e5',
   fontDarker = '#626b7e',
   gaugeTickColor = '#bbbfc5';
 
-var settings = HALO.settings;
+let settings = HALO.settings;
 
 class Model extends React.Component {
 
@@ -69,7 +69,7 @@ class Model extends React.Component {
 
   getOverview() {
     request.getOverview().then((res) => {
-      var data = res.hypervisor_statistics;
+      let data = res.hypervisor_statistics;
 
       this.setState({
         data: data,
@@ -105,8 +105,8 @@ class Model extends React.Component {
   displayDisk(data) {
     // nova bug: if storage is ceph, nova would duplicate the local_gb by multiplying the count!!!
     // when storage is commercial storage, nova can not get the storage size, we can only set it by setting
-    var rate = data.local_gb_used / (settings.commercial_storage ? settings.commercial_storage : (data.local_gb / data.count));
-    var rateColor = this.getChartColor(rate);
+    let rate = data.local_gb_used / (settings.commercial_storage ? settings.commercial_storage : (data.local_gb / data.count));
+    let rateColor = this.getChartColor(rate);
 
     this.diskChart.setOption({
       lineWidth: 8,
@@ -124,7 +124,7 @@ class Model extends React.Component {
   }
 
   displayCPU(data) {
-    var sum = data.vcpus,
+    let sum = data.vcpus,
       used = data.vcpus_used,
       max = sum > used ? sum : used,
       period;
@@ -161,7 +161,7 @@ class Model extends React.Component {
   }
 
   displayMemory(data) {
-    var rate = data.memory_mb_used / data.memory_mb,
+    let rate = data.memory_mb_used / data.memory_mb,
       rateColor = this.getChartColor(rate);
 
     this.memoryChart.setOption({
@@ -186,42 +186,42 @@ class Model extends React.Component {
   }
 
   clickTabs(e, item) {
-    var path = router.getPathList();
+    let path = router.getPathList();
     router.pushState('/' + path[0] + '/' + item.key);
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       data = state.data,
       loading = state.loading;
 
     // nova bug: if storage is ceph, nova would duplicate the local_gb by multipying the count!!!, the commercial storage is normal
-    var diskSum = settings.commercial_storage ? settings.commercial_storage : data.local_gb / data.count;
-    var diskUsed = data.local_gb_used;
-    var diskFree = diskSum - diskUsed;
+    let diskSum = settings.commercial_storage ? settings.commercial_storage : data.local_gb / data.count;
+    let diskUsed = data.local_gb_used;
+    let diskFree = diskSum - diskUsed;
 
-    var disk = {
+    let disk = {
       sum: unitConverter(diskSum, 'GB'),
       used: unitConverter(diskUsed, 'GB'),
       free: unitConverter(diskFree, 'GB'),
       rateClass: this.getChartClass(diskUsed / diskSum)
     };
-    var cpu = {
+    let cpu = {
       sum: data.vcpus,
       used: data.vcpus_used,
       common: getCommonFactor(data.vcpus, data.vcpus_used)
     };
-    var memory = {
+    let memory = {
       sum: unitConverter(data.memory_mb, 'MB'),
       used: unitConverter(data.memory_mb_used, 'MB'),
       free: unitConverter(data.memory_mb - data.memory_mb_used, 'MB'),
       rate: Math.round((data.memory_mb_used / data.memory_mb) * 100),
       rateClass: this.getChartClass(data.memory_mb_used / data.memory_mb)
     };
-    var csum = cpu.sum / cpu.common;
-    var cused = cpu.used / cpu.common;
-    var numerator = csum / csum;
-    var denominator = (cused / csum).toFixed(2);
+    let csum = cpu.sum / cpu.common;
+    let cused = cpu.used / cpu.common;
+    let numerator = csum / csum;
+    let denominator = (cused / csum).toFixed(2);
 
     return (
       <div className="halo-module-host-overview" style={this.props.style}>

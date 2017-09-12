@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(groupData, parent, callback) {
-  var group = groupData.rawItem,
+  let group = groupData.rawItem,
     user = groupData.childItem;
 
   config.fields[0].text = group.name || group.id.slice(0, 8);
@@ -12,7 +12,7 @@ function pop(groupData, parent, callback) {
   config.fields[1].data[0].selected = true;
   config.btn.disabled = false;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -26,7 +26,7 @@ function pop(groupData, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'user':
-          var btnState = refs.btn.state.disabled;
+          let btnState = refs.btn.state.disabled;
           refs.btn.setState({
             disabled: !btnState
           });

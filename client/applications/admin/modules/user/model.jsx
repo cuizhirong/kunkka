@@ -1,28 +1,28 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var {Button} = require('client/uskin/index');
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const {Button} = require('client/uskin/index');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createUser = require('./pop/create/index');
-var activateUser = require('./pop/activate/index');
-var deactivateUser = require('./pop/deactivate/index');
-var addRole = require('./pop/add_role/index');
-var removeRole = require('./pop/remove_role/index');
-var modifyProject = require('./pop/modify_project/index');
-var resetPassword = require('./pop/reset_password/index');
-var joinGroup = require('./pop/join_group/index');
-var leaveGroup = require('./pop/leave_group/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createUser = require('./pop/create/index');
+const activateUser = require('./pop/activate/index');
+const deactivateUser = require('./pop/deactivate/index');
+const addRole = require('./pop/add_role/index');
+const removeRole = require('./pop/remove_role/index');
+const modifyProject = require('./pop/modify_project/index');
+const resetPassword = require('./pop/reset_password/index');
+const joinGroup = require('./pop/join_group/index');
+const leaveGroup = require('./pop/leave_group/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-// var router = require('client/utils/router');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+// let router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -46,7 +46,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+    let that = this;
     this.tableColRender(this.state.config.table.column);
     request.getDomains().then((res) => {
       that.setState({
@@ -80,7 +80,7 @@ class Model extends React.Component {
           break;
         case 'project':
           column.render = (col, item, i) => {
-            var projectId = item.default_project_id;
+            let projectId = item.default_project_id;
             return projectId ?
               <a data-type="router" key={projectId} href={'/admin/project/' + projectId}>{'(' + projectId.substring(0, 8) + ')'}</a> : '';
           };
@@ -104,8 +104,8 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
-    var filter = this.state.config.filter;
+    let table = this.state.config.table;
+    let filter = this.state.config.filter;
     request.getUserByID(id).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -115,7 +115,7 @@ class Model extends React.Component {
       this.setPagination(table, res);
       this.initializeFilter(filter);
       this.updateTableData(table, res._url/*, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       }*/);
     }).catch((res) => {
@@ -128,8 +128,8 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
-    var filter = this.state.config.filter;
+    let table = this.state.config.table;
+    let filter = this.state.config.filter;
     request.getList(table.limit).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
@@ -145,7 +145,7 @@ class Model extends React.Component {
   getFilterList(data) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
@@ -158,7 +158,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -181,7 +181,7 @@ class Model extends React.Component {
   initializeFilter(filters) {
     let enableLdap = HALO.settings.enable_ldap;
     config.filter[1].items[1].default = enableLdap ? 'Defalut' : __.all + __.domain;
-    var domains = [];
+    let domains = [];
     this.state.domains.forEach((item) => {
       domains.push({
         id: item.id,
@@ -195,7 +195,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var userID = data.user,
+      let userID = data.user,
         allTenant = data.all_tenant;
 
       if (userID) {
@@ -209,7 +209,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl/*, refreshDetail, callback*/) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -219,7 +219,7 @@ class Model extends React.Component {
       if (currentUrl) {
         this.stores.urls.push(currentUrl);
 
-        var detail = this.refs.dashboard.refs.detail,
+        let detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && /*refreshDetail &&*/ params.length > 2) {
           detail.refresh();
@@ -230,14 +230,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -276,7 +276,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -284,7 +284,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -303,7 +303,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -334,7 +334,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -358,9 +358,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var that = this;
+    let that = this;
     switch(key) {
       case 'create':
         createUser(null, null, function() {
@@ -441,7 +441,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -451,8 +451,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var singleRow = rows.length === 1;
-    var status = singleRow ? rows[0].enabled : null;
+    let singleRow = rows.length === 1;
+    let status = singleRow ? rows[0].enabled : null;
 
     for(let key in btns) {
       switch (key) {
@@ -479,18 +479,18 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
           syncUpdate = false;
           request.getRelatedResource(rows[0].id).then((res) => {
-            var basicPropsItem = this.getBasicPropsItems(rows[0], res[1].projects);
-            var groupConfig = this.getGroupConfig(rows[0], res[0].groups);
+            let basicPropsItem = this.getBasicPropsItems(rows[0], res[1].projects);
+            let groupConfig = this.getGroupConfig(rows[0], res[0].groups);
             contents[tabKey] = (
               <div>
                 <BasicProps
@@ -525,8 +525,8 @@ class Model extends React.Component {
           syncUpdate = false;
           request.getRoleAssignments(rows[0]).then((assignments) => {
             request.getUserRoles(assignments).then((res) => {
-              var domainRoleConfig = this.getDomainRoleConfig(rows[0], res.domainRoles);
-              var projectRoleConfig = this.getProjectRoleConfig(rows[0], res.projectRoles);
+              let domainRoleConfig = this.getDomainRoleConfig(rows[0], res.domainRoles);
+              let projectRoleConfig = this.getProjectRoleConfig(rows[0], res.projectRoles);
               contents[tabKey] = (
                 <div>
                   <DetailMinitable
@@ -575,9 +575,9 @@ class Model extends React.Component {
   }
 
   getDomainRoleConfig(item, dRoles) {
-    var dataContent = [];
-    var getRoles = function(element) {
-      var roles = [];
+    let dataContent = [];
+    let getRoles = function(element) {
+      let roles = [];
       element.forEach((r, index) => {
         if (index > 0) {
           roles.push(', ');
@@ -586,9 +586,9 @@ class Model extends React.Component {
       });
       return roles;
     };
-    for (var key in dRoles) {
-      var element = dRoles[key];
-      var dataObj = {
+    for (let key in dRoles) {
+      let element = dRoles[key];
+      let dataObj = {
         id: key,
         name: <a data-type="router" href={'/admin/domain/' + key}>{'(' + key.substring(0, 8) + ')'}</a>,
         role: <div>{getRoles(element)}</div>,
@@ -601,7 +601,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     }
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.domain,
         key: 'name',
@@ -624,9 +624,9 @@ class Model extends React.Component {
   }
 
   getProjectRoleConfig(item, pRoles) {
-    var dataContent = [];
-    var getRoles = function(element) {
-      var roles = [];
+    let dataContent = [];
+    let getRoles = function(element) {
+      let roles = [];
       element.forEach((r, index) => {
         if (index > 0) {
           roles.push(', ');
@@ -635,9 +635,9 @@ class Model extends React.Component {
       });
       return roles;
     };
-    for (var key in pRoles) {
-      var element = pRoles[key];
-      var dataObj = {
+    for (let key in pRoles) {
+      let element = pRoles[key];
+      let dataObj = {
         id: element.id,
         name: <a data-type="router" href={'/admin/project/' + element.id}>{key}</a>,
         role: <div>{getRoles(element.roles)}</div>,
@@ -650,7 +650,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     }
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.project,
         key: 'name',
@@ -673,9 +673,9 @@ class Model extends React.Component {
   }
 
   getGroupConfig(item, groups) {
-    var dataContent = [];
+    let dataContent = [];
     groups.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: element.id,
         name: <a data-type="router" href={'/admin/user-group/' + element.id}>{element.name}</a>,
         operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'leave_group', {
@@ -686,7 +686,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __['user-group'] + __.name,
         key: 'name',
@@ -709,7 +709,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item, originProjects) {
-    var projects = [];
+    let projects = [];
     if (originProjects && originProjects.length > 0) {
       originProjects.forEach((project, index) => {
         if (index > 0) {
@@ -719,7 +719,7 @@ class Model extends React.Component {
       });
     }
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name,
       type: 'editable'
@@ -757,10 +757,10 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editUser(rawItem.id, {
           name: newName
         }).then((res) => {

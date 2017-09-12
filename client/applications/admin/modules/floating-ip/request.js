@@ -1,6 +1,6 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 function getParameters(fields) {
   let ret = '';
@@ -16,7 +16,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy/neutron/v2.0/floatingips?all_tenants=1&limit=' + pageLimit;
+    let url = '/proxy/neutron/v2.0/floatingips?all_tenants=1&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -31,7 +31,7 @@ module.exports = {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
-    var url = '/proxy/neutron/v2.0/floatingips?all_tenants=1&limit=' + pageLimit + getParameters(data);
+    let url = '/proxy/neutron/v2.0/floatingips?all_tenants=1&limit=' + pageLimit + getParameters(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
   getServerByID: function(serverID) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -51,7 +51,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/proxy/neutron/v2.0/' + nextUrl;
+    let url = '/proxy/neutron/v2.0/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -63,7 +63,7 @@ module.exports = {
     });
   },
   getFloatingIPByID: function(floatingipID) {
-    var url = '/proxy/neutron/v2.0/floatingips/' + floatingipID;
+    let url = '/proxy/neutron/v2.0/floatingips/' + floatingipID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -81,7 +81,7 @@ module.exports = {
     });
   },
   getRelatedSourcesById: function(item) {
-    var deferredList = [];
+    let deferredList = [];
 
     if(item.router_id) {
       deferredList.push(fetch.get({
@@ -95,7 +95,7 @@ module.exports = {
       deferredList.push(fetch.get({
         url: '/proxy/neutron/v2.0/ports/' + item.port_id
       }).then((res) => {
-        var port = res.port;
+        let port = res.port;
         if(port.device_owner.indexOf('compute') === 0) {
           item.server_id = port.device_id;
           return port.device_id;
@@ -109,7 +109,7 @@ module.exports = {
       }
       ).then((inst) => {
         if(inst) {
-          var server = inst.server;
+          let server = inst.server;
           item.server_name = server.name;
         }
       }));
@@ -135,7 +135,7 @@ module.exports = {
   exportCSV(fields) {
     let url = '/proxy/csv/neutron/v2.0/floatingips?all_tenants=1' + getParameters(fields);
     function ret() {
-      var linkNode = document.createElement('a');
+      let linkNode = document.createElement('a');
       linkNode.href = url;
       linkNode.click();
       linkNode = null;

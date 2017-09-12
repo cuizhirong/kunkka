@@ -1,5 +1,5 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 const PROJECT_ID = HALO.user.projectId;
 

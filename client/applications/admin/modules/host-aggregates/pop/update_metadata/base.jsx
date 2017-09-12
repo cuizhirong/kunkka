@@ -1,15 +1,15 @@
-var React = require('react');
-var {Modal, Button, Tip} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var Item = require('./select_items.jsx');
+const React = require('react');
+const {Modal, Button, Tip} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const Item = require('./select_items.jsx');
 
-var NumberItem = require('./subs/number.jsx');
-var SelectItem = require('./subs/single-select.jsx');
-var BooleanItem = require('./subs/boolean.jsx');
-var StringItem = require('./subs/string.jsx');
-var MultiSelect = require('./subs/multi-select.jsx');
+const NumberItem = require('./subs/number.jsx');
+const SelectItem = require('./subs/single-select.jsx');
+const BooleanItem = require('./subs/boolean.jsx');
+const StringItem = require('./subs/string.jsx');
+const MultiSelect = require('./subs/multi-select.jsx');
 
 const TITLE = __.update_metadata;
 
@@ -281,8 +281,8 @@ class ModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
     return (
       <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={730}>

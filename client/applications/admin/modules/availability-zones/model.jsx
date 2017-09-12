@@ -1,13 +1,13 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
-var BasicProps = require('client/components/basic_props/index');
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
+const React = require('react');
+const Main = require('client/components/main/index');
+const BasicProps = require('client/components/basic_props/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -91,14 +91,14 @@ class Model extends React.Component {
 //request: get Hypervisor List
   getZonesList(refreshDetail) {
     this.clearState();
-    var _config = this.state.config,
+    let _config = this.state.config,
       table = _config.table,
       params = this.props.params;
     request.getAvailabilityZone().then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       if(params && params[2]) {
         this.updateTableData(newTable, true, () => {
-          var pathList = router.getPathList();
+          let pathList = router.getPathList();
           router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
         });
       } else {
@@ -119,14 +119,14 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
     }, () => {
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -167,7 +167,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -181,7 +181,7 @@ class Model extends React.Component {
   }
 
   clearState() {
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -216,14 +216,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -271,7 +271,7 @@ class Model extends React.Component {
       }
     });
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.zoneName
     }, {

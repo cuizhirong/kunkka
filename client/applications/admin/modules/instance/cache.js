@@ -1,4 +1,4 @@
-var fetch = require('client/applications/admin/cores/fetch');
+const fetch = require('client/applications/admin/cores/fetch');
 
 module.exports = {
   getImageType: function() {

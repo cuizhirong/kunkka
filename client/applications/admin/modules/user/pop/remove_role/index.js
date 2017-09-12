@@ -1,7 +1,7 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(type, obj, parent, callback) {
   config.btn.disabled = true;
@@ -23,19 +23,19 @@ function pop(type, obj, parent, callback) {
     config.btn.disabled = false;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var roles = [];
+      let roles = [];
       refs.role.state.data.forEach(function(ele) {
         if (ele.selected) {
           roles.push(ele.id);
         }
       });
-      var domainId;
+      let domainId;
       if (type === 'domain') {
         domainId = obj.domain_id;
       } else {
@@ -49,7 +49,7 @@ function pop(type, obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch (field) {
         case 'role':
-          var hasRole = status.data.some((item) => {
+          let hasRole = status.data.some((item) => {
             if (item.selected) {
               return true;
             }

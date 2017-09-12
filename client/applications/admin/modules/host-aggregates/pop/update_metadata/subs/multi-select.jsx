@@ -1,5 +1,5 @@
-var React = require('react');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
 
 class MultiSelect extends React.Component {
   constructor(props) {
@@ -103,9 +103,9 @@ class MultiSelect extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
-    var __ = props.__;
+    let props = this.props;
+    let state = this.state;
+    let __ = props.__;
 
     return (
       <li className={'multi-select-item-wrapper' + (state.unfold ? '' : ' fold')}>

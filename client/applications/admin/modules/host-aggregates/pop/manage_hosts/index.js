@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
-var getErrorMessage = require('client/applications/admin/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
+const getErrorMessage = require('client/applications/admin/utils/error_message');
 
 function pop(obj, parent, callback) {
   let hosts = [];
   config.fields[0].text = obj.name;
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

@@ -1,11 +1,11 @@
 require('./style/index.less');
-var Chart = require('client/libs/charts/index');
-var __ = require('locale/client/admin.lang.json');
-var {Tab} = require('client/uskin/index');
+const Chart = require('client/libs/charts/index');
+const __ = require('locale/client/admin.lang.json');
+const {Tab} = require('client/uskin/index');
 
-var React = require('react');
+const React = require('react');
 
-var infoColor = '#42b9e5',
+const infoColor = '#42b9e5',
   info700Color = '#097fab',
   warningColor = '#f2994b',
   dangerColor = '#ff5a67',
@@ -62,9 +62,9 @@ class Model extends React.Component {
   }
 
   showPhysicalChart() {
-    var that = this;
+    let that = this;
     setTimeout(function() {
-      var res = {
+      let res = {
         assigned_size: 70,
         physical_size: 100,
         storage_node: 24,
@@ -79,8 +79,8 @@ class Model extends React.Component {
         physical_size: res.physical_size,
         assigned_size: res.assigned_size
       });
-      var rate = res.assigned_size / res.physical_size;
-      var seriesColor = infoColor;
+      let rate = res.assigned_size / res.physical_size;
+      let seriesColor = infoColor;
       if (rate > 0.6 && rate <= 0.8) {
         seriesColor = warningColor;
       } else if (rate > 0.8) {
@@ -107,9 +107,9 @@ class Model extends React.Component {
   }
 
   showOversaleChart() {
-    var that = this;
+    let that = this;
     setTimeout(function() {
-      var res = {
+      let res = {
         soldSize: 100,
         usedSize: 10
       };
@@ -147,7 +147,7 @@ class Model extends React.Component {
   }
 
   showUtilizationChart(period) {
-    var that = this;
+    let that = this;
     setTimeout(function() {
       that.setState({
         utilizationLoading: false
@@ -192,7 +192,7 @@ class Model extends React.Component {
   }
 
   showIncrementChart(period) {
-    var that = this;
+    let that = this;
     setTimeout(function() {
       that.setState({
         incrementLoading: false
@@ -285,11 +285,11 @@ class Model extends React.Component {
   }
 
   render() {
-    var state = this.state;
+    let state = this.state;
 
-    var isNakedPhysicalSize = state.physicalSizeType === 'physical';
+    let isNakedPhysicalSize = state.physicalSizeType === 'physical';
 
-    var tabs = [{
+    let tabs = [{
       name: __.storage_service + ' - ' + __.overview,
       key: 'overview',
       default: true

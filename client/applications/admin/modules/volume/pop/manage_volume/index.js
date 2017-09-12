@@ -1,8 +1,8 @@
-var React = require('react');
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const React = require('react');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
 
@@ -17,7 +17,7 @@ function pop(obj, parent, callback) {
     content: <input placeholder={__.value} ref={(ref) => {valueInput = ref; }} />
   }];
 
-  var props = {
+  let props = {
     __: __,
     config: config,
     parent: parent,

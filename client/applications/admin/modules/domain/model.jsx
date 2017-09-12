@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var modifyDomain = require('./pop/modify_domain/index');
-//var deactivateDomain = require('./pop/deactivate/index');
-var activateDomain = require('./pop/activate/index');
+const modifyDomain = require('./pop/modify_domain/index');
+//let deactivateDomain = require('./pop/deactivate/index');
+const activateDomain = require('./pop/activate/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-var router = require('client/utils/router');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+const router = require('client/utils/router');
 
 class Model extends React.Component {
 
@@ -83,7 +83,7 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getDomainByID(id).then((res) => {
       if (res.domain) {
         table.data = [res.domain];
@@ -91,7 +91,7 @@ class Model extends React.Component {
         table.data = [];
       }
       this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -104,7 +104,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList(table.limit).then((res) => {
       table.data = res.domains;
       this.updateTableData(table, res._url);
@@ -112,7 +112,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.domains) {
         table.data = res.domains;
@@ -142,7 +142,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -152,7 +152,7 @@ class Model extends React.Component {
       if (currentUrl) {
         this.stores.urls.push(currentUrl.split('/v3/')[1]);
 
-        var detail = this.refs.dashboard.refs.detail,
+        let detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && refreshDetail && params.length > 2) {
           detail.refresh();
@@ -192,7 +192,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -200,7 +200,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -219,7 +219,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -250,7 +250,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -274,9 +274,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var that = this;
+    let that = this;
     switch(key) {
       case 'modify_domain':
         modifyDomain(rows[0], null, function(_data) {
@@ -316,7 +316,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -326,8 +326,8 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var singleRow = rows.length === 1;
-    var status = singleRow ? rows[0].enabled : null;
+    let singleRow = rows.length === 1;
+    let status = singleRow ? rows[0].enabled : null;
 
     for(let key in btns) {
       switch (key) {
@@ -350,11 +350,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -370,7 +370,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -396,7 +396,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name,
       type: 'editable'
@@ -427,7 +427,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editDomain(rawItem.id, {
           name: newName
         }).then((res) => {

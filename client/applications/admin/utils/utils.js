@@ -1,5 +1,5 @@
-var __ = require('locale/client/admin.lang.json');
-var constant = require('./constant');
+const __ = require('locale/client/admin.lang.json');
+const constant = require('./constant');
 
 module.exports = {
   getVolumeType: function(item) {
@@ -16,7 +16,7 @@ module.exports = {
     if (isNaN(m) || isNaN(n)) {
       return 1;
     } else {
-      var u = m, v = n, t = v;
+      let u = m, v = n, t = v;
       while (v !== 0){
         t = u % v;
         u = v;
@@ -26,14 +26,14 @@ module.exports = {
     }
   },
   exportCSV: function(url) {
-    var linkNode = document.createElement('a');
+    let linkNode = document.createElement('a');
     linkNode.href = url;
     linkNode.click();
     linkNode = null;
   },
   getTime(time) {
-    var now = new Date();
-    var date;
+    let now = new Date();
+    let date;
     switch(time) {
       case 'hour':
         date = new Date(now.getTime() - 3 * 3600 * 1000);
@@ -101,7 +101,7 @@ module.exports = {
   },
 
   getChartData(data, granularity, startTime, resourceType) {
-    var _data = [];
+    let _data = [];
     if (resourceType) {
       data.forEach((d) => {
         _data.push(d[2].toFixed(2));
@@ -204,7 +204,7 @@ module.exports = {
   },
 
   ipFormat(ip) {
-    var num = 0;
+    let num = 0;
     ip = ip.split('.');
     num = Number(ip[0]) * 256 * 256 * 256 + Number(ip[1]) * 256 * 256 + Number(ip[2]) * 256 + Number(ip[3]);
     num = num >>> 0;

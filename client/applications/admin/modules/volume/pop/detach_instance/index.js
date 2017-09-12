@@ -1,12 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -14,7 +14,7 @@ function pop(obj, parent, callback) {
     onInitialize: function(refs) {
       obj.attachments.forEach(ele => {
         request.getServerById(ele.server_id).then((res) => {
-          var server = res.server,
+          let server = res.server,
             data = [];
 
           data.push({
@@ -35,7 +35,7 @@ function pop(obj, parent, callback) {
           }
         }).catch(e => {
           if(e.status === 404) {
-            var data = [];
+            let data = [];
 
             data.push({
               name: __.instance + ' (' + ele.server_id.substr(0, 8) + ') ' + __.already_deleted
@@ -50,7 +50,7 @@ function pop(obj, parent, callback) {
     },
 
     onConfirm: function(refs, cb) {
-      var selected = refs.instance.state.data.filter((ele) => ele.selected)[0];
+      let selected = refs.instance.state.data.filter((ele) => ele.selected)[0];
 
       request.detachInstance({
         attachmentId: selected.attachmentId,

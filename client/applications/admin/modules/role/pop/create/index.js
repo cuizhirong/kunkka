@@ -1,7 +1,7 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -18,13 +18,13 @@ function pop(obj, parent, callback) {
     config.btn.disabled = true;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         name: refs.name.state.value
       };
       if (obj) {

@@ -1,17 +1,17 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
+const deleteModal = require('client/components/modal_delete/index');
 
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var request = require('./request');
-var getStatusIcon = require('../../utils/status_icon');
-var csv = require('./pop/csv/index');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const request = require('./request');
+const getStatusIcon = require('../../utils/status_icon');
+const csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -66,7 +66,7 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
-    var setOption = function(key, data) {
+    let setOption = function(key, data) {
       filters.forEach((filter) => {
         filter.items.forEach((item) => {
           if(item.key === key) {
@@ -76,7 +76,7 @@ class Model extends React.Component {
       });
     };
 
-    var statusTypes = [{
+    let statusTypes = [{
       id: 'available',
       name: __.available
     }, {
@@ -93,7 +93,7 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    var filter = this.state.config.filter;
+    let filter = this.state.config.filter;
     this.initializeFilter(filter);
 
     if (params[2]) {
@@ -110,7 +110,7 @@ class Model extends React.Component {
   getSingle(snapshotID) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
 
     request.getSnapshotByID(snapshotID).then((res) => {
       table.data = res.list;
@@ -126,8 +126,8 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
-    var pageLimit = table.limit;
+    let table = this.state.config.table;
+    let pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
       table.data = res.list;
@@ -141,7 +141,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -159,7 +159,7 @@ class Model extends React.Component {
   }
 
   getFilteredList(data) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
 
     request.filterFromAll(data, table.limit).then((res) => {
       table.data = res.list;
@@ -178,7 +178,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var snapshotID = data.snapshot_id,
+      let snapshotID = data.snapshot_id,
         allTenant = data.all_tenant;
 
       if (snapshotID) {
@@ -192,7 +192,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -201,7 +201,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -210,14 +210,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -256,7 +256,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -264,7 +264,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -283,7 +283,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -309,7 +309,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows,
+    let rows = data.rows,
       that = this;
 
     switch(key) {
@@ -348,7 +348,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -380,7 +380,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -402,7 +402,7 @@ class Model extends React.Component {
         delete data.rows;
         this.clearState();
 
-        var table = this.state.config.table;
+        let table = this.state.config.table;
 
         request.getFilterList(data).then((res) => {
           table.data = res.list;
@@ -421,10 +421,10 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
@@ -432,7 +432,7 @@ class Model extends React.Component {
           syncUpdate = false;
           detail.setState({loading: true});
           request.getVolumeById(rows[0].volume_id).then((res) => {
-            var basicPropsItem = this.getBasicPropsItems(rows[0], res.volume);
+            let basicPropsItem = this.getBasicPropsItems(rows[0], res.volume);
             contents[tabKey] = (
               <div>
                 <BasicProps
@@ -466,7 +466,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item, volume) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substr(0, 8) + ')',
       type: 'editable'
@@ -520,7 +520,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editSnapshotName(rawItem, newName).then((res) => {
           this.refresh({
             refreshList: true,

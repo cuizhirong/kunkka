@@ -1,5 +1,5 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getAggregatesList: function() {
@@ -147,7 +147,7 @@ module.exports = {
     });
   },
   deleteItems: function(rows) {
-    var deferredList = rows.map((item) => fetch.delete({
+    let deferredList = rows.map((item) => fetch.delete({
       url: '/proxy/nova/v2.1/os-aggregates/' + item.id
     }));
     return RSVP.all(deferredList);

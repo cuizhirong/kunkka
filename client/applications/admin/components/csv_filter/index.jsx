@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/admin.lang.json');
-var Calendar = require('client/uskin/index').Calendar;
+const React = require('react');
+const __ = require('locale/client/admin.lang.json');
+const Calendar = require('client/uskin/index').Calendar;
 
 class Filter extends React.Component {
   constructor(props) {

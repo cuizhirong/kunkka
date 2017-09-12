@@ -1,8 +1,8 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 function requestParams(obj) {
-  var str = '';
+  let str = '';
   for(let key in obj) {
     if(key === 'name') {
       str += ('&search=' + obj[key]);
@@ -20,7 +20,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit;
+    let url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -29,7 +29,7 @@ module.exports = {
     });
   },
   getProjectByID: function(projectID) {
-    var url = '/proxy-search/keystone/v3/projects?id=' + projectID;
+    let url = '/proxy-search/keystone/v3/projects?id=' + projectID;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -45,7 +45,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/keystone/v3/projects?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -70,7 +70,7 @@ module.exports = {
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/keystone/v3/projects/' + item.id
@@ -79,7 +79,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getUserIds: function(projectID) {
-    var users = [];
+    let users = [];
     return fetch.get({
       url: '/proxy/keystone/v3/role_assignments?scope.project.id=' + projectID
     }).then((res) => {
@@ -92,7 +92,7 @@ module.exports = {
     });
   },
   getUserGrpIds: function(projectID) {
-    var userGrps = [];
+    let userGrps = [];
     return fetch.get({
       url: '/proxy/keystone/v3/role_assignments?scope.project.id=' + projectID
     }).then((res) => {
@@ -124,7 +124,7 @@ module.exports = {
     });
   },
   getUsers: function(userIds, assignments) {
-    var deferredList = [];
+    let deferredList = [];
     deferredList.push(fetch.get({
       url: '/proxy/keystone/v3/roles'
     }));
@@ -134,10 +134,10 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList).then((res) => {
-      var users = [],
+      let users = [],
         roles = res[0].roles;
-      var filterAssignment = function(assignment) {
-        var role = [];
+      let filterAssignment = function(assignment) {
+        let role = [];
         assignment.forEach((a) => {
           roles.some((r) => {
             if (r.id === a) {
@@ -149,7 +149,7 @@ module.exports = {
         });
         return role;
       };
-      for (var i = 1; i < res.length; i++) {
+      for (let i = 1; i < res.length; i++) {
         res[i].user.role = filterAssignment(assignments[userIds[i - 1]]);
         users.push(res[i].user);
       }
@@ -157,7 +157,7 @@ module.exports = {
     });
   },
   getGrps: function(grpIds, roleMappings) {
-    var deferredList = [];
+    let deferredList = [];
     deferredList.push(fetch.get({
       url: '/proxy/keystone/v3/roles'
     }));
@@ -199,8 +199,8 @@ module.exports = {
     });
   },
   modifyQuota: function(data, projectID) {
-    var _data = {};
-    for(var i in data) {
+    let _data = {};
+    for(let i in data) {
       _data[i] = data[i].total;
     }
     return fetch.put({
@@ -228,7 +228,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/domains'
     }).then((res) => {
-      var domains = [];
+      let domains = [];
       res.domains.forEach((domain) => {
         if (domain.id === 'default') {
           domains.unshift(domain);
@@ -241,12 +241,12 @@ module.exports = {
     });
   },
   getAllUsers: function() {
-    var deferredList = [];
+    let deferredList = [];
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain;
-      var defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
-      var domainID = domains.find((ele) => ele.name === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
+      let currentDomain = HALO.configs.domain;
+      let defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
+      let domainID = domains.find((ele) => ele.name === currentDomain).id;
+      let urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
       deferredList.push(fetch.get({
         url: '/proxy/keystone/v3/users' + urlParam
       }));
@@ -257,7 +257,7 @@ module.exports = {
     });
   },
   addUser: function(projectID, userID, roleID) {
-    var deferredList = [];
+    let deferredList = [];
     roleID.forEach((id) => {
       deferredList.push(fetch.put({
         url: '/proxy/keystone/v3/projects/' + projectID + '/users/' + userID + '/roles/' + id
@@ -266,7 +266,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   addUserGroups: function(projectID, userGroupID, roleID) {
-    var deferredList = [];
+    let deferredList = [];
     roleID.forEach((id) => {
       deferredList.push(fetch.put({
         url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + userGroupID + '/roles/' + id
@@ -275,7 +275,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   removeUser: function(projectID, userID, roles) {
-    var deferredList = [];
+    let deferredList = [];
     roles.forEach((role) => {
       deferredList.push(fetch.delete({
         url: '/proxy/keystone/v3/projects/' + projectID + '/users/' + userID + '/roles/' + role
@@ -285,12 +285,12 @@ module.exports = {
   },
   getUserGroups: function() {
     return this.getDomains().then((domains) => {
-      var currentDomain = HALO.configs.domain;
-      var defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
-      var domainID = domains.find((ele) => ele.name === currentDomain).id;
-      var urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
+      let currentDomain = HALO.configs.domain;
+      let defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
+      let domainID = domains.find((ele) => ele.name === currentDomain).id;
+      let urlParam = domainID !== 'default' ? '?domain_id=' + domainID : defaultid;
 
-      var url = '/proxy/keystone/v3/groups' + urlParam;
+      let url = '/proxy/keystone/v3/groups' + urlParam;
       return fetch.get({
         url: url
       }).then((res) => {
@@ -301,7 +301,7 @@ module.exports = {
     });
   },
   getAllRoles: function() {
-    var url = '/proxy/keystone/v3/roles';
+    let url = '/proxy/keystone/v3/roles';
     return fetch.get({
       url: url
     });
@@ -316,8 +316,8 @@ module.exports = {
   queryUserId: function(data) {
     if(data.type === 'name') {
       return this.getDomains().then((domains) => {
-        var currentDomain = HALO.configs.domain;
-        var domainID = domains.find((ele) => ele.name === currentDomain).id;
+        let currentDomain = HALO.configs.domain;
+        let domainID = domains.find((ele) => ele.name === currentDomain).id;
         return fetch.get({
           url: '/api/v1/users?name=' + data.value + '&domain_id=' + domainID
         });
@@ -346,7 +346,7 @@ module.exports = {
     return RSVP.all(requestList);
   },
   addUserGroup: function(projectID, groupID, roleID) {
-    var deferredList = [];
+    let deferredList = [];
     roleID.forEach((id) => {
       deferredList.push(fetch.put({
         url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + groupID + '/roles/' + id
@@ -360,7 +360,7 @@ module.exports = {
     });
   },
   removeUserGroup: function(projectID, groupID, roles) {
-    var deferredList = [];
+    let deferredList = [];
     roles.forEach((r) => {
       deferredList.push(fetch.delete({
         url: '/proxy/keystone/v3/projects/' + projectID + '/groups/' + groupID + '/roles/' + r

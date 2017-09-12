@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop (obj, parent, callback) {
   config.fields[0].text = obj.name;
   config.fields[2].value = obj.description;
 
-  var changeField = config.fields[1];
+  let changeField = config.fields[1];
   changeField.value = obj.value.toString();
   if(obj.type === 'boolean') {
     changeField.type = 'tab';
@@ -18,13 +18,13 @@ function pop (obj, parent, callback) {
     changeField.type = 'input';
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var newData = {
+      let newData = {
         value: refs.value.state.value,
         description: refs.describe.state.value
       };

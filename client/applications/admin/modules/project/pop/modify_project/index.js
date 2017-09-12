@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   config.title = ['modify', 'project'];
@@ -12,14 +12,14 @@ function pop(obj, parent, callback) {
   config.fields[3].label = __.activate;
   config.fields[3].checked = obj.enabled;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         name: refs.name.state.value,
         description: refs.describe.state.value,
         enabled: refs.activate.state.checked

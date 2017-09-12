@@ -1,18 +1,18 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var Modal = require('client/uskin/index').Modal;
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const Modal = require('client/uskin/index').Modal;
 
-var forceDelete = require('./pop/delete/index');
+const forceDelete = require('./pop/delete/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var getErrorMessage = require('../../utils/error_message');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const getErrorMessage = require('../../utils/error_message');
 
 class Model extends React.Component {
 
@@ -73,7 +73,7 @@ class Model extends React.Component {
 //request: get single data by ID
   getSingle(id) {
     this.clearUrls();
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getSingle(id).then((res) => {
       if (res.server.status.toLowerCase() === 'soft_deleted') {
         table.data = [res.server];
@@ -82,7 +82,7 @@ class Model extends React.Component {
       }
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -95,7 +95,7 @@ class Model extends React.Component {
 //request: get list
   getList() {
     this.clearUrls();
-    var table = this.state.config.table,
+    let table = this.state.config.table,
       pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
@@ -107,7 +107,7 @@ class Model extends React.Component {
 
 //request: get next list
   getNextList(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.server) {
         table.data = [res.server];
@@ -128,7 +128,7 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -137,7 +137,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -149,14 +149,14 @@ class Model extends React.Component {
 
 //set pagination
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.servers_links ? res.servers_links[0] : null;
 
     if (next && next.rel === 'next') {
       pagination.nextUrl = next.href.split('/v2.1/')[1];
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -204,7 +204,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -212,7 +212,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -259,7 +259,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'next') {
@@ -280,16 +280,16 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
-    var props = {
+    let {rows} = data;
+    let props = {
       title: __.tip,
       content: __.please_refresh,
       okText: __.ok
     };
 
-    var that = this;
+    let that = this;
     function refresh() {
-      var r = {
+      let r = {
         refreshList: true,
         refreshDetail: true,
         loadingTable: true,
@@ -307,7 +307,7 @@ class Model extends React.Component {
           Modal.warning(props);
         }).catch((err) => {
           refresh();
-          var t = getErrorMessage(err);
+          let t = getErrorMessage(err);
           props.content = t;
           Modal.danger(props);
         });
@@ -342,7 +342,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -352,7 +352,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var single = rows.length === 1 ? rows[0] : null;
+    let single = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
@@ -371,14 +371,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -405,7 +405,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name
     }, {

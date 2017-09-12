@@ -1,21 +1,21 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var RelatedInstance = require('../image/detail/related_instance');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const RelatedInstance = require('../image/detail/related_instance');
 
-var migratePop = require('./pop/migrate/index');
+const migratePop = require('./pop/migrate/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
-var getTime = require('client/utils/time_unification');
-var utils = require('../../utils/utils');
-var csv = require('./pop/csv/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
+const getTime = require('client/utils/time_unification');
+const utils = require('../../utils/utils');
+const csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -42,7 +42,7 @@ class Model extends React.Component {
     this.state.config.table.column.find((col) => {
       if (col.key === 'ip') {
         col.sortBy = function(item1, item2) {
-          var a = item1.host_ip,
+          let a = item1.host_ip,
             b = item2.host_ip;
           return utils.ipFormat(a) - utils.ipFormat(b);
         };
@@ -103,11 +103,11 @@ class Model extends React.Component {
   getHypervisorById(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getHypervisorById(id).then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       this.updateTableData(newTable, res._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     }).catch((res) => {
@@ -117,7 +117,7 @@ class Model extends React.Component {
   }
 
   getHypervisorListToStore() {
-    var pageLimit = this.state.config.table.limit;
+    let pageLimit = this.state.config.table.limit;
     request.getHypervisorList(pageLimit).then((res) => {
       this.stores.hosts = res.hypervisors;
     });
@@ -127,9 +127,9 @@ class Model extends React.Component {
   getHypervisorList() {
     this.clearState();
 
-    var pageLimit = this.state.config.table.limit;
+    let pageLimit = this.state.config.table.limit;
     request.getHypervisorList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      let table = this.processTableData(this.state.config.table, res);
       this.stores.hosts = res.hypervisors;
       this.updateTableData(table, res._url);
     });
@@ -137,7 +137,7 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -147,7 +147,7 @@ class Model extends React.Component {
       if (currentUrl) {
         this.stores.urls.push(currentUrl);
 
-        var detail = this.refs.dashboard.refs.detail,
+        let detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && refreshDetail && params.length > 2) {
           detail.refresh();
@@ -165,7 +165,7 @@ class Model extends React.Component {
       table.data = [res.hypervisor];
     }
 
-    var pagination = {};
+    let pagination = {};
 
     res.hypervisors_links && res.hypervisors_links.forEach((link) => {
       if (link.rel === 'prev') {
@@ -186,7 +186,7 @@ class Model extends React.Component {
 //request: jump to next page according to the given url
   getNextListData(url, refreshDetail) {
     request.getNextList(url).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      let table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
   }
@@ -221,7 +221,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -229,7 +229,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -249,7 +249,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -280,7 +280,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -302,7 +302,7 @@ class Model extends React.Component {
         delete data.rows;
         this.clearState();
 
-        var table = this.state.config.table;
+        let table = this.state.config.table;
         request.getFilterList(data).then((res) => {
           table.data = res.servers;
           table = this.processTableData(table, res);
@@ -320,12 +320,12 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       requestData;
 
-    var that = this;
+    let that = this;
     function refresh() {
-      var r = {
+      let r = {
         refreshList: true,
         refreshDetail: true
       };
@@ -379,7 +379,7 @@ class Model extends React.Component {
     this.clearState();
 
     request.getListByName(name).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      let table = this.processTableData(this.state.config.table, res);
       this.stores.hosts = res.hypervisors;
       this.updateTableData(table, res._url);
     });
@@ -390,7 +390,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var hostID = data.host ? data.host.id : null,
+      let hostID = data.host ? data.host.id : null,
         allTenant = data.all_tenant;
 
       if (hostID) {
@@ -404,7 +404,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -414,7 +414,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var sole = rows.length === 1 ? rows[0] : null;
+    let sole = rows.length === 1 ? rows[0] : null;
 
     for(let key in btns) {
       switch (key) {
@@ -439,15 +439,15 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -472,12 +472,12 @@ class Model extends React.Component {
               insData.push(instance);
             }
           });
-          var pagination = {
+          let pagination = {
             current: current,
             total: Math.ceil(insData.length / limit),
             total_num: insData.length
           };
-          var instanceConfig = this.getInstanceConfig(insData.slice((current - 1) * limit, current * limit), pagination);
+          let instanceConfig = this.getInstanceConfig(insData.slice((current - 1) * limit, current * limit), pagination);
           contents[tabKey] = (
             <RelatedInstance
               tableConfig={instanceConfig}
@@ -512,10 +512,10 @@ class Model extends React.Component {
   }
 
   getInstanceConfig(item, pagination) {
-    var dataContent = [];
-    for (var key in item) {
-      var element = item[key];
-      var dataObj = {
+    let dataContent = [];
+    for (let key in item) {
+      let element = item[key];
+      let dataObj = {
         name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
         id: element.id,
         status: getStatusIcon(element.status),
@@ -523,7 +523,7 @@ class Model extends React.Component {
       };
       dataContent.push(dataObj);
     }
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -551,7 +551,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.hypervisor_hostname
     }, {

@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
-var __ = require('locale/client/admin.lang.json');
-var unitConverter = require('client/utils/unit_converter');
+const __ = require('locale/client/admin.lang.json');
+const unitConverter = require('client/utils/unit_converter');
 
 class ResourceQuota extends React.Component {
 
@@ -16,8 +16,8 @@ class ResourceQuota extends React.Component {
   }
 
   componentWillMount() {
-    var types = this.props.types;
-    var quota = [{
+    let types = this.props.types;
+    let quota = [{
       title: __.compute,
       items: [{
         title: __.instance,
@@ -110,7 +110,7 @@ class ResourceQuota extends React.Component {
   }
 
   render() {
-    var quota = this.state.quota,
+    let quota = this.state.quota,
       overview = this.props.overview;
 
     return (
@@ -121,7 +121,7 @@ class ResourceQuota extends React.Component {
               <h3>{ele.title}</h3>
               <ul className="quota-list">
                 {ele.items.map((item, i) => {
-                  var used, total, inUse, inUseClassName;
+                  let used, total, inUse, inUseClassName;
 
                   if (overview[item.key]) {
                     if (overview[item.key].total > -1) {

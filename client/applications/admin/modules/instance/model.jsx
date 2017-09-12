@@ -1,24 +1,24 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var LineChart = require('client/components/line_chart/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const LineChart = require('client/components/line_chart/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var dissociateFIP = require('./pop/dissociate_fip/index');
-var migratePop = require('./pop/migrate/index');
+const deleteModal = require('client/components/modal_delete/index');
+const dissociateFIP = require('./pop/dissociate_fip/index');
+const migratePop = require('./pop/migrate/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var csv = require('./pop/csv/index');
-var getTime = require('client/utils/time_unification');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
+const csv = require('./pop/csv/index');
+const getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 
@@ -60,7 +60,7 @@ class Model extends React.Component {
   }
 
   getFloatingIp(item) {
-    var floatingIP = [];
+    let floatingIP = [];
     Object.keys(item.addresses).forEach((key) =>
       item.addresses[key].forEach((element) => {
         if (element['OS-EXT-IPS:type'] === 'floating') {
@@ -72,7 +72,7 @@ class Model extends React.Component {
   }
 
   getFixedIp(item) {
-    var ips = item.addresses, ret = [];
+    let ips = item.addresses, ret = [];
     Object.keys(ips).forEach((key) => {
       ips[key].forEach((ele) => {
         if (ele['OS-EXT-IPS:type'] === 'fixed') {
@@ -84,7 +84,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var that = this, a = '', b = '';
+    let that = this, a = '', b = '';
 
     this.state.config.table.column.forEach((col) => {
       if (col.key === 'floating_ip') {
@@ -122,7 +122,7 @@ class Model extends React.Component {
 
   //helper
   findItemByID(arr, id) {
-    var ret;
+    let ret;
 
     arr.some((item) => {
       if (item.id === id) {
@@ -139,7 +139,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'flavor':
           column.render = (col, item, i) => {
-            var flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id);
+            let flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id);
             return (
               <a data-type="router" href={'/admin/flavor/' + item.flavor.id}>
                 {flavor ? flavor.name : '(' + item.flavor.id.substr(0, 8) + ')'}
@@ -150,14 +150,14 @@ class Model extends React.Component {
         case 'image':
           column.render = (col, item, i) => {
             if(item.image) {
-              var image = this.findItemByID(this.stores.imageTypes, item.image.id);
+              let image = this.findItemByID(this.stores.imageTypes, item.image.id);
               return (
                 <a data-type="router" href={'/admin/image/' + item.image.id}>
                   {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
                 </a>
               );
             } else {
-              var bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
+              let bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
               return (
                 <a data-type="router" href={'/admin/volume/' + bootableVolume}>
                   {bootableVolume !== '' ? '(' + bootableVolume.substr(0, 8) + ')' : ''}
@@ -173,7 +173,7 @@ class Model extends React.Component {
           break;
         case 'fixed_ip':
           column.render = (col, item, i) => {
-            var ips = item.addresses,
+            let ips = item.addresses,
               ret = [];
 
             Object.keys(ips).forEach((key) => {
@@ -194,7 +194,7 @@ class Model extends React.Component {
   }
 
   initializeFilter(filters, res) {
-    var setOption = function(key, data) {
+    let setOption = function(key, data) {
       filters.forEach((filter) => {
         filter.items.forEach((item) => {
           if (item.key === key) {
@@ -204,7 +204,7 @@ class Model extends React.Component {
       });
     };
 
-    var imageTypes = [];
+    let imageTypes = [];
     res.imageType.list.forEach((image) => {
       imageTypes.push({
         id: image.id,
@@ -213,7 +213,7 @@ class Model extends React.Component {
     });
     setOption('image', imageTypes);
 
-    var flavorTypes = [];
+    let flavorTypes = [];
     res.flavorType.flavors.forEach((flavor) => {
       flavorTypes.push({
         id: flavor.id,
@@ -222,7 +222,7 @@ class Model extends React.Component {
     });
     setOption('flavor', flavorTypes);
 
-    var statusTypes = [{
+    let statusTypes = [{
       id: 'ACTIVE',
       name: __.active
     }, {
@@ -254,7 +254,7 @@ class Model extends React.Component {
   getServerByID(serverID) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getServerByID(serverID).then((res) => {
       table.data = [res.server];
       table = this.processTableData(table, res);
@@ -270,7 +270,7 @@ class Model extends React.Component {
   getServerByIDInitialize(serverID) {
     this.clearState();
 
-    var _config = this.state.config,
+    let _config = this.state.config,
       filter = _config.filter,
       table = _config.table;
 
@@ -279,9 +279,9 @@ class Model extends React.Component {
       table.data = [res[0].server];
       this.initializeFilter(filter, res[1]);
 
-      var newTable = this.processTableData(table, res[0]);
+      let newTable = this.processTableData(table, res[0]);
       this.updateTableData(newTable, res[0]._url, true, () => {
-        var pathList = router.getPathList();
+        let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
     });
@@ -291,9 +291,9 @@ class Model extends React.Component {
   getInitialListData() {
     this.clearState();
 
-    var pageLimit = this.state.config.table.limit;
+    let pageLimit = this.state.config.table.limit;
     request.getList(pageLimit).then((res) => {
-      var table = this.processTableData(this.state.config.table, res);
+      let table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
     });
   }
@@ -302,23 +302,23 @@ class Model extends React.Component {
   getListInitialize() {
     this.clearState();
 
-    var _config = this.state.config,
+    let _config = this.state.config,
       filter = _config.filter,
       table = _config.table;
 
-    var pageLimit = this.state.config.table.limit;
+    let pageLimit = this.state.config.table.limit;
     request.getListInitialize(pageLimit).then((res) => {
       this.addTypesToStore(res[1]);
       this.initializeFilter(filter, res[1]);
 
-      var newTable = this.processTableData(table, res[0]);
+      let newTable = this.processTableData(table, res[0]);
       this.updateTableData(newTable, res[0]._url);
     });
   }
 
   //request: get next list according to given url
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       table = this.processTableData(table, res);
       this.updateTableData(table, res._url, refreshDetail);
@@ -332,7 +332,7 @@ class Model extends React.Component {
   getFilterList(filterData) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     filterData.limit = this.state.config.table.limit;
     request.filterFromAll(filterData).then((res) => {
       table.data = res.servers;
@@ -350,7 +350,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var serverID = data.instance,
+      let serverID = data.instance,
         allTenant = data.all_tenant;
 
       if (serverID) {
@@ -365,7 +365,7 @@ class Model extends React.Component {
 
   //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -374,7 +374,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.1/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -385,14 +385,14 @@ class Model extends React.Component {
   }
 
   setPaginationData(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.servers_links ? res.servers_links[0] : null;
 
     if (next && next.rel === 'next') {
       pagination.nextUrl = next.href.split('/v2.1/')[1];
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -404,7 +404,7 @@ class Model extends React.Component {
 
   setFloatingIP(table) {
     table.data.forEach((data) => {
-      var floatingIP = [];
+      let floatingIP = [];
       Object.keys(data.addresses).forEach((key) =>
         data.addresses[key].forEach((element) => {
           if (element['OS-EXT-IPS:type'] === 'floating') {
@@ -463,7 +463,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -471,7 +471,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -491,7 +491,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -522,7 +522,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev') {
@@ -544,7 +544,7 @@ class Model extends React.Component {
         delete data.rows;
         this.clearState();
 
-        var table = this.state.config.table;
+        let table = this.state.config.table;
         request.getFilterList(data).then((res) => {
           table.data = res.servers;
           table = this.processTableData(table, res);
@@ -562,10 +562,10 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       that = this;
 
-    var refresh = () => {
+    let refresh = () => {
       this.refresh({
         refreshList: true,
         loadingTable: true,
@@ -651,7 +651,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -661,12 +661,12 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var single = rows.length === 1 ? rows[0] : null;
+    let single = rows.length === 1 ? rows[0] : null;
     btns.export_csv.disabled = false;
 
     for (let key in btns) {
       if(single) {
-        var itemStatus = single.status.toLowerCase();
+        let itemStatus = single.status.toLowerCase();
         switch (key) {
           case 'migrate':
             btns[key].disabled = (itemStatus !== 'error' && itemStatus !== 'error_deleting') ? false : true;
@@ -702,11 +702,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -722,8 +722,8 @@ class Model extends React.Component {
     switch (tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
-          var falutDetails = this.getFalutDetails(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let falutDetails = this.getFalutDetails(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -759,7 +759,7 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           let that = this;
 
-          var updateDetailMonitor = function(newContents, loading) {
+          let updateDetailMonitor = function(newContents, loading) {
             detail.setState({
               contents: newContents,
               loading: loading
@@ -767,10 +767,10 @@ class Model extends React.Component {
           };
           let time = data.time;
 
-          var resourceId = rows[0].id,
+          let resourceId = rows[0].id,
             instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
             portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
-          var tabItems = [{
+          let tabItems = [{
             name: __.three_hours,
             key: '300',
             time: 'hour'
@@ -823,7 +823,7 @@ class Model extends React.Component {
             updateContents([]);
           }
           request.getResourceMeasures(resourceId, instanceMetricType, granularity, utils.getTime(time)).then((res) => {
-            var arr = res.map((r, index) => ({
+            let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
               unit: utils.getUnit('instance', instanceMetricType[index]),
               xAxis: utils.getChartData(r, granularity, utils.getTime(time)),
@@ -832,7 +832,7 @@ class Model extends React.Component {
             request.getNetworkResourceId(resourceId).then(_data => {
               request.getPort(_data).then(datas => {
                 request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
-                  var portData = resourceData.map((_rd, index) => ({
+                  let portData = resourceData.map((_rd, index) => ({
                     title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
                     unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
                     yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), 'instance'),
@@ -857,7 +857,7 @@ class Model extends React.Component {
             loading: true
           });
           request.getActionLog(rows[0].id).then(res => {
-            var actionItems = this.getActionLogs(res.instanceActions);
+            let actionItems = this.getActionLogs(res.instanceActions);
             contents[tabKey] = (
               <DetailMinitable
                 __={__}
@@ -878,9 +878,9 @@ class Model extends React.Component {
   }
 
   getActionLogs(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.forEach((ele, index) => {
-      var dataObj = {
+      let dataObj = {
         request_id: ele.request_id,
         action: __[ele.action],
         start_time: getTime(ele.start_time, true),
@@ -889,7 +889,7 @@ class Model extends React.Component {
       };
       tableContent.push(dataObj);
     });
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.request_id,
         key: 'request_id',
@@ -920,10 +920,10 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id),
+    let flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id),
       image = this.findItemByID(this.stores.imageTypes, item.image.id),
       fixedIps = (function() {
-        var ips = item.addresses,
+        let ips = item.addresses,
           ret = [];
         Object.keys(ips).forEach((key) => {
           ips[key].forEach((ele, i) => {
@@ -935,7 +935,7 @@ class Model extends React.Component {
         return ret.join(', ');
       })();
 
-    var getImage = function() {
+    let getImage = function() {
       if(item.image) {
         return <a data-type="router" href={'/admin/image/' + item.image.id}>
           {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
@@ -948,7 +948,7 @@ class Model extends React.Component {
       }
     };
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
     }, {

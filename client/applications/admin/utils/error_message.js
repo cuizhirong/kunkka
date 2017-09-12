@@ -1,7 +1,7 @@
 function getErrorMessage(error) {
   if (error) {
-    var response = JSON.parse(error.responseText);
-    var errorMessage = '';
+    let response = JSON.parse(error.responseText);
+    let errorMessage = '';
     if (response) {
       if (response.badRequest) {
         errorMessage = response.badRequest.message;

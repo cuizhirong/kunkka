@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Table, Pagination} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
+const React = require('react');
+const {Table, Pagination} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
 
 class RelatedInstance extends React.Component {
   constructor(props) {
@@ -14,8 +14,8 @@ class RelatedInstance extends React.Component {
   }
 
   render() {
-    var table = this.props.tableConfig;
-    var pagi = this.props.tableConfig.pagination;
+    let table = this.props.tableConfig;
+    let pagi = this.props.tableConfig.pagination;
 
     return (
       <div className="halo-module-related-instance" style={this.props.style}>

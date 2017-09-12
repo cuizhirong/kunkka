@@ -1,7 +1,7 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/admin.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/admin.lang.json');
 
 function pop(obj, parent, callback) {
   config.btn.disabled = true;
@@ -12,7 +12,7 @@ function pop(obj, parent, callback) {
     config.fields[2].data[i].selected = true;
     config.btn.disabled = false;
   }
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -32,7 +32,7 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch (field) {
         case 'role':
-          var hasRole = status.data.some((item) => {
+          let hasRole = status.data.some((item) => {
             if (item.selected) {
               return true;
             }

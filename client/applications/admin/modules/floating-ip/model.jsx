@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var allocateModal = require('./pop/allocation_floating_ip/index');
-var dissociateModal = require('./pop/dissociate_floating_ip/index');
+const allocateModal = require('./pop/allocation_floating_ip/index');
+const dissociateModal = require('./pop/dissociate_floating_ip/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/admin.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var csv = require('./pop/csv/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/admin.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
+const csv = require('./pop/csv/index');
 
 class Model extends React.Component {
 
@@ -36,7 +36,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var a = '', b = '';
+    let a = '', b = '';
 
     this.state.config.table.column.forEach((col) => {
       if (col.key === 'floating_ip') {
@@ -94,7 +94,7 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getFloatingIPByID(id).then((res) => {
       if (res.floatingip) {
         table.data = [res.floatingip];
@@ -113,7 +113,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList(table.limit).then((res) => {
       table.data = res.floatingips;
       this.setPagination(table, res);
@@ -126,7 +126,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if(res.floatingip) {
         table.data = [res.floatingip];
@@ -146,7 +146,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -155,7 +155,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.0/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if(detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -164,14 +164,14 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.floatingips_links ? res.floatingips_links[0] : null;
 
     if(next && next.rel === 'next') {
       pagination.nextUrl = next.href.split('/v2.0/')[1];
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -210,7 +210,7 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -218,7 +218,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -237,7 +237,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -255,7 +255,7 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        var item = data.rows[0];
+        let item = data.rows[0];
         this.loadingDetail();
         if(item.router_id || item.port_id) {
           request.getRelatedSourcesById(item).then(() => {
@@ -282,14 +282,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
         if(rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -316,7 +316,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.floating_ip + __.address,
       type: 'copy',
       content: item.floating_ip_address
@@ -379,7 +379,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev') {
@@ -401,7 +401,7 @@ class Model extends React.Component {
         delete data.rows;
         this.clearState();
 
-        var table = this.state.config.table;
+        let table = this.state.config.table;
         request.getFilterList(data).then((res) => {
           table.data = res.floatingips;
           this.setPagination(table, res);
@@ -419,7 +419,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(actionType, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
 
     switch(actionType) {
       case 'allocate':
@@ -458,7 +458,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 

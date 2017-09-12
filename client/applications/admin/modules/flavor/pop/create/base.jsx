@@ -1,9 +1,9 @@
-var React = require('react');
-var {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var Input = require('client/components/modal_common/subs/input/index');
+const React = require('react');
+const {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const Input = require('client/components/modal_common/subs/input/index');
 
 class FlavorBase extends React.Component {
   constructor(props) {
@@ -47,7 +47,7 @@ class FlavorBase extends React.Component {
     let vcpu = this.refs.vcpu.state.value;
     let memoryGb = this.refs.memory_gb.state.value;
     let capacityGb = this.refs.capacity_gb.state.value;
-    var regex = /^[a-zA-Z0-9_.]{1,}$/;
+    let regex = /^[a-zA-Z0-9_.]{1,}$/;
     if (regex.exec(name)) {
       this.refs.name.setState({
         error: false
@@ -76,7 +76,7 @@ class FlavorBase extends React.Component {
     });
     let callback = this.props.callback;
     let refs = this.refs;
-    var flavorData = {
+    let flavorData = {
       flavor: {
         name: refs.name.state.value,
         ram: Number(refs.memory_gb.state.value) * 1024,
@@ -84,7 +84,7 @@ class FlavorBase extends React.Component {
         disk: Number(refs.capacity_gb.state.value)
       }
     };
-    var flavorMetaData = {
+    let flavorMetaData = {
       'extra_specs': {}
     };
     refs.id.state.value && (flavorData.flavor.id = refs.id.state.value);
@@ -164,8 +164,8 @@ class FlavorBase extends React.Component {
   }
 
   renderFlavorInfo(key) {
-    var obj = this.props.obj;
-    var state = this.state;
+    let obj = this.props.obj;
+    let state = this.state;
     return <div className={'flavor-info' + (key === '0' ? '' : ' hide')}>
       <Input ref="name" value={obj ? obj.name : ''} __={__} label={__.name} onAction={this.onChangeName} required={true} tip_info="flavor_name_tip"/>
       <Input ref="vcpu" value={obj ? obj.vcpu : ''} label={__.vcpu} onAction={this.onChangeName} required={true}/>
@@ -211,7 +211,7 @@ class FlavorBase extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
     let items = [{
       name: '* ' + __.flavor + __.info,

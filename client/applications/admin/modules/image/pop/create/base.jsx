@@ -1,10 +1,10 @@
-var React = require('react');
-var {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var Input = require('client/components/modal_common/subs/input/index');
-var Select = require('client/components/modal_common/subs/select/index');
+const React = require('react');
+const {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const Input = require('client/components/modal_common/subs/input/index');
+const Select = require('client/components/modal_common/subs/select/index');
 
 class ImageBase extends React.Component {
 
@@ -104,7 +104,7 @@ class ImageBase extends React.Component {
         });
       });
     } else {
-      var imageData = {
+      let imageData = {
         type: 'import',
         input: {
           import_from: refs.url.state.value,
@@ -146,9 +146,9 @@ class ImageBase extends React.Component {
   }
 
   onSwitchTab(e, status) {
-    var obj = this.props.obj;
+    let obj = this.props.obj;
     if (status.key === '1') {
-      var _attrs = [
+      let _attrs = [
         'architecture', 'container_format', 'disk_format', 'created_at',
         'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
         'visibility', 'name', 'is_public', 'protected', 'min_disk',
@@ -256,8 +256,8 @@ class ImageBase extends React.Component {
   }
 
   renderImageInfo(key) {
-    var obj = this.props.obj;
-    var formatData = [{
+    let obj = this.props.obj;
+    let formatData = [{
       name: __.aki,
       key: 'aki',
       id: 'aki'
@@ -302,7 +302,7 @@ class ImageBase extends React.Component {
       key: 'vmdk',
       id: 'vmdk'
     }];
-    var architectureData = [{
+    let architectureData = [{
       name: __.no_architecture,
       id: 'no'
     }, {
@@ -319,7 +319,7 @@ class ImageBase extends React.Component {
       name: __.no,
       id: false
     }];
-    var state = this.state;
+    let state = this.state;
     return <div className={'image-info' + (key === '0' ? '' : ' hide')}>
       <Input ref="name" value={obj ? obj.name : ''} label={__.name} onAction={this.onChangeName} required={true} />
       <Input ref="describe" value={obj ? obj.description : ''} label={__.describe} onAction={this.onChangeName} />
@@ -365,7 +365,7 @@ class ImageBase extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
     let items = [{
       name: '* ' + __.image + __.info,

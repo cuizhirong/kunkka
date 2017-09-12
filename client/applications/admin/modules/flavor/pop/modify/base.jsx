@@ -1,9 +1,9 @@
-var React = require('react');
-var {Modal, Button, Table, Tip} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var request = require('../../request');
+const React = require('react');
+const {Modal, Button, Table, Tip} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const request = require('../../request');
 
-var getErrorMessage = require('../../../../utils/error_message');
+const getErrorMessage = require('../../../../utils/error_message');
 
 class ModifyMetaData extends React.Component {
   constructor(props) {
@@ -32,8 +32,8 @@ class ModifyMetaData extends React.Component {
     });
   }
   componentWillMount(){
-    var obj = this.props.obj.res.extra_specs;
-    var metaData = this.state.metaData;
+    let obj = this.props.obj.res.extra_specs;
+    let metaData = this.state.metaData;
     let singleData;
     for(let key in obj) {
       singleData = {
@@ -54,7 +54,7 @@ class ModifyMetaData extends React.Component {
 
   modifyMetadata(){
     let callback = this.props.callback;
-    var flavorCreateMetaData = {
+    let flavorCreateMetaData = {
       'extra_specs': {}
     };
 
@@ -167,7 +167,7 @@ class ModifyMetaData extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
     return (
       <Modal refs="modal" {...props} title={__.edit + __.meta_data} visible={state.visible}>
