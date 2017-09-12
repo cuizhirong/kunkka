@@ -1,6 +1,6 @@
 function getErrorMessage(error, isSubmit) {
-  var response = JSON.parse(error.responseText);
-  var errorMessage = '';
+  let response = JSON.parse(error.responseText);
+  let errorMessage = '';
   if (error && !isSubmit) {
     if (response) {
       if (response.message) {

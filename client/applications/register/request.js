@@ -1,4 +1,4 @@
-var ajax = require('client/libs/ajax');
+const ajax = require('client/libs/ajax');
 
 module.exports = {
   getVerification: function(phone) {

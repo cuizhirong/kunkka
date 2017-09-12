@@ -1,5 +1,5 @@
-var React = require('react');
-var Tooltip = require('client/uskin/index').Tooltip;
+const React = require('react');
+const Tooltip = require('client/uskin/index').Tooltip;
 require('./style/index.less');
 
 class Input extends React.Component {
@@ -42,7 +42,7 @@ class Input extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -51,10 +51,10 @@ class Input extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
 
-    var checkStatus = function() {
+    let checkStatus = function() {
       if(state.error) {
         return 'error';
       } else if(state.loading) {
@@ -66,7 +66,7 @@ class Input extends React.Component {
       }
     };
 
-    var changeWidth = function() {
+    let changeWidth = function() {
       try{
         if(document.body.clientWidth <= 1366) {
           return 214;

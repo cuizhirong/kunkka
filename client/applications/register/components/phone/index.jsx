@@ -1,7 +1,7 @@
-let React = require('react');
-let request = require('../../request.js');
-let getErrorMessage = require('../../utils/error_message.js');
-let Tooltip = require('client/uskin/index').Tooltip;
+const React = require('react');
+const request = require('../../request.js');
+const getErrorMessage = require('../../utils/error_message.js');
+const Tooltip = require('client/uskin/index').Tooltip;
 require('./style/index.less');
 
 class Phone extends React.Component {
@@ -50,7 +50,7 @@ class Phone extends React.Component {
         }
       }, 1000);
     }).catch((err) => {
-      var code = err.status;
+      let code = err.status;
       this.setState({
         sysError: code >= 500 ? true : false,
         wait: false,
