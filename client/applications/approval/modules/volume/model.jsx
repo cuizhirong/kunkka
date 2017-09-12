@@ -1,43 +1,43 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var RelatedSnapshot = require('client/components/related_snapshot/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
-var LineChart = require('client/components/line_chart/index');
-var {Button} = require('client/uskin/index');
+const BasicProps = require('client/components/basic_props/index');
+const RelatedSnapshot = require('client/components/related_snapshot/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const LineChart = require('client/components/line_chart/index');
+const {Button} = require('client/uskin/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createModal = require('./pop/create/index');
-var attachInstance = require('./pop/attach_instance/index');
-var createSnapshot = require('./pop/create_snapshot/index');
-var detachInstance = require('./pop/detach_instance/index');
-var setRead = require('./pop/set_read/index');
-var setReadWrite = require('./pop/set_read_write/index');
-var resizeVolume = require('./pop/resize/index');
-var changeOwner = require('./pop/change_owner/index');
-var changeUsage = require('./pop/change_usage/index');
-var notify = require('../../utils/notify');
-var createAlarm = require('../alarm/pop/create/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createModal = require('./pop/create/index');
+const attachInstance = require('./pop/attach_instance/index');
+const createSnapshot = require('./pop/create_snapshot/index');
+const detachInstance = require('./pop/detach_instance/index');
+const setRead = require('./pop/set_read/index');
+const setReadWrite = require('./pop/set_read_write/index');
+const resizeVolume = require('./pop/resize/index');
+const changeOwner = require('./pop/change_owner/index');
+const changeUsage = require('./pop/change_usage/index');
+const notify = require('../../utils/notify');
+const createAlarm = require('../alarm/pop/create/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/approval.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/approval/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var getTime = require('client/utils/time_unification');
-var utils = require('../alarm/utils');
-var timeUtils = require('../../utils/utils');
+const config = require('./config.json');
+const __ = require('locale/client/approval.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/approval/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const getTime = require('client/utils/time_unification');
+const utils = require('../alarm/utils');
+const timeUtils = require('../../utils/utils');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
-    var enableAlarm = HALO.settings.enable_alarm;
+    let enableAlarm = HALO.settings.enable_alarm;
     if (!enableAlarm) {
       let detail = config.table.detail.tabs;
       delete detail[1];
@@ -100,7 +100,7 @@ class Model extends React.Component {
           break;
         case 'attch_instance':
           column.render = (col, item, i) => {
-            var server = item.server;
+            let server = item.server;
             if (server && server.status === 'SOFT_DELETED') {
               return <span><i className="glyphicon icon-instance"></i>{'(' + server.id.substr(0, 8) + ')'}</span>;
             } else if (server) {
@@ -145,11 +145,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.approval.refs.detail;
+      let detail = this.refs.approval.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -183,13 +183,13 @@ class Model extends React.Component {
   }
 
   closeDetail() {
-    var detail = this.refs.approval.refs.detail;
+    let detail = this.refs.approval.refs.detail;
     detail.onClose();
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
+    let rows = data.rows;
+    let that = this;
     switch (key) {
       case 'create':
         createModal();
@@ -278,7 +278,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -288,7 +288,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var len = rows.length;
+    let len = rows.length;
 
     for(let key in btns) {
       switch (key) {
@@ -317,7 +317,7 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1) ? false : true;
           break;
         case 'delete':
-          var hasAttach = rows.some((item) => {
+          let hasAttach = rows.some((item) => {
             return item.server ? true : false;
           });
           btns[key].disabled = (len > 0) && !hasAttach ? false : true;
@@ -331,11 +331,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -351,7 +351,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicProps(rows[0]),
+          let basicPropsItem = this.getBasicProps(rows[0]),
             relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].snapshots);
           contents[tabKey] = (
             <div>
@@ -386,7 +386,7 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           let that = this;
 
-          var updateDetailMonitor = function(newContents, loading) {
+          let updateDetailMonitor = function(newContents, loading) {
             detail.setState({
               contents: newContents,
               loading: loading
@@ -399,8 +399,8 @@ class Model extends React.Component {
           contents[tabKey] = (<div/>);
           updateDetailMonitor(contents, true);
 
-          var metricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
-          var tabItems = [{
+          let metricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+          let tabItems = [{
             name: __.three_hours,
             key: '300',
             time: 'hour'
@@ -464,7 +464,7 @@ class Model extends React.Component {
               });
               if (res.length !== 0) {
                 request.getMeasures(ids, granularity, timeUtils.getTime(time)).then((_r) => {
-                  var arr = _r.map((r, index) => ({
+                  let arr = _r.map((r, index) => ({
                     title: utils.getMetricName(metricType[index]),
                     unit: utils.getUnit('volume', metricType[index]),
                     yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), 'volume'),
@@ -490,9 +490,9 @@ class Model extends React.Component {
         break;
       case 'alarm':
         if (isAvailableView(rows)) {
-          var asyncAlarmKey = tabKey;
+          let asyncAlarmKey = tabKey;
 
-          var updateDetailAlarm = function(newContents) {
+          let updateDetailAlarm = function(newContents) {
             detail.setState({
               contents: newContents,
               loading: false
@@ -504,7 +504,7 @@ class Model extends React.Component {
             loading: true
           });
           request.getAlarmList(rows[0].id).then(res => {
-            var alarmItems = this.getAlarmItems(res);
+            let alarmItems = this.getAlarmItems(res);
             contents[asyncAlarmKey] = (
               <DetailMinitable
                 __={__}
@@ -529,10 +529,10 @@ class Model extends React.Component {
   }
 
   getAlarmItems(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.forEach((element, index) => {
       if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'volume') {
-        var dataObj = {
+        let dataObj = {
           id: index + 1,
           name: element.name,
           enabled: <span style={element.enabled ? {color: '#1eb9a5'} : {}}>{element.enabled ? __.enabled : __.closed}</span>,
@@ -543,7 +543,7 @@ class Model extends React.Component {
       }
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -570,8 +570,8 @@ class Model extends React.Component {
   }
 
   getBasicProps(item) {
-    var getAttachments = (_item) => {
-      var server = _item.server;
+    let getAttachments = (_item) => {
+      let server = _item.server;
       if (server && server.status === 'SOFT_DELETED') {
         return <span><i className="glyphicon icon-instance"></i>{'(' + server.id.substr(0, 8) + ')'}</span>;
       } else if (server) {
@@ -586,7 +586,7 @@ class Model extends React.Component {
       }
     };
 
-    var data = [{
+    let data = [{
       title: __.name,
       type: 'editable',
       content: item.name
@@ -630,7 +630,7 @@ class Model extends React.Component {
   }
 
   getRelatedSnapshotItems(items) {
-    var data = [];
+    let data = [];
     items.forEach((item) => {
       data.push({
         title: item.created_at,
@@ -652,7 +652,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.approval.refs.detail.loading();
@@ -671,7 +671,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -692,7 +692,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editVolumeName(rawItem, newName).then((res) => {
           this.refresh({
             detailRefresh: true

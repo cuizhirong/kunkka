@@ -1,6 +1,6 @@
-var storage = require('client/applications/approval/cores/storage');
-var fetch = require('client/applications/approval/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/approval/cores/storage');
+const fetch = require('client/applications/approval/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -15,7 +15,7 @@ module.exports = {
             return false;
           });
         }
-        var lbs = data.loadbalancer,
+        let lbs = data.loadbalancer,
           listeners = data.listener;
         lbs.some(lb => {
           lb.listeners.some(listener => {
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
   deletePools: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach(item => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/lbaas/pools/' + item.id

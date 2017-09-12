@@ -1,9 +1,9 @@
-var ImageModel = require('../image/model');
-var config = require('./config.json');
-var request = require('../image/request');
-var __ = require('locale/client/approval.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
-var unitConverter = require('client/utils/unit_converter');
+const ImageModel = require('../image/model');
+const config = require('./config.json');
+const request = require('../image/request');
+const __ = require('locale/client/approval.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
+const unitConverter = require('client/utils/unit_converter');
 
 class Model extends ImageModel {
 
@@ -17,17 +17,17 @@ class Model extends ImageModel {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var _config = this.state.config;
+      let _config = this.state.config;
 
-      var table = config.table;
-      var data = res.filter((ele) => {
+      let table = config.table;
+      let data = res.filter((ele) => {
         let ownerMatch = ele.visibility === 'private' ? ele.owner === HALO.user.projectId : true;
         return ele.image_type === 'snapshot' && ownerMatch;
       });
       table.data = data;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -45,10 +45,10 @@ class Model extends ImageModel {
   }
 
   getBasicPropsItems(item) {
-    var name = this.getImageLabel(item);
-    var size = unitConverter(item.size);
+    let name = this.getImageLabel(item);
+    let size = unitConverter(item.size);
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: name
     }, {

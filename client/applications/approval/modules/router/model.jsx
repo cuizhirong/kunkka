@@ -1,26 +1,26 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const Main = require('client/components/main/index');
+const {Button} = require('client/uskin/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createRouter = require('./pop/create_router/index');
-var publicGateway = require('./pop/enable_public_gateway/index');
-var disableGateway = require('./pop/disable_gateway/index');
-var relatedSubnet = require('./pop/related_subnet/index');
-var detachSubnet = require('./pop/detach_subnet/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createRouter = require('./pop/create_router/index');
+const publicGateway = require('./pop/enable_public_gateway/index');
+const disableGateway = require('./pop/disable_gateway/index');
+const relatedSubnet = require('./pop/related_subnet/index');
+const detachSubnet = require('./pop/detach_subnet/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/approval.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/approval/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
+const config = require('./config.json');
+const __ = require('locale/client/approval.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/approval/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
@@ -78,7 +78,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'floating_ip':
           column.render = (col, item, i) => {
-            var fip = '';
+            let fip = '';
             if(item.external_gateway_info) {
               item.external_gateway_info.external_fixed_ips.some((ip) => {
                 if (ip.ip_address.indexOf(':') < 0) {
@@ -109,11 +109,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -147,7 +147,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     switch (key) {
       case 'create':
         createRouter();
@@ -161,7 +161,7 @@ class Model extends React.Component {
         }, true);
         break;
       case 'delete':
-        var hasSubnet = rows.some((ele) => ele.subnets.length > 0);
+        let hasSubnet = rows.some((ele) => ele.subnets.length > 0);
         deleteModal({
           __: __,
           action: 'delete',
@@ -203,7 +203,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -236,11 +236,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -256,7 +256,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+          let basicPropsItem = this.getBasicPropsItems(rows[0]),
             subnetConfig = this.getDetailTableConfig(rows[0]);
           contents[tabKey] = (
             <div>
@@ -290,8 +290,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var exGateway = item.external_gateway_info;
-    var getGatewayState = function() {
+    let exGateway = item.external_gateway_info;
+    let getGatewayState = function() {
       if(exGateway && exGateway.network_name) {
         return __.on + '/' + exGateway.network_name;
       } else if (exGateway) {
@@ -301,7 +301,7 @@ class Model extends React.Component {
       }
     };
 
-    var fip = '-';
+    let fip = '-';
     if (exGateway) {
       exGateway.external_fixed_ips.some((ip) => {
         if (ip.ip_address.indexOf(':') < 0) {
@@ -311,7 +311,7 @@ class Model extends React.Component {
         return false;
       });
     }
-    var items = [{
+    let items = [{
       title: __.name,
       type: 'editable',
       content: item.name || '(' + item.id.substring(0, 8) + ')'
@@ -333,9 +333,9 @@ class Model extends React.Component {
   }
 
   getDetailTableConfig(item) {
-    var dataContent = [];
+    let dataContent = [];
     item.subnets.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         name: <div>
             <i className="glyphicon icon-subnet" />
@@ -351,7 +351,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.subnet_name,
         key: 'name',
@@ -379,7 +379,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -398,7 +398,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -419,7 +419,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editRouterName(rawItem, newName).then((res) => {});
         break;
       case 'cnt_subnet':

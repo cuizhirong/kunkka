@@ -1,6 +1,6 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
 class VncConsole extends React.Component {
   constructor(props) {

@@ -1,13 +1,13 @@
-var React = require('react');
-var NavBar = require('client/components/navbar/index');
-var SideMenu = require('client/components/side_menu/index');
-var router = require('client/utils/router');
+const React = require('react');
+const NavBar = require('client/components/navbar/index');
+const SideMenu = require('client/components/side_menu/index');
+const router = require('client/utils/router');
 
 require('./cores/ws');
 require('client/utils/router_delegate');
 require('./cores/watchdog');
 
-var loader = require('./cores/loader'),
+const loader = require('./cores/loader'),
   configs = loader.configs;
 
 class Model extends React.Component {
@@ -27,8 +27,8 @@ class Model extends React.Component {
   loadRouter() {
     router.on('changeState', this.onChangeState);
 
-    var pathList = router.getPathList();
-    var approval = HALO.configs.approval,
+    let pathList = router.getPathList();
+    let approval = HALO.configs.approval,
       enableApply = approval.showApply,
       showMyApply = approval.showMyApplication,
       showMgmtApply = approval.showManageApplication,
@@ -44,7 +44,7 @@ class Model extends React.Component {
       if(!enableApply) {
         //admin user won't see dashboard regular modules in approval
         ['compute', 'network', 'storage', 'monitor'].forEach(title => {
-          var modules = configs.modules;
+          let modules = configs.modules;
           modules.some(obj => {
             if(obj.title === title) {
               obj.items.forEach(tab => {
@@ -92,7 +92,7 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
-    var _moduleName = pathList[1],
+    let _moduleName = pathList[1],
       modules = this.state.modules;
     if (modules.indexOf(_moduleName) === -1) {
       modules = modules.concat(_moduleName);
@@ -107,7 +107,7 @@ class Model extends React.Component {
   }
 
   _filterMenu(item) {
-    var ret = item;
+    let ret = item;
     configs.routers.some((m) => {
       if (item === m.key) {
         ret = m.link;
@@ -154,13 +154,13 @@ class Model extends React.Component {
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       props = this.props,
       __ = props.__,
       HALO = props.HALO,
       modules = loader.modules,
       menus = [];
-    var approval = HALO.configs.approval,
+    let approval = HALO.configs.approval,
       enableApply = approval.showApply,
       showMyApply = approval.showMyApplication,
       showMgmtApply = approval.showManageApplication,
@@ -179,7 +179,7 @@ class Model extends React.Component {
         }
       }
 
-      var submenu = [];
+      let submenu = [];
       m.items.forEach((n) => {
         switch(n) {
           case 'overview':
@@ -231,7 +231,7 @@ class Model extends React.Component {
           <div id="main">
             {
               state.modules.map((m, index) => {
-                var M = modules[m];
+                let M = modules[m];
                 if (M) {
                   return (<M
                     key={index}
@@ -251,7 +251,7 @@ class Model extends React.Component {
 function filterMenu(modules) {
   modules.forEach((m) => {
     m.items = m.items.filter((i) => {
-      var b = configs.routers.some((n) => {
+      let b = configs.routers.some((n) => {
         if (n.key === i) {
           return true;
         }

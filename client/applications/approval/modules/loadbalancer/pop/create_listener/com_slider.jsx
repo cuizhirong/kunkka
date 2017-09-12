@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var Slider = require('client/uskin/index').Slider;
-var __ = require('locale/client/approval.lang.json');
+const React = require('react');
+const Slider = require('client/uskin/index').Slider;
+const __ = require('locale/client/approval.lang.json');
 
 class ComSlider extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class ComSlider extends React.Component {
   }
 
   render() {
-    var className = 'halo-pop-com-slider modal-row';
+    let className = 'halo-pop-com-slider modal-row';
     if (this.props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

@@ -1,21 +1,21 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.detail = {};
-      var createDetail = data.detail;
+      let createDetail = data.detail;
       createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
+      let configCreate = createDetail.create;
+      let createItem = {};
       createItem = {
         _type: 'SecurityGroup',
         _identity: 'security',
@@ -30,7 +30,7 @@ function pop(parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
-      var name = refs.name.state;
+      let name = refs.name.state;
       switch (field) {
         case 'name':
           if(name.error === true && name.value === '') {

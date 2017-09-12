@@ -1,26 +1,26 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(parent, callback) {
   if (!HALO.settings.is_show_vlan) {
     config.fields[2].hide = true;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.detail = {};
-      var createDetail = data.detail;
+      let createDetail = data.detail;
 
       createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
+      let configCreate = createDetail.create;
+      let createItem = {};
 
       createItem = {
         _type: 'Network',
@@ -49,7 +49,7 @@ function pop(parent, callback) {
       data.description = refs.apply_description.state.value;
 
       if(refs.apply_subnet.state.checked) {
-        var subCreateItem = {};
+        let subCreateItem = {};
         subCreateItem = {
           _type: 'Subnet',
           _identity: 'subnet',
@@ -72,9 +72,9 @@ function pop(parent, callback) {
       }
     },
     onAction: function(field, status, refs) {
-      var subnetChecked = refs.apply_subnet.state.checked;
-      var netState = refs.net_address.state;
-      var flag = (subnetChecked && netState.value && !netState.error) || !subnetChecked;
+      let subnetChecked = refs.apply_subnet.state.checked;
+      let netState = refs.net_address.state;
+      let flag = (subnetChecked && netState.value && !netState.error) || !subnetChecked;
       switch (field) {
         case 'apply_subnet':
           refs.subnet_name.setState({
@@ -90,7 +90,7 @@ function pop(parent, callback) {
           });
           break;
         case 'net_address':
-          var testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
+          let testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
           if(refs.apply_subnet.state.checked) {
             if(!testAddr.test(netState.value)) {
               if(netState.value !== '') {

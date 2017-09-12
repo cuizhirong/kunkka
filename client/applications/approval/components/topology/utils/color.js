@@ -1,4 +1,4 @@
-var colorMap = [{
+const colorMap = [{
   color: 'rgba(228,249,248,0.9)',
   subnetColor: ['rgb(142,218,208)', 'rgb(95,203,189)', 'rgb(30,185,165)', 'rgb(27,166,148)'],
   hover: {

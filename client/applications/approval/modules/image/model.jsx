@@ -1,23 +1,23 @@
 require('./style/index.less');
 
 //react components
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail components
-var BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
 //pop modal
-var deleteModal = require('client/components/modal_delete/index');
-//var createInstance = require('../instance/pop/create_instance/index');
+const deleteModal = require('client/components/modal_delete/index');
+//let createInstance = require('../instance/pop/create_instance/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/approval.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/approval/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var unitConverter = require('client/utils/unit_converter');
+const config = require('./config.json');
+const __ = require('locale/client/approval.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/approval/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -34,7 +34,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var columns = this.state.config.table.column;
+    let columns = this.state.config.table.column;
     this.tableColRender(columns);
 
     msgEvent.on('dataChange', (data) => {
@@ -44,7 +44,7 @@ class Model extends React.Component {
             detailRefresh: true
           }, false);
 
-          var path = router.getPathList();
+          let path = router.getPathList();
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === path[2]) {
             router.replaceState('/approval/' + path[1]);
           }
@@ -80,7 +80,7 @@ class Model extends React.Component {
           break;
         case 'size':
           col.render = (rcol, ritem, rindex) => {
-            var size = unitConverter(ritem.size);
+            let size = unitConverter(ritem.size);
             return size.num + ' ' + size.unit;
           };
           break;
@@ -96,10 +96,10 @@ class Model extends React.Component {
   }
 
   getImageLabel(item) {
-    var label = item.image_label && item.image_label.toLowerCase();
-    var style = null;
+    let label = item.image_label && item.image_label.toLowerCase();
+    let style = null;
 
-    var imgURL = HALO.settings.default_image_url;
+    let imgURL = HALO.settings.default_image_url;
     if (imgURL) {
       style = {
         background: `url("${imgURL}") 0 0 no-repeat`,
@@ -120,17 +120,17 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var _config = this.state.config;
+      let _config = this.state.config;
 
-      var table = _config.table;
-      var data = res.filter((ele) => {
+      let table = _config.table;
+      let data = res.filter((ele) => {
         let ownerMatch = ele.image_type !== 'snapshot' ? ele.owner === HALO.user.projectId : true;
         return ele.visibility === 'public' && ownerMatch;
       });
       table.data = data;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -164,7 +164,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     switch (key) {
       case 'delete':
         deleteModal({
@@ -203,7 +203,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -228,13 +228,13 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {
+    let {
       rows
     } = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -250,7 +250,7 @@ class Model extends React.Component {
     switch (tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -271,10 +271,10 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var name = this.getImageLabel(item);
-    var size = unitConverter(item.size);
+    let name = this.getImageLabel(item);
+    let size = unitConverter(item.size);
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: name
     }, {
@@ -307,7 +307,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -326,7 +326,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

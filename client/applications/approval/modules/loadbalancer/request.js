@@ -1,6 +1,6 @@
-var storage = require('client/applications/approval/cores/storage');
-var fetch = require('client/applications/approval/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/approval/cores/storage');
+const fetch = require('client/applications/approval/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   getRelatedListeners: function(data) {
-    var deferredList = [];
+    let deferredList = [];
     data.forEach(item => {
       deferredList.push(fetch.get({
         url: '/proxy/neutron/v2.0/lbaas/listeners/' + item.id

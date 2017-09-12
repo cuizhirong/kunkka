@@ -1,17 +1,17 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
-// var priceConverter = require('../../../../utils/price');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
+// let priceConverter = require('../../../../utils/price');
 
-var gatewayId = null;
+let gatewayId = null;
 function pop(parent, callback) {
 
-  // var enableCharge = HALO.settings.enable_charge;
+  // let enableCharge = HALO.settings.enable_charge;
   // config.fields[2].hide = !enableCharge;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -22,7 +22,7 @@ function pop(parent, callback) {
       //   "has_label": true
       // }
       // function setPrice() {
-      //   var price = HALO.prices.router.unit_price.price.segmented[0].price;
+      //   let price = HALO.prices.router.unit_price.price.segmented[0].price;
 
       //   refs.charge.setState({
       //     value: price
@@ -60,13 +60,13 @@ function pop(parent, callback) {
       // }
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.detail = {};
-      var createDetail = data.detail;
+      let createDetail = data.detail;
 
       createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
+      let configCreate = createDetail.create;
+      let createItem = {};
       createItem = {
         _type: 'Router',
         _identity: 'router',

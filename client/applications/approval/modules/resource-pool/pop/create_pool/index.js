@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
-  var algorithm = [{
+  let algorithm = [{
     name: __.round_robin,
     id: 'round_robin'
   }, {
@@ -16,8 +16,8 @@ function pop(obj, parent, callback) {
   }];
   config.fields[3].data = algorithm;
 
-  var getListenersUnderType = function(items) {
-    var listeners = {};
+  let getListenersUnderType = function(items) {
+    let listeners = {};
     listeners.tcp = [];
     listeners.http = [];
     items.forEach(item => {
@@ -33,18 +33,18 @@ function pop(obj, parent, callback) {
     return listeners;
   };
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getListeners(true).then(res => {
-        var listeners = getListenersUnderType(res);
+        let listeners = getListenersUnderType(res);
         refs.listener.setState({
           listeners: listeners
         });
 
-        var p = refs.protocol.state.data[0].name;
+        let p = refs.protocol.state.data[0].name;
         refs.protocol.setState({
           value: p
         });
@@ -55,14 +55,14 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
       data.detail.type = 'direct';
       data.detail.resourceType = 'resourcePool';
-      var createDetail = data.detail.create;
-      var poolParam = {
+      let createDetail = data.detail.create;
+      let poolParam = {
         _type: 'ResourcePool',
         _identity: 'pool',
         description: refs.desc.state.value,
@@ -82,9 +82,9 @@ function pop(obj, parent, callback) {
       if(!obj) {
         switch(field) {
           case 'protocol':
-            var listeners = refs.listener.state.listeners;
+            let listeners = refs.listener.state.listeners;
             if(listeners) {
-              var tcpL = listeners.tcp,
+              let tcpL = listeners.tcp,
                 httpL = listeners.http;
 
               if(refs.protocol.state.value === 'TCP') {

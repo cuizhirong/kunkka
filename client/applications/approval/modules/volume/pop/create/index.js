@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
-var utils = require('client/applications/approval/utils/utils');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+const utils = require('client/applications/approval/utils/utils');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -15,7 +15,7 @@ var copyObj = function(obj) {
 };
 
 function pop(obj, parent, callback) {
-  var copyConfig = copyObj(config);
+  let copyConfig = copyObj(config);
   if (obj) {
     copyConfig.fields[1].hide = true;
     copyConfig.fields.unshift({
@@ -25,11 +25,11 @@ function pop(obj, parent, callback) {
       text: obj.name
     });
   }
-  var volumeTypes = [];
+  let volumeTypes = [];
 
-  var typeCapacity = {};
+  let typeCapacity = {};
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: copyConfig,
@@ -37,22 +37,22 @@ function pop(obj, parent, callback) {
       request.getOverview().then((overview) => {
         if (overview.volume_types.length > 0) {
           //capacity of all the types
-          var allCapacity = overview.overview_usage.gigabytes;
+          let allCapacity = overview.overview_usage.gigabytes;
 
           //capacity set by user
-          var settings = HALO.settings;
-          var singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
+          let settings = HALO.settings;
+          let singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
 
           //capacity set by front-end side
-          var defaultTotal = 1000;
+          let defaultTotal = 1000;
 
           overview.volume_types.forEach((type) => {
             typeCapacity[type] = overview.overview_usage['gigabytes_' + type];
 
-            var min = 1, max, total, used;
+            let min = 1, max, total, used;
 
             //capacity of the type
-            var capacity = overview.overview_usage['gigabytes_' + type];
+            let capacity = overview.overview_usage['gigabytes_' + type];
 
             if (capacity.total < 0) {
               if (allCapacity.total < 0) {
@@ -88,13 +88,13 @@ function pop(obj, parent, callback) {
             typeCapacity[type].min = min;
           });
 
-          var selected = typeCapacity[overview.volume_types[0]];
-          var selectedMax = selected.max;
-          var selectedMin = selected.min;
+          let selected = typeCapacity[overview.volume_types[0]];
+          let selectedMax = selected.max;
+          let selectedMin = selected.min;
 
-          var setFields = () => {
-            var overviewVolumeTypes = overview.volume_types;
-            var settingsVolumeTypes = HALO.settings.appliable_volume_types ? JSON.parse(HALO.settings.appliable_volume_types) : [];
+          let setFields = () => {
+            let overviewVolumeTypes = overview.volume_types;
+            let settingsVolumeTypes = HALO.settings.appliable_volume_types ? JSON.parse(HALO.settings.appliable_volume_types) : [];
             overviewVolumeTypes.forEach((item) => {
               if(settingsVolumeTypes.includes(item)) {
                 volumeTypes.push(item);
@@ -115,7 +115,7 @@ function pop(obj, parent, callback) {
             if (obj) {
               selectedMin = obj.size;
             }
-            var lackOfSize = selectedMin > selectedMax;
+            let lackOfSize = selectedMin > selectedMax;
 
             refs.capacity_size.setState({
               min: selectedMin,
@@ -145,13 +145,13 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var usage = refs.usage.state.value;
-      var data = {};
+      let usage = refs.usage.state.value;
+      let data = {};
       data.detail = {};
-      var createDetail = data.detail;
+      let createDetail = data.detail;
       createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
+      let configCreate = createDetail.create;
+      let createItem = {};
       createItem = {
         _type: 'Volume',
         _identity: 'volume',
@@ -169,8 +169,8 @@ function pop(obj, parent, callback) {
         callback && callback(res);
         cb(true);
       }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
+        let reg = new RegExp('"message":"(.*)","');
+        let tip = reg.exec(err.response)[1];
 
         refs.error.setState({
           value: tip,
@@ -182,13 +182,13 @@ function pop(obj, parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'type':
-          var type = refs.type.state.value;
-          var capacity = typeCapacity[type];
+          let type = refs.type.state.value;
+          let capacity = typeCapacity[type];
 
           if (capacity) {
-            var min = capacity.min;
-            var max = capacity.max;
-            var value = parseFloat(refs.capacity_size.state.inputValue);
+            let min = capacity.min;
+            let max = capacity.max;
+            let value = parseFloat(refs.capacity_size.state.inputValue);
 
             if (isNaN(value) || value < min) {
               value = min;
@@ -224,8 +224,8 @@ function pop(obj, parent, callback) {
           }
           break;
         case 'usage':
-          var usage = refs.usage.state.value;
-          var usageUTF8Length = utils.getStringUTF8Length(usage);
+          let usage = refs.usage.state.value;
+          let usageUTF8Length = utils.getStringUTF8Length(usage);
           if (usageUTF8Length > 255 || usageUTF8Length === 0) {
             refs.btn.setState({
               disabled: true

@@ -1,25 +1,25 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
 // function priceError(refs, error) {
 //   refs.btn.setState({
 //     disabled: false
 //   });
 // }
-var externalNetwork = null;
+let externalNetwork = null;
 
 function pop(parent, callback) {
 
-  var settings = HALO.settings;
-  var enableBandwidth = settings.enable_floatingip_bandwidth;
-  // var enableCharge = settings.enable_charge;
-  var defaultBandwidth = settings.max_floatingip_bandwidth;
+  let settings = HALO.settings;
+  let enableBandwidth = settings.enable_floatingip_bandwidth;
+  // let enableCharge = settings.enable_charge;
+  let defaultBandwidth = settings.max_floatingip_bandwidth;
 
-  var tipField = config.fields[0];
-  var bandwidthField = config.fields[1];
-  var chargeField = config.fields[2];
+  let tipField = config.fields[0];
+  let bandwidthField = config.fields[1];
+  let chargeField = config.fields[2];
 
   if (enableBandwidth) {
     if (defaultBandwidth) {
@@ -36,14 +36,14 @@ function pop(parent, callback) {
     tipField.hide = false;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     destroyPrevious: true,
     onInitialize: function(refs) {
       /*if (enableCharge) {
-        var bandwidth = config.fields[0].min;
+        let bandwidth = config.fields[0].min;
         request.getFloatingIPPrice(bandwidth).then((res) => {
           refs.charge.setState({
             value: res.unit_price
@@ -56,7 +56,7 @@ function pop(parent, callback) {
       }*/
 
       request.getNetworks().then((networks) => {
-        var floatingNetwork = networks.filter((item) => item['router:external']);
+        let floatingNetwork = networks.filter((item) => item['router:external']);
 
         if (floatingNetwork.length > 0) {
           externalNetwork = floatingNetwork;
@@ -82,13 +82,13 @@ function pop(parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if (externalNetwork) {
-        var data = {};
+        let data = {};
         data.detail = {};
-        var createDetail = data.detail;
+        let createDetail = data.detail;
 
         createDetail.create = [];
-        var configCreate = createDetail.create;
-        var createItem = {};
+        let configCreate = createDetail.create;
+        let createItem = {};
         createItem = {
           _type: 'Floatingip',
           _identity: 'floatingip'
@@ -127,8 +127,8 @@ function pop(parent, callback) {
           break;
         /*case 'bandwidth':
           if (enableCharge) {
-            var sliderEvent = state.eventType === 'mouseup';
-            var inputEvnet = state.eventType === 'change' && !state.error;
+            let sliderEvent = state.eventType === 'mouseup';
+            let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
               request.getFloatingIPPrice(state.value).then((res) => {

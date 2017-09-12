@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
 
 function pop(data, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -17,7 +17,7 @@ function pop(data, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var obj = {};
+      let obj = {};
       obj.detail = {};
       obj.detail.resize = [];
       obj.detail.resize.push(data);

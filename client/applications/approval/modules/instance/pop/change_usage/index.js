@@ -1,15 +1,15 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var utils = require('../../../../utils/utils');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const utils = require('../../../../utils/utils');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].value = obj.metadata.usage ? obj.metadata.usage : '';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -25,7 +25,7 @@ function pop(obj, parent, callback) {
         });
         return;
       }
-      var data = {};
+      let data = {};
       data.metadata = obj.metadata;
       data.metadata.usage = refs.chg_usage.state.value;
       request.updateUsage(obj.id, data).then(() => {

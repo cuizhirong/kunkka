@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -13,18 +13,18 @@ module.exports = {
     });
   },
   editNotifyName: function(item, newName) {
-    var data = {
+    let data = {
       name: newName
     };
 
-    var url = '/proxy/kiki/v1/topics/' + item.uuid;
+    let url = '/proxy/kiki/v1/topics/' + item.uuid;
     return fetch.put({
       url: url,
       data: data
     });
   },
   addEndpoint: function(data) {
-    var url = '/proxy/kiki/v1/subscriptions';
+    let url = '/proxy/kiki/v1/subscriptions';
     return fetch.post({
       url: url,
       data: data
@@ -34,14 +34,14 @@ module.exports = {
     });
   },
   addNotify: function(data) {
-    var url = '/proxy/kiki/v1/topics';
+    let url = '/proxy/kiki/v1/topics';
     return fetch.post({
       url: url,
       data: data
     });
   },
   deleteItems: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/kiki/v1/topics/' + item.uuid
@@ -50,26 +50,26 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getNotifyById: function(id) {
-    var url = '/proxy/kiki/v1/topics/' + id;
+    let url = '/proxy/kiki/v1/topics/' + id;
     return fetch.get({
       url: url
     });
   },
   resendVerify: function(id) {
-    var url = '/proxy/kiki/v1/subscriptions/' + id + '/verify';
+    let url = '/proxy/kiki/v1/subscriptions/' + id + '/verify';
     return fetch.put({
       url: url
     });
   },
   updateNotify: function(data, id) {
-    var url = '/proxy/kiki/v1/topics/' + id;
+    let url = '/proxy/kiki/v1/topics/' + id;
     return fetch.put({
       url: url,
       data: data
     });
   },
   deleteSub: function(subId, id) {
-    var url = '/proxy/kiki/v1/subscriptions/' + subId + '/' + id;
+    let url = '/proxy/kiki/v1/subscriptions/' + subId + '/' + id;
     return fetch.delete({
       url: url
     });

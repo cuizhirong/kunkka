@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/approval.lang.json');
-var unitConverter = require('client/utils/unit_converter');
+const React = require('react');
+const __ = require('locale/client/approval.lang.json');
+const unitConverter = require('client/utils/unit_converter');
 
 class ApplyDetail extends React.Component {
   constructor(props) {
@@ -81,8 +81,8 @@ class ApplyDetail extends React.Component {
     switch(field) {
       case 'image':
         let image = this.getResByID(item, field);
-        var style = null;
-        var imgURL = HALO.settings.default_image_url;
+        let style = null;
+        let imgURL = HALO.settings.default_image_url;
         if (imgURL) {
           style = {
             background: `url("${imgURL}") 0 0 no-repeat`,
@@ -230,7 +230,7 @@ class ApplyDetail extends React.Component {
   }
 
   render() {
-    var applyDetail = this.props.items,
+    let applyDetail = this.props.items,
       createDetail = applyDetail.create,
       bindDetail = applyDetail.bind,
       resizeDetail = applyDetail.resize;

@@ -1,25 +1,25 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {};
-      var name = refs.name.state.value;
+      let data = {};
+      let name = refs.name.state.value;
       if (refs.type.state.value === 'create_keypair') {
         data = {
           name: name
         };
         request.createKeypair(data).then((res) => {
-          var container = document.getElementById('modal-container').getElementsByClassName('modal')[0];
-          var linkNode = document.createElement('a');
+          let container = document.getElementById('modal-container').getElementsByClassName('modal')[0];
+          let linkNode = document.createElement('a');
           if (linkNode.download !== undefined) {
             linkNode.download = res.name + '.pem';
           }
@@ -43,7 +43,7 @@ function pop(parent, callback) {
       }
     },
     onAction: function(filed, state, refs) {
-      var name = refs.name.state;
+      let name = refs.name.state;
       switch (filed) {
         case 'type':
           refs.public_key.setState({

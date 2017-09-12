@@ -1,34 +1,34 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
-  var slider = config.fields[0];
+  let slider = config.fields[0];
   slider.min = obj.size;
   slider.max = obj.size;
   slider.value = obj.size;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getOverview().then((overview) => {
-        var max, total, used;
+        let max, total, used;
 
         //capacity of the type
-        var capacity = overview.overview_usage['gigabytes_' + obj.volume_type];
+        let capacity = overview.overview_usage['gigabytes_' + obj.volume_type];
 
         //capacity of all the types
-        var allCapacity = overview.overview_usage.gigabytes;
+        let allCapacity = overview.overview_usage.gigabytes;
 
         //capacity set by user
-        var settings = HALO.settings;
-        var singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
+        let settings = HALO.settings;
+        let singleMax = settings.max_single_gigabytes ? settings.max_single_gigabytes : 1000;
 
         //capacity set by front-end side
-        var defaultTotal = 1000;
+        let defaultTotal = 1000;
 
         if (capacity.total < 0) {
           if (allCapacity.total < 0) {
@@ -55,7 +55,7 @@ function pop(obj, parent, callback) {
           }
         }
 
-        var setStates = (res, enableCharge, isError) => {
+        let setStates = (res, enableCharge, isError) => {
           refs.capacity_size.setState({
             max: max,
             value: obj.size,
@@ -86,11 +86,11 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.resize = [];
-      var resize = data.detail.resize,
+      let resize = data.detail.resize,
         resizeItem = {};
 
       resizeItem = {
@@ -109,8 +109,8 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'capacity_size':
           if (HALO.settings.enable_charge) {
-            var sliderEvent = state.eventType === 'mouseup';
-            var inputEvnet = state.eventType === 'change' && !state.error;
+            let sliderEvent = state.eventType === 'mouseup';
+            let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
               request.getVolumePrice('volume.size', state.value).then((res) => {

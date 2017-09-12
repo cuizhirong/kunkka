@@ -1,6 +1,6 @@
-var storage = require('client/applications/approval/cores/storage');
-var fetch = require('client/applications/approval/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/approval/cores/storage');
+const fetch = require('client/applications/approval/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {

@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class SelectData extends React.Component {
   constructor(props) {

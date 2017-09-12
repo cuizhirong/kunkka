@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -21,14 +21,14 @@ function pop(obj, parent, callback) {
 
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
       data.detail.type = 'direct';
       data.detail.resourceType = 'healthMonitor';
-      var createDetail = data.detail.create;
-      var monitorParam = {
+      let createDetail = data.detail.create;
+      let monitorParam = {
         _type: 'HealthMonitor',
         _identity: 'monitor',
         type: refs.probe_type.state.value,
@@ -45,7 +45,7 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
-      var delay = refs.delay.state,
+      let delay = refs.delay.state,
         timeout = refs.timeout.state,
         retries = refs.max_retries.state,
         fullFilled = delay.value && timeout.value && retries.value && !delay.error && !timeout.error && !retries.error;

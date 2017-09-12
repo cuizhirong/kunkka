@@ -1,5 +1,5 @@
-var storage = require('client/applications/approval/cores/storage');
-var fetch = require('../../cores/fetch');
+const storage = require('client/applications/approval/cores/storage');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getList: function(pageLimit) {
@@ -7,7 +7,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/apply/approved?limit=' + pageLimit + '&&page=1';
+    let url = '/api/apply/approved?limit=' + pageLimit + '&&page=1';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -19,7 +19,7 @@ module.exports = {
     });
   },
   getNextList: function(nextUrl) {
-    var url = '/api/apply/' + nextUrl;
+    let url = '/api/apply/' + nextUrl;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -31,7 +31,7 @@ module.exports = {
     });
   },
   getApplicationByID: function(applicationID) {
-    var url = '/api/apply/' + applicationID + '?status=approved';
+    let url = '/api/apply/' + applicationID + '?status=approved';
     return fetch.get({
       url: url
     }).then((res) => {
@@ -43,7 +43,7 @@ module.exports = {
     });
   },
   getResourceInfo: function(forced) {
-    var resources = ['image', 'flavor', 'securitygroup', 'subnet', 'loadbalancer',
+    let resources = ['image', 'flavor', 'securitygroup', 'subnet', 'loadbalancer',
     'listener', 'pool', 'floatingip', 'volume', 'instance', 'network'];
     return storage.getList(resources, forced).then(function(data) {
       return data;

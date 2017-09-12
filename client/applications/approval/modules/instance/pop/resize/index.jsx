@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var Base = require('./base');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const Base = require('./base');
 
 function modal(obj, callback) {
 
-  var container = null;
+  let container = null;
 
   (function() {
-    var mask = null,
+    let mask = null,
       doc = document,
       root = doc.getElementById('modal-container');
 
@@ -36,7 +36,7 @@ function modal(obj, callback) {
     destory();
   }
 
-  var _props = {
+  let _props = {
     onAfterClose: onAfterClose,
     obj: obj,
     callback: callback

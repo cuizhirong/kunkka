@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
+const __ = require('locale/client/approval.lang.json');
 
 function getField(fieldName) {
-  var res = null;
+  let res = null;
   config.fields.some((field) => {
     if (field.field === fieldName) {
       res = field;
@@ -35,17 +35,17 @@ function pop(obj, parent, callback) {
     getField('gw_address').disabled = true;
   }
 
-  var objDns = obj.dns_nameservers;
+  let objDns = obj.dns_nameservers;
   getField('subnet_dns1').value = objDns[0] || '';
   getField('subnet_dns2').value = objDns[1] || '';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         name: refs.subnet_name.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked
       };
@@ -57,8 +57,8 @@ function pop(obj, parent, callback) {
         }
       }
 
-      var dns1 = refs.subnet_dns1.state.value;
-      var dns2 = refs.subnet_dns2.state.value;
+      let dns1 = refs.subnet_dns1.state.value;
+      let dns2 = refs.subnet_dns2.state.value;
       if (dns1 || dns2) {
         let dns = [];
         dns1 && dns.push(dns1);

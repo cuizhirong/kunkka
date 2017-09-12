@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].value = obj.metadata.owner ? obj.metadata.owner : '';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
         });
         return;
       }
-      var data = {};
+      let data = {};
       data.metadata = obj.metadata;
       data.metadata.owner = refs.chg_owner.state.value;
       request.updateOwner(obj.id, data).then(() => {

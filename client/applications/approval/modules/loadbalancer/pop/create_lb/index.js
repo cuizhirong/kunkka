@@ -1,21 +1,21 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var Request = require('../../../port/request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const Request = require('../../../port/request');
+const __ = require('locale/client/approval.lang.json');
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      var subnetGroup = [];
+      let subnetGroup = [];
       Request.getSubnetSGList().then((data) => {
-        var subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);
+        let subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);
         if (subnets.length > 0) {
           subnets.forEach((subnet) => {
-            var hasGroup = subnetGroup.some((group) => {
+            let hasGroup = subnetGroup.some((group) => {
               if (group.id === subnet.network_id) {
                 group.data.push(subnet);
                 return true;
@@ -32,7 +32,7 @@ function pop(obj, parent, callback) {
             }
           });
 
-          var selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
+          let selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
 
           refs.subnet.setState({
             data: subnetGroup,
@@ -48,15 +48,15 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
 
-      var createDetail = data.detail.create;
+      let createDetail = data.detail.create;
       data.detail.type = 'direct';
       data.detail.resourceType = 'loadBalancer';
-      var lbParam = {
+      let lbParam = {
         _type: 'LoadBalancer',
         _identity: 'lb',
         name: refs.name.state.value ? refs.name.state.value : '',

@@ -1,31 +1,31 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var applyModal = require('./pop/apply_ip/index');
-var associateInstance = require('./pop/associate_instance/index');
-var dissociateRelated = require('./pop/dissociate_related/index');
-var changeBandwidth = require('./pop/change_bandwidth/index');
-var assciateLb = require('./pop/associate_lb/index');
+const deleteModal = require('client/components/modal_delete/index');
+const applyModal = require('./pop/apply_ip/index');
+const associateInstance = require('./pop/associate_instance/index');
+const dissociateRelated = require('./pop/dissociate_related/index');
+const changeBandwidth = require('./pop/change_bandwidth/index');
+const assciateLb = require('./pop/associate_lb/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/approval.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/approval/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
+const config = require('./config.json');
+const __ = require('locale/client/approval.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/approval/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
 
-    var enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
+    let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
     if (!enableBandwidth) {
       let dropdown = config.btns[config.btns.length - 2].dropdown.items[0].items;
       delete dropdown[2];
@@ -43,9 +43,9 @@ class Model extends React.Component {
   componentWillMount() {
     //In case of having 2 or more external network, show the floating_network of the floating ip.
     request.getNetworks().then(networks => {
-      var exNetworks = networks.filter(n => n['router:external']);
+      let exNetworks = networks.filter(n => n['router:external']);
       if(exNetworks.length > 1) {
-        var newConfig = this.state.config,
+        let newConfig = this.state.config,
           newColumn = {
             title: __.external_network,
             key: 'external_network'
@@ -108,7 +108,7 @@ class Model extends React.Component {
         case 'assc_resource': //router, server or lbaas
           column.render = (col, item, i) => {
             if (item.association && item.association.type === 'server') {
-              var server = item.association.device;
+              let server = item.association.device;
               return (
                 <span>
                   <i className="glyphicon icon-instance" />
@@ -132,7 +132,7 @@ class Model extends React.Component {
           break;
         case 'bandwidth':
           column.render = (col, item, i) => {
-            var rateLimit = Number(item.rate_limit);
+            let rateLimit = Number(item.rate_limit);
             if(rateLimit === 0) {
               return '';
             }
@@ -141,7 +141,7 @@ class Model extends React.Component {
           break;
         case 'status':
           column.render = (col, item, i) => {
-            var status = item.status.toLowerCase();
+            let status = item.status.toLowerCase();
             if (status === 'active') {
               return (
                 <div className="status-data">
@@ -173,11 +173,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -211,15 +211,15 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     rows.forEach((row) => {
       row.name = row.floating_ip_address;
     });
 
-    var that = this;
+    let that = this;
     switch (key) {
       case 'delete':
-        var hasSource = rows.some((ele) => ele.association.type === 'server');
+        let hasSource = rows.some((ele) => ele.association.type === 'server');
         deleteModal({
           __: __,
           action: 'release',
@@ -280,7 +280,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -314,11 +314,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -334,7 +334,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -355,14 +355,14 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var rateLimit = Number(item.rate_limit);
-    var bandwidth;
+    let rateLimit = Number(item.rate_limit);
+    let bandwidth;
     if(rateLimit !== 0) {
       bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
     } else {
       bandwidth = '-';
     }
-    var getResource = function() {
+    let getResource = function() {
       if(item.association && item.association.type === 'server') {
         return (<span>
           <i className="glyphicon icon-instance" />
@@ -382,7 +382,7 @@ class Model extends React.Component {
       }
     };
 
-    var items = [{
+    let items = [{
       title: __.id,
       content: item.id
     }, {
@@ -405,7 +405,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -424,7 +424,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

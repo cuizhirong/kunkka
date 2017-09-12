@@ -1,4 +1,4 @@
-var __ = require('locale/client/approval.lang.json');
+const __ = require('locale/client/approval.lang.json');
 
 module.exports = {
   getVolumeType: function(item) {
@@ -13,13 +13,13 @@ module.exports = {
   },
 
   getStringUTF8Length: function(str) {
-    var m = encodeURIComponent(str).match(/%[89ABab]/g);
+    let m = encodeURIComponent(str).match(/%[89ABab]/g);
     return str.length + (m ? m.length : 0);
   },
 
   getTime(time) {
-    var now = new Date();
-    var date;
+    let now = new Date();
+    let date;
     switch(time) {
       case 'hour':
         date = new Date(now.getTime() - 3 * 3600 * 1000 - 20 * 60 * 1000);

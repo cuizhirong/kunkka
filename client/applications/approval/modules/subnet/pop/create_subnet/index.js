@@ -1,24 +1,24 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
 
-var subnetDescription = require('../subnet_description/index');
+const subnetDescription = require('../subnet_description/index');
 
 function pop(obj, parent, callback) {
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getNetworks().then((data) => {
         if (data.length > 0) {
-          var selectedItem = data[0].id;
+          let selectedItem = data[0].id;
           if (obj && obj.id) {
             selectedItem = obj.id;
           }
-          var networks = [];
+          let networks = [];
           data.forEach((ele) => {
             if (!ele.shared) {
               networks.push(ele);
@@ -32,13 +32,13 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.detail = {};
-      var createDetail = data.detail;
+      let createDetail = data.detail;
 
       createDetail.create = [];
-      var configCreate = createDetail.create;
-      var createItem = {};
+      let configCreate = createDetail.create;
+      let createItem = {};
 
       createItem = {
         _type: 'Subnet',
@@ -50,7 +50,7 @@ function pop(obj, parent, callback) {
         enable_dhcp: refs.enable_dhcp.state.checked
       };
 
-      var gwChecked = refs.enable_gw.state.checked;
+      let gwChecked = refs.enable_gw.state.checked;
       if (!gwChecked) {
         createItem.gateway_ip = null;
       } else {
@@ -70,7 +70,7 @@ function pop(obj, parent, callback) {
 
       configCreate.push(createItem);
 
-      var netAddr = refs.net_address.state.value,
+      let netAddr = refs.net_address.state.value,
         testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
       if(!testAddr.test(netAddr)) {
         refs.net_address.setState({
@@ -81,7 +81,7 @@ function pop(obj, parent, callback) {
       }
     },
     onAction: function(field, status, refs) {
-      var netState = refs.net_address.state;
+      let netState = refs.net_address.state;
       switch (field) {
         case 'enable_gw':
           refs.gw_address.setState({

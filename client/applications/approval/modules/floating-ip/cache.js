@@ -1,4 +1,4 @@
-var fetch = require('client/applications/approval/cores/fetch');
+const fetch = require('client/applications/approval/cores/fetch');
 
 module.exports = {
   getFloatingipList: function() {

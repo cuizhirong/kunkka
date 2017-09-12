@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var ApplyDetail = require('../../components/apply_detail/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const ApplyDetail = require('../../components/apply_detail/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/approval.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/approval.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -54,13 +54,13 @@ class Model extends React.Component {
   }
 
   getTableData(detailRefresh) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList().then((res) => {
       table.data = res.Applies;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -88,7 +88,7 @@ class Model extends React.Component {
   getSingle(id) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getApplicationByID(id).then((res) => {
       if (res) {
         table.data = [res];
@@ -107,7 +107,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList(table.limit).then((res) => {
       table.data = res.Applies;
       this.setPagination(table, res);
@@ -120,7 +120,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if(res.Applies) {
         table.data = res.Applies;
@@ -140,7 +140,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -149,7 +149,7 @@ class Model extends React.Component {
     }, () => {
       currentUrl && this.stores.urls.push(currentUrl.split('/apply/')[1]);
 
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if(detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -158,7 +158,7 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.next ? res.next : null,
       limit = table.limit ? table.limit : 10;
 
@@ -169,7 +169,7 @@ class Model extends React.Component {
       pagination.nextUrl = urlHead + 'page=' + next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -222,14 +222,14 @@ class Model extends React.Component {
         }
       }
 
-      var history = this.stores.urls,
+      let history = this.stores.urls,
         url = history.pop();
       this.getNextListData(url, data.refreshDetail);
     }
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -248,7 +248,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -285,17 +285,17 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
     switch(tabKey) {
       case 'description':
         if(rows.length === 1) {
           syncUpdate = false;
           request.getResourceInfo().then(res => {
-            var basicPropsItem = this.getBasicPropsItems(rows[0]);
+            let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
             contents[tabKey] = (
               <div>
@@ -336,7 +336,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.id,
       content: item.id
     }, {
@@ -357,7 +357,7 @@ class Model extends React.Component {
       type: 'time'
     }];
 
-    var approvals = item.approvals,
+    let approvals = item.approvals,
       len = approvals.length;
     if(item.status === 'refused' && len > 0) {
       items.push({
@@ -392,7 +392,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev') {
@@ -431,7 +431,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 

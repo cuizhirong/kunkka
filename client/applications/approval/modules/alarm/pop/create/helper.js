@@ -1,4 +1,4 @@
-var __ = require('locale/client/approval.lang.json');
+const __ = require('locale/client/approval.lang.json');
 
 let helper = {
 

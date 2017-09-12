@@ -1,16 +1,16 @@
-var eventList = [],
+let eventList = [],
   callback = null;
 
 class CanvasEvent {
   constructor(canvas) {
     this.canvas = canvas;
     canvas.addEventListener('mousemove', function(ev) {
-      var _rect = canvas.getBoundingClientRect(),
+      let _rect = canvas.getBoundingClientRect(),
         x = ev.pageX - _rect.left,
         y = ev.pageY - _rect.top;
 
-      var b = eventList.some((e) => {
-        var metric = e.metric;
+      let b = eventList.some((e) => {
+        let metric = e.metric;
         if (x >= metric.left && x <= (metric.left + metric.width) &&
           y >= metric.top && y <= (metric.top + metric.height)) {
 
@@ -37,7 +37,7 @@ class CanvasEvent {
    * @param {Function} cb - event listener
    */
   bind(metric, zIndex, cb) {
-    var func = null;
+    let func = null;
     if (zIndex === 0) {
       func = eventList.push;
     } else {

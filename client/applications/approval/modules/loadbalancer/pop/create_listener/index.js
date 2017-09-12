@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/approval.lang.json');
-var request = require('../../request');
-var popSlider = require('./com_slider');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/approval.lang.json');
+const request = require('../../request');
+const popSlider = require('./com_slider');
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -20,14 +20,14 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.description = refs.apply_description.state.value;
       data.detail = {};
       data.detail.create = [];
       data.detail.type = 'direct';
       data.detail.resourceType = 'listener';
-      var createDetail = data.detail.create;
-      var listenerParam = {
+      let createDetail = data.detail.create;
+      let listenerParam = {
         _type: 'Listener',
         _identity: 'listener',
         loadbalancer_id: obj.id,
@@ -46,7 +46,7 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch(field) {
         case 'protocol_port':
-          var portRange = refs.protocol_port.state.value;
+          let portRange = refs.protocol_port.state.value;
           if(portRange > 0 && portRange < 65536) {
             refs.protocol_port.setState({
               error: false

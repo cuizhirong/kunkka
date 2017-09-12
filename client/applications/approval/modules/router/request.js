@@ -1,11 +1,11 @@
-var storage = require('client/applications/approval/cores/storage');
-var fetch = require('client/applications/approval/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/approval/cores/storage');
+const fetch = require('client/applications/approval/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
     return storage.getList(['router', 'network', 'subnet'], forced).then(function(data) {
-      var exNetworks = [];
+      let exNetworks = [];
       data.network.forEach((item) => {
         if (item['router:external']) {
           exNetworks.push(item);
@@ -37,7 +37,7 @@ module.exports = {
     });
   },
   editRouterName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.router = {};
     data.router.name = newName;
 
@@ -47,7 +47,7 @@ module.exports = {
     });
   },
   deleteRouters: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/routers/' + item.id
@@ -87,7 +87,7 @@ module.exports = {
   },
   getGateway: function() {
     return storage.getList(['network']).then(function(data) {
-      var exNetworks = [];
+      let exNetworks = [];
       data.network.forEach((item) => {
         if (item['router:external']) {
           exNetworks.push(item);
@@ -104,7 +104,7 @@ module.exports = {
     });
   },
   detachSubnet: function(item) {
-    var data = {};
+    let data = {};
     data.subnet_id = item.childItem.id;
 
     return fetch.put({

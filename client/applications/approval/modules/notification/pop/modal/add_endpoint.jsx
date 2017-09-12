@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var SelectData = require('./select');
-var t;
+const React = require('react');
+const {Button} = require('client/uskin/index');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const SelectData = require('./select');
+let t;
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+let copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -77,8 +77,8 @@ class AddEndpoint extends React.Component {
   }
 
   countDown(i, wait) {
-    var time = document.getElementById('time' + i);
-    var resend = document.getElementById('resend' + i);
+    let time = document.getElementById('time' + i);
+    let resend = document.getElementById('resend' + i);
     resend && resend.classList.add('hide');
     time && time.classList.remove('hide');
     wait--;
@@ -94,7 +94,7 @@ class AddEndpoint extends React.Component {
   }
 
   renderData() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
 
     if (state.data && state.data.length > 0) {
@@ -126,8 +126,8 @@ class AddEndpoint extends React.Component {
   }
 
   onConfirm() {
-    var mobile = this.state.renderValue, mflag;
-    var regBox = {
+    let mobile = this.state.renderValue, mflag;
+    let regBox = {
       regEmail : /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/,
       regMobile : /^0?1[3|4|5|8][0-9]\d{8}$/
     };
@@ -140,7 +140,7 @@ class AddEndpoint extends React.Component {
       document.getElementById('input').classList.add('error');
     } else {
       document.getElementById('input').classList.remove('error');
-      var data = {
+      let data = {
         protocol: this.state.value.toLowerCase()
       };
       if (this.state.value.toLowerCase() === 'sms') {
@@ -173,7 +173,7 @@ class AddEndpoint extends React.Component {
   }
 
   render() {
-    var className = 'halo-pop-com-endpoint modal-row';
+    let className = 'halo-pop-com-endpoint modal-row';
     if (this.props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

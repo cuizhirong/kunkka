@@ -1,12 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/approval.lang.json');
-var getErrorMessage = require('client/applications/approval/utils/error_message');
-var utils = require('client/applications/approval/utils/utils');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+const getErrorMessage = require('client/applications/approval/utils/error_message');
+const utils = require('client/applications/approval/utils/utils');
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -35,8 +35,8 @@ function pop(obj, parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'apply_usage':
-          var usage = refs.apply_usage.state.value;
-          var usageUTF8Length = utils.getStringUTF8Length(usage);
+          let usage = refs.apply_usage.state.value;
+          let usageUTF8Length = utils.getStringUTF8Length(usage);
           if (usageUTF8Length > 255 || usageUTF8Length === 0) {
             refs.btn.setState({
               disabled: true
