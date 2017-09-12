@@ -1,5 +1,5 @@
-let storage = require('client/applications/dashboard/cores/storage');
-let fetch = require('client/applications/dashboard/cores/fetch');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
 
 module.exports = {
   getList: function(forced) {

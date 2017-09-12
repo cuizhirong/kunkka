@@ -1,30 +1,30 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail component
-var BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
 //sub module used in listener tab of detail page
-var ListenerList = require('./listener_list');
+const ListenerList = require('./listener_list');
 
 //pop modals
-var deleteModal = require('client/components/modal_delete/index');
-var createLb = require('./pop/create_lb/index');
-var assocFip = require('./pop/assoc_fip/index');
-var dissocFip = require('./pop/dissoc_fip/index');
-var createListener = require('./pop/create_listener/index');
-var updateListenerState = require('./pop/update_listener_state/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createLb = require('./pop/create_lb/index');
+const assocFip = require('./pop/assoc_fip/index');
+const dissocFip = require('./pop/dissoc_fip/index');
+const createListener = require('./pop/create_listener/index');
+const updateListenerState = require('./pop/update_listener_state/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var notify = require('client/applications/dashboard/utils/notify');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
+const notify = require('client/applications/dashboard/utils/notify');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -41,7 +41,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var a = '', b = '';
+    let a = '', b = '';
 
     this.state.config.table.column.forEach((col) => {
       if (col.key === 'floating_ip') {
@@ -122,11 +122,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then(res => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -162,7 +162,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -181,7 +181,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -190,7 +190,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
     switch(key) {
       case 'create':
@@ -242,7 +242,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -273,12 +273,12 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -294,7 +294,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -342,7 +342,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.slice(0, 8) + ')',
       type: 'editable'
@@ -400,7 +400,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch (actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editLbaasName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'lb',
@@ -416,17 +416,17 @@ class Model extends React.Component {
   }
 
   getListenerConfigs(items) {
-    var configs = [];
-    var wordsToLine = function(data) {
-      var value = '';
+    let configs = [];
+    let wordsToLine = function(data) {
+      let value = '';
       data.forEach(ele => {
         value += __[ele];
       });
 
       return value;
     };
-    var getlistenerDropdown = function(item) {
-      var dropdown = [{
+    let getlistenerDropdown = function(item) {
+      let dropdown = [{
         items: [{
           title: __.enable,
           key: 'enable',
@@ -445,8 +445,8 @@ class Model extends React.Component {
       return dropdown;
     };
 
-    var getListenerDetail = function(item) {
-      var itemDetail = [{
+    let getListenerDetail = function(item) {
+      let itemDetail = [{
         feild: __.protocol,
         value: item.protocol
       }, {

@@ -1,15 +1,15 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    var storgeList = ['router', 'network', 'subnet'];
+    let storgeList = ['router', 'network', 'subnet'];
     if (HALO.settings.enable_ipsec) {
       storgeList = storgeList.concat(['ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy']);
     }
     return storage.getList(storgeList, forced).then((res) => {
-      var exNetworks = [];
+      let exNetworks = [];
       res.network.forEach((item) => {
         if (item['router:external']) {
           exNetworks.push(item);
@@ -75,7 +75,7 @@ module.exports = {
     });
   },
   editRouterName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.router = {};
     data.router.name = newName;
 
@@ -85,7 +85,7 @@ module.exports = {
     });
   },
   deleteRouters: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/routers/' + item.id
@@ -127,7 +127,7 @@ module.exports = {
   },
   getGateway: function() {
     return storage.getList(['network']).then(function(data) {
-      var exNetworks = [];
+      let exNetworks = [];
       data.network.forEach((item) => {
         if (item['router:external']) {
           exNetworks.push(item);
@@ -144,7 +144,7 @@ module.exports = {
     });
   },
   detachSubnet: function(item) {
-    var data = {};
+    let data = {};
     data.subnet_id = item.childItem.id;
 
     return fetch.put({
@@ -153,7 +153,7 @@ module.exports = {
     });
   },
   createVpnService: function(data) {
-    var url = '/proxy/neutron/v2.0/vpn/vpnservices';
+    let url = '/proxy/neutron/v2.0/vpn/vpnservices';
     return fetch.post({
       url: url,
       data: data
@@ -162,20 +162,20 @@ module.exports = {
     });
   },
   deleteVpnService: function(id) {
-    var url = '/proxy/neutron/v2.0/vpn/vpnservices/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/vpnservices/' + id;
     return fetch.delete({
       url: url
     });
   },
   createTunnel: function(data) {
-    var url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections';
+    let url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections';
     return fetch.post({
       url: url,
       data: data
     });
   },
   updateIpsecConnection: function(id, data) {
-    var url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections/' + id;
     return fetch.put({
       url: url,
       data: data
@@ -184,7 +184,7 @@ module.exports = {
     });
   },
   deleteIpsecConnection: function(id) {
-    var url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/ipsec-site-connections/' + id;
     return fetch.delete({
       url: url
     });

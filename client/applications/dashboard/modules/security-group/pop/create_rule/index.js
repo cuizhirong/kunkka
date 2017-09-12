@@ -1,27 +1,27 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(item, direction, securityGroups, callback) {
 
-  var rules = ['All TCP', 'All UDP', 'SSH', 'MySQL', 'DNS', 'RDP', 'HTTP', 'HTTPS', 'POP3',
+  let rules = ['All TCP', 'All UDP', 'SSH', 'MySQL', 'DNS', 'RDP', 'HTTP', 'HTTPS', 'POP3',
     'POP3S', 'SMTP', 'SMTPS', 'IMAP', 'IMAPS'];
 
-  var protocols = [
+  let protocols = [
     { id: 'all_protocols', name: __.all_protocols },
     { id: 'tcp', name: 'TCP' },
     { id: 'udp', name: 'UDP' },
     { id: 'icmp', name: 'ICMP'}
   ];
 
-  var targets = [
+  let targets = [
     { id: 'any', name: __.any },
     { id: 'cidr', name: 'CIDR' },
     { id: 'security_group', name: __.security_group }
   ];
 
-  var icmpTypes = [
+  let icmpTypes = [
     { id: 'all', name: __.all },
     { id: 'dest_unreach', name: __.dest_unreach, code: 3 },
     { id: 'source_quench', name: __.source_quench, code: 4 },
@@ -40,7 +40,7 @@ function pop(item, direction, securityGroups, callback) {
     { id: 'address_mask_reply', name: __.address_mask_reply, code: 18 }
   ];
 
-  var icmpMaps = {
+  let icmpMaps = {
     all: [{ id: 'empty', name: ' ' }],
     dest_unreach: [
       { id: 'dest_network_unreach', name: __.dest_network_unreach, code: 0 },
@@ -202,7 +202,7 @@ function pop(item, direction, securityGroups, callback) {
   }
 
   function onClickIcmpType(status, refs) {
-    var icmpCodes = icmpMaps[status.value];
+    let icmpCodes = icmpMaps[status.value];
     switch(status.value) {
       case 'all':
         refs.icmp_code.setState({
@@ -221,7 +221,7 @@ function pop(item, direction, securityGroups, callback) {
     }
   }
 
-  var props = {
+  let props = {
     __: __,
     config: config,
     onInitialize: function(refs) {
@@ -250,12 +250,12 @@ function pop(item, direction, securityGroups, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var sgRule = {};
+      let sgRule = {};
 
       sgRule.direction = direction;
       sgRule.security_group_id = item.id;
 
-      var target = refs.target.state.value;
+      let target = refs.target.state.value;
       switch(target) {
         case 'any':
           sgRule.remote_ip_prefix = '0.0.0.0/0';
@@ -270,8 +270,8 @@ function pop(item, direction, securityGroups, callback) {
           break;
       }
 
-      var protocol = refs.protocol.state.value;
-      var portRange = refs.port_range.state.value;
+      let protocol = refs.protocol.state.value;
+      let portRange = refs.port_range.state.value;
       switch(protocol) {
         case 'all_protocols':
           sgRule.port_range_min = null;
@@ -279,22 +279,22 @@ function pop(item, direction, securityGroups, callback) {
           break;
         case 'tcp':
           sgRule.protocol = 'tcp';
-          var tcpranges = portRange.split('-');
-          var tcprangeMin = Number(tcpranges[0]);
+          let tcpranges = portRange.split('-');
+          let tcprangeMin = Number(tcpranges[0]);
           sgRule.port_range_min = tcprangeMin;
           sgRule.port_range_max = tcpranges[1] ? Number(tcpranges[1]) : tcprangeMin;
           break;
         case 'udp':
           sgRule.protocol = 'udp';
-          var udpranges = portRange.split('-');
-          var udprangeMin = Number(udpranges[0]);
+          let udpranges = portRange.split('-');
+          let udprangeMin = Number(udpranges[0]);
           sgRule.port_range_min = udprangeMin;
           sgRule.port_range_max = udpranges[1] ? Number(udpranges[1]) : udprangeMin;
           break;
         case 'icmp':
           sgRule.protocol = 'icmp';
-          var icmpType = refs.icmp_type.state.value;
-          var icmpCode = refs.icmp_code.state.value;
+          let icmpType = refs.icmp_type.state.value;
+          let icmpCode = refs.icmp_code.state.value;
           if (icmpType !== 'all') {
             sgRule.port_range_min = icmpTypes.filter((ele) => ele.id === icmpType)[0].code;
             sgRule.port_range_max = icmpMaps[icmpType].filter((ele) => ele.id === icmpCode)[0].code;

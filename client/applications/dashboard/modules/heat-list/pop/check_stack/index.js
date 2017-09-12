@@ -1,7 +1,7 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
 
 function pop(obj, parent, callback) {
   switch(obj.type) {
@@ -20,14 +20,14 @@ function pop(obj, parent, callback) {
     default:
       break;
   }
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data[obj.type] = null;
 
       request.checkStack(obj.row, data).then((res) => {

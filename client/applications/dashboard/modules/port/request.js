@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -55,7 +55,7 @@ module.exports = {
     return storage.getList(['subnet', 'securitygroup'], forced);
   },
   editPortName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.port = {};
     data.port.name = newName;
 
@@ -65,7 +65,7 @@ module.exports = {
     });
   },
   deletePorts: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/ports/' + item.id
@@ -74,7 +74,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   createPort: function(port) {
-    var data = {
+    let data = {
       port: port
     };
     return fetch.post({

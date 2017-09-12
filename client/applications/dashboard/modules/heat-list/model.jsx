@@ -1,27 +1,27 @@
 require('./style/index.less');
 
 //react components
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail components
-var DetailMinitable = require('client/components/detail_minitable/index');
-var RelatedSources = require('client/components/related_sources/index');
-var getTime = require('client/utils/time_unification');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const RelatedSources = require('client/components/related_sources/index');
+const getTime = require('client/utils/time_unification');
 
 //pop modal
-var deleteModal = require('client/components/modal_delete/index');
-var checkStack = require('./pop/check_stack/index');
-var create = require('./pop/create/index');
+const deleteModal = require('client/components/modal_delete/index');
+const checkStack = require('./pop/check_stack/index');
+const create = require('./pop/create/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -38,7 +38,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var columns = this.state.config.table.column;
+    let columns = this.state.config.table.column;
     this.tableColRender(columns);
 
     msgEvent.on('dataChange', (data) => {
@@ -48,7 +48,7 @@ class Model extends React.Component {
             detailRefresh: true
           }, false);
 
-          var path = router.getPathList();
+          let path = router.getPathList();
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === path[2]) {
             router.replaceState('/dashboard/' + path[1]);
           }
@@ -92,13 +92,13 @@ class Model extends React.Component {
   getTableData(forceUpdate, detailRefresh) {
     request.initContainer().then(_res => {
       request.getList(forceUpdate).then((res) => {
-        var _config = this.state.config;
+        let _config = this.state.config;
 
-        var table = _config.table;
+        let table = _config.table;
         table.data = res;
         table.loading = false;
 
-        var detail = this.refs.dashboard.refs.detail;
+        let detail = this.refs.dashboard.refs.detail;
 
         if (detail && detail.state.loading) {
           detail.setState({
@@ -134,8 +134,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
+    let rows = data.rows;
+    let that = this;
     switch (key) {
       case 'create':
         create(null, null, () => {
@@ -211,7 +211,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -243,14 +243,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {
+    let {
       rows
     } = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -268,7 +268,7 @@ class Model extends React.Component {
         syncUpdate = false;
         if (isAvailableView(rows)) {
           request.getSingle(rows[0]).then(res => {
-            var basicPropsItem = this.getItem(res.stack);
+            let basicPropsItem = this.getItem(res.stack);
             contents[tabKey] = (
               <div>
                 <RelatedSources
@@ -290,7 +290,7 @@ class Model extends React.Component {
       case 'resource':
         syncUpdate = false;
         request.getResource(rows[0]).then(resources => {
-          var resourcesConfig = this.getResourceConfig(resources);
+          let resourcesConfig = this.getResourceConfig(resources);
           contents[tabKey] = (
             <DetailMinitable
               __={__}
@@ -308,7 +308,7 @@ class Model extends React.Component {
       case 'events':
         syncUpdate = false;
         request.getEvents(rows[0]).then(events => {
-          var eventsConfig = this.getEventsConfig(events.events);
+          let eventsConfig = this.getEventsConfig(events.events);
           contents[tabKey] = (
             <DetailMinitable
               __={__}
@@ -326,7 +326,7 @@ class Model extends React.Component {
       case 'template':
         syncUpdate = false;
         request.getTemplate(rows[0]).then(template => {
-          var templateRes = this.getTemplateRes(template);
+          let templateRes = this.getTemplateRes(template);
           contents[tabKey] = (
             <div>
               {templateRes}
@@ -356,8 +356,8 @@ class Model extends React.Component {
   }
 
   getItem(item) {
-    var basicProps = [], statusProps = [], parameters = [], createParameters = [], outputs = [];
-    var vid = '(' + item.id.slice(0, 8) + ')',
+    let basicProps = [], statusProps = [], parameters = [], createParameters = [], outputs = [];
+    let vid = '(' + item.id.slice(0, 8) + ')',
       vname = item.stack_name || vid;
     basicProps.push({
       key: __.name,
@@ -382,7 +382,7 @@ class Model extends React.Component {
       data: item.stack_status_reason
     });
 
-    for(var i in item.parameters) {
+    for(let i in item.parameters) {
       parameters.push({
         key: i,
         data: item.parameters[i]
@@ -409,7 +409,7 @@ class Model extends React.Component {
       data: __[item.disable_rollback.toString()]
     });
 
-    var data = [{
+    let data = [{
       title: __.basic + __.properties,
       key: 'basic',
       type: 'list',
@@ -440,9 +440,9 @@ class Model extends React.Component {
   }
 
   getResourceConfig(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.resources.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         resource_name: element.resource_name,
         physical_resource_id: <a data-type="router" href={'/dashboard/' + utils.getResourceType(element.resource_type.split('::')[2]) + '/' + element.physical_resource_id}>
@@ -455,7 +455,7 @@ class Model extends React.Component {
       };
       tableContent.push(dataObj);
     });
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -502,7 +502,7 @@ class Model extends React.Component {
       };
       tableContent.push(dataObj);
     });
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.stack + __.resource,
         key: 'logical_resource_id',
@@ -533,7 +533,7 @@ class Model extends React.Component {
   }
 
   getTemplateRes(template) {
-    var items = [], i = 0;
+    let items = [], i = 0;
     function getTemplateData(data, index) {
       for(let key in data) {
         if (data[key] && data[key].constructor === Object && key !== 'params') {
@@ -554,7 +554,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -573,7 +573,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

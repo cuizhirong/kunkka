@@ -1,33 +1,33 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
-var {Button, Tip} = require('client/uskin/index');
+const React = require('react');
+const Main = require('client/components/main/index');
+const {Button, Tip} = require('client/uskin/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
-var portforwarding = require('./detail/port_forwarding');
-var IpsecTable = require('./detail/ipsec_table/index');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const portforwarding = require('./detail/port_forwarding');
+const IpsecTable = require('./detail/ipsec_table/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createRouter = require('./pop/create_router/index');
-var publicGateway = require('./pop/enable_public_gateway/index');
-var disableGateway = require('./pop/disable_gateway/index');
-var relatedSubnet = require('./pop/related_subnet/index');
-var detachSubnet = require('./pop/detach_subnet/index');
-var createVpnService = require('./pop/create_vpn_service/index');
-var createTunnel = require('./pop/create_tunnel/index');
-var editTunnel = require('./pop/edit_tunnel/index');
-var createPortForwarding = require('./pop/create_portforwarding/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createRouter = require('./pop/create_router/index');
+const publicGateway = require('./pop/enable_public_gateway/index');
+const disableGateway = require('./pop/disable_gateway/index');
+const relatedSubnet = require('./pop/related_subnet/index');
+const detachSubnet = require('./pop/detach_subnet/index');
+const createVpnService = require('./pop/create_vpn_service/index');
+const createTunnel = require('./pop/create_tunnel/index');
+const editTunnel = require('./pop/edit_tunnel/index');
+const createPortForwarding = require('./pop/create_portforwarding/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var utils = require('../../utils/utils');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -60,12 +60,12 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+    let that = this;
 
     this.state.config.table.column.find((col) => {
       if (col.key === 'floating_ip') {
         col.sortBy = function(item1, item2) {
-          var a = that.getFloatingIp(item1),
+          let a = that.getFloatingIp(item1),
             b = that.getFloatingIp(item2);
           return utils.ipFormat(a) - utils.ipFormat(b);
         };
@@ -91,7 +91,7 @@ class Model extends React.Component {
   }
 
   getFloatingIp(item) {
-    var fip = '';
+    let fip = '';
     if(item.external_gateway_info) {
       item.external_gateway_info.external_fixed_ips.some((ip) => {
         if (ip.ip_address.indexOf(':') < 0) {
@@ -126,7 +126,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'floating_ip':
           column.render = (col, item, i) => {
-            var fip = '';
+            let fip = '';
             if(item.external_gateway_info) {
               item.external_gateway_info.external_fixed_ips.some((ip) => {
                 if (ip.ip_address.indexOf(':') < 0) {
@@ -157,11 +157,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -194,7 +194,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     switch (key) {
       case 'create':
         createRouter();
@@ -208,7 +208,7 @@ class Model extends React.Component {
         }, true);
         break;
       case 'delete':
-        var hasSubnet = rows.some((ele) => ele.subnets.length > 0);
+        let hasSubnet = rows.some((ele) => ele.subnets.length > 0);
         deleteModal({
           __: __,
           action: 'delete',
@@ -250,7 +250,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -283,11 +283,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -303,7 +303,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+          let basicPropsItem = this.getBasicPropsItems(rows[0]),
             subnetConfig = this.getDetailTableConfig(rows[0]);
           contents[tabKey] = (
             <div>
@@ -333,10 +333,10 @@ class Model extends React.Component {
             loading: true
           });
 
-          var routerId = rows[0].id;
+          let routerId = rows[0].id;
           request.getPortForwarding(routerId).then((portFrwds) => {
-            var tableconfig = portforwarding.getTableConfig(rows[0], portFrwds, this);
-            var tipStyle = {
+            let tableconfig = portforwarding.getTableConfig(rows[0], portFrwds, this);
+            let tipStyle = {
               marginBottom: '10px'
             };
 
@@ -382,7 +382,7 @@ class Model extends React.Component {
         break;
       case 'ipsec':
         if (isAvailableView) {
-          var vpnService = this.getVpnService(rows[0]),
+          let vpnService = this.getVpnService(rows[0]),
             ipsecItem = this.getIpsecItem(rows[0]);
 
           contents[tabKey] = (
@@ -421,8 +421,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var exGateway = item.external_gateway_info;
-    var getGatewayState = function() {
+    let exGateway = item.external_gateway_info;
+    let getGatewayState = function() {
       if(exGateway && exGateway.network_name) {
         return __.on + '/' + exGateway.network_name;
       } else if (exGateway) {
@@ -432,7 +432,7 @@ class Model extends React.Component {
       }
     };
 
-    var fip = '-';
+    let fip = '-';
     if (exGateway) {
       exGateway.external_fixed_ips.some((ip) => {
         if (ip.ip_address.indexOf(':') < 0) {
@@ -442,7 +442,7 @@ class Model extends React.Component {
         return false;
       });
     }
-    var items = [{
+    let items = [{
       title: __.name,
       type: 'editable',
       content: item.name || '(' + item.id.substring(0, 8) + ')'
@@ -464,9 +464,9 @@ class Model extends React.Component {
   }
 
   getDetailTableConfig(item) {
-    var dataContent = [];
+    let dataContent = [];
     item.subnets.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         name: <div>
             <i className="glyphicon icon-subnet" />
@@ -482,7 +482,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.subnet_name,
         key: 'name',
@@ -509,8 +509,8 @@ class Model extends React.Component {
   }
 
   getIpsecItem(item) {
-    var columns = [];
-    var columnIke = [{
+    let columns = [];
+    let columnIke = [{
       title: __.ike_policy + __.name,
       key: 'ipsecpolicy',
       dataIndex: 'name'
@@ -535,7 +535,7 @@ class Model extends React.Component {
       key: 'sa_lifetime',
       dataIndex: 'sa_lifetime'
     }];
-    var columnIpsec = [{
+    let columnIpsec = [{
       title: __.ipsec_policy + __.name,
       key: 'ipsecpolicy',
       dataIndex: 'name'
@@ -556,7 +556,7 @@ class Model extends React.Component {
       key: 'sa_lifetime',
       dataIndex: 'sa_lifetime'
     }];
-    var columnTagret = [{
+    let columnTagret = [{
       title: __.target_network,
       key: 'target',
       dataIndex: 'peer_cidr'
@@ -567,7 +567,7 @@ class Model extends React.Component {
     }];
     columns.splice(0, 0, columnIke, columnIpsec, columnTagret);
 
-    var dataContent = [],
+    let dataContent = [],
       obj = [],
       dataObj;
     item.ipsec_site_connections.forEach((element, i) => {
@@ -586,7 +586,7 @@ class Model extends React.Component {
 
       dataContent.push(obj);
     });
-    var tableConfig = {
+    let tableConfig = {
       columns: columns,
       data: item.ipsec_site_connections,
       dataContents: dataContent,
@@ -597,9 +597,9 @@ class Model extends React.Component {
   }
 
   getVpnService(item) {
-    var dataContent = [];
+    let dataContent = [];
     item.vpnservices.forEach((vpnService, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         name: vpnService.name || '(' + vpnService.id.substring(0, 8) + ')',
         subnet: vpnService.subnet.cidr,
@@ -610,7 +610,7 @@ class Model extends React.Component {
       };
       dataContent.push(dataObj);
     });
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.vpn_service,
         key: 'name',
@@ -633,7 +633,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -652,7 +652,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -679,7 +679,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editRouterName(rawItem, newName).then((res) => {});
         break;
       case 'cnt_subnet':
@@ -719,7 +719,7 @@ class Model extends React.Component {
   }
 
   onIpsecAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch (actionType) {
       case 'cnt_tunnel':
         createTunnel(data.rawItem, null, () => {
@@ -758,7 +758,7 @@ class Model extends React.Component {
         break;
       case 'delete_cidr':
         data.rawItem.peer_cidrs.splice(data.index, 1);
-        var peerCidrs = {
+        let peerCidrs = {
           ipsec_site_connection: {
             peer_cidrs: data.rawItem.peer_cidrs
           }

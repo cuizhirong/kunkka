@@ -1,6 +1,6 @@
-let __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
-let untilData = {
+const untilData = {
 
   getFormatData: function() {
 

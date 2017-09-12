@@ -1,7 +1,7 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
 class UploadFile extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class UploadFile extends React.Component {
   }
 
   onChangeValue(e) {
-    var file = this.refs.file.files[0];
+    let file = this.refs.file.files[0];
     this.setState({
       value: file
     });

@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('../../../../utils/error_message');
-var createRouter = require('client/applications/dashboard/modules/router/pop/create_router/index');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('../../../../utils/error_message');
+const createRouter = require('client/applications/dashboard/modules/router/pop/create_router/index');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

@@ -1,9 +1,9 @@
-var msgEvent = require('./msg_event');
-var notify = require('../utils/notify');
+const msgEvent = require('./msg_event');
+const notify = require('../utils/notify');
 
 function connectWS(opt) {
-  var ws = new WebSocket(opt.url);
-  var interval;
+  let ws = new WebSocket(opt.url);
+  let interval;
   ws.onopen = function() {
     ws.send(opt.projectId);
     interval = setInterval(function() {
@@ -11,7 +11,7 @@ function connectWS(opt) {
     }, 25000);
   };
   ws.onmessage = function(event) {
-    var data = JSON.parse(event.data);
+    let data = JSON.parse(event.data);
     notify(data);
     msgEvent.emit('message', data);
   };
@@ -28,11 +28,11 @@ function connectWS(opt) {
 }
 
 try {
-  var opt = {
+  let opt = {
     projectId: HALO.user.projectId
   };
-  var hostname = window.location.hostname;
-  var protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  let hostname = window.location.hostname;
+  let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
   opt.url = protocol + hostname + HALO.websocket.url;
   console.log('load websocket');
   connectWS(opt);

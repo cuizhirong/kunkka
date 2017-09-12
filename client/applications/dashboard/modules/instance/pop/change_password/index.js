@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function invalidPwd(pwd) {
   return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) ||
@@ -10,14 +10,14 @@ function invalidPwd(pwd) {
 }
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var password = refs.password.state.value;
-      var data = {
+      let password = refs.password.state.value;
+      let data = {
         changePassword: {
           adminPass: password
         }
@@ -35,8 +35,8 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'password':
         case 'confirm_pwd':
-          var pwd1 = refs.password.state.value;
-          var pwd2 = refs.confirm_pwd.state.value;
+          let pwd1 = refs.password.state.value;
+          let pwd2 = refs.confirm_pwd.state.value;
 
           refs.confirm_pwd.setState({
             error: (pwd1 !== pwd2) || invalidPwd(pwd1) || invalidPwd(pwd2)

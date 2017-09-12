@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
-  var algorithm = [{
+  let algorithm = [{
     name: __.round_robin,
     id: 'round_robin'
   }, {
@@ -25,8 +25,8 @@ function pop(obj, parent, callback) {
     config.btn.value = 'create';
   }
 
-  var getListenersUnderType = function(items) {
-    var listeners = {};
+  let getListenersUnderType = function(items) {
+    let listeners = {};
     listeners.tcp = [];
     listeners.http = [];
     items.forEach(item => {
@@ -42,7 +42,7 @@ function pop(obj, parent, callback) {
     return listeners;
   };
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -72,12 +72,12 @@ function pop(obj, parent, callback) {
         });
       } else {
         request.getListeners(true).then(res => {
-          var listeners = getListenersUnderType(res);
+          let listeners = getListenersUnderType(res);
           refs.listener.setState({
             listeners: listeners
           });
 
-          var p = refs.protocol.state.data[0].name;
+          let p = refs.protocol.state.data[0].name;
           refs.protocol.setState({
             value: p
           });
@@ -90,7 +90,7 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if(obj) {
-        var updateParam = {
+        let updateParam = {
           name: refs.name.state.value,
           lb_algorithm: refs.load_algorithm.state.value.toUpperCase(),
           description: refs.desc.state.value
@@ -103,7 +103,7 @@ function pop(obj, parent, callback) {
           cb(false, getErrorMessage(error));
         });
       } else {
-        var param = {
+        let param = {
           name: refs.name.state.value,
           listener_id: refs.listener.state.value,
           protocol: refs.protocol.state.value.toUpperCase(),
@@ -123,9 +123,9 @@ function pop(obj, parent, callback) {
       if(!obj) {
         switch(field) {
           case 'protocol':
-            var listeners = refs.listener.state.listeners;
+            let listeners = refs.listener.state.listeners;
             if(listeners) {
-              var tcpL = listeners.tcp,
+              let tcpL = listeners.tcp,
                 httpL = listeners.http;
 
               if(refs.protocol.state.value === 'TCP') {

@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var createKeypair = require('./pop/create_keypair/index');
-var deleteModal = require('client/components/modal_delete/index');
+const createKeypair = require('./pop/create_keypair/index');
+const deleteModal = require('client/components/modal_delete/index');
 
-var config = require('./config.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
+const config = require('./config.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -51,11 +51,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -89,8 +89,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
+    let rows = data.rows;
+    let that = this;
     switch (key) {
       case 'crt_keypair':
         createKeypair(null, function(_data) {
@@ -133,7 +133,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -158,7 +158,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -177,7 +177,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

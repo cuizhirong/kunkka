@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var utils = require('../../utils');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const utils = require('../../utils');
 
 function pop(obj, callback) {
 
-  var props = {
+  let props = {
     __: __,
     config: config,
     onInitialize: function(refs) {

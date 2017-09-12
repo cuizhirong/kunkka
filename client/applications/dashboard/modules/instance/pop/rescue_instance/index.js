@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function isIncorrectPwd(pwd) {
   return (pwd.length < 8 || pwd.length > 20 || !/^[a-zA-Z0-9]/.test(pwd) || !/[a-z]+/.test(pwd) || !/[A-Z]+/.test(pwd) || !/[0-9]+/.test(pwd));
@@ -39,14 +39,14 @@ function pop(obj, parent, callback) {
   }
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getImages().then(data => {
         if (data.length > 0) {
-          var imageGroup = getImageGroup(data);
+          let imageGroup = getImageGroup(data);
 
           if (imageGroup.length > 0) {
             refs.image.setState({

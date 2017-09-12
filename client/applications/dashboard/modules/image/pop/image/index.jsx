@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-let React = require('react');
-let ReactDOM = require('react-dom');
-let Base = require('./base');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const Base = require('./base');
 
 function modal(obj, parent, callback) {
   let container = null;

@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -12,7 +12,7 @@ module.exports = {
     });
   },
   deleteFiles: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + item.name
@@ -23,7 +23,7 @@ module.exports = {
   downloadItem: function(item) {
     let url = '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + item.name;
     function addLink() {
-      var linkNode = document.createElement('a');
+      let linkNode = document.createElement('a');
       if (linkNode.download !== undefined) {
         linkNode.download = item.name;
       }

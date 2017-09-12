@@ -1,16 +1,16 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var createFloatingIp = require('client/applications/dashboard/modules/floating-ip/pop/apply_ip/index');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const createFloatingIp = require('client/applications/dashboard/modules/floating-ip/pop/apply_ip/index');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
-  var ports = [];
-  var addresses = obj.addresses;
+  let ports = [];
+  let addresses = obj.addresses;
 
   for (let key in addresses) {
     for (let ele of addresses[key]) {
@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
     }
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -36,7 +36,7 @@ function pop(obj, parent, callback) {
       }
       request.getFloatingIpList().then((data) => {
         if(data.length > 0) {
-          var dataArray = [];
+          let dataArray = [];
           data.some((_data) => {
             if((!_data.association.type || _data.association.type !== 'server') && !_data.fixed_ip_address) {
               _data.name = _data.floating_ip_address;
@@ -54,7 +54,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         addFloatingIp: {
           address: ''
         }

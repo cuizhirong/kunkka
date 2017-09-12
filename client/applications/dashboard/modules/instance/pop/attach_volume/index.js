@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
 
-  var volumeData = {};
-  var typeData = [];
+  let volumeData = {};
+  let typeData = [];
   obj.types.forEach((type) => {
     volumeData[type] = [];
     typeData.push(type);
@@ -18,7 +18,7 @@ function pop(obj, parent, callback) {
 
   obj.volumes.forEach((ele) => {
     if (ele.status === 'available') {
-      var hasVolume = obj.rawItem.volume.some((v) => {
+      let hasVolume = obj.rawItem.volume.some((v) => {
         if (v.id === ele.id) {
           return true;
         }
@@ -33,7 +33,7 @@ function pop(obj, parent, callback) {
 
   config.fields[2].data = volumeData[config.fields[1].value];
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

@@ -1,13 +1,13 @@
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
-var DetailMinitable = require('client/components/detail_minitable/index');
-var BasicProps = require('client/components/basic_props/index');
-var {Button} = require('client/uskin/index');
-var request = require('../request');
-var t, time, resend;
+const DetailMinitable = require('client/components/detail_minitable/index');
+const BasicProps = require('client/components/basic_props/index');
+const {Button} = require('client/uskin/index');
+const request = require('../request');
+let t, time, resend;
 
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class DetailIndex extends React.Component {
 
@@ -24,7 +24,7 @@ class DetailIndex extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name
     }, {
@@ -67,9 +67,9 @@ class DetailIndex extends React.Component {
   }
 
   getDetailTableConfig(item) {
-    var dataContent = [];
+    let dataContent = [];
     item.subscriptions.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         category: 'Email',
         endpoint: element.subscriber.substr(7),
@@ -87,7 +87,7 @@ class DetailIndex extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.category,
         key: 'category',
@@ -118,7 +118,7 @@ class DetailIndex extends React.Component {
   }
 
   render() {
-    var basicPropsItem = this.getBasicPropsItems(this.props.rows),
+    let basicPropsItem = this.getBasicPropsItems(this.props.rows),
       endpointConfig = this.getDetailTableConfig(this.props.rows);
 
     return (

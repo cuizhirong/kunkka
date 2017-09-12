@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(data, parent, enableTrue, callback) {
-  var obj = data.rows[0],
+  let obj = data.rows[0],
     rawItem = data.rawItem;
   if(enableTrue) {
     config.title = ['enable', 'resource'];
@@ -19,13 +19,13 @@ function pop(data, parent, enableTrue, callback) {
   config.fields[0].info = config.fields[0].info.replace('{1}', obj.name || '(' + obj.server_id.slice(0, 8) + ')');
   config.btn.disabled = false;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var resourceParam = {'admin_state_up': enableTrue};
+      let resourceParam = {'admin_state_up': enableTrue};
       request.updateMember(rawItem.id, obj.id, resourceParam).then(res => {
         callback && callback();
         cb(true);

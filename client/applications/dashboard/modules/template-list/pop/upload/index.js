@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var uploadFile = require('./upload_file');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const uploadFile = require('./upload_file');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

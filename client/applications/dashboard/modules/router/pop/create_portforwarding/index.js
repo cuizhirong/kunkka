@@ -1,15 +1,15 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function initializeConfig(conf, router) {
 
-  var routerName = conf.fields[0];
-  var protocols = conf.fields[1];
-  var sourceip = conf.fields[2];
-  var sourcePort = conf.fields[3];
+  let routerName = conf.fields[0];
+  let protocols = conf.fields[1];
+  let sourceip = conf.fields[2];
+  let sourcePort = conf.fields[3];
 
   routerName.text = router.name ? router.name : '(' + router.id.substr(0, 8) + ')';
   protocols.data = [{
@@ -39,7 +39,7 @@ function initializeConfig(conf, router) {
 
 function pop(router, callback) {
 
-  var props = {
+  let props = {
     __: __,
     config: initializeConfig(config, router),
     onInitialize: function(refs) {

@@ -1,9 +1,9 @@
-let React = require('react');
-let utilData = require('./util_data');
-let __ = require('locale/client/dashboard.lang.json');
-let Input = require('client/components/modal_common/subs/input/index');
-let Select = require('client/components/modal_common/subs/select/index');
-let Checkbox = require('client/components/modal_common/subs/checkbox/index');
+const React = require('react');
+const utilData = require('./util_data');
+const __ = require('locale/client/dashboard.lang.json');
+const Input = require('client/components/modal_common/subs/input/index');
+const Select = require('client/components/modal_common/subs/select/index');
+const Checkbox = require('client/components/modal_common/subs/checkbox/index');
 
 const formatData = utilData.getFormatData(),
   resourceType = utilData.getResourceType(),

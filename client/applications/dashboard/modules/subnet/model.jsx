@@ -1,28 +1,28 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const Main = require('client/components/main/index');
+const {Button} = require('client/uskin/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
-var getStatusIcon = require('client/applications/dashboard/utils/status_icon');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const getStatusIcon = require('client/applications/dashboard/utils/status_icon');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createSubnet = require('./pop/create_subnet/index');
-var connectRouter = require('./pop/connect_router/index');
-var disconnectRouter = require('./pop/disconnect_router/index');
-var addInstance = require('./pop/add_instance/index');
-var modifySubnet = require('./pop/modify_subnet/index');
-var createPort = require('../port/pop/create_port/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createSubnet = require('./pop/create_subnet/index');
+const connectRouter = require('./pop/connect_router/index');
+const disconnectRouter = require('./pop/disconnect_router/index');
+const addInstance = require('./pop/add_instance/index');
+const modifySubnet = require('./pop/modify_subnet/index');
+const createPort = require('../port/pop/create_port/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var router = require('client/utils/router');
-var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const router = require('client/utils/router');
+const request = require('./request');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const notify = require('client/applications/dashboard/utils/notify');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -130,11 +130,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -168,8 +168,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
+    let rows = data.rows;
+    let that = this;
     switch (key) {
       case 'refresh':
         this.refresh({
@@ -246,7 +246,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -256,7 +256,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var length = rows.length,
+    let length = rows.length,
       external = rows[0] ? rows[0].network['router:external'] : null,
       shared = rows[0] ? rows[0].network.shared : null;
     for(let key in btns) {
@@ -282,7 +282,7 @@ class Model extends React.Component {
           btns[key].disabled = (length === 1 && !shared && !external) ? false : true;
           break;
         case 'delete':
-          var disableDelete = rows.some((row) => {
+          let disableDelete = rows.some((row) => {
             return row.network.shared || row.network['router:external'];
           });
           btns[key].disabled = (rows.length >= 1 && !disableDelete) ? false : true;
@@ -296,11 +296,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -316,7 +316,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]),
+          let basicPropsItem = this.getBasicPropsItems(rows[0]),
             virtualInterfaceItem = this.getVirtualInterfaceItems(rows[0]);
           contents[tabKey] = (
             <div>
@@ -357,10 +357,10 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editSubnetName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'subnet',
@@ -410,7 +410,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var data = [{
+    let data = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: item.network.shared || item.network['router:external'] ? '' : 'editable'
@@ -474,9 +474,9 @@ class Model extends React.Component {
   }
 
   getVirtualInterfaceItems(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.ports.forEach((element, index) => {
-      var dataObj = {
+      let dataObj = {
         id: index + 1,
         name: <a data-type="router" href={'/dashboard/port/' + element.id}>{element.name ? element.name : '(' + element.id.substring(0, 8) + ')'}</a>,
         ip_address: element.fixed_ips[0].ip_address,
@@ -531,7 +531,7 @@ class Model extends React.Component {
       tableContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -567,7 +567,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -586,7 +586,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

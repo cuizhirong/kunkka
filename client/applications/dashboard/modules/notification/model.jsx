@@ -1,20 +1,20 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var modal = require('./pop/modal/index');
-var Detail = require('./detail/index');
+const deleteModal = require('client/components/modal_delete/index');
+const modal = require('./pop/modal/index');
+const Detail = require('./detail/index');
 
-var __ = require('locale/client/dashboard.lang.json');
-var config = require('./config.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-//var notify = require('client/applications/dashboard/utils/notify');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
+const config = require('./config.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+//let notify = require('client/applications/dashboard/utils/notify');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 
@@ -84,11 +84,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -122,7 +122,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(actionType, refs, data) {
-    var rows = data.rows,
+    let rows = data.rows,
       that = this;
 
     switch(actionType) {
@@ -186,7 +186,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -214,9 +214,9 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch(tabKey) {
       case 'description':
@@ -245,7 +245,7 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch(actionType) {
       case 'add_endpoint':
         modal([data.rawItem], null, () => {
@@ -270,7 +270,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -289,7 +289,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

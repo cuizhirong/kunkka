@@ -1,18 +1,18 @@
 require('./style/index.less');
 
 //react components
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail components
-//var BasicProps = require('client/components/basic_props/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
+//let BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var getStatusIcon = require('../../utils/status_icon');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -51,13 +51,13 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var _config = this.state.config;
+      let _config = this.state.config;
 
-      var table = _config.table;
+      let table = _config.table;
       table.data = res || [];
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -103,14 +103,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {
+    let {
       rows
     } = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -128,7 +128,7 @@ class Model extends React.Component {
         syncUpdate = false;
         if (isAvailableView(rows)) {
           request.getSingle(rows[0]).then(res => {
-            var basicPropsItem = this.getItem(res.template_functions);
+            let basicPropsItem = this.getItem(res.template_functions);
             contents[tabKey] = (
               <div>
                 <DetailMinitable
@@ -162,7 +162,7 @@ class Model extends React.Component {
   }
 
   getItem(item) {
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.function,
         key: 'functions',
@@ -182,7 +182,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -201,7 +201,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

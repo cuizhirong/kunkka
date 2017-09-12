@@ -1,12 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -25,7 +25,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var serverId = refs.instance.state.value,
+      let serverId = refs.instance.state.value,
         portId = obj.id;
       request.attachInstance(serverId, portId).then((res) => {
         callback && callback(res);

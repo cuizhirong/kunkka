@@ -1,25 +1,25 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var priceConverter = require('../../../../utils/price');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const priceConverter = require('../../../../utils/price');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
-  var enableCharge = HALO.settings.enable_charge;
+  let enableCharge = HALO.settings.enable_charge;
   config.fields[2].hide = !enableCharge;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       function setPrice() {
-        var unitPrice = HALO.prices['snapshot.size'].unit_price.price.segmented[0].price;
-        var imgSize = obj.image.size / 1024 / 1024 / 1024;
-        var price = Number(unitPrice * imgSize).toFixed(4);
+        let unitPrice = HALO.prices['snapshot.size'].unit_price.price.segmented[0].price;
+        let imgSize = obj.image.size / 1024 / 1024 / 1024;
+        let price = Number(unitPrice * imgSize).toFixed(4);
 
         refs.charge.setState({
           value: price
@@ -38,7 +38,7 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var snapshot = {
+      let snapshot = {
         name: refs.inst_snapshot_name.state.value,
         metadata: {
           meta_var: 'meta_val'

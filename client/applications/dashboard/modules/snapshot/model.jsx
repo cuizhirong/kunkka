@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createVolume = require('../volume/pop/create/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createVolume = require('../volume/pop/create/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var getStatusIcon = require('../../utils/status_icon');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -102,11 +102,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -140,7 +140,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
+    let rows = data.rows;
     switch (key) {
       case 'create':
         createVolume(rows[0]);
@@ -184,7 +184,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -211,11 +211,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -231,7 +231,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -256,7 +256,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var data = [{
+    let data = [{
       title: __.name,
       type: 'editable',
       content: item.name
@@ -283,7 +283,7 @@ class Model extends React.Component {
     }];
 
     if (HALO.settings.enable_approval) {
-      var metadata = item.metadata;
+      let metadata = item.metadata;
       data.push({
         title: __.owner,
         content: metadata.owner ? metadata.owner : '-'
@@ -295,7 +295,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -314,7 +314,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -335,7 +335,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editSnapshotName(rawItem, newName).then((res) => {
           this.refresh({
             detailRefresh: true

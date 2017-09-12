@@ -1,4 +1,4 @@
-var __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
 module.exports = {
   getVolumeType: function(volumeType) {
@@ -13,8 +13,8 @@ module.exports = {
   },
 
   getTime(time) {
-    var now = new Date();
-    var date;
+    let now = new Date();
+    let date;
     switch(time) {
       case 'hour':
         date = new Date(now.getTime() - 3 * 3600 * 1000 - 20 * 60 * 1000);
@@ -36,7 +36,7 @@ module.exports = {
   },
 
   ipFormat(ip) {
-    var num = 0;
+    let num = 0;
     ip = ip.split('.');
     num = Number(ip[0]) * 256 * 256 * 256 + Number(ip[1]) * 256 * 256 + Number(ip[2]) * 256 + Number(ip[3]);
     num = num >>> 0;

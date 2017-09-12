@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -14,7 +14,7 @@ module.exports = {
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
@@ -33,10 +33,10 @@ module.exports = {
     });
   },
   poweron: function(items) {
-    var data = {};
+    let data = {};
     data['os-start'] = null;
 
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.post({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
@@ -46,10 +46,10 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   poweroff: function(items) {
-    var data = {};
+    let data = {};
     data['os-stop'] = null;
 
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.post({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
@@ -59,11 +59,11 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   reboot: function(items) {
-    var data = {};
+    let data = {};
     data.reboot = {};
     data.reboot.type = 'SOFT';
 
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.post({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
@@ -73,7 +73,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   editServerName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.server = {};
     data.server.name = newName;
 
@@ -83,7 +83,7 @@ module.exports = {
     });
   },
   getVncConsole: function(item) {
-    var data = {
+    let data = {
       'os-getVNCConsole': {
         'type': 'novnc'
       }
@@ -95,7 +95,7 @@ module.exports = {
     });
   },
   getVolumeList: function(fetchVolumeTypes) {
-    var deferredList = [];
+    let deferredList = [];
     deferredList.push(storage.getList(['volume']));
     if (fetchVolumeTypes) {
       deferredList.push(fetch.get({
@@ -120,7 +120,7 @@ module.exports = {
     });
   },
   createSnapshot: function(snapshot, item) {
-    var data = {};
+    let data = {};
     data.createImage = snapshot;
     return fetch.post({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id + '/action',
@@ -128,7 +128,7 @@ module.exports = {
     });
   },
   attachVolume: function(item, volumeId) {
-    var data = {};
+    let data = {};
     data.volumeAttachment = {
       volumeId: volumeId
     };
@@ -175,7 +175,7 @@ module.exports = {
     });
   },
   createInstance: function(data) {
-    var url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers';
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers';
     if(!data.imageRef) {
       url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-volumes_boot';
     }
@@ -208,7 +208,7 @@ module.exports = {
     });
   },
   detachSomeVolume: function(serverId, items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/os-volume_attachments/' + item.id
@@ -229,7 +229,7 @@ module.exports = {
     });
   },
   getAlarmList(id) {
-    var alarm = [], rule = '';
+    let alarm = [], rule = '';
     return storage.getList(['alarm']).then(function(data) {
       data.alarm.forEach(a => {
         rule = a.gnocchi_resources_threshold_rule;
@@ -242,7 +242,7 @@ module.exports = {
     });
   },
   getResourceMeasures: function(resourceId, type, granularity, start) {
-    var deferredList = [];
+    let deferredList = [];
     type.forEach((t) => {
       deferredList.push(fetch.get({
         url: '/proxy/gnocchi/v1/resource/generic/' + resourceId + '/metric/' + t + '/measures?granularity=' + granularity + '&start=' + start
@@ -251,7 +251,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getMeasures: function(id, granularity, start) {
-    var url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
+    let url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;
     return fetch.get({
       url: url
     });

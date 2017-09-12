@@ -1,12 +1,12 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -22,7 +22,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var updateMonitor = {
+      let updateMonitor = {
         delay: refs.delay.state.value,
         timeout: refs.timeout.state.value,
         max_retries: refs.max_retries.state.value
@@ -36,7 +36,7 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
-      var delay = refs.delay.state,
+      let delay = refs.delay.state,
         timeout = refs.timeout.state,
         retries = refs.max_retries.state,
         hmFilled = delay.value && timeout.value && retries.value && !delay.error && !timeout.error && !retries.error;

@@ -1,5 +1,5 @@
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
 module.exports = {
 
@@ -18,7 +18,7 @@ module.exports = {
       return ele;
     });
 
-    var config = {
+    let config = {
       column: [{
         title: __.protocol,
         key: 'protocol',

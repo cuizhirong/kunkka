@@ -1,11 +1,11 @@
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
-var constant = require('./pop/create/constant');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
+const constant = require('./pop/create/constant');
 
 module.exports = {
 
   getISOTime: function(number) {
-    var date = new Date();
+    let date = new Date();
     date.setDate(date.getDate() + number);
     return date.toISOString().substr(0, 16) + 'Z';
   },
@@ -85,7 +85,7 @@ module.exports = {
   },
 
   getChartData(data, granularity, startTime, resourceType) {
-    var _data = [];
+    let _data = [];
     if (resourceType /*&& (resourceType === 'instance' || resourceType === 'volume')*/) {
       data.forEach((d) => {
         _data.push(d[2].toFixed(2));

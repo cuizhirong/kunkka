@@ -1,4 +1,4 @@
-var __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
 let helper = {
 

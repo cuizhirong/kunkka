@@ -1,19 +1,19 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var SecurityDetail = require('client/components/security_detail/index');
+const SecurityDetail = require('client/components/security_detail/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createSecurityGroup = require('./pop/create_security_group/index');
-var modifySecurityGroup = require('./pop/modify_security_group/index');
-var createRule = require('./pop/create_rule/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createSecurityGroup = require('./pop/create_security_group/index');
+const modifySecurityGroup = require('./pop/modify_security_group/index');
+const createRule = require('./pop/create_rule/index');
 
-var config = require('./config.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
+const config = require('./config.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -55,11 +55,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -93,8 +93,8 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows;
-    var that = this;
+    let rows = data.rows;
+    let that = this;
     switch (key) {
       case 'create':
         createSecurityGroup(null, function() {
@@ -147,7 +147,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -157,7 +157,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var noDefault = true;
+    let noDefault = true;
     rows.forEach((ele) => {
       noDefault = noDefault && (ele.name === 'default' ? false : true);
     });
@@ -178,11 +178,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -198,8 +198,8 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var itemKeys = ['ingress', 'egress'];
-          var items = this.getSecurityDetailData(rows[0], this);
+          let itemKeys = ['ingress', 'egress'];
+          let items = this.getSecurityDetailData(rows[0], this);
 
           contents[tabKey] = (
             <SecurityDetail
@@ -225,11 +225,11 @@ class Model extends React.Component {
   }
 
   getSecurityDetailData(item, that) {
-    var allRulesData = [],
+    let allRulesData = [],
       ingressRulesData = [],
       egressRulesData = [];
 
-    var getPortRange = function(_ele) {
+    let getPortRange = function(_ele) {
       if(_ele.protocol === null) {
         return __.all_ports;
       } else if(_ele.protocol === 'tcp' || _ele.protocol === 'udp') {
@@ -243,22 +243,22 @@ class Model extends React.Component {
       }
     };
 
-    var getICMPTypeCode = function(_ele) {
+    let getICMPTypeCode = function(_ele) {
       if (_ele.protocol === 'icmp') {
-        var min = _ele.port_range_min === null ? '' : _ele.port_range_min;
-        var max = _ele.port_range_max === null ? '' : _ele.port_range_max;
+        let min = _ele.port_range_min === null ? '' : _ele.port_range_min;
+        let max = _ele.port_range_max === null ? '' : _ele.port_range_max;
         return min + '/' + max;
       } else {
         return '-';
       }
     };
 
-    var getSourceType = function(_ele) {
+    let getSourceType = function(_ele) {
       if(_ele.remote_ip_prefix) {
         return _ele.remote_ip_prefix;
       } else if (_ele.remote_group_id) {
-        var data = that.state.config.table.data;
-        var source = data.filter((d) => d.id === _ele.remote_group_id)[0];
+        let data = that.state.config.table.data;
+        let source = data.filter((d) => d.id === _ele.remote_group_id)[0];
 
         return (
           <span>
@@ -270,7 +270,7 @@ class Model extends React.Component {
     };
 
     item.security_group_rules.forEach((ele) => {
-      var sourceOrTarget = getSourceType(ele);
+      let sourceOrTarget = getSourceType(ele);
 
       allRulesData.push({
         id: ele.id,
@@ -293,7 +293,7 @@ class Model extends React.Component {
       }
     });
 
-    var data = {
+    let data = {
       ingress: {
         value: __.ingress,
         tip: {
@@ -365,7 +365,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -384,7 +384,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -403,12 +403,12 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var {tab, rawItem} = data;
+    let {tab, rawItem} = data;
 
-    var that = this;
+    let that = this;
     switch(actionType) {
       case 'create_rule':
-        var securityGroups = this.state.config.table.data;
+        let securityGroups = this.state.config.table.data;
         createRule(rawItem, tab, securityGroups, function() {
           that.refresh({
             detailRefresh: true

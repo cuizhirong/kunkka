@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -15,8 +15,8 @@ var copyObj = function(obj) {
 
 function pop(obj, parent, callback) {
   function getSubnetGroup(subnetArray) {
-    var subnets = subnetArray.filter((ele) => !ele.network['router:external']);
-    var joinedSubnet = [],
+    let subnets = subnetArray.filter((ele) => !ele.network['router:external']);
+    let joinedSubnet = [],
       subnetGroup = [],
       hasAvailableSubnet = false;
 
@@ -48,7 +48,7 @@ function pop(obj, parent, callback) {
 
     if (hasAvailableSubnet) {
       subnets.forEach((subnet) => {
-        var hasGroup = subnetGroup.some((group) => {
+        let hasGroup = subnetGroup.some((group) => {
           if (group.id === subnet.network_id && !subnet.disabled) {
             group.data.push(subnet);
             return true;
@@ -71,14 +71,14 @@ function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getSubnetList().then((data) => {
         if (data.length > 0) {
-          var subnetGroup = getSubnetGroup(data);
+          let subnetGroup = getSubnetGroup(data);
 
           if (subnetGroup.length > 0) {
             refs.select_subnet.setState({
@@ -94,10 +94,10 @@ function pop(obj, parent, callback) {
       });
       request.getPortList().then((data) => {
         if (data.length > 0) {
-          var ports = copyObj(data);
-          var filteredData = ports.filter((port) => {
+          let ports = copyObj(data);
+          let filteredData = ports.filter((port) => {
             if (!port.device_owner) {
-              var ip = '';
+              let ip = '';
               if (port.fixed_ips && port.fixed_ips.length > 0) {
                 ip = port.fixed_ips[0].ip_address;
               }
@@ -114,7 +114,7 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if (refs.select_subnet.state.checkedField === 'select_subnet') {
-        var networkId = '',
+        let networkId = '',
           portSecurityEnabled = true,
           shared = false;
         refs.select_subnet.state.data.some((group) => {
@@ -137,7 +137,7 @@ function pop(obj, parent, callback) {
             cb(true);
           });
         } else {
-          var port = {
+          let port = {
             network_id: networkId,
             fixed_ips: [{
               subnet_id: refs.select_subnet.state.value

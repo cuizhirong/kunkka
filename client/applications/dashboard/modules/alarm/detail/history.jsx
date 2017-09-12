@@ -1,12 +1,12 @@
-var utils = require('../utils');
-var __ = require('locale/client/dashboard.lang.json');
-var moment = require('client/libs/moment');
+const utils = require('../utils');
+const __ = require('locale/client/dashboard.lang.json');
+const moment = require('client/libs/moment');
 
 module.exports = {
 
   getHistoryConfig: function(data) {
 
-    var datas = data.map((ele, i) => {
+    let datas = data.map((ele, i) => {
       let type = '';
       let action = '';
       let detail = JSON.parse(ele.detail);
@@ -45,7 +45,7 @@ module.exports = {
       };
     });
 
-    var table = {
+    let table = {
       column: [{
         title: __.timestamp,
         key: 'timestamp',

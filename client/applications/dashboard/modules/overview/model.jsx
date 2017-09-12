@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Tab} = require('client/uskin/index');
-var ResourceInfo = require('./info');
-var ResourceQuota = require('./quota');
+const React = require('react');
+const {Tab} = require('client/uskin/index');
+const ResourceInfo = require('./info');
+const ResourceQuota = require('./quota');
 
-var request = require('./request');
-var __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -36,23 +36,23 @@ class Model extends React.Component {
   }
 
   getProjectName() {
-    var projectID = HALO.user.projectId,
+    let projectID = HALO.user.projectId,
       projects = HALO.user.projects;
 
-    var ret = projects.filter((project) => project.id === projectID);
+    let ret = projects.filter((project) => project.id === projectID);
 
     return ret[0] ? ret[0].name : '';
   }
 
   render() {
-    var overviewTab = [{
+    let overviewTab = [{
       name: __.overview,
       key: 'overview',
       default: true
     }];
 
-    var overview = this.state.overview;
-    var types = this.state.types;
+    let overview = this.state.overview;
+    let types = this.state.types;
 
     return (
       <div className="halo-module-overview" style={this.props.style}>

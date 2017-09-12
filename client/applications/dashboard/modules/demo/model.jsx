@@ -1,6 +1,6 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
 class Model extends React.Component {
 

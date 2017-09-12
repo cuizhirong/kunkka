@@ -1,9 +1,9 @@
-let commonModal = require('client/components/modal_common/index');
-let config = require('./config.json');
-let request = require('../../request');
-let addHostroutes = require('../create_subnet/add_hostroutes');
-let getErrorMessage = require('client/applications/dashboard/utils/error_message');
-let __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const addHostroutes = require('../create_subnet/add_hostroutes');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function getField(fieldName) {
   let res = null;
@@ -36,11 +36,11 @@ function pop(obj, parent, callback) {
     getField('gw_address').disabled = true;
   }
 
-  var objDns = obj.dns_nameservers;
+  let objDns = obj.dns_nameservers;
   getField('subnet_dns1').value = objDns[0] || '';
   getField('subnet_dns2').value = objDns[1] || '';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -51,7 +51,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         name: refs.subnet_name.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked,
         host_routes: []

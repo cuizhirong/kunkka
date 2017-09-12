@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
-var __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
 class ResourceInfo extends React.Component {
 
@@ -11,7 +11,7 @@ class ResourceInfo extends React.Component {
   }
 
   componentWillMount() {
-    var info = [{
+    let info = [{
       title: __.instance,
       key: 'instances',
       link: 'instance'
@@ -39,13 +39,13 @@ class ResourceInfo extends React.Component {
   }
 
   renderContent(info, overview) {
-    var halfLength = Math.floor(info.length / 2);
+    let halfLength = Math.floor(info.length / 2);
 
     if (!overview) {
       overview = {};
     }
 
-    var leftSide = [],
+    let leftSide = [],
       rightSide = [];
 
     function renderItem(item, index) {
@@ -76,7 +76,7 @@ class ResourceInfo extends React.Component {
   }
 
   render() {
-    var info = this.state.info,
+    let info = this.state.info,
       overview = this.props.overview;
 
     return (

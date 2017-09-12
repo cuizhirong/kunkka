@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, btnType, parent, callback) {
   config.fields[0].text = obj.rawItem.name;
 
   //convey data array to config in cases of detial page remove and main table remove
   if(btnType) {
-    var volume = obj.childItem,
+    let volume = obj.childItem,
       detailData = [];
     detailData.push({
       name: volume.name ? volume.name + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )' :
@@ -19,7 +19,7 @@ function pop(obj, btnType, parent, callback) {
     config.fields[1].data = detailData;
     config.btn.disabled = false;
   } else {
-    var volumes = obj.rawItem.volume,
+    let volumes = obj.rawItem.volume,
       mainData = [];
     volumes.forEach(v => {
       mainData.push({
@@ -38,7 +38,7 @@ function pop(obj, btnType, parent, callback) {
     config.fields[1].data = mainData;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -50,7 +50,7 @@ function pop(obj, btnType, parent, callback) {
           cb(true);
         });
       } else {
-        var dataArray = [];
+        let dataArray = [];
         refs.volume.state.data.some((v) => {
           if(v.selected) {
             dataArray.push(v);

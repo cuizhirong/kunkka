@@ -1,12 +1,12 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
     return storage.getList(['securitygroup'], forced).then(function(data) {
       return data.securitygroup.map((sg) => {
-        var rules = sg.security_group_rules.filter((rule) => rule.ethertype !== 'IPv6');
+        let rules = sg.security_group_rules.filter((rule) => rule.ethertype !== 'IPv6');
         sg.security_group_rules = rules;
 
         return sg;
@@ -14,7 +14,7 @@ module.exports = {
     });
   },
   deleteSecurityGroup: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((ele) => {
       deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-groups/' + ele.id
@@ -42,7 +42,7 @@ module.exports = {
     });
   },
   addSecurityGroupRule: function(newData) {
-    var data = {};
+    let data = {};
     data.security_group_rule = newData;
 
     return fetch.post({

@@ -1,9 +1,9 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   if (obj) {
@@ -12,17 +12,17 @@ function pop(obj, parent, callback) {
     config.title[0] = 'create';
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      var subnetGroup = [];
+      let subnetGroup = [];
       request.getSubnetSGList().then((data) => {
-        var subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);
+        let subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);
         if (subnets.length > 0) {
           subnets.forEach((subnet) => {
-            var hasGroup = subnetGroup.some((group) => {
+            let hasGroup = subnetGroup.some((group) => {
               if (group.id === subnet.network_id) {
                 group.data.push(subnet);
                 return true;
@@ -40,10 +40,10 @@ function pop(obj, parent, callback) {
             }
           });
 
-          var selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
+          let selectedSubnet = subnetGroup.length > 0 ? subnetGroup[0].data[0] : null;
           if(obj) {
             selectedSubnet = subnets.find(ele => ele.id === obj.id);
-            var currentGroup = subnetGroup.find(ele => ele.id === obj.network.id);
+            let currentGroup = subnetGroup.find(ele => ele.id === obj.network.id);
             currentGroup.data = [{name: selectedSubnet.name, id: selectedSubnet.id}];
             subnetGroup = [currentGroup];
           }
@@ -58,9 +58,9 @@ function pop(obj, parent, callback) {
           });
         }
 
-        var sgs = data.securitygroup;
+        let sgs = data.securitygroup;
         if (sgs.length > 0) {
-          var securitygroups = [],
+          let securitygroups = [],
             defaultSecurity;
           sgs.forEach((item) => {
             if (item.name === 'default') {
@@ -85,7 +85,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var port = {
+      let port = {
         name: refs.name.state.value,
         network_id: '',
         security_groups: [],
@@ -94,7 +94,7 @@ function pop(obj, parent, callback) {
         }]
       };
 
-      var subnet = refs.subnet.state;
+      let subnet = refs.subnet.state;
 
       subnet.data.some((ele) => {
         return ele.data.some((s) => {
@@ -129,7 +129,7 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'subnet':
           if (!refs.subnet.state.clicked) {
-            var portSecurityEnabled = true;
+            let portSecurityEnabled = true;
             status.data.some((group) => {
               return group.data.some((s) => {
                 if (s.id === status.value) {
@@ -148,7 +148,7 @@ function pop(obj, parent, callback) {
           if (refs.security_group.state.clicked) {
             createSecurityGroup(refs.modal, () => {
               request.getSecuritygroupList().then((data) => {
-                var s = data.securitygroup;
+                let s = data.securitygroup;
                 refs.security_group.setState({
                   data: s,
                   value: s[0].id,

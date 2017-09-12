@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -14,7 +14,7 @@ module.exports = {
         });
 
         if (v.attachments.length > 0) {
-          var serverId = v.attachments[0].server_id;
+          let serverId = v.attachments[0].server_id;
           data.instance.some((ele) => {
             if (ele.id === serverId) {
               v.server = ele;
@@ -54,7 +54,7 @@ module.exports = {
     });
   },
   getVolumePrice: function(type, size) {
-    var url = '/proxy/gringotts/v2/products/price' +
+    let url = '/proxy/gringotts/v2/products/price' +
       '?purchase.bill_method=hour' +
       '&purchase.purchases[0].product_name=' + type +
       '&purchase.purchases[0].service=block_storage' +
@@ -71,7 +71,7 @@ module.exports = {
     });
   },
   createVolume: function(_data) {
-    var data = {};
+    let data = {};
     data.volume = _data;
 
     return fetch.post({
@@ -80,7 +80,7 @@ module.exports = {
     });
   },
   createSnapshot: function(_data) {
-    var data = {};
+    let data = {};
     data.snapshot = _data;
 
     return fetch.post({
@@ -89,7 +89,7 @@ module.exports = {
     });
   },
   attachInstance: function(_data) {
-    var data = {};
+    let data = {};
     data.volumeAttachment = {};
     data.volumeAttachment.volumeId = _data.volumeId;
 
@@ -104,7 +104,7 @@ module.exports = {
     });
   },
   extendVolumeSize: function(item, _data) {
-    var data = {};
+    let data = {};
     data['os-extend'] = _data;
 
     return fetch.post({
@@ -113,7 +113,7 @@ module.exports = {
     });
   },
   setReadOnly: function(item) {
-    var data = {};
+    let data = {};
     data['os-update_readonly_flag'] = {};
     data['os-update_readonly_flag'].readonly = true;
 
@@ -123,7 +123,7 @@ module.exports = {
     });
   },
   setReadWrite: function(item) {
-    var data = {};
+    let data = {};
     data['os-update_readonly_flag'] = {};
     data['os-update_readonly_flag'].readonly = false;
 
@@ -133,7 +133,7 @@ module.exports = {
     });
   },
   editVolumeName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.volume = {};
     data.volume.name = newName;
 
@@ -143,7 +143,7 @@ module.exports = {
     });
   },
   deleteVolumes: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id
@@ -157,7 +157,7 @@ module.exports = {
     });
   },
   getMeasures: function(ids, granularity, start) {
-    var deferredList = [];
+    let deferredList = [];
     ids.forEach((id) => {
       deferredList.push(fetch.get({
         url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
@@ -178,7 +178,7 @@ module.exports = {
     });
   },
   getAlarmList: function(id) {
-    var alarm = [], rule = '';
+    let alarm = [], rule = '';
     return storage.getList(['alarm']).then(function(data) {
       data.alarm.forEach(a => {
         rule = a.gnocchi_resources_threshold_rule;

@@ -1,4 +1,4 @@
-var textEllipsis = require('./text_ellipsis');
+const textEllipsis = require('./text_ellipsis');
 
 module.exports = {
   /**

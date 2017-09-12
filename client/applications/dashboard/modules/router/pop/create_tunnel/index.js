@@ -1,18 +1,18 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('../../../../utils/error_message');
-var popTarget = require('./target_network');
-var popSelect = require('./select');
-var createVpnService = require('../create_vpn_service/index');
-var createIkePolicy = require('client/applications/dashboard/modules/ike-policy/pop/create/index');
-var createIpsecPolicy = require('client/applications/dashboard/modules/ipsec-policy/pop/create/index');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
+const popTarget = require('./target_network');
+const popSelect = require('./select');
+const createVpnService = require('../create_vpn_service/index');
+const createIkePolicy = require('client/applications/dashboard/modules/ike-policy/pop/create/index');
+const createIpsecPolicy = require('client/applications/dashboard/modules/ipsec-policy/pop/create/index');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = __.layer_three;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -40,7 +40,7 @@ function pop(obj, parent, callback) {
 
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         ipsec_site_connection: {
           name: refs.name.state.value,
           ipsecpolicy_id: refs.ipsec_policy.refs.select.state.value,
@@ -111,7 +111,7 @@ function pop(obj, parent, callback) {
         default:
           break;
       }
-      var vpnService = refs.vpn_service.refs.select && refs.vpn_service.refs.select.state.data.length,
+      let vpnService = refs.vpn_service.refs.select && refs.vpn_service.refs.select.state.data.length,
         ikePolicy = refs.ike_policy.refs.select && refs.ike_policy.refs.select.state.data.length,
         ipsecPolicy = refs.ipsec_policy.refs.select && refs.ipsec_policy.refs.select.state.data.length;
       if (vpnService && ikePolicy && ipsecPolicy) {

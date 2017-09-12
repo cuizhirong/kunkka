@@ -3,38 +3,38 @@
  * 当收到消息，通知storage更新数据，当数据更新后，通知具体的module更新
  */
 
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
-var msgEvent = require('./msg_event');
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
+const msgEvent = require('./msg_event');
 
-var instance = require('../modules/instance/cache');
-var image = require('../modules/image/cache');
-var port = require('../modules/port/cache');
-var floatingip = require('../modules/floating-ip/cache');
-var keypair = require('../modules/keypair/cache');
-var network = require('../modules/network/cache');
-var router = require('../modules/router/cache');
-var securitygroup = require('../modules/security-group/cache');
-var snapshot = require('../modules/snapshot/cache');
-var subnet = require('../modules/subnet/cache');
-var volume = require('../modules/volume/cache');
-var loadbalancer = require('../modules/loadbalancer/cache');
-var pool = require('../modules/resource-pool/cache');
-var listener = require('../modules/loadbalancer/cache');
-var healthmonitor = require('../modules/resource-pool/cache');
-var member = require('../modules/resource-pool/cache');
-var vpnservice = require('../modules/router/cache');
-var ipsec = require('../modules/router/cache');
-var ikepolicy = require('../modules/ike-policy/cache');
-var ipsecpolicy = require('../modules/ipsec-policy/cache');
-var notification = require('../modules/notification/cache');
-var alarm = require('../modules/alarm/cache');
-var orchestration = require('../modules/heat-list/cache');
-var resourcetype = require('../modules/template-resource/cache');
-var templateversion = require('../modules/template-version/cache');
-var templatelist = require('../modules/template-list/cache');
+const instance = require('../modules/instance/cache');
+const image = require('../modules/image/cache');
+const port = require('../modules/port/cache');
+const floatingip = require('../modules/floating-ip/cache');
+const keypair = require('../modules/keypair/cache');
+const network = require('../modules/network/cache');
+const router = require('../modules/router/cache');
+const securitygroup = require('../modules/security-group/cache');
+const snapshot = require('../modules/snapshot/cache');
+const subnet = require('../modules/subnet/cache');
+const volume = require('../modules/volume/cache');
+const loadbalancer = require('../modules/loadbalancer/cache');
+const pool = require('../modules/resource-pool/cache');
+const listener = require('../modules/loadbalancer/cache');
+const healthmonitor = require('../modules/resource-pool/cache');
+const member = require('../modules/resource-pool/cache');
+const vpnservice = require('../modules/router/cache');
+const ipsec = require('../modules/router/cache');
+const ikepolicy = require('../modules/ike-policy/cache');
+const ipsecpolicy = require('../modules/ipsec-policy/cache');
+const notification = require('../modules/notification/cache');
+const alarm = require('../modules/alarm/cache');
+const orchestration = require('../modules/heat-list/cache');
+const resourcetype = require('../modules/template-resource/cache');
+const templateversion = require('../modules/template-version/cache');
+const templatelist = require('../modules/template-list/cache');
 
-var map = {
+const map = {
   network: ['subnet'],
   subnet: ['network', 'port'],
   port: ['subnet', 'instance'],
@@ -45,10 +45,10 @@ var map = {
 };
 
 function Storage() {
-  var that = this;
+  let that = this;
   this.cache = [];
   msgEvent.on('message', function(data) {
-    var type = data.resource_type,
+    let type = data.resource_type,
       list = [];
 
     if (map[type]) {
@@ -65,7 +65,7 @@ function Storage() {
 
 Storage.prototype = {
   getList: function(typeList, forced) {
-    var that = this,
+    let that = this,
       promises = {};
 
     typeList.forEach((type) => {

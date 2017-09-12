@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var router = require('client/utils/router');
-var mainEvent = require('client/components/main/event');
+const React = require('react');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const router = require('client/utils/router');
+const mainEvent = require('client/components/main/event');
 
 class VncConsole extends React.Component {
   constructor(props) {
@@ -61,7 +61,7 @@ class VncConsole extends React.Component {
   }
 
   getData() {
-    var props = this.props;
+    let props = this.props;
 
     fetch.post({
       url: props.url,
@@ -100,7 +100,7 @@ class VncConsole extends React.Component {
   }
 
   render() {
-    var data = this.state.data;
+    let data = this.state.data;
 
     return (
       <div className="halo-com-console-output" data-id={this.props['data-id']}>

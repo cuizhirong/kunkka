@@ -1,4 +1,4 @@
-var storage = require('client/applications/dashboard/cores/storage');
+const storage = require('client/applications/dashboard/cores/storage');
 
 module.exports = {
   getList: function(forced) {

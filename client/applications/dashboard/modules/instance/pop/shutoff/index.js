@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
 
 function pop(obj, parent, callback) {
   config.fields[0].info = __.confirm_inst_action.replace('{0}', __.ins_action_shutoff);
   config.fields[1].data = obj;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -16,8 +16,8 @@ function pop(obj, parent, callback) {
         cb(true);
         callback && callback(res);
       }).catch((err) => {
-        var reg = new RegExp('"message":"(.*)","');
-        var tip = reg.exec(err.response)[1];
+        let reg = new RegExp('"message":"(.*)","');
+        let tip = reg.exec(err.response)[1];
 
         refs.error.setState({
           value: tip,

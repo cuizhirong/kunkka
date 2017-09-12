@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button, DropdownButton} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
-// var getStatusIcon = require('../../utils/status_icon');
+const React = require('react');
+const {Button, DropdownButton} = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
+// let getStatusIcon = require('../../utils/status_icon');
 
 class ListenerList extends React.Component {
   constructor(props) {
@@ -30,10 +30,10 @@ class ListenerList extends React.Component {
   }
 
   onAction(actionType, childItem, e, btn) {
-    var props = this.props,
+    let props = this.props,
       tabKey = props.tabKey;
 
-    var data = {};
+    let data = {};
     data.rawItem = props.rawItem;
     if (childItem) {
       data.childItem = childItem;
@@ -47,7 +47,7 @@ class ListenerList extends React.Component {
   }
 
   wordsToLine(data) {
-    var value = '';
+    let value = '';
     data.forEach(ele => {
       value += __[ele];
     });
@@ -56,7 +56,7 @@ class ListenerList extends React.Component {
   }
 
   render() {
-    var listenerConfigs = this.props.listenerConfigs,
+    let listenerConfigs = this.props.listenerConfigs,
       btnValue = this.wordsToLine(['modify', 'listener']),
       btnData = {value: __.more};
 

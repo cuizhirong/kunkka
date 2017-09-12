@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getStatusIcon = require('../../../../utils/status_icon');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getStatusIcon = require('../../../../utils/status_icon');
 
 function pop(obj, parent, callback) {
 
@@ -11,11 +11,11 @@ function pop(obj, parent, callback) {
   dataList.data = obj;
   dataList.getStatusIcon = getStatusIcon;
 
-  var hasActive = obj.some((ele) => ele.status.toLowerCase() === 'active');
+  let hasActive = obj.some((ele) => ele.status.toLowerCase() === 'active');
   config.fields[1].hide = !hasActive;
   config.btn.disabled = hasActive;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var uskin = require('client/uskin/index');
-var {Table, Button, DropdownButton} = uskin;
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const uskin = require('client/uskin/index');
+const {Table, Button, DropdownButton} = uskin;
+const __ = require('locale/client/dashboard.lang.json');
 
 class ResourceList extends React.Component {
 
@@ -42,7 +42,7 @@ class ResourceList extends React.Component {
   }
 
   onAction(tabKey, actionType, rawItem, e, btn) {
-    var data = {};
+    let data = {};
     data.rawItem = rawItem;
     data.rows = this.state.rows;
     if(actionType === 'add_resource') {
@@ -53,7 +53,7 @@ class ResourceList extends React.Component {
   }
 
   render() {
-    var tableConfig = this.props.tableConfig,
+    let tableConfig = this.props.tableConfig,
       btnConfig = this.props.btnConfig;
 
     return (

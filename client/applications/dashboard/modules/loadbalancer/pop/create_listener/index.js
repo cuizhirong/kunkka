@@ -1,9 +1,9 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var enableCharge = HALO.settings.enable_charge;
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const enableCharge = HALO.settings.enable_charge;
 
 function pop(obj, parent, actionModify, callback) {
   if(actionModify) {
@@ -24,7 +24,7 @@ function pop(obj, parent, actionModify, callback) {
     chargeField.hide = false;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -66,7 +66,7 @@ function pop(obj, parent, actionModify, callback) {
     },
     onConfirm: function(refs, cb) {
       if(actionModify) {
-        var updateData = {
+        let updateData = {
           name: refs.name.state.value,
           connection_limit: refs.connection_limit.state.value
         };
@@ -78,7 +78,7 @@ function pop(obj, parent, actionModify, callback) {
           cb(false, getErrorMessage(error));
         });
       } else {
-        var listenerData = {
+        let listenerData = {
           name: refs.name.state.value,
           protocol: refs.listener_protocol.state.value,
           protocol_port: refs.protocol_port.state.value,
@@ -97,7 +97,7 @@ function pop(obj, parent, actionModify, callback) {
     onAction: function(field, state, refs) {
       switch(field) {
         case 'protocol_port':
-          var portRange = refs.protocol_port.state.value;
+          let portRange = refs.protocol_port.state.value;
           if(portRange > 0 && portRange < 65536) {
             refs.protocol_port.setState({
               error: false
@@ -128,8 +128,8 @@ function pop(obj, parent, actionModify, callback) {
           }
           break;
         case 'connection_limit':
-          var isMouseUp = state.eventType === 'mouseup';
-          var conValue = refs.connection_limit.state.value;
+          let isMouseUp = state.eventType === 'mouseup';
+          let conValue = refs.connection_limit.state.value;
 
           if (isMouseUp) {
             refs.connection_limit.setState({

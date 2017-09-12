@@ -1,16 +1,16 @@
-var React = require('react');
-var {Button, Modal, Step} = require('client/uskin/index');
-var SelectMetric = require('./select_metric');
-var AlarmConfig = require('./alarm_config');
-var SetNotification = require('./set_notification');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
-var resourceList = require('./resources');
-var initialState = require('./state');
-var createNotification = require('../../../notification/pop/modal/index');
-var getErrorMessage = require('../../../../utils/error_message');
-var {getTime} = require('../../../../utils/utils');
-var utils = require('../../utils');
+const React = require('react');
+const {Button, Modal, Step} = require('client/uskin/index');
+const SelectMetric = require('./select_metric');
+const AlarmConfig = require('./alarm_config');
+const SetNotification = require('./set_notification');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
+const resourceList = require('./resources');
+const initialState = require('./state');
+const createNotification = require('../../../notification/pop/modal/index');
+const getErrorMessage = require('../../../../utils/error_message');
+const {getTime} = require('../../../../utils/utils');
+const utils = require('../../utils');
 
 let title;
 let measureData = [];
@@ -316,14 +316,14 @@ class ModalBase extends React.Component {
       threshold: state.threshold
     };
     // deep Clone ORZ~
-    var cloneObj = function(ob) {
-      var str, newobj = ob.constructor === Array ? [] : {};
+    let cloneObj = function(ob) {
+      let str, newobj = ob.constructor === Array ? [] : {};
       if(typeof ob !== 'object') {
         return null;
       } else {
         str = JSON.stringify(ob);
         newobj = JSON.parse(str);
-        for(var i in ob) {
+        for(let i in ob) {
           newobj[i] = typeof ob[i] === 'object' ?
           cloneObj(ob[i]) : ob[i];
         }

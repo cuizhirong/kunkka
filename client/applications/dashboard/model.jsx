@@ -1,13 +1,13 @@
-var React = require('react');
-var NavBar = require('client/components/navbar/index');
-var SideMenu = require('client/components/side_menu/index');
-var router = require('client/utils/router');
+const React = require('react');
+const NavBar = require('client/components/navbar/index');
+const SideMenu = require('client/components/side_menu/index');
+const router = require('client/utils/router');
 
 require('./cores/ws');
 require('client/utils/router_delegate');
 require('./cores/watchdog');
 
-var loader = require('./cores/loader'),
+const loader = require('./cores/loader'),
   configs = loader.configs;
 
 class Model extends React.Component {
@@ -27,7 +27,7 @@ class Model extends React.Component {
   loadRouter() {
     router.on('changeState', this.onChangeState);
 
-    var pathList = router.getPathList();
+    let pathList = router.getPathList();
     if (pathList.length <= 1) {
       pathList[1] = configs.default_module;
     }
@@ -36,7 +36,7 @@ class Model extends React.Component {
 
   onChangeState(pathList) {
     if (this.isValidPath(pathList)) {
-      var _moduleName = pathList[1],
+      let _moduleName = pathList[1],
         modules = this.state.modules;
       if (modules.indexOf(_moduleName) === -1) {
         modules = modules.concat(_moduleName);
@@ -94,7 +94,7 @@ class Model extends React.Component {
   }
 
   _filterMenu(item) {
-    var ret = item;
+    let ret = item;
     configs.routers.some((m) => {
       if (item === m.key) {
         ret = m.link;
@@ -136,7 +136,7 @@ class Model extends React.Component {
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       props = this.props,
       __ = props.__,
       HALO = props.HALO,
@@ -144,7 +144,7 @@ class Model extends React.Component {
       menus = [];
 
     props.menus.forEach((m) => {
-      var submenu = [];
+      let submenu = [];
       m.items.forEach((n, i) => {
         submenu.push({
           subtitle: __[n],
@@ -181,7 +181,7 @@ class Model extends React.Component {
           <div id="main">
             {
               state.modules.map((m, index) => {
-                var M = modules[m];
+                let M = modules[m];
                 if (M) {
                   return <M key={index} params={state.params} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
                 }
@@ -198,13 +198,13 @@ class Model extends React.Component {
 function filterMenu(modules) {
   modules.forEach((m) => {
     m.items = m.items.filter((i) => {
-      var b = configs.routers.some((n) => {
+      let b = configs.routers.some((n) => {
         if (n.key === i) {
           return true;
         }
         return false;
       });
-      var h = configs.hidden ? configs.hidden.some((hide) => {
+      let h = configs.hidden ? configs.hidden.some((hide) => {
         if (hide === i) {
           return true;
         }

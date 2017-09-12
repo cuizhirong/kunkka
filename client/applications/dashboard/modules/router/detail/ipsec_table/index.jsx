@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button, Table, Switch} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const {Button, Table, Switch} = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
 
 class IpsecTable extends React.Component {
 
@@ -37,7 +37,7 @@ class IpsecTable extends React.Component {
   }
 
   onChange(adminData) {
-    var data = {
+    let data = {
       id: adminData.id,
       isOpen: !adminData.admin_state_up
     };
@@ -53,7 +53,7 @@ class IpsecTable extends React.Component {
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       tableConfig = this.props.tableConfig;
     return (
       <div className="halo-com-ipsec-table">

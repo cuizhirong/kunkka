@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var Topology = require('../../components/topology/index');
+const React = require('react');
+const Topology = require('../../components/topology/index');
 
-var request = require('./request');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+const request = require('./request');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
 
-var t = null;
+let t = null;
 
 class Model extends React.Component {
 

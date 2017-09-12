@@ -1,9 +1,9 @@
-let commonModal = require('client/components/modal_common/index');
-let config = require('./config.json');
-let request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
 // let getErrorMessage = require('client/applications/dashboard/utils/error_message');
-let __ = require('locale/client/dashboard.lang.json');
-let unitConverter = require('client/utils/unit_converter');
+const __ = require('locale/client/dashboard.lang.json');
+const unitConverter = require('client/utils/unit_converter');
 
 function pop(obj, parent, callback) {
   config.fields[0].icon_type = 'image';

@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[1].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
   config.fields[2].text = obj.server.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -16,7 +16,7 @@ function pop(obj, parent, callback) {
     onInitialize: function(refs) {
     },
     onConfirm: function(refs, cb) {
-      var serverId = obj.server.id,
+      let serverId = obj.server.id,
         portId = obj.id;
 
       request.detchInstance(serverId, portId).then((res) => {

@@ -1,27 +1,27 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/model');
-var { Button } = require('client/uskin/index');
+const React = require('react');
+const Main = require('client/components/main/model');
+const { Button } = require('client/uskin/index');
 
-var BasicProps = require('client/components/basic_props/index');
-var DetailMiniTable = require('client/components/detail_minitable/index');
-var LineChart = require('client/components/line_chart/index');
-var description = require('./detail/description');
-var history = require('./detail/history');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMiniTable = require('client/components/detail_minitable/index');
+const LineChart = require('client/components/line_chart/index');
+const description = require('./detail/description');
+const history = require('./detail/history');
 
-var createAlarm = require('./pop/create/index');
-var enableAlarm = require('./pop/enable_alarm/index');
-var deleteModal = require('client/components/modal_delete/index');
-var addNotification = require('./pop/add_notification/index');
+const createAlarm = require('./pop/create/index');
+const enableAlarm = require('./pop/enable_alarm/index');
+const deleteModal = require('client/components/modal_delete/index');
+const addNotification = require('./pop/add_notification/index');
 
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var getStatusIcon = require('../../utils/status_icon');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var utils = require('./utils');
-var timeUtils = require('../../utils/utils');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const utils = require('./utils');
+const timeUtils = require('../../utils/utils');
 
 class Model extends Main {
 
@@ -128,13 +128,13 @@ class Model extends Main {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var syncUpdate = true;
-    var isSingle = rows.length === 1;
-    var unavailableView = (
+    let syncUpdate = true;
+    let isSingle = rows.length === 1;
+    let unavailableView = (
       <div className="no-data-desc">
         <p>{__.view_is_unavailable}</p>
       </div>
@@ -142,7 +142,7 @@ class Model extends Main {
     if (!isSingle) {
       contents[tabKey] = unavailableView;
     }
-    var update = (newContents, loading) => {
+    let update = (newContents, loading) => {
       detail.setState({
         contents: newContents,
         loading: loading

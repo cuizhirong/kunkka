@@ -1,20 +1,20 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('client/applications/dashboard/modules/port/request');
-var createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('client/applications/dashboard/modules/port/request');
+const createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getSecuritygroupList().then((data) => {
         if(data.securitygroup.length > 0) {
-          var securitygroups = data.securitygroup;
+          let securitygroups = data.securitygroup;
           obj.security_groups.forEach((item) => {
             securitygroups.some((s) => {
               if (s.id === item.id) {
@@ -35,7 +35,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         port: {
           security_groups: []
         }

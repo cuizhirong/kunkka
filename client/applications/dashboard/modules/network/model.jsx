@@ -1,24 +1,24 @@
 require('./style/index.less');
 
-let React = require('react');
-let Main = require('client/components/main/index');
-let {Button} = require('client/uskin/index');
+const React = require('react');
+const Main = require('client/components/main/index');
+const {Button} = require('client/uskin/index');
 
-let BasicProps = require('client/components/basic_props/index');
-let DetailMinitable = require('client/components/detail_minitable/index');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
-let deleteModal = require('client/components/modal_delete/index');
-let createNetwork = require('./pop/create_network/index');
-let createSubnet = require('../subnet/pop/create_subnet/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createNetwork = require('./pop/create_network/index');
+const createSubnet = require('../subnet/pop/create_subnet/index');
 
-let config = require('./config.json');
-let __ = require('locale/client/dashboard.lang.json');
-let router = require('client/utils/router');
-let request = require('./request');
-let msgEvent = require('client/applications/dashboard/cores/msg_event');
-let notify = require('client/applications/dashboard/utils/notify');
-let getStatusIcon = require('../../utils/status_icon');
-let getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const router = require('client/utils/router');
+const request = require('./request');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const notify = require('client/applications/dashboard/utils/notify');
+const getStatusIcon = require('../../utils/status_icon');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class Model extends React.Component {
 

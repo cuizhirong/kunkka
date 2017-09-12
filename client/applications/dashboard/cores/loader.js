@@ -1,8 +1,8 @@
 /**
  * @func load modules dynamically
  */
-var configs = require('../config.json');
-var modules = {};
+const configs = require('../config.json');
+let modules = {};
 
 if (!HALO.configs.renderer) { // Do not load modules in server-end
   configs.modules.forEach((m) => {

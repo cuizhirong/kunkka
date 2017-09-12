@@ -1,24 +1,24 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
-var createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
-var createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
-var request = require('../../request');
-var unitConverter = require('client/utils/unit_converter');
-var priceConverter = require('../../../../utils/price');
-var getErrorMessage = require('../../../../utils/error_message');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
+const createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
+const createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
+const request = require('../../request');
+const unitConverter = require('client/utils/unit_converter');
+const priceConverter = require('../../../../utils/price');
+const getErrorMessage = require('../../../../utils/error_message');
 
 const TITLE = __.create + __.instance;
 
-var tooltipHolder;
+let tooltipHolder;
 
 class ModalBase extends React.Component {
 
   constructor(props) {
     super(props);
 
-    var imageTypes = [{
+    let imageTypes = [{
       value: __.system_image,
       key: 'image'
     }, {
@@ -29,7 +29,7 @@ class ModalBase extends React.Component {
       key: 'bootableVolume'
     }];
 
-    var credentials = [{
+    let credentials = [{
       key: 'keypair',
       value: __.keypair
     }, {
@@ -115,13 +115,13 @@ class ModalBase extends React.Component {
   }
 
   initialize(res) {
-    var selectDefault = (arr) => {
+    let selectDefault = (arr) => {
       return arr.length > 0 ? arr[0] : null;
     };
 
-    var images = [];
-    var snapshots = [];
-    var bootableVolumes = [];
+    let images = [];
+    let snapshots = [];
+    let bootableVolumes = [];
 
     //sort image and snapshot
     res.image.forEach((ele) => {
@@ -140,7 +140,7 @@ class ModalBase extends React.Component {
       return false;
     });
 
-    var imageSort = (a, b) => {
+    let imageSort = (a, b) => {
       if (a.image_label_order) {
         a.image_label_order = 9999;
       }
@@ -148,8 +148,8 @@ class ModalBase extends React.Component {
         b.image_label_order = 9999;
       }
 
-      var aLabel = Number(a.image_label_order);
-      var bLabel = Number(b.image_label_order);
+      let aLabel = Number(a.image_label_order);
+      let bLabel = Number(b.image_label_order);
       if (aLabel === bLabel) {
         if (a.image_name_order) {
           a.image_name_order = 9999;
@@ -157,8 +157,8 @@ class ModalBase extends React.Component {
         if (b.image_name_order) {
           b.image_name_order = 9999;
         }
-        var aName = Number(a.image_name_order);
-        var bName = Number(b.image_name_order);
+        let aName = Number(a.image_name_order);
+        let bName = Number(b.image_name_order);
         return aName - bName;
       } else {
         return aLabel - bLabel;
@@ -168,23 +168,23 @@ class ModalBase extends React.Component {
     snapshots.sort(imageSort);
     bootableVolumes.sort(bootableVolumes);
 
-    var selectedImage = selectDefault(images);
-    var username = 'root';
+    let selectedImage = selectDefault(images);
+    let username = 'root';
 
     if (selectedImage.image_meta) {
       let meta = JSON.parse(selectedImage.image_meta);
       username = meta.os_username;
     }
 
-    var flavors = res.flavor;
+    let flavors = res.flavor;
     this._flavors = flavors;
 
-    var image = selectDefault(images);
-    var snapshot = selectDefault(snapshots);
-    var bootableVolume = selectDefault(bootableVolumes);
-    var currentImage = image;
-    var imageType = 'image';
-    var obj = this.props.obj;
+    let image = selectDefault(images);
+    let snapshot = selectDefault(snapshots);
+    let bootableVolume = selectDefault(bootableVolumes);
+    let currentImage = image;
+    let imageType = 'image';
+    let obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
       if (obj.image_type !== 'snapshot') {//image type
@@ -195,17 +195,17 @@ class ModalBase extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    var hideKeypair = currentImage && currentImage.image_label ? currentImage.image_label.toLowerCase() === 'windows' : false;
-    var credential = hideKeypair ? 'psw' : 'keypair';
+    let hideKeypair = currentImage && currentImage.image_label ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    let credential = hideKeypair ? 'psw' : 'keypair';
 
-    var networks = res.network.filter((ele) => {
+    let networks = res.network.filter((ele) => {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
     });
 
-    var sg = res.securitygroup;
+    let sg = res.securitygroup;
 
-    var keypairs = res.keypair;
-    var selectedKeypair = selectDefault(keypairs);
+    let keypairs = res.keypair;
+    let selectedKeypair = selectDefault(keypairs);
 
     this.setState({
       ready: true,
@@ -231,11 +231,11 @@ class ModalBase extends React.Component {
   }
 
   findCpu(flavors, cpu) {
-    var cpuKeys = {};
+    let cpuKeys = {};
     flavors.forEach((ele) => {
       cpuKeys[ele.vcpus] = true;
     });
-    var cpus = (Object.keys(cpuKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    let cpus = (Object.keys(cpuKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
     if (typeof cpu === 'undefined') {
       cpu = cpus[0];
     }
@@ -246,12 +246,12 @@ class ModalBase extends React.Component {
   }
 
   findRam(flavors, cpu, ram) {
-    var rawRams = flavors.filter((ele) => ele.vcpus === cpu);
-    var ramKeys = {};
+    let rawRams = flavors.filter((ele) => ele.vcpus === cpu);
+    let ramKeys = {};
     rawRams.forEach((ele) => {
       ramKeys[ele.ram] = true;
     });
-    var rams = (Object.keys(ramKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    let rams = (Object.keys(ramKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
     if (typeof ram === 'undefined') {
       ram = rams[0];
     }
@@ -263,12 +263,12 @@ class ModalBase extends React.Component {
   }
 
   findDisk(flavors, cpu, ram, disk) {
-    var rawDisks = flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram);
-    var diskKeys = {};
+    let rawDisks = flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram);
+    let diskKeys = {};
     rawDisks.forEach((ele) => {
       diskKeys[ele.disk] = true;
     });
-    var disks = (Object.keys(diskKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
+    let disks = (Object.keys(diskKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
     if (typeof disk === 'undefined') {
       disk = disks[0];
     }
@@ -295,7 +295,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeName(e) {
-    var name = e.target.value;
+    let name = e.target.value;
 
     this.setState({
       name: name
@@ -303,13 +303,13 @@ class ModalBase extends React.Component {
   }
 
   onChangeImageType(key, e) {
-    var state = this.state;
-    var image = state.images.length > 0 ? state.images[0] : null;
-    var snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
-    var bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
+    let state = this.state;
+    let image = state.images.length > 0 ? state.images[0] : null;
+    let snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
+    let bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
 
-    var username = 'root';
-    var objImage = null;
+    let username = 'root';
+    let objImage = null;
     switch(key) {
       case 'image':
         objImage = image;
@@ -329,7 +329,7 @@ class ModalBase extends React.Component {
       username = meta.os_username;
     }
 
-    var hideKeypair = false;
+    let hideKeypair = false;
     if (objImage && objImage.image_label) {
       hideKeypair = objImage.image_label.toLowerCase() === 'windows';
     }
@@ -351,13 +351,13 @@ class ModalBase extends React.Component {
   }
 
   setFlavor(objImage, type, value) {
-    var state = this.state;
-    var cpus = state.cpus;
-    var cpu = type === 'cpu' ? value : state.cpu;
-    var rams = state.memories;
-    var ram = type === 'ram' ? value : state.memory;
-    var disks = state.volumes;
-    var disk = type === 'disk' ? value : state.volume;
+    let state = this.state;
+    let cpus = state.cpus;
+    let cpu = type === 'cpu' ? value : state.cpu;
+    let rams = state.memories;
+    let ram = type === 'ram' ? value : state.memory;
+    let disks = state.volumes;
+    let disk = type === 'disk' ? value : state.volume;
 
     if (objImage) {
       let flavor;
@@ -373,22 +373,22 @@ class ModalBase extends React.Component {
       }
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
-      var inArray = function(item, arr) {
+      let inArray = function(item, arr) {
         return arr.some((ele) => ele === item);
       };
 
       if (inArray(type, ['all'])) {
-        var cpuOpt = this.findCpu(flavors);
+        let cpuOpt = this.findCpu(flavors);
         cpus = cpuOpt.cpus;
         cpu = cpuOpt.cpu;
       }
       if (inArray(type, ['all', 'cpu'])) {
-        var ramOpt = this.findRam(flavors, cpu);
+        let ramOpt = this.findRam(flavors, cpu);
         rams = ramOpt.rams;
         ram = ramOpt.ram;
       }
       if (inArray(type, ['all', 'cpu', 'ram'])) {
-        var diskOpt = this.findDisk(flavors, cpu, ram);
+        let diskOpt = this.findDisk(flavors, cpu, ram);
         disks = diskOpt.disks;
         disk = diskOpt.disk;
       }
@@ -409,13 +409,13 @@ class ModalBase extends React.Component {
   }
 
   onChangeImage(item, e) {
-    var username = 'root';
+    let username = 'root';
     if (item.image_meta) {
-      var meta = JSON.parse(item.image_meta);
+      let meta = JSON.parse(item.image_meta);
       username = meta.os_username;
     }
 
-    var hideKeypair = false;
+    let hideKeypair = false;
     if (item.image_label) {
       hideKeypair = item.image_label.toLowerCase() === 'windows';
     }
@@ -433,13 +433,13 @@ class ModalBase extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    var username = 'root';
+    let username = 'root';
     if (item.image_meta) {
-      var meta = JSON.parse(item.image_meta);
+      let meta = JSON.parse(item.image_meta);
       username = meta.os_username;
     }
 
-    var hideKeypair = false;
+    let hideKeypair = false;
     if (item.image_label) {
       hideKeypair = item.image_label.toLowerCase() === 'windows';
     }
@@ -457,16 +457,16 @@ class ModalBase extends React.Component {
   }
 
   onChangeBootableVolume(item, e) {
-    var imageData = item.volume_image_metadata;
-    var username = '';
+    let imageData = item.volume_image_metadata;
+    let username = '';
     if(imageData.image_meta) {
-      var meta = JSON.parse(imageData.image_meta);
+      let meta = JSON.parse(imageData.image_meta);
       username = meta.os_username;
     }
 
-    var hideKeypair = false;
+    let hideKeypair = false;
     if(imageData.image_label) {
-      var label = imageData.image_label.toLowerCase();
+      let label = imageData.image_label.toLowerCase();
       hideKeypair = label === 'windows';
     }
 
@@ -505,10 +505,10 @@ class ModalBase extends React.Component {
   }
 
   onChangeNetwork(e) {
-    var subnets = this.state.networks;
-    var selected = e.target.value;
+    let subnets = this.state.networks;
+    let selected = e.target.value;
 
-    var item;
+    let item;
     subnets.some((ele) => {
       if (ele.id === selected) {
         item = ele;
@@ -554,7 +554,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeKeypair(e) {
-    var name = e.target.value;
+    let name = e.target.value;
 
     this.setState({
       keypairName: name
@@ -636,7 +636,7 @@ class ModalBase extends React.Component {
   }
 
   findDefaultFlavor(flavors, cpu, ram, disk) {
-    var defaultFlavor;
+    let defaultFlavor;
     flavors.some((ele) => {
       if (ele.vcpus === cpu && ele.ram === ram && ele.disk === disk) {
         defaultFlavor = ele;
@@ -649,7 +649,7 @@ class ModalBase extends React.Component {
   }
 
   findSelectedImage() {
-    var state = this.state;
+    let state = this.state;
     switch(state.imageType) {
       case 'image':
         return state.image;
@@ -663,23 +663,23 @@ class ModalBase extends React.Component {
   }
 
   onChangeCpu(cpu, e) {
-    var img = this.findSelectedImage();
+    let img = this.findSelectedImage();
     this.setFlavor(img, 'cpu', cpu);
   }
 
   onChangeMemory(ram, e) {
-    var img = this.findSelectedImage();
+    let img = this.findSelectedImage();
     this.setFlavor(img, 'ram', ram);
   }
 
   onChangeVolume(disk, e) {
-    var img = this.findSelectedImage();
+    let img = this.findSelectedImage();
     this.setFlavor(img, 'disk', disk);
   }
 
   onChangeSecurityGroup(sg, e) {
-    var state = this.state;
-    var selects = state.securityGroup;
+    let state = this.state;
+    let selects = state.securityGroup;
 
     if (selects[sg.id]) {
       delete selects[sg.id];
@@ -695,14 +695,14 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    var state = this.state;
+    let state = this.state;
     if (state.disabled) {
       return;
     }
 
-    var enable = state.name && state.flavor && state.network && state.number,
+    let enable = state.name && state.flavor && state.network && state.number,
       enableImage = false;
-    var selectedImage;
+    let selectedImage;
     if (state.imageType === 'image') {
       enable = enable && state.image;
       enableImage = enable;
@@ -722,7 +722,7 @@ class ModalBase extends React.Component {
     }
 
     if (enable) {
-      var data = {};
+      let data = {};
       if(enableImage) {
         data = {
           name: state.name.trim(),
@@ -735,7 +735,7 @@ class ModalBase extends React.Component {
           max_count: state.number
         };
       } else {
-        var bootVolume = state.bootableVolume;
+        let bootVolume = state.bootableVolume;
         data = {
           name: state.name.trim(),
           block_device_mapping_v2: [{
@@ -768,16 +768,16 @@ class ModalBase extends React.Component {
           };
         } else {
           //store pwd for linux
-          var userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
+          let userData = '#cloud-config\ndisable_root: False\npassword: {0}\nchpasswd:\n list: |\n   root:{0}\n expire: False\nssh_pwauth: True';
           userData = userData.replace(/\{0\}/g, state.pwd);
           data.user_data = window.btoa(userData);
         }
         data.adminPass = state.pwd;
       }
 
-      var selectedSg = state.securityGroup;
-      var securitygroups = state.securityGroups;
-      var sg = [];
+      let selectedSg = state.securityGroup;
+      let securitygroups = state.securityGroups;
+      let sg = [];
       securitygroups.forEach((ele) => {
         if (selectedSg[ele.id]) {
           sg.push({
@@ -795,7 +795,7 @@ class ModalBase extends React.Component {
           visible: false
         });
       }).catch((error) => {
-        var errorTip = getErrorMessage(error);
+        let errorTip = getErrorMessage(error);
 
         this.setState({
           disabled: false,
@@ -843,7 +843,7 @@ class ModalBase extends React.Component {
   }
 
   renderImages(props, state) {
-    var Types = (
+    let Types = (
       <div className="row row-tab row-tab-single" key="types">
         <div className="modal-label">
           {__.image}
@@ -862,17 +862,17 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var selectedKey = state.imageType;
-    var style = null;
+    let selectedKey = state.imageType;
+    let style = null;
 
-    var imgURL = HALO.settings.default_image_url;
+    let imgURL = HALO.settings.default_image_url;
     if (imgURL) {
       style = {
         background: `url("${imgURL}") 0 0 no-repeat`,
         backgroundSize: '20px 20px'
       };
     }
-    var Images = (
+    let Images = (
       <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
         {
           !state.ready ?
@@ -899,7 +899,7 @@ class ModalBase extends React.Component {
         }
       </div>
     );
-    var Snapshots = (
+    let Snapshots = (
       <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'snapshot' ? '' : ' hide')} key="snapshots">
         {
           !state.ready ?
@@ -926,7 +926,7 @@ class ModalBase extends React.Component {
         }
       </div>
     );
-    var BootableVolumes = (
+    let BootableVolumes = (
       <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'bootableVolume' ? '' : ' hide')} key="bootableVolumes">
         {
           !state.ready ?
@@ -954,7 +954,7 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var ret = [];
+    let ret = [];
     ret.push(Types);
     ret.push(Images);
     ret.push(Snapshots);
@@ -964,7 +964,7 @@ class ModalBase extends React.Component {
   }
 
   renderFlavors(props, state) {
-    var data = [{
+    let data = [{
       key: 'cpu',
       title: __.cpu + __.type,
       data: state.cpus,
@@ -978,7 +978,7 @@ class ModalBase extends React.Component {
       title: __.memory + __.size,
       data: state.memories,
       render: (val) => {
-        var res = unitConverter(Number(val), 'MB');
+        let res = unitConverter(Number(val), 'MB');
         return res.num + ' ' + res.unit;
       },
       selected: state.memory,
@@ -994,8 +994,8 @@ class ModalBase extends React.Component {
       onChange: this.onChangeVolume
     }];
 
-    var flavor = state.flavor;
-    var flavorDetail;
+    let flavor = state.flavor;
+    let flavorDetail;
     if (flavor) {
       let ram = unitConverter(flavor.ram, 'MB');
       flavorDetail = flavor.name + ' ( ' +
@@ -1046,7 +1046,7 @@ class ModalBase extends React.Component {
   }
 
   renderNetworks(props, state) {
-    var selected = state.network;
+    let selected = state.network;
     return (
       <div className="row row-select">
         <div className="modal-label">
@@ -1075,10 +1075,10 @@ class ModalBase extends React.Component {
   }
 
   renderSecurityGroup(props, state) {
-    var selects = state.securityGroup;
-    var hasSelects = Object.keys(selects).length > 0 ? true : false;
-    var selectObj = state.securityGroups.filter((ele) => selects[ele.id]);
-    var detail = selectObj.map((ele) => ele.name).join(', ');
+    let selects = state.securityGroup;
+    let hasSelects = Object.keys(selects).length > 0 ? true : false;
+    let selectObj = state.securityGroups.filter((ele) => selects[ele.id]);
+    let detail = selectObj.map((ele) => ele.name).join(', ');
 
     return (
       <div className="row row-dropdown row-security-group">
@@ -1097,7 +1097,7 @@ class ModalBase extends React.Component {
                 <ul>
                   {
                     state.securityGroups.map((ele) => {
-                      var selected = selects[ele.id];
+                      let selected = selects[ele.id];
                       return (
                         <li key={ele.id}
                           className={selected ? 'selected' : null}
@@ -1134,17 +1134,17 @@ class ModalBase extends React.Component {
   }
 
   renderCredentials(props, state) {
-    var selected = state.credential;
-    var isKeypair = selected === 'keypair';
+    let selected = state.credential;
+    let isKeypair = selected === 'keypair';
 
-    var credentials = state.credentials;
-    var hideKeypair = state.hideKeypair;
+    let credentials = state.credentials;
+    let hideKeypair = state.hideKeypair;
 
     if (hideKeypair) {
       credentials = [credentials[1]];
     }
 
-    var Types = (
+    let Types = (
       <div className="row row-tab row-tab-credential" key="types">
         <div className="modal-label">
           {__.credentials}
@@ -1163,8 +1163,8 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var keypair = state.keypairName;
-    var Keypairs = (
+    let keypair = state.keypairName;
+    let Keypairs = (
       <div className={'row row-select credential-sub' + (isKeypair ? '' : ' hide')} key="keypairs">
         <div className="modal-label">
           {__.keypair}
@@ -1188,7 +1188,7 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var Psw = (
+    let Psw = (
       <div className={'row row-select credential-sub' + (isKeypair ? ' hide' : '')} key="psw">
         <div className="modal-data">
           <div className="input-user">
@@ -1225,14 +1225,14 @@ class ModalBase extends React.Component {
       </div>
     );
 
-    var CrdTips = (
+    let CrdTips = (
       <div className="credential-tips" key="tips">
         <i className="glyphicon icon-status-warning" />
         {__.instance_credential_tip}
       </div>
     );
 
-    var ret = [];
+    let ret = [];
     ret.push(Types);
     ret.push(Keypairs);
     ret.push(Psw);
@@ -1242,11 +1242,11 @@ class ModalBase extends React.Component {
   }
 
   renderCreateNum(props, state) {
-    var price = state.price;
-    var numPrice = price;
-    var monthlyPrice = price;
+    let price = state.price;
+    let numPrice = price;
+    let monthlyPrice = price;
 
-    var enableCharge = HALO.settings.enable_charge;
+    let enableCharge = HALO.settings.enable_charge;
     if (enableCharge && state.flavor) {
       let type = state.flavor.name;
       if (HALO.prices) {
@@ -1293,7 +1293,7 @@ class ModalBase extends React.Component {
 
   renderBtn(props, state, page) {
     if (page === 1) {
-      var hasImage = false;
+      let hasImage = false;
       if (state.imageType === 'image') {
         hasImage = state.image;
       } else if (state.imageType === 'snapshot') {
@@ -1331,11 +1331,11 @@ class ModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
-    var page = state.page;
-    var slideClass = '';
+    let page = state.page;
+    let slideClass = '';
     if (state.pagingAni) {
       slideClass = page === 1 ? ' move-out' : ' move-in';
     } else {

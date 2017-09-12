@@ -1,13 +1,13 @@
-var autoscale = require('client/libs/charts/autoscale');
-var utils = require('client/libs/charts/utils');
-var routerUtil = require('client/utils/router');
+const autoscale = require('client/libs/charts/autoscale');
+const utils = require('client/libs/charts/utils');
+const routerUtil = require('client/utils/router');
 
-var colorMap = require('./utils/color');
-var loader = require('./utils/loader');
-var shape = require('./utils/shape');
-var CanvasEvent = require('./utils/event');
+const colorMap = require('./utils/color');
+const loader = require('./utils/loader');
+const shape = require('./utils/shape');
+const CanvasEvent = require('./utils/event');
 
-var resources = [
+const resources = [
     '/static/assets/dashboard/icon-public-network.png',
     '/static/assets/dashboard/icon-network.png',
     '/static/assets/dashboard/icon-floatingip.png',
@@ -38,7 +38,7 @@ var resources = [
     OTHER: [0, 120]
   };
 
-var resourceReady = false,
+let resourceReady = false,
   d = null,
   container = null,
   canvas = null,
@@ -80,7 +80,7 @@ class Topology {
     instancePos = [];
     loadbalancerPos = [];
 
-    var networks = data.network;
+    let networks = data.network;
 
     // process router
     data.router.forEach((r, i) => {
@@ -109,7 +109,7 @@ class Topology {
     });
 
     // process instance
-    var tmpInstancePos = [];
+    let tmpInstancePos = [];
     data.instance.forEach((instance, i) => {
       tmpInstancePos[i] = {
         name: instance.name,
@@ -120,14 +120,14 @@ class Topology {
         floating_ip: instance.floating_ip
       };
 
-      var addrs = instance.addresses;
+      let addrs = instance.addresses;
       Object.keys(addrs).forEach((key) => {
-        var _networks = addrs[key];
+        let _networks = addrs[key];
         _networks.forEach((n) => {
           if (n['OS-EXT-IPS:type'] === 'floating') {
             return;
           }
-          var subnet = n.subnet;
+          let subnet = n.subnet;
           networks.some((network, j) => {
             return network.subnets.some((s, m) => {
               if (s.id === subnet.id) {
@@ -145,7 +145,7 @@ class Topology {
     });
 
     tmpInstancePos.forEach((instance, i) => {
-      var subnets = instance.subnets;
+      let subnets = instance.subnets;
       if (subnets.length === 0) {
         instance.layer = -1;
       } else {
@@ -160,9 +160,9 @@ class Topology {
       return a.layer - b.layer;
     });
 
-    var cursor;
+    let cursor;
     tmpInstancePos.forEach((instance) => {
-      var len = instancePos.length;
+      let len = instancePos.length;
       if (instance.layer === cursor) {
         instancePos[len - 1].instances.push(instance);
       } else {
@@ -175,7 +175,7 @@ class Topology {
     });
 
     // loadbalancer
-    var tmpLoadbalancerPos = [];
+    let tmpLoadbalancerPos = [];
     data.loadbalancer.forEach((l, i) => {
       tmpLoadbalancerPos[i] = {
         name: l.name || '(' + l.id.slice(0, 8) + ')',
@@ -204,7 +204,7 @@ class Topology {
     });
 
     tmpLoadbalancerPos.forEach((loadbalancer, i) => {
-      var subnets = loadbalancer.subnets;
+      let subnets = loadbalancer.subnets;
       loadbalancer.subnets = subnets.sort((a, b) => {
         return a.networkLayer - b.networkLayer;
       });
@@ -215,9 +215,9 @@ class Topology {
       return a.layer - b.layer;
     });
 
-    var cursor2;
+    let cursor2;
     tmpLoadbalancerPos.forEach((loadbalancer) => {
-      var len = loadbalancerPos.length;
+      let len = loadbalancerPos.length;
       if (loadbalancer.layer === cursor2) {
         loadbalancerPos[len - 1].loadbalancers.push(loadbalancer);
       } else {
@@ -239,7 +239,7 @@ class Topology {
   }
 
   calcPos() {
-    var x = 0,
+    let x = 0,
       y = 243;
     // reset max width
     maxWidth = 0;
@@ -260,7 +260,7 @@ class Topology {
         networkPos[i].y = networkPos[i - 1].y + networkPos[i - 1].h + 160;
       }
 
-      var subnets = data.subnets,
+      let subnets = data.subnets,
         len = subnets.length;
 
       if (len === 0) {
@@ -269,7 +269,7 @@ class Topology {
         networkPos[i].h = 20 * len + (len - 1) * 12 + 40;
       }
 
-      var _sub = networkPos[i].subnets = [];
+      let _sub = networkPos[i].subnets = [];
       subnets.forEach((subnet, j) => {
         _sub.push({
           x: 10,
@@ -293,14 +293,14 @@ class Topology {
       router.y = 134.5; //83 + 51 + 0.5
       router.h = 58;
 
-      var len = router.subnets.length;
+      let len = router.subnets.length;
       if (len > 1) {
         router.w = 78 + (len - 1) * 10;
       } else {
         router.w = 78;
       }
 
-      var start = (router.w - 12 * len + 10) / 2 + router.x;
+      let start = (router.w - 12 * len + 10) / 2 + router.x;
       router.subnets.forEach((subnet, j) => {
         subnet.x = start + j * 12 - 0.5;
         subnet.y = router.y + router.h;
@@ -308,7 +308,7 @@ class Topology {
         // subnet.h = 100;
       });
     });
-    var _routerLen = routerPos.length;
+    let _routerLen = routerPos.length;
     if (_routerLen !== 0) {
       let lastRouter = routerPos[_routerLen - 1];
       maxWidth = lastRouter.w + lastRouter.x;
@@ -316,10 +316,10 @@ class Topology {
 
     // calc instance positions
     placeholder = [];
-    var loop = 0;
+    let loop = 0;
     routerPos.forEach((router) => {
       router.subnets.forEach((s) => {
-        var _layer = s.networkLayer;
+        let _layer = s.networkLayer;
 
         for (loop = 0; loop < _layer; loop++) {
           if (!placeholder[loop]) {
@@ -337,7 +337,7 @@ class Topology {
     });
 
     instancePos.forEach((instance) => {
-      var layer = instance.layer,
+      let layer = instance.layer,
         instances = instance.instances,
         mw = 0;
 
@@ -379,7 +379,7 @@ class Topology {
         ins.h = 58;
 
         // 2.根据placehoder算出instance实际的x坐标
-        var cur = 0.5,
+        let cur = 0.5,
           p = placeholder[layer];
         if (p) {
           p.some((_p, i) => {
@@ -414,7 +414,7 @@ class Topology {
           }];
         }
 
-        var upX = ins.x + (ins.w - up * 12 + 10) / 2 - 0.5,
+        let upX = ins.x + (ins.w - up * 12 + 10) / 2 - 0.5,
           downX = ins.x + (ins.w - down * 12 + 10) / 2 - 0.5;
 
         ins.subnets.forEach((s) => {
@@ -473,7 +473,7 @@ class Topology {
         networkPos[layer].maxWidth = mw;
       }
 
-      var lastEle = instances[instances.length - 1];
+      let lastEle = instances[instances.length - 1];
       if (lastEle.x + lastEle.w > maxWidth) {
         maxWidth = lastEle.x + lastEle.w;
       }
@@ -487,7 +487,7 @@ class Topology {
         _lb.y = _lo.h + _lo.y + 51.5;
         _lb.h = 58;
         _lb.x = _lo.maxWidth + i * (10 + 78) + (_lo.maxWidth > 0 ? 0 : 0.5);
-        // var start = (router.w - 12 * len + 10) / 2 + router.x;
+        // let start = (router.w - 12 * len + 10) / 2 + router.x;
         _lb.subnets.forEach((subnet, j) => {
           subnet.x = _lb.w / 2 + _lb.x + j * 12 - 0.5;
           subnet.y = _lb.y + _lb.h;
@@ -503,12 +503,12 @@ class Topology {
       return 260;
     }
     // The last network
-    var p = networkPos[networkPos.length - 1];
+    let p = networkPos[networkPos.length - 1];
     return p.h + p.y + 260;
   }
 
   draw() {
-    var offsetX = Math.round((w - maxWidth) / 2);
+    let offsetX = Math.round((w - maxWidth) / 2);
     if (offsetX < 0) {
       offsetX = 0;
     }
@@ -523,7 +523,7 @@ class Topology {
 
     // draw routers
     routerPos.forEach((router, i) => {
-      var _x = router.x + offsetX;
+      let _x = router.x + offsetX;
       if (router.gateway) {
         ctx.fillStyle = basicColor;
         ctx.fillRect(_x + router.w / 2 - 0.5, router.y - 52, 2, 52);
@@ -540,7 +540,7 @@ class Topology {
 
 
     for (let len = networkPos.length, i = len - 1; i >= 0; i--) {
-      var _color = colorMap[i % 8],
+      let _color = colorMap[i % 8],
         network = networkPos[i];
 
       // 1. draw network
@@ -559,7 +559,7 @@ class Topology {
       })(network);
 
       // 2. draw subnets
-      var _subnets = network.subnets;
+      let _subnets = network.subnets;
       for (let sLen = _subnets.length, j = sLen - 1; j >= 0; j--) {
         let subnet = _subnets[j];
         let subnetColor = _color.subnetColor[j % 4];
@@ -581,7 +581,7 @@ class Topology {
 
         // 画云主机和子网的连线
         instancePos.forEach((instances) => {
-          var layer = instances.layer;
+          let layer = instances.layer;
           if (layer === -1) {
             return;
           }
@@ -638,7 +638,7 @@ class Topology {
     // draw instnaces
     instancePos.forEach((instances, i) => {
       instances.instances.forEach((_instance) => {
-        var _x = _instance.x + offsetX;
+        let _x = _instance.x + offsetX;
         shape.roundRect(ctx, _x, _instance.y, _instance.w, _instance.h, 2, borderColor, true);
         ctx.drawImage(imageList[5], imageMap[_instance.image][0], imageMap[_instance.image][1],
           40, 40, _x + _instance.w / 2 - 13.5, _instance.y + 7.5, 26, 26);
@@ -717,7 +717,7 @@ class Topology {
     loader(resources).then(data => {
       imageList = data;
       resourceReady = true;
-      var loading = container.getElementsByClassName('loading')[0];
+      let loading = container.getElementsByClassName('loading')[0];
       loading && loading.classList.add('hide');
       this.draw();
     });

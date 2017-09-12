@@ -1,13 +1,13 @@
-var commonModal = require('client/components/modal_common/index');
-var createSubnet = require('../../../subnet/pop/create_subnet/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const createSubnet = require('../../../subnet/pop/create_subnet/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
-var getAvailableSubnets = function(data, refs) {
-  var subnets = data.filter((ele) => !ele.network['router:external']);
-  var subnetGroup = [],
+let getAvailableSubnets = function(data, refs) {
+  let subnets = data.filter((ele) => !ele.network['router:external']);
+  let subnetGroup = [],
     hasAvailableSubnet = false;
   subnets.forEach((s) => {
     if (s.router.id) {
@@ -23,7 +23,7 @@ var getAvailableSubnets = function(data, refs) {
 
   subnets.forEach((subnet) => {
     if (!subnet.network.shared) {
-      var hasGroup = subnetGroup.some((group) => {
+      let hasGroup = subnetGroup.some((group) => {
         if (group.id === subnet.network_id) {
           group.data.push(subnet);
           return true;
@@ -63,13 +63,13 @@ var getAvailableSubnets = function(data, refs) {
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getSubnets(false).then(res => {
-        var mySubnets = getAvailableSubnets(res, refs);
+        let mySubnets = getAvailableSubnets(res, refs);
         refs.subnet.setState({
           data: mySubnets
         });
@@ -94,7 +94,7 @@ function pop(obj, parent, callback) {
             });
             createSubnet(null, null, function() {
               request.getSubnets(true).then(res => {
-                var mySubnets = getAvailableSubnets(res, refs);
+                let mySubnets = getAvailableSubnets(res, refs);
                 refs.subnet.setState({
                   data: mySubnets
                 });

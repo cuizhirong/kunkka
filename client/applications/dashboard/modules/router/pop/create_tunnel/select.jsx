@@ -1,10 +1,10 @@
 require('./style/index.less');
 
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -45,7 +45,7 @@ class SelectData extends React.Component {
   }
 
   renderData() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
     if (state.data && state.data.length > 0) {
       return (
@@ -58,7 +58,7 @@ class SelectData extends React.Component {
         </select>
       );
     } else {
-      var content = __.no_resources.replace('{0}', __[props.field]);
+      let content = __.no_resources.replace('{0}', __[props.field]);
       return (
         <span className="empty-text-label">{content}</span>
       );
@@ -66,7 +66,7 @@ class SelectData extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    let props = this.props;
     return (
       <div className="halo-pop-com-select">
         <div>

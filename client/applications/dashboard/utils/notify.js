@@ -1,6 +1,6 @@
-var Notification = require('client/uskin/index').Notification;
-var __ = require('locale/client/dashboard.lang.json');
-var stack = {};
+const Notification = require('client/uskin/index').Notification;
+const __ = require('locale/client/dashboard.lang.json');
+let stack = {};
 
 // @param data {Object} contains resource_name, stage, action, resource_type, resource_id
 function notify(data) {
@@ -8,7 +8,7 @@ function notify(data) {
     return;
   }
 
-  var isAutoHide = true,
+  let isAutoHide = true,
     icon = 'icon-status-active',
     func = Notification.addNotice,
     placeholder = 'msg_notify_end',

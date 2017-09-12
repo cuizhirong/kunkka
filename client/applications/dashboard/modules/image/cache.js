@@ -1,4 +1,4 @@
-let fetch = require('client/applications/dashboard/cores/fetch');
+const fetch = require('client/applications/dashboard/cores/fetch');
 
 module.exports = {
   getImageList: function() {

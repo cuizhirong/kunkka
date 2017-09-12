@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
   getFloatingIPPrice: function(bandwidth) {
-    var url = '/proxy/gringotts/v2/products/price' +
+    let url = '/proxy/gringotts/v2/products/price' +
       '?purchase.bill_method=hour' +
       '&purchase.purchases[0].product_name=ip.floating' +
       '&purchase.purchases[0].service=network' +
@@ -78,7 +78,7 @@ module.exports = {
     });
   },
   deleteFloatingIps: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-floating-ips/' + item.id

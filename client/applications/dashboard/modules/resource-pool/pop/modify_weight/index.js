@@ -1,15 +1,15 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(data, parent, callback) {
-  var {rawItem, rows} = data,
+  let {rawItem, rows} = data,
     obj = rows[0];
   config.fields[0].text = obj.name || '(' + obj.server_id.slice(0, 8) + ')';
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -19,7 +19,7 @@ function pop(data, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var weightParam = {
+      let weightParam = {
         weight: refs.weight.state.value
       };
       request.updateMember(rawItem.id, obj.id, weightParam).then(res => {
@@ -30,7 +30,7 @@ function pop(data, parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
-      var weightState = refs.weight.state;
+      let weightState = refs.weight.state;
       if(weightState.value && !weightState.error) {
         refs.btn.setState({
           disabled: false
@@ -42,7 +42,7 @@ function pop(data, parent, callback) {
       }
       switch(field) {
         case 'weight':
-          var weight = refs.weight.state.value;
+          let weight = refs.weight.state.value;
           if(weight > 0 && weight < 101) {
             refs.weight.setState({
               error: false

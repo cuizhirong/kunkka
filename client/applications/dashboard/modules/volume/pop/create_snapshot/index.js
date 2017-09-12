@@ -1,26 +1,26 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
-var priceConverter = require('../../../../utils/price');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
+const priceConverter = require('../../../../utils/price');
 
 function pop(obj, parent, callback) {
   config.fields[1].text = obj.name + '(' + obj.volume_type + ' | ' + obj.size + 'G' + ')';
 
-  var enableCharge = HALO.settings.enable_charge;
+  let enableCharge = HALO.settings.enable_charge;
   config.fields[3].hide = !enableCharge;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      var type = 'snapshot.size';
+      let type = 'snapshot.size';
       function setPrice() {
-        var unitPrice = HALO.prices[type].unit_price.price.segmented[0].price;
-        var volumeSize = obj.size;
-        var price = Number(unitPrice * volumeSize).toFixed(4);
+        let unitPrice = HALO.prices[type].unit_price.price.segmented[0].price;
+        let volumeSize = obj.size;
+        let price = Number(unitPrice * volumeSize).toFixed(4);
 
         refs.charge.setState({
           value: price
@@ -39,7 +39,7 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var data = {};
+      let data = {};
       data.name = refs.snapshot_name.state.value;
       data.volume_id = obj.id;
       data.force = true;

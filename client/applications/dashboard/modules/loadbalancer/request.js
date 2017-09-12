@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -54,7 +54,7 @@ module.exports = {
     });
   },
   getRelatedListeners: function(data) {
-    var deferredList = [];
+    let deferredList = [];
     data.forEach(item => {
       deferredList.push(fetch.get({
         url: '/proxy/neutron/v2.0/lbaas/listeners/' + item.id
@@ -93,7 +93,7 @@ module.exports = {
     });
   },
   getPrice: function(type, size) {
-    var url = '/proxy/gringotts/v2/products/price' +
+    let url = '/proxy/gringotts/v2/products/price' +
       '?purchase.bill_method=hour' +
       '&purchase.purchases[0].product_name=' + type +
       '&purchase.purchases[0].service=network' +

@@ -1,8 +1,8 @@
-let commonModal = require('client/components/modal_common/index');
-let config = require('./config.json');
-let request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
 // let getErrorMessage = require('client/applications/dashboard/utils/error_message');
-let __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;

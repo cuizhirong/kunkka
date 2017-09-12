@@ -1,10 +1,10 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -14,9 +14,9 @@ var copyObj = function(obj) {
 };
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
-  var ports = [],
+  let ports = [],
     securityGroups = [];
-  var addresses = obj.addresses;
+  let addresses = obj.addresses;
 
   for (let key in addresses) {
     for (let ele of addresses[key]) {
@@ -30,7 +30,7 @@ function pop(obj, parent, callback) {
     }
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -43,7 +43,7 @@ function pop(obj, parent, callback) {
 
         request.getSecuritygroupList().then((data) => {
           if(data.length > 0) {
-            var res = copyObj(data);
+            let res = copyObj(data);
             securityGroups = copyObj(data);
             ports[0].security_groups.forEach((item) => {
               res.some((r) => {
@@ -67,7 +67,7 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         port: {
           security_groups : []
         }
@@ -85,7 +85,7 @@ function pop(obj, parent, callback) {
     onAction: function(field, state, refs) {
       switch (field) {
         case 'security_group':
-          var hasSecurity = state.data.some((item) => {
+          let hasSecurity = state.data.some((item) => {
             if (item.selected) {
               return true;
             }
@@ -98,7 +98,7 @@ function pop(obj, parent, callback) {
         case 'port':
           ports.some((item) => {
             if (item.id === state.value) {
-              var sgs = copyObj(securityGroups);
+              let sgs = copyObj(securityGroups);
               item.security_groups.forEach((ele) => {
                 sgs.some((s) => {
                   if (ele.name === s.name) {

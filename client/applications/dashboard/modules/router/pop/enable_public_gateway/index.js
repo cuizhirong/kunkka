@@ -1,15 +1,15 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
 
-var gatewayId = null;
+let gatewayId = null;
 
 function pop(obj, parent, callback) {
-  var name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';
+  let name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';
   config.fields[0].info = __[config.fields[0].field].replace('{0}', name);
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -33,7 +33,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         external_gateway_info: {
           network_id: gatewayId ? gatewayId : refs.external_network.state.value
         }

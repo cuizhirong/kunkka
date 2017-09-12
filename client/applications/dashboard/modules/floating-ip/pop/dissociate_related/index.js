@@ -1,7 +1,7 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[1].text = obj.name;
@@ -15,7 +15,7 @@ function pop(obj, parent, callback) {
     config.fields[2].text = obj.lbaas.name;
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,

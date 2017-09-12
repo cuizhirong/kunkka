@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
-var ShortTip = require('client/components/modal_common/subs/short_tip/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
+const ShortTip = require('client/components/modal_common/subs/short_tip/index');
 
 class TargetNetwork extends React.Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class TargetNetwork extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
 
     return (

@@ -1,5 +1,5 @@
-var utils = require('../../utils');
-var request = require('../../request');
+const utils = require('../../utils');
+const request = require('../../request');
 
 function getInstanceResource(instance) {
 

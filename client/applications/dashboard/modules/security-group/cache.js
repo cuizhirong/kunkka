@@ -1,4 +1,4 @@
-var fetch = require('client/applications/dashboard/cores/fetch');
+const fetch = require('client/applications/dashboard/cores/fetch');
 
 module.exports = {
   getSecuritygroupList: function() {

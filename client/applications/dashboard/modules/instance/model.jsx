@@ -1,53 +1,53 @@
 require('./style/index.less');
 
 //react components
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail components
-var BasicProps = require('client/components/basic_props/index');
-var RelatedSources = require('client/components/related_sources/index');
-var RelatedSnapshot = require('client/components/related_snapshot/index');
-var ConsoleOutput = require('../../components/console_output/index');
-var VncConsole = require('../../components/vnc_console/index');
-var DetailMinitable = require('client/components/detail_minitable/index');
-var LineChart = require('client/components/line_chart/index');
-var {Button} = require('client/uskin/index');
+const BasicProps = require('client/components/basic_props/index');
+const RelatedSources = require('client/components/related_sources/index');
+const RelatedSnapshot = require('client/components/related_snapshot/index');
+const ConsoleOutput = require('../../components/console_output/index');
+const VncConsole = require('../../components/vnc_console/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
+const LineChart = require('client/components/line_chart/index');
+const {Button} = require('client/uskin/index');
 
 //pop modals
-var deleteModal = require('client/components/modal_delete/index');
-var createInstance = require('./pop/create_instance/index');
-var poweronInstance = require('./pop/poweron/index');
-var shutoffInstance = require('./pop/shutoff/index');
-var rebootInstance = require('./pop/reboot/index');
-var associateFip = require('./pop/associate_fip/index');
-var attachVolume = require('./pop/attach_volume/index');
-var joinNetwork = require('./pop/join_network/index');
-var instSnapshot = require('./pop/inst_snapshot/index');
-var dissociateFIP = require('./pop/dissociate_fip/index');
-var changeSecurityGrp = require('./pop/change_security_grp/index');
-var changePassword = require('./pop/change_password/index');
-var detachVolume = require('./pop/detach_volume/index');
-var detachNetwork = require('./pop/detach_network/index');
-var resizeInstance = require('./pop/resize/index');
-var deleteInstance = require('./pop/delete/index');
-var createAlarm = require('../alarm/pop/create/index');
-var rebuildInstance = require('./pop/rebuild_instance/index');
-var rescueInstance = require('./pop/rescue_instance/index');
-var changeAction = require('./pop/change_action/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createInstance = require('./pop/create_instance/index');
+const poweronInstance = require('./pop/poweron/index');
+const shutoffInstance = require('./pop/shutoff/index');
+const rebootInstance = require('./pop/reboot/index');
+const associateFip = require('./pop/associate_fip/index');
+const attachVolume = require('./pop/attach_volume/index');
+const joinNetwork = require('./pop/join_network/index');
+const instSnapshot = require('./pop/inst_snapshot/index');
+const dissociateFIP = require('./pop/dissociate_fip/index');
+const changeSecurityGrp = require('./pop/change_security_grp/index');
+const changePassword = require('./pop/change_password/index');
+const detachVolume = require('./pop/detach_volume/index');
+const detachNetwork = require('./pop/detach_network/index');
+const resizeInstance = require('./pop/resize/index');
+const deleteInstance = require('./pop/delete/index');
+const createAlarm = require('../alarm/pop/create/index');
+const rebuildInstance = require('./pop/rebuild_instance/index');
+const rescueInstance = require('./pop/rescue_instance/index');
+const changeAction = require('./pop/change_action/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/dashboard.lang.json');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
-var getStatusIcon = require('../../utils/status_icon');
-var unitConverter = require('client/utils/unit_converter');
-var getTime = require('client/utils/time_unification');
-var utils = require('../alarm/utils');
-var timeUtils = require('../../utils/utils');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/dashboard.lang.json');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const notify = require('client/applications/dashboard/utils/notify');
+const getStatusIcon = require('../../utils/status_icon');
+const unitConverter = require('client/utils/unit_converter');
+const getTime = require('client/utils/time_unification');
+const utils = require('../alarm/utils');
+const timeUtils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -85,7 +85,7 @@ class Model extends React.Component {
       return true;
     }
 
-    var a = '', b = '';
+    let a = '', b = '';
 
     this.state.config.table.column.forEach((col) => {
       if (col.key === 'floating_ip') {
@@ -196,10 +196,10 @@ class Model extends React.Component {
           break;
         case 'ip_address':
           column.render = (col, item, i) => {
-            var arr = [],
+            let arr = [],
               count = 0;
-            for (var n in item.addresses) {
-              for (var addr of item.addresses[n]) {
+            for (let n in item.addresses) {
+              for (let addr of item.addresses[n]) {
                 if (addr.version === 4 && addr['OS-EXT-IPS:type'] === 'fixed') {
                   if (addr.port) {
                     if (count !== 0) {
@@ -227,7 +227,7 @@ class Model extends React.Component {
           break;
         case 'flavor':
           column.render = (col, item, i) => {
-            var ret = '';
+            let ret = '';
             if (item.flavor.name) {
               let ram = unitConverter(item.flavor.ram, 'MB');
               ret = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB';
@@ -250,11 +250,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -298,7 +298,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       that = this;
 
     switch (key) {
@@ -306,7 +306,7 @@ class Model extends React.Component {
         createInstance();
         break;
       case 'vnc_console':
-        var url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?server_name=' + rows[0].name;
+        let url = '/api/v1/' + HALO.user.projectId + '/servers/' + rows[0].id + '/vnc?server_name=' + rows[0].name;
         window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         break;
       case 'power_on':
@@ -470,7 +470,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -481,14 +481,14 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var allActive = true;
+    let allActive = true;
     rows.forEach((ele, i) => {
-      var thisState = ele.status.toLowerCase() === 'active' ? true : false;
+      let thisState = ele.status.toLowerCase() === 'active' ? true : false;
       allActive = allActive && thisState;
     });
 
-    var isSingle = rows.length === 1;
-    var status;
+    let isSingle = rows.length === 1;
+    let status;
     if (rows.length > 0) {
       status = rows[0].status.toLowerCase();
     }
@@ -565,12 +565,12 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
-    var syncUpdate = true;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -583,21 +583,21 @@ class Model extends React.Component {
       }
     };
 
-    var updateDetail = function(newContents) {
+    let updateDetail = function(newContents) {
       detail.setState({
         contents: newContents,
         loading: false
       });
     };
 
-    var itemStatus = rows[0].status.toLowerCase();
+    let itemStatus = rows[0].status.toLowerCase();
     switch (tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
-          var falutDetails = this.getFalutDetails(rows[0]);
-          var relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
-          var relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let falutDetails = this.getFalutDetails(rows[0]);
+          let relatedSourcesItem = this.getRelatedSourcesItems(rows[0]);
+          let relatedSnapshotItems = this.getRelatedSnapshotItems(rows[0].instance_snapshot);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -652,7 +652,7 @@ class Model extends React.Component {
         break;
       case 'console_output':
         if (isAvailableView(rows)) {
-          var serverId = rows[0].id,
+          let serverId = rows[0].id,
             requestData = {
               'os-getConsoleOutput': {
                 'length': -1
@@ -673,7 +673,7 @@ class Model extends React.Component {
       case 'vnc_console':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          var asyncTabKey = tabKey;
+          let asyncTabKey = tabKey;
 
           //open detail without delaying
           contents[asyncTabKey] = <VncConsole />;
@@ -698,7 +698,7 @@ class Model extends React.Component {
           syncUpdate = false;
           let that = this;
 
-          var updateDetailMonitor = function(newContents, loading) {
+          let updateDetailMonitor = function(newContents, loading) {
             detail.setState({
               contents: newContents,
               loading: loading
@@ -706,10 +706,10 @@ class Model extends React.Component {
           };
           let time = data.time;
 
-          var resourceId = rows[0].id,
+          let resourceId = rows[0].id,
             instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
             portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
-          var tabItems = [{
+          let tabItems = [{
             name: __.three_hours,
             key: '300',
             time: 'hour'
@@ -764,7 +764,7 @@ class Model extends React.Component {
             updateContents([]);
           }
           request.getResourceMeasures(resourceId, instanceMetricType, granularity, timeUtils.getTime(time)).then((res) => {
-            var arr = res.map((r, index) => ({
+            let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
               unit: utils.getUnit('instance', instanceMetricType[index]),
               yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), 'instance'),
@@ -784,7 +784,7 @@ class Model extends React.Component {
                 });
               }
               request.getNetworkResource(granularity, timeUtils.getTime(time), rows[0], _datas).then(resourceData => {
-                var portArr = resourceData.map((_rd, index) => ({
+                let portArr = resourceData.map((_rd, index) => ({
                   title: ips[parseInt(index / 2, 10)] + ' ' + utils.getMetricName(portMetricType[index % 2]),
                   unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
                   yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), 'instance'),
@@ -805,14 +805,14 @@ class Model extends React.Component {
       case 'alarm':
         if (isAvailableView(rows)) {
           syncUpdate = false;
-          var asyncAlarmKey = tabKey;
+          let asyncAlarmKey = tabKey;
 
           //open detail without delaying
           detail.setState({
             loading: true
           });
           request.getAlarmList(rows[0].id).then(res => {
-            var alarmItems = this.getAlarmItems(res);
+            let alarmItems = this.getAlarmItems(res);
             contents[asyncAlarmKey] = (
               <DetailMinitable
                 __={__}
@@ -836,7 +836,7 @@ class Model extends React.Component {
           });
 
           request.getActionLog(rows[0].id).then(res => {
-            var actionItems = this.getActionLogs(res.instanceActions);
+            let actionItems = this.getActionLogs(res.instanceActions);
             contents[tabKey] = (
               <DetailMinitable
                 __={__}
@@ -864,9 +864,9 @@ class Model extends React.Component {
   }
 
   getActionLogs(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.forEach((ele, index) => {
-      var dataObj = {
+      let dataObj = {
         request_id: ele.request_id,
         action: __[ele.action],
         start_time: getTime(ele.start_time, true),
@@ -875,7 +875,7 @@ class Model extends React.Component {
       };
       tableContent.push(dataObj);
     });
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.request_id,
         key: 'request_id',
@@ -906,10 +906,10 @@ class Model extends React.Component {
   }
 
   getAlarmItems(item) {
-    var tableContent = [];
+    let tableContent = [];
     item.forEach((element, index) => {
       if (element.type === 'gnocchi_resources_threshold' && element.gnocchi_resources_threshold_rule.resource_type === 'instance') {
-        var dataObj = {
+        let dataObj = {
           id: index + 1,
           name: <a data-type="router" href={'/dashboard/alarm/' + element.alarm_id}>
               {element.name}
@@ -922,7 +922,7 @@ class Model extends React.Component {
       }
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -949,7 +949,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var flavor = '';
+    let flavor = '';
     if (item.flavor.name) {
       let ram = unitConverter(item.flavor.ram, 'MB');
       flavor = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB';
@@ -957,7 +957,7 @@ class Model extends React.Component {
       flavor = '(' + item.flavor.id.substr(0, 8) + ')';
     }
 
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
@@ -996,7 +996,7 @@ class Model extends React.Component {
     }];
 
     if (HALO.settings.enable_approval) {
-      var metadata = item.metadata;
+      let metadata = item.metadata;
       items.push({
         title: __.owner,
         content: metadata.owner ? metadata.owner : '-'
@@ -1030,9 +1030,9 @@ class Model extends React.Component {
   }
 
   getRelatedSourcesItems(items) {
-    var attchVolumes = [];
+    let attchVolumes = [];
     items.volume.forEach((volume, i) => {
-      var vid = '(' + volume.id.slice(0, 8) + ')',
+      let vid = '(' + volume.id.slice(0, 8) + ')',
         vname = volume.name || vid;
       attchVolumes.push({
         key: volume.name,
@@ -1043,7 +1043,7 @@ class Model extends React.Component {
       });
     });
 
-    var networks = [];
+    let networks = [];
     for (let key in items.addresses) {
       let floatingIps = [], floatingIp = {};
       for (let item of items.addresses[key]) {
@@ -1092,7 +1092,7 @@ class Model extends React.Component {
       });
     }
 
-    var data = [{
+    let data = [{
       title: __.volume,
       key: 'volume',
       content: attchVolumes,
@@ -1128,9 +1128,9 @@ class Model extends React.Component {
   }
 
   getRelatedSnapshotItems(items) {
-    var data = [];
+    let data = [];
     items.forEach((item) => {
-      var size = unitConverter(item.size);
+      let size = unitConverter(item.size);
       data.push({
         title: item.created_at,
         name: <a data-type="router" href={'/dashboard/image-snapshot/' + item.id}>{item.name}</a>,
@@ -1147,7 +1147,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -1166,7 +1166,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -1185,10 +1185,10 @@ class Model extends React.Component {
   }
 
   onDescriptionAction(actionType, data) {
-    var that = this;
+    let that = this;
     switch (actionType) {
       case 'edit_name':
-        var {
+        let {
           rawItem, newName
         } = data;
         request.editServerName(rawItem, newName).then((res) => {

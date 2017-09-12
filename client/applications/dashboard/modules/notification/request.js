@@ -1,6 +1,6 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
@@ -9,14 +9,14 @@ module.exports = {
     });
   },
   addEndpoint: function(name, id, data) {
-    var url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + id + '/confirm';
+    let url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + id + '/confirm';
     return fetch.post({
       url: url,
       data: data
     });
   },
   deleteItems: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/zaqar/v2/queues/' + item.name,
@@ -28,7 +28,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   getSubscriptionsByName: function(name) {
-    var url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions';
+    let url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions';
     return fetch.get({
       url: url,
       headers: {
@@ -38,7 +38,7 @@ module.exports = {
   },
   addSubscriptions: function(name, data) {
     let updateList = [];
-    var url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions';
+    let url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions';
     data.subcribers && data.subcribers.forEach((s) => {
       if(s.op === 'add') {
         updateList.push(fetch.post({
@@ -95,7 +95,7 @@ module.exports = {
     });
   },
   deleteSub: function(name, id) {
-    var url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + id;
+    let url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + id;
     return fetch.delete({
       url: url,
       headers: {
@@ -104,7 +104,7 @@ module.exports = {
     });
   },
   resendVerify: function(sub) {
-    var url = '/proxy/zaqar/v2/queues/' + sub.source + '/subscriptions';
+    let url = '/proxy/zaqar/v2/queues/' + sub.source + '/subscriptions';
     return fetch.post({
       url: url,
       data: {

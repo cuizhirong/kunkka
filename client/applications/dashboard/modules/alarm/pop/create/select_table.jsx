@@ -1,7 +1,7 @@
-var React = require('react');
-var {InputSearch} = require('client/uskin/index');
-var Item = require('./select_table_item');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const {InputSearch} = require('client/uskin/index');
+const Item = require('./select_table_item');
+const __ = require('locale/client/dashboard.lang.json');
 
 class SelectTable extends React.Component {
 

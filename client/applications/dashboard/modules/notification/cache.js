@@ -1,5 +1,5 @@
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getNotificationList: function() {

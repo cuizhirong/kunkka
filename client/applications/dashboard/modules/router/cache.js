@@ -1,5 +1,5 @@
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getRouterList: function() {
@@ -17,7 +17,7 @@ module.exports = {
     });
   },
   getIkePolicyById: function(id) {
-    var url = '/proxy/neutron/v2.0/vpn/ikepolicies/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/ikepolicies/' + id;
     return fetch.get({
       url: url
     }).then(res => {
@@ -26,7 +26,7 @@ module.exports = {
     });
   },
   getIpsecPolicyById: function(id) {
-    var url = '/proxy/neutron/v2.0/vpn/ipsecpolicies/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/ipsecpolicies/' + id;
     return fetch.get({
       url: url
     }).then(res => {
@@ -35,17 +35,17 @@ module.exports = {
     });
   },
   getVpnServiceById: function(id) {
-    var url = '/proxy/neutron/v2.0/vpn/vpnservices/' + id;
+    let url = '/proxy/neutron/v2.0/vpn/vpnservices/' + id;
     return fetch.get({
       url: url
     });
   },
   getIpsecList: function() {
-    var that = this;
+    let that = this;
     return fetch.get({
       url: '/proxy/neutron/v2.0/vpn/ipsec-site-connections'
     }).then(function(res) {
-      var _res = res.ipsec_site_connections.map((ipsec, index) => {
+      let _res = res.ipsec_site_connections.map((ipsec, index) => {
         return that.getIkePolicyById(ipsec.ikepolicy_id).then((ike) => {
           res.ipsec_site_connections[index].ikepolicy = [ike.ikepolicy];
           return that.getIpsecPolicyById(ipsec.ipsecpolicy_id).then((_ipsec) => {

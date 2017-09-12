@@ -1,12 +1,12 @@
 /**
  * @func: get status icon in table and details
  */
-var React = require('react');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
 module.exports = (str, option) => {
-  var status = option ? option.status : str.toLowerCase();
-  var type = {};
+  let status = option ? option.status : str.toLowerCase();
+  let type = {};
 
   if (option) {
     type = option.type;
@@ -65,7 +65,7 @@ module.exports = (str, option) => {
     }
   }
 
-  var className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'
+  let className = type.status === 'loading' ? 'glyphicon icon-loading status-loading'
     : 'glyphicon icon-status-' + type.icon + ' ' + type.status;
 
   return (

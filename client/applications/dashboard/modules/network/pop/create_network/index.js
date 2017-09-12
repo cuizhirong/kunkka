@@ -1,9 +1,9 @@
-let commonModal = require('client/components/modal_common/index');
-let config = require('./config.json');
-let request = require('../../request');
-let networkType = require('./network_type');
-let __ = require('locale/client/dashboard.lang.json');
-let getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const networkType = require('./network_type');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function chooseVlan(refs, vlanState, testMin, testMax, testAddr, netVlanstate, subnetChecked, vlanLength){
   let vlanNumber = parseInt(vlanState.value, 10);

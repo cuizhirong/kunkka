@@ -1,6 +1,6 @@
-var React = require('react');
-var { Tip } = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
+const React = require('react');
+const { Tip } = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
 
 let countId = 0;
 

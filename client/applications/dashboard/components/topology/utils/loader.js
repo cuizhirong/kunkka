@@ -1,11 +1,11 @@
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
 module.exports = function(imageList) {
-  var promises = {};
+  let promises = {};
   imageList.forEach((url, i) => {
     promises[i] = new Promise(function(resolve, reject) {
-      var img = new Image();
+      let img = new Image();
       img.addEventListener('load', function() {
         resolve(img);
       }, false);

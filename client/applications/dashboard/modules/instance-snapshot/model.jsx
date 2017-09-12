@@ -1,6 +1,6 @@
-var ImageModel = require('../image/model');
-var config = require('./config.json');
-var request = require('../image/request');
+const ImageModel = require('../image/model');
+const config = require('./config.json');
+const request = require('../image/request');
 
 class Model extends ImageModel {
 
@@ -14,16 +14,16 @@ class Model extends ImageModel {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var _config = this.state.config;
+      let _config = this.state.config;
 
-      var table = config.table;
-      var data = res.filter((ele) => {
+      let table = config.table;
+      let data = res.filter((ele) => {
         return ele.image_type === 'snapshot';
       });
       table.data = data;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false

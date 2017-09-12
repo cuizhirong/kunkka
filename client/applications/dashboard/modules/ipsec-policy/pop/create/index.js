@@ -1,25 +1,25 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
-var __ = require('locale/client/dashboard.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const __ = require('locale/client/dashboard.lang.json');
 
 function pop(parent, callback) {
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      var name = refs.name.state.value;
-      var authAlgorithm = refs.auth_algorithm.state.value;
-      var encryptionAlgorighm = refs.encryption_algorithm.state.value;
-      var encapsulationMode = refs.encapsulation_mode.state.value;
-      var transformProtocol = refs.transform_protocol.state.value;
-      var pfs = refs.pfs.state.value;
-      var saLifetime = refs.sa_lifetime.state.value;
+      let name = refs.name.state.value;
+      let authAlgorithm = refs.auth_algorithm.state.value;
+      let encryptionAlgorighm = refs.encryption_algorithm.state.value;
+      let encapsulationMode = refs.encapsulation_mode.state.value;
+      let transformProtocol = refs.transform_protocol.state.value;
+      let pfs = refs.pfs.state.value;
+      let saLifetime = refs.sa_lifetime.state.value;
 
-      var data = {
+      let data = {
         ipsecpolicy: {
           name: name,
           transform_protocol: transformProtocol,
@@ -44,7 +44,7 @@ function pop(parent, callback) {
     onAction: function(filed, state, refs) {
       switch (filed) {
         case 'name':
-          var regexName = /^[a-z1-9A-Z_.]{1,}$/;
+          let regexName = /^[a-z1-9A-Z_.]{1,}$/;
           if(regexName.test(state.value)) {
             refs.name.setState({
               error: false
@@ -62,7 +62,7 @@ function pop(parent, callback) {
           }
           break;
         case 'sa_lifetime':
-          var regexLifetime = /^[1-9.]{1,}$/;
+          let regexLifetime = /^[1-9.]{1,}$/;
           if(regexLifetime.test(state.value)) {
             refs.sa_lifetime.setState({
               error: false

@@ -1,16 +1,16 @@
-var React = require('react');
-var {Modal, Button, InputNumber, Tip} = require('client/uskin/index');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('../../request');
-var ShortTip = require('client/components/modal_common/subs/short_tip');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const React = require('react');
+const {Modal, Button, InputNumber, Tip} = require('client/uskin/index');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('../../request');
+const ShortTip = require('client/components/modal_common/subs/short_tip');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 class CreateModalBase extends React.Component {
   constructor(props) {
     super(props);
     this.title = props.obj && props.obj.type === 'preview' ? __.preview + __.stack : __.create + __.stack;
 
-    var templateResource = [{
+    let templateResource = [{
       name: __.file,
       id: 'file'
     }, {
@@ -24,7 +24,7 @@ class CreateModalBase extends React.Component {
       id: 'direct_input'
     }];
 
-    var environmentSource = [{
+    let environmentSource = [{
       name: __.direct_input,
       id: 'direct_input'
     }];
@@ -205,7 +205,7 @@ class CreateModalBase extends React.Component {
           }
           let i = 0;
           request.getResourceData(customConstraint).then(_data => {
-            for(var key in _data) {
+            for(let key in _data) {
               if (_data[key][0]) {
                 that[labels[i]] = _data[key][0].id || _data[key][0].name;
               }
@@ -280,7 +280,7 @@ class CreateModalBase extends React.Component {
             }
             let i = 0;
             request.getResourceData(customConstraint).then(_data => {
-              for(var key in _data) {
+              for(let key in _data) {
                 if (_data[key][0]) {
                   this[labels[i]] = _data[key][0].id || _data[key][0].name;
                 }
@@ -739,7 +739,7 @@ class CreateModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       page = state.page,
       slideClass = '';

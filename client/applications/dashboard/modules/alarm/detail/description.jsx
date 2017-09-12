@@ -1,10 +1,10 @@
-var React = require('react');
-var utils = require('../utils');
-var helper = require('../pop/create/helper');
-var __ = require('locale/client/dashboard.lang.json');
-var getStatusIcon = require('../../../utils/status_icon');
-var request = require('../request');
-var deleteModal = require('client/components/modal_delete/index');
+const React = require('react');
+const utils = require('../utils');
+const helper = require('../pop/create/helper');
+const __ = require('locale/client/dashboard.lang.json');
+const getStatusIcon = require('../../../utils/status_icon');
+const request = require('../request');
+const deleteModal = require('client/components/modal_delete/index');
 
 module.exports = {
 
@@ -128,7 +128,7 @@ module.exports = {
       getRow('ok', __.alarm_when_ok, this.getNotificationId(url))
     );
 
-    var table = {
+    let table = {
       column: [{
         title: __.trigger,
         key: 'trigger',

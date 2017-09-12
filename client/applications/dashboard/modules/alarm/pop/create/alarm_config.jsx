@@ -1,9 +1,9 @@
-var React = require('react');
-var Chart = require('echarts');
-var __ = require('locale/client/dashboard.lang.json');
-var utils = require('../../utils');
-var contant = require('./constant');
-var helper = require('./helper');
+const React = require('react');
+const Chart = require('echarts');
+const __ = require('locale/client/dashboard.lang.json');
+const utils = require('../../utils');
+const contant = require('./constant');
+const helper = require('./helper');
 
 let lineChart;
 

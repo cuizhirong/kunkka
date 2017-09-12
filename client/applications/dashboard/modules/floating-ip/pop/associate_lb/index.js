@@ -1,19 +1,19 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../../loadbalancer/request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../../loadbalancer/request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getList().then(loadbalancers => {
-        var lbs = loadbalancers.filter(lb => {
+        let lbs = loadbalancers.filter(lb => {
           if(lb.floatingip) {
             return false;
           }
@@ -26,7 +26,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var portID = refs.port.state.value;
+      let portID = refs.port.state.value;
       request.associateFloatingIp(portID, obj.id).then((res) => {
         callback && callback(res);
         cb(true);
@@ -39,7 +39,7 @@ function pop(obj, parent, callback) {
         case 'lb':
           refs.lb.state.data.some(lb => {
             if(lb.id === refs.lb.state.value) {
-              var ports = [{
+              let ports = [{
                 name: lb.vip_address,
                 id: lb.vip_port_id
               }];

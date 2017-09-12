@@ -1,6 +1,6 @@
-let storage = require('client/applications/dashboard/cores/storage');
-let fetch = require('client/applications/dashboard/cores/fetch');
-let RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {

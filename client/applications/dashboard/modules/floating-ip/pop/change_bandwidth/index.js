@@ -1,8 +1,8 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function priceError(refs, error) {
   refs.btn.setState({
@@ -12,22 +12,22 @@ function priceError(refs, error) {
 
 function pop(obj, parent, callback) {
 
-  var defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
+  let defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
   if (defaultBandwidth) {
     config.fields[0].max = defaultBandwidth;
   }
 
-  var currentBandwidth = obj.rate_limit / 1024;
+  let currentBandwidth = obj.rate_limit / 1024;
   if (currentBandwidth < 1) {
     currentBandwidth = 1;
   }
   config.fields[0].value = currentBandwidth;
 
-  var enableCharge = HALO.settings.enable_charge;
+  let enableCharge = HALO.settings.enable_charge;
   config.btn.disabled = enableCharge;
   config.fields[1].hide = !enableCharge;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -42,7 +42,7 @@ function pop(obj, parent, callback) {
       }
 
       if (enableCharge) {
-        var bandwidth = currentBandwidth;
+        let bandwidth = currentBandwidth;
         request.getFloatingIPPrice(bandwidth).then((res) => {
           refs.charge.setState({
             value: res.unit_price
@@ -55,8 +55,8 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var bw = Number(refs.bandwidth.state.value) * 1024;
-      var data = {
+      let bw = Number(refs.bandwidth.state.value) * 1024;
+      let data = {
         floatingip: {
           rate_limit: bw
         }
@@ -73,8 +73,8 @@ function pop(obj, parent, callback) {
       switch (field) {
         case 'bandwidth':
           if (enableCharge) {
-            var sliderEvent = state.eventType === 'mouseup';
-            var inputEvnet = state.eventType === 'change' && !state.error;
+            let sliderEvent = state.eventType === 'mouseup';
+            let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
               request.getFloatingIPPrice(state.value).then((res) => {

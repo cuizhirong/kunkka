@@ -1,20 +1,20 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var getErrorMessage = require('client/applications/dashboard/utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       request.getInstances().then((data) => {
-        var instances = data.filter((item) => {
-          var addresses = item.addresses;
+        let instances = data.filter((item) => {
+          let addresses = item.addresses;
           for (let key in addresses) {
             for (let ele of addresses[key]) {
               if (ele['OS-EXT-IPS:type'] === 'fixed') {
@@ -39,10 +39,10 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var serverID = refs.instance.state.value;
-      var portID = refs.port.state.value;
-      var fixedAddress = refs.port.state.data.find((ele) => ele.id === portID);
-      var data = {
+      let serverID = refs.instance.state.value;
+      let portID = refs.port.state.value;
+      let fixedAddress = refs.port.state.data.find((ele) => ele.id === portID);
+      let data = {
         addFloatingIp: {
           address: obj.floating_ip_address,
           fixed_address: fixedAddress.name
@@ -59,14 +59,14 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch (field) {
         case 'instance':
-          var instances = refs.instance.state.data;
-          var selected = refs.instance.state.value;
+          let instances = refs.instance.state.data;
+          let selected = refs.instance.state.value;
 
-          var item = instances.filter((instance) => instance.id === selected)[0];
+          let item = instances.filter((instance) => instance.id === selected)[0];
 
           if (instances.length > 0) {
-            var ports = [];
-            var addresses = item.addresses;
+            let ports = [];
+            let addresses = item.addresses;
 
             for (let key in addresses) {
               for (let ele of addresses[key]) {

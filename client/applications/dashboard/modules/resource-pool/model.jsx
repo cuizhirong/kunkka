@@ -1,28 +1,28 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail component
-var BasicProps = require('client/components/basic_props/index');
-var ResourceList = require('./resource_list');
+const BasicProps = require('client/components/basic_props/index');
+const ResourceList = require('./resource_list');
 
 //pop modals
-var createPool = require('./pop/create_pool/');
-var deleteModal = require('client/components/modal_delete/index');
-var addResource = require('./pop/add_resource/index');
-var updateResourceState = require('./pop/update_resource_state/index');
-var modifyWeight = require('./pop/modify_weight/index');
-var createMonitor = require('./pop/create_monitor/index');
-var modifyMonitor = require('./pop/modify_monitor/index');
+const createPool = require('./pop/create_pool/');
+const deleteModal = require('client/components/modal_delete/index');
+const addResource = require('./pop/add_resource/index');
+const updateResourceState = require('./pop/update_resource_state/index');
+const modifyWeight = require('./pop/modify_weight/index');
+const createMonitor = require('./pop/create_monitor/index');
+const modifyMonitor = require('./pop/modify_monitor/index');
 
-var config = require('./config.json');
-var router = require('client/utils/router');
-var __ = require('locale/client/dashboard.lang.json');
-var request = require('./request');
-var getStatusIcon = require('../../utils/status_icon');
-var notify = require('client/applications/dashboard/utils/notify');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
+const config = require('./config.json');
+const router = require('client/utils/router');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const getStatusIcon = require('../../utils/status_icon');
+const notify = require('client/applications/dashboard/utils/notify');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
 
 class Model extends React.Component {
 
@@ -39,7 +39,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var columns = this.state.config.table.column;
+    let columns = this.state.config.table.column;
     this.tableColRender(columns);
 
     msgEvent.on('dataChange', data => {
@@ -101,11 +101,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then(res => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -139,7 +139,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
     switch(key) {
       case 'create_pool':
@@ -204,7 +204,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -235,11 +235,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -257,11 +257,11 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           detail.setState({loading: true});
           request.getRelated(false).then(res => {
-            var pool = rows[0];
+            let pool = rows[0];
             request.getMembers(pool.id).then(r => {
               pool.members = r.members;
               r.members.forEach(member => {
-                var servers = res.instance;
+                let servers = res.instance;
                 servers.some((server) => {
                   for (let addr in server.addresses) {
                     for (let subnet of server.addresses[addr]) {
@@ -274,7 +274,7 @@ class Model extends React.Component {
                 });
               });
 
-              var basicPropsItem = this.getBasicPropsItems(rows[0]),
+              let basicPropsItem = this.getBasicPropsItems(rows[0]),
                 resourceListConfig = this.getResourceListConfig(rows[0]),
                 btnConfig = this.getBtnConfig();
 
@@ -313,7 +313,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.slice(0, 8) + ')',
       type: 'editable'
@@ -356,7 +356,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -375,7 +375,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -396,7 +396,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data, moreBtnKey) {
     switch (actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editPoolName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'resource_pool',
@@ -418,9 +418,9 @@ class Model extends React.Component {
   }
 
   getResourceListConfig(pool) {
-    var dataContent = [];
+    let dataContent = [];
     pool.members.forEach(m => {
-      var dataObj = {
+      let dataObj = {
         name: m.name,
         server_id: m.server_id,
         id: m.id,
@@ -432,7 +432,7 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     });
 
-    var tableConfig = {
+    let tableConfig = {
       column: [{
         title: __.name,
         key: 'name',
@@ -490,7 +490,7 @@ class Model extends React.Component {
   }
 
   getBtnConfig() {
-    var btnConfig = {};
+    let btnConfig = {};
     btnConfig.btn = {
       value: __.more,
       iconClass: 'more'
@@ -520,7 +520,7 @@ class Model extends React.Component {
   }
 
   onClickResourceMoreBtn(btnKey, data) {
-    var {rawItem, rows} = data;
+    let {rawItem, rows} = data;
     switch(btnKey) {
       case 'modify_weight':
         modifyWeight(data);

@@ -1,14 +1,14 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/dashboard.lang.json');
-var popTarget = require('../create_tunnel/target_network');
-var getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/dashboard.lang.json');
+const popTarget = require('../create_tunnel/target_network');
+const getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = __.layer_three;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
@@ -28,7 +28,7 @@ function pop(obj, parent, callback) {
       });
     },
     onConfirm: function(refs, cb) {
-      var data = {
+      let data = {
         ipsec_site_connection: {
           name: refs.name.state.value,
           admin_state_up: true,

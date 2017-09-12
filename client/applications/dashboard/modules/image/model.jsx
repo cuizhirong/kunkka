@@ -1,27 +1,27 @@
 require('./style/index.less');
 
 //react components
-let React = require('react');
-let Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
 //detail components
-let BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
 //pop modal
-let deleteModal = require('client/components/modal_delete/index');
-let createInstance = require('../instance/pop/create_instance/index');
-let createVolume = require('./pop/create_volume/index');
-let RelatedInstance = require('../image/detail/related_instance');
-let image = require('./pop/image/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createInstance = require('../instance/pop/create_instance/index');
+const createVolume = require('./pop/create_volume/index');
+const RelatedInstance = require('../image/detail/related_instance');
+const image = require('./pop/image/index');
 
-let config = require('./config.json');
-let __ = require('locale/client/dashboard.lang.json');
-let request = require('./request');
-let router = require('client/utils/router');
-let msgEvent = require('client/applications/dashboard/cores/msg_event');
-let getStatusIcon = require('../../utils/status_icon');
-let unitConverter = require('client/utils/unit_converter');
-let getTime = require('client/utils/time_unification');
+const config = require('./config.json');
+const __ = require('locale/client/dashboard.lang.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const getStatusIcon = require('../../utils/status_icon');
+const unitConverter = require('client/utils/unit_converter');
+const getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 

@@ -1,24 +1,24 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var BasicProps = require('client/components/basic_props/index');
+const BasicProps = require('client/components/basic_props/index');
 
-var deleteModal = require('client/components/modal_delete/index');
-var createPort = require('./pop/create_port/index');
-var associateInstance = require('./pop/associate_instance/index');
-var detachInstance = require('./pop/detach_instance/index');
-var modifySecurityGroup = require('./pop/modify_security_group/index');
+const deleteModal = require('client/components/modal_delete/index');
+const createPort = require('./pop/create_port/index');
+const associateInstance = require('./pop/associate_instance/index');
+const detachInstance = require('./pop/detach_instance/index');
+const modifySecurityGroup = require('./pop/modify_security_group/index');
 
-var __ = require('locale/client/dashboard.lang.json');
-var config = require('./config.json');
-var request = require('./request');
-var router = require('client/utils/router');
-var msgEvent = require('client/applications/dashboard/cores/msg_event');
-var notify = require('client/applications/dashboard/utils/notify');
-var getStatusIcon = require('../../utils/status_icon');
-var utils = require('../../utils/utils');
+const __ = require('locale/client/dashboard.lang.json');
+const config = require('./config.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const notify = require('client/applications/dashboard/utils/notify');
+const getStatusIcon = require('../../utils/status_icon');
+const utils = require('../../utils/utils');
 
 class Model extends React.Component {
 
@@ -35,7 +35,7 @@ class Model extends React.Component {
   }
 
   componentWillMount() {
-    var a = '', b = '';
+    let a = '', b = '';
 
     this.state.config.table.column.forEach((col) => {
       if (col.key === 'floating_ip') {
@@ -93,7 +93,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'subnet':
           column.render = (col, item, i) => {
-            var subnets = [];
+            let subnets = [];
             item.subnets.forEach((_subnet, _i) => {
               if(_subnet.id) {
                 _i && subnets.push(', ');
@@ -164,11 +164,11 @@ class Model extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -202,7 +202,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var rows = data.rows,
+    let rows = data.rows,
       that = this;
 
     switch (key) {
@@ -279,7 +279,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -289,7 +289,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var len = rows.length,
+    let len = rows.length,
       device = rows[0] ? rows[0].device_owner : null;
 
     for(let key in btns) {
@@ -304,7 +304,7 @@ class Model extends React.Component {
           btns[key].disabled = (len === 1 && (!device || device.indexOf('compute') > -1) && rows[0].port_security_enabled) ? false : true;
           break;
         case 'delete':
-          var b = rows.every((m) => {
+          let b = rows.every((m) => {
             if (!m.device_owner || m.device_owner.indexOf('compute') > -1) {
               return true;
             }
@@ -321,11 +321,11 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
-    var isAvailableView = (_rows) => {
+    let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
           <div className="no-data-desc">
@@ -341,7 +341,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -377,7 +377,7 @@ class Model extends React.Component {
   onDescriptionAction(actionType, data) {
     switch(actionType) {
       case 'edit_name':
-        var {rawItem, newName} = data;
+        let {rawItem, newName} = data;
         request.editPortName(rawItem, newName).then((res) => {
           notify({
             resource_type: 'port',
@@ -396,7 +396,7 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')',
       type: 'editable'
@@ -431,7 +431,7 @@ class Model extends React.Component {
     }, {
       title: __.subnet,
       content: (function() {
-        var subnets = [];
+        let subnets = [];
         item.subnets.map((_subnet, _i) => {
           if(_subnet.id) {
             _i && subnets.push(', ');
@@ -482,7 +482,7 @@ class Model extends React.Component {
 
   refresh(data, forceUpdate) {
     if (data) {
-      var path = router.getPathList();
+      let path = router.getPathList();
       if (path[2]) {
         if (data.detailLoading) {
           this.refs.dashboard.refs.detail.loading();
@@ -501,7 +501,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({

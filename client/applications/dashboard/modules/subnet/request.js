@@ -1,11 +1,11 @@
-var storage = require('client/applications/dashboard/cores/storage');
-var fetch = require('client/applications/dashboard/cores/fetch');
-var RSVP = require('rsvp');
+const storage = require('client/applications/dashboard/cores/storage');
+const fetch = require('client/applications/dashboard/cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
     return storage.getList(['subnet', 'network', 'router', 'instance', 'port'], forced).then(function(data) {
-      var subnets = data.subnet;
+      let subnets = data.subnet;
       subnets.forEach((subnet) => {
         subnet.port_security_enabled = subnet.network.port_security_enabled;
         subnet.ports.forEach((item) => {
@@ -39,7 +39,7 @@ module.exports = {
         });
       });
 
-      var exNetworks = data.network.filter(n => {
+      let exNetworks = data.network.filter(n => {
         if(n['router:external'] === true) {
           return true;
         }
@@ -47,7 +47,7 @@ module.exports = {
       });
 
       return subnets.filter(s => {
-        var isExSubnet = false;
+        let isExSubnet = false;
         exNetworks.forEach(n => {
           if(s.network_id === n.id) {
             isExSubnet = isExSubnet || true;
@@ -61,7 +61,7 @@ module.exports = {
     });
   },
   editSubnetName: function(item, newName) {
-    var data = {};
+    let data = {};
     data.subnet = {};
     data.subnet.name = newName;
 
@@ -71,7 +71,7 @@ module.exports = {
     });
   },
   deleteSubnets: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/neutron/v2.0/subnets/' + item.id
@@ -139,7 +139,7 @@ module.exports = {
     });
   },
   createPort: function(port) {
-    var data = {
+    let data = {
       port: port
     };
     return fetch.post({
