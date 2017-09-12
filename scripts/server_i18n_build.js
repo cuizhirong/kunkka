@@ -100,7 +100,7 @@ _locales.forEach(locale => {
 });
 
 _locales.forEach(lang => {
-  var langLowerCase = lang.toLowerCase();
+  let langLowerCase = lang.toLowerCase();
   Object.keys(i18n).forEach(module => {
     Object.keys(i18n[module]).forEach(component => {
       locales[langLowerCase][module][component] = i18n[module][component][lang];

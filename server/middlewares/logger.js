@@ -1,8 +1,8 @@
 'use strict';
 
-var winston = require('winston');
-var config = require('config');
-var logger = new (winston.Logger)({
+const winston = require('winston');
+const config = require('config');
+let logger = new (winston.Logger)({
   transports: [
     new (winston.transports.File)({
       name: 'accessLog',

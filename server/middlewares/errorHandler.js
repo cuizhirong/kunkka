@@ -1,9 +1,9 @@
 'use strict';
 
-var config = require('config');
+const config = require('config');
 
-var sessionEnginePort = config('sessionEngine').port;
-var sessionEngineType = config('sessionEngine').type;
+const sessionEnginePort = config('sessionEngine').port;
+const sessionEngineType = config('sessionEngine').type;
 
 module.exports = function (err, req, res, next) {
   if (err.status && err.response) {

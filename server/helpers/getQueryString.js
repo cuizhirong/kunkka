@@ -3,7 +3,7 @@
 const qs = require('querystring');
 
 module.exports = function (query) {
-  var str = '';
+  let str = '';
   if (query) {
     Object.keys(query).forEach(function (k) {
       if (str) {

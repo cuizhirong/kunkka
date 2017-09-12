@@ -43,7 +43,7 @@ const promisifyMemcachedClientAPI = function (memcachedClient) {
 };
 
 module.exports = function (app) {
-  var sessionEngine = config('sessionEngine');
+  let sessionEngine = config('sessionEngine');
   if (sessionEngine.type === 'Session') {
     app.use(session({
       secret: sessionEngine.secret,
@@ -51,9 +51,9 @@ module.exports = function (app) {
       saveUninitialized: true
     }));
   } else if (sessionEngine.type === 'Redis') {
-    var RedisStore = require('connect-redis')(session);
-    var Redis = require('redis');
-    var RedisClient = Redis.createClient({
+    let RedisStore = require('connect-redis')(session);
+    let Redis = require('redis');
+    let RedisClient = Redis.createClient({
       host: sessionEngine.host,
       port: sessionEngine.port
     });
@@ -78,16 +78,16 @@ module.exports = function (app) {
       }
     });
   } else if (sessionEngine.type === 'Memcached') {
-    var Memcached = require('memjs');
-    var memjsLogger = {};
+    let Memcached = require('memjs');
+    let memjsLogger = {};
     memjsLogger.log = logger.error;
-    var memcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
+    let memcachedClient = Memcached.Client.create(sessionEngine.remotes.join(','), {
       failover: false,
       logger: memjsLogger
     });
     promisifyMemcachedClientAPI(memcachedClient);
     app.set('CacheClient', memcachedClient);
-    var MemcachedStore = require('connect-memjs')(session);
+    let MemcachedStore = require('connect-memjs')(session);
     app.use(session({
       secret: sessionEngine.secret,
       resave: false,

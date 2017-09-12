@@ -32,7 +32,7 @@
     "no-this-before-super": 2,
     "no-undef": 2,
     "no-unused-vars": [2, { "vars": "all", "args": "none" }],
-    "no-var": 0,
+    "no-var": 2,
     "no-unused-expressions": 0,
     "no-shadow": [2, {"allow": ["xhr"]}],
     "padded-blocks": 0,

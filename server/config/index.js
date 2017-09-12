@@ -4,9 +4,9 @@
  * Module dependencies
  */
 
-var env = process.env.NODE_ENV || 'development';
+let env = process.env.NODE_ENV || 'development';
 
-var configObj;
+let configObj;
 try {
   configObj = require('configs/server');
 } catch (e) {
