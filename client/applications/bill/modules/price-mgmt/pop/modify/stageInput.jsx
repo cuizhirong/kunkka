@@ -1,10 +1,10 @@
 require('./style/index.less');
 
-var React = require('react');
-var Table = require('client/uskin/index').Table;
-var Button = require('client/uskin/index').Button;
-var EditContent = require('../editable/edit_content.jsx');
-var __ = require('locale/client/bill.lang.json');
+const React = require('react');
+const Table = require('client/uskin/index').Table;
+const Button = require('client/uskin/index').Button;
+const EditContent = require('../editable/edit_content.jsx');
+const __ = require('locale/client/bill.lang.json');
 
 class StageInput extends React.Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class StageInput extends React.Component {
 
   onChange(e) {
     //number check and whether value exist in data
-    var regex = /^[0-9.]{1,}$/;
+    let regex = /^[0-9.]{1,}$/;
     this.setState({
       rangeClass: (regex.exec(this.refs.range.value) && !this.isExist(this.state.data, this.refs.range.value)) ? '' : 'error',
       valueClass: regex.exec(this.refs.price.value) ? '' : 'error'
@@ -33,13 +33,13 @@ class StageInput extends React.Component {
   }
 
   componentWillMount() {
-    var data = [],
+    let data = [],
       value = this.props.value.sort((a, b) => {
         return a.count - b.count;
       });
 
     value.forEach((price) => {
-      var o = {
+      let o = {
         count: price.count,
         price: price.price
       };
@@ -60,7 +60,7 @@ class StageInput extends React.Component {
     switch(eventType) {
       case 'addlist':
         if(this.refs.range.value !== '' && this.refs.price.value !== '' && this.state.rangeClass !== 'error') {
-          var price = {
+          let price = {
             count: data.length === 0 ? 0 : +this.refs.range.value,
             price: this.refs.price.value
           };
@@ -117,7 +117,7 @@ class StageInput extends React.Component {
   }
 
   onAction(actionType, data) {
-    var _data = this.state.data;
+    let _data = this.state.data;
     switch(actionType) {
       case 'range':
         if(data.newValue !== '') {
@@ -147,7 +147,7 @@ class StageInput extends React.Component {
   }
 
   render() {
-    var columns = [{
+    let columns = [{
       title: __.range,
       key: 'range',
       dataIndex: 'range'

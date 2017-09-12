@@ -1,13 +1,13 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main/index');
+const React = require('react');
+const Main = require('client/components/main/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/bill.lang.json');
-var {Pagination} = require('client/uskin/index');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/bill.lang.json');
+const {Pagination} = require('client/uskin/index');
 
 class Model extends React.Component {
   constructor(props) {
@@ -60,8 +60,8 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    var current = 1;
-    var limit = this.state.config.table.limit;
+    let current = 1;
+    let limit = this.state.config.table.limit;
     this.getList(current, limit);
   }
 
@@ -70,7 +70,7 @@ class Model extends React.Component {
       current = 1;
     }
 
-    var _config = this.state.config,
+    let _config = this.state.config,
       table = _config.table;
     request.getList((current - 1) * limit, limit).then((res) => {
       table.data = res.charges;
@@ -82,12 +82,12 @@ class Model extends React.Component {
   }
 
   updateTableData(table, current, totalNum, limit) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     if (totalNum > 0) {
-      var total = Math.ceil(totalNum / limit);
+      let total = Math.ceil(totalNum / limit);
       table.pagination = {
         current: current,
         total: total,
@@ -116,15 +116,15 @@ class Model extends React.Component {
   }
 
   onNextPage(refs, page) {
-    var limit = this.state.config.table.limit;
+    let limit = this.state.config.table.limit;
     this.getList(page, limit);
   }
 
   onClickBtnList(key, refs, data) {
     switch (key) {
       case 'refresh':
-        var current = 1;
-        var limit = this.state.config.table.limit;
+        let current = 1;
+        let limit = this.state.config.table.limit;
         this.loadingTable();
         this.getList(current, limit);
         break;
@@ -134,7 +134,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -147,7 +147,7 @@ class Model extends React.Component {
   }
 
   render() {
-    var _config = this.state.config,
+    let _config = this.state.config,
       table = _config.table,
       pagi = table.pagination;
     return (

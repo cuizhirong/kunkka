@@ -1,9 +1,9 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getOverview: function() {
-    var queryList = [];
+    let queryList = [];
     queryList.push(this.getBill());
     queryList.push(this.getBillProject());
     return RSVP.all(queryList);

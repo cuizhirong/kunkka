@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var BasicProps = require('client/components/basic_props/index');
-var modifyPricePop = require('./pop/modify/index');
-var deleteModal = require('client/components/modal_delete/index');
-var Table = require('client/uskin/index').Table;
-var __ = require('locale/client/bill.lang.json');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var request = require('./request');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const BasicProps = require('client/components/basic_props/index');
+const modifyPricePop = require('./pop/modify/index');
+const deleteModal = require('client/components/modal_delete/index');
+const Table = require('client/uskin/index').Table;
+const __ = require('locale/client/bill.lang.json');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const request = require('./request');
 
 class Model extends React.Component {
 
@@ -51,13 +51,13 @@ class Model extends React.Component {
       switch (column.key) {
         case 'base_price':
           column.render = (col, item, i) => {
-            var basePrice = item.unit_price.price.base_price;
+            let basePrice = item.unit_price.price.base_price;
             return <span className="orange">{basePrice}</span>;
           };
           break;
         case 'price':
           column.render = (col, item, i) => {
-            var price = item.unit_price.price;
+            let price = item.unit_price.price;
             if(price.segmented) {
               return (
                 <div className="halo-module-price-mgmt-price">
@@ -71,7 +71,7 @@ class Model extends React.Component {
           break;
         case 'type':
           column.render = (col, item, i) => {
-            var type = item.unit_price.price.type;
+            let type = item.unit_price.price.type;
             if(type === 'segmented') {
               return __.gradient_charge;
             } else {
@@ -102,7 +102,7 @@ class Model extends React.Component {
   }
 
   getSingle(id) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getPriceById(id).then((res) => {
       if (res) {
         table.data = [res];
@@ -117,7 +117,7 @@ class Model extends React.Component {
   }
 
   getSingleByName(name) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getPriceByName(name).then((res) => {
       if (res) {
         table.data = res;
@@ -133,9 +133,9 @@ class Model extends React.Component {
 
   getList() {
     this.clearState();
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList().then((res) => {
-      var newTable = this.processTableData(table, res);
+      let newTable = this.processTableData(table, res);
       this.updateTableData(newTable, res._url);
     }).catch((res) => {
       table.data = [];
@@ -145,14 +145,14 @@ class Model extends React.Component {
 
   //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
     }, () => {
-      var detail = this.refs.dashboard.refs.detail,
+      let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -169,11 +169,11 @@ class Model extends React.Component {
 
   getTableData(detailRefresh) {
     request.getList().then((res) => {
-      var table = this.state.config.table;
+      let table = this.state.config.table;
       table.data = res.products;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -224,7 +224,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -237,7 +237,7 @@ class Model extends React.Component {
   }
 
   clearState() {
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -286,7 +286,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -296,7 +296,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var len = rows.length;
+    let len = rows.length;
 
     for(let key in btns) {
       switch (key) {
@@ -315,7 +315,7 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       that = this;
 
     switch(key) {
@@ -366,14 +366,14 @@ class Model extends React.Component {
   }
 
   onClickDetailTabs(tabKey, refs, data) {
-    var {rows} = data;
-    var detail = refs.detail;
-    var contents = detail.state.contents;
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
 
     switch (tabKey) {
       case 'description':
         if (rows.length === 1) {
-          var basicPropsItem = this.getBasicPropsItems(rows[0]);
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
 
           contents[tabKey] = (
             <div>
@@ -398,8 +398,8 @@ class Model extends React.Component {
   }
 
   getBasicPropsItems(item) {
-    var type = item.unit_price.price.type;
-    var tableConfig = {
+    let type = item.unit_price.price.type;
+    let tableConfig = {
       datakey: item.id,
       column: [{
         title: __.range,
@@ -418,7 +418,7 @@ class Model extends React.Component {
       data: []
     };
     item.unit_price.price.segmented.forEach((childItem, i) => {
-      var range = '>  ' + childItem.count,
+      let range = '>  ' + childItem.count,
         price = childItem.price,
         data = {
           range: range,
@@ -427,13 +427,13 @@ class Model extends React.Component {
       tableConfig.data.push(data);
     });
 
-    var price = <Table
+    let price = <Table
         __={__}
         dataKey={tableConfig.dataKey}
         column={tableConfig.column}
         data={tableConfig.data}
       />;
-    var items = [{
+    let items = [{
       title: __.name,
       content: item.name || '(' + item.id.substring(0, 8) + ')'
     }, {

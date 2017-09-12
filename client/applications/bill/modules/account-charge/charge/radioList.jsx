@@ -1,6 +1,6 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
 class Main extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Main extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    let props = this.props;
 
     return (
       <div className="p-r">

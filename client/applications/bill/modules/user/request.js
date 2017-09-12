@@ -1,7 +1,7 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 function requestParams(obj) {
-  var str = '';
+  let str = '';
   for(let key in obj) {
     str += ('&' + key + '=' + obj[key]);
   }
@@ -16,7 +16,7 @@ module.exports = {
     }
 
     return this.getDomains().then((domains) => {
-      var domainID = 'default';
+      let domainID = 'default';
       if (HALO.configs.domain) {
         let domainName = HALO.configs.domain.toLowerCase();
         let domainIndex = domains.findIndex((ele) => ele.name.toLowerCase() === domainName);
@@ -29,7 +29,7 @@ module.exports = {
         }
       }
 
-      var url = '/api/v1/users?limit=' + pageLimit;
+      let url = '/api/v1/users?limit=' + pageLimit;
       if (HALO.settings.enable_ldap) {
         url += '&domain_id=' + domainID;
       }
@@ -59,7 +59,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    var url = '/api/v1/users?limit=' + pageLimit + requestParams(data);
+    let url = '/api/v1/users?limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -106,7 +106,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/keystone/v3/domains'
     }).then((res) => {
-      var domains = [];
+      let domains = [];
       res.domains.forEach((domain) => {
         if (domain.id === 'default') {
           domains.unshift(domain);

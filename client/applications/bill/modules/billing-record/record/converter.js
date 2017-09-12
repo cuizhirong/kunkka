@@ -3,7 +3,7 @@
  */
 module.exports = {
   getLangValue(lang, obj) {
-    var strs = '';
+    let strs = '';
     obj.map((str) => {
       strs += lang[str];
     });

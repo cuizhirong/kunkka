@@ -1,14 +1,14 @@
 require('./style/index.less');
 
-var React = require('react');
-var Main = require('client/components/main_paged/index');
-var charge = require('./pop/charge/index');
+const React = require('react');
+const Main = require('client/components/main_paged/index');
+const charge = require('./pop/charge/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/bill.lang.json');
-var getStatusIcon = require('../../utils/status_icon');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/bill.lang.json');
+const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
@@ -79,7 +79,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getList(table.limit).then((res) => {
       const users = res[0];
       const domains = res[1];
@@ -99,7 +99,7 @@ class Model extends React.Component {
   getFilterList(data) {
     this.clearState();
 
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getFilteredList(data, table.limit).then((res) => {
       table.data = res.users;
       this.setPagination(table, res);
@@ -112,7 +112,7 @@ class Model extends React.Component {
   }
 
   getNextListData(url, refreshDetail) {
-    var table = this.state.config.table;
+    let table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.users) {
         table.data = res.users;
@@ -138,7 +138,7 @@ class Model extends React.Component {
     if (actionType === 'search') {
       this.loadingTable();
 
-      var allTenant = data.all_tenant;
+      let allTenant = data.all_tenant;
 
       if (allTenant) {
         this.getFilterList(allTenant);
@@ -149,7 +149,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -159,7 +159,7 @@ class Model extends React.Component {
       if (currentUrl) {
         this.stores.urls.push(currentUrl);
 
-        var detail = this.refs.dashboard.refs.detail,
+        let detail = this.refs.dashboard.refs.detail,
           params = this.props.params;
         if (detail && refreshDetail && params.length > 2) {
           detail.refresh();
@@ -170,7 +170,7 @@ class Model extends React.Component {
   }
 
   setPagination(table, res) {
-    var pagination = {};
+    let pagination = {};
 
     res.users_links && res.users_links.forEach((link) => {
       if (link.rel === 'prev') {
@@ -218,7 +218,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -237,7 +237,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -268,7 +268,7 @@ class Model extends React.Component {
         this.onClickTableCheckbox(refs, data);
         break;
       case 'pagination':
-        var url,
+        let url,
           history = this.stores.urls;
 
         if (data.direction === 'prev'){
@@ -292,9 +292,9 @@ class Model extends React.Component {
   }
 
   onClickBtnList(key, refs, data) {
-    var {rows} = data;
+    let {rows} = data;
 
-    var that = this;
+    let that = this;
     switch(key) {
       case 'charge':
         charge(rows[0], null, function() {
@@ -318,7 +318,7 @@ class Model extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -328,7 +328,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    var singleRow = rows.length === 1;
+    let singleRow = rows.length === 1;
     btns.charge.disabled = !singleRow;
 
     return btns;

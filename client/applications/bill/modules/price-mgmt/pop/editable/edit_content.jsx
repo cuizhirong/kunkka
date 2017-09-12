@@ -1,6 +1,6 @@
 require('./style/index.less');
 
-var React = require('react');
+const React = require('react');
 
 class EditContent extends React.Component {
 
@@ -31,7 +31,7 @@ class EditContent extends React.Component {
   }
 
   onChangeInput(e) {
-    var regex = /^[0-9.]{1,}$/;
+    let regex = /^[0-9.]{1,}$/;
     this.setState({
       value: e.target.value,
       className: ''
@@ -60,7 +60,7 @@ class EditContent extends React.Component {
   }
 
   onConfirm(e) {
-    var item = this.props.item;
+    let item = this.props.item;
     this.props.onAction && this.props.onAction(item.actionType, {
       item: item,
       newValue: this.state.value
@@ -75,15 +75,15 @@ class EditContent extends React.Component {
   }
 
   onDelete() {
-    var deleteItem = this.props.deleteItem;
-    var index = this.props.item.index;
+    let deleteItem = this.props.deleteItem;
+    let index = this.props.item.index;
     this.props.onAction && this.props.onAction(deleteItem, {
       index: index
     });
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       value = state.value,
       edit = state.edit,
       content = state.content,

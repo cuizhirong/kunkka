@@ -1,7 +1,7 @@
-var fetch = require('client/applications/dashboard/cores/fetch');
-// var RSVP = require('rsvp');
+const fetch = require('client/applications/dashboard/cores/fetch');
+// let RSVP = require('rsvp');
 function getParams(obj) {
-  var params = Object.keys(obj).map((key) => {
+  let params = Object.keys(obj).map((key) => {
     return obj[key] ? key + '=' + obj[key] : '';
   }).join('&');
 
@@ -25,7 +25,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/gringotts/v2/orders/' + id + '?limit=' + limit + '&offset=' + offset
     }).then((res) => {
-      var data = res.bills;
+      let data = res.bills;
       for (let i = 0; i < data.length; i++) {
         data[i]._id = i;
       }

@@ -1,4 +1,4 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getList: function(offset, pageLimit) {
@@ -9,7 +9,7 @@ module.exports = {
       offset = 0;
     }
 
-    var url = '/proxy/gringotts/v2/accounts/charges?limit=' + pageLimit + '&offset=' + offset;
+    let url = '/proxy/gringotts/v2/accounts/charges?limit=' + pageLimit + '&offset=' + offset;
     return fetch.get({
       url: url
     }).then((res) => {

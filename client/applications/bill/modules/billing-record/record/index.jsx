@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Pagination, Table} = require('client/uskin/index');
-var SelectList = require('./select_list');
-var Detail = require('./detail');
-var __ = require('locale/client/bill.lang.json');
-var converter = require('./converter');
-var moment = require('client/libs/moment');
+const React = require('react');
+const {Pagination, Table} = require('client/uskin/index');
+const SelectList = require('./select_list');
+const Detail = require('./detail');
+const __ = require('locale/client/bill.lang.json');
+const converter = require('./converter');
+const moment = require('client/libs/moment');
 
 class Main extends React.Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class Main extends React.Component {
   }
 
   componentWillMount() {
-    var config = this.props.config;
+    let config = this.props.config;
     converter.convertLang(__, config);
     this.tableColRender(config.table.column);
   }
@@ -34,7 +34,7 @@ class Main extends React.Component {
       switch (column.type) {
         case 'captain':
           column.render = (col, item, i) => {
-            var formatData = column.formatter && column.formatter(col, item, i);
+            let formatData = column.formatter && column.formatter(col, item, i);
             if (!formatData) {
               formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.order_id.substr(0, 8) + ')');
             }
@@ -69,9 +69,9 @@ class Main extends React.Component {
   }
 
   onClickCaptain(item, e) {
-    var detail = this.refs.detail;
-    var table = this.refs.table;
-    var checked = table.state.checkedKey[item.order_id];
+    let detail = this.refs.detail;
+    let table = this.refs.table;
+    let checked = table.state.checkedKey[item.order_id];
 
     if (checked) {
       table.setState({ checkedKey: {} });
@@ -107,12 +107,12 @@ class Main extends React.Component {
   }
 
   onAction(field, actionType, data) {
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
 
   render() {
-    var config = this.props.config,
+    let config = this.props.config,
       table = config.table,
       pagi = table.pagination,
       detail = config.table.detail,

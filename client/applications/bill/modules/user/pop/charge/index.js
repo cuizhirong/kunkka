@@ -1,20 +1,20 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/bill.lang.json');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/bill.lang.json');
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name;
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
     },
     onConfirm: function(refs, cb) {
-      var value = refs.charge.state.value;
-      var data = {
+      let value = refs.charge.state.value;
+      let data = {
         value: value,
         type: 'user',
         come_from: 'system'
@@ -30,8 +30,8 @@ function pop(obj, parent, callback) {
     onAction: function(field, status, refs) {
       switch (field) {
         case 'charge':
-          var value = refs.charge.state.value.trim();
-          var patrn = /^([1-9]\d*|0)(\.\d*[1-9])?$/;
+          let value = refs.charge.state.value.trim();
+          let patrn = /^([1-9]\d*|0)(\.\d*[1-9])?$/;
           if (patrn.exec(value)) {
             refs.user_tip.setState({
               hide: true

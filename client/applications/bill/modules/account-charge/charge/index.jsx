@@ -1,10 +1,10 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
 
-var moment = require('client/libs/moment');
-var ChargeTable = require('./charge_table');
+const moment = require('client/libs/moment');
+const ChargeTable = require('./charge_table');
 
 
 class Main extends React.Component {
@@ -30,13 +30,13 @@ class Main extends React.Component {
   }
 
   onAction(field, actionType, data) {
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
 
   accountCharge() {
-    var value = this.refs.chargeTable.refs.input.state.value;
-    var patrn = /^([1-9]\d*|0)(\.\d*[1-9])?$/;
+    let value = this.refs.chargeTable.refs.input.state.value;
+    let patrn = /^([1-9]\d*|0)(\.\d*[1-9])?$/;
     if (patrn.exec(value) && value >= HALO.settings.min_recharge_amount) {
       if (!this.state.isHide) {
         this.setState({
@@ -52,8 +52,8 @@ class Main extends React.Component {
   }
 
   render() {
-    var __ = this.props.__;
-    var className = 'tip-danger hide';
+    let __ = this.props.__;
+    let className = 'tip-danger hide';
     if (!this.state.isHide) {
       className += 'tip-danger';
     }

@@ -1,11 +1,11 @@
 require('./style/index.less');
 
-var ReactDOM = require('react-dom');
-var React = require('react');
-var Model = require('./model');
-var __ = require('locale/client/bill.lang.json');
+const ReactDOM = require('react-dom');
+const React = require('react');
+const Model = require('./model');
+const __ = require('locale/client/bill.lang.json');
 
-var dashboardModel = React.createFactory(Model);
+const dashboardModel = React.createFactory(Model);
 
 ReactDOM.render(
   dashboardModel({

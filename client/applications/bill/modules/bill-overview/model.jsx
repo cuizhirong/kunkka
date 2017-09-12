@@ -1,13 +1,13 @@
 require('./style/index.less');
 
-var React = require('react');
-var Tab = require('client/uskin/index').Tab;
-var Table = require('client/uskin/index').Table;
+const React = require('react');
+const Tab = require('client/uskin/index').Tab;
+const Table = require('client/uskin/index').Table;
 
-var request = require('./request');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/bill.lang.json');
-var getTime = require('client/utils/time_unification');
+const request = require('./request');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/bill.lang.json');
+const getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
   constructor(props) {
@@ -95,12 +95,12 @@ class Model extends React.Component {
   }
 
   render() {
-    var tabs = [{
+    let tabs = [{
       name: __['bill-overview'],
       key: 'bill-overview',
       default: true
     }];
-    var columm = [{
+    let columm = [{
       title: __.project,
       dataIndex: 'project_name',
       key: 'project_name'
@@ -128,7 +128,7 @@ class Model extends React.Component {
     }
     this.tableColRender(columm);
 
-    var state = this.state;
+    let state = this.state;
     return (
       <div className="halo-module-bill-overview" style={this.props.style}>
         <Tab items={tabs} />

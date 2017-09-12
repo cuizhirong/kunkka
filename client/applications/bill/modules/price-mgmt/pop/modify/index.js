@@ -1,11 +1,11 @@
-var commonModal = require('client/components/modal_common/index');
-var config = require('./config.json');
-var request = require('../../request');
-var __ = require('locale/client/bill.lang.json');
-var stageInput = require('./stageInput.jsx');
-var getErrorMessage = require('../../../../utils/error_message');
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/bill.lang.json');
+const stageInput = require('./stageInput.jsx');
+const getErrorMessage = require('../../../../utils/error_message');
 
-var regionList = HALO.region_list;
+const regionList = HALO.region_list;
 
 function pop(obj, parent, callback) {
   config.fields[4].data = regionList;
@@ -27,13 +27,13 @@ function pop(obj, parent, callback) {
     config.btn.type = 'create';
   }
 
-  var props = {
+  let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
       if(obj) {
-        var price = obj.unit_price.price.segmented;
+        let price = obj.unit_price.price.segmented;
         refs.price.setState({
           renderer: stageInput,
           value: price
@@ -49,7 +49,7 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      var updateData = {
+      let updateData = {
         name: refs.name.state.value,
         service: refs.service.state.value,
         region_id: refs.region.state.value,
@@ -91,10 +91,10 @@ function pop(obj, parent, callback) {
       }
     },
     onAction: function(field, state, refs) {
-      var disable = refs.name.state.error || refs.base_price.state.error || !refs.name.state.value || !refs.base_price.state.value;
+      let disable = refs.name.state.error || refs.base_price.state.error || !refs.name.state.value || !refs.base_price.state.value;
       switch(field) {
         case 'name':
-          var nameRegex = /^[a-zA-Z0-9_.:+-/\\\(\)\{\}]{1,}$/;
+          let nameRegex = /^[a-zA-Z0-9_.:+-/\\\(\)\{\}]{1,}$/;
           refs.name.setState({
             error: !nameRegex.test(state.value)
           }, () => {
@@ -104,7 +104,7 @@ function pop(obj, parent, callback) {
           });
           break;
         case 'base_price':
-          var priceRegex = /^[0-9.]{1,}$/;
+          let priceRegex = /^[0-9.]{1,}$/;
           refs.base_price.setState({
             error: !priceRegex.test(state.value)
           }, () => {

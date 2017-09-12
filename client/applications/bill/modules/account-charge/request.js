@@ -1,8 +1,8 @@
-var fetch = require('../../cores/fetch');
+const fetch = require('../../cores/fetch');
 
 module.exports = {
   getList: function(id) {
-    var url = '/proxy/gringotts/v2/accounts/' + id;
+    let url = '/proxy/gringotts/v2/accounts/' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -14,7 +14,7 @@ module.exports = {
     });
   },
   payment: function(method, data) {
-    var url = '/api/pay/' + method;
+    let url = '/api/pay/' + method;
     return fetch.post({
       url: url,
       data: data

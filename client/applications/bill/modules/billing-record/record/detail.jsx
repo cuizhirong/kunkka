@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Tab, Table, Pagination} = require('client/uskin/index');
-var moment = require('client/libs/moment');
-var __ = require('locale/client/bill.lang.json');
+const React = require('react');
+const {Tab, Table, Pagination} = require('client/uskin/index');
+const moment = require('client/libs/moment');
+const __ = require('locale/client/bill.lang.json');
 
 
 class Detail extends React.Component {
@@ -90,15 +90,15 @@ class Detail extends React.Component {
   }
 
   onDetailAction(type, data) {
-    var func = this.props.onDetailAction;
+    let func = this.props.onDetailAction;
     func && func(type, data);
   }
 
   render() {
-    var state = this.state;
-    var content = state.content;
-    var table = content.table;
-    var pagi = content.pagination;
+    let state = this.state;
+    let content = state.content;
+    let table = content.table;
+    let pagi = content.pagination;
 
     return (
       <div className={'bill-record-main-detail' + (state.visible ? ' visible' : '')}>

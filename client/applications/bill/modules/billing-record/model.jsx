@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var Record = require('./record/index');
+const React = require('react');
+const Record = require('./record/index');
 
-var request = require('./request');
-var config = require('./config.json');
-var moment = require('client/libs/moment');
-var getStatusIcon = require('../../utils/status_icon');
-var router = require('client/utils/router');
+const request = require('./request');
+const config = require('./config.json');
+const moment = require('client/libs/moment');
+const getStatusIcon = require('../../utils/status_icon');
+const router = require('client/utils/router');
 
-var __ = require('locale/client/bill.lang.json');
+const __ = require('locale/client/bill.lang.json');
 
 class Model extends React.Component {
 
@@ -78,19 +78,19 @@ class Model extends React.Component {
 
   getFilters(cb) {
     let path = router.getPathList();
-    var projects = Object.assign([], HALO.user.projects);
+    let projects = Object.assign([], HALO.user.projects);
     projects.unshift({
       id: 'all',
       name: __.all + __.project
     });
 
-    var regions = Object.assign([], HALO.region_list);
+    let regions = Object.assign([], HALO.region_list);
     regions.unshift({
       id: 'all',
       name: __.all + __.region
     });
 
-    var status = [{
+    let status = [{
       id: 'all',
       name: __.all + __.status
     }, {
@@ -110,7 +110,7 @@ class Model extends React.Component {
       name: __.error
     }];
 
-    var selectList = this.refs.record.refs.select_list;
+    let selectList = this.refs.record.refs.select_list;
     selectList.setState({
       projects: projects,
       regions: regions,
@@ -118,8 +118,8 @@ class Model extends React.Component {
       statuses: status,
       status: status[0]
     }, () => {
-      var current = 1;
-      var limit = this.state.config.table.limit;
+      let current = 1;
+      let limit = this.state.config.table.limit;
       if(path[2]) {
         let project = {
           id: path[2]
@@ -136,15 +136,15 @@ class Model extends React.Component {
   }
 
   setTable(data, current, totalNum, limit) {
-    var state = this.state;
-    var newConfig = state.config;
+    let state = this.state;
+    let newConfig = state.config;
 
-    var table = newConfig.table;
+    let table = newConfig.table;
     table.data = data;
     table.loading = false;
 
     if (totalNum > 0) {
-      var total = Math.ceil(totalNum / limit);
+      let total = Math.ceil(totalNum / limit);
       table.pagination = {
         current: current,
         total: total,
@@ -164,7 +164,7 @@ class Model extends React.Component {
       current = 1;
     }
     let state = this.refs.record.refs.select_list.state;
-    var data = {};
+    let data = {};
     if (state.project.id && state.project.id !== 'all') {
       data.project_id = state.project.id;
     }
@@ -206,8 +206,8 @@ class Model extends React.Component {
       case 'reset':
         refs.detail.close();
 
-        var current = 1;
-        var limit = this.state.config.table.limit;
+        let current = 1;
+        let limit = this.state.config.table.limit;
         router.replaceState('/bill/billing-record', null, null, true);
         this.getSales(current, limit);
         break;
@@ -217,13 +217,13 @@ class Model extends React.Component {
   }
 
   setDetailTable(data, current, totalNum, limit) {
-    var detail = this.refs.record.refs.detail;
+    let detail = this.refs.record.refs.detail;
 
-    var content = detail.state.content;
+    let content = detail.state.content;
     content.table.data = data;
 
-    var pagination = null;
-    var total = Math.ceil(totalNum / limit);
+    let pagination = null;
+    let total = Math.ceil(totalNum / limit);
     if (data.length > 0 && total > 1) {
       pagination = {
         current: current,
@@ -253,20 +253,20 @@ class Model extends React.Component {
   }
 
   openDetail(refs, item) {
-    var limit = this.state.config.table.detail.table.limit;
-    var current = 1;
+    let limit = this.state.config.table.detail.table.limit;
+    let current = 1;
 
     this.getBillsByOrder(item, current, limit);
   }
 
   onNextDetailPage(refs, data) {
-    var limit = this.state.config.table.detail.table.limit;
+    let limit = this.state.config.table.detail.table.limit;
 
     this.getBillsByOrder(data.item, data.page, limit);
   }
 
   onNextPage(refs, page) {
-    var limit = this.state.config.table.limit;
+    let limit = this.state.config.table.limit;
     router.replaceState('/bill/billing-record', null, null, true);
     this.getSales(page, limit);
   }

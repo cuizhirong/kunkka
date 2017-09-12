@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var request = require('./request');
-var moment = require('client/libs/moment');
-var waiting = require('./pop/waiting/index');
-var __ = require('locale/client/bill.lang.json');
+const React = require('react');
+const request = require('./request');
+const moment = require('client/libs/moment');
+const waiting = require('./pop/waiting/index');
+const __ = require('locale/client/bill.lang.json');
 
-var Charge = require('./charge/index');
+const Charge = require('./charge/index');
 
 class Model extends React.Component {
 
@@ -36,7 +36,7 @@ class Model extends React.Component {
   }
 
   onInitialize() {
-    var userId = HALO.user.userId;
+    let userId = HALO.user.userId;
 
     request.getList(userId).then((res) => {
       this.setState({
@@ -49,10 +49,10 @@ class Model extends React.Component {
     switch (field) {
       case 'charge':
         if (actionType === 'recharge') {
-          var value = refs.chargeTable.refs.input.state.value;
-          var payments = document.getElementsByName('payment');
-          var payment = '';
-          for(var index in payments) {
+          let value = refs.chargeTable.refs.input.state.value;
+          let payments = document.getElementsByName('payment');
+          let payment = '';
+          for(let index in payments) {
             if(payments[index].checked) {
               payment = payments[index].value;
               break;
@@ -63,7 +63,7 @@ class Model extends React.Component {
               balance: res.balance
             });
           });
-          var url = '/api/pay/' + payment + '?amount=' + value;
+          let url = '/api/pay/' + payment + '?amount=' + value;
           window.open(url, '_blank', 'width=780, height=436, left=0, top=0, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no').blur();
         }
         break;

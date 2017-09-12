@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var Input = require('client/components/modal_common/subs/input');
-var RadioList = require('./radioList');
-var resources = '/static/assets/bill/bank_logo.png';
+const React = require('react');
+const Input = require('client/components/modal_common/subs/input');
+const RadioList = require('./radioList');
+const resources = '/static/assets/bill/bank_logo.png';
 
 class Main extends React.Component {
   constructor(props) {
@@ -26,34 +26,34 @@ class Main extends React.Component {
   }
 
   onAction(field, actionType, data) {
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
 
   renderRadio() {
-    var alipayClass = {
+    let alipayClass = {
       background: 'url(' + resources + ') 0 0 no-repeat',
       backgroundPosition: -150
     };
-    var paypalClass = {
+    let paypalClass = {
       background: 'url(' + resources + ') 0 0 no-repeat',
       backgroundPosition: -480
     };
-    var alipay = {
+    let alipay = {
       id: 1,
       name: 'payment',
       value: 'alipay',
       styleClass: alipayClass
     };
-    var paypal = {
+    let paypal = {
       id: 2,
       name: 'payment',
       value: 'paypal',
       styleClass: paypalClass
     };
-    var enableAlipay = HALO.settings.enable_alipay;
-    var enablePaypal = HALO.settings.enable_paypal;
-    var listItems = [];
+    let enableAlipay = HALO.settings.enable_alipay;
+    let enablePaypal = HALO.settings.enable_paypal;
+    let listItems = [];
     if (enableAlipay) {
       listItems.push(alipay);
     }
@@ -83,8 +83,8 @@ class Main extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var __ = props.__;
+    let props = this.props;
+    let __ = props.__;
 
     return (
       <div className="charge-table">

@@ -1,14 +1,14 @@
-var fetch = require('../../cores/fetch');
-var RSVP = require('rsvp');
+const fetch = require('../../cores/fetch');
+const RSVP = require('rsvp');
 
 module.exports = {
   getList: function() {
-    var url = '/proxy/gringotts/v2/products/detail';
+    let url = '/proxy/gringotts/v2/products/detail';
     return fetch.get({
       url: url
     }).then((res) => {
-      var productsArray = [];
-      for (var k in res.products) {
+      let productsArray = [];
+      for (let k in res.products) {
         productsArray = productsArray.concat(res.products[k]);
         res.products[k].id = res.products[k].product_id;
       }
@@ -18,7 +18,7 @@ module.exports = {
     });
   },
   getPriceById: function(id) {
-    var url = '/proxy/gringotts/v2/products/' + id;
+    let url = '/proxy/gringotts/v2/products/' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -28,12 +28,12 @@ module.exports = {
     });
   },
   getPriceByName: function(name) {
-    var url = '/proxy/gringotts/v2/products/detail';
+    let url = '/proxy/gringotts/v2/products/detail';
     return fetch.get({
       url: url
     }).then((res) => {
-      var productsArray = [];
-      for(var k in res.products) {
+      let productsArray = [];
+      for(let k in res.products) {
         if(res.products[k].name === name) {
           res.products[k].id = res.products[k].product_id;
           productsArray = productsArray.concat(res.products[k]);
@@ -43,14 +43,14 @@ module.exports = {
     });
   },
   updatePriceById: function(id, data) {
-    var url = '/proxy/gringotts/v2/products/' + id;
+    let url = '/proxy/gringotts/v2/products/' + id;
     return fetch.put({
       url: url,
       data: data
     });
   },
   deleteItem: function(items) {
-    var deferredList = [];
+    let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
         url: '/proxy/gringotts/v2/products/' + item.id

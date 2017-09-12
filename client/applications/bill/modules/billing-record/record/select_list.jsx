@@ -1,7 +1,7 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
+const React = require('react');
+const {Button} = require('client/uskin/index');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class Detail extends React.Component {
   }
 
   onChangeProject(e) {
-    var value = e.target.value;
-    var project = this.state.projects.find((ele) => ele.id === value);
+    let value = e.target.value;
+    let project = this.state.projects.find((ele) => ele.id === value);
 
     this.setState({
       project: project
@@ -31,8 +31,8 @@ class Detail extends React.Component {
   }
 
   onChangeRegion(e) {
-    var value = e.target.value;
-    var region = this.state.regions.find((ele) => ele.id === value);
+    let value = e.target.value;
+    let region = this.state.regions.find((ele) => ele.id === value);
 
     this.setState({
       region: region
@@ -40,8 +40,8 @@ class Detail extends React.Component {
   }
 
   onChangeStatus(e) {
-    var value = e.target.value;
-    var status = this.state.statuses.find((ele) => ele.id === value);
+    let value = e.target.value;
+    let status = this.state.statuses.find((ele) => ele.id === value);
 
     this.setState({
       status: status
@@ -49,8 +49,8 @@ class Detail extends React.Component {
   }
 
   onConfirm() {
-    var state = this.state;
-    var data = {
+    let state = this.state;
+    let data = {
       project_id: state.project.id === 'all' ? null : state.project.id,
       region_id: state.region.id === 'all' ? null : state.region.id,
       status: state.status.id === 'all' ? null : state.status.id
@@ -60,10 +60,10 @@ class Detail extends React.Component {
   }
 
   onReset() {
-    var state = this.state;
-    var project = state.projects[0];
-    var region = state.regions[0];
-    var status = state.statuses[0];
+    let state = this.state;
+    let project = state.projects[0];
+    let region = state.regions[0];
+    let status = state.statuses[0];
 
     this.setState({
       project: project,
@@ -71,7 +71,7 @@ class Detail extends React.Component {
       status: status
     });
 
-    var data = {
+    let data = {
       project: null,
       region: null
     };
@@ -79,7 +79,7 @@ class Detail extends React.Component {
   }
 
   onAction(btnKey, data) {
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func('select_list', btnKey, data);
   }
 
@@ -120,8 +120,8 @@ class Detail extends React.Component {
   }
 
   render() {
-    var __ = this.props.__;
-    var state = this.state;
+    let __ = this.props.__;
+    let state = this.state;
 
     return (
       <div className="select-list">
