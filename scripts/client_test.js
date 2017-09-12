@@ -1,5 +1,5 @@
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 function clearDir(dir) {
   try {
@@ -15,21 +15,21 @@ function clearDir(dir) {
 
 function copyFile(source, dest) {
   if (fs.existsSync(source)) {
-    var readFrom = fs.createReadStream(source);
-    var writeTo = fs.createWriteStream(dest);
+    let readFrom = fs.createReadStream(source);
+    let writeTo = fs.createWriteStream(dest);
     readFrom.pipe(writeTo);
   }
 }
 
-var dest = 'tests/static_tests/';
+let dest = 'tests/static_tests/';
 clearDir(path.resolve(dest));
 
-var loginPath = 'client/login/test/';
+let loginPath = 'client/login/test/';
 copyFile(path.resolve(loginPath, 'login-test.js'), path.resolve(dest, 'login-test.js'));
 
-var componentsPath = 'client/components';
+let componentsPath = 'client/components';
 fs.readdirSync(path.resolve(componentsPath)).map(function(dirName) {
-  var testDir = path.resolve(componentsPath, dirName, 'test');
+  let testDir = path.resolve(componentsPath, dirName, 'test');
 
   if (fs.existsSync(path.resolve(testDir))) {
     fs.readdirSync(path.resolve(testDir)).filter(function(fileName) {

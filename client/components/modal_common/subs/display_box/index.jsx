@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class DisplayBox extends React.Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class DisplayBox extends React.Component {
   }
 
   render() {
-    var state = this.state;
-    var className = state.hide ? 'modal-row display-box-row hide' : 'modal-row display-box-row';
+    let state = this.state;
+    let className = state.hide ? 'modal-row display-box-row hide' : 'modal-row display-box-row';
 
     return (
       <div className={className}>

@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Tab} = require('client/uskin/index');
-var router = require('client/utils/router');
-var event = require('./event');
+const React = require('react');
+const {Tab} = require('client/uskin/index');
+const router = require('client/utils/router');
+const event = require('./event');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class Detail extends React.Component {
 
   componentWillUpdate(nextProps, nextState) {
     if (!nextState.loading && this.state.loading) {
-      var func = this.props.setRefreshBtnDisabled();
+      let func = this.props.setRefreshBtnDisabled();
       func && func(false);
     }
   }
@@ -39,18 +39,18 @@ class Detail extends React.Component {
   }
 
   updateTabContent(tab) {
-    var func = this.props.onClickTabs;
+    let func = this.props.onClickTabs;
     func && func(tab);
   }
 
   onClickTabs(e, tab) {
     if (tab.key !== this.findDefaultTab().key) {
-      var tabs = this.changeDefaultTab(tab);
+      let tabs = this.changeDefaultTab(tab);
       this.setState({
         tabs: tabs
       });
 
-      var contents = this.state.contents;
+      let contents = this.state.contents;
       if (!contents[tab.key]) {
         this.updateTabContent(tab);
       }
@@ -64,7 +64,7 @@ class Detail extends React.Component {
   changeDefaultTab(tab) {
     event.emit('changeTab', tab);
 
-    var tabs = this.state.tabs;
+    let tabs = this.state.tabs;
     tabs.forEach((t) => {
       t.default = (t.key === tab.key) ? true : false;
     });
@@ -87,12 +87,12 @@ class Detail extends React.Component {
   }
 
   onClose() {
-    var path = router.getPathList();
+    let path = router.getPathList();
     router.pushState('/' + path.slice(0, 2).join('/'));
   }
 
   render() {
-    var state = this.state;
+    let state = this.state;
 
     return (
       <div className={'admin-com-table-detail' + (state.visible ? ' visible' : '')}>

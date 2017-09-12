@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class IconLabel extends React.Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class IconLabel extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var className = 'modal-row icon-label-row';
+    let props = this.props;
+    let className = 'modal-row icon-label-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

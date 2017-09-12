@@ -1,5 +1,5 @@
-let React = require('react');
-let {Button} = require('uskin');
+const React = require('react');
+const {Button} = require('uskin');
 
 class KeyValue extends React.Component {
   constructor(props) {
@@ -30,18 +30,18 @@ class KeyValue extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
-    var {__, inputs} = props;
+    let props = this.props;
+    let state = this.state;
+    let {__, inputs} = props;
     let that = this;
 
-    var className = 'modal-row input-row label-row key-value';
+    let className = 'modal-row input-row label-row key-value';
 
     if (this.state.hide) {
       className += ' hide';
     }
 
-    var getFixedWidth = (width) => ({
+    let getFixedWidth = (width) => ({
       width,
       maxWidth: width,
       minWidth: width

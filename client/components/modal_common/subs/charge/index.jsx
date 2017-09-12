@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class Charge extends React.Component {
   constructor(props) {
@@ -22,12 +22,12 @@ class Charge extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
-    var __ = this.props.__;
-    var value = state.value;
-    var monthlyValue = (Number(state.value) * 24 * 30).toFixed(4);
+    let __ = this.props.__;
+    let value = state.value;
+    let monthlyValue = (Number(state.value) * 24 * 30).toFixed(4);
 
     return (
       <div className={'modal-row charge-row' + (state.hide ? ' hide' : '')}>

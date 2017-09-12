@@ -1,13 +1,13 @@
 require('./style/index.less');
 
-var React = require('react');
-var {InputSearch, Tab, Table} = require('client/uskin/index');
-var ButtonList = require('./button_list');
-var Detail = require('./detail');
-var converter = require('client/components/main/converter');
-var moment = require('client/libs/moment');
-var router = require('client/utils/router');
-var getTime = require('client/utils/time_unification');
+const React = require('react');
+const {InputSearch, Tab, Table} = require('client/uskin/index');
+const ButtonList = require('./button_list');
+const Detail = require('./detail');
+const converter = require('client/components/main/converter');
+const moment = require('client/libs/moment');
+const router = require('client/utils/router');
+const getTime = require('client/utils/time_unification');
 
 class Modal extends React.Component {
   constructor(props) {
@@ -23,8 +23,8 @@ class Modal extends React.Component {
   }
 
   componentWillMount() {
-    var config = this.props.config;
-    var dataKey = config.table.dataKey;
+    let config = this.props.config;
+    let dataKey = config.table.dataKey;
 
     config.table.column.forEach((col) => {
       if (col.filter) {
@@ -32,7 +32,7 @@ class Modal extends React.Component {
       }
       if (col.sort) {
         col.sortBy = function(item1, item2) {
-          var key = col.dataIndex,
+          let key = col.dataIndex,
             a = item1[key] ? item1[key] : '(' + item1[dataKey] + ')',
             b = item2[key] ? item2[key] : '(' + item2[dataKey] + ')';
 
@@ -49,9 +49,9 @@ class Modal extends React.Component {
       switch (column.type) {
         case 'captain':
           column.render = (col, item, i) => {
-            var formatData = column.formatter && column.formatter(col, item, i);
+            let formatData = column.formatter && column.formatter(col, item, i);
             if (!formatData) {
-              var key = this.props.config.table.dataKey;
+              let key = this.props.config.table.dataKey;
               formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item[key].substr(0, 8) + ')');
             }
             return (
@@ -82,7 +82,7 @@ class Modal extends React.Component {
       data = {};
     }
     data.rows = this.stores.rows;
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
 
@@ -123,11 +123,11 @@ class Modal extends React.Component {
 
   updateRows(data) {
     //update main store rows
-    var newRows = [];
-    var key = this.props.config.table.dataKey;
+    let newRows = [];
+    let key = this.props.config.table.dataKey;
 
     this.stores.rows.forEach((item) => {
-      var existed = data.filter((d) => d[key] === item[key])[0];
+      let existed = data.filter((d) => d[key] === item[key])[0];
 
       if (existed) {
         newRows.push(existed);
@@ -137,12 +137,12 @@ class Modal extends React.Component {
     this.stores.rows = newRows;
 
     //update table checkedKey
-    var checkedKey = {};
+    let checkedKey = {};
     newRows.forEach((item) => {
       checkedKey[item[key]] = true;
     });
 
-    var table = this.refs.table;
+    let table = this.refs.table;
     if (table) {
       table.check(checkedKey);
     }
@@ -155,12 +155,12 @@ class Modal extends React.Component {
   }
 
   onChangeParams(params) {
-    var table = this.refs.table,
+    let table = this.refs.table,
       detail = this.refs.detail;
 
-    var key = this.props.config.table.dataKey;
+    let key = this.props.config.table.dataKey;
     if (params.length === 3) {
-      var row = this.props.config.table.data.filter((data) => data[key] === params[2])[0];
+      let row = this.props.config.table.data.filter((data) => data[key] === params[2])[0];
       /* no row data means invalid path list */
       if (!row) {
         router.replaceState('/' + params.slice(0, 2).join('/'));
@@ -210,25 +210,25 @@ class Modal extends React.Component {
   }
 
   searchInTable(text) {
-    var table = this.refs.table;
+    let table = this.refs.table;
 
     if (table) {
-      var search = this.props.config.search,
+      let search = this.props.config.search,
         filterCol = search.column;
 
       if (search && search.column) {
         if (text) {
           //close detail when search start
-          var params = this.props.params;
+          let params = this.props.params;
           if (params.length > 2) {
             router.pushState('/' + params.slice(0, 2).join('/'));
           }
 
           //arguments: filter columns, filter function
           table.filter(filterCol, function(item, column) {
-            var ret = column.some((col) => {
+            let ret = column.some((col) => {
               if (filterCol[col.key] && item[col.dataIndex]) {
-                var td = item[col.dataIndex].toLowerCase();
+                let td = item[col.dataIndex].toLowerCase();
                 return td.indexOf(text.toLowerCase()) > -1 ? true : false;
               }
             });
@@ -245,12 +245,12 @@ class Modal extends React.Component {
   onClickCaptain(item, e) {
     e.preventDefault();
 
-    var key = this.props.config.table.dataKey;
-    var shouldClose = this.refs.detail.state.visible
+    let key = this.props.config.table.dataKey;
+    let shouldClose = this.refs.detail.state.visible
       && (this.stores.rows.length === 1)
       && (this.stores.rows[0][key] === item[key]);
 
-    var path = router.getPathList();
+    let path = router.getPathList();
     if (shouldClose) {
       router.pushState('/' + path[0] + '/' + path[1]);
     } else {
@@ -259,7 +259,7 @@ class Modal extends React.Component {
   }
 
   clickTabs(e, item) {
-    var path = router.getPathList();
+    let path = router.getPathList();
     router.pushState('/' + path[0] + '/' + item.key);
   }
 
@@ -272,8 +272,8 @@ class Modal extends React.Component {
   }
 
   checkboxListener(status, clickedRow, arr) {
-    var path = this.props.params;
-    var key = this.props.config.table.dataKey;
+    let path = this.props.params;
+    let key = this.props.config.table.dataKey;
 
     if (arr.length <= 0) {
       router.pushState('/' + path[0] + '/' + path[1]);
@@ -338,7 +338,7 @@ class Modal extends React.Component {
   }
 
   render() {
-    var _config = this.props.config,
+    let _config = this.props.config,
       tabs = _config.tabs,
       title = _config.tabs.filter((tab) => tab.default)[0].name,
       btns = _config.btns,

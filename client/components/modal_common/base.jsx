@@ -1,29 +1,29 @@
-var React = require('react');
-var {Modal, Button} = require('client/uskin/index');
-var UskinTip = require('client/uskin/index').Tip;
+const React = require('react');
+const {Modal, Button} = require('client/uskin/index');
+const UskinTip = require('client/uskin/index').Tip;
 
-var Input = require('./subs/input/index');
-var InputPassword = require('./subs/input_pwd/index');
-var Text = require('./subs/text/index');
-var Tip = require('./subs/tip/index');
-var Checkbox = require('./subs/checkbox/index');
-var IconLabel = require('./subs/icon_label/index');
-var TextArea = require('./subs/textarea/index');
-var Select = require('./subs/select/index');
-var SelectGroup = require('./subs/select_group/index');
-var SelectSingle = require('./subs/select_single/index');
-var Tab = require('./subs/tab/index');
-var GroupSelect = require('./subs/group_select/index');
-var RadioInput = require('./subs/radio_input/index');
-var Slider = require('./subs/slider/index');
-var Progress = require('./subs/progress/index');
-var ShortTip = require('./subs/short_tip/index');
-var DisplayBox = require('./subs/display_box/index');
-var DataList = require('./subs/data_list/index');
-var Charge = require('./subs/charge/index');
-var Adapter = require('./subs/adapter/index');
-var KeyValueTable = require('./subs/key_value_table/index');
-var KeyValue = require('./subs/key_value/index');
+const Input = require('./subs/input/index');
+const InputPassword = require('./subs/input_pwd/index');
+const Text = require('./subs/text/index');
+const Tip = require('./subs/tip/index');
+const Checkbox = require('./subs/checkbox/index');
+const IconLabel = require('./subs/icon_label/index');
+const TextArea = require('./subs/textarea/index');
+const Select = require('./subs/select/index');
+const SelectGroup = require('./subs/select_group/index');
+const SelectSingle = require('./subs/select_single/index');
+const Tab = require('./subs/tab/index');
+const GroupSelect = require('./subs/group_select/index');
+const RadioInput = require('./subs/radio_input/index');
+const Slider = require('./subs/slider/index');
+const Progress = require('./subs/progress/index');
+const ShortTip = require('./subs/short_tip/index');
+const DisplayBox = require('./subs/display_box/index');
+const DataList = require('./subs/data_list/index');
+const Charge = require('./subs/charge/index');
+const Adapter = require('./subs/adapter/index');
+const KeyValueTable = require('./subs/key_value_table/index');
+const KeyValue = require('./subs/key_value/index');
 
 class ModalBase extends React.Component {
 
@@ -47,13 +47,13 @@ class ModalBase extends React.Component {
   }
 
   initialize() {
-    var props = this.props;
+    let props = this.props;
 
     return props.config.fields.map((m) => {
       m.label = this.__[m.field];
       m.__ = this.__;
 
-      var subComs = {
+      let subComs = {
         'text': Text,
         'tab': Tab,
         'input': Input,
@@ -78,7 +78,7 @@ class ModalBase extends React.Component {
         'key_value': KeyValue
       };
 
-      var Sub = subComs[m.type];
+      let Sub = subComs[m.type];
 
       return Sub ? <Sub key={m.field} ref={m.field} {...m} onAction={this.onAction} /> : null;
     });
@@ -89,8 +89,8 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    var isEmpty = false;
-    var refs = this.refs;
+    let isEmpty = false;
+    let refs = this.refs;
     this.props.config.fields.forEach((m) => {
       if (m.required && (m.type === 'input' || m.type === 'textarea') && !refs[m.field].state.value && !refs[m.field].state.hide) {
         refs[m.field].setState({
@@ -113,7 +113,7 @@ class ModalBase extends React.Component {
         });
 
         if(this.props.destroyPrevious) {
-          var root = document.getElementById('modal-container');
+          let root = document.getElementById('modal-container');
           root.firstChild.classList.add('hide');
         }
       } else {
@@ -158,12 +158,12 @@ class ModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       btn = props.config.btn,
       __ = this.__;
 
-    var title = props.config.title.map(function(m) {
+    let title = props.config.title.map(function(m) {
       return __[m];
     }).join('');
 

@@ -1,5 +1,5 @@
-var React = require('react');
-var request = require('client/libs/ajax');
+const React = require('react');
+const request = require('client/libs/ajax');
 
 class Projects extends React.Component{
   constructor(props) {
@@ -25,7 +25,7 @@ class Projects extends React.Component{
       return;
     }
 
-    var errHandler = function(err) {
+    let errHandler = function(err) {
       if (err.status === 401) {
         window.location = '/auth/logout';
       }
@@ -34,9 +34,9 @@ class Projects extends React.Component{
       });
     };
 
-    var fetch = {};
+    let fetch = {};
     fetch.put = function(options) {
-      var opt = Object.assign({
+      let opt = Object.assign({
         dataType: 'json',
         contentType: 'application/json',
         headers: {
@@ -57,7 +57,7 @@ class Projects extends React.Component{
   }
 
   renderProject() {
-    var projects = HALO.user.projects;
+    let projects = HALO.user.projects;
 
     return projects.map((item, index) => {
       return (

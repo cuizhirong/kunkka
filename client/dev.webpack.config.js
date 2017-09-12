@@ -1,21 +1,21 @@
-var config = require('./webpack.config.js');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var fs = require('fs');
-var path = require('path');
+const config = require('./webpack.config.js');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const fs = require('fs');
+const path = require('path');
 
-var language = process.env.npm_config_lang || process.env.language;
+let language = process.env.npm_config_lang || process.env.language;
 
 // Default language
 if (!language) {
   language = 'zh-CN';
 }
 
-var applications = fs.readdirSync('./applications').filter(function(m) {
+let applications = fs.readdirSync('./applications').filter(function(m) {
   return fs.statSync(path.join('./applications', m)).isDirectory();
 });
-var apps = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
-var entry = {};
+let apps = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
+let entry = {};
 apps.forEach(function(m) {
   entry[m] = './applications/' + m + '/index.jsx';
 });

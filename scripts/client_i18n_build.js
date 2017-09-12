@@ -1,24 +1,24 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var glob = require('glob');
-var chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
+const chalk = require('chalk');
 
-var language = process.env.npm_config_lang || process.env.language;
+let language = process.env.npm_config_lang || process.env.language;
 if (!language) {
   language = 'zh-CN';
 }
 
-var rootDir = path.resolve(__dirname, '..');
-var appsDir = path.join(rootDir, 'client', 'applications');
-var applications = fs.readdirSync(appsDir).filter(function(m) {
+const rootDir = path.resolve(__dirname, '..');
+const appsDir = path.join(rootDir, 'client', 'applications');
+let applications = fs.readdirSync(appsDir).filter(function(m) {
   return fs.statSync(path.join(appsDir, m)).isDirectory();
 });
-var appList = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
+let appList = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
 
 function buildInvertedIndex(files, output) {
-  var invertedIndex = {
+  let invertedIndex = {
     words: [],
     docIndex: {}
   };
@@ -37,7 +37,7 @@ function buildInvertedIndex(files, output) {
   });
 
   invertedIndex.words.forEach(function(word) {
-    var dupCount = invertedIndex.docIndex[word].length;
+    let dupCount = invertedIndex.docIndex[word].length;
     if (dupCount > 1) {
       console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(word) + ' is duplicate in ' + chalk.bold(dupCount) + ' files: ');
       invertedIndex.docIndex[word].forEach(function(_path) {
@@ -49,14 +49,14 @@ function buildInvertedIndex(files, output) {
 
 
 function writeFile(fileName, str) {
-  var localePath = path.resolve(rootDir, 'locale');
+  let localePath = path.resolve(rootDir, 'locale');
   try {
     fs.accessSync(localePath, fs.F_OK);
   } catch (e) {
     fs.mkdirSync(localePath);
     fs.mkdirSync(path.join(localePath, 'client'));
   }
-  var clientPath = path.join(localePath, 'client');
+  let clientPath = path.join(localePath, 'client');
   try {
     fs.accessSync(clientPath, fs.F_OK);
   } catch (e) {
@@ -71,13 +71,13 @@ function writeFile(fileName, str) {
 }
 
 appList.forEach(function(app) {
-  var appDir = rootDir + '/client/applications/' + app;
+  let appDir = rootDir + '/client/applications/' + app;
 
   glob(appDir + '/modules/**/lang.json', {}, function(er, files) {
     files.unshift(appDir + '/locale/lang.json');
-    var file = '';
+    let file = '';
     try {
-      var output = {};
+      let output = {};
       buildInvertedIndex(files, output);
       writeFile(app + '.lang.json', JSON.stringify(output));
     } catch (e) {

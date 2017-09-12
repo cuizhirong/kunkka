@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class Adapter extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Adapter extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -36,7 +36,7 @@ class Adapter extends React.Component {
   }
 
   render() {
-    var state = this.state;
+    let state = this.state;
     return (
       this.state.renderer ? this.state.renderer(state) : <div>no info</div>
     );

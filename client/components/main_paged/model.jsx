@@ -1,7 +1,7 @@
-var React = require('react');
-var Main = require('./index');
-var router = require('client/utils/router');
-var moment = require('client/libs/moment');
+const React = require('react');
+const Main = require('./index');
+const router = require('client/utils/router');
+const moment = require('client/libs/moment');
 
 class Model extends React.Component {
 
@@ -55,7 +55,7 @@ class Model extends React.Component {
   }
 
   updateTableData(table, currentUrl, refreshDetail) {
-    var newConfig = this.state.config;
+    let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -63,7 +63,7 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       this.stores.urls.push(currentUrl);
-      var dashboard = this.refs.dashboard,
+      let dashboard = this.refs.dashboard,
         detail = dashboard.refs.detail,
         params = this.props.params;
 
@@ -74,14 +74,14 @@ class Model extends React.Component {
   }
 
   setPaginationData(table, res) {
-    var pagination = {},
+    let pagination = {},
       next = res.links && res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    var history = this.stores.urls;
+    let history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -108,13 +108,13 @@ class Model extends React.Component {
       }
     }
 
-    var history = this.stores.urls,
+    let history = this.stores.urls,
       url = history.pop();
     this.getNextListData(url, true);
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -133,14 +133,14 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    var dashboard = this.refs.dashboard;
+    let dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -193,7 +193,7 @@ class Model extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    let props = this.props;
 
     return (
       <div className={'halo-module-default ' + this.className} style={props.style}>

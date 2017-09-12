@@ -1,6 +1,6 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var Password = require('client/components/password/index');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const Password = require('client/components/password/index');
 
 class Settings extends React.Component {
   constructor(props) {
@@ -14,18 +14,18 @@ class Settings extends React.Component {
   onClick(key, e) {
     switch (key) {
       case 'settings':
-        var setWidth = (node, width) => {
+        let setWidth = (node, width) => {
           ['maxWidth', 'width', 'minWidth'].forEach((w) => {
             node.style[w] = width;
             node.style.overflowX = 'hidden';
           });
         };
-        var haloMenu = document.getElementsByClassName('halo-com-menu')[0];
+        let haloMenu = document.getElementsByClassName('halo-com-menu')[0];
         setWidth(haloMenu, '120px');
         document.getElementById('main').style.display = 'none';
 
-        var wrapper = document.getElementById('main-wrapper');
-        var div = document.createElement('div');
+        let wrapper = document.getElementById('main-wrapper');
+        let div = document.createElement('div');
         div.setAttribute('class', 'pwd');
         div.setAttribute('style', ['flex: 1']);
         wrapper.appendChild(div);
@@ -57,10 +57,10 @@ class Settings extends React.Component {
   }
 
   setTmpl() {
-    var currtLang = HALO.configs.lang;
-    var __ = this.props.__;
+    let currtLang = HALO.configs.lang;
+    let __ = this.props.__;
 
-    var config = [{
+    let config = [{
       title: __.personal_settings,
       key: 'settings',
       icon: 'setting'

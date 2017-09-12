@@ -1,8 +1,8 @@
 require('../../style/index.less');
 require('./style/index.less');
 
-var React = require('react');
-var {Button, ButtonGroup, Table, Tip} = require('client/uskin/index');
+const React = require('react');
+const {Button, ButtonGroup, Table, Tip} = require('client/uskin/index');
 
 class BasicProps extends React.Component {
 
@@ -27,7 +27,7 @@ class BasicProps extends React.Component {
     this.setState({
       selectedKey: value
     });
-    var sgImage = document.querySelector('.sg-image');
+    let sgImage = document.querySelector('.sg-image');
     switch(value) {
       case 'ingress':
         sgImage.classList.remove('sg-image-egress');
@@ -43,7 +43,7 @@ class BasicProps extends React.Component {
   }
 
   onClickBtn(e) {
-    var props = this.props,
+    let props = this.props,
       onDetailAction = props.onClick,
       tabKey = props.tabKey,
       rawItem = props.rawItem;
@@ -57,7 +57,7 @@ class BasicProps extends React.Component {
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       selectedKey = state.selectedKey,
       props = this.props,
       itemKeys = props.itemKeys,

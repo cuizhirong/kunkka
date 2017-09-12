@@ -1,5 +1,5 @@
-var React = require('react');
-var {Modal, Button, Tip} = require('client/uskin/index');
+const React = require('react');
+const {Modal, Button, Tip} = require('client/uskin/index');
 
 class ModalBase extends React.Component {
 
@@ -48,7 +48,7 @@ class ModalBase extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       __ = props.__,
       action = __[props.action],
@@ -57,11 +57,11 @@ class ModalBase extends React.Component {
       cancel = __.cancel,
       content = __.msg_delete.replace('{0}', action).replace('{1}', type).replace('{2}', num);
 
-    var _props = Object.assign({}, props, {
+    let _props = Object.assign({}, props, {
       title: action + type
     });
 
-    var iconType = props.iconType || (Array.isArray(props.type) ? '' : props.type.replace('_', '-'));
+    let iconType = props.iconType || (Array.isArray(props.type) ? '' : props.type.replace('_', '-'));
 
     return (
       <Modal {..._props} visible={state.visible}>

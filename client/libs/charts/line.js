@@ -1,7 +1,7 @@
-var easing = require('./easing');
-var autoscale = require('./autoscale');
-var utils = require('./utils');
-var CanvasEvent = require('./event');
+const easing = require('./easing');
+const autoscale = require('./autoscale');
+const utils = require('./utils');
+const CanvasEvent = require('./event');
 
 class LineChart {
   constructor(container) {
@@ -10,7 +10,7 @@ class LineChart {
   }
 
   initDOM() {
-    var canvas = this.canvas = document.createElement('canvas'),
+    let canvas = this.canvas = document.createElement('canvas'),
       bCanvas = this.bCanvas = document.createElement('canvas'),
       vCanvas = this.vCanvas = document.createElement('canvas'),
       tooltip = this.tooltip = document.createElement('div'),
@@ -59,13 +59,13 @@ class LineChart {
   }
 
   calcAxis(option) {
-    var tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
+    let tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
 
     // // calc the width of y-text
-    // var ctx = this.canvas.getContext('2d');
+    // let ctx = this.canvas.getContext('2d');
     // this.marginLeft = ctx.measureText('' + realMax).width;
 
-    var max, min, data = [],
+    let max, min, data = [],
       realMax, realMin;
     option.series.forEach(function(m) {
       data = data.concat(m.data);
@@ -95,14 +95,14 @@ class LineChart {
     // console.log(this.height-this.marginBottom,this.ratioY)
     // console.log(max, realMax, min, realMin);
 
-    var xData = option.xAxis.data;
+    let xData = option.xAxis.data;
     this.interval = Math.ceil(xData.length / 6);
     this.ratioX = (this.width - this.marginLeft) / (xData.length - 1);
     // console.log(interval, this.ratioX);
   }
 
   renderLineBackground(option) {
-    var ctx = this.bCanvas.getContext('2d'),
+    let ctx = this.bCanvas.getContext('2d'),
       yAxis = option.yAxis,
       marginLeft = this.marginLeft,
       marginBottom = this.marginBottom,
@@ -125,7 +125,7 @@ class LineChart {
     // Draw xAxis
     ctx.beginPath();
 
-    var t = height - marginBottom - this.ratioY * this.tickPeriod * (-this.realMin) / this.tickPeriod;
+    let t = height - marginBottom - this.ratioY * this.tickPeriod * (-this.realMin) / this.tickPeriod;
     ctx.moveTo(marginLeft, t);
     ctx.lineTo(width, t);
     ctx.stroke();
@@ -172,7 +172,7 @@ class LineChart {
 
   // Calc the data points and the control-points
   calcPostions(option) {
-    var series = option.series,
+    let series = option.series,
       ratioX = this.ratioX,
       ratioY = this.ratioY,
       height = this.height,
@@ -184,9 +184,9 @@ class LineChart {
     this.ctPositions = [];
 
     series.forEach((s, i) => {
-      var p = this.positions[i] = [];
-      var cp = this.ctPositions[i] = [];
-      var len = s.data.length;
+      let p = this.positions[i] = [];
+      let cp = this.ctPositions[i] = [];
+      let len = s.data.length;
 
       s.data.forEach((data, j) => {
         if (this.realMax === this.realMin && this.realMax === 0) {
@@ -223,14 +223,14 @@ class LineChart {
             y: (p[j - 1].y + p[j + 1].y) / 2
           };
 
-          var diffY = p[j].y - middle.y;
+          let diffY = p[j].y - middle.y;
 
-          var pre = {
+          let pre = {
             x: (p[j - 1].x + middle.x) / 2,
             y: (p[j - 1].y + middle.y) / 2 + diffY
           };
 
-          var post = {
+          let post = {
             x: (p[j + 1].x + middle.x) / 2,
             y: (p[j + 1].y + middle.y) / 2 + diffY
           };
@@ -241,7 +241,7 @@ class LineChart {
   }
 
   renderVLine(option) {
-    var ctx = this.vCanvas.getContext('2d'),
+    let ctx = this.vCanvas.getContext('2d'),
       series = option.series,
       alert = option.alert,
       height = this.height,
@@ -261,7 +261,7 @@ class LineChart {
     this.event.unBindAll();
 
     series.forEach((s, j) => {
-      var data = s.data,
+      let data = s.data,
         color = s.color,
         type = s.type,
         opacity = s.opacity,
@@ -334,14 +334,14 @@ class LineChart {
   }
 
   renderLine() {
-    var ctx = this.canvas.getContext('2d'),
+    let ctx = this.canvas.getContext('2d'),
       vCtx = this.vCanvas.getContext('2d'),
       w = this.width,
       h = this.height,
       ratio = window.devicePixelRatio || 1;
 
     ++this.count;
-    var t = this.easingFunc(this.count / this.ticks);
+    let t = this.easingFunc(this.count / this.ticks);
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(vCtx.canvas, 0, 0, t * w * ratio, h * ratio, 0, 0, t * w, h);
 

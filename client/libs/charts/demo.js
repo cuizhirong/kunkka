@@ -1,6 +1,6 @@
-var Chart = require('./index');
+const Chart = require('./index');
 
-var c = new Chart.PieChart(document.getElementById('container'));
+let c = new Chart.PieChart(document.getElementById('container'));
 
 c.setOption({
   lineWidth: 10,
@@ -32,7 +32,7 @@ setTimeout(function() {
   });
 }, 3000);
 
-var c2 = new Chart.PieChart(document.getElementById('container2'));
+let c2 = new Chart.PieChart(document.getElementById('container2'));
 
 c2.setOption({
   lineWidth: 0.2,
@@ -49,7 +49,7 @@ c2.setOption({
   easing: 'easeInOutQuart'
 });
 
-var c3 = new Chart.PieChart(document.getElementById('container3'));
+let c3 = new Chart.PieChart(document.getElementById('container3'));
 
 c3.setOption({
   lineWidth: 10,
@@ -65,7 +65,7 @@ c3.setOption({
   period: 600
 });
 
-var c4 = new Chart.GaugeChart(document.getElementById('container4'));
+let c4 = new Chart.GaugeChart(document.getElementById('container4'));
 
 c4.setOption({
   lineWidth: 0.4,
@@ -111,7 +111,7 @@ setTimeout(function() {
 }, 2000);
 
 
-var c5 = new Chart.BarChart(document.getElementById('container5'));
+let c5 = new Chart.BarChart(document.getElementById('container5'));
 
 c5.setOption({
   unit: 'TB',
@@ -167,7 +167,7 @@ setTimeout(function() {
   });
 }, 1000);
 
-var c6 = new Chart.LineChart(document.getElementById('container6'));
+let c6 = new Chart.LineChart(document.getElementById('container6'));
 
 c6.setOption({
   unit: 'TB',
@@ -204,7 +204,7 @@ c6.setOption({
   easing: 'easeOutCubic'
 });
 
-var c7 = new Chart.LineChart(document.getElementById('container7'));
+let c7 = new Chart.LineChart(document.getElementById('container7'));
 
 c7.setOption({
   unit: 'TB',

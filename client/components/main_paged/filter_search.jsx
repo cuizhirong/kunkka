@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
-var __ = require('locale/client/admin.lang.json');
-var router = require('client/utils/router');
+const React = require('react');
+const {Button} = require('client/uskin/index');
+const __ = require('locale/client/admin.lang.json');
+const router = require('client/utils/router');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -41,12 +41,12 @@ class Detail extends React.Component {
   }
 
   reset(e) {
-    var filters = this.props.items,
+    let filters = this.props.items,
       refs = this.refs;
 
     filters.forEach((filter) => {
       filter.items.forEach((item) => {
-        var itemKey = filter.group_key + '_' + item.key;
+        let itemKey = filter.group_key + '_' + item.key;
         if(item.type === 'select') {
           if (item.default) {
             refs[itemKey].value = 'defaultValue';
@@ -65,13 +65,13 @@ class Detail extends React.Component {
   }
 
   confirm(e) {
-    var filters = this.props.items,
+    let filters = this.props.items,
       refs = this.refs,
       fields = {};
 
     filters.forEach((filter) => {
       filter.items.forEach((item) => {
-        var itemKey = filter.group_key + '_' + item.key;
+        let itemKey = filter.group_key + '_' + item.key;
         if ((item.type === 'select' && refs[itemKey].value !== 'defaultValue')
           || (item.type === 'input' && refs[itemKey].value !== '')) {
 
@@ -85,7 +85,7 @@ class Detail extends React.Component {
 
     this.props.onConfirm && this.props.onConfirm(fields);
 
-    var pathList = router.getPathList();
+    let pathList = router.getPathList();
     if (pathList.length > 2) {
       router.pushState('/' + pathList[0] + '/' + pathList[1]);
     }
@@ -94,14 +94,14 @@ class Detail extends React.Component {
   }
 
   renderFilters(filters) {
-    var ret = [];
+    let ret = [];
 
     filters.forEach((filter, index) => {
       if (index > 0) {
         ret.push(<div key={'division_' + index} className="division">{__.or}</div>);
       }
 
-      var perGroup = [];
+      let perGroup = [];
       filter.items.forEach((item) => {
         if(item.type === 'select') {
           perGroup.push(
@@ -132,7 +132,7 @@ class Detail extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       expand = this.state.expand,
       filters = props.items;
 

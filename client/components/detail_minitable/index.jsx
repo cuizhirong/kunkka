@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var uskin = require('client/uskin/index');
-var Table = uskin.Table;
+const React = require('react');
+const uskin = require('client/uskin/index');
+const Table = uskin.Table;
 
 class DetailMinitable extends React.Component {
 
@@ -29,7 +29,7 @@ class DetailMinitable extends React.Component {
   }
 
   render() {
-    var tableConfig = this.props.tableConfig;
+    let tableConfig = this.props.tableConfig;
 
     return (
       <div className="toggle">

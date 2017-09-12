@@ -1,7 +1,7 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button, DropdownButton} = require('client/uskin/index');
+const React = require('react');
+const {Button, DropdownButton} = require('client/uskin/index');
 
 class Detail extends React.Component {
   constructor(props) {
@@ -21,9 +21,9 @@ class Detail extends React.Component {
   // }
 
   formateBtns(btns) {
-    var formatedBtns = {};
+    let formatedBtns = {};
 
-    var traverseChildren = (item, arr = []) => {
+    let traverseChildren = (item, arr = []) => {
       let newArr = arr;
       if (item.children) {
         item.children.forEach((child) => {
@@ -70,7 +70,7 @@ class Detail extends React.Component {
   }
 
   render() {
-    var btns = this.props.btns;
+    let btns = this.props.btns;
 
     return (
       <div className="btn-list">

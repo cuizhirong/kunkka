@@ -1,5 +1,5 @@
-var React = require('react');
-var ShortTip = require('../short_tip/index');
+const React = require('react');
+const ShortTip = require('../short_tip/index');
 
 class Textarea extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class Textarea extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -34,8 +34,8 @@ class Textarea extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var className = 'modal-row textarea-row';
+    let props = this.props;
+    let className = 'modal-row textarea-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

@@ -1,7 +1,7 @@
-var React = require('react');
+const React = require('react');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -31,7 +31,7 @@ class Tab extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (typeof this.state[index] !== 'object') {
         if (this.state[index] !== nextState[index]) {
           return true;
@@ -50,10 +50,10 @@ class Tab extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       __ = props.__;
-    var className = 'modal-row tab-row';
+    let className = 'modal-row tab-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class DataList extends React.Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class DataList extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
     return (
       <div className={'modal-row data-list-row' + (state.hide ? ' hide' : '')}>

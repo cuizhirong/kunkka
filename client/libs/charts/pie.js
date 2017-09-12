@@ -1,8 +1,8 @@
-var easing = require('./easing');
-var autoscale = require('./autoscale');
-var utils = require('./utils');
+const easing = require('./easing');
+const autoscale = require('./autoscale');
+const utils = require('./utils');
 
-var resizeCanvas;
+let resizeCanvas;
 
 class PieChart {
   constructor(container) {
@@ -13,11 +13,11 @@ class PieChart {
   }
 
   initDOM() {
-    var canvas = this.canvas = document.createElement('canvas'),
+    let canvas = this.canvas = document.createElement('canvas'),
       bCanvas = this.bCanvas = document.createElement('canvas'),
       textDiv = this.textDiv = document.createElement('div');
 
-    var min = Math.min(this.container.clientWidth, this.container.clientHeight);
+    let min = Math.min(this.container.clientWidth, this.container.clientHeight);
     this.width = min;
     this.height = min;
 
@@ -32,7 +32,7 @@ class PieChart {
   }
 
   resize() {
-    var min = Math.min(this.container.clientWidth, this.container.clientHeight);
+    let min = Math.min(this.container.clientWidth, this.container.clientHeight);
     if (this.width === min && this.height === min) {
       return;
     }
@@ -85,15 +85,15 @@ class PieChart {
   }
 
   renderPieBackground() {
-    var ctx = this.bCanvas.getContext('2d'),
+    let ctx = this.bCanvas.getContext('2d'),
       option = this.option,
       bgColor = option.bgColor;
 
-    var min = this.option.lineWidth * 2;
+    let min = this.option.lineWidth * 2;
     if (this.width <= min) {
       this.width = this.height = min;
     }
-    var height = this.height,
+    let height = this.height,
       width = this.width,
       coordinate = [width / 2, height / 2],
       lineWidth = option.lineWidth,
@@ -109,13 +109,13 @@ class PieChart {
   }
 
   setStrokeStyle() {
-    var ctx = this.canvas.getContext('2d');
+    let ctx = this.canvas.getContext('2d');
     ctx.strokeStyle = this.option.series[0].color;
     ctx.lineWidth = this.option.lineWidth;
   }
 
   renderPie() {
-    var ctx = this.canvas.getContext('2d'),
+    let ctx = this.canvas.getContext('2d'),
       option = this.option,
       series = option.series,
       coordinate = [this.width / 2, this.height / 2],
@@ -123,9 +123,9 @@ class PieChart {
       radius = this.width / 2 - lineWidth / 2;
 
     ++this.count;
-    var t = this.easingFunc(this.count / this.ticks);
-    var percent = t * series[0].data;
-    var arc = percent * Math.PI * 2 - Math.PI / 2;
+    let t = this.easingFunc(this.count / this.ticks);
+    let percent = t * series[0].data;
+    let arc = percent * Math.PI * 2 - Math.PI / 2;
 
     ctx.clearRect(0, 0, this.width, this.height);
     ctx.beginPath();

@@ -1,4 +1,4 @@
-var eventList = [];
+let eventList = [];
 
 class CanvasEvent {
   constructor(canvas, tooltip, circleTip) {
@@ -6,12 +6,12 @@ class CanvasEvent {
     this.tooltip = tooltip;
     this.circleTip = circleTip;
     canvas.addEventListener('mousemove', function(ev) {
-      var _rect = canvas.getBoundingClientRect(),
+      let _rect = canvas.getBoundingClientRect(),
         x = ev.pageX - _rect.left,
         style = {color: '#1797c6'};
       //[[{metric: {m: 16, time: '14: 00', unit: '%', x: 30, y : 84}}], [{metric: {m: 16, time: '11: 00', unit: '%', x: 60, y : 84}}], [{metric: {m: 16, time: '12: 00', unit: 'B/s', x: 30, y : 84}}], [{metric: {m: 16, time: '14: 00', unit: 'B/s', x: 30, y : 184}}]]
       eventList.some((e) => {
-        var metric = e.metric;
+        let metric = e.metric;
         if (x <= metric.x) {
           tooltip.style.visibility = 'visible';
           circleTip.style.visibility = 'visible';
@@ -37,7 +37,7 @@ class CanvasEvent {
     });
 
     canvas.addEventListener('mouseout', function(ev) {
-      var _rect = canvas.getBoundingClientRect(),
+      let _rect = canvas.getBoundingClientRect(),
         x = ev.pageX - _rect.left,
         y = ev.pageY - _rect.top;
 
@@ -57,7 +57,7 @@ class CanvasEvent {
    * @param {Function} cb - event listener
    */
   bind(metric, zIndex) {
-    var func = null;
+    let func = null;
     if (zIndex === 0) {
       func = eventList.push;
     } else {

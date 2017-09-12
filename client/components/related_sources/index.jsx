@@ -1,9 +1,9 @@
 require('../../style/index.less');
 require('./style/index.less');
 
-var React = require('react');
-var uskin = require('client/uskin/index');
-var Table = uskin.Table;
+const React = require('react');
+const uskin = require('client/uskin/index');
+const Table = uskin.Table;
 const copy = require('clipboard-plus');
 
 class RelatedSources extends React.Component {
@@ -45,11 +45,11 @@ class RelatedSources extends React.Component {
   }
 
   onAction(actionType, data) {
-    var props = this.props,
+    let props = this.props,
       tabKey = props.tabKey,
       rawItem = props.rawItem;
 
-    var newData = data;
+    let newData = data;
     if (!newData) {
       newData = {};
     }
@@ -59,10 +59,10 @@ class RelatedSources extends React.Component {
   }
 
   getContent(item, i) {
-    var __ = this.props.__;
+    let __ = this.props.__;
     switch(item.type) {
       case 'mini-table':
-        var columns = item.content.column;
+        let columns = item.content.column;
         if (!columns.some((column) => column.key === 'delete')) {
           columns.push({
             title: null,
@@ -160,7 +160,7 @@ class RelatedSources extends React.Component {
   }
 
   render() {
-    var items = this.props.items;
+    let items = this.props.items;
 
     return (
       <div className="toggle">

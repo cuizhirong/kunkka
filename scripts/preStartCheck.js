@@ -1,9 +1,9 @@
 'use strict';
 
-var fs = require('fs');
-var Path = require('path');
-var ChildProcess = require('child_process');
-var Config = require('../configs/server.json');
+const fs = require('fs');
+const Path = require('path');
+const ChildProcess = require('child_process');
+const Config = require('../configs/server.json');
 
 function color(str, c) {
   // 0: black; 1: red; 2: green; 3: yellow; 4: blue; 5: purple; 6: cyan; 7: white;
@@ -22,7 +22,7 @@ function red(str) {
 //   return color(str, '43;37;1');
 // }
 
-var oldLog = console.log;
+let oldLog = console.log;
 console.log = function(msg) {
   return oldLog.call(console, cyan('~') + msg);
 };
@@ -44,10 +44,10 @@ function execShell(shell, error, func) {
 }
 
 function checkAndCreate(pathlist) {
-  var dirlist = {};
-  var filelist = {};
-  var dir = '';
-  var file = '';
+  let dirlist = {};
+  let filelist = {};
+  let dir = '';
+  let file = '';
   if (pathlist instanceof Array) {
     pathlist.forEach(function(ele) {
       if (Path.dirname(ele)) {
@@ -71,8 +71,8 @@ function checkAndCreate(pathlist) {
     dir = Path.dirname(pathlist) ? Path.dirname(pathlist) : '';
     file = Path.basename(pathlist) ? pathlist : '';
   }
-  var stcD = 'sudo mkdir ' + dir + '; sudo chmod a+rw ' + dir;
-  var stcF = 'sudo touch ' + file + '; sudo chmod a+rw ' + file;
+  let stcD = 'sudo mkdir ' + dir + '; sudo chmod a+rw ' + dir;
+  let stcF = 'sudo touch ' + file + '; sudo chmod a+rw ' + file;
   if (dir) {
     execShell(stcD, '', execShell.bind(this, '', stcF));
   } else if (file) {
@@ -90,7 +90,7 @@ function checkAndCreate(pathlist) {
 //     return console.log(yellow('WARNING') + ': You do not use any memory cache ( like "memcached" or "redis" )');
 //   }
 //   console.log(service + ' address is ' + cyan(Config.sessionEngine.address + ':' + Config.sessionEngine.port));
-//   var stc = 'nc -w 10 -z ' + Config.sessionEngine.address + ' ' + Config.sessionEngine.port;
+//   let stc = 'nc -w 10 -z ' + Config.sessionEngine.address + ' ' + Config.sessionEngine.port;
 //   execShell(stc, 'Can not connect to ' + cyan(Config.sessionEngine.address + ':' + Config.sessionEngine.port));
 // }
 

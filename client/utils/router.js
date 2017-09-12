@@ -3,7 +3,7 @@
  * Updated by: yaoli
  */
 
-var EventEmitter = require('eventemitter2');
+const EventEmitter = require('eventemitter2');
 
 class RouterModel extends EventEmitter {
   constructor() {
@@ -34,7 +34,7 @@ class RouterModel extends EventEmitter {
   }
 
   getPathList() {
-    var path = window.location.pathname;
+    let path = window.location.pathname;
 
     return path.split('/').filter((m) => {
       return m ? true : false;
@@ -46,7 +46,7 @@ class RouterModel extends EventEmitter {
   }
 }
 
-var ret = {};
+let ret = {};
 try {
   if (window) {
     ret = new RouterModel();

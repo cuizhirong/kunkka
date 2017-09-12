@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class ShortTip extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class ShortTip extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -31,9 +31,9 @@ class ShortTip extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
-    var className = 'modal-row short-tip-row';
+    let className = 'modal-row short-tip-row';
     if (props.has_label) {
       className += ' label-row';
     } else if (props.has_long_label) {

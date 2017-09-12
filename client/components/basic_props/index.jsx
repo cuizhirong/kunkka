@@ -1,10 +1,10 @@
 require('../../style/index.less');
 require('./style/index.less');
 
-var React = require('react');
-var EditContent = require('./edit_content');
-var moment = require('client/libs/moment');
-var getTime = require('client/utils/time_unification');
+const React = require('react');
+const EditContent = require('./edit_content');
+const moment = require('client/libs/moment');
+const getTime = require('client/utils/time_unification');
 const copy = require('clipboard-plus');
 
 class BasicProps extends React.Component {
@@ -43,7 +43,7 @@ class BasicProps extends React.Component {
   }
 
   getItemContent(item, rawItem) {
-    var copyId;
+    let copyId;
     if(item.title && item.title.toLowerCase() === 'id') {
       copyId = String(item.content);
       return <div>{item.content}<i title="click to copy id!" className="glyphicon icon-copy copyid" onClick={this.onClick.bind(this, copyId)} /></div>;
@@ -62,7 +62,7 @@ class BasicProps extends React.Component {
   }
 
   render() {
-    var items = this.props.items,
+    let items = this.props.items,
       rawItem = this.props.rawItem,
       state = this.state;
 

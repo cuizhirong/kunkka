@@ -1,4 +1,4 @@
-var router = require('client/utils/router');
+const router = require('client/utils/router');
 
 try {
   document.addEventListener('click', function(e) {

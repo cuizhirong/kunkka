@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class Checkbox extends React.Component {
   constructor(props) {
@@ -30,8 +30,8 @@ class Checkbox extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var className = 'modal-row checkbox-row';
+    let props = this.props;
+    let className = 'modal-row checkbox-row';
     if (props.has_label) {
       className += ' label-row';
     } else if (props.has_long_label) {

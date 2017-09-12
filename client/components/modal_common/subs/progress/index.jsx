@@ -1,5 +1,5 @@
-var React = require('react');
-var Slider = require('client/uskin/index').Slider;
+const React = require('react');
+const Slider = require('client/uskin/index').Slider;
 
 class Progress extends React.Component {
   constructor(props) {
@@ -23,9 +23,9 @@ class Progress extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
-    var className = this.state.hide ? 'modal-row progress-row hide' : 'modal-row progress-row';
+    let className = this.state.hide ? 'modal-row progress-row hide' : 'modal-row progress-row';
 
     return (
       <div className={className}>

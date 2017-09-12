@@ -1,17 +1,17 @@
-var path = require('path');
-var fs = require('fs');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var autoprefixer = require('autoprefixer');
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
-var language = process.env.language;
+let language = process.env.language;
 
 // Default language
 if (!language) {
   language = 'zh-CN';
 }
 
-var entry = {};
+let entry = {};
 fs.readdirSync('./applications')
   .filter(function(m) {
     return fs.statSync(path.join('./applications', m)).isDirectory();

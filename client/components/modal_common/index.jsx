@@ -1,15 +1,15 @@
 require('./style/index.less');
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var Base = require('./base');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const Base = require('./base');
 
 function modal(props) {
 
-  var container = null;
+  let container = null;
 
   (function() {
-    var mask = null,
+    let mask = null,
       doc = document,
       root = doc.getElementById('modal-container');
 
@@ -25,7 +25,7 @@ function modal(props) {
     }
 
     if(props.destroyPrevious && root.childNodes.length > 1) {
-      var previousModal = root.lastChild;
+      let previousModal = root.lastChild;
       previousModal.parentNode.removeChild(previousModal);
     }
 
@@ -42,7 +42,7 @@ function modal(props) {
     destory();
   }
 
-  var _props = Object.assign({}, props, {
+  let _props = Object.assign({}, props, {
     onAfterClose: onAfterClose
   });
 

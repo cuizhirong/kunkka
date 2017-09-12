@@ -1,10 +1,10 @@
 require('./style/index.less');
 
-var React = require('react');
-var Menu = require('client/uskin/index').Menu;
+const React = require('react');
+const Menu = require('client/uskin/index').Menu;
 
-var SLIDER_MIN_HEIGHT = 70;
-var MOUSEMOVE = 'mousemove',
+const SLIDER_MIN_HEIGHT = 70;
+const MOUSEMOVE = 'mousemove',
   MOUSEUP = 'mouseup',
   MOUSEDOWN = 'mousedown',
   MOUSEENTER = 'mouseenter',
@@ -67,7 +67,7 @@ class SideMenu extends React.Component {
 
   trigger(eventType, target) {
     if(document.createEvent) {
-      var eventObj = document.createEvent(eventType);
+      let eventObj = document.createEvent(eventType);
       eventObj.initEvent(eventType, true, false );
       target.dispatchEvent(eventObj);
     } else if (document.createEventObject) {
@@ -155,7 +155,7 @@ class SideMenu extends React.Component {
       })(this),
       wheel: (function(_this) {
         return function(e) {
-          var delta;
+          let delta;
           if (e === null) {
             return;
           }
@@ -169,7 +169,7 @@ class SideMenu extends React.Component {
       })(this),
       enter: (function(_this) {
         return function(e) {
-          var _ref;
+          let _ref;
           if (!_this.isBeingDragged) {
             return;
           }
@@ -183,7 +183,7 @@ class SideMenu extends React.Component {
   }
 
   addEvents(name) {
-    var events = this.events;
+    let events = this.events;
     this.bind(window, RESIZE, events[RESIZE]);
     this.bind(this['slider' + name], MOUSEDOWN, events[DOWN]);
     this.bind(this['pane' + name], MOUSEDOWN, events[PANEDOWN]);
@@ -231,7 +231,7 @@ class SideMenu extends React.Component {
   }
 
   updateScrollValues(name) {
-    var content;
+    let content;
     content = this['content' + name];
     this['maxScrollTop' + name] = content.scrollHeight - content.clientHeight;
     this['content' + name].ScrollTop = content.scrollTop;
@@ -266,7 +266,7 @@ class SideMenu extends React.Component {
           <ul>
             {
               apps.map((m) => {
-                var k = Object.keys(m)[0];
+                let k = Object.keys(m)[0];
                 return (
                   <li key={k} onClick={this.onSwitch.bind(this, k)} className={currentApp === k ? 'selected' : null}>
                     <i className={'glyphicon icon-g-' + k}></i>

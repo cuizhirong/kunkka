@@ -1,5 +1,5 @@
-var easing = require('./easing');
-var autoscale = require('./autoscale');
+const easing = require('./easing');
+const autoscale = require('./autoscale');
 
 class BarChart {
   constructor(container) {
@@ -8,7 +8,7 @@ class BarChart {
   }
 
   initDOM() {
-    var canvas = this.canvas = document.createElement('canvas'),
+    let canvas = this.canvas = document.createElement('canvas'),
       bCanvas = this.bCanvas = document.createElement('canvas');
 
     this.width = this.container.clientWidth;
@@ -45,7 +45,7 @@ class BarChart {
   }
 
   renderBarBackground() {
-    var ctx = this.bCanvas.getContext('2d'),
+    let ctx = this.bCanvas.getContext('2d'),
       option = this.option,
       yAxis = option.yAxis,
       marginLeft = this.marginLeft,
@@ -81,12 +81,12 @@ class BarChart {
   }
 
   calcYAxis(option) {
-    var tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
-    var data = option.series.map(function(m) {
+    let tickPeriod = this.tickPeriod = option.yAxis.tickPeriod || 10;
+    let data = option.series.map(function(m) {
       return m.data;
     });
-    var max = Math.max.apply(null, data);
-    var realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
+    let max = Math.max.apply(null, data);
+    let realMax = this.realMax = Math.ceil(max * 1.2 / tickPeriod) * tickPeriod;
 
     this.ratio = this.height / realMax;
 
@@ -96,12 +96,12 @@ class BarChart {
     });
 
     // calc the width of y-text
-    var ctx = this.canvas.getContext('2d');
+    let ctx = this.canvas.getContext('2d');
     this.marginLeft = Math.ceil(ctx.measureText('' + realMax).width);
   }
 
   renderBar() {
-    var ctx = this.canvas.getContext('2d'),
+    let ctx = this.canvas.getContext('2d'),
       option = this.option,
       series = option.series,
       height = this.height,
@@ -111,14 +111,14 @@ class BarChart {
       gap = tickWidth - barWidth;
 
     ++this.count;
-    var t = this.easingFunc(this.count / this.ticks);
+    let t = this.easingFunc(this.count / this.ticks);
 
     ctx.clearRect(0, 0, this.width, height);
     ctx.textAlign = 'center';
 
     series.forEach((m, i) => {
       ctx.fillStyle = m.color;
-      var h = heightList[i] * t;
+      let h = heightList[i] * t;
       ctx.fillRect(this.marginLeft + tickWidth * i + gap + 5, height - h + 0.5 - 3, barWidth, h);
       ctx.fillText(m.data + option.unit, this.marginLeft + tickWidth * i + gap + 5 + barWidth / 2, height - h + 0.5 - 3 - 6);
 

@@ -1,7 +1,7 @@
-var React = require('react');
+const React = require('react');
 
-var copyObj = function(obj) {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = function(obj) {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -32,7 +32,7 @@ class SelectSingle extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    var now = (new Date()).getTime();
+    let now = (new Date()).getTime();
     if (nextState.value === null && (now - this.time < 50)) {
       return false;
     } else {
@@ -46,9 +46,9 @@ class SelectSingle extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
-    var className = 'modal-row select-single-row';
+    let className = 'modal-row select-single-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {
@@ -58,16 +58,16 @@ class SelectSingle extends React.Component {
       className += ' hide';
     }
 
-    var that = this;
+    let that = this;
     function renderTabs() {
-      var data = state.data, columnNum = props.columnNum, ret = [];
-      var width = (100 - (columnNum - 1) * 2) / columnNum + '%';
+      let data = state.data, columnNum = props.columnNum, ret = [];
+      let width = (100 - (columnNum - 1) * 2) / columnNum + '%';
 
-      for(var i = 0; i < data.length; i += columnNum) {
-        var tabs = [];
-        for(var j = i; j < i + columnNum; j++) {
+      for(let i = 0; i < data.length; i += columnNum) {
+        let tabs = [];
+        for(let j = i; j < i + columnNum; j++) {
           if (j < data.length) {
-            var value = data[j];
+            let value = data[j];
             tabs.push(
               <a key={value}
                 style={{width: width}}

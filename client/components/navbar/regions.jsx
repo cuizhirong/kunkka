@@ -1,5 +1,5 @@
-var React = require('react');
-var request = require('client/libs/ajax');
+const React = require('react');
+const request = require('client/libs/ajax');
 
 class Regions extends React.Component{
   constructor(props) {
@@ -25,7 +25,7 @@ class Regions extends React.Component{
       return;
     }
 
-    var errHandler = function(err) {
+    let errHandler = function(err) {
       if (err.status === 401) {
         window.location = '/auth/logout';
       }
@@ -34,9 +34,9 @@ class Regions extends React.Component{
       });
     };
 
-    var fetch = {};
+    let fetch = {};
     fetch.put = function(options) {
-      var opt = Object.assign({
+      let opt = Object.assign({
         dataType: 'json',
         contentType: 'application/json',
         headers: {
@@ -56,7 +56,7 @@ class Regions extends React.Component{
   }
 
   renderRegion() {
-    var regions = HALO.region_list;
+    let regions = HALO.region_list;
 
     return regions.map((item, index) => {
       return (

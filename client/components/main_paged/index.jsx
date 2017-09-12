@@ -1,15 +1,15 @@
 require('./style/index.less');
 require('./style/model.less');
 
-var React = require('react');
-var {InputSearch, Pagination, Tab, Table} = require('client/uskin/index');
-var ButtonList = require('./button_list');
-var FilterSearch = require('./filter_search');
-var Detail = require('./detail');
-var converter = require('./converter');
-var moment = require('client/libs/moment');
-var router = require('client/utils/router');
-var getTime = require('client/utils/time_unification');
+const React = require('react');
+const {InputSearch, Pagination, Tab, Table} = require('client/uskin/index');
+const ButtonList = require('./button_list');
+const FilterSearch = require('./filter_search');
+const Detail = require('./detail');
+const converter = require('./converter');
+const moment = require('client/libs/moment');
+const router = require('client/utils/router');
+const getTime = require('client/utils/time_unification');
 
 class Main extends React.Component {
   constructor(props) {
@@ -27,14 +27,14 @@ class Main extends React.Component {
   }
 
   componentWillMount() {
-    var config = this.props.config;
+    let config = this.props.config;
     config.table.column.forEach((col) => {
       if (col.filter) {
         col.filterAll = ['all'];
       }
       if (col.sort) {
         col.sortBy = function(item1, item2) {
-          var key = col.dataIndex,
+          let key = col.dataIndex,
             a = item1[key] ? item1[key] : '(' + item1.id + ')',
             b = item2[key] ? item2[key] : '(' + item2.id + ')';
 
@@ -52,7 +52,7 @@ class Main extends React.Component {
       switch (column.type) {
         case 'captain':
           column.render = (col, item, i) => {
-            var formatData = column.formatter && column.formatter(col, item, i);
+            let formatData = column.formatter && column.formatter(col, item, i);
             if (!formatData) {
               formatData = (item[col.dataIndex] ? item[col.dataIndex] : '(' + item.id.substr(0, 8) + ')');
             }
@@ -84,7 +84,7 @@ class Main extends React.Component {
       data = {};
     }
     data.rows = this.stores.rows;
-    var func = this.props.onAction;
+    let func = this.props.onAction;
     func && func(field, actionType, this.refs, data);
   }
 
@@ -114,8 +114,8 @@ class Main extends React.Component {
       }
     }
 
-    var detail = this.refs.detail;
-    var refreshBtnDisabled = nextProps.config.table.loading || detail && detail.state.loading;
+    let detail = this.refs.detail;
+    let refreshBtnDisabled = nextProps.config.table.loading || detail && detail.state.loading;
     this.setRefreshBtnDisabled(refreshBtnDisabled);
     this.updateRows(nextProps.config.table.data);
   }
@@ -140,10 +140,10 @@ class Main extends React.Component {
 
   updateRows(data) {
     //update main store rows
-    var newRows = [];
+    let newRows = [];
 
     this.stores.rows.forEach((item) => {
-      var existed = data.filter((d) => d.id === item.id)[0];
+      let existed = data.filter((d) => d.id === item.id)[0];
 
       if (existed) {
         newRows.push(existed);
@@ -153,12 +153,12 @@ class Main extends React.Component {
     this.stores.rows = newRows;
 
     //update table checkedKey
-    var checkedKey = {};
+    let checkedKey = {};
     newRows.forEach((item) => {
       checkedKey[item.id] = true;
     });
 
-    var table = this.refs.table;
+    let table = this.refs.table;
     if (table) {
       table.check(checkedKey);
     }
@@ -171,11 +171,11 @@ class Main extends React.Component {
   }
 
   onChangeParams(params) {
-    var table = this.refs.table,
+    let table = this.refs.table,
       detail = this.refs.detail;
 
     if (params.length === 3) {
-      var row = this.props.config.table.data.filter((data) => '' + data.id === params[2])[0];
+      let row = this.props.config.table.data.filter((data) => '' + data.id === params[2])[0];
       /* no row data means invalid path list */
       if (!row) {
         router.replaceState('/' + params.slice(0, 2).join('/'));
@@ -223,11 +223,11 @@ class Main extends React.Component {
   onClickCaptain(item, e) {
     e.preventDefault();
 
-    var shouldClose = this.refs.detail.state.visible
+    let shouldClose = this.refs.detail.state.visible
       && (this.stores.rows.length === 1)
       && (this.stores.rows[0].id === item.id);
 
-    var path = router.getPathList();
+    let path = router.getPathList();
     if (shouldClose) {
       router.pushState('/' + path[0] + '/' + path[1]);
     } else {
@@ -236,7 +236,7 @@ class Main extends React.Component {
   }
 
   clickTabs(e, item) {
-    var path = router.getPathList();
+    let path = router.getPathList();
     router.pushState('/' + path[0] + '/' + item.key);
   }
 
@@ -254,7 +254,7 @@ class Main extends React.Component {
 
   keypressSearch(e) {
     if (e.key === 'Enter') {
-      var value = this.refs.search.state.value;
+      let value = this.refs.search.state.value;
 
       this.onAction('search', 'click', {
         text: value
@@ -263,7 +263,7 @@ class Main extends React.Component {
   }
 
   checkboxListener(status, clickedRow, arr) {
-    var path = this.props.params;
+    let path = this.props.params;
     if (arr.length <= 0) {
       router.pushState('/admin/' + path[1]);
     } else if (arr.length <= 1) {
@@ -301,11 +301,11 @@ class Main extends React.Component {
   }
 
   displayDetail() {
-    var detail = this.refs.detail,
+    let detail = this.refs.detail,
       tabKey = detail.findDefaultTab().key,
       contents = detail.state.contents;
 
-    var __ = this.props.__;
+    let __ = this.props.__;
     contents[tabKey] = (
       <div className="no-data-desc">
         <p>{__.view_is_unavailable}</p>
@@ -343,8 +343,8 @@ class Main extends React.Component {
   }
 
   closeDetail(visible) {
-    var dashboardVisible = typeof visible === 'undefined' ? this.props.visible : visible;
-    var detail = this.refs.detail;
+    let dashboardVisible = typeof visible === 'undefined' ? this.props.visible : visible;
+    let detail = this.refs.detail;
 
     if (detail && detail.state.visible) {
       let params = this.props.params;
@@ -377,10 +377,10 @@ class Main extends React.Component {
   }
 
   onNextPage(direction) {
-    var data = {};
+    let data = {};
     data.url = '';
 
-    var pagi = this.props.config.table.pagination;
+    let pagi = this.props.config.table.pagination;
     if (direction === 'next') {
       data.url = pagi.nextUrl;
     } else if( direction === 'prev') {
@@ -391,11 +391,11 @@ class Main extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    let props = this.props;
 
-    var __ = props.__;
+    let __ = props.__;
 
-    var _config = props.config,
+    let _config = props.config,
       tabs = _config.tabs,
       title = _config.tabs.filter((tab) => tab.default)[0].name,
       btns = _config.btns,
@@ -404,7 +404,7 @@ class Main extends React.Component {
       table = _config.table,
       detail = _config.table.detail;
 
-    var pagination = table.pagination,
+    let pagination = table.pagination,
       hasPagi, pagiLabel;
     if (pagination && !table.loading) {
       let hasNext = pagination.nextUrl ? true : false;

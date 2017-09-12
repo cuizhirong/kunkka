@@ -1,7 +1,7 @@
-var moment = require('client/libs/moment');
+const moment = require('client/libs/moment');
 
 function getTime(time, fromNow, formatter) {
-  var uniformTime = time.replace('.000000', 'Z'),
+  let uniformTime = time.replace('.000000', 'Z'),
     _formatter = formatter || 'YYYY-MM-DD HH:mm:ss';
 
   if(fromNow) {

@@ -1,5 +1,5 @@
-var React = require('react');
-var Tip = require('client/uskin/index').Tip;
+const React = require('react');
+const Tip = require('client/uskin/index').Tip;
 
 class Error extends React.Component {
   constructor(props) {
@@ -23,11 +23,11 @@ class Error extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
 
-    var className = this.state.hide ? 'modal-row tip-row hide' : 'modal-row tip-row';
-    var type = (props.tip_type === 'error') ? 'danger' : props.tip_type;
+    let className = this.state.hide ? 'modal-row tip-row hide' : 'modal-row tip-row';
+    let type = (props.tip_type === 'error') ? 'danger' : props.tip_type;
 
     return (
       <div className={className}>

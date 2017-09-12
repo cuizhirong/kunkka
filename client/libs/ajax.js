@@ -3,10 +3,10 @@
  * Author: LeeY
  */
 
-var RSVP = require('rsvp');
-var Promise = RSVP.Promise;
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
 
-var c = {
+let c = {
   dataTypes: {
     _default: '*/*',
     xml: 'application/xml, text/xml',
@@ -20,10 +20,10 @@ var c = {
 
 module.exports = (function(m) {
 
-  var request = {
+  let request = {
     ajax: function(options) {
 
-      var config = {
+      let config = {
           url: '',
           method: 'GET',
           async: true,
@@ -36,7 +36,7 @@ module.exports = (function(m) {
         o = Object.assign(config, options),
         xhr = new XMLHttpRequest();
 
-      var promise = new Promise(function(resolve, reject) {
+      let promise = new Promise(function(resolve, reject) {
         function handler() {
           if (this.readyState !== 4) {
             return;
@@ -80,7 +80,7 @@ module.exports = (function(m) {
     },
     decodeQuery: function(q) {
       if (!q) return '';
-      var ret = Object.keys(q).map((el) => {
+      let ret = Object.keys(q).map((el) => {
         return el + '=' + q[el];
       }).join('&');
 
@@ -92,14 +92,14 @@ module.exports = (function(m) {
     processData: function(data) {
       if (!data) return null;
 
-      var type = Object.prototype.toString.call(data);
+      let type = Object.prototype.toString.call(data);
       if (type === '[object Object]' || type === '[object Array]') {
         return JSON.stringify(data);
       }
       return null;
     },
     converters: function(dataType, data) {
-      var ret = null;
+      let ret = null;
       if (dataType === 'script') {
         //eval(data);
         ret = data;

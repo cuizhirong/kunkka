@@ -1,6 +1,6 @@
-var React = require('react');
-var Main = require('./index');
-var router = require('client/utils/router');
+const React = require('react');
+const Main = require('./index');
+const router = require('client/utils/router');
 
 class Module extends React.Component {
 
@@ -45,13 +45,13 @@ class Module extends React.Component {
 
   getTableData(forceUpdate, detailRefresh) {
     this.getList(forceUpdate).then((data) => {
-      var _config = this.state.config;
+      let _config = this.state.config;
 
-      var table = _config.table;
+      let table = _config.table;
       table.data = data;
       table.loading = false;
 
-      var detail = this.refs.dashboard.refs.detail;
+      let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
           loading: false
@@ -67,9 +67,9 @@ class Module extends React.Component {
           }
 
           if (router.getPathList().length > 2) {
-            var path = router.getPathList()[2];
-            var key = _config.table.dataKey;
-            var shouldClose = !data.some((ele) => ele[key] === path);
+            let path = router.getPathList()[2];
+            let key = _config.table.dataKey;
+            let shouldClose = !data.some((ele) => ele[key] === path);
 
             if (shouldClose) {
               detail.onClose();
@@ -105,7 +105,7 @@ class Module extends React.Component {
   }
 
   loadingTable() {
-    var _config = this.state.config;
+    let _config = this.state.config;
     _config.table.loading = true;
 
     this.setState({
@@ -151,7 +151,7 @@ class Module extends React.Component {
   }
 
   onClickTableCheckbox(refs, data) {
-    var {rows} = data,
+    let {rows} = data,
       btnList = refs.btnList,
       btns = btnList.state.btns;
 
@@ -161,7 +161,7 @@ class Module extends React.Component {
   }
 
   render() {
-    var props = this.props;
+    let props = this.props;
 
     return (
       <div className={'halo-module ' + this.className} style={props.style}>

@@ -1,12 +1,12 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Tab, Button} = require('client/uskin/index');
-var InputPassword = require('client/components/modal_common/subs/input_pwd/index');
-var converter = require('./converter');
+const React = require('react');
+const {Tab, Button} = require('client/uskin/index');
+const InputPassword = require('client/components/modal_common/subs/input_pwd/index');
+const converter = require('./converter');
 
-var config = require('./config.json');
-var ajax = require('client/libs/ajax');
+const config = require('./config.json');
+const ajax = require('client/libs/ajax');
 
 class Model extends React.Component {
 
@@ -45,7 +45,7 @@ class Model extends React.Component {
     document.getElementById('main').style.display = 'block';
     document.getElementsByClassName('pwd')[0].style.display = 'none';
 
-    var haloMenu = document.getElementsByClassName('halo-com-menu')[0];
+    let haloMenu = document.getElementsByClassName('halo-com-menu')[0];
     haloMenu.style.width = '';
     haloMenu.style.minWidth = '';
     haloMenu.style.maxWidth = '';
@@ -53,7 +53,7 @@ class Model extends React.Component {
   }
 
   modify() {
-    var newPwd = this.refs.new_pwd.state.value,
+    let newPwd = this.refs.new_pwd.state.value,
       confirmPwd = this.refs.confirm_pwd.state.value;
     ['original_pwd', 'new_pwd', 'confirm_pwd'].forEach(m => {
       this.refs[m].setState({
@@ -65,7 +65,7 @@ class Model extends React.Component {
         error: true
       });
     } else {
-      var data = {
+      let data = {
         original_password: this.refs.original_pwd.state.value,
         password: newPwd
       };
@@ -92,7 +92,7 @@ class Model extends React.Component {
   }
 
   render() {
-    var _config = this.state.config,
+    let _config = this.state.config,
       tabs = _config.tabs,
       inputs = _config.fields,
       __ = this.props.__,

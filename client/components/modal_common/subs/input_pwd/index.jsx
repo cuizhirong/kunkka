@@ -1,5 +1,5 @@
-var React = require('react');
-var ShortTip = require('../short_tip/index');
+const React = require('react');
+const ShortTip = require('../short_tip/index');
 
 class InputPassword extends React.Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class InputPassword extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -42,10 +42,10 @@ class InputPassword extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
+    let props = this.props;
+    let state = this.state;
 
-    var className = 'modal-row input-password-row label-row';
+    let className = 'modal-row input-password-row label-row';
     if (props.is_long_label) {
       className += ' long-label-row';
     }

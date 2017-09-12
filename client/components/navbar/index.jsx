@@ -1,9 +1,9 @@
 require('./style/index.less');
 
-var React = require('react');
-var Settings = require('./settings');
-var Regions = require('./regions');
-var Projects = require('./projects');
+const React = require('react');
+const Settings = require('./settings');
+const Regions = require('./regions');
+const Projects = require('./projects');
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -15,10 +15,10 @@ class NavBar extends React.Component {
   }
 
   render() {
-    var HALO = this.props.HALO;
-    var { hideRegion, hideProject, hideSetting } = this.props;
+    let HALO = this.props.HALO;
+    let { hideRegion, hideProject, hideSetting } = this.props;
 
-    var currentProjectId = HALO.user.projectId,
+    let currentProjectId = HALO.user.projectId,
       currentProjectName;
     HALO.user.projects.some((p) => {
       if (p.id === currentProjectId) {
@@ -28,7 +28,7 @@ class NavBar extends React.Component {
       return false;
     });
 
-    var currentRegionId = HALO.current_region,
+    let currentRegionId = HALO.current_region,
       currentRegionName;
     HALO.region_list.some((r) => {
       if (r.id === currentRegionId) {
@@ -38,7 +38,7 @@ class NavBar extends React.Component {
       return false;
     });
 
-    var logo = {
+    let logo = {
       backgroundImage: 'url(' + (HALO.settings.logo_url || '/static/assets/nav_logo.png') + ')'
     };
 

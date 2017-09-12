@@ -1,7 +1,7 @@
-var React = require('react');
+const React = require('react');
 
-var copyObj = (obj) => {
-  var newobj = obj.constructor === Array ? [] : {};
+const copyObj = (obj) => {
+  let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
     return newobj;
   } else {
@@ -28,7 +28,7 @@ class SelectGroup extends React.Component {
   }
 
   onChange(index) {
-    var data = copyObj(this.state.data);
+    let data = copyObj(this.state.data);
     data[index].selected = !data[index].selected;
     if (this.state.single) {
       data.forEach((item) => {
@@ -58,7 +58,7 @@ class SelectGroup extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (typeof this.state[index] !== 'object') {
         if (this.state[index] !== nextState[index]) {
           return true;
@@ -77,7 +77,7 @@ class SelectGroup extends React.Component {
   }
 
   renderEmpty() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       __ = props.__;
     if (props.empty_text && (!state.data || state.data.length < 1)) {
@@ -103,9 +103,9 @@ class SelectGroup extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state;
-    var className = 'modal-row select-group-row';
+    let className = 'modal-row select-group-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {
@@ -126,7 +126,7 @@ class SelectGroup extends React.Component {
         <div>
           {
             state.data.map((item, index) => {
-              var selected = false;
+              let selected = false;
               if (state.single && item.id === state.value) {
                 selected = true;
               } else if (!state.single) {

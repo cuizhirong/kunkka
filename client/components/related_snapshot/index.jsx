@@ -1,8 +1,8 @@
 require('./style/index.less');
 
-var React = require('react');
-var {Button} = require('client/uskin/index');
-var getTime = require('client/utils/time_unification');
+const React = require('react');
+const {Button} = require('client/uskin/index');
+const getTime = require('client/utils/time_unification');
 
 class RelatedSnapshot extends React.Component {
 
@@ -33,20 +33,20 @@ class RelatedSnapshot extends React.Component {
   }
 
   createAcion(childItem) {
-    var actionType = this.props.actionType.create;
+    let actionType = this.props.actionType.create;
     this.onAction(actionType, childItem);
   }
 
   deleteAcion(childItem) {
-    var actionType = this.props.actionType.delete;
+    let actionType = this.props.actionType.delete;
     this.onAction(actionType, childItem);
   }
 
   onAction(actionType, childItem) {
-    var props = this.props,
+    let props = this.props,
       tabKey = props.tabKey;
 
-    var data = {};
+    let data = {};
     data.rawItem = props.rawItem;
     if (childItem) {
       data.childItem = childItem;
@@ -56,7 +56,7 @@ class RelatedSnapshot extends React.Component {
   }
 
   render() {
-    var btnConfig = this.props.btnConfig,
+    let btnConfig = this.props.btnConfig,
       items = this.props.items;
 
     return (

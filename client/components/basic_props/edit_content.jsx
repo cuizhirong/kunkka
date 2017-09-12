@@ -1,6 +1,6 @@
 require('../../style/index.less');
 
-var React = require('react');
+const React = require('react');
 
 class EditContent extends React.Component {
 
@@ -50,7 +50,7 @@ class EditContent extends React.Component {
   }
 
   onConfirm(e) {
-    var item = this.props.item,
+    let item = this.props.item,
       rawItem = this.props.rawItem;
     this.props.onAction && this.props.onAction('edit_name', {
       item: item,
@@ -67,7 +67,7 @@ class EditContent extends React.Component {
   }
 
   render() {
-    var state = this.state,
+    let state = this.state,
       value = state.value,
       edit = state.edit,
       content = state.content;

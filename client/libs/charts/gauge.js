@@ -1,5 +1,5 @@
-var easing = require('./easing');
-var autoscale = require('./autoscale');
+const easing = require('./easing');
+const autoscale = require('./autoscale');
 
 class GaugeChart {
   constructor(container) {
@@ -8,7 +8,7 @@ class GaugeChart {
   }
 
   initDOM() {
-    var canvas = this.canvas = document.createElement('canvas'),
+    let canvas = this.canvas = document.createElement('canvas'),
       bCanvas = this.bCanvas = document.createElement('canvas'),
       tCanvas = this.tCanvas = document.createElement('canvas');
 
@@ -43,7 +43,7 @@ class GaugeChart {
   }
 
   renderGaugeTick() {
-    var ctx = this.tCanvas.getContext('2d'),
+    let ctx = this.tCanvas.getContext('2d'),
       option = this.option,
       tick = this.option.tick,
       coordinate = [this.maxRadius, this.maxRadius],
@@ -75,7 +75,7 @@ class GaugeChart {
   }
 
   renderGaugeBackground() {
-    var ctx = this.bCanvas.getContext('2d'),
+    let ctx = this.bCanvas.getContext('2d'),
       option = this.option,
       width = this.width,
       height = this.height,
@@ -92,7 +92,7 @@ class GaugeChart {
   }
 
   renderGauge() {
-    var ctx = this.canvas.getContext('2d'),
+    let ctx = this.canvas.getContext('2d'),
       option = this.option,
       series = option.series,
       coordinate = [this.width / 2, this.width / 2],
@@ -100,9 +100,9 @@ class GaugeChart {
       radius = this.width / 2 - lineWidth / 2;
 
     ++this.count;
-    var t = this.easingFunc(this.count / this.ticks);
-    var percent = t * series[0].data;
-    var arc = percent * Math.PI + Math.PI;
+    let t = this.easingFunc(this.count / this.ticks);
+    let percent = t * series[0].data;
+    let arc = percent * Math.PI + Math.PI;
 
     ctx.clearRect(0, 0, this.width, this.height);
     ctx.strokeStyle = option.series[0].color;
@@ -117,12 +117,12 @@ class GaugeChart {
 
     ctx.moveTo(coordinate[0] + Math.cos(arc) * radius, coordinate[1] + Math.sin(arc) * radius);
 
-    var c = Math.atan(Math.sqrt(radius * radius - 16) / 4);
+    let c = Math.atan(Math.sqrt(radius * radius - 16) / 4);
 
-    var x1 = c - percent * Math.PI;
+    let x1 = c - percent * Math.PI;
     ctx.lineTo(coordinate[0] - Math.cos(x1) * 4, coordinate[1] + Math.sin(x1) * 4);
 
-    var x2 = c - (Math.PI / 2 - percent * Math.PI);
+    let x2 = c - (Math.PI / 2 - percent * Math.PI);
     ctx.quadraticCurveTo(coordinate[0] - 5 * Math.cos(arc), coordinate[1] - 5 * Math.sin(arc), coordinate[0] + Math.sin(x2) * 4, coordinate[1] - Math.cos(x2) * 4);
     ctx.fill();
 

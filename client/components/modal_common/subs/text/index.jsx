@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 class Text extends React.Component {
   constructor(props) {
@@ -21,8 +21,8 @@ class Text extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
+    let props = this.props;
+    let className = this.state.hide ? 'modal-row text-row hide' : 'modal-row text-row';
 
     return <div className={className}>{props.__[props.info] || props.info}</div>;
   }

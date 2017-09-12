@@ -1,11 +1,11 @@
-var React = require('react');
-var Slider = require('client/uskin/index').Slider;
+const React = require('react');
+const Slider = require('client/uskin/index').Slider;
 
 class Slide extends React.Component {
   constructor(props) {
     super(props);
 
-    var initValue = props.value ? props.value : props.min;
+    let initValue = props.value ? props.value : props.min;
     this.state = {
       value: initValue,
       inputValue: initValue,
@@ -23,7 +23,7 @@ class Slide extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -36,12 +36,12 @@ class Slide extends React.Component {
   }
 
   onInputChange(e) {
-    var state = this.state,
+    let state = this.state,
       min = state.min,
       max = state.max;
 
-    var val = e.target.value;
-    var floatVal = parseFloat(val);
+    let val = e.target.value;
+    let floatVal = parseFloat(val);
 
     if (floatVal >= min && floatVal <= max) {
       this.setState({
@@ -69,13 +69,13 @@ class Slide extends React.Component {
   }
 
   render() {
-    var props = this.props,
+    let props = this.props,
       state = this.state,
       min = state.min,
       max = state.max,
       disabled = state.disabled;
 
-    var className = 'modal-row slider-row';
+    let className = 'modal-row slider-row';
     if (props.is_long_label) {
       className += ' label-row long-label-row';
     } else {

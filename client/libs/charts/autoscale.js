@@ -9,7 +9,7 @@
  */
 
 module.exports = function(canvasList, opt) {
-  var ratio = window.devicePixelRatio || 1,
+  let ratio = window.devicePixelRatio || 1,
     ctx = null;
 
   canvasList.forEach(canvas => {

@@ -1,5 +1,5 @@
-var React = require('react');
-var {Button, Table} = require('uskin');
+const React = require('react');
+const {Button, Table} = require('uskin');
 
 class InputPassword extends React.Component {
   constructor(props) {
@@ -46,7 +46,7 @@ class InputPassword extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    for (var index in this.state) {
+    for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {
         return true;
       }
@@ -56,16 +56,16 @@ class InputPassword extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var state = this.state;
-    var {__, inputs, table} = props;
+    let props = this.props;
+    let state = this.state;
+    let {__, inputs, table} = props;
 
-    var className = 'modal-row key-value-table';
+    let className = 'modal-row key-value-table';
     if (this.state.hide) {
       className += ' hide';
     }
 
-    var getFixedWidth = (width) => ({
+    let getFixedWidth = (width) => ({
       width,
       maxWidth: width,
       minWidth: width

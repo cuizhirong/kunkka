@@ -1,8 +1,8 @@
 require('./style/index.less');
-//var Chart = require('client/libs/charts/index');
-var Echarts = require('echarts');
-var React = require('react');
-var {Tab} = require('client/uskin/index');
+//let Chart = require('client/libs/charts/index');
+const Echarts = require('echarts');
+const React = require('react');
+const {Tab} = require('client/uskin/index');
 let count = 0;
 
 class ChartLine extends React.Component {
@@ -20,7 +20,7 @@ class ChartLine extends React.Component {
   }
 
   componentDidMount() {
-    var that = this;
+    let that = this;
     this.state.data ? this.renderLineChart(this.state.data, this.state.granularity) : '';
     try {
       window.onresize = function() {
@@ -96,12 +96,12 @@ class ChartLine extends React.Component {
       myChart.hideLoading();
       myChart.setOption(option);
     } else {
-      var charts = document.getElementById(ele);
+      let charts = document.getElementById(ele);
       while(charts.hasChildNodes()) {
         charts.removeChild(charts.firstChild);
       }
-      var legendWp = document.createElement('div');
-      var label = document.createElement('label');
+      let legendWp = document.createElement('div');
+      let label = document.createElement('label');
       label.className = 'no-data';
       label.innerHTML = this.props.__.no_monitor_data;
       legendWp.appendChild(label);
@@ -111,7 +111,7 @@ class ChartLine extends React.Component {
   }
 
   chart(title, subText, xAxis, chartData, receiveProps) {
-    var option = {
+    let option = {
       title: {
         text: title,
         subtext: subText
@@ -172,7 +172,7 @@ class ChartLine extends React.Component {
   }
 
   render() {
-    var tabItems = this.state.tabItems,
+    let tabItems = this.state.tabItems,
       chartData = this.state.data;
 
     return (
