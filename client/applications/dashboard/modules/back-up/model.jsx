@@ -4,10 +4,8 @@ const React = require('react');
 const Main = require('client/components/main/index');
 
 const BasicProps = require('client/components/basic_props/index');
-
 const deleteModal = require('client/components/modal_delete/index');
-const createVolume = require('../volume/pop/create/index');
-const backupSnapshot = require('./pop/backup_snapshot/index');
+const restoreModal = require('./pop/restore/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -17,7 +15,6 @@ const msgEvent = require('client/applications/dashboard/cores/msg_event');
 const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -35,7 +32,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'snapshot') {
+        if (data.resource_type === 'volume' || data.resource_type === 'snapshot') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -43,7 +40,7 @@ class Model extends React.Component {
           if (data.action === 'delete'
             && data.stage === 'end'
             && data.resource_id === router.getPathList()[2]) {
-            router.replaceState('/dashboard/snapshot');
+            router.replaceState('/dashboard/back-up');
           }
         }
       }
@@ -65,36 +62,6 @@ class Model extends React.Component {
         this.getTableData(false);
       }
     }
-  }
-
-  tableColRender(columns) {
-    columns.map((column) => {
-      switch (column.key) {
-        case 'size':
-          column.render = (col, item, i) => {
-            return item.size + ' GB';
-          };
-          break;
-        case 'volume':
-          column.render = (col, item, i) => {
-            if(item.volume) {
-              return (
-                <span>
-                  <i className="glyphicon icon-volume" />
-                  <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
-                    {item.volume.name ? item.volume.name : '(' + item.volume.id.substr(0, 8) + ')'}
-                  </a>
-                </span>
-              );
-            } else {
-              return '-';
-            }
-          };
-          break;
-        default:
-          break;
-      }
-    });
   }
 
   onInitialize(params) {
@@ -124,6 +91,47 @@ class Model extends React.Component {
     });
   }
 
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'size':
+          column.render = (col, item, i) => {
+            return item.size + ' GB';
+          };
+          break;
+        case 'resource':
+          column.render = (col, item, i) => {
+            if (item.snapshots.length === 0 && item.snapshot_id !== null) {
+              return (
+                 <span><i className="glyphicon icon-snapshot" />{'(' + item.snapshot_id.slice(0, 8) + ')'}</span>
+              );
+            } else if (item.snapshots.length === 0 && item.snapshot_id === null && item.volumes.length === 0) {
+              return (
+                 <span><i className="glyphicon icon-volume" />{'(' + item.volume_id.slice(0, 8) + ')'}</span>
+              );
+            } else if (item.snapshots.length > 0) {
+              return (
+                <span>
+                  <i className="glyphicon icon-snapshot" />
+                  <a data-type="router" href={'/dashboard/snapshot/' + item.snapshots[0].id}>{item.snapshots[0].name || '(' + item.snapshots[0].id.slice(0, 8) + ')'}</a>
+                </span>
+              );
+            } else if (item.volumes.length > 0) {
+              return (
+                <span>
+                  <i className="glyphicon icon-volume" />
+                  <a data-type="router" href={'/dashboard/volume/' + item.volume_id}>{item.volumes[0].name || '(' + item.volumes[0].id.slice(0, 8) + ')'}</a>
+                </span>
+              );
+            }
+          };
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   onAction(field, actionType, refs, data) {
     switch (field) {
       case 'btnList':
@@ -143,22 +151,34 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     switch (key) {
-      case 'create':
-        createVolume(rows[0]);
+      case 'restart':
+        let restoreData = {
+          restore : {
+            backup_id : rows[0].id,
+            volumn_id: rows[0].volume_id,
+            name: rows[0].name
+          }
+        };
+        restoreModal({
+          __: __,
+          action: 'restart',
+          type: 'back-up',
+          data: rows,
+          onRestore: function(_data, cb) {
+            request.restoreBackup(rows[0], restoreData).then((res) => {
+              cb(true);
+            });
+          }
+        });
         break;
-      case 'crt_img':
-        break;
-      case 'back_up':
-        backupSnapshot(rows[0]);
-        break;
-      case 'del_snapshot':
+      case 'delete':
         deleteModal({
           __: __,
           action: 'delete',
-          type: 'snapshot',
+          type: 'back-up',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteSnapshots(rows).then((res) => {
+            request.deleteBackup(rows).then((res) => {
               cb(true);
             });
           }
@@ -198,23 +218,86 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    for(let key in btns) {
-      switch (key) {
-        case 'create':
-          btns[key].disabled = rows.length === 1 ? false : true;
-          break;
-        case 'back_up':
-          btns[key].disabled = rows.length === 1 ? false : true;
-          break;
-        case 'del_snapshot':
-          btns[key].disabled = rows.length > 0 ? false : true;
-          break;
-        default:
-          break;
-      }
+    let single, singleStatus;
+    if (rows.length === 1) {
+      single = rows[0];
+      singleStatus = single.status;
     }
 
+    btns.restart.disabled = !(rows.length === 1 && (singleStatus === 'available' || singleStatus === 'in-use'));
+    btns.delete.disabled = !(rows.length >= 1);
+
     return btns;
+  }
+
+  getBasicProps(item) {
+
+    let getResource = (_item) => {
+      if (_item.snapshots.length === 0 && item.snapshot_id !== null) {
+        return (
+           <span><i className="glyphicon icon-snapshot" />{'(' + _item.snapshot_id.slice(0, 8) + ')'}</span>
+        );
+      } else if (_item.snapshots.length === 0 && _item.snapshot_id === null && _item.volumes.length === 0) {
+        return (
+           <span><i className="glyphicon icon-volume" />{'(' + _item.volume_id.slice(0, 8) + ')'}</span>
+        );
+      } else if (_item.snapshots.length > 0) {
+        return (
+          <span>
+            <i className="glyphicon icon-snapshot" />
+            <a data-type="router" href={'/dashboard/snapshot/' + _item.snapshots[0].id}>{_item.snapshots[0].name || '(' + _item.snapshots[0].id.slice(0, 8) + ')'}</a>
+          </span>
+        );
+      } else if (_item.volumes.length > 0) {
+        return (
+          <span>
+            <i className="glyphicon icon-volume" />
+            <a data-type="router" href={'/dashboard/volume/' + _item.volume_id}>{_item.volumes[0].name || '(' + _item.volumes[0].id.slice(0, 8) + ')'}</a>
+          </span>
+        );
+      }
+    };
+
+    let data = [{
+      title: __.name,
+      content: item.name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.resource,
+      content: item.size + ' GB'
+    }, {
+      title: __.size,
+      content: getResource(item)
+    }, {
+      title: __.status,
+      content: getStatusIcon(item.status)
+    }, {
+      title: __.container,
+      content: item.container
+    }, {
+      title: __.availability_zone,
+      content: item.availability_zone
+    }, {
+      title: __.description,
+      content: item.description
+    }, {
+      title: __.incremental,
+      content: item.is_incremental ? __.yes : __.no
+    }, {
+      title: __.force,
+      content: item.has_dependent_backups ? __.yes : __.no
+    }, {
+      title: __.create + __.time,
+      type: 'time',
+      content: item.created_at
+    }, {
+      title: __.update + __.time,
+      type: 'time',
+      content: item.updated_at
+    }];
+    return data;
   }
 
   onClickDetailTabs(tabKey, refs, data) {
@@ -238,8 +321,7 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          let basicPropsItem = this.getBasicPropsItems(rows[0]);
-
+          let basicPropsItem = this.getBasicProps(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -247,8 +329,7 @@ class Model extends React.Component {
                 defaultUnfold={true}
                 tabKey={'description'}
                 items={basicPropsItem ? basicPropsItem : []}
-                rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)} />
+                rawItem={rows[0]} />
             </div>
           );
         }
@@ -262,42 +343,12 @@ class Model extends React.Component {
     });
   }
 
-  getBasicPropsItems(item) {
-    let data = [{
-      title: __.name,
-      type: 'editable',
-      content: item.name
-    }, {
-      title: __.id,
-      content: item.id
-    }, {
-      title: __.volume,
-      content: item.volume ?
-        <span>
-          <i className="glyphicon icon-volume" />
-          <a data-type="router" href={'/dashboard/volume/' + item.volume.id}>
-            {item.volume.name ? item.volume.name : '(' + item.volume.id.substr(0, 8) + ')'}
-          </a>
-        </span>
-        : '-'
-    }, {
-      title: __.status,
-      content: getStatusIcon(item.status)
-    }, {
-      title: __.create + __.time,
-      type: 'time',
-      content: item.created_at
-    }];
-
-    if (HALO.settings.enable_approval) {
-      let metadata = item.metadata;
-      data.push({
-        title: __.owner,
-        content: metadata.owner ? metadata.owner : '-'
-      });
-    }
-
-    return data;
+  forceRefresh() {
+    this.refresh({
+      tableLoading: true,
+      detailLoading: true,
+      detailRefresh: true
+    }, true);
   }
 
   refresh(data, forceUpdate) {
@@ -329,48 +380,21 @@ class Model extends React.Component {
     });
   }
 
-  onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
-      case 'description':
-        this.onDescriptionAction(actionType, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  onDescriptionAction(actionType, data) {
-    switch(actionType) {
-      case 'edit_name':
-        let {rawItem, newName} = data;
-        request.editSnapshotName(rawItem, newName).then((res) => {
-          this.refresh({
-            detailRefresh: true
-          }, true);
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
   render() {
     return (
-      <div className="halo-module-snapshot" style={this.props.style}>
+      <div className="halo-module-back-up" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
-          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           config={this.state.config}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
           params={this.props.params}
           getStatusIcon={getStatusIcon}
           __={__} />
       </div>
     );
   }
-
 }
-
 module.exports = Model;

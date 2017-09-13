@@ -26,5 +26,11 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  createBackup: function(data) {
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/backups',
+      data: data
+    });
   }
 };

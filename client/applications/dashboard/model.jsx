@@ -130,6 +130,8 @@ class Model extends React.Component {
         return 'snapshot';
       case 'alarm':
         return 'monitor';
+      case 'back-up':
+        return 'backup';
       default:
         return name;
     }

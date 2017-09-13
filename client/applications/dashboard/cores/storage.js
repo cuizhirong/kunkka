@@ -24,6 +24,7 @@ const listener = require('../modules/loadbalancer/cache');
 const healthmonitor = require('../modules/resource-pool/cache');
 const member = require('../modules/resource-pool/cache');
 const vpnservice = require('../modules/router/cache');
+const backup = require('../modules/back-up/cache');
 const ipsec = require('../modules/router/cache');
 const ikepolicy = require('../modules/ike-policy/cache');
 const ipsecpolicy = require('../modules/ipsec-policy/cache');
@@ -41,7 +42,8 @@ const map = {
   router: ['subnet', 'port', 'network'],
   floatingip: ['instance', 'port'],
   instance: ['port', 'volume', 'image'],
-  image: ['instance']
+  image: ['instance'],
+  backup: ['volume', 'snapshot']
 };
 
 function Storage() {
@@ -89,7 +91,7 @@ Storage.prototype = {
 
 };
 
-Object.assign(Storage.prototype, instance, image, port, floatingip, keypair, network, router, securitygroup,
+Object.assign(Storage.prototype, instance, backup, image, port, floatingip, keypair, network, router, securitygroup,
   snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member, vpnservice, ipsec, ikepolicy,
   ipsecpolicy, notification, alarm, orchestration, resourcetype, templateversion, templatelist);
 

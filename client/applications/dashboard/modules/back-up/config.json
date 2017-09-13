@@ -1,24 +1,18 @@
 {
   "tabs": [{
-    "name": ["snapshot"],
-    "key": "snapshot",
+    "name": ["back_up"],
+    "key": "back-up",
     "default": true
   }],
   "btns": [{
-    "value": ["create", "volume"],
-    "key": "create",
+    "value": ["restart"],
+    "key": "restart",
     "type": "create",
-    "icon": "create",
+    "icon": "restart",
     "disabled": true
-  },  {
-    "value": ["back_up"],
-    "key": "back_up",
-    "type": "create",
-    "icon": "backup",
-    "disabled": true
-  }, {
+  },{
     "value": ["delete"],
-    "key": "del_snapshot",
+    "key": "delete",
     "type": "delete",
     "icon": "delete",
     "disabled": true
@@ -43,18 +37,17 @@
       "sort": true
     }, {
       "title": ["size"],
-      "dataIndex": "",
+      "dataIndex": "size",
       "key": "size"
     }, {
-      "title": ["volume"],
-      "dataIndex": "",
-      "key": "volume"
+      "title": ["resource"],
+      "dataIndex": "resource",
+      "key": "resource"
     }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
       "key": "status",
-      "filterAll": ["all"],
       "filter": [{
         "name": ["available"],
         "key": "available",

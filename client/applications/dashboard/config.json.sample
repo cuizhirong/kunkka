@@ -34,7 +34,8 @@
     "title": "storage",
     "items": [
       "volume",
-      "snapshot"
+      "snapshot",
+      "back-up"
     ]
   }, {
     "title": "monitor",
