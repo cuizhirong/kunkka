@@ -89,6 +89,9 @@ function pop(obj, parent, callback) {
           }
 
           request.createUser(data).then((res) => {
+            if(res.project) {
+              request.linkProject(res.project.id);
+            }
             callback && callback(res.user);
             cb(true);
           }).catch((prjError) => {

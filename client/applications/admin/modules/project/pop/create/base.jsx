@@ -389,6 +389,7 @@ class ModalBase extends React.Component {
         this.onCancel();
         callback && callback();
       }
+      request.linkProject(res.project.id);
     }).catch((error) => {
       this.setState({
         isCommiting: false,

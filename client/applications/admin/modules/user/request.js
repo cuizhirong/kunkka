@@ -287,5 +287,21 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/keystone/v3/groups/' + groupID + '/users/' + userID
     });
+  },
+  linkProject: (projectId) => {
+    return RSVP.all([fetch.get({
+      url: '/proxy/keystone/v3/roles?name=rating'
+    }), fetch.get({
+      url: '/proxy/keystone/v3/users?name=cloudkitty'
+    })]).then((res) => {
+      if(res[0].roles.length < 1 || res[1].users.length < 1) {
+        return null;
+      }
+      let ratingId = res[0].roles[0].id;
+      let userId = res[1].users[0].id;
+      return fetch.put({
+        url: `/proxy/keystone/v3/projects/${projectId}/users/${userId}/roles/${ratingId}`
+      });
+    });
   }
 };
