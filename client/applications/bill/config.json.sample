@@ -3,16 +3,12 @@
     "title": "account_bill",
     "items": [
       "bill-overview",
-      "billing-record",
-      "account-charge",
-      "charge-record"
+      "billing-record"
     ]
   }, {
     "title": "bill_mgmt",
     "items": [
-      "user",
-      "price-mgmt",
-      "global-record"
+      "price-mgmt"
     ]
   }],
   "default_module": "bill-overview",

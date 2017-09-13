@@ -1,30 +1,26 @@
 {
   "en": {
-    "bill_balance": "Bill Balance",
-    "consumption": "Total Consumption",
-    "consumption_estimate": "Consumption Estimate",
-    "consumption_each_day": "Consumption each day",
-    "consumption_each_hour": "Consumption each hour",
-    "created_at": "Created At",
-    "day": "Day",
-    "full": "Full",
-    "noData": "no billing data",
-    "owed": "Owed",
-    "project_consumption": "Project Consumption",
-    "user_consumption": "User Consumption"
+    "by_day": "Day",
+    "by_month": "Month",
+    "end_time": "End Time",
+    "from": "From",
+    "loading": "loading...",
+    "query": "Query",
+    "recent_consumption_record": "Recent consumption record",
+    "start_time": "Start Time",
+    "sum": "Sum",
+    "to": "To"
   },
   "zh-CN": {
-    "bill_balance": "账户余额",
-    "consumption": "累计支付金额",
-    "consumption_estimate": "消费剩余天数",
-    "consumption_each_day": "每日消费金额",
-    "consumption_each_hour": "每小时消费金额",
-    "created_at": "创建时间",
-    "day": "天",
-    "full": "充足",
-    "noData": "无计费信息",
-    "owed": "欠费",
-    "project_consumption": "项目支付金额",
-    "user_consumption": "我的支付金额"
+    "by_day": "按天",
+    "by_month": "按月",
+    "end_time": "结束时间",
+    "from": "从",
+    "loading": "加载中...",
+    "query": "查询",
+    "recent_consumption_record": "最近消费记录",
+    "start_time": "开始时间",
+    "sum": "金额",
+    "to": "到"
   }
 }

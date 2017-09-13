@@ -1,35 +1,60 @@
 require('./style/index.less');
 
 const React = require('react');
-const Tab = require('client/uskin/index').Tab;
-const Table = require('client/uskin/index').Table;
+const {Button, Tab, Calendar} = require('client/uskin/index');
+const Chart = require('echarts');
+const moment = require('moment');
 
 const request = require('./request');
-const moment = require('client/libs/moment');
 const __ = require('locale/client/bill.lang.json');
-const getTime = require('client/utils/time_unification');
+const CountUp = require('../../utils/countUp.js');
+const chartOption = require('../../utils/chart_option.js');
+let pieChart, lineChart, holderChart;
+let monthData, dayData;
+let appPie = {
+  currentIndex: -1
+};
 
 class Model extends React.Component {
   constructor(props) {
     super(props);
-    moment.locale(HALO.configs.lang);
 
     this.state = {
-      balance: '0.00',
-      consumption: '0.00',
-      remaining_day: '0',
-      price_per_day: '0.00',
-      price_per_hour: '0.00',
-      data: [],
-      ready: false
+      services: [],
+      sum: 0,
+      currentLine: 'month',
+      loadingLineChart: true,
+      loadingPieChart: true,
+      startTime: null,
+      endTime: null
     };
 
-    ['onInitialize'].forEach((m) => {
+    ['onInitialize', 'onSwitchProject', 'onSwitchRegion', 'onChangeStartTime', 'onChangeEndTime', 'onQuery'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
 
   componentWillMount() {
+    let that = this;
+    // update charts data
+    setInterval(() => {
+      that.onInitialize();
+    }, 60 * 60 * 1000);
+  }
+
+  componentDidMount() {
+    pieChart = Chart.init(document.getElementById('pie-chart'));
+    lineChart = Chart.init(document.getElementById('line-chart'));
+    holderChart = Chart.init(document.getElementById('loading-holder'));
+    this.loadingChart(pieChart);
+    this.loadingChart(holderChart);
+    try {
+      window.onresize = () => {
+        lineChart.resize();
+      };
+    } catch(e) {
+      return;
+    }
     this.onInitialize();
   }
 
@@ -40,58 +65,249 @@ class Model extends React.Component {
     return true;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
-      this.onInitialize();
+  onInitialize() {
+    this.getList();
+    this.getTrend('month');
+  }
+
+  countingNumber(ele, number) {
+    new CountUp(ele, 0, number, 2, 1).start();
+  }
+
+  loadingChart(chart) {
+    chart.clear();
+    chart.showLoading('default', {
+      text: __.loading,
+      color: '#00afc8',
+      textColor: '#252f3d',
+      maskColor: 'rgba(255, 255, 255, 0.8)',
+      zlevel: 0
+    });
+  }
+
+  upDatePieChart() {
+    pieChart.hideLoading();
+    chartOption.pieNormalOption.series[0].data = this.state.services;
+    pieChart.setOption(chartOption.pieNormalOption);
+  }
+
+  upDateLineChart(xAxis, data) {
+    lineChart.hideLoading();
+    chartOption.lineChartOption.xAxis.data = xAxis;
+    chartOption.lineChartOption.series = [{
+      name: 'none',
+      type: 'line',
+      smooth: true,
+      data: data
+    }];
+    lineChart.setOption(chartOption.lineChartOption);
+  }
+
+  getList(startTime, endTime) {
+    if(startTime && endTime) {
+      this.loadingChart(pieChart);
+      this.loadingChart(holderChart);
+    }
+    let num = 0,
+      totalLength = 0,
+      sum = 0;
+    request.getServices().then((res) => {
+      totalLength = res.services.length;
+      res.services.map(s => s.value = '...');
+      this.setState({
+        services: res.services
+      }, () => {
+        holderChart.dispose();
+        res.services.forEach((r, i) => {
+          request.getPriceByService(r.name, startTime, endTime).then((result) => {
+            let services = this.state.services;
+            // current sum
+            let _sum = result.length > 0 ? result.reduce((prev, cur) => +(prev) + +cur[2], 0) : 0;
+            num += 1;
+            // calculate total sum
+            sum += _sum;
+            services[i].value = _sum.toFixed(2);
+            this.setState({
+              services: services
+            }, () => {
+              this.countingNumber('counting_' + i, this.state.services[i].value);
+            });
+            if(num === totalLength) {
+              this.setState({
+                sum: sum.toFixed(2)
+              }, () => {
+                this.setState({
+                  loadingPieChart: false
+                });
+                this.countingNumber('sum-number', this.state.sum);
+                this.upDatePieChart();
+              });
+            }
+          });
+        });
+      });
+    });
+  }
+
+  getTrend(time) {
+    if(monthData && time === 'month') {
+      this.upDateLineChart(monthData.xAxis, monthData.data);
+    } else if(dayData && time === 'day') {
+      this.upDateLineChart(dayData.xAxis, dayData.data);
+    } else {
+      this.loadingChart(lineChart);
+      this.setState({
+        loadingLineChart: true
+      });
+      request.getTrend().then((res) => {
+        let chartMonthData = this.processMonthData(res[0]);
+        let chartDayData = this.processDayData(res[1]);
+        if(time === 'month') {
+          this.upDateLineChart(chartMonthData.xAxis, chartMonthData.data);
+        } else {
+          this.upDateLineChart(chartDayData.xAxis, chartDayData.data);
+        }
+        this.setState({
+          loadingLineChart: false
+        });
+      });
     }
   }
 
-  tableColRender(columns) {
-    columns.map((column) => {
-      switch (column.key) {
-        case 'project_name':
-          column.render = (col, item, i) => {
-            return <a data-type="router" href={'/bill/billing-record/' + item.project_id}>{item.project_name}</a>;
-          };
-          break;
-        case 'project_consumption':
-          column.render = (col, item, i) => {
-            return <span className="orange">{item.project_consumption}</span>;
-          };
-          break;
-        case 'user_consumption':
-          column.render = (col, item, i) => {
-            return <span className="orange">{item.user_consumption}</span>;
-          };
-          break;
-        case 'created_at':
-          column.render = (col, item, i) => {
-            return getTime(item.created_at);
-          };
-          break;
-        default:
-          break;
+  processMonthData(res) {
+    let resLength = res.length;
+    let xAxisHolder = [];
+    let dataHolder = [];
+    let xAxis = [];
+    let data = [];
+    res.forEach((r) => {
+      xAxis.push(r[0].slice(0, 10));
+      data.push(+r[2].toFixed(2));
+    });
+    if(resLength < 12) {
+      for(let i = 0; i < 12 - resLength; i++) {
+        xAxisHolder[i] = moment(res[0][0]).subtract(12 - resLength - i, 'months').format().slice(0, 10);
+        dataHolder[i] = 0;
       }
+      xAxis = xAxisHolder.concat(xAxis);
+      data = dataHolder.concat(data);
+    }
+    monthData = {
+      xAxis: xAxis,
+      data: data
+    };
+    return monthData;
+  }
+
+  processDayData(res) {
+    let resLength = res.length;
+    let xAxisHolder = [];
+    let dataHolder = [];
+    let xAxis = [];
+    let data = [];
+    res.forEach((r) => {
+      xAxis.push(r[0].slice(0, 10));
+      data.push(+r[2].toFixed(2));
+    });
+    if(resLength < 31) {
+      for(let i = 0; i < 31 - resLength; i++) {
+        xAxisHolder[i] = moment(res[0][0]).subtract(31 - resLength - i, 'days').format().slice(0, 10);
+        dataHolder[i] = 0;
+      }
+      xAxis = xAxisHolder.concat(xAxis);
+      data = dataHolder.concat(data);
+    }
+    dayData = {
+      xAxis: xAxis,
+      data: data
+    };
+    return dayData;
+  }
+
+  onHoverItem(i) {
+    if(i === appPie.currentIndex || this.state.loadingPieChart) {
+      return;
+    }
+    // cancel prev highlight
+    pieChart.dispatchAction({
+      type: 'downplay',
+      seriesIndex: 0,
+      dataIndex: appPie.currentIndex
+    });
+    appPie.currentIndex = i;
+    // highlight
+    pieChart.dispatchAction({
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex: appPie.currentIndex
+    });
+    // show tooltip
+    pieChart.dispatchAction({
+      type: 'showTip',
+      seriesIndex: 0,
+      dataIndex: appPie.currentIndex
     });
   }
 
-  onInitialize() {
-    this.getList();
+  onMoveOutItem() {
+    if(this.state.loadingPieChart) {
+      return;
+    }
+    pieChart.dispatchAction({
+      type: 'downplay',
+      seriesIndex: 0,
+      dataIndex: appPie.currentIndex
+    });
+    pieChart.dispatchAction({
+      type: 'hideTip',
+      seriesIndex: 0,
+      dataIndex: appPie.currentIndex
+    });
+    appPie.currentIndex = -1;
   }
 
-  getList() {
-    request.getOverview().then((res) => {
-      let data = res[0].accounts[0];
-      this.setState({
-        ready: true,
-        balance: parseFloat(data.balance),
-        consumption: parseFloat(data.consumption),
-        remaining_day: data.remaining_day,
-        price_per_day: parseFloat(data.price_per_day),
-        price_per_hour: (parseFloat(data.price_per_day) / 24),
-        data: res[1]
-      });
+  onSwitchLineChart(time) {
+    if(this.state.loadingLineChart) {
+      return;
+    }
+    this.setState({
+      currentLine: time
     });
+    this.getTrend(time);
+  }
+
+  onSwitchRegion(e) {
+    request.switchRegion(e.target.value).then(() => {
+      window.location.reload();
+    });
+  }
+
+  onSwitchProject(e) {
+    request.switchProject(e.target.value).then(() => {
+      window.location.reload();
+    });
+  }
+
+  onChangeStartTime(time) {
+    let date = new Date(time.year + '-' + time.month + '-' + time.date);
+    this.setState({
+      startTime: date
+    });
+  }
+
+  onChangeEndTime(time) {
+    let date = new Date(time.year + '-' + time.month + '-' + time.date);
+    this.setState({
+      endTime: date
+    });
+  }
+
+  onQuery() {
+    let state = this.state;
+    if(state.loadingPieChart && !state.startTime && !state.endTime) {
+      return;
+    }
+    this.getList(state.startTime, state.endTime);
   }
 
   render() {
@@ -100,105 +316,70 @@ class Model extends React.Component {
       key: 'bill-overview',
       default: true
     }];
-    let columm = [{
-      title: __.project,
-      dataIndex: 'project_name',
-      key: 'project_name'
-    }, {
-      title: __.user_consumption,
-      dataIndex: 'user_consumption',
-      key: 'user_consumption'
-    }, {
-      title: __.project_consumption,
-      dataIndex: 'project_consumption',
-      key: 'project_consumption'
-    }, {
-      title: __.created_at,
-      dataIndex: 'created_at',
-      key: 'created_at'
-    }];
-    function displayRemainingDay(data) {
-      if(data === -1) {
-        return __.full;
-      } else if(data === -2) {
-        return __.owed;
-      } else {
-        return data + __.day;
-      }
-    }
-    this.tableColRender(columm);
 
     let state = this.state;
+    let regions = HALO.region_list;
+    let projects = HALO.user.projects;
     return (
       <div className="halo-module-bill-overview" style={this.props.style}>
         <Tab items={tabs} />
-        {
-          state.ready ? <div className="overview">
-            <div className="overview-wrapper">
-              <div className="overview-first">
-                <div className="overview-item">
-                  <div className="item">
-                    <div className="title">{__.bill_balance}<a data-type="router" href="/bill/account-charge">充值</a></div>
-                    <div className={'content' + (state.balance >= 0 ? ' blue' : ' red')}>
-                      ¥&nbsp;{state.balance}
-                    </div>
-                  </div>
-                </div>
-                <div className="overview-item">
-                  <div className="item">
-                    <div className="title">{__.consumption}</div>
-                    <div className="content orange">
-                      ¥&nbsp;{state.consumption}
-                    </div>
-                  </div>
-                </div>
-                <div className="overview-item">
-                  <div className="item">
-                    <div className="title">{__.consumption_estimate}</div>
-                    <div className="content green">
-                      {displayRemainingDay(state.remaining_day)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="overview-second">
-                <div className="overview-item">
-                  <div className="item">
-                    <div className="title">{__.consumption_each_day}</div>
-                    <div className="content orange">
-                      ¥&nbsp;{state.price_per_day}
-                    </div>
-                  </div>
-                </div>
-                <div className="overview-item">
-                  <div className="item">
-                    <div className="title">{__.consumption_each_hour}</div>
-                    <div className="content orange">
-                      ¥&nbsp;{state.price_per_hour}
-                    </div>
-                  </div>
-                </div>
-                <div className="overview-item">
-                </div>
-              </div>
+        <div className="header">
+          <select value={HALO.current_region} onChange={this.onSwitchRegion}>
+            {
+              regions.map((region) => {
+                return <option key={region.id} value={region.id}>{region.name}</option>;
+              })
+            }
+          </select>
+          <select value={HALO.user.projectId} onChange={this.onSwitchProject}>
+            {
+              projects.map((project) => {
+                return <option key={project.id} value={project.id}>{project.name}</option>;
+              })
+            }
+          </select>
+          <div className="calendar-wrapper">
+            <span>{__.from}</span><Calendar onChange={this.onChangeStartTime} hasScreen={true} unfold={false} placeholder={__.start_time} />
+            <span>{__.to}</span><Calendar onChange={this.onChangeEndTime} hasScreen={true} unfold={false} placeholder={__.end_time} />
+            <Button value={__.query} btnKey="normal" onClick={this.onQuery} />
+          </div>
+        </div>
+        <div className="center">
+          <div className="sum-wrapper">
+            <div id="pie-chart"></div>
+            <div className="center-text">
+              <div className="number">¥<span id="sum-number"></span></div>
+              <div className="text">{__.total_amount}</div>
             </div>
-            <div className="table-wrapper">
-              <Table
-                ref="table"
-                column={columm}
-                data={state.data}
-                dataKey={'project_id'}
-                hover={true}
-                striped={false}
-                />
-                {
-                  state.data && state.data.length === 0 ? <div className="no-data">
-                    {__.noData}
-                  </div> : null
-                }
+          </div>
+          <div className="resources-wrapper">
+          <div id="loading-holder"></div>
+          {
+            state.services.map((p, i) => {
+              return <div key={i} className="item-wrapper">
+                <div className="item" onMouseOver={this.onHoverItem.bind(this, i)} onMouseLeave={this.onMoveOutItem.bind(this)} >
+                  <div className="child-wrapper">
+                    <div className="title">
+                      <i className="glyphicon icon-instance"></i>{p.name}
+                    </div>
+                    <div className="value">¥<span id={'counting_' + i}>...</span></div>
+                  </div>
+                </div>
+              </div>;
+            })
+          }
+          </div>
+        </div>
+        <div className="footer">
+          <div className="title">{__.recent_consumption_record}</div>
+          <div className="content">
+            <div id="line-chart"></div>
+            <div className="btn-wrapper">
+              <div className={'left' + (state.currentLine === 'month' ? ' select' : '')} onClick={this.onSwitchLineChart.bind(this, 'month')}>{__.by_month}</div>
+              <div className={'right' + (state.currentLine === 'day' ? ' select' : '')} onClick={this.onSwitchLineChart.bind(this, 'day')}>{__.by_day}</div>
             </div>
-          </div> : <div className="loading-data"><i className="glyphicon icon-loading"></i></div>
-        }
+          </div>
+        </div>
       </div>
     );
   }
