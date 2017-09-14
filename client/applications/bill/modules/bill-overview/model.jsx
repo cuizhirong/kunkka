@@ -9,6 +9,8 @@ const request = require('./request');
 const __ = require('locale/client/bill.lang.json');
 const CountUp = require('../../utils/countUp.js');
 const chartOption = require('../../utils/chart_option.js');
+const getIcons = require('./get_icons');
+const COLOR_LIST = require('../../utils/color_list.js');
 let pieChart, lineChart, holderChart;
 let monthData, dayData;
 let appPie = {
@@ -26,7 +28,8 @@ class Model extends React.Component {
       loadingLineChart: true,
       loadingPieChart: true,
       startTime: null,
-      endTime: null
+      endTime: null,
+      hoverIndex: -1
     };
 
     ['onInitialize', 'onSwitchProject', 'onSwitchRegion', 'onChangeStartTime', 'onChangeEndTime', 'onQuery'].forEach((m) => {
@@ -228,6 +231,9 @@ class Model extends React.Component {
     if(i === appPie.currentIndex || this.state.loadingPieChart) {
       return;
     }
+    this.setState({
+      hoverIndex: i
+    });
     // cancel prev highlight
     pieChart.dispatchAction({
       type: 'downplay',
@@ -253,6 +259,9 @@ class Model extends React.Component {
     if(this.state.loadingPieChart) {
       return;
     }
+    this.setState({
+      hoverIndex: -1
+    });
     pieChart.dispatchAction({
       type: 'downplay',
       seriesIndex: 0,
@@ -320,6 +329,9 @@ class Model extends React.Component {
     let state = this.state;
     let regions = HALO.region_list;
     let projects = HALO.user.projects;
+    let iconStyle = state.hoverIndex < 0 ? {} : {
+      color: COLOR_LIST[state.hoverIndex]
+    };
     return (
       <div className="halo-module-bill-overview" style={this.props.style}>
         <Tab items={tabs} />
@@ -360,7 +372,7 @@ class Model extends React.Component {
                 <div className="item" onMouseOver={this.onHoverItem.bind(this, i)} onMouseLeave={this.onMoveOutItem.bind(this)} >
                   <div className="child-wrapper">
                     <div className="title">
-                      <i className="glyphicon icon-instance"></i>{p.name}
+                      <i style={(i === state.hoverIndex) ? iconStyle : {}} className={'glyphicon icon-' + getIcons(p.name)}></i>{p.name}
                     </div>
                     <div className="value">¥<span id={'counting_' + i}>...</span></div>
                   </div>

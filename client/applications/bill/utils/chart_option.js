@@ -1,5 +1,5 @@
 const __ = require('locale/client/bill.lang.json');
-const COLOR_LIST = ['#19B7CD', '#33BFD3', '#4CC7D8', '#66CFDE', '#7FD7E3', '#99DFE9', '#B2E7EE', '#CCEFF4', '#E5F7F9'];
+const COLOR_LIST = require('./color_list');
 let basePieOption = function(style) {
   let itemStyle = style || {
     emphasis: {
