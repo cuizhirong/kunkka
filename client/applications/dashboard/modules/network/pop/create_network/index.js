@@ -87,7 +87,7 @@ function pop(parent, callback) {
   if (!HALO.settings.is_show_vlan) {
     config.fields[2].hide = true;
   }
-
+  let phyNet = HALO.configs.neutron_network_vlanranges.split(',');
   let props = {
     __: __,
     parent: parent,
@@ -96,7 +96,7 @@ function pop(parent, callback) {
       refs.enable_vlan.setState({
         renderer: networkType
       });
-      let phyNet = HALO.configs.neutron_network_vlanranges;
+
       let phyItem;
       let item = phyNet.map((items, index) => {
         phyItem = items.split(':');
@@ -121,11 +121,10 @@ function pop(parent, callback) {
           refs.vlan_id.setState({
             hide: false
           });
-          let v = HALO.configs.neutron_network_vlanranges;
           let vId = refs.vlan_id.state.value;
           let physicalNetwork = refs.select_physical_network.state.value;
-          if(v.length === 1) {
-            data['provider:physical_network'] = v[0].split(':')[0];
+          if(phyNet.length === 1) {
+            data['provider:physical_network'] = phyNet[0].split(':')[0];
           }
           data['provider:segmentation_id'] = vId;
           data['provider:physical_network'] = physicalNetwork;
@@ -182,12 +181,11 @@ function pop(parent, callback) {
         enableType = refs.enable_vlan.refs.enable_type.state.selectedValue,
         testFlat = /^\w+$/;
       let phyiscalNet = refs.select_physical_network.state.value;
-      let vlanLength = HALO.configs.neutron_network_vlanranges.length;
+      let vlanLength = phyNet.length;
 
-      let vlanRanges = HALO.configs.neutron_network_vlanranges;
       let vlanItem = [];
       let testMin, testMax;
-      vlanRanges.forEach(item => {
+      phyNet.forEach(item => {
         vlanItem.push(item.split(':'));
       });
       switch (field) {
@@ -286,6 +284,9 @@ function pop(parent, callback) {
               });
               refs.select_physical_network.setState({
                 hide: true
+              });
+              refs.btn.setState({
+                disabled: vlanState.value === ''
               });
               break;
             default:
