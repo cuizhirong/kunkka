@@ -1,20 +1,10 @@
 {
   "tabs": [{
-    "name": ["image"],
-    "key": "image",
+    "name": ["snapshot-type"],
+    "key": "snapshot-type",
     "default": true
   }],
   "btns": [{
-    "value": ["create", "image"],
-    "key": "create",
-    "icon": "create",
-    "type": "create"
-  }, {
-    "value": ["edit", "image"],
-    "key": "edit_image",
-    "icon": "edit",
-    "disabled": true
-  }, {
     "value": ["export", "csv"],
     "key": "export_csv",
     "icon": "download",
@@ -35,14 +25,14 @@
     "items": [{
       "type": "input",
       "key": "id",
-      "placeholder": ["pls_enter", "image_id"]
+      "placeholder": ["pls_enter", "snapshot_id"]
     }]
   }, {
-    "group_key": "filter_type",
+    "group_key": "filter_name",
     "items": [{
       "type": "input",
       "key": "name",
-      "placeholder": ["pls_enter", "image_name"]
+      "placeholder": ["pls_enter", "snapshot_name"]
     }]
   }],
   "table": {

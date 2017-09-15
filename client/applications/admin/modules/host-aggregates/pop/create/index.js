@@ -6,12 +6,14 @@ const getErrorMessage = require('client/applications/admin/utils/error_message')
 
 function pop(obj, parent, callback) {
   if(obj) {
+    config.title[0] = 'modify';
     config.fields[0].value = obj.name;
     config.fields[1].value = obj.availability_zone ? obj.availability_zone : '';
     config.btn.disabled = false;
     config.btn.type = null;
     config.btn.value = 'modify';
   } else {
+    config.title[0] = 'create';
     config.fields[0].value = '';
     config.fields[1].value = '';
     config.btn.disabled = true;

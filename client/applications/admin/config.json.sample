@@ -9,7 +9,8 @@
       "availability-zones",
       "instance-restore",
       "flavor",
-      "image"
+      "image",
+      "snapshot-type"
     ]
   }, {
     "title": "storage_service",

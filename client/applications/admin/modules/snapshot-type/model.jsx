@@ -6,7 +6,6 @@ const BasicProps = require('client/components/basic_props/index');
 const deleteModal = require('client/components/modal_delete/index');
 const RelatedInstance = require('./detail/related_instance');
 
-const image = require('./pop/create/index');
 
 const request = require('./request');
 const config = require('./config.json');
@@ -40,8 +39,9 @@ class Model extends React.Component {
 
   componentWillMount() {
     let column = this.state.config.table.column;
+
+    // update table column render function
     this.tableColRender(column);
-    // this.initializeFilter(this.state.config.filter);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -56,6 +56,45 @@ class Model extends React.Component {
       this.loadingTable();
       this.onInitialize(nextProps.params);
     }
+  }
+
+  /**
+   * initialize table data
+   * @param {Array<string>} params path list
+   */
+  onInitialize(params) {
+    if (params[2]) {
+      this.getSingle(params[2]);
+    } else {
+      this.getList();
+    }
+  }
+
+  tableColRender(columns) {
+    columns.map((column) => {
+      switch (column.key) {
+        case 'name':
+          column.formatter = (col, item, i) => {
+            return this.getImageLabel(item);
+          };
+          break;
+        case 'size':
+          column.render = (col, item, i) => {
+            let size = unitConverter(item.size);
+            size.num = typeof size.num === 'number' ? size.num : 0;
+            return size.num + ' ' + size.unit;
+          };
+          break;
+        case 'image_type':
+          column.render = (col, item, i) => {
+            return __['snapshot-type'];
+          };
+          break;
+        default:
+          break;
+      }
+    });
+
   }
 
   getImageLabel(item) {
@@ -77,86 +116,11 @@ class Model extends React.Component {
     );
   }
 
-  tableColRender(columns) {
-    columns.map((column) => {
-      switch (column.key) {
-        case 'name':
-          column.formatter = (col, item, i) => {
-            return this.getImageLabel(item);
-          };
-          break;
-        case 'size':
-          column.render = (col, item, i) => {
-            let size = unitConverter(item.size);
-            size.num = typeof size.num === 'number' ? size.num : 0;
-            return size.num + ' ' + size.unit;
-          };
-          break;
-        case 'image_type':
-          column.render = (col, item, i) => {
-            return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  initializeFilter(filters, res) {
-    let setOption = function(key, data) {
-      filters.forEach((filter) => {
-        filter.items.forEach((item) => {
-          if (item.key === key) {
-            item.data = data;
-          }
-        });
-      });
-    };
-
-    let statusTypes = [{
-      id: 'snapshot',
-      name: __.snapshot_type
-    }, {
-      id: 'image',
-      name: __.image
-    }];
-    setOption('type', statusTypes);
-  }
-
-//initialize table data
-  onInitialize(params) {
-    if (params[2]) {
-      this.getSingle(params[2]);
-    } else {
-      this.getList();
-    }
-  }
-
-//request: get single data by ID
-  getSingle(id) {
-    this.clearState();
-
-    let table = this.state.config.table;
-    request.getSingle(id).then((res) => {
-      table.data = res.list;
-      this.setPagination(table, res);
-      this.updateTableData(table, res._url, true, () => {
-        let pathList = router.getPathList();
-        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
-      });
-    }).catch((res) => {
-      table.data = [];
-      table.pagination = null;
-      this.updateTableData(table, String(res.responseURL));
-    });
-  }
-
-//request: get list
+  // get table data
   getList() {
     this.clearState();
 
-    let table = this.state.config.table,
+    const table = this.state.config.table,
       pageLimit = table.limit;
 
     request.getList(pageLimit).then((res) => {
@@ -170,9 +134,45 @@ class Model extends React.Component {
     });
   }
 
+  /**
+   * get data by snapshot id
+   * @param {string} id
+   */
+  getSingle(id) {
+    this.clearState();
+
+    const table = this.state.config.table;
+    request.getSingle(id).then((res) => {
+      table.data = res.list;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url, true, () => {
+        const pathList = router.getPathList();
+        router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
+      });
+    }).catch((res) => {
+      table.data = [];
+      table.pagination = null;
+      this.updateTableData(table, String(res.responseURL));
+    });
+  }
+
+  /**
+   * get snapshots by name
+   * @param {*} name snapshot name
+   * @param {number} pageLimit
+   */
+  getSnapshotByName(name, pageLimit) {
+    request.filter(name, pageLimit).then((res) => {
+      const table = this.state.config.table;
+      table.data = res.list;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
+  }
+
 //request: get next list
   getNextList(url, refreshDetail) {
-    let table = this.state.config.table;
+    const table = this.state.config.table;
     request.getNextList(url).then((res) => {
       if (res.list) {
         table.data = res.list;
@@ -191,7 +191,7 @@ class Model extends React.Component {
 
 //rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
-    let newConfig = this.state.config;
+    const newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
@@ -200,7 +200,7 @@ class Model extends React.Component {
     }, () => {
       this.stores.urls.push(currentUrl);
 
-      let detail = this.refs.dashboard.refs.detail,
+      const detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
@@ -212,14 +212,14 @@ class Model extends React.Component {
 
 //set pagination
   setPagination(table, res) {
-    let pagination = {},
+    const pagination = {},
       next = res.links.next ? res.links.next : null;
 
     if (next) {
       pagination.nextUrl = next;
     }
 
-    let history = this.stores.urls;
+    const history = this.stores.urls;
 
     if (history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
@@ -267,7 +267,7 @@ class Model extends React.Component {
         }
       }
 
-      let history = this.stores.urls,
+      const history = this.stores.urls,
         url = history.pop();
 
       this.getNextListData(url, data.refreshDetail);
@@ -275,7 +275,7 @@ class Model extends React.Component {
   }
 
   loadingTable() {
-    let _config = this.state.config;
+    const _config = this.state.config;
     _config.table.loading = true;
     _config.table.data = [];
 
@@ -295,7 +295,7 @@ class Model extends React.Component {
   clearState() {
     this.clearUrls();
 
-    let dashboard = this.refs.dashboard;
+    const dashboard = this.refs.dashboard;
     if (dashboard) {
       dashboard.clearState();
     }
@@ -344,22 +344,6 @@ class Model extends React.Component {
         this.loadingTable();
         this.getNextListData(url);
         break;
-      case 'filtrate':
-        delete data.rows;
-        this.clearState();
-        let table = this.state.config.table;
-
-        request.getFilterList(data).then((res) => {
-          table.data = res.list;
-          this.setPagination(table, res);
-          this.updateTableData(table, res._url);
-        }).catch((res) => {
-          table.data = [];
-          table.pagination = null;
-          this.updateTableData(table, String(res.responseURL));
-        });
-        this.loadingTable();
-        break;
       default:
         break;
     }
@@ -368,24 +352,8 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let {rows} = data;
 
-    let that = this;
+    const that = this;
     switch(key) {
-      case 'create':
-        image(null, null, (res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
-      case 'edit_image':
-        image(rows[0], null, (res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
       case 'export_csv':
         request.getFieldsList().then((res) => {
           csv(res);
@@ -421,12 +389,18 @@ class Model extends React.Component {
     }
   }
 
+  /**
+   * filter search action handler
+   * @param {string} actionType only should be 'search' here
+   * @param {React Component} refs if data doesn't exist, this is the data param
+   * @param {Object} data
+   */
   onFilterSearch(actionType, refs, data) {
     if (actionType === 'search') {
       this.loadingTable();
 
-      let idData = data.filter_id,
-        nameData = data.filter_type;
+      const idData = data.filter_id,
+        nameData = data.filter_name;
 
       if (idData) {
         this.getSingle(idData.id);
@@ -434,14 +408,9 @@ class Model extends React.Component {
         this.clearState();
 
         let pageLimit = this.state.config.table.limit;
-        request.filter(nameData, pageLimit).then((res) => {
-          let table = this.state.config.table;
-          table.data = res.list;
-          this.setPagination(table, res);
-          this.updateTableData(table, res._url);
-        });
+        this.getSnapshotByName(nameData, pageLimit);
       } else {
-        let r = {};
+        const r = {};
         r.initialList = true;
         r.loadingTable = true;
         r.clearState = true;
@@ -466,10 +435,6 @@ class Model extends React.Component {
 
     for(let key in btns) {
       switch (key) {
-        case 'edit_name':
-        case 'edit_image':
-          btns[key].disabled = sole ? false : true;
-          break;
         case 'export_csv':
           btns[key].disabled = false;
           break;
@@ -510,7 +475,7 @@ class Model extends React.Component {
         }
         break;
       case 'instance':
-        let insData = [], that = this, limit = 20, current = data.current || 1;
+        let insData = [], that = this, limit = 10, current = data.current || 1;
         syncUpdate = false;
         request.getInstances().then(instances => {
           instances.forEach(instance => {
@@ -557,10 +522,10 @@ class Model extends React.Component {
   }
 
   getInstanceConfig(item, pagination) {
-    let dataContent = [];
+    const dataContent = [];
     for (let key in item) {
       let element = item[key];
-      let dataObj = {
+      const dataObj = {
         name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
         id: element.id,
         status: getStatusIcon(element.status),
@@ -641,7 +606,7 @@ class Model extends React.Component {
 
   render() {
     return (
-      <div className="halo-module-image" style={this.props.style}>
+      <div className="halo-module-snapshot-type" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}
