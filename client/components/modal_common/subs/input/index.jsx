@@ -59,7 +59,7 @@ class Input extends React.Component {
         <div>
           <input className={this.state.error ? 'error' : ''} type={props.input_type} disabled={this.state.disabled} onChange={this.onChange} value={this.state.value} />
           {
-            state.tip_info && <ShortTip label={props.__[state.tip_info]} />
+            state.tip_info && <ShortTip label={props.__[state.tip_info] || state.tip_info} />
           }
         </div>
       </div>
