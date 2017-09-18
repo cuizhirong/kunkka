@@ -133,7 +133,6 @@ function pop(parent, callback) {
           });
           break;
         case 'vxlan':
-          data['provider:network_type'] = 'vxlan';
           break;
         case 'flat':
           data['provider:network_type'] = 'flat';
@@ -199,6 +198,13 @@ function pop(parent, callback) {
           refs.btn.setState({
             disabled: vlanState.value === ''
           });
+          if(enableType === 'vxlan') {
+            if(!subnetChecked) {
+              refs.btn.setState({
+                disabled: false
+              });
+            }
+          }
           break;
         case 'vlan_id':
           if (enableType === 'vlan') {
@@ -217,6 +223,11 @@ function pop(parent, callback) {
                 hide: true
               });
             }
+          }
+          if(enableType === 'vxlan' && !subnetChecked) {
+            refs.btn.setState({
+              disabled: false
+            });
           }
           break;
         case 'physical_network':
