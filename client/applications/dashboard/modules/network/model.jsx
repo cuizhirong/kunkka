@@ -348,7 +348,7 @@ class Model extends React.Component {
       content: getStatusIcon(item.status)
     }, {
       title: __.network_type,
-      content: networkType
+      content: networkType || 'vxlan'
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
@@ -365,8 +365,7 @@ class Model extends React.Component {
         title: __.vlan_id,
         content: networkType === 'vlan' ? item['provider:segmentation_id'] : '-'
       });
-    }
-    if (networkType === 'flat') {
+    } else if (networkType === 'flat') {
       items.push({
         title: __.physical_network,
         content: networkType === 'flat' ? item['provider:physical_network'] : '-'

@@ -87,13 +87,16 @@ function pop(parent, callback) {
   if (!HALO.settings.is_show_vlan) {
     config.fields[2].hide = true;
   }
+  if(HALO.user.roles.indexOf('admin') === -1) {
+    delete config.fields[6];
+  }
   let phyNet = HALO.configs.neutron_network_vlanranges.split(',');
   let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs, field) {
-      refs.enable_vlan.setState({
+      refs.enable_vlan && refs.enable_vlan.setState({
         renderer: networkType
       });
 
@@ -114,35 +117,37 @@ function pop(parent, callback) {
       let data = {
         name: refs.network_name.state.value
       };
-      let netType = refs.enable_vlan.refs.enable_type.state.selectedValue;
-      switch(netType) {
-        case 'vlan':
-          data['provider:network_type'] = 'vlan';
-          refs.vlan_id.setState({
-            hide: false
-          });
-          let vId = refs.vlan_id.state.value;
-          let physicalNetwork = refs.select_physical_network.state.value;
-          if(phyNet.length === 1) {
-            data['provider:physical_network'] = phyNet[0].split(':')[0];
-          }
-          data['provider:segmentation_id'] = vId;
-          data['provider:physical_network'] = physicalNetwork;
-          refs.btn.setState({
-            disabled: true
-          });
-          break;
-        case 'vxlan':
-          break;
-        case 'flat':
-          data['provider:network_type'] = 'flat';
-          let physical = refs.physical_network.state.value;
-          if(physical !== '') {
-            data['provider:physical_network'] = physical;
-          }
-          break;
-        default:
-          break;
+      if (refs.enable_vlan) {
+        let netType = refs.enable_vlan.refs.enable_type.state.selectedValue;
+        switch(netType) {
+          case 'vlan':
+            data['provider:network_type'] = 'vlan';
+            refs.vlan_id.setState({
+              hide: false
+            });
+            let vId = refs.vlan_id.state.value;
+            let physicalNetwork = refs.select_physical_network.state.value;
+            if(phyNet.length === 1) {
+              data['provider:physical_network'] = phyNet[0].split(':')[0];
+            }
+            data['provider:segmentation_id'] = vId;
+            data['provider:physical_network'] = physicalNetwork;
+            refs.btn.setState({
+              disabled: true
+            });
+            break;
+          case 'vxlan':
+            break;
+          case 'flat':
+            data['provider:network_type'] = 'flat';
+            let physical = refs.physical_network.state.value;
+            if(physical !== '') {
+              data['provider:physical_network'] = physical;
+            }
+            break;
+          default:
+            break;
+        }
       }
       if (!refs.enable_security.state.checked) {
         data.port_security_enabled = false;
@@ -177,16 +182,36 @@ function pop(parent, callback) {
         testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/,
         vlanState = refs.vlan_id.state,
         flatState = refs.physical_network.state,
-        enableType = refs.enable_vlan.refs.enable_type.state.selectedValue,
         testFlat = /^\w+$/;
       let phyiscalNet = refs.select_physical_network.state.value;
       let vlanLength = phyNet.length;
 
+      let enableType = refs.enable_vlan && refs.enable_vlan.refs.enable_type.state.selectedValue;
       let vlanItem = [];
       let testMin, testMax;
       phyNet.forEach(item => {
         vlanItem.push(item.split(':'));
       });
+      if (HALO.user.roles.indexOf('admin') === -1) {
+        if (subnetChecked && testAddr.test(netVlanstate.value)) {
+          refs.btn.setState({
+            disabled: netVlanstate.value === ''
+          });
+        } else if (!subnetChecked) {
+          refs.btn.setState({
+            disabled: false
+          });
+        }
+        refs.vlan_id.setState({
+          hide: true
+        });
+        refs.physical_network.setState({
+          hide: true
+        });
+        refs.select_physical_network.setState({
+          hide: true
+        });
+      }
       switch (field) {
         case 'create_subnet':
           refs.subnet_name.setState({
@@ -198,16 +223,14 @@ function pop(parent, callback) {
           refs.btn.setState({
             disabled: vlanState.value === ''
           });
-          if(enableType === 'vxlan') {
-            if(!subnetChecked) {
-              refs.btn.setState({
-                disabled: false
-              });
-            }
+          if(enableType && enableType === 'vxlan' && !subnetChecked) {
+            refs.btn.setState({
+              disabled: false
+            });
           }
           break;
         case 'vlan_id':
-          if (enableType === 'vlan') {
+          if (enableType && enableType === 'vlan') {
             vlanItem.forEach((m) => {
               if (m[0] === phyiscalNet) {
                 testMin = m[1];
@@ -224,14 +247,14 @@ function pop(parent, callback) {
               });
             }
           }
-          if(enableType === 'vxlan' && !subnetChecked) {
+          if(enableType && enableType === 'vxlan' && !subnetChecked) {
             refs.btn.setState({
               disabled: false
             });
           }
           break;
         case 'physical_network':
-          if (enableType === 'flat') {
+          if (enableType && enableType === 'flat') {
             chooseFlat(refs, subnetChecked, netVlanstate, testFlat, flatState, testAddr);
             refs.select_physical_network.setState({
               hide: true
@@ -239,7 +262,7 @@ function pop(parent, callback) {
           }
           break;
         case 'enable_vlan':
-          switch (enableType) {
+          switch (enableType && enableType) {
             case 'vlan':
               refs.vlan_id.setState({
                 hide: false
@@ -338,11 +361,11 @@ function pop(parent, callback) {
               refs.net_address.setState({
                 error: false
               });
-              if (enableType === 'vxlan') {
+              if (enableType && enableType === 'vxlan') {
                 refs.btn.setState({
                   disabled: false
                 });
-              } else if (enableType === 'vlan') {
+              } else if (enableType && enableType === 'vlan') {
                 vlanItem.forEach((m) => {
                   if (m[0] === phyiscalNet) {
                     if (m[0] === phyiscalNet) {
