@@ -27,10 +27,10 @@ function getCapacitySize(refs, state, type) {
 
   switch(type) {
     case 'image':
-      size = Math.ceil(item[0].size / UNITNUMBER);
+      size = item[0] && Math.ceil(item[0].size / UNITNUMBER);
       break;
     default:
-      size = item[0].size;
+      size = item[0] && item[0].size;
       break;
   }
 
@@ -39,7 +39,7 @@ function getCapacitySize(refs, state, type) {
   refs.capacity_size.setState({
     value: value,
     inputValue: value,
-    min: minValue
+    min: minValue || 1
   });
 }
 
@@ -131,18 +131,18 @@ function pop(obj, parent, callback) {
 
       refs.volume_source.setState({
         data: volumeSource,
-        value: volumeSource[0].id
+        value: volumeSource[0] && volumeSource[0].id
       });
 
       request.getSources().then(sources => {
         refs.image.setState({
           data: sources.image,
-          value: sources.image[0].id
+          value: sources.image[0] && sources.image[0].id
         });
         let volSou = sources.volume.filter(v => v.status === 'available' || v.status === 'in-use');
         refs.volume.setState({
           data: volSou,
-          value: volSou[0].id
+          value: volSou[0] && volSou[0].id
         });
         request.getOverview().then((overview) => {
 
@@ -239,15 +239,17 @@ function pop(obj, parent, callback) {
           let isInputError = state.error;
           let value = state.min >= state.max ? state.min : refs.capacity_size.state.value;
           let inputValue = state.min >= state.max ? state.min : refs.capacity_size.state.inputValue;
+          let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value);
+
 
           refs.capacity_size.setState({
             value: value,
-            inputValue: inputValue,
+            inputValue: inputValue || 1,
             disabled: isError
           });
 
           refs.btn.setState({
-            disabled: refs.capacity_size.state.hide || isError || isInputError
+            disabled: refs.capacity_size.state.hide || isError || isInputError || (refs.volume_source.state.value === 'volume' && volume.length === 0)
           });
 
           refs.warning.setState({
@@ -291,7 +293,7 @@ function pop(obj, parent, callback) {
           }
 
           refs.type.state.data && refs.capacity_size.setState({
-            min: min,
+            min: min || 1,
             max: max,
             value: min,
             inputValue: min,
@@ -332,7 +334,8 @@ function pop(obj, parent, callback) {
               break;
             case 'volume':
               let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value);
-              let volumeType = volume[0].volume_type ? [volume[0].volume_type] : [];
+              let volumeType = volume[0] && volume[0].volume_type ? [volume[0].volume_type] : [];
+
               refs.type.refs.volume_type.refs.volumeTypes.setState({
                 data: volumeType,
                 value: volumeType[0]
@@ -371,7 +374,7 @@ function pop(obj, parent, callback) {
         case 'volume':
           if (refs.volume_source.state.value === 'volume') {
             let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value);
-            let volumeType = volume[0].volume_type ? [volume[0].volume_type] : [];
+            let volumeType = volume[0] && volume[0].volume_type ? [volume[0].volume_type] : [];
             refs.type.refs.volume_type.refs.volumeTypes.setState({
               data: volumeType,
               value: volumeType[0]
