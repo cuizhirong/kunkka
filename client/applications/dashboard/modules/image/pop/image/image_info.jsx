@@ -6,7 +6,6 @@ const Select = require('client/components/modal_common/subs/select/index');
 const Checkbox = require('client/components/modal_common/subs/checkbox/index');
 
 const formatData = utilData.getFormatData(),
-  resourceType = utilData.getResourceType(),
   protectedData = utilData.getProtectedData(),
   architectureData = utilData.getArchitectureData();
 
@@ -20,7 +19,7 @@ class ImageInfo extends React.Component {
       this.state = this.getInitialState();
     }
 
-    ['onChangeName', 'onChangeType', 'onCheckbox'].forEach((func) => {
+    ['onChangeName', 'onCheckbox'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
 
@@ -32,15 +31,6 @@ class ImageInfo extends React.Component {
     });
   }
 
-  onChangeType() {
-    this.refs.url.setState({
-      hide: !(this.refs.type.state.value === 'url')
-    });
-    this.setState({
-      resourceType: this.refs.type.state.value
-    });
-  }
-
   onChangeName() {
     let name = this.refs.name.state.value,
       state = this.state, item;
@@ -49,8 +39,6 @@ class ImageInfo extends React.Component {
       this.setState({
         fileValue: item
       });
-    } else {
-      item = this.refs.url.state.value;
     }
     this.props.onChangeName && this.props.onChangeName(name, item, state.resourceType);
   }
@@ -65,15 +53,14 @@ class ImageInfo extends React.Component {
 
   getInitialState() {
     let state = {
-      nmae: '',
+      name: '',
       min_ram: '',
       min_disk: '',
       fileValue: '',
-      direct_url: '',
       checked: false,
       disabled: false,
+      resourceType: 'file',
       description: '',
-      resourceType: 'url',
       key: this.props.displayKey,
       disk_format: formatData[0].id,
       protected: protectedData[0].id,
@@ -84,15 +71,13 @@ class ImageInfo extends React.Component {
   }
 
   getItemState(item) {
+
     let state = {
-      isEdit: true,
       checked: true,
       fileValue: '',
       disabled: true,
       name: item.name,
-      resourceType: 'url',
       key: this.props.displayKey,
-      direct_url: item.direct_url,
       disk_format: item.disk_format,
       description: item.description,
       architecture: item.architecture,
@@ -118,18 +103,6 @@ class ImageInfo extends React.Component {
         value={state.description}
         label={__.description}
         onAction={this.onChangeName} />
-      <Select ref="type"
-        hide={state.isEdit}
-        value={state.resourceType}
-        label={__.resource_type}
-        data={resourceType}
-        onAction={this.onChangeType} />
-      <Input ref="url"
-        value={state.direct_url}
-        label={__.url}
-        required={true}
-        disabled={state.disabled}
-        onAction={this.onChangeName} />
       <div id="uploadProgress" style={{display: 'none'}} className={className}>
         <div>{__.upload_progress}</div>
         <div>
@@ -137,7 +110,7 @@ class ImageInfo extends React.Component {
           <span id="percentage"></span><span id="time"></span>
         </div>
       </div>
-      <div className={className + (state.resourceType === 'url' ? ' hide' : '')}>
+      <div className={className + (state.resourceType ? '' : ' hide')}>
         <div>
           <strong>*</strong>{__.file}
         </div>

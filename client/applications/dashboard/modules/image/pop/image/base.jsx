@@ -107,140 +107,85 @@ class ImageBase extends React.Component {
         });
       });
     } else {
-      if (imageInfo.type.state.value === 'url') {
-        let imageData = {
-          type: 'import',
-          input: {
-            import_from: imageInfo.url.state.value,
-            import_from_format: imageInfo.format.state.value,
-            image_properties: {
-              name: imageInfo.name.state.value,
-              disk_format: imageInfo.format.state.value,
-              container_format: 'bare'
-            }
+      let imageData = {
+        name: imageInfo.name.state.value,
+        container_format: 'bare',
+        disk_format: imageInfo.format.state.value,
+        visibility: this.changeType(this.props.obj.type)
+      };
+      if (imageInfo.describe.state.value) {
+        imageData.description = imageInfo.describe.state.value;
+      }
+      if (imageInfo.more.state.checked) {
+        imageData.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
+        imageData.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
+        imageData.protected = imageInfo.protected.state.value.toString() === 'true';
+      }
+      if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
+        imageData.architecture = imageInfo.architecture.state.value;
+      }
+      let file = refs.image_info.state.fileValue;
+      request.createImage(imageData).then(res => {
+        let ot;//
+        let oloaded;
+        //上传文件方法
+        let xhr = new XMLHttpRequest();
+        let url = '/proxy-glance/v2/images/' + res.id + '/file';
+        let form = new FormData(); // FormData 对象
+        form.append('mf', file); // 文件对象
+        xhr.open('PUT', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+        xhr.onload = function uploadComplete(evt) {
+          that.onCancel();
+          callback && callback();
+        };
+        xhr.onerror = function uploadFailed(evt) {
+          that.setState({
+            errorMessage: getErrorMessage(evt)
+          });
+        };
+        xhr.upload.onprogress = function progressFunction(evt) {
+          let uploadProgress = document.getElementById('uploadProgress');
+          let progressBar = document.getElementById('progressBar');
+          let percentageDiv = document.getElementById('percentage');
+          uploadProgress.style.display = 'flex';
+          if (evt.lengthComputable) {
+            progressBar.max = evt.total;
+            progressBar.value = evt.loaded;
+            percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
+          }
+          let time = document.getElementById('time');
+          let nt = new Date().getTime();
+          let pertime = (nt - ot) / 1000;
+          ot = new Date().getTime() - 1;
+
+          let perload = evt.loaded - oloaded;
+          oloaded = evt.loaded;
+          //上传速度计算
+          let speed = perload / pertime;
+          let bspeed = speed;
+          let units = 'b/s';//单位名称
+          if(speed / 1024 > 1){
+            speed = speed / 1024;
+            units = 'k/s';
+          }
+          if(speed / 1024 > 1){
+            speed = speed / 1024;
+            units = 'M/s';
+          }
+          speed = speed.toFixed(1);
+          let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+          time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
+          if (bspeed === 0) {
+            time.innerHTML = __.upload_canael;
           }
         };
-
-        if (imageInfo.describe.state.value) {
-          imageData.input.image_properties.description = imageInfo.describe.state.value;
-        }
-        imageData.input.image_properties.visibility = this.changeType(this.props.obj.type);
-        if (imageInfo.more.state.checked) {
-          imageData.input.image_properties.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
-          imageData.input.image_properties.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
-          imageData.input.image_properties.protected = imageInfo.protected.state.value.toString() === 'true';
-        }
-
-        if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
-          imageData.input.image_properties.architecture = imageInfo.architecture.state.value;
-        }
-
-        for(let i in this.state.metaData) {
-          imageData.input.image_properties[this.state.metaData[i].key] = this.state.metaData[i].value;
-        }
-
-        request.createTask(imageData).then(_res => {
-          this.onCancel();
-          callback && callback();
-        }).catch(err => {
-          this.refs.btn.setState({
-            disabled: false
-          });
-          this.setState({
-            errorMessage: getErrorMessage(err)
-          });
-        });
-      } else {
-        let imageData = {
-          name: imageInfo.name.state.value,
-          container_format: 'bare',
-          disk_format: imageInfo.format.state.value,
-          visibility: this.changeType(this.props.obj.type)
+        xhr.upload.onloadstart = function(){
+          ot = new Date().getTime();
+          oloaded = 0;
         };
-
-        if (imageInfo.describe.state.value) {
-          imageData.description = imageInfo.describe.state.value;
-        }
-
-        if (imageInfo.more.state.checked) {
-          imageData.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
-          imageData.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
-          imageData.protected = imageInfo.protected.state.value.toString() === 'true';
-        }
-
-        if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
-          imageData.architecture = imageInfo.architecture.state.value;
-        }
-
-        let file = refs.image_info.state.fileValue;
-
-        request.createImage(imageData).then(res => {
-
-          let ot;//
-          let oloaded;
-          //上传文件方法
-          let xhr = new XMLHttpRequest();
-          let url = '/proxy-glance/v2/images/' + res.id + '/file';
-          let form = new FormData(); // FormData 对象
-          form.append('mf', file); // 文件对象
-          xhr.open('PUT', url, true);
-          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-          xhr.onload = function uploadComplete(evt) {
-            that.onCancel();
-            callback && callback();
-          };
-          xhr.onerror = function uploadFailed(evt) {
-            that.setState({
-              errorMessage: getErrorMessage(evt)
-            });
-          };
-          xhr.upload.onprogress = function progressFunction(evt) {
-            let uploadProgress = document.getElementById('uploadProgress');
-            let progressBar = document.getElementById('progressBar');
-            let percentageDiv = document.getElementById('percentage');
-            uploadProgress.style.display = 'flex';
-
-            if (evt.lengthComputable) {
-              progressBar.max = evt.total;
-              progressBar.value = evt.loaded;
-              percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
-            }
-
-            let time = document.getElementById('time');
-            let nt = new Date().getTime();
-            let pertime = (nt - ot) / 1000;
-            ot = new Date().getTime();
-
-            let perload = evt.loaded - oloaded;
-            oloaded = evt.loaded;
-
-            //上传速度计算
-            let speed = perload / pertime;
-            let bspeed = speed;
-            let units = 'b/s';//单位名称
-            if(speed / 1024 > 1){
-              speed = speed / 1024;
-              units = 'k/s';
-            }
-            if(speed / 1024 > 1){
-              speed = speed / 1024;
-              units = 'M/s';
-            }
-            speed = speed.toFixed(1);
-
-            let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
-            time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
-            if (bspeed === 0) {
-              time.innerHTML = __.upload_canael;
-            }
-          };
-          xhr.upload.onloadstart = function(){
-            ot = new Date().getTime();
-            oloaded = 0;
-          };
-          xhr.send(form);
-        });
-      }
+        xhr.send(form);
+      });
     }
   }
 
@@ -291,9 +236,7 @@ class ImageBase extends React.Component {
         });
       }
     } else {
-      let matchString = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
-      let status = type === 'url' ? url && matchString.test(url) : url;
-      if (name && status) {
+      if (name && url) {
         this.setState({
           btnEnable: false
         });
@@ -351,8 +294,6 @@ class ImageBase extends React.Component {
   changeType(type) {
     switch(type) {
       case 'image':
-        return 'public';
-      case 'private-image':
         return 'private';
       default:
         return '';

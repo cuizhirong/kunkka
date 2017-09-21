@@ -1,7 +1,5 @@
 let commonModal = require('client/components/modal_common/index');
 let config = require('./config.json');
-//let request = require('../../request');
-// let getErrorMessage = require('client/applications/dashboard/utils/error_message');
 let __ = require('locale/client/dashboard.lang.json');
 let showMembers = require('./show_members');
 

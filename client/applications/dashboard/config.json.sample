@@ -8,8 +8,6 @@
     "items": [
       "instance",
       "image",
-      "shared-image",
-      "private-image",
       "instance-snapshot",
       "keypair",
       "ike-policy",
@@ -34,8 +32,7 @@
     "title": "storage",
     "items": [
       "volume",
-      "snapshot",
-      "back-up"
+      "snapshot"
     ]
   }, {
     "title": "monitor",
@@ -63,12 +60,6 @@
   }, {
     "key": "resource-pool",
     "link": "loadbalancer"
-  }, {
-    "key": "shared-image",
-    "link": "image"
-  }, {
-    "key": "private-image",
-    "link": "image"
   }, {
     "key": "template-version",
     "link": "heat-list"

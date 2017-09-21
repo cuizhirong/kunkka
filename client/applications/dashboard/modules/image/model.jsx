@@ -9,9 +9,9 @@ const BasicProps = require('client/components/basic_props/index');
 
 //pop modal
 const deleteModal = require('client/components/modal_delete/index');
-const createInstance = require('../instance/pop/create_instance/index');
-const createVolume = require('./pop/create_volume/index');
 const RelatedInstance = require('../image/detail/related_instance');
+const updateStatus = require('./pop/update_status/index');
+const sharedImage = require('./pop/shared_image/index');
 const image = require('./pop/image/index');
 
 const config = require('./config.json');
@@ -27,26 +27,6 @@ class Model extends React.Component {
 
   constructor(props) {
     super(props);
-
-    if(HALO.user.roles.indexOf('admin') !== -1) {
-      config.btns.unshift({
-        'value': ['create', 'image'],
-        'key': 'create_image',
-        'type': 'create',
-        'icon': 'create'
-      });
-      config.btns.some(btn => {
-        if (btn.dropdown) {
-          btn.dropdown.items[0].items.unshift({
-            'title': ['edit', 'image'],
-            'key': 'edit_image',
-            'disabled': true
-          });
-          return true;
-        }
-        return false;
-      });
-    }
 
     this.state = {
       config: config
@@ -111,7 +91,7 @@ class Model extends React.Component {
           break;
         case 'type':
           col.render = (rcol, ritem, rindex) => {
-            return ritem.image_type === 'snapshot' ? __.instance_snapshot : __.image;
+            return __.image;
           };
           break;
         default:
@@ -148,10 +128,7 @@ class Model extends React.Component {
       let _config = this.state.config;
 
       let table = _config.table;
-      let data = res.filter((ele) => {
-        return ele.image_type !== 'snapshot' && ele.visibility === 'public';
-      });
-      table.data = data;
+      table.data = res;
       table.loading = false;
 
       let detail = this.refs.dashboard.refs.detail;
@@ -191,31 +168,30 @@ class Model extends React.Component {
     let rows = data.rows,
       that = this;
     switch (key) {
-      case 'create':
-        createInstance(rows[0], null, function() {
-          router.pushState('/dashboard/instance');
-        });
-        break;
-      case 'create_volume':
-        createVolume(rows[0]);
-        break;
       case 'create_image':
         this.state.config.tabs.forEach(tab => tab.default && image({type: tab.key}, null, () => {
           that.refresh({
-            detailRefresh: true,
-            tableLoading: true
+            tableLoading: true,
+            detailRefresh: true
           }, true);
         }));
         break;
       case 'edit_image':
         this.state.config.tabs.forEach(tab => {
-          tab.default &&
-          image({item: rows[0], type: tab.key}, null, () => {
-            that.refresh({
+          tab.default && image({item: rows[0], type: tab.key}, null, () => {
+            this.refresh({
               tableLoading: true,
               detailRefresh: true
             }, true);
           });
+        });
+        break;
+
+      case 'update_status':
+        updateStatus(null, null, () => {
+          this.refresh({
+            detailRefresh: true
+          }, true);
         });
         break;
       case 'delete':
@@ -226,14 +202,13 @@ class Model extends React.Component {
           data: rows,
           onDelete: function(_data, cb) {
             request.deleteImage(rows[0].id).then((res) => {
-              that.refresh({
-                detailRefresh: true,
-                tableLoading: true
-              }, true);
               cb(true);
             });
           }
         });
+        break;
+      case 'share_image':
+        sharedImage(rows[0]);
         break;
       case 'refresh':
         this.refresh({
@@ -271,15 +246,14 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     for (let key in btns) {
       switch (key) {
-        case 'create':
-        case 'create_volume':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
-          break;
         case 'edit_image':
-          btns[key].disabled = (rows.length === 1) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].visibility === 'private') ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && !rows[0].protected) ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
+          break;
+        case 'share_image':
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private') ? false : true;
           break;
         default:
           break;
@@ -426,7 +400,7 @@ class Model extends React.Component {
       content: size.num + ' ' + size.unit
     }, {
       title: __.type,
-      content: item.image_type === 'snapshot' ? __.instance_snapshot : __.image
+      content: __.image
     }, {
       title: __.checksum,
       content: item.checksum ? item.checksum : '-'

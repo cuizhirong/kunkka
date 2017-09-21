@@ -1,40 +1,34 @@
 {
   "tabs": [{
-    "name": ["public_image"],
+    "name": ["image"],
     "key": "image",
     "default": true
-  }, {
-    "name": ["shared_image"],
-    "key": "shared-image"
-  }, {
-    "name": ["private_image"],
-    "key": "private-image"
   }],
   "btns": [{
-    "value": ["create", "instance"],
-    "key": "create",
-    "type": "create",
+    "value": ["create", "image"],
+    "key": "create_image",
     "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["edit", "image"],
+    "key": "edit_image",
+    "icon": "edit",
     "disabled": true
   }, {
-    "value": ["more"],
-    "key": "more",
-    "iconClass": "more",
-    "dropdown": {
-      "width": 160,
-      "items": [{
-        "items": [{
-          "title": ["create", "volume"],
-          "key": "create_volume",
-          "disabled": true
-        }, {
-          "title": ["delete"],
-          "key": "delete",
-          "disabled": true,
-          "danger": true
-        }]
-      }]
-    }
+    "value": ["share", "image"],
+    "key": "share_image",
+    "icon": "file-sharing",
+    "disabled": true
+  }, {
+    "value": ["update", "status"],
+    "key": "update_status",
+    "icon": "edit"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "disabled": true,
+    "icon": "delete"
   }, {
     "key": "refresh",
     "icon": "refresh"
