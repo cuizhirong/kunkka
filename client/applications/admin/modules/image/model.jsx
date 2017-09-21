@@ -41,7 +41,6 @@ class Model extends React.Component {
   componentWillMount() {
     let column = this.state.config.table.column;
     this.tableColRender(column);
-    // this.initializeFilter(this.state.config.filter);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -54,7 +53,7 @@ class Model extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
-      this.onInitialize(nextProps.params);
+      this.getList();
     }
   }
 
@@ -94,34 +93,13 @@ class Model extends React.Component {
           break;
         case 'image_type':
           column.render = (col, item, i) => {
-            return item.image_type === 'snapshot' ? __.snapshot_type : __.image;
+            return __.image;
           };
           break;
         default:
           break;
       }
     });
-  }
-
-  initializeFilter(filters, res) {
-    let setOption = function(key, data) {
-      filters.forEach((filter) => {
-        filter.items.forEach((item) => {
-          if (item.key === key) {
-            item.data = data;
-          }
-        });
-      });
-    };
-
-    let statusTypes = [{
-      id: 'snapshot',
-      name: __.snapshot_type
-    }, {
-      id: 'image',
-      name: __.image
-    }];
-    setOption('type', statusTypes);
   }
 
 //initialize table data
@@ -367,11 +345,10 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     let {rows} = data;
-
     let that = this;
     switch(key) {
       case 'create':
-        image(null, null, (res) => {
+        image({type: 'public'}, null, (res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true
@@ -379,7 +356,7 @@ class Model extends React.Component {
         });
         break;
       case 'edit_image':
-        image(rows[0], null, (res) => {
+        image({item: rows[0], type: 'public'}, null, (res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true
@@ -474,7 +451,7 @@ class Model extends React.Component {
           btns[key].disabled = false;
           break;
         case 'delete':
-          btns[key].disabled = (sole && sole.image_type === 'snapshot' && !sole.protected) ? false : true;
+          btns[key].disabled = (sole && !sole.protected) ? false : true;
           break;
         default:
           break;
@@ -597,7 +574,6 @@ class Model extends React.Component {
 
   getBasicPropsItems(item) {
     let size = unitConverter(item.size);
-
     let items = [{
       title: __.name,
       content: this.getImageLabel(item)
@@ -609,10 +585,13 @@ class Model extends React.Component {
       content: size.num + ' ' + size.unit
     }, {
       title: __.type,
-      content: item.image_type === 'snapshot' ? __.snapshot_type : __.image
+      content: __.image
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
+    }, {
+      title: __.visibility,
+      content: item.visibility
     }, {
       title: __.created + __.time,
       type: 'time',

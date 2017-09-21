@@ -157,7 +157,7 @@ class Model extends React.Component {
                 </a>
               );
             } else {
-              let bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
+              let bootableVolume = item['os-extended-volumes:volumes_attached'] && item['os-extended-volumes:volumes_attached'].length !== 0 ? item['os-extended-volumes:volumes_attached'][0].id : '';
               return (
                 <a data-type="router" href={'/admin/volume/' + bootableVolume}>
                   {bootableVolume !== '' ? '(' + bootableVolume.substr(0, 8) + ')' : ''}
@@ -941,7 +941,7 @@ class Model extends React.Component {
           {image ? image.name : '(' + item.image.id.substr(0, 8) + ')'}
         </a>;
       } else {
-        let bootableVolume = item['os-extended-volumes:volumes_attached'] ? item['os-extended-volumes:volumes_attached'][0].id : '';
+        let bootableVolume = item['os-extended-volumes:volumes_attached'] && item['os-extended-volumes:volumes_attached'].length !== 0 ? item['os-extended-volumes:volumes_attached'][0].id : '';
         return <a data-type="router" href={'/admin/volume/' + bootableVolume}>
           {bootableVolume !== '' ? '(' + bootableVolume.substr(0, 8) + ')' : ''}
         </a>;

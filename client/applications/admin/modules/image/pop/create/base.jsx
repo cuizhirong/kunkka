@@ -3,34 +3,35 @@ const {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
 const __ = require('locale/client/admin.lang.json');
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
-const Input = require('client/components/modal_common/subs/input/index');
-const Select = require('client/components/modal_common/subs/select/index');
+const ImageInfo = require('./image_info');
 
 class ImageBase extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       displayKey: '0',
-      checked: props.obj ? true : false,
+      checked: props.obj.item ? true : false,
       metaData: [],
       addMetaData: [],
-      removeMetaData: [],
-      errorMessage: ''
+      btnEnable: true,
+      item: props.obj.item,
+      errorMessage: '',
+      removeMetaData: []
     };
 
     this.id = 0;
 
     this.mask = document.querySelector('.modal-mask');
 
-    ['onCancel', 'onCreateImage', 'onSwitchTab', 'renderImageInfo', 'renderMetaData', 'onChangeName', 'onAddUserToTable'].forEach((func) => {
+    ['onCancel', 'onCreateImage', 'onSwitchTab', 'renderMetaData',
+    'onChangeName', 'onAddUserToTable'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
 
   componentDidMount() {
-    if (this.props.obj) {
+    if (this.props.obj.item) {
       this.refs.btn.setState({
         disabled: false
       });
@@ -48,36 +49,37 @@ class ImageBase extends React.Component {
       disabled: true
     });
     let callback = this.props.callback;
-    let refs = this.refs, data = {};
-    if (this.props.obj) {
+    let refs = this.refs, data = {}, that = this;
+    let imageInfo = refs.image_info.refs;
+    if (this.props.obj.item) {
       data = [{
         op: 'replace',
         path: '/name',
-        value: refs.name.state.value
+        value: imageInfo.name.state.value
       }, {
         op: 'replace',
         path: '/min_disk',
-        value: parseInt(refs.min_disk.state.value, 10)
+        value: parseInt(imageInfo.min_disk.state.value, 10)
       }, {
         op: 'replace',
         path: '/min_ram',
-        value: parseInt(refs.min_ram.state.value, 10)
+        value: parseInt(imageInfo.min_ram.state.value, 10)
       }, {
         op: 'replace',
         path: '/protected',
-        value: refs.protected.state.value === 'true'
+        value: imageInfo.protected.state.value === 'true'
       }];
-      if (this.props.obj.description) {
+      if (this.props.obj.item.description) {
         data.push({
           op: 'replace',
           path: '/description',
-          value: refs.describe.state.value
+          value: imageInfo.describe.state.value
         });
       } else {
         data.push({
           op: 'add',
           path: '/description',
-          value: refs.describe.state.value
+          value: imageInfo.describe.state.value
         });
       }
       this.state.addMetaData.forEach(addData => {
@@ -95,7 +97,7 @@ class ImageBase extends React.Component {
         });
       });
 
-      request.updateImage(this.props.obj.id, data).then(_res => {
+      request.updateImage(this.props.obj.item.id, data).then(_res => {
         this.onCancel();
         callback && callback();
       }).catch(_err => {
@@ -104,49 +106,144 @@ class ImageBase extends React.Component {
         });
       });
     } else {
-      let imageData = {
-        type: 'import',
-        input: {
-          import_from: refs.url.state.value,
-          import_from_format: refs.format.state.value,
-          image_properties: {
-            name: refs.name.state.value,
-            disk_format: refs.format.state.value,
-            container_format: 'bare'
+      if (imageInfo.type.state.value === 'url') {
+        let imageData = {
+          type: 'import',
+          input: {
+            import_from: imageInfo.url.state.value,
+            import_from_format: imageInfo.format.state.value,
+            image_properties: {
+              name: imageInfo.name.state.value,
+              disk_format: imageInfo.format.state.value,
+              container_format: 'bare'
+            }
           }
+        };
+
+        if (imageInfo.describe.state.value) {
+          imageData.input.image_properties.description = imageInfo.describe.state.value;
         }
-      };
-      if (refs.describe.state.value) {
-        imageData.input.image_properties.description = refs.describe.state.value;
-      }
-      imageData.input.image_properties.visibility = 'public';
-      if (this.state.checked) {
-        imageData.input.image_properties.min_disk = parseInt(refs.min_disk.state.value, 10) || 0;
-        imageData.input.image_properties.min_ram = parseInt(refs.min_ram.state.value, 10) || 0;
-        imageData.input.image_properties.protected = refs.protected.state.value === 'true';
-      }
-      if (this.state.checked && refs.architecture.state.value !== 'no') {
-        imageData.input.image_properties.architecture = refs.architecture.state.value;
-      }
-      for(let i in this.state.metaData) {
-        imageData.input.image_properties[this.state.metaData[i].key] = this.state.metaData[i].value;
-      }
-      request.createTask(imageData).then(_res => {
-        this.onCancel();
-        callback && callback();
-      }).catch(err => {
-        this.refs.btn.setState({
-          disabled: false
+        imageData.input.image_properties.visibility = this.changeType(this.props.obj.type);
+        if (imageInfo.more.state.checked) {
+          imageData.input.image_properties.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
+          imageData.input.image_properties.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
+          imageData.input.image_properties.protected = imageInfo.protected.state.value.toString() === 'true';
+        }
+
+        if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
+          imageData.input.image_properties.architecture = imageInfo.architecture.state.value;
+        }
+
+        for(let i in this.state.metaData) {
+          imageData.input.image_properties[this.state.metaData[i].key] = this.state.metaData[i].value;
+        }
+
+        request.createTask(imageData).then(_res => {
+          this.onCancel();
+          callback && callback();
+        }).catch(err => {
+          this.refs.btn.setState({
+            disabled: false
+          });
+          this.setState({
+            errorMessage: getErrorMessage(err)
+          });
         });
-        this.setState({
-          errorMessage: getErrorMessage(err)
+      } else {
+        let imageData = {
+          name: imageInfo.name.state.value,
+          container_format: 'bare',
+          disk_format: imageInfo.format.state.value,
+          visibility: this.changeType(this.props.obj.type)
+        };
+        if (imageInfo.describe.state.value) {
+          imageData.description = imageInfo.describe.state.value;
+        }
+
+        if (imageInfo.more.state.checked) {
+          imageData.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
+          imageData.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
+          imageData.protected = imageInfo.protected.state.value.toString() === 'true';
+        }
+
+        if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
+          imageData.architecture = imageInfo.architecture.state.value;
+        }
+
+        let file = refs.image_info.state.fileValue;
+
+        request.createImage(imageData).then(res => {
+
+          let ot;//
+          let oloaded;
+          //上传文件方法
+          let xhr = new XMLHttpRequest();
+          let url = '/proxy-glance/v2/images/' + res.id + '/file';
+          let form = new FormData(); // FormData 对象
+          form.append('mf', file); // 文件对象
+          xhr.open('PUT', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+          xhr.onload = function uploadComplete(evt) {
+            that.onCancel();
+            callback && callback();
+          };
+          xhr.onerror = function uploadFailed(evt) {
+            that.setState({
+              errorMessage: getErrorMessage(evt)
+            });
+          };
+          xhr.upload.onprogress = function progressFunction(evt) {
+            let uploadProgress = document.getElementById('uploadProgress');
+            let progressBar = document.getElementById('progressBar');
+            let percentageDiv = document.getElementById('percentage');
+            uploadProgress.style.display = 'flex';
+
+            if (evt.lengthComputable) {
+              progressBar.max = evt.total;
+              progressBar.value = evt.loaded;
+              percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
+            }
+
+            let time = document.getElementById('time');
+            let nt = new Date().getTime();
+            let pertime = (nt - ot) / 1000;
+            ot = new Date().getTime() - 1;
+
+            let perload = evt.loaded - oloaded;
+            oloaded = evt.loaded;
+
+            //上传速度计算
+            let speed = perload / pertime;
+            let bspeed = speed;
+            let units = 'b/s';//单位名称
+            if(speed / 1024 > 1){
+              speed = speed / 1024;
+              units = 'k/s';
+            }
+            if(speed / 1024 > 1){
+              speed = speed / 1024;
+              units = 'M/s';
+            }
+            speed = speed.toFixed(1);
+
+            let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+            time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
+            if (bspeed === 0) {
+              time.innerHTML = __.upload_canael;
+            }
+          };
+          xhr.upload.onloadstart = function(){
+            ot = new Date().getTime();
+            oloaded = 0;
+          };
+          xhr.send(form);
         });
-      });
+      }
     }
   }
 
   onSwitchTab(e, status) {
-    let obj = this.props.obj;
+    let obj = this.props.obj.item;
     if (status.key === '1') {
       let _attrs = [
         'architecture', 'container_format', 'disk_format', 'created_at',
@@ -180,27 +277,27 @@ class ImageBase extends React.Component {
     });
   }
 
-  onChangeName() {
-    let name = this.refs.name.state.value;
-    let url = this.refs.url.state.value;
-    if (this.props.obj) {
+  onChangeName(name, url, type) {
+    if (this.state.item) {
       if (name) {
-        this.refs.btn.setState({
-          disabled: false
+        this.setState({
+          btnEnable: false
         });
       } else {
-        this.refs.btn.setState({
-          disabled: true
+        this.setState({
+          btnEnable: true
         });
       }
     } else {
-      if (name && url) {
-        this.refs.btn.setState({
-          disabled: false
+      let matchString = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+      let status = type === 'url' ? url && matchString.test(url) : url;
+      if (name && status) {
+        this.setState({
+          btnEnable: false
         });
       } else {
-        this.refs.btn.setState({
-          disabled: true
+        this.setState({
+          btnEnable: true
         });
       }
     }
@@ -213,7 +310,7 @@ class ImageBase extends React.Component {
     let addMetaData = this.state.addMetaData;
     let metaKey = this.refs.metaKey.value;
     let metaValue = this.refs.metaValue.value;
-    let singleData = {}, id;
+    let singleData, id;
     if (metaKey) {
       id = this.id ++;
       singleData = {
@@ -234,6 +331,17 @@ class ImageBase extends React.Component {
     }
   }
 
+  changeType(type) {
+    switch(type) {
+      case 'public':
+        return 'public';
+      case 'shared-image':
+        return 'private';
+      default:
+        return '';
+    }
+  }
+
   removeUserData(id) {
     let metaData = this.state.metaData,
       removeMetaData = this.state.removeMetaData;
@@ -249,98 +357,10 @@ class ImageBase extends React.Component {
     });
   }
 
-  onCheckbox(e) {
-    this.setState({
-      checked: !this.state.checked
-    });
-  }
-
-  renderImageInfo(key) {
-    let obj = this.props.obj;
-    let formatData = [{
-      name: __.aki,
-      key: 'aki',
-      id: 'aki'
-    }, {
-      name: __.ami,
-      key: 'ami',
-      id: 'ami'
-    }, {
-      name: __.ari,
-      key: 'ari',
-      id: 'ari'
-    }, {
-      name: __.docker,
-      key: 'docker',
-      id: 'docker'
-    }, {
-      name: __.iso,
-      key: 'iso',
-      id: 'iso'
-    }, {
-      name: __.ova,
-      key: 'ova',
-      id: 'ova'
-    }, {
-      name: __.qcow2,
-      key: 'qcow2',
-      id: 'qcow2'
-    }, {
-      name: __.raw,
-      key: 'raw',
-      id: 'raw'
-    }, {
-      name: __.vdi,
-      key: 'vdi',
-      id: 'vdi'
-    }, {
-      name: __.vhd,
-      key: 'vhd',
-      id: 'vhd'
-    }, {
-      name: __.vmdk,
-      key: 'vmdk',
-      id: 'vmdk'
-    }];
-    let architectureData = [{
-      name: __.no_architecture,
-      id: 'no'
-    }, {
-      name: 'i386 for a 32-bit',
-      id: 'i386'
-    }, {
-      name: 'x86_64 for a 64-bit',
-      id: 'x86_64'
-    }];
-    let protectedData = [{
-      name: __.yes,
-      id: true
-    }, {
-      name: __.no,
-      id: false
-    }];
-    let state = this.state;
-    return <div className={'image-info' + (key === '0' ? '' : ' hide')}>
-      <Input ref="name" value={obj ? obj.name : ''} label={__.name} onAction={this.onChangeName} required={true} />
-      <Input ref="describe" value={obj ? obj.description : ''} label={__.describe} onAction={this.onChangeName} />
-      <Input ref="url" disabled={obj ? true : false} value={obj ? obj.direct_url : ''} label={__.url} onAction={this.onChangeName} required={true} />
-      <Select ref="format" disabled={obj ? true : false} onAction={this.onChangeFormat.bind(this)} label={__.format} data={formatData} value={obj ? obj.disk_format : formatData[0].id} />
-      <div className="checkbox-wrapper">
-        <input ref="more" checked={state.checked} onChange={this.onCheckbox.bind(this)} type="checkbox" />&nbsp;{__.more}
-      </div>
-      <div className={state.checked ? '' : 'hide'}>
-        <Select ref="architecture" disabled={obj ? true : false} onAction={this.onChangeFormat.bind(this)} label={__.architecture} data={architectureData} value={obj ? obj.architecture : architectureData[0].id} />
-        <Input ref="min_disk" value={obj ? obj.min_disk.toString() : ''} label={__.min_disk} onAction={this.onChangeName} />
-        <Input ref="min_ram" value={obj ? obj.min_ram.toString() : ''} label={__.min_ram} onAction={this.onChangeName} />
-        <Select ref="protected" onAction={this.onChangeFormat.bind(this)} label={__.protected} data={protectedData} value={obj ? obj.protected.toString() : protectedData[0].id} />
-      </div>
-    </div>;
-  }
-
   renderMetaData(key) {
     let state = this.state;
     let columns = [{
-      title: __.key,
+      title: __.key_value,
       key: 'key',
       dataIndex: 'key'
     }, {
@@ -354,9 +374,9 @@ class ImageBase extends React.Component {
     }];
     return <div className={'meta-data' + (key === '1' ? '' : ' hide')}>
       <div className="meta-header">
-        <input ref="metaKey" className="key-input" placeholder={__.key} type="text" />
+        <input ref="metaKey" className="key-input" placeholder={__.key_value} type="text" />
         <input ref="metaValue" className="key-input" placeholder={__.value} type="text" />
-        <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
+        <Button value={__.add_data} type="create" onClick={this.onAddUserToTable} />
       </div>
       <div className="meta-content">
         <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
@@ -377,14 +397,14 @@ class ImageBase extends React.Component {
       default: state.displayKey === '1'
     }];
     return (
-      <Modal refs="modal" {...props} title={props.obj ? __.edit + __.image : __.create + __.image} visible={state.visible}>
+      <Modal refs="modal" {...props} title={props.obj.item ? __.edit + __.image : __.create + __.image} visible={state.visible}>
         <div className="modal-bd halo-com-modal-create-image">
           <div className="content-wrapper">
             <div className="select-tab">
               <Tab items={items} onClick={this.onSwitchTab} />
             </div>
             <div className="modal-content">
-              {this.renderImageInfo(state.displayKey)}
+              <ImageInfo ref="image_info" displayKey={state.displayKey} type={props.obj.type} item={state.item} changeType={this.changeType.bind(this)} onChangeName={this.onChangeName}/>
               {this.renderMetaData(state.displayKey)}
             </div>
             <div className={'error-wrapper' + (state.errorMessage ? '' : ' hide')}>
@@ -394,7 +414,7 @@ class ImageBase extends React.Component {
         </div>
         <div className="modal-ft halo-com-modal-create-image">
           <div className="right-side">
-            <Button ref="btn" value={props.obj ? __.edit : __.create} disabled={true} onClick={this.onCreateImage} type="create" />
+            <Button ref="btn" value={props.obj.item ? __.edit : __.create} disabled={state.btnEnable} onClick={this.onCreateImage} type="create" />
             <Button value={__.cancel} onClick={this.onCancel} type="cancel" />
           </div>
         </div>

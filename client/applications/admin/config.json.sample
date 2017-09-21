@@ -10,6 +10,7 @@
       "instance-restore",
       "flavor",
       "image",
+      "shared-image",
       "snapshot-type"
     ]
   }, {
@@ -55,6 +56,9 @@
   }, {
     "key": "availability-zones",
     "link": "host-aggregates"
+  }, {
+    "key": "shared-image",
+    "link": "image"
   }, {
     "key": "volume-type",
     "link": "volume"

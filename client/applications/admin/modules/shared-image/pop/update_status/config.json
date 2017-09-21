@@ -1,0 +1,10 @@
+{
+  "title": ["share", "image"],
+  "fields": [{
+    "type": "adapter",
+    "field": "members"
+  }],
+  "btn": {
+    "value": "ok"
+  }
+}

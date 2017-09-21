@@ -1,37 +1,24 @@
 {
   "tabs": [{
     "name": ["public","image"],
-    "key": "image",
-    "default": true
+    "key": "image"
   }, {
     "name": ["shared_image"],
-    "key": "shared-image"
+    "key": "shared-image",
+    "default": true
   }],
   "btns": [{
-    "value": ["create", "image"],
-    "key": "create",
-    "icon": "create",
-    "type": "create"
-  }, {
     "value": ["edit", "image"],
-    "key": "edit_image",
+    "key": "modify_image",
     "icon": "edit",
     "disabled": true
-  }, {
-    "value": ["export", "csv"],
-    "key": "export_csv",
-    "icon": "download",
-    "disabled": true
-  }, {
-    "value": ["delete"],
-    "key": "delete",
-    "icon": "delete",
-    "type": "delete",
-    "disabled": true
+    }, {
+    "value": ["update", "status"],
+    "key": "update_status",
+    "icon": "edit"
   }, {
     "key": "refresh",
-    "icon": "refresh",
-    "disabled": true
+    "icon": "refresh"
   }],
   "filter": [{
     "group_key": "filter_id",
@@ -52,7 +39,6 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
-    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
@@ -61,10 +47,11 @@
       "sort": true
     }, {
       "title": ["size"],
+      "dataIndex": "size",
       "key": "size"
     }, {
       "title": ["type"],
-      "key": "image_type",
+      "key": "type",
       "dataIndex": "image_type"
     }, {
       "title": ["status"],

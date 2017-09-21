@@ -31,7 +31,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit;
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -51,7 +51,7 @@ module.exports = {
       }
       return ret;
     }
-    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit + getParameters(data);
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&limit=' + pageLimit + getParameters(data);
 
     return fetch.get({
       url: url
@@ -110,7 +110,13 @@ module.exports = {
       url: '/proxy/csv-field/images'
     });
   },
-  exportCSV(fields) {
+  createImage: function(data) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images',
+      data: data
+    });
+  },
+  exportCSV: function(fields) {
     let url = '/proxy/csv/glance/v2/images' + getParams(fields);
     function ret() {
       let linkNode = document.createElement('a');
@@ -123,7 +129,7 @@ module.exports = {
       resolve(ret());
     });
   },
-  getInstances() {
+  getInstances: function() {
     let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
     return fetch.get({
       url: url
@@ -131,7 +137,7 @@ module.exports = {
       return res.servers;
     });
   },
-  createTask(data) {
+  createTask: function(data) {
     return fetch.post({
       url: '/proxy/glance/v2/tasks',
       data: data
