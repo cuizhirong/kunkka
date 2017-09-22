@@ -9,7 +9,11 @@ module.exports = function (query) {
       if (str) {
         str += '&';
       }
-      str += k + '=' + qs.escape(query[k]);
+      if (Array.isArray(query[k])) {
+        str += query[k].map(value => k + '=' + qs.escape(value)).join('&');
+      } else {
+        str += k + '=' + qs.escape(query[k]);
+      }
     });
     str = str ? ('?' + str) : '';
   }

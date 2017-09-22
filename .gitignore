@@ -72,3 +72,5 @@ client/assets/**/
 /server/db_migration/migrations/*
 /server/db_migration/config.json
 
+package-lock.json
+
