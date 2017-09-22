@@ -1,4 +1,5 @@
 'use strict';
+const _ = require('lodash');
 const co = require('co');
 const request = require('superagent');
 const getQueryString = require('helpers/getQueryString.js');
@@ -172,15 +173,12 @@ module.exports = (req, res, next) => {
       let list;
       if (pathSplit[4] === 'images') {
         let images = [];
-        yield listImageRecursive({limit: 9999}, '', token, remote[service][region], images);
+        let queryToOpenstack = _.omit(req.query, ['image_type']);
+        queryToOpenstack.limit = 9999;
+        yield listImageRecursive(queryToOpenstack, '', token, remote[service][region], images);
 
         let imageType = req.query.image_type;
         let isFilterSnapshot = (imageType === 'snapshot');
-        if(!search){
-          list = images.filter(image => {
-            return image.image_type === imageType;
-          });
-        }
         if (imageType && search) {
           if(isFilterSnapshot){
             list = images.filter(image => {
