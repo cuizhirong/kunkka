@@ -68,12 +68,12 @@ class Model extends React.Component {
 
     this.props.menus.forEach((ele) => {
 
-      if (ele.title !== 'monitor') {
+      if (ele.title !== 'monitor' && ele.title !== 'orchestration') {
         ele.items.forEach((item) => {
           menuKeys.push(item);
         });
       } else {
-        if (HALO.settings.enable_alarm) {
+        if (HALO.settings.enable_alarm || HALO.settings.enable_orchestration) {
           ele.items.forEach((item) => {
             menuKeys.push(item);
           });
@@ -132,6 +132,8 @@ class Model extends React.Component {
         return 'monitor';
       case 'back-up':
         return 'backup';
+      case 'orchestration':
+        return 'template-list';
       default:
         return name;
     }
@@ -167,6 +169,13 @@ class Model extends React.Component {
     if (!HALO.settings.enable_alarm) {
       let index = -1;
       menus.some((ele, i) => ele.key === 'monitor' ? (index = i, true) : false);
+
+      if (index > -1) {
+        menus.splice(index, 1);
+      }
+    } else if (!HALO.settings.enable_orchestration) {
+      let index = -1;
+      menus.some((ele, i) => ele.key === 'orchestration' ? (index = i, true) : false);
 
       if (index > -1) {
         menus.splice(index, 1);

@@ -19,7 +19,7 @@ function pop(obj, parent, callback) {
       let fileName = name ? name : file.name;
       let reader = new FileReader();
       reader.onloadend = function () {
-        let url = '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + fileName;
+        let url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + fileName;
         let xhr = new XMLHttpRequest();
 
         xhr.open('PUT', url, true);

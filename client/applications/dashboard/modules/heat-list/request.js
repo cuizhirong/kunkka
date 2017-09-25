@@ -35,12 +35,12 @@ module.exports = {
   },
   getTemplates: function() {
     return fetch.get({
-      url: '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template'
+      url: HALO.configs.swift_url + '/' + HALO.user.projectId + '_template'
     });
   },
   getContainer: function() {
     return fetch.get({
-      url: '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template'
+      url: HALO.configs.swift_url + '/' + HALO.user.projectId + '_template'
     });
   },
   checkStack: function(item, data) {
