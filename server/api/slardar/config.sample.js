@@ -68,12 +68,6 @@ module.exports = {
       description: 'dashboard页面-单个云硬盘最大容量'
     }, {
       app: 'dashboard',
-      name: 'is_show_vlan',
-      value: 'true',
-      type: 'boolean',
-      description: 'dashboard页面-显示 vlan'
-    }, {
-      app: 'dashboard',
       name: 'max_floatingip_bandwidth',
       value: 30,
       type: 'number',
@@ -103,6 +97,12 @@ module.exports = {
       type: 'boolean',
       description: 'dashboard页面-路由端口转发开关'
     }, {
+      app: 'dashboard',
+      name: 'enable_orchestration',
+      value: 'false',
+      type: 'boolean',
+      description: 'dashboard页面-显示编排'
+    }, {
       app: 'admin',
       name: 'commercial_storage',
       value: 0,
@@ -114,6 +114,18 @@ module.exports = {
       value: '',
       type: 'text',
       description: '管理页面-样式定制'
+    }, {
+      app: 'admin',
+      name: 'is_show_vlan',
+      value: 'true',
+      type: 'boolean',
+      description: '管理页面-显示 vlan'
+    }, {
+      app: 'admin',
+      name: 'is_show_flat',
+      value: 'true',
+      type: 'boolean',
+      description: '管理页面-显示 vlan'
     }, {
       app: 'bill',
       name: 'view.css',
