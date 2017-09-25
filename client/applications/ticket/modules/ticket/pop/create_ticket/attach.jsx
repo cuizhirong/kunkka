@@ -34,7 +34,7 @@ class Attach extends React.Component {
   uploadFile(file) {
     let reader = new FileReader(),
       that = this,
-      url = '/proxy-swift/v1/AUTH_' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_ticket' + '/' + file.name.replace(/\s+/g, '');
+      url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_ticket' + '/' + file.name.replace(/\s+/g, '');
     that.setState({
       attachments: that.state.attachments.concat(url),
       fileNames: that.state.fileNames.concat(file.name),
