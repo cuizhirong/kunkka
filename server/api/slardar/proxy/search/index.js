@@ -41,6 +41,21 @@ const objects = [
     hasPagination: true, service: 'neutron', version: 'v2.0'
   },
   {
+    name: 'network', re: /\/neutron\/v2.0\/networks/i,
+    hasPagination: true, service: 'neutron', version: 'v2.0',
+    match: 'name'
+  },
+  {
+    name: 'subnet', re: /\/neutron\/v2.0\/subnets/i,
+    hasPagination: true, service: 'neutron', version: 'v2.0',
+    match: 'name'
+  },
+  {
+    name: 'router', re: /\/neutron\/v2.0\/routers/i,
+    hasPagination: true, service: 'neutron', version: 'v2.0',
+    match: 'name'
+  },
+  {
     name: 'domain', re: /\/keystone\/v3\/domains/i,
     hasPagination: false, service: 'keystone', version: 'v3'
   },
