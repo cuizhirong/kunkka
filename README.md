@@ -1,7 +1,9 @@
-![logo](./client/assets/logo_halo@66x66.png)
+![logo](./.github/logo_halo.png)
 
 # Halo
 Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do interaction between OpenStack services including Nova, Keystone, Swift and so on.
+
+![Unitedstack dashboard](./.github/dashboard.png)
 
 ## Related Modules
 
@@ -40,15 +42,15 @@ For more scripts, Please visit [http://halo.ustack.com/started/scripts.html](htt
 
 ## Issues
 
-Please make sure to read the [Issue Reporting Checklist](./CONTRIBUTING.md#Issues) before opening an issue.
+Please make sure to read the [Issue Reporting Checklist](./.github/CONTRIBUTING.md#Issues) before opening an issue.
 
 ## Contribution
 
-Halo welcome every one who wants to contribute the code, please read over [CONTRIBUTING](./CONTRIBUTING.md) first.
+Halo welcome every one who wants to contribute the code, please read over [CONTRIBUTING](./.github/CONTRIBUTING.md) first.
 
 ## Code Convention
 
-Before development, please read over Halo [Code Convention](./CODE_CONVENTION.md).
+Before development, please read over Halo [Code Convention](./.github/CODE_CONVENTION.md).
 
 ## Change Log
 
@@ -59,4 +61,4 @@ Please visit [Change Log](./CHANGELOG.md).
 For the latest releases and announcements, follow us:
 
 * Weibo: [@UnitedStack_Halo](http://weibo.com/u/6344552711)
-* Twitter: @ustack_halo
+* Twitter: [@ustack_halo](https://twitter.com/ustack_halo)
