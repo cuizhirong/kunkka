@@ -90,7 +90,7 @@ function pop(parent, callback) {
   if(HALO.user.roles.indexOf('admin') === -1) {
     delete config.fields[6];
   }
-  let phyNet = HALO.configs.neutron_network_vlanranges.split(',');
+  let phyNet = HALO.configs.neutron_network_vlanranges;
   let props = {
     __: __,
     parent: parent,
