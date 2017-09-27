@@ -31,6 +31,7 @@ class Model extends React.Component {
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
+    this.initializeFilter(this.state.config.table.column);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -57,6 +58,19 @@ class Model extends React.Component {
           break;
         default:
           break;
+      }
+    });
+  }
+
+  initializeFilter(columns) {
+    columns.forEach((column) => {
+      if(column.filter) {
+        const filters = column.filter;
+        filters.forEach((filter) => {
+          filter.filterBy = (item, col) => {
+            return item.app === filter.key;
+          };
+        });
       }
     });
   }
@@ -168,8 +182,8 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'search':
-        this.onClickSearch(actionType, refs, data);
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
@@ -179,28 +193,37 @@ class Model extends React.Component {
     }
   }
 
-  onClickSearch(actionType, refs, data) {
-    if (actionType === 'click') {
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
       this.loadingTable();
 
-      if(data.text) {
-        request.getList().then(res => {
-          let settings = res.setting;
-          let newSettings = settings.filter((setting) => {
-            return setting.name === data.text || setting.name.includes(data.text);
-          });
-          let newConfig = this.state.config;
-          newConfig.table.data = newSettings;
-          newConfig.table.loading = false;
+      const confName = data.configuration_name;
+      const confDesc = data.configuration_desc;
 
-          this.setState({
-            config: newConfig
-          });
-        });
+      if(confName) {
+        this.getFilteredList(confName, 'name');
+      } else if(confDesc) {
+        this.getFilteredList(confDesc, 'description');
       } else {
         this.onInitialize();
       }
     }
+  }
+
+  getFilteredList(group, fieldName) {
+    request.getList().then(res => {
+      const settings = res.setting;
+      const newSettings = settings.filter(setting => {
+        return setting[fieldName] && setting[fieldName].includes(group[fieldName]);
+      });
+      let newConfig = this.state.config;
+      newConfig.table.data = newSettings;
+      newConfig.table.loading = false;
+
+      this.setState({
+        config: newConfig
+      });
+    });
   }
 
   onClickTable(actionType, refs, data) {

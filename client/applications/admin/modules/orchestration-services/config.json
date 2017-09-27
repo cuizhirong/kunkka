@@ -1,0 +1,97 @@
+{
+  "tabs": [{
+    "name": ["services"],
+    "key": "system-information"
+  }, {
+    "name": ["compute_services"],
+    "key": "compute-services"
+  }, {
+    "name": ["block_storage_services"],
+    "key": "block-storage-services"
+  }, {
+    "name": ["network_agents"],
+    "key": "network-agents"
+  }, {
+    "name": ["orchestration_services"],
+    "key": "orchestration-services",
+    "default": "true"
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "hostname",
+    "items": [{
+      "type": "input",
+      "key": "hostname",
+      "placeholder": ["pls_enter", "host_name"]
+    }, {
+      "type": "input",
+      "key": "binary",
+      "placeholder": ["pls_enter", "name"]
+    }]
+  }, {
+    "group_key": "engine_id",
+    "items": [{
+      "type": "input",
+      "key": "engine_id",
+      "placeholder": ["pls_enter", "engine_id"]
+    }]
+  }, {
+    "group_key": "topic",
+    "items": [{
+      "type": "input",
+      "key": "topic",
+      "placeholder": ["pls_enter", "topic"]
+    }]
+  }],
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["hostname"],
+      "dataIndex": "hostname",
+      "key": "hostname",
+      "sort": true
+    }, {
+      "title": ["binary"],
+      "key": "binary",
+      "dataIndex": "binary",
+      "sort": true
+    }, {
+      "title": ["engine_id"],
+      "key": "engine_id",
+      "dataIndex": "engine_id",
+      "sort": true
+    }, {
+      "title": ["hosts"],
+      "dataIndex": "host",
+      "key": "host",
+      "sort": true
+    }, {
+      "title": ["topic"],
+      "key": "topic",
+      "dataIndex": "topic",
+      "sort": true
+    }, {
+      "title": ["admin_state"],
+      "key": "status",
+      "filter": [{
+        "name": "Up",
+        "key": "up"
+      }, {
+        "name": "Down",
+        "key": "down"
+      }]
+    }, {
+      "title": ["last_updated"],
+      "dataIndex": "updated_at",
+      "key": "last_updated",
+      "sort": true,
+      "type": "time"
+    }],
+    "data": []
+  }
+}

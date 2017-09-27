@@ -37,6 +37,15 @@
       "role"
     ]
   }, {
+    "title": "system-information",
+    "items": [
+      "system-information",
+      "compute-services",
+      "block-storage-services",
+      "network-agents",
+      "orchestration-services"
+    ]
+  }, {
     "title": "setting-mgmt",
     "items": [
       "setting-mgmt"
@@ -65,6 +74,18 @@
   }, {
     "key": "qos-spec",
     "link": "volume"
+  }, {
+    "key": "compute-services",
+    "link": "system-information"
+  }, {
+    "key": "block-storage-services",
+    "link": "system-information"
+  }, {
+    "key": "network-agents",
+    "link": "system-information"
+  }, {
+    "key": "orchestration-services",
+    "link": "system-information"
   }],
   "theme": "default"
 }

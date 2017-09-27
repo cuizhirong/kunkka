@@ -1,0 +1,90 @@
+{
+  "tabs": [{
+    "name": ["services"],
+    "key": "system-information"
+  }, {
+    "name": ["compute_services"],
+    "key": "compute-services"
+  }, {
+    "name": ["block_storage_services"],
+    "key": "block-storage-services"
+  }, {
+    "name": ["network_agents"],
+    "key": "network-agents",
+    "default": "true"
+  }, {
+    "name": ["orchestration_services"],
+    "key": "orchestration-services"
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "agent_type",
+    "items": [{
+      "type": "input",
+      "key": "agent_type",
+      "placeholder": ["pls_enter", "agent_type"]
+    }]
+  }, {
+    "group_key": "agent_name",
+    "items": [{
+      "type": "input",
+      "key": "binary",
+      "placeholder": ["pls_enter", "agent_name"]
+    }]
+  }, {
+    "group_key": "host",
+    "items": [{
+      "type": "input",
+      "key": "host",
+      "placeholder": ["pls_enter", "hosts"]
+    }]
+  }],
+  "table": {
+    "dataKey": "index",
+    "loading": true,
+    "column": [{
+      "title": ["type"],
+      "dataIndex": "agent_type",
+      "key": "type",
+      "sort": true
+    }, {
+      "title": ["binary"],
+      "key": "binary",
+      "dataIndex": "binary",
+      "sort": true
+    }, {
+      "title": ["hosts"],
+      "key": "host",
+      "dataIndex": "host",
+      "sort": true
+    }, {
+      "title": ["status"],
+      "type": "status",
+      "dataIndex": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active"
+      }, {
+        "name": ["down"],
+        "key": "down"
+      }]
+    }, {
+      "title": ["admin_state"],
+      "dataIndex": "state",
+      "key": "state",
+      "filter": [{
+        "name": "Up",
+        "key": "up"
+      }, {
+        "name": "Down",
+        "key": "down"
+      }]
+    }],
+    "data": []
+  }
+}

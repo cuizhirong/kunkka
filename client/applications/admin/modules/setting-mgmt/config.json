@@ -14,10 +14,36 @@
     "icon": "refresh",
     "disabled": true
   }],
-  "search": {
-    "placeholder": ["pls_enter", "configuration", "name"],
-    "width": 200
-  },
+  "filter": [
+    {
+      "group_key": "configuration_name",
+      "items": [
+        {
+          "type": "input",
+          "key": "name",
+          "placeholder": [
+            "pls_enter",
+            "configuration",
+            "name"
+          ]
+        }
+      ]
+    },
+    {
+      "group_key": "configuration_desc",
+      "items": [
+        {
+          "type": "input",
+          "key": "description",
+          "placeholder": [
+            "pls_enter",
+            "configuration",
+            "description"
+          ]
+        }
+      ]
+    }
+  ],
   "table": {
     "checkbox": true,
     "dataKey": "id",
@@ -30,7 +56,32 @@
     }, {
       "title": ["application"],
       "dataIndex": "app",
-      "key": "app"
+      "key": "app",
+      "filter": [{
+        "name": "Admin",
+        "key": "admin"
+      }, {
+        "name": "Approval",
+        "key": "approval"
+      }, {
+        "name": "Auth",
+        "key": "auth"
+      }, {
+        "name": "Bill",
+        "key": "bill"
+      }, {
+        "name": "Dashboard",
+        "key": "dashboard"
+      }, {
+        "name": "Global",
+        "key": "global"
+      }, {
+        "name": "Storage",
+        "key": "storage"
+      }, {
+        "name": "Ticket",
+        "key": "ticket"
+      }]
     }, {
       "title": ["type"],
       "dataIndex": "type",
