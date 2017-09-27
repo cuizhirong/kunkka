@@ -34,10 +34,7 @@ module.exports = (app) => {
             next({message: req.i18n.__('api.keystone.confirmSuccess')});
           }
         });
-
-    }).catch(err => {
-      next(err);
-    });
+    }).catch(next);
   }, customResPage);
 
   app.get([
