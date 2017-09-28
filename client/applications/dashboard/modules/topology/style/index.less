@@ -9,11 +9,19 @@
   overflow-x: hidden;
 
   .c {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
+    position: relative;
+    margin: 20px;
+    flex: 1;
+    overflow: auto;
+    .download {
+      z-index: 100;
+      position: absolute;
+      left: 0;
+      top: 0;
+      &.hide {
+        display: none;
+      }
+    }
     .loading {
       position: absolute;
       top: 50%;
