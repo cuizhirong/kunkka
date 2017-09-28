@@ -46,7 +46,7 @@ let resourceReady = false,
   event = null,
   w = 0,
   h = 0,
-  maxWidth = 0,
+  maxWidth = 0, // router and unlink instance holder width
   basicColor = '#59cbdb',
   textColor = '#000',
   borderColor = '#d5dee2',
@@ -57,18 +57,21 @@ let resourceReady = false,
   loadbalancerPos = [],
   placeholder = []; // Calc the used positions of instances
 
+const log = console.log;
+
 class Topology {
   constructor(wp, data) {
     container = wp;
 
-    if (data.instance && data.instance.length > 50) {
-      data.instance = data.instance.slice(0, 50);
-    }
+    // if (data.instance && data.instance.length > 50) {
+    //   data.instance = data.instance.slice(0, 50);
+    // }
     d = this.processData(data);
-
-    w = wp.clientWidth;
     // calc height by data
     h = this.calcPos();
+
+    // in order to display scroll-x
+    w = maxWidth + 20;
 
     utils.bind(window, 'resize', this.onResize.bind(this));
   }
@@ -177,6 +180,7 @@ class Topology {
     // loadbalancer
     let tmpLoadbalancerPos = [];
     data.loadbalancer.forEach((l, i) => {
+      let subnets;
       tmpLoadbalancerPos[i] = {
         name: l.name || '(' + l.id.slice(0, 8) + ')',
         id: l.id,
@@ -200,7 +204,8 @@ class Topology {
         });
       });
 
-      tmpLoadbalancerPos[i].layer = tmpLoadbalancerPos[i].subnets[0].networkLayer;
+      subnets = tmpLoadbalancerPos[i].subnets;
+      tmpLoadbalancerPos[i].layer = subnets.length > 0 ? subnets[0].networkLayer : -1;
     });
 
     tmpLoadbalancerPos.forEach((loadbalancer, i) => {
@@ -229,12 +234,13 @@ class Topology {
       }
     });
 
-    // console.log('tmpLb', tmpLoadbalancerPos);
-
-    // console.log('tmpInstancePos', tmpInstancePos);
-    // console.log('routerPos', routerPos);
-    // console.log('instancePos', instancePos);
-    // console.log('loadbalancerPos', loadbalancerPos);
+    if(process.env.NODE_ENV !== 'production') {
+      log('tmpLb', tmpLoadbalancerPos);
+      log('tmpInstancePos', tmpInstancePos);
+      log('routerPos', routerPos);
+      log('instancePos', instancePos);
+      log('loadbalancerPos', loadbalancerPos);
+    }
     return data;
   }
 
@@ -244,7 +250,9 @@ class Topology {
     // reset max width
     maxWidth = 0;
 
-    // calc network positions
+    /**
+     * calc Network positions
+     */
     d.network.forEach((data, i) => {
       networkPos[i] = {
         x: x,
@@ -282,8 +290,9 @@ class Topology {
       });
     });
 
-    // calc router positions
-    // console.log(routerPos);
+    /**
+     * calc Router positions
+     */
     routerPos.forEach((router, i) => {
       if (i === 0) {
         router.x = 0.5;
@@ -314,14 +323,16 @@ class Topology {
       maxWidth = lastRouter.w + lastRouter.x;
     }
 
-    // calc instance positions
+    /**
+     * Calc the used positions of instances and lb
+     * line need space, never cover.
+     */
     placeholder = [];
-    let loop = 0;
     routerPos.forEach((router) => {
       router.subnets.forEach((s) => {
         let _layer = s.networkLayer;
 
-        for (loop = 0; loop < _layer; loop++) {
+        for (let loop = 0; loop < _layer; loop++) {
           if (!placeholder[loop]) {
             placeholder[loop] = [];
           }
@@ -335,6 +346,46 @@ class Topology {
 
       });
     });
+
+    /**
+     * inset item to placeholder, fill the blank.
+     */
+    const setPos = (holder, item, layer) => {
+      let cur = 0.5,
+        p = holder[layer];
+      if (p) {
+        p.some((_p, i) => {
+          if (i === 0) {
+            cur = 0.5;
+          } else {
+            cur = p[i - 1].x + p[i - 1].w + 10;
+          }
+          let next = cur + item.w + 10;
+          if (next <= _p.x) {
+            item.x = cur;
+            p.splice(i, 0, {
+              x: cur,
+              w: item.w
+            });
+            return true;
+          }
+          return false;
+        });
+        if (item.x === void(0)) { // last postion in the row
+          item.x = p[p.length - 1].x + p[p.length - 1].w + 10;
+          p.push({
+            x: item.x,
+            w: item.w
+          });
+        }
+      } else {
+        item.x = cur;
+        holder[layer] = [{
+          x: cur,
+          w: item.w
+        }];
+      }
+    };
 
     instancePos.forEach((instance) => {
       let layer = instance.layer,
@@ -379,40 +430,7 @@ class Topology {
         ins.h = 58;
 
         // 2.根据placehoder算出instance实际的x坐标
-        let cur = 0.5,
-          p = placeholder[layer];
-        if (p) {
-          p.some((_p, i) => {
-            if (i === 0) {
-              cur = 0.5;
-            } else {
-              cur = p[i - 1].x + p[i - 1].w + 10;
-            }
-            let next = cur + ins.w + 10;
-            if (next <= _p.x) {
-              ins.x = cur;
-              p.splice(i, 0, {
-                x: cur,
-                w: ins.w
-              });
-              return true;
-            }
-            return false;
-          });
-          if (ins.x === void(0)) { // last postion in the row
-            ins.x = p[p.length - 1].x + p[p.length - 1].w + 10;
-            p.push({
-              x: ins.x,
-              w: ins.w
-            });
-          }
-        } else {
-          ins.x = cur;
-          placeholder[layer] = [{
-            x: cur,
-            w: ins.w
-          }];
-        }
+        setPos(placeholder, ins, layer);
 
         let upX = ins.x + (ins.w - up * 12 + 10) / 2 - 0.5,
           downX = ins.x + (ins.w - down * 12 + 10) / 2 - 0.5;
@@ -474,6 +492,7 @@ class Topology {
       }
 
       let lastEle = instances[instances.length - 1];
+
       if (lastEle.x + lastEle.w > maxWidth) {
         maxWidth = lastEle.x + lastEle.w;
       }
@@ -486,19 +505,27 @@ class Topology {
         _lb.w = 78;
         _lb.y = _lo.h + _lo.y + 51.5;
         _lb.h = 58;
-        _lb.x = _lo.maxWidth + i * (10 + 78) + (_lo.maxWidth > 0 ? 0 : 0.5);
+        // _lb.x = _lo.maxWidth + i * (10 + 78) + (_lo.maxWidth > 0 ? 0 : 0.5);
         // let start = (router.w - 12 * len + 10) / 2 + router.x;
+
+        setPos(placeholder, _lb, layer);
+
         _lb.subnets.forEach((subnet, j) => {
           subnet.x = _lb.w / 2 + _lb.x + j * 12 - 0.5;
           subnet.y = _lb.y + _lb.h;
         });
       });
-    });
-    // console.log('calcu', loadbalancerPos);
+      let lastEle = lo.loadbalancers[lo.loadbalancers.length - 1];
 
-    // console.log('placeholder: ', placeholder);
-    // console.log('instancePos: ', instancePos);
-    // console.log('networkPos', networkPos);
+      if (lastEle.x + lastEle.w > maxWidth) {
+        maxWidth = lastEle.x + lastEle.w + 10;
+      }
+    });
+
+    if(process.env.NODE_ENV !== 'production') {
+      log('placeholder: ', placeholder);
+      log('networkPos', networkPos);
+    }
     if (networkPos.length === 0) {
       return 260;
     }
@@ -515,11 +542,18 @@ class Topology {
 
     // clear canvas
     ctx.clearRect(0, 0, w, h);
+
+    // draw white background;
+    ctx.save();
+    ctx.fillStyle = '#fff';
+    ctx.rect(0, 0, w, h);
+    ctx.fill();
+    ctx.restore();
     // clear events
     event.unBindAll();
 
     ctx.drawImage(imageList[0], Math.round(w / 2 - 49), 0, 98, 78);
-    shape.roundRect(ctx, 0, 78, w, 5, 2, basicColor);
+    shape.roundRect(ctx, 0, 78, maxWidth, 5, 2, basicColor);
 
     // draw routers
     routerPos.forEach((router, i) => {
@@ -544,16 +578,16 @@ class Topology {
         network = networkPos[i];
 
       // 1. draw network
-      shape.roundRect(ctx, network.x, network.y, network.w, network.h, 5, _color.color);
+      shape.roundRect(ctx, network.x, network.y, maxWidth, network.h, 5, _color.color);
       ctx.drawImage(imageList[1], network.x + 10, network.y + 11, 16, 11);
       shape.text(ctx, network.name, network.x + 30, network.y + 16, textColor);
-      (function(n) {
+      (n => {
         event.bind({
           left: n.x,
           top: n.y,
           width: n.w,
           height: n.h
-        }, 0, function() {
+        }, 0, () => {
           routerUtil.pushState('/dashboard/network/' + n.id);
         });
       })(network);
@@ -564,7 +598,7 @@ class Topology {
         let subnet = _subnets[j];
         let subnetColor = _color.subnetColor[j % 4];
 
-        shape.roundRect(ctx, subnet.x, subnet.y, subnet.w, subnet.h, 5, subnetColor);
+        shape.roundRect(ctx, subnet.x, subnet.y, maxWidth - 20, subnet.h, 5, subnetColor);
         shape.text(ctx, subnet.name, subnet.x + 10, subnet.y + 10, textColor);
 
         // 画路由器和子网的连接线
@@ -628,7 +662,7 @@ class Topology {
           top: subnet.y,
           width: subnet.w,
           height: subnet.h
-        }, 1, function() {
+        }, 1, () => {
           routerUtil.pushState('/dashboard/subnet/' + subnet.id);
         });
       }
@@ -654,13 +688,13 @@ class Topology {
         if (_instance.floating_ip) {
           ctx.drawImage(imageList[2], _x + 3.5, _instance.y + 3.5, 16, 16);
         }
-        (function(n) {
+        (n => {
           event.bind({
             left: _x,
             top: n.y,
             width: n.w,
             height: n.h
-          }, 0, function() {
+          }, 0, () => {
             routerUtil.pushState('/dashboard/instance/' + n.id);
           });
         })(_instance);
@@ -687,13 +721,13 @@ class Topology {
         if (_loadbalancer.floatingip) {
           ctx.drawImage(imageList[2], _x + 3.5, _loadbalancer.y + 3.5, 16, 16);
         }
-        (function(n) {
+        (n => {
           event.bind({
             left: _x,
             top: n.y,
             width: n.w,
             height: n.h
-          }, 0, function() {
+          }, 0, () => {
             routerUtil.pushState('/dashboard/loadbalancer/' + n.id);
           });
         })(_loadbalancer);
@@ -702,12 +736,12 @@ class Topology {
 
   }
 
-  render() {
+  render(cb) {
     canvas = document.createElement('canvas');
+    canvas.id = 'tp';
     container.appendChild(canvas);
     event = new CanvasEvent(canvas);
     ctx = canvas.getContext('2d');
-
     autoscale([canvas], {
       width: w,
       height: h
@@ -720,6 +754,7 @@ class Topology {
       let loading = container.getElementsByClassName('loading')[0];
       loading && loading.classList.add('hide');
       this.draw();
+      cb && cb();
     });
   }
 
@@ -727,13 +762,12 @@ class Topology {
     if (!resourceReady) {
       return;
     }
-
-    w = container.clientWidth;
     autoscale([canvas], {
       width: w,
       height: h
     });
     this.calcPos();
+    w = maxWidth + 20;
     this.draw();
   }
 
@@ -743,8 +777,8 @@ class Topology {
     }
 
     d = this.processData(data);
-    w = container.clientWidth;
     h = this.calcPos();
+    w = maxWidth + 20;
     autoscale([canvas], {
       width: w,
       height: h
