@@ -8,6 +8,8 @@ const __ = require('locale/client/dashboard.lang.json');
 
 const request = require('./request');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const FILENAME = 'topology.png';
+const nullHref = 'javascript: void(0)'; // eslint-disable-line
 
 let t = null;
 
@@ -17,7 +19,8 @@ class Model extends React.Component {
     super(props);
 
     this.state = {
-      ready: false
+      loading: true,
+      href: nullHref
     };
   }
 
@@ -26,7 +29,9 @@ class Model extends React.Component {
       t = new Topology(this.refs.c, data);
       t.render(() => {
         this.setState({
-          ready: true
+          loading: false
+        }, () => {
+          this.initHref();
         });
       });
     });
@@ -41,6 +46,7 @@ class Model extends React.Component {
           case 'floatingip':
             request.getList().then((_data) => {
               t.reRender(_data);
+              this.initHref();
             });
             break;
           default:
@@ -54,23 +60,58 @@ class Model extends React.Component {
     if (nextProps.style.display !== 'none') {
       request.getList().then((data) => {
         t.reRender(data);
+        this.initHref();
       });
     }
   }
 
-  download() {
+  refresh() {
+    this.setState({
+      loading: true,
+      href: nullHref
+    }, () => {
+      request.getList(true).then((data) => {
+        this.setState({
+          loading: false
+        }, () => {
+          t.reRender(data);
+          this.initHref();
+        });
+      });
+    });
+  }
+
+  initHref() {
     const canvas = document.getElementById('tp');
-    download('topology.png', canvas.toDataURL('image/png'));
+    download(canvas.toDataURL('image/png')).then((href) => {
+      this.setState({
+        href: href
+      });
+    }).catch(e => {
+      this.setState({
+        href: e
+      });
+    });
   }
 
   render() {
+    let state = this.state;
     return (
       <div className="halo-module-topology" style={this.props.style}>
-        <div ref="c" className="c">
-          <div title={__.click_to_download} className={'download ' + (this.state.ready ? '' : 'hide')}>
-            <Button type="create" initial={true} onClick={this.download} iconClass="download" />
+        <div className="wrapper">
+          <a className={'download ' + (state.loading ? 'disabled' : '')}
+            /* if has a filename, will download even if the href is javascript: void(0) */
+            download={state.loading ? null : FILENAME}
+            href={state.href}
+          >
+            <i className="glyphicon icon-download"></i>{__.click_to_download}
+          </a>
+          <Button initial={true} onClick={this.refresh.bind(this)} disabled={state.loading} iconClass="refresh" />
+        </div>
+        <div ref="c" className="c" id="c">
+          <div className={'loading-wrapper ' + (state.loading ? '' : 'hide')}>
+            <div className="loading glyphicon icon-loading"></div>
           </div>
-          <div className="loading glyphicon icon-loading"></div>
         </div>
       </div>
     );

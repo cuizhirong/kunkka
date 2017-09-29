@@ -1,8 +1,8 @@
 {
   "en": {
-    "click_to_download": "click to download topology."
+    "click_to_download": "Download"
   },
   "zh-CN": {
-    "click_to_download": "点击下载拓扑图到本地."
+    "click_to_download": "点击下载拓扑图"
   }
 }

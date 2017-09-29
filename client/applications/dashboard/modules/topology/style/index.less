@@ -5,30 +5,83 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-
+  overflow: hidden;
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    margin: 20px 0 0 20px;
+    &.hide {
+      display: none;
+    }
+    .download {
+      display: inline-block;
+      cursor: pointer;
+      padding: 0 12px;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      user-select: none;
+      font-weight: 400;
+      text-align: center;
+      min-width: 32px;
+      white-space: nowrap;
+      height: 30px;
+      line-height: 32px;
+      border-radius: 2px;
+      background-color: @color_info;
+      color: #fff;
+      font-size: 13px;
+      margin-right: 10px;
+      &:hover {
+        background-color: @color_info_600;
+        border-color: @color_info_600;
+      }
+      &.disabled {
+        color: @color_font_700;
+        background-color: @color_disabled_400;
+        border-color: @color_disabled_400;
+        cursor: not-allowed;
+      }
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
   .c {
     position: relative;
     margin: 20px;
     flex: 1;
-    overflow: auto;
-    .download {
-      z-index: 100;
-      position: absolute;
-      left: 0;
-      top: 0;
-      &.hide {
-        display: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    #tp {
+      cursor: grab;
+      &.pointer {
+        cursor: pointer;
+      }
+      &.grab {
+        cursor: grab;
+      }
+      &.grabbing {
+        cursor: grabbing;
       }
     }
-    .loading {
+    .loading-wrapper {
+      z-index: 10;
+      background-color: #fff;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left: -16px;
-      margin-top: -16px;
-      color: @color_grey_800;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      vertical-align: middle;
+      .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -16px;
+        margin-top: -16px;
+        color: @color_grey_800;
+      }
     }
   }
 }

@@ -4,31 +4,61 @@ let eventList = [],
 class CanvasEvent {
   constructor(canvas) {
     this.canvas = canvas;
-    canvas.addEventListener('mousemove', function(ev) {
+    canvas.addEventListener('mousemove', ev => {
       let _rect = canvas.getBoundingClientRect(),
         x = ev.pageX - _rect.left,
         y = ev.pageY - _rect.top;
 
-      let b = eventList.some((e) => {
+      let b = eventList.some(e => {
         let metric = e.metric;
         if (x >= metric.left && x <= (metric.left + metric.width) &&
           y >= metric.top && y <= (metric.top + metric.height)) {
 
-          canvas.style.cursor = 'pointer';
+          canvas.className = 'pointer';
           callback = e.cb;
           return true;
         }
         return false;
       });
       if (!b) {
-        canvas.style.cursor = 'default';
+        canvas.className = 'grab';
         callback = null;
       }
     });
 
-    canvas.addEventListener('click', function() {
-      callback && callback();
+    canvas.addEventListener('mousedown', () => {
+      if(callback) {
+        callback();
+      } else {
+        this.drag(canvas);
+      }
     });
+  }
+
+  drag(canvas) {
+    const wrapper = document.getElementById('c');
+    const inner = document.getElementById('tp');
+    let [ _x, _y ] = [ void(0), void(0) ];
+    let moveHandler = ev => {
+      let [ x, y ] = [ ev.pageX, ev.pageY ];
+      if(_x && _y) {
+        if(wrapper.scrollLeft + wrapper.clientWidth <= inner.clientWidth) {
+          wrapper.scrollLeft -= (x - _x);
+        }
+        if(wrapper.scrollTop + wrapper.clientHeight <= inner.clientHeight) {
+          wrapper.scrollTop -= (y - _y);
+        }
+      }
+      [ _x, _y ] = [ x, y ];
+      canvas.className = 'grabbing';
+    };
+    let upHandler = () => {
+      canvas.className = '';
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+    };
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
   }
 
   /**

@@ -570,6 +570,16 @@ class Topology {
       }
       ctx.drawImage(imageList[4], statusMap[router.status][0], statusMap[router.status][1],
         30, 30, _x + router.w - 18.5, router.y + 3.5, 15, 15);
+      (n => {
+        event.bind({
+          left: _x,
+          top: n.y,
+          width: n.w,
+          height: n.h
+        }, 0, () => {
+          routerUtil.pushState('/dashboard/router/' + n.id);
+        });
+      })(router);
     });
 
 
@@ -585,7 +595,7 @@ class Topology {
         event.bind({
           left: n.x,
           top: n.y,
-          width: n.w,
+          width: maxWidth,
           height: n.h
         }, 0, () => {
           routerUtil.pushState('/dashboard/network/' + n.id);
@@ -660,7 +670,7 @@ class Topology {
         event.bind({
           left: subnet.x,
           top: subnet.y,
-          width: subnet.w,
+          width: maxWidth - 20,
           height: subnet.h
         }, 1, () => {
           routerUtil.pushState('/dashboard/subnet/' + subnet.id);
@@ -751,8 +761,6 @@ class Topology {
     loader(resources).then(data => {
       imageList = data;
       resourceReady = true;
-      let loading = container.getElementsByClassName('loading')[0];
-      loading && loading.classList.add('hide');
       this.draw();
       cb && cb();
     });

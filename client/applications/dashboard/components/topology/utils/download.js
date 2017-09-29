@@ -1,7 +1,10 @@
 /**
  * convert canvas data to image source, then download it.
  */
-module.exports = (fileName, content) => {
+const RSVP = require('rsvp');
+const Promise = RSVP.Promise;
+
+module.exports = (content) => {
   const base64ImgToBlob = data => {
     const parts = data.split(';base64,');
     const contentType = parts[0].split(':')[1];
@@ -17,9 +20,12 @@ module.exports = (fileName, content) => {
       type: contentType
     });
   };
-  const aLink = document.createElement('a');
-  const blob = base64ImgToBlob(content);
-  aLink.download = fileName;
-  aLink.href = URL.createObjectURL(blob);
-  aLink.click();
+  return new Promise((resolve, reject) => {
+    const blob = base64ImgToBlob(content);
+    try {
+      resolve(URL.createObjectURL(blob));
+    } catch(e) {
+      reject('javascript: void(0)'); // eslint-disable-line
+    }
+  });
 };
