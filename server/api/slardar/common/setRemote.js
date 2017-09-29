@@ -1,5 +1,8 @@
 'use strict';
 
+const config = require('config');
+const endpointType = config('endpoint_type') || 'internal';
+
 module.exports = function setRemote(catalog) {
   let remote = {};
   let oneRemote;
@@ -8,7 +11,7 @@ module.exports = function setRemote(catalog) {
       remote[service.name] = oneRemote = {};
     }
     for (let j = 0, m = service.endpoints.length, endpoint = service.endpoints[0]; j < m; j++, endpoint = service.endpoints[j]) {
-      if (endpoint.interface === 'public') {
+      if (endpoint.interface === endpointType) {
         oneRemote[endpoint.region_id] = service.name === 'swift' ? endpoint.url : endpoint.url.split('/').slice(0, 3).join('/');
         break;
       }

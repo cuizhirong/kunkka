@@ -21,7 +21,8 @@ module.exports = {
     'admin_username': 'admin',
     'admin_password': 'da2d728652d52ec8b09ca1be',
     'admin_projectId': '1f3a2befce114130a121632782adec42',
-    'neutron_network_vlanranges': 'datacentre:1:1000,datacentre2:1001:2000'
+    'neutron_network_vlanranges': 'datacentre:1:1000,datacentre2:1001:2000',
+    'endpoint_type': 'internal'
   },
   'setting': [
     {
