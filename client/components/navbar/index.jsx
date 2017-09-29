@@ -16,7 +16,7 @@ class NavBar extends React.Component {
 
   render() {
     let HALO = this.props.HALO;
-    let { hideRegion, hideProject, hideSetting } = this.props;
+    let { region, project, setting } = this.props;
 
     let currentProjectId = HALO.user.projectId,
       currentProjectName;
@@ -47,9 +47,8 @@ class NavBar extends React.Component {
         <div className="logo" style={logo}></div>
         <ul className="links">
           {
-            hideRegion ?
-              null
-            : <li>
+            region ?
+              <li>
                 <div className="link-title">
                   <i className="glyphicon icon-region"></i>
                   <span ref="name">{currentRegionName}</span>
@@ -57,12 +56,12 @@ class NavBar extends React.Component {
                 <div className="link-dropdown">
                   <Regions />
                 </div>
-              </li>
+              </li> :
+              null
           }
           {
-            hideProject ?
-              null
-            : <li>
+            project ?
+              <li>
                 <div className="link-title">
                   <i className="glyphicon icon-project"></i>
                   <span ref="name">{currentProjectName}</span>
@@ -70,12 +69,12 @@ class NavBar extends React.Component {
                 <div className="link-dropdown">
                   <Projects />
                 </div>
-              </li>
+              </li> :
+              null
           }
           {
-            hideSetting ?
-              null
-            : <li>
+            setting ?
+              <li>
                 <div className="link-title">
                   <i className="glyphicon icon-avatar"></i>
                   <span className="user-name">{HALO.user.username}</span>
@@ -83,7 +82,8 @@ class NavBar extends React.Component {
                 <div className="link-dropdown">
                   <Settings __={this.props.__} />
                 </div>
-              </li>
+              </li> :
+              null
           }
         </ul>
       </div>
