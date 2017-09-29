@@ -1,8 +1,8 @@
 require('./style/index.less');
 
 const React = require('react');
-const Topology = require('../../components/topology/index');
-const download = require('../../components/topology/utils/download');
+const Topology = require('client/components/topology/index');
+const download = require('client/components/topology/utils/download');
 const Button = require('client/uskin/index').Button;
 const __ = require('locale/client/dashboard.lang.json');
 
