@@ -4,9 +4,12 @@ let stack = {};
 
 // @param data {Object} contains resource_name, stage, action, resource_type, resource_id
 function notify(data) {
-  if (Notification.len >= 30) {
-    return;
-  }
+  /**
+   * Ah?
+   */
+  // if (Notification.len >= 30) {
+  //   return;
+  // }
 
   let isAutoHide = true,
     icon = 'icon-status-active',
