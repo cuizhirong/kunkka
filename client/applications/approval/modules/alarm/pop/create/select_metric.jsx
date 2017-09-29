@@ -1,6 +1,18 @@
 const React = require('react');
 const {Button, ButtonGroup} = require('client/uskin/index');
-const Chart = require('echarts');
+
+/**
+ * echart parts list
+ * https://github.com/ecomfe/echarts/blob/master/index/part.js
+ *
+ * wrong: const Echarts = require('echarts');
+ * right: see below
+ */
+const Chart = require('echarts/lib/echarts');
+require('echarts/lib/chart/line');
+require('echarts/lib/component/tooltip');
+require('echarts/lib/component/title');
+
 const SelectTable = require('./select_table');
 const __ = require('locale/client/approval.lang.json');
 const utils = require('../../utils');
