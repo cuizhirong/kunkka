@@ -185,7 +185,7 @@ class Model extends React.Component {
     return (
       <div id="wrapper">
         <div id="navbar">
-          <NavBar HALO={HALO} __={__} />
+          <NavBar HALO={HALO} __={__} project={true} region={true} setting={true} />
         </div>
         <div id="main-wrapper">
           <SideMenu items={menus} application={HALO.application} />
