@@ -70,7 +70,6 @@ module.exports = (app) => {
   });
   app.put('/proxy-swift/init-container', (req, res, next) => {
     co(function *() {
-      const adminToken = yield adminLogin();
       let endpoint = req.session.endpoint;
       let region = req.session.user.regionId;
       if (!endpoint.swift) {
@@ -80,18 +79,60 @@ module.exports = (app) => {
         });
       }
       const containers = ['template', 'ticket'];
+
+      let token = req.session.user.token;
       let swiftHost = endpoint.swift[region];
+      if (swiftHost.indexOf('AUTH_') > -1 ) {
+        let adminToken = yield adminLogin();
+        token = adminToken.token;
+      }
       let projectId = req.session.user.projectId;
       yield Promise.all(containers.map(container => {
         return request.put(`${swiftHost}/${projectId}_${container}`)
-          .set('X-Auth-Token', adminToken.token)
+          .set('X-Auth-Token', token)
           .set('X-Container-write', `${projectId}:*`)
           .set('X-Container-read', '.r:*,.rlistings');
       }));
       res.end();
     }).catch(next);
   });
-  app.use(['/proxy-swift/', '/proxy-glance/'], (req, res, next) => {
+  app.use(['/proxy-swift/'], (req, res, next) => {
+    let service = 'swift';
+    let endpoint = req.session.endpoint;
+    let region = req.session.user.regionId;
+    if (!endpoint[service]) {
+      res.status(503).json({
+        status: 503,
+        message: service + req.i18n.__('api.swift.unavailable')
+      });
+    }
+    const swiftHost = endpoint[service][region];
+    const hostnameAndPort = swiftHost.split('://')[1].split('/')[0];
+    const urlPrefix = swiftHost.split('://')[1].slice(hostnameAndPort.length);
+    const headers = _.omit(req.headers, ['cookie']);
+    headers['X-Auth-Token'] = req.session.user.token;
+    const url = urlPrefix + '/' + req.path.split('/').slice(1).join('/') + getQueryString(req.query);
+    const options = {
+      hostname: hostnameAndPort.split(':')[0],
+      port: hostnameAndPort.split(':')[1],
+      path: url,
+      method: req.method,
+      headers: headers
+    };
+    const swiftReq = http.request(options, (response) => {
+      res.set(response.headers);
+      res.status(response.statusCode);
+      response.pipe(res);
+      response.on('end', () => {
+        res.end();
+      });
+    });
+    req.pipe(swiftReq);
+    swiftReq.on('error', (e) => {
+      res.status(500).send(e);
+    });
+  });
+  app.use(['/proxy-glance/'], (req, res, next) => {
     let service = req.originalUrl.split('/')[1].slice(6);
     let endpoint = req.session.endpoint;
     let region = req.session.user.regionId;
