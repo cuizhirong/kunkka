@@ -24,6 +24,9 @@
   }, {
     "title": "network_service",
     "items": [
+      "network",
+      "subnet",
+      "router",
       "floating-ip",
       "port"
     ]
@@ -68,6 +71,9 @@
   }, {
     "key": "shared-image",
     "link": "image"
+  }, {
+    "key": "subnet",
+    "link": "network"
   }, {
     "key": "volume-type",
     "link": "volume"

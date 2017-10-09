@@ -1,0 +1,83 @@
+{
+  "tabs": [{
+    "name": ["router"],
+    "key": "router",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "router"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["enable", "ext_gatway"],
+          "key": "en_gw",
+          "disabled": true
+        }, {
+          "title": ["disable", "ext_gatway"],
+          "key": "dis_gw",
+          "disabled": true
+        }, {
+          "title": ["connect", "subnet"],
+          "key": "cnt_subnet",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "router_id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["floating_ip"],
+      "dataIndex": "floatingip",
+      "key": "floating_ip"
+    }, {
+      "title": ["ext_gatway"],
+      "key": "ext_gw"
+      }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

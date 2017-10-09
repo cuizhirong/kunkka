@@ -1,0 +1,41 @@
+{
+  "title": ["modify", "subnet"],
+  "fields": [{
+    "type": "input",
+    "field": "subnet_name",
+    "value": "",
+    "is_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_gw",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "gw_address",
+    "tip_info": "change_info",
+    "value": "",
+    "is_long_label": true,
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_dhcp",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns1",
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns2",
+    "is_long_label": true
+  }, {
+    "type": "adapter",
+    "field": "add_hostroutes"
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

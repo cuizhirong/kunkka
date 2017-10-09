@@ -1,0 +1,33 @@
+{
+  "title": ["create", "router"],
+  "fields": [{
+    "type": "input",
+    "field": "name"
+  }, {
+    "type": "input",
+    "field": "project_id",
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_public_gateway",
+    "has_label": true,
+    "checked": true
+  }, {
+    "type": "select",
+    "field": "external_network",
+    "hide": true,
+    "empty_text": {
+      "info": "no_network"
+    }
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": false
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "tabs": [{
+    "name": ["network"],
+    "key": "network"
+  }, {
+    "name": ["subnet"],
+    "key": "subnet",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "subnet"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["connect", "router"],
+    "key": "connect_router",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["disconnect", "router"],
+    "key": "disconnect_router",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["add_", "instance"],
+          "key": "add_instance",
+          "disabled": true
+        }, {
+          "title": ["modify", "subnet"],
+          "key": "modify_subnet",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "subnet_id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["prv_network"],
+      "key": "prv_network"
+    }, {
+      "title": ["associate", "router"],
+      "key": "assc_router"
+    }, {
+      "title": ["ip", "version"],
+      "key": "ip_ver"
+    }, {
+      "title": ["cidr"],
+      "dataIndex": "cidr",
+      "key": "cidr"
+    }, {
+      "title": ["enable_dhcp"],
+      "key": "enable_dhcp"
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

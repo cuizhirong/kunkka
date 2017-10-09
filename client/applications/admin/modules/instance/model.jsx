@@ -383,7 +383,6 @@ class Model extends React.Component {
       callback && callback();
     });
   }
-
   setPaginationData(table, res) {
     let pagination = {},
       next = res.servers_links ? res.servers_links[0] : null;

@@ -1,6 +1,6 @@
 {
   "tabs": [{
-    "name": ["public","image"],
+    "name": ["public_image"],
     "key": "image",
     "default": true
   }, {

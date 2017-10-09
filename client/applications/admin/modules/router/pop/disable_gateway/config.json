@@ -1,0 +1,16 @@
+{
+  "title": ["disable", "public_gateway"],
+  "fields": [{
+    "type": "text",
+    "field": "tip_dis_gw",
+    "info": "tip_dis_gw"
+  }, {
+    "type": "tip",
+    "tip_type": "info",
+    "field": "info_dis_gw"
+  }],
+  "btn": {
+    "value": "disable",
+    "disable": false
+  }
+}

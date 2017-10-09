@@ -1,0 +1,26 @@
+{
+  "title": ["connect", "router"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "router",
+    "hide": true,
+    "empty_text": {
+      "info": "no_router"
+    },
+    "data": []
+  }, {
+    "type": "tip",
+    "tip_type": "error",
+    "field": "error",
+    "hide": true
+  }],
+  "btn": {
+    "value": "connect",
+    "disabled": true
+  }
+}

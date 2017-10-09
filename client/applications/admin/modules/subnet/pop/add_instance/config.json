@@ -1,0 +1,25 @@
+{
+  "title": ["mount", "instance"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "instance",
+    "empty_text": {
+      "info": "no_instance"
+    }
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "join_network_tip",
+    "hide": false
+  }],
+  "btn": {
+    "value": "add",
+    "type": "create",
+    "disabled": true
+  }
+}
