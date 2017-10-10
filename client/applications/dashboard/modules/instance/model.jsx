@@ -1084,7 +1084,7 @@ class Model extends React.Component {
             security_group: securityGroups,
             floating_ip: floatingIp && floatingIp.id ?
               <a data-type="router" href={'/dashboard/floating-ip/' + floatingIp.id}>{floatingIp.addr}</a> : '-',
-            __renderKey: index,
+            __renderKey: index + item.port.id,
             childItem: item
           });
           floatingIp = {};

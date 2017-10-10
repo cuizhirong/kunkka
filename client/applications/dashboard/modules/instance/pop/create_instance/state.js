@@ -1,0 +1,65 @@
+let initialState = {
+
+  getInitialState: function(imageTypes, credentials) {
+    let state = {
+      visible: true,
+      ready: false,
+      disabled: false,
+      page: 1,
+      pagingAni: false,
+      name: '',
+      imageTypes: imageTypes,
+      imageType: imageTypes[0].key,
+      images: [],
+      image: null,
+      snapshots: [],
+      snapshot: null,
+      bootableVolumes: [],
+      bootableVolume: null,
+      volumeSnapshots: [],
+      volumeSnapshot: null,
+      flavors: [],
+      flavor: null,
+      cpus: [],
+      cpu: null,
+      memories: [],
+      memory: null,
+      volumes: [],
+      volume: null,
+      networks: [],
+      network: [],
+      hideKeypair: false,
+      securityGroups: [],
+      securityGroup: [],
+      sgUnfold: false,
+      credentials: credentials,
+      credential: credentials[0].key,
+      keypairs: [],
+      keypairName: '',
+      username: '',
+      pwd: '',
+      pwdVisible: false,
+      pwdError: true,
+      showPwdTip: false,
+      confirmPwd: '',
+      confirmPwdVisible: false,
+      confirmPwdError: false,
+      price: '0.0000',
+      number: 1,
+      disabledNumber: false,
+      error: '',
+      showError: false,
+      step: ['image_selection'],
+      isShowDetail: false,
+      fromTo: '01',
+      port: [],
+      ports: [],
+      isDetail: false,
+      deviceSize: 1
+    };
+
+    return state;
+  }
+};
+
+module.exports = initialState;

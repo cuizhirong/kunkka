@@ -12,7 +12,7 @@
   }, {
     "value": ["vnc_console"],
     "key": "vnc_console",
-    "icon": "volume",
+    "icon": "vnc",
     "disabled": true
   }, {
     "value": ["power_on_ins"],

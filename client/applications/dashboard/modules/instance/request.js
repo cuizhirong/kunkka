@@ -165,7 +165,7 @@ module.exports = {
     });
   },
   getData: function() {
-    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair', 'volume']).then(function(data) {
+    return storage.getList(['flavor', 'image', 'securitygroup', 'network', 'keypair', 'volume', 'snapshot', 'port']).then(function(data) {
       return data;
     });
   },
@@ -317,6 +317,15 @@ module.exports = {
   getActionLog: function(id) {
     return fetch.get({
       url: '/proxy/nova/v2.1/servers/' + id + '/os-instance-actions'
+    });
+  },
+  createVolume: function(_data) {
+    let data = {};
+    data.volume = _data;
+
+    return fetch.post({
+      url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
+      data: data
     });
   }
 };
