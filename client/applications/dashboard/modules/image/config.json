@@ -10,6 +10,12 @@
     "icon": "create",
     "type": "create"
   }, {
+    "value": ["create", "instance"],
+    "key": "create",
+    "icon": "create",
+    "type": "create",
+    "disabled": true
+  }, {
     "value": ["edit", "image"],
     "key": "edit_image",
     "icon": "edit",

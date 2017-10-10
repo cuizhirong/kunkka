@@ -13,6 +13,7 @@ const RelatedInstance = require('../image/detail/related_instance');
 const updateStatus = require('./pop/update_status/index');
 const sharedImage = require('./pop/shared_image/index');
 const image = require('./pop/image/index');
+const createInstance = require('../instance/pop/create_instance');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -91,7 +92,7 @@ class Model extends React.Component {
           break;
         case 'type':
           col.render = (rcol, ritem, rindex) => {
-            return __.image;
+            return ritem.image_type && ritem.image_type === 'snapshot' ? __.snapshot : __.image;
           };
           break;
         default:
@@ -126,9 +127,9 @@ class Model extends React.Component {
   getTableData(forceUpdate, detailRefresh) {
     request.getList(forceUpdate).then((res) => {
       let _config = this.state.config;
-
+      let data = res.filter(ele => !ele.image_type || ele.image_type !== 'snapshot');
       let table = _config.table;
-      table.data = res;
+      table.data = data;
       table.loading = false;
 
       let detail = this.refs.dashboard.refs.detail;
@@ -194,6 +195,9 @@ class Model extends React.Component {
           }, true);
         });
         break;
+      case 'create':
+        createInstance(data.rows[0]);
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -248,6 +252,9 @@ class Model extends React.Component {
       switch (key) {
         case 'edit_image':
           btns[key].disabled = (rows.length === 1 && rows[0].visibility === 'private') ? false : true;
+          break;
+        case 'create':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
@@ -400,7 +407,7 @@ class Model extends React.Component {
       content: size.num + ' ' + size.unit
     }, {
       title: __.type,
-      content: __.image
+      content: item.image_type === 'snapshot' ? __.snapshot : __.image
     }, {
       title: __.checksum,
       content: item.checksum ? item.checksum : '-'

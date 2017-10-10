@@ -165,7 +165,7 @@ class Model extends React.Component {
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
           <a data-type="router"
-            href={'/dashboard/' + (image.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + image.id}>
+            href={'/dashboard/' + (image.image_type === 'snapshot' ? 'instance-snapshot/' : 'image/') + image.id}>
             {image.name}
           </a>
         </div>
@@ -178,7 +178,7 @@ class Model extends React.Component {
         <div>
           <i className={'icon-image-default ' + label} style={style}/>
           <a data-type="router"
-            href={'/dashboard/' + (imageData.image_type === 'snapshot' ? 'image-snapshot/' : 'image/') + imageData.image_id}>
+            href={'/dashboard/' + (imageData.image_type === 'snapshot' ? 'instance-snapshot/' : 'image/') + imageData.image_id}>
             {imageData.image_name}
           </a>
         </div>
@@ -1133,7 +1133,7 @@ class Model extends React.Component {
       let size = unitConverter(item.size);
       data.push({
         title: item.created_at,
-        name: <a data-type="router" href={'/dashboard/image-snapshot/' + item.id}>{item.name}</a>,
+        name: <a data-type="router" href={'/dashboard/instance-snapshot/' + item.id}>{item.name}</a>,
         size: size.num + ' ' + size.unit,
         time: item.created_at,
         status: getStatusIcon(item.status),
