@@ -110,6 +110,18 @@ module.exports = {
       return domains;
     });
   },
+  getDomainByID: function(domainID) {
+    let url = '/proxy/keystone/v3/domains/' + domainID;
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return res;
+    }).catch((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   createProject: function(data) {
     return fetch.post({
       url: '/proxy/keystone/v3/projects',

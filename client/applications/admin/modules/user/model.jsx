@@ -489,33 +489,36 @@ class Model extends React.Component {
         if (rows.length === 1) {
           syncUpdate = false;
           request.getRelatedResource(rows[0].id).then((res) => {
-            let basicPropsItem = this.getBasicPropsItems(rows[0], res[1].projects);
-            let groupConfig = this.getGroupConfig(rows[0], res[0].groups);
-            contents[tabKey] = (
-              <div>
-                <BasicProps
-                  title={__.basic + __.properties}
-                  defaultUnfold={true}
-                  tabKey={'description'}
-                  items={basicPropsItem}
-                  rawItem={rows[0]}
-                  onAction={this.onDetailAction.bind(this)}
-                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-                <DetailMinitable
-                  __={__}
-                  title={__['user-group']}
-                  defaultUnfold={true}
-                  tableConfig={groupConfig ? groupConfig : []}>
-                  <Button value={__.join + __['user-group']} onClick={this.onDetailAction.bind(this, 'description', 'join_group', {
-                    rawItem: rows[0]
-                  })}/>
-                </DetailMinitable>
-              </div>
-            );
+            request.getDomainByID(rows[0].domain_id).then((_res) => {
+              let DomainName = _res.domain.name;
+              let basicPropsItem = this.getBasicPropsItems(rows[0], res[1].projects, DomainName);
+              let groupConfig = this.getGroupConfig(rows[0], res[0].groups);
+              contents[tabKey] = (
+                <div>
+                  <BasicProps
+                    title={__.basic + __.properties}
+                    defaultUnfold={true}
+                    tabKey={'description'}
+                    items={basicPropsItem}
+                    rawItem={rows[0]}
+                    onAction={this.onDetailAction.bind(this)}
+                    dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                  <DetailMinitable
+                    __={__}
+                    title={__['user-group']}
+                    defaultUnfold={true}
+                    tableConfig={groupConfig ? groupConfig : []}>
+                    <Button value={__.join + __['user-group']} onClick={this.onDetailAction.bind(this, 'description', 'join_group', {
+                      rawItem: rows[0]
+                    })}/>
+                  </DetailMinitable>
+                </div>
+              );
 
-            detail.setState({
-              contents: contents,
-              loading: false
+              detail.setState({
+                contents: contents,
+                loading: false
+              });
             });
           });
         }
@@ -708,7 +711,7 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  getBasicPropsItems(item, originProjects) {
+  getBasicPropsItems(item, originProjects, originDomain) {
     let projects = [];
     if (originProjects && originProjects.length > 0) {
       originProjects.forEach((project, index) => {
@@ -728,7 +731,7 @@ class Model extends React.Component {
       content: item.id
     }, {
       title: __.domain,
-      content: <a data-type="router" key={item.domain_id} href={'/admin/domain/' + item.domain_id}>{item.domain_id}</a>
+      content: <a data-type="router" key={item.domain_id} href={'/admin/domain/' + item.domain_id}>{originDomain}</a>
     }, {
       title: __.describe,
       content: item.description
