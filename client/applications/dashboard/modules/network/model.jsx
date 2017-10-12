@@ -348,7 +348,7 @@ class Model extends React.Component {
       content: getStatusIcon(item.status)
     }, {
       title: __.network_type,
-      content: networkType || 'vxlan'
+      content: networkType
     }, {
       title: __.security + __.restrict,
       content: item.port_security_enabled ?
@@ -360,17 +360,12 @@ class Model extends React.Component {
       title: __.shared,
       content: item.shared ? __.yes : __.no
     }];
-    if (networkType === 'vlan') {
-      items.push({
-        title: __.vlan_id,
-        content: networkType === 'vlan' ? item['provider:segmentation_id'] : '-'
-      });
-    } else if (networkType === 'flat') {
-      items.push({
-        title: __.physical_network,
-        content: networkType === 'flat' ? item['provider:physical_network'] : '-'
-      });
-    }
+
+    items.push({
+      title: networkType === 'vlan' ? __.vlan_id : (networkType === 'flat' ? __.physical_network : ''), // eslint-disable-line
+      content: networkType === 'vlan' ? item['provider:segmentation_id'] : (networkType === 'flat' ? item['provider:physical_network'] : '') // eslint-disable-line
+    });
+
     return items;
   }
 

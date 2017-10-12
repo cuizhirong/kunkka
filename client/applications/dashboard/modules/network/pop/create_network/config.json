@@ -28,29 +28,6 @@
     "is_long_label": true,
     "tip_info": "cidr_tip",
     "required": true
-  }, {
-    "type": "adapter",
-    "field": "enable_vlan"
-  }, {
-    "type": "select",
-    "field": "select_physical_network",
-    "hide": true,
-    "required": true,
-    "is_long_label": true
-  }, {
-    "type": "input",
-    "field": "vlan_id",
-    "hide": true,
-    "required": true,
-    "is_long_label": true,
-    "tip_info": "vlan_tip"
-  }, {
-    "type": "input",
-    "field": "physical_network",
-    "is_long_label": true,
-    "hide": true,
-    "tip_info": "physical_tip",
-    "required": true
   }],
   "btn": {
     "value": "create",

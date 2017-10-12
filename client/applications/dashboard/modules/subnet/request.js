@@ -7,7 +7,7 @@ module.exports = {
     return storage.getList(['subnet', 'network', 'router', 'instance', 'port'], forced).then(function(data) {
       let subnets = data.subnet;
       subnets.forEach((subnet) => {
-        subnet.port_security_enabled = subnet.network.port_security_enabled;
+        // subnet.port_security_enabled = subnet.network.port_security_enabled;
         subnet.ports.forEach((item) => {
           if (item.device_owner === 'network:ha_router_replicated_interface') {
             data.router.some((r) => {

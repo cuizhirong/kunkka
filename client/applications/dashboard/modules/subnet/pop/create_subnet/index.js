@@ -4,8 +4,6 @@ let request = require('../../request');
 let addHostroutes = require('./add_hostroutes');
 let __ = require('locale/client/dashboard.lang.json');
 
-let createNetwork = require('client/applications/dashboard/modules/network/pop/create_network/index');
-
 function pop(obj, parent, callback) {
 
   let props = {
@@ -17,30 +15,12 @@ function pop(obj, parent, callback) {
         renderer: addHostroutes,
         objHostRoutes: []
       });
-      request.getNetworks().then((data) => {
-        if (data.length > 0) {
-          let selectedItem = data[0].id;
-          if (obj && obj.id) {
-            selectedItem = obj.id;
-          }
-          let networks = [];
-          data.forEach((ele) => {
-            if (!ele.shared) {
-              networks.push(ele);
-            }
-          });
-          refs.select_network.setState({
-            data: networks,
-            value: selectedItem
-          });
-        }
-      });
     },
     onConfirm: function(refs, cb) {
       let data = {
         ip_version: 4,
         name: refs.subnet_name.state.value,
-        network_id: refs.select_network.state.value,
+        network_id: refs.input_network.state.value,
         cidr: refs.net_address.state.value,
         enable_dhcp: refs.enable_dhcp.state.checked,
         host_routes: []
@@ -85,6 +65,9 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
+      let netState = refs.net_address.state,
+        testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/,
+        networkState = refs.input_network.state.value;
       switch (field) {
         case 'enable_gw':
           refs.gw_address.setState({
@@ -111,23 +94,12 @@ function pop(obj, parent, callback) {
             hide: !status.checked
           });
           break;
-        case 'select_network':
-          if (refs.select_network.state.clicked) {
-            createNetwork(refs.modal, (res) => {
-              refs.select_network.setState({
-                data: [res],
-                value: res.id,
-                clicked: false
-              });
-              refs.btn.setState({
-                disabled: false
-              });
-            });
-          }
+        case 'input_network':
+          refs.btn.setState({
+            disabled: !(testAddr.test(netState.value) && networkState !== '')
+          });
           break;
         case 'net_address':
-          let netState = refs.net_address.state,
-            testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\/(\d|1\d|2\d|3[0-2])$/;
           if(!testAddr.test(netState.value)) {
             refs.net_address.setState({
               error: true
@@ -136,12 +108,12 @@ function pop(obj, parent, callback) {
               disabled: true
             });
           } else {
-            refs.net_address.setState({
-              error: false
-            });
-            if (refs.select_network.state.data.length) {
+            if(testAddr.test(netState.value) && networkState !== '') {
               refs.btn.setState({
                 disabled: false
+              });
+              refs.net_address.setState({
+                error: false
               });
             } else {
               refs.btn.setState({
