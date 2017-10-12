@@ -168,8 +168,22 @@ class Model extends React.Component {
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
         break;
+      case 'search':
+        this.onClickSearch(actionType, refs, data);
+        break;
       default:
         break;
+    }
+  }
+
+  onClickSearch(actionType, refs, data) {
+    if (actionType === 'click') {
+      this.loadingTable();
+      if (data.text) {
+        this.getSingle(data.text);
+      } else {
+        this.getList();
+      }
     }
   }
 

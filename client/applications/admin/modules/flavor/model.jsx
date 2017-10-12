@@ -73,7 +73,7 @@ class Model extends React.Component {
           break;
         case 'enable':
           column.render = (col, item, i) => {
-            return __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable;
+            return item['OS-FLV-DISABLED:disabled'] ? __.disable : __.enable;
           };
           break;
         default:
