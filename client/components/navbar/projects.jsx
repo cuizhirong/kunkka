@@ -1,5 +1,5 @@
 const React = require('react');
-const request = require('client/libs/ajax');
+const fetch = require('client/libs/fetch');
 
 class Projects extends React.Component{
   constructor(props) {
@@ -24,27 +24,6 @@ class Projects extends React.Component{
     if (id === HALO.user.projectId) {
       return;
     }
-
-    let errHandler = function(err) {
-      if (err.status === 401) {
-        window.location = '/auth/logout';
-      }
-      return new Promise(function(resolve, reject) {
-        reject(err);
-      });
-    };
-
-    let fetch = {};
-    fetch.put = function(options) {
-      let opt = Object.assign({
-        dataType: 'json',
-        contentType: 'application/json',
-        headers: {
-          REGION: HALO.current_region
-        }
-      }, options);
-      return request.put(opt).catch(errHandler);
-    };
 
     fetch.put({
       url: '/auth/switch_project',
