@@ -181,7 +181,7 @@ class CreateModalBase extends React.Component {
       });
       request.validate(data).then(res => {
         if (props.obj && props.obj.type === 'preview') {
-          let url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + file.name;
+          let url = '/proxy-swift/' + HALO.user.projectId + '_template' + '/' + file.name;
           let xhr = new XMLHttpRequest();
 
           xhr.open('PUT', url, true);
@@ -211,7 +211,7 @@ class CreateModalBase extends React.Component {
               }
               i ++;
             }
-            let url = '/proxy-swift/v1/' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + file.name;
+            let url = '/proxy-swift/' + HALO.user.projectId + '_template' + '/' + file.name;
             let xhr = new XMLHttpRequest();
 
             xhr.open('PUT', url, true);
@@ -249,7 +249,7 @@ class CreateModalBase extends React.Component {
             data.template_url = state.url;
             break;
           case 'template':
-            data.template_url = HALO.configs.swift_url + '/v1/' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + state.templateValue;
+            data.template_url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + state.templateValue;
             break;
           case 'direct_input':
             data.template = state.directInput;
@@ -334,7 +334,7 @@ class CreateModalBase extends React.Component {
     } else if (state.url) {
       data.template_url = state.url;
     } else if (state.templateValue) {
-      data.template_url = HALO.configs.swift_url + '/v1/' + HALO.configs.adminProjectId + '/' + HALO.user.projectId + '_template' + '/' + state.templateValue;
+      data.template_url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + state.templateValue;
     } else {
       data.template = state.template;
     }

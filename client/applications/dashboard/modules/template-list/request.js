@@ -15,13 +15,13 @@ module.exports = {
     let deferredList = [];
     items.forEach((item) => {
       deferredList.push(fetch.delete({
-        url: HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + item.name
+        url: '/proxy-swift/' + HALO.user.projectId + '_template' + '/' + item.name
       }));
     });
     return RSVP.all(deferredList);
   },
   downloadItem: function(item) {
-    let url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_template' + '/' + item.name;
+    let url = '/proxy-swift/' + HALO.user.projectId + '_template' + '/' + item.name;
     function addLink() {
       let linkNode = document.createElement('a');
       if (linkNode.download !== undefined) {
