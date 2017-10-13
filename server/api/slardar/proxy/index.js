@@ -96,6 +96,55 @@ module.exports = (app) => {
       res.end();
     }).catch(next);
   });
+  app.put('/proxy-swift/:container/:obj', (req, res, next) => {
+    let service = 'swift';
+    let endpoint = req.session.endpoint;
+    let region = req.session.user.regionId;
+    if (!endpoint[service]) {
+      res.status(503).json({
+        status: 503,
+        message: service + req.i18n.__('api.swift.unavailable')
+      });
+    }
+    const swiftHost = endpoint[service][region];
+    const hostnameAndPort = swiftHost.split('://')[1].split('/')[0];
+    const urlPrefix = swiftHost.split('://')[1].slice(hostnameAndPort.length);
+    const headers = _.omit(req.headers, ['cookie']);
+    headers['X-Auth-Token'] = req.session.user.token;
+    const url = urlPrefix + '/' + req.path.split('/').slice(2).join('/') + getQueryString(req.query);
+    const options = {
+      hostname: hostnameAndPort.split(':')[0],
+      port: hostnameAndPort.split(':')[1],
+      path: url,
+      method: 'get',
+      headers: headers
+    };
+    http.request(options, resGet => {
+      if (resGet.statusCode === 200) {
+        res.status(400).send({
+          status: 400,
+          message: req.i18n.__('api.swift.nameToken')
+        });
+      } else {
+        options.method = 'put';
+        const swiftReq = http.request(options, resPut => {
+          res.set(resPut.headers);
+          res.status(resPut.statusCode);
+          resPut.pipe(res);
+          resPut.on('end', () => {
+            res.end();
+          });
+        }).on('error', errPut => {
+          res.status(500).send(errPut);
+        });
+        req.pipe(swiftReq);
+      }
+    }).on('error', errGet => {
+      res.status(500).send(errGet);
+    }).end();
+
+  });
+
   app.use(['/proxy-swift/'], (req, res, next) => {
     let service = 'swift';
     let endpoint = req.session.endpoint;

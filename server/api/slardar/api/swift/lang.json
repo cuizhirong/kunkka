@@ -1,8 +1,10 @@
 {
   "en": {
-    "unavailable": "Service Unavailable"
+    "unavailable": "Service Unavailable",
+    "nameToken": "The name Had been token."
   },
   "zh-CN": {
-    "unavailable": "服务不可用"
+    "unavailable": "服务不可用",
+    "nameToken": "名称已被占用"
   }
 }
