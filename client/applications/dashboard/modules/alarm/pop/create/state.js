@@ -16,14 +16,15 @@ let initialState = {
       resourceType: undefined,
       metricType: undefined,
       resources: [],
-      measureGranularity: 300,
+      measureGranularity: 60,
+      granularityKey: 300,
       searchResource: '',
 
       //alarm config
       name: '',
       descrition: '',
       evaluationPeriods: 1,
-      granularity: 300,
+      granularity: 60,
       aggregationMethod: 'mean',
       comparisonOperator: 'gt',
       threshold: 5,
@@ -90,7 +91,8 @@ let initialState = {
       resourceType: rule.resource_type,
       metricType: rule.metric,
       resources: [], //after update
-      measureGranularity: 300,
+      measureGranularity: 60,
+      granularityKey: 300,
       searchResource: '',
 
       //alarm config

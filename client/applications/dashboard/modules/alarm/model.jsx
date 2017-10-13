@@ -269,11 +269,13 @@ class Model extends Main {
           syncUpdate = false;
           let that = this;
 
-          let granularity = '';
+          let granularity = '', key = '';
           if (data.granularity) {
             granularity = data.granularity;
+            key = data.key;
           } else {
-            granularity = '300';
+            granularity = '60';
+            key = '300';
             detailLoading();
           }
           let time = data.time;
@@ -282,21 +284,25 @@ class Model extends Main {
           let tabItems = [{
             name: __.three_hours,
             key: '300',
+            value: '60',
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
+            value: '60',
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
+            value: '60',
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
+            value: '3600',
             time: 'month'
           }];
-          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+          tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
           let updateContents = (graphs) => {
             contents[tabKey] = (
@@ -310,7 +316,8 @@ class Model extends Main {
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
-                    granularity: tab.key,
+                    granularity: tab.value,
+                    key: tab.key,
                     time: tab.time
                   });
                 }} />
@@ -327,8 +334,8 @@ class Model extends Main {
             let graphs = [measures].map((arr) => ({
               title: utils.getMetricName(rule.metric),
               unit: utils.getUnit(rule.resource_type, rule.metric),
-              yAxisData: utils.getChartData(arr, granularity, timeUtils.getTime(time), rule.resource_type),
-              xAxis: utils.getChartData(arr, granularity, timeUtils.getTime(time))
+              yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.resource_type),
+              xAxis: utils.getChartData(arr, key, timeUtils.getTime(time))
             }));
             updateContents(graphs);
           }).catch((err) => {

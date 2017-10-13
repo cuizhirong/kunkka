@@ -30,7 +30,9 @@ class AddEndpoint extends React.Component {
       showsubs: [],
       renderValue: props.renderValue ? props.renderValue : '',
       name: props.name ? props.name : null,
-      checked: false
+      checked: false,
+      subscriptions: [],
+      deleteSubs: []
     };
 
     this.wait = 60;
@@ -41,6 +43,7 @@ class AddEndpoint extends React.Component {
   }
 
   componentWillMount() {
+    clearTimeout(t);
     if (this.state.name) {
       request.getSubscriptionsByName(this.state.name).then(res => {
         this.setState({
@@ -73,7 +76,12 @@ class AddEndpoint extends React.Component {
 
   times(i, sub) {
     this.countDown(i, this.wait);
-    request.resendVerify(sub).then(() => {
+    let that = this;
+    request.resendVerify(sub).then((res) => {
+      this.state.subscriptions.push(res.subscription_id);
+      that.setState({
+        subscriptions: this.state.subscriptions
+      });
     }).catch(error => {
       getErrorMessage(error);
     });
@@ -192,11 +200,14 @@ class AddEndpoint extends React.Component {
   }
 
   deleteSub(i) {
+    clearTimeout(t);
     let v = this.state.showsubs[i];
+    request.deleteSubs('undefined', this.state.subscriptions.splice(i, 1));
     if(!/^id/.test(v.id)) {
       this.state.showsubs.splice(i, 1);
       this.setState({
         showsubs: this.state.showsubs,
+        subscriptions: this.state.subscriptions,
         opsubs: this.state.opsubs.concat(Object.assign(v, {op: 'delete'}))
       }, () => {
         this.setState({
@@ -207,6 +218,7 @@ class AddEndpoint extends React.Component {
       this.state.showsubs.splice(i, 1);
       this.setState({
         showsubs: this.state.showsubs,
+        subscriptions: this.state.subscriptions,
         opsubs: this.state.opsubs.filter(o => o.id !== v.id)
       }, () => {
         this.setState({

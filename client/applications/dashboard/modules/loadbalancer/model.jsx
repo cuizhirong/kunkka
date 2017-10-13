@@ -291,6 +291,13 @@ class Model extends React.Component {
       }
     };
 
+    let update = (newContents, loading) => {
+      detail.setState({
+        contents: newContents,
+        loading: loading
+      });
+    };
+
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
@@ -311,20 +318,20 @@ class Model extends React.Component {
         break;
       case 'listener':
         if (isAvailableView(rows)) {
-          detail.setState({loading: true});
-          request.getRelatedListeners(rows[0].listeners).then(res => {
-            contents[tabKey] = (
-              <ListenerList
-                title={__.listener + __.list}
-                tabKey={'listener'}
-                rawItem={data.rows[0]}
-                listenerConfigs={this.getListenerConfigs(res)}
-                onAction={this.onDetailAction.bind(this)}
-                defaultUnfold={true} />
-            );
-            detail.setState({
-              contents: contents,
-              loading: false
+          syncUpdate = false;
+          update(contents, true);
+          request.getPools().then(pools => {
+            request.getRelatedListeners(rows[0].listeners).then(res => {
+              contents[tabKey] = (
+                <ListenerList
+                  title={__.listener + __.list}
+                  tabKey={'listener'}
+                  rawItem={data.rows[0]}
+                  listenerConfigs={this.getListenerConfigs(res, pools)}
+                  onAction={this.onDetailAction.bind(this)}
+                  defaultUnfold={true} />
+              );
+              update(contents);
             });
           });
         }
@@ -334,10 +341,7 @@ class Model extends React.Component {
     }
 
     if (syncUpdate) {
-      detail.setState({
-        contents: contents,
-        loading: false
-      });
+      update(contents);
     }
   }
 
@@ -415,7 +419,7 @@ class Model extends React.Component {
     }
   }
 
-  getListenerConfigs(items) {
+  getListenerConfigs(items, pools) {
     let configs = [];
     let wordsToLine = function(data) {
       let value = '';
@@ -457,7 +461,7 @@ class Model extends React.Component {
         value: item.connection_limit === -1 ? __.infinity : item.connection_limit
       }, {
         feild: wordsToLine(['default', 'resource_pool']),
-        value: item.default_pool_id ? '(' + item.default_pool_id.slice(0, 8) + ')' : '-'
+        value: item.default_pool_id ? pools.filter(pool => pool.id === items[0].default_pool_id)[0].name : '-'
       }, {
         feild: __.enabled_state,
         value: item.admin_state_up ? __.enabled : __.disabled

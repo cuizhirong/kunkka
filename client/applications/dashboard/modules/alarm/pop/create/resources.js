@@ -5,7 +5,7 @@ function getInstanceResource(instance) {
 
   let item = [{
     name: utils.getMetricName('cpu_util'),
-    metricType: 'cpu_util',
+    metricType: 'cpu.util',
     key: 'cpu_util',
     resourceType: 'instance',
     resource: instance

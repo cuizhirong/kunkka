@@ -64,6 +64,7 @@ function pop(obj, parent, callback) {
       if (refs.add_endpoint.state.checked) {
         data.subcribers = refs.endpoint.refs.endpoints.state.opsubs;
       }
+
       if (obj && obj.constructor === Array) {
         request.addSubscriptions(obj[0].name, data).then(res => {
           callback && callback(res);
@@ -146,6 +147,9 @@ function pop(obj, parent, callback) {
         default:
           break;
       }
+    },
+    onCancel: function(refs) {
+      refs.endpoint.refs.endpoints.state.subscriptions.length > 0 && request.deleteSubs('undefined', refs.endpoint.refs.endpoints.state.subscriptions);
     }
   };
 

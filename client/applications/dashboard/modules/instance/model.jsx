@@ -707,36 +707,42 @@ class Model extends React.Component {
           let time = data.time;
 
           let resourceId = rows[0].id,
-            instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            instanceMetricType = ['cpu.util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
             portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
           let tabItems = [{
             name: __.three_hours,
             key: '300',
+            value: '60',
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
+            value: '60',
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
+            value: '60',
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
+            value: '3600',
             time: 'month'
           }];
 
-          let granularity = '';
+          let granularity = '', key = '';
           if (data.granularity) {
             granularity = data.granularity;
+            key = data.key;
           } else {
-            granularity = '300';
+            granularity = '60';
+            key = '300';
             contents[tabKey] = (<div/>);
             updateDetailMonitor(contents, true);
           }
 
-          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+          tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
           let updateContents = (arr, xAxisData) => {
             contents[tabKey] = (
@@ -750,7 +756,8 @@ class Model extends React.Component {
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
-                    granularity: tab.key,
+                    granularity: tab.value,
+                    key: tab.key,
                     time: tab.time
                   });
                 }} >
@@ -767,14 +774,14 @@ class Model extends React.Component {
             let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
               unit: utils.getUnit('instance', instanceMetricType[index]),
-              yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), 'instance'),
-              xAxis: utils.getChartData(r, granularity, timeUtils.getTime(time))
+              yAxisData: utils.getChartData(r, key, timeUtils.getTime(time), 'instance'),
+              xAxis: utils.getChartData(r, key, timeUtils.getTime(time))
             }));
             request.getNetworkResourceId(resourceId).then(_data => {
               const addresses = rows[0].addresses;
               let ips = [], _datas = [];
-              for (let key in addresses) {
-                addresses[key].filter((addr) => addr['OS-EXT-IPS:type'] === 'fixed').some((addrItem) => {
+              for (let _key in addresses) {
+                addresses[_key].filter((addr) => addr['OS-EXT-IPS:type'] === 'fixed').some((addrItem) => {
                   _data.forEach(_portData => {
                     if (addrItem.port.id.substr(0, 11) === _portData.name.substr(3)) {
                       ips.push(addrItem.port.fixed_ips[0].ip_address);

@@ -103,6 +103,24 @@ module.exports = {
       }
     });
   },
+  deleteSubs: function(name, subscriptions) {
+    let deferredList = [];
+    subscriptions.forEach((sub) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + sub,
+        headers: {
+          'Client-ID': HALO.user.userId
+        }
+      }));
+    });
+    deferredList.push(fetch.delete({
+      url: '/proxy/zaqar/v2/queues/undefined',
+      headers: {
+        'Client-ID': HALO.user.userId
+      }
+    }));
+    return RSVP.all(deferredList);
+  },
   resendVerify: function(sub) {
     let url = '/proxy/zaqar/v2/queues/' + sub.source + '/subscriptions';
     return fetch.post({

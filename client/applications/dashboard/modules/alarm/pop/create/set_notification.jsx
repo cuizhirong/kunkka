@@ -104,8 +104,8 @@ class Modal extends React.Component {
                 <select value={ele.notification} onChange={this.onChangeNotification.bind(this, ele.id)}>
                   <option value="none">{__.please_select}</option>
                   {
-                    state.notifications.map((e) =>
-                      <option value={e.id} key={e.id}>{e.name}</option>
+                    state.notifications.map((e, index) =>
+                      <option value={e.name} key={e.name + index}>{e.name}</option>
                     )
                   }
                 </select>

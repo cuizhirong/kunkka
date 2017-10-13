@@ -31,6 +31,7 @@ module.exports = {
     if (metric) {
       switch (metric) {
         case 'cpu_util':
+        case 'cpu.util':
           return __.cpu_utilization;
         case 'disk.device.read.bytes.rate':
           return __.disk_device_read_rate;
@@ -72,13 +73,11 @@ module.exports = {
 
   getNextPeriodDate: function(prev, granularity) {
     switch (Number(granularity)) {
-      case constant.GRANULARITY_HOUR:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
-      case constant.GRANULARITY_DAY:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
-      case constant.GRANULARITY_WEEK:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
-      case constant.GRANULARITY_MONTH:
+      case 300:
+      case 6900:
+      case 3600:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
+      case 21600:
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }
@@ -103,13 +102,14 @@ module.exports = {
     } else {
       prev = new Date();
     }
-
+    const DOTS_TIME = this.getTime(granularity);
     const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
     if (data.length < DOTS_NUM) {
       let length = DOTS_NUM - data.length;
 
-      while (length > 0) {
+
+      while (length > 0 && DOTS_TIME < prev.getTime()) {
         prev = this.getNextPeriodDate(prev, granularity);
         let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
         _data.unshift(unData);
@@ -120,9 +120,33 @@ module.exports = {
     return _data;
   },
 
+  getTime(granularity) {
+    let now = new Date();
+    let date;
+    switch(Number(granularity)) {
+      case 300:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+      case 900:
+        date = now.getTime() - 24 * 3600 * 1000;
+        break;
+      case 3600:
+        date = now.getTime() - 7 * 24 * 3600 * 1000;
+        break;
+      case 21600:
+        date = now.getTime() - 30 * 24 * 3600 * 1000;
+        break;
+      default:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+    }
+    return date;
+  },
+
   getUnit: function(resourceType, metricType) {
     switch(metricType) {
       case 'cpu_util':
+      case 'cpu.util':
         return '%';
       case 'memory.usage':
         return 'MB';
@@ -143,15 +167,14 @@ module.exports = {
 
   getDotsNumber(granularity, prev) {
     switch (Number(granularity)) {
-      case constant.GRANULARITY_HOUR:
-        return 36;
-      case constant.GRANULARITY_DAY:
-        return 96;
-      case constant.GRANULARITY_WEEK:
-        return 168;
-      case constant.GRANULARITY_MONTH:
-        let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
-        return 4 * date.getDate();
+      case 300:
+        return 180;
+      case 900:
+        return 1440;
+      case 3600:
+        return 10080;
+      case 21600:
+        return 720;
       default:
         return 0;
     }

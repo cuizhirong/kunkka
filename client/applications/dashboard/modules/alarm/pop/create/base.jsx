@@ -144,27 +144,27 @@ class ModalBase extends React.Component {
 
             if (resourceType === 'instance') {
               let resourceID = st.resource.id;
-              let startTime = this.getStartTime(st.measureGranularity);
+              let startTime = this.getStartTime(st.granularityKey);
 
               request.getResourceMeasures(resourceID, st.metricType, st.measureGranularity, startTime).then((data) => {
                 measureData = data;
-                this.updateGraph(data, st.measureGranularity);
+                this.updateGraph(data, st.granularityKey);
               }).catch((err) => {
-                this.updateGraph([], st.measureGranularity);
+                this.updateGraph([], st.granularityKey);
               });
 
             } if (resourceType === 'volume') {
               let update = (volResource) => {
                 let volResourceId = volResource.metrics[st.metricType];
                 if (volResourceId) {
-                  let startTime = this.getStartTime(st.measureGranularity);
+                  let startTime = this.getStartTime(st.granularityKey);
                   request.getVolumeMeasures(volResourceId, st.measureGranularity, startTime).then((data) => {
-                    this.updateGraph(data, st.measureGranularity);
+                    this.updateGraph(data, st.granularityKey);
                   }).catch((err) => {
-                    this.updateGraph([], st.measureGranularity);
+                    this.updateGraph([], st.granularityKey);
                   });
                 } else {
-                  this.updateGraph([], st.measureGranularity);
+                  this.updateGraph([], st.granularityKey);
                 }
               };
 
@@ -189,12 +189,12 @@ class ModalBase extends React.Component {
               let update = (ports) => {
                 let portMeasure = this.findPortMeasures(ports, portId);
                 if (portMeasure) {
-                  let startTime = this.getStartTime(st.measureGranularity);
+                  let startTime = this.getStartTime(st.granularityKey);
 
                   request.getResourceMeasures(portMeasure.id, st.metricType, st.measureGranularity, startTime).then((data) => {
-                    this.updateGraph(data, st.measureGranularity);
+                    this.updateGraph(data, st.granularityKey);
                   }).catch((err) => {
-                    this.updateGraph([], st.measureGranularity);
+                    this.updateGraph([], st.granularityKey);
                   });
 
                   if (!resource._measureId) {
@@ -219,7 +219,7 @@ class ModalBase extends React.Component {
           }
           break;
         case 'threshold':
-          this.refs.alarm_config.updateGraph(measureData, st.measureGranularity, st.threshold);
+          this.refs.alarm_config.updateGraph(measureData, st.granularityKey, st.threshold);
           break;
         default:
           break;

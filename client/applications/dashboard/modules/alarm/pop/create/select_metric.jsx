@@ -16,7 +16,7 @@ class Modal extends React.Component {
     super(props);
 
     this.state = {
-      granularity: 300
+      granularity: 60
     };
 
     ['onClickPeriod', 'onClickResource', 'onChangeSearch'].forEach((func) => {
@@ -69,7 +69,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + helper.getGranularity(granularity) + 's';
     let yAxis = [];
     let xAxis = [];
     function fixMeasure(num) {
@@ -97,12 +97,13 @@ class Modal extends React.Component {
       prev = new Date();
     }
 
+    const DOTS_TIME = this.getTime(granularity);
     const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
     if (data.length < DOTS_NUM) {
       let length = DOTS_NUM - data.length;
 
-      while (length > 0) {
+      while (length > 0 && DOTS_TIME < prev.getTime()) {
         prev = this.getNextPeriodDate(prev, granularity);
         xAxis.unshift(helper.getDateStr(prev));
         yAxis.unshift(0);
@@ -113,17 +114,39 @@ class Modal extends React.Component {
     this.updateChart({ unit, title, xAxis, yAxis, name: utils.getMetricName(state.metricType) });
   }
 
+  getTime(granularity) {
+    let now = new Date();
+    let date;
+    switch(granularity) {
+      case constant.GRANULARITY_HOUR:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+      case constant.GRANULARITY_DAY:
+        date = now.getTime() - 24 * 3600 * 1000;
+        break;
+      case constant.GRANULARITY_WEEK:
+        date = now.getTime() - 7 * 24 * 3600 * 1000;
+        break;
+      case constant.GRANULARITY_MONTH:
+        date = now.getTime() - 30 * 24 * 3600 * 1000;
+        break;
+      default:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+    }
+    return date;
+  }
+
   getDotsNumber(granularity, prev) {
     switch (granularity) {
       case constant.GRANULARITY_HOUR:
-        return 36;
+        return 180;
       case constant.GRANULARITY_DAY:
-        return 96;
+        return 1440;
       case constant.GRANULARITY_WEEK:
-        return 168;
+        return 10080;
       case constant.GRANULARITY_MONTH:
-        let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
-        return 4 * date.getDate();
+        return 720;
       default:
         return 0;
     }
@@ -132,11 +155,9 @@ class Modal extends React.Component {
   getNextPeriodDate(prev, granularity) {
     switch (granularity) {
       case constant.GRANULARITY_HOUR:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
       case constant.GRANULARITY_DAY:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
       case constant.GRANULARITY_WEEK:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
       case constant.GRANULARITY_MONTH:
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
@@ -166,8 +187,8 @@ class Modal extends React.Component {
         trigger: 'axis'
       },
       grid: {
-        left: '3%',
-        right: '4%',
+        left: '5%',
+        right: '5%',
         bottom: '3%',
         containLabel: true
       },
@@ -203,7 +224,9 @@ class Modal extends React.Component {
     if (this.props.state.resource) {
       this.props.onChangeState('loadingChart', true);
     }
-    this.props.onChangeState('measureGranularity', Number(granularity));
+
+    this.props.onChangeState('measureGranularity', Number(granularity.split(',')[0]));
+    this.props.onChangeState('granularityKey', Number(granularity.split(',')[1]));
   }
 
   onChangeSearch(text, isClicked) {
@@ -214,7 +237,7 @@ class Modal extends React.Component {
 
   render() {
     const state = this.props.state;
-    let granularity = state.measureGranularity;
+    let granularityKey = state.granularityKey;
     let {resources} = state;
 
     let recentHour = __.recent_hours.replace('{0}', constant.RECENT_HOUR);
@@ -230,10 +253,10 @@ class Modal extends React.Component {
         <div className="chart-box">
           <div className="granularity-box">
             <ButtonGroup>
-              <Button btnKey={'' + constant.GRANULARITY_HOUR} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_HOUR} />
-              <Button btnKey={'' + constant.GRANULARITY_DAY} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_DAY} />
-              <Button btnKey={'' + constant.GRANULARITY_WEEK} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_WEEK} />
-              <Button btnKey={'' + constant.GRANULARITY_MONTH} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularity === constant.GRANULARITY_MONTH} />
+              <Button btnKey={'60,300'} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
+              <Button btnKey={'60,900'} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
+              <Button btnKey={'60,3600'} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
+              <Button btnKey={'3600,21600'} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
             </ButtonGroup>
           </div>
           <div className="chart-content">

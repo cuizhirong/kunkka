@@ -30,7 +30,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity, threshold) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + helper.getGranularity(granularity) + 's';
     let measures = [];
     let xAxis = [];
     function fixMeasure(num) {
@@ -50,12 +50,13 @@ class Modal extends React.Component {
       prev = new Date();
     }
 
+    const DOTS_TIME = this.getTime(granularity);
     const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
     if (data.length < DOTS_NUM) {
       let length = DOTS_NUM - data.length;
 
-      while (length > 0) {
+      while (length > 0 && DOTS_TIME < prev.getTime()) {
         prev = this.getNextPeriodDate(prev, granularity);
         xAxis.unshift(helper.getDateStr(prev));
         measures.unshift(0);
@@ -71,17 +72,39 @@ class Modal extends React.Component {
     this.updateChart({ unit, title, xAxis, measures, thresholds, name: utils.getMetricName(state.metricType) });
   }
 
+  getTime(granularity) {
+    let now = new Date();
+    let date;
+    switch(granularity) {
+      case contant.GRANULARITY_HOUR:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+      case contant.GRANULARITY_DAY:
+        date = now.getTime() - 24 * 3600 * 1000;
+        break;
+      case contant.GRANULARITY_WEEK:
+        date = now.getTime() - 7 * 24 * 3600 * 1000;
+        break;
+      case contant.GRANULARITY_MONTH:
+        date = now.getTime() - 30 * 24 * 3600 * 1000;
+        break;
+      default:
+        date = now.getTime() - 3 * 3600 * 1000;
+        break;
+    }
+    return date;
+  }
+
   getDotsNumber(granularity, prev) {
     switch (granularity) {
       case contant.GRANULARITY_HOUR:
-        return 36;
+        return 180;
       case contant.GRANULARITY_DAY:
-        return 96;
+        return 1440;
       case contant.GRANULARITY_WEEK:
-        return 168;
+        return 10080;
       case contant.GRANULARITY_MONTH:
-        let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
-        return 4 * date.getDate();
+        return 720;
       default:
         return 0;
     }
@@ -90,11 +113,9 @@ class Modal extends React.Component {
   getNextPeriodDate(prev, granularity) {
     switch (granularity) {
       case contant.GRANULARITY_HOUR:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
       case contant.GRANULARITY_DAY:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
       case contant.GRANULARITY_WEEK:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
       case contant.GRANULARITY_MONTH:
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
@@ -124,8 +145,8 @@ class Modal extends React.Component {
         trigger: 'axis'
       },
       grid: {
-        left: '3%',
-        right: '4%',
+        left: '5%',
+        right: '5%',
         bottom: '3%',
         containLabel: true
       },
