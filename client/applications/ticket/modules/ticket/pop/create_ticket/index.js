@@ -28,7 +28,8 @@ function pop(obj, parent, callback) {
         value: selectedItem
       });
       refs.attach_file.setState({
-        renderer: popAttach
+        renderer: popAttach,
+        type: 'create'
       });
     },
     onConfirm: function(refs, cb) {

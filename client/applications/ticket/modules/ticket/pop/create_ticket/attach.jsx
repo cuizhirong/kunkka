@@ -34,7 +34,7 @@ class Attach extends React.Component {
   uploadFile(file) {
     let reader = new FileReader(),
       that = this,
-      url = HALO.configs.swift_url + '/' + HALO.user.projectId + '_ticket' + '/' + file.name.replace(/\s+/g, '');
+      url = '/proxy-swift/' + HALO.user.projectId + '_ticket' + '/' + file.name.replace(/\s+/g, '');
     that.setState({
       attachments: that.state.attachments.concat(url),
       fileNames: that.state.fileNames.concat(file.name),
@@ -81,9 +81,9 @@ class Attach extends React.Component {
             { this.state.fileNames.length ?
               this.state.fileNames.map((fileName, index) => {
                 return (
-                  <div key={index} className="attach">
-                      <i className={this.state.uploadError[index] ? 'glyphicon icon-status-warning error' : 'glyphicon icon-log'} /><span>{this.state.uploadError[index] ? __.upload_error : this.getContent(fileName)}</span>
-                      <i className="glyphicon icon-delete" onClick={this.deleteAttach.bind(this, index)}/>
+                  <div key={index} className={this.props.type === 'detail' ? 'attach attach-detail' : 'attach attach-create'}>
+                    <i className={this.state.uploadError[index] ? 'glyphicon icon-status-warning error' : 'glyphicon icon-log'} /><span className={this.props.type === 'detail' ? 'span-detail' : 'span-create'}>{this.state.uploadError[index] ? __.upload_error : this.getContent(fileName)}</span>
+                    <i className="glyphicon icon-delete delete" onClick={this.deleteAttach.bind(this, index)}/>
                   </div>);
               })
             : '' }

@@ -15,17 +15,27 @@
       .attach {
         margin-left: 42px;
         padding-left: 10px;
-        width: 382px;
         height: 30px;
         line-height: 30px;
         text-align: left;
         background-color: @attach_bg_color;
+        
+        &.attach-create {
+          width: 346px;
+        }
         .error {
           color: @attach_delete;
         }
-        > span {
+        .delete {
+          float: right;
+          width: 10px;
+          height: 20px;
+          margin-top: 10px;
+          margin-right: 10px;
+        }
+        .span-create {
           display: inline-block;
-          width: 340px;
+          width: 310px;
         }
         i:last-child {
           &:hover {

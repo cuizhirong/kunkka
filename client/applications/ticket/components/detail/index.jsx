@@ -158,7 +158,7 @@ class Detail extends React.Component {
               {__.reply}
               <textarea ref="reply"/>
               <div className="reply-attach">
-                <Adapter ref="upload" renderer={Attach}/>
+                <Adapter ref="upload" renderer={Attach} type="detail"/>
               </div>
               <div className="detail-bottom">
                 <button className="btn btn-submit" onClick={this.submitReply}>{__.submit}</button>
