@@ -60,6 +60,12 @@ class Model extends React.Component {
             return __[item.status];
           };
           break;
+        case 'state':
+          column.render = (col, item) => {
+            const state = item.state;
+            return state[0].toUpperCase() + state.slice(1);
+          };
+          break;
         default:
           break;
       }
@@ -129,9 +135,9 @@ class Model extends React.Component {
       }
 
       if(agent.admin_state_up) {
-        agent.state = 'Up';
+        agent.state = 'up';
       } else {
-        agent.state = 'Down';
+        agent.state = 'down';
       }
     });
   }
