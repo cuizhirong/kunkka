@@ -3,7 +3,7 @@
  */
 module.exports = {
   getLangValue(lang, obj) {
-    if (toString.call(obj) === '[object Array]') {
+    if (Object.prototype.toString.call(obj) === '[object Array]') {
       let strs = '';
       obj.forEach((str) => {
         strs += lang[str];

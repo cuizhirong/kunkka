@@ -1,0 +1,6 @@
+# Browsers that we support 
+ 
+ie >= 10
+Firefox >= 35
+Chrome >= 45
+Safari >= 7

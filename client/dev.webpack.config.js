@@ -17,7 +17,7 @@ let applications = fs.readdirSync('./applications').filter(function(m) {
 let apps = (process.env.npm_config_app && process.env.npm_config_app.split(',')) || applications;
 let entry = {};
 apps.forEach(function(m) {
-  entry[m] = './applications/' + m + '/index.jsx';
+  entry[m] = ['babel-polyfill', './applications/' + m + '/index.jsx'];
 });
 
 config.entry = entry;
