@@ -504,6 +504,13 @@ class Model extends React.Component {
                 <a data-type="router" href={'/dashboard/router/' + element.device_id}>{item.router.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
               </div>
             );
+          } else if (element.device_owner && element.device_owner.indexOf('neutron') > -1){
+            return (
+              <div>
+                <i className="glyphicon icon-lb"></i>
+                <a data-type="router" href={'/dashboard/loadbalancer/' + element.device_id}>{element.lbs.name || '(' + element.device_id.substr(0, 8) + ')'}</a>
+              </div>
+            );
           } else {
             return <div>{__[element.device_owner]}</div>;
           }

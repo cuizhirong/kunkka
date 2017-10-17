@@ -4,7 +4,7 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['subnet', 'network', 'router', 'instance', 'port'], forced).then(function(data) {
+    return storage.getList(['subnet', 'network', 'router', 'instance', 'port', 'loadbalancer'], forced).then(function(data) {
       let subnets = data.subnet;
       subnets.forEach((subnet) => {
         // subnet.port_security_enabled = subnet.network.port_security_enabled;
@@ -33,8 +33,19 @@ module.exports = {
               };
             }
           }
-          if (item.device_owner) {
-            item.status = 'ACTIVE';
+          if (item.device_owner.indexOf('neutron') > -1) {
+            data.loadbalancer.some((l) => {
+              if (l.id === item.device_id) {
+                item.lbs = l;
+                return true;
+              }
+              return false;
+            });
+            if (!item.lbs) {
+              item.lbs = {
+                id: item.device_id
+              };
+            }
           }
         });
       });
@@ -121,6 +132,11 @@ module.exports = {
         }
         return true;
       });
+    });
+  },
+  getLoadbalancer: function() {
+    return storage.getList(['loadbalancer']).then(function(data) {
+      return data.loadbalancers;
     });
   },
   getInstances: function() {

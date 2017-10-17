@@ -30,11 +30,6 @@ module.exports = {
             };
           }
         }
-        if (!item.device_owner) {
-          item.status = 'DOWN';
-        } else {
-          item.status = 'ACTIVE';
-        }
       });
       return data.port;
     });
