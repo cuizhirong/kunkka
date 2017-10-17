@@ -154,7 +154,7 @@ class ModalBase extends React.Component {
     this.setState({
       visible: false
     });
-    this.props.onCancel && this.props.onCancel();
+    this.props.onCancel && this.props.onCancel(this.refs);
   }
 
   render() {
