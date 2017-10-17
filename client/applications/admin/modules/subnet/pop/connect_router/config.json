@@ -8,7 +8,6 @@
   }, {
     "type": "select",
     "field": "router",
-    "hide": true,
     "empty_text": {
       "info": "no_router"
     },

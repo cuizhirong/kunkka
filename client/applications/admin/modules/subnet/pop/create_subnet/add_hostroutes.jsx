@@ -7,7 +7,6 @@ let __ = require('locale/client/admin.lang.json');
 class AddHostRoutes extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       showsubs: JSON.parse(JSON.stringify(props.objHostRoutes)) || [],
       opsubs: [],

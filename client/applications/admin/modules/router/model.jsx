@@ -277,13 +277,13 @@ class Model extends React.Component {
           tip: hasSubnet ? __.tip_router_has_subnet : null,
           onDelete: function(_data, cb) {
             request.deleteRouters(rows).then((res) => {
+              cb(true);
               that.refresh({
                 refreshList: true,
                 refreshDetail: true,
                 loadingTable: true,
                 loadingDetail: true
               });
-              cb(true);
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });

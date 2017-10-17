@@ -1,23 +1,27 @@
 @import "../../../../../style/theme.less";
 
 .halo-pop-com-host-routes {
-  margin-top: 18px;
+  margin-top: 10px !important;
+  padding-bottom: 20px !important;
   padding-left: 0px!important;
   align-items: baseline!important;
   .host {
     .host-content {
       margin-top: 10px;
+      display: flex;
       div {
-        display: inline-block;
+        flex-flow: row;
         input {
-          width: 104px;
+          flex-flow: row;
+          width: 38%;
           margin-right: 10px;
         }
       }
       .btn {
+        flex-flow: row;
         vertical-align: top;
-        width: 70px;
-        min-width: 70px;
+        width: 71px;
+        min-width: 71px;
       }
     }
     .host-list {
@@ -40,4 +44,8 @@
       }
     }
   }
+}
+.modal-bd.halo-com-modal-common {
+  box-sizing: border-box;
+  padding-bottom: 16px;
 }

@@ -246,13 +246,13 @@ class Model extends React.Component {
           iconType: 'network',
           onDelete: function(_data, cb) {
             request.deleteNetworks(rows).then((res) => {
+              cb(true);
               that.refresh({
                 refreshList: true,
                 refreshDetail: true,
                 loadingTable: true,
                 loadingDetail: true
               });
-              cb(true);
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });

@@ -26,8 +26,7 @@ class RadioButtonList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hideVlan: !HALO.settings.is_show_vlan,
-      hideFlat: !HALO.settings.is_show_flat,
+      hideVlan: !HALO.configs.neutron_network_vlanranges || HALO.configs.neutron_network_vlanranges.length === 0 || HALO.configs.neutron_network_vlanranges === '',
       selectedValue: 'vxlan'
     };
     ['onSelectedValueChanged', 'renderRadionButtons'].forEach(m => {
@@ -59,8 +58,7 @@ class RadioButtonList extends React.Component {
       value: 'flat',
       name: 'network_type',
       text: 'flat',
-      checked: 'false',
-      hideFlat: that.state.hideFlat
+      checked: 'false'
     }];
     return (
       <div>
@@ -72,8 +70,6 @@ class RadioButtonList extends React.Component {
         {
           itemlist.map((item, index) => {
             if (item.value === 'vlan' && item.hideVlan) {
-              return false;
-            } else if (item.value === 'flat' && item.hideFlat) {
               return false;
             } else {
               return (<RadioButton
