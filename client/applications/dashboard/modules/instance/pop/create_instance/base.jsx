@@ -119,7 +119,7 @@ class ModalBase extends React.Component {
     };
     images.sort(imageSort);
     snapshots.sort(imageSort);
-    bootableVolumes.sort(bootableVolumes);
+    bootableVolumes.sort();
 
     let selectedImage = selectDefault(images);
     let username = 'root';
@@ -137,7 +137,7 @@ class ModalBase extends React.Component {
     let bootableVolume = selectDefault(bootableVolumes);
     let volumeSnapshot = selectDefault(volumeSnapshots);
     let currentImage = image;
-    let imageType = 'images';
+    let imageType = 'image';
     let obj = this.props.obj;
     if (typeof obj !== 'undefined') {
       currentImage = obj;
@@ -261,7 +261,7 @@ class ModalBase extends React.Component {
     let objImage = null,
       deviceSize = 1;
     switch(key) {
-      case 'images':
+      case 'image':
         objImage = image;
         deviceSize = image.min_disk || 1;
         break;
@@ -609,7 +609,7 @@ class ModalBase extends React.Component {
   findSelectedImage() {
     let state = this.state;
     switch(state.imageType) {
-      case 'images':
+      case 'image':
         return state.image;
       case 'snapshot':
         return state.snapshot;
@@ -648,7 +648,7 @@ class ModalBase extends React.Component {
       enableImage = false, enableVolumeImage = false;
     let selectedImage, volumeTip = this.volumeTip.state;
 
-    if (state.imageType === 'images') {
+    if (state.imageType === 'image') {
       enable = enable && state.image;
       enableImage = enable;
       selectedImage = state.image;
@@ -700,7 +700,7 @@ class ModalBase extends React.Component {
             uuid: selectedImage.id,
             source_type: 'image',
             volume_size: volumeTip.deviceSize,
-            device_name: '/dev/' + volumeTip.deviceName,
+            device_name: volumeTip.deviceName,
             delete_on_termination: volumeTip.deleteVolume === 'yes'
           }];
           let dataVol = {};
@@ -852,7 +852,7 @@ class ModalBase extends React.Component {
     }
 
     let Images = (
-      <div id="images" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'images' ? '' : ' hide')} key="images">
+      <div id="images" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -1541,7 +1541,7 @@ class ModalBase extends React.Component {
   renderBtn(props, state, page) {
     if (page === 1) {
       let hasImage = false;
-      if (state.imageType === 'images') {
+      if (state.imageType === 'image') {
         hasImage = state.image;
       } else if (state.imageType === 'snapshot') {
         hasImage = state.snapshot;
@@ -1579,7 +1579,7 @@ class ModalBase extends React.Component {
         </div>
       );
     } else if (page === 4) {
-      let enable = state.flavor && state.network.length >= 1 && state.number;
+      let enable = state.flavor && (state.network.length >= 1 || state.port.length >= 1) && state.number;
       if (state.credential === 'keypair') {
         enable = enable && state.keypairName;
       } else {
@@ -1653,7 +1653,7 @@ class ModalBase extends React.Component {
             <div className={'page' + slideClass}>
               {this.renderNetworks(props, state)}
             </div>
-            <div className={'page' + slideClass}>
+            <div className={'page error' + slideClass}>
               {this.renderName(props, state)}
               {this.renderSecurityGroup(props, state)}
               {this.renderCredentials(props, state)}

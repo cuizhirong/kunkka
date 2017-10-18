@@ -2,7 +2,7 @@ const __ = require('locale/client/dashboard.lang.json');
 let constant = {
   imageTypes: [{
     value: __.system_image,
-    key: 'images'
+    key: 'image'
   }, {
     value: __.instance_snapshot,
     key: 'snapshot'

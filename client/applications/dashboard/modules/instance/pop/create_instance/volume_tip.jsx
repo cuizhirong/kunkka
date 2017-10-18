@@ -12,7 +12,7 @@ class VolumeTip extends React.Component {
     this.state = {
       checked: 'yes',
       deleteVolume: 'yes',
-      deviceName: 'vda',
+      deviceName: '',
       deviceSize: props.deviceSize
     };
   }

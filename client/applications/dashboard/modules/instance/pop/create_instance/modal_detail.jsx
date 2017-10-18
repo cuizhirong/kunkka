@@ -27,29 +27,28 @@ class DetailModal extends React.Component {
 
     let {imageType, price, flavor, number, keypairName} = this.props;
 
-    function getData(ele) {
-      if (ele && ele.constructor === Object) {
-        let obj;
-        if (ele.vcpus) {
-          obj = ele.name + ' ( ' + ele.vcpus + ' vCPU / '
+    function getData(props, key) {
+      let ele = props[key];
+
+      switch(key) {
+        case 'image':
+          return props[imageType].name || '(' + props[imageType].id.slice(0, 8) + ')';
+        case 'flavor':
+          return ele.name + ' ( ' + ele.vcpus + ' vCPU / '
             + unitConverter(ele.ram, 'MB').num + ' '
             + unitConverter(ele.ram, 'MB').unit
             + ' / ' + ele.disk + ' GB )';
-        } else {
-          obj = ele.name || '(' + ele.id.slice(0, 8) + ')';
-        }
-        return obj;
-      } else if (ele && ele.constructor === Array) {
-        return ele.map(e => e.name || '(' + e.id.slice(0, 8) + ')').join(', ');
-      } else {
-        switch(ele) {
-          case 'psw':
-            return 'password';
-          case 'keypair':
-            return 'keypair / ' + keypairName;
-          default:
-            return ele;
-        }
+        case 'network':
+          return <div>
+            <div>{ele.length > 0 && __.network + '(' + ele.map(e => e.name || '(' + e.id.slice(0, 8) + ')').join(', ') + ')'}</div>
+            <div>{props.port.length > 0 && __.port + '(' + props.port.map(p => p.name || '(' + p.id.slice(0, 8) + ')').join(', ') + ')'}</div>
+          </div>;
+        case 'securityGroup':
+          return ele.map(e => e.name || '(' + e.id.slice(0, 8) + ')').join(', ');
+        case 'credential':
+          return ele === 'psw' ? 'password' : 'keypair / ' + keypairName;
+        default:
+          return ele;
       }
     }
 
@@ -83,7 +82,7 @@ class DetailModal extends React.Component {
                     constant.tableColume.map(ele =>
                       <tr key={ele.key}>
                         <td>{ele.value}</td>
-                        <td className={ele.key}>{this.props[imageType] && getData(this.props[ele.key])}</td>
+                        <td className={ele.key}>{this.props[imageType] && getData(this.props, ele.key)}</td>
                       </tr>
                     )
                   }
