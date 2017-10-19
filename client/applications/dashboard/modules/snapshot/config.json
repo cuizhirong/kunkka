@@ -11,12 +11,6 @@
     "icon": "create",
     "disabled": true
   },  {
-    "value": ["back_up"],
-    "key": "back_up",
-    "type": "create",
-    "icon": "backup",
-    "disabled": true
-  }, {
     "value": ["delete"],
     "key": "del_snapshot",
     "type": "delete",

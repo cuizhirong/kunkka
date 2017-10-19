@@ -5,7 +5,13 @@ let addHostroutes = require('./add_hostroutes');
 let __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
-
+  if(obj && obj.hasOwnProperty('subnets')) {
+    config.fields[1].value = obj.id;
+    config.fields[1].disabled = true;
+  } else {
+    config.fields[1].value = '';
+    config.fields[1].disabled = false;
+  }
   let props = {
     __: __,
     parent: parent,

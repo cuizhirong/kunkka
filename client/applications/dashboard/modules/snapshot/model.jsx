@@ -7,7 +7,7 @@ const BasicProps = require('client/components/basic_props/index');
 
 const deleteModal = require('client/components/modal_delete/index');
 const createVolume = require('../volume/pop/create/index');
-const backupSnapshot = require('./pop/backup_snapshot/index');
+// const backupSnapshot = require('./pop/backup_snapshot/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -148,9 +148,9 @@ class Model extends React.Component {
         break;
       case 'crt_img':
         break;
-      case 'back_up':
+      /*case 'back_up':
         backupSnapshot(rows[0]);
-        break;
+        break;*/
       case 'del_snapshot':
         deleteModal({
           __: __,
@@ -203,9 +203,9 @@ class Model extends React.Component {
         case 'create':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
-        case 'back_up':
+        /*case 'back_up':
           btns[key].disabled = rows.length === 1 ? false : true;
-          break;
+          break;*/
         case 'del_snapshot':
           btns[key].disabled = rows.length > 0 ? false : true;
           break;
