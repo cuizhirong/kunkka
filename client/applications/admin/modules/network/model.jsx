@@ -216,25 +216,24 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
+
+    let refresh = () => {
+      this.refresh({
+        refreshList: true,
+        loadingTable: true,
+        refreshDetail: true
+      });
+    };
+
     switch (key) {
       case 'create':
         createNetwork(null, (res) => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'crt_subnet':
         createSubnet((rows[0]), null, (res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'delete':
@@ -247,12 +246,7 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteNetworks(rows).then((res) => {
               cb(true);
-              that.refresh({
-                refreshList: true,
-                refreshDetail: true,
-                loadingTable: true,
-                loadingDetail: true
-              });
+              refresh();
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
@@ -260,7 +254,7 @@ class Model extends React.Component {
         });
         break;
       case 'refresh':
-        this.refresh({
+        that.refresh({
           refreshList: true,
           refreshDetail: true,
           loadingTable: true,
@@ -432,8 +426,11 @@ class Model extends React.Component {
         let {rawItem, newName} = data;
         request.editNetworkName(rawItem, newName).then((res) => {
           this.refresh({
-            detailRefresh: true
-          }, true);
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
         });
         break;
       case 'crt_subnet':

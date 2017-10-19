@@ -22,6 +22,13 @@ function pop(obj, parent, callback) {
           refs.btn.setState({
             disabled: false
           });
+        } else {
+          refs.router.setState({
+            hide: false
+          });
+          refs.btn.setState({
+            disabled: true
+          });
         }
       });
     },

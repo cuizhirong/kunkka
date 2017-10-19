@@ -28,7 +28,7 @@
     "select_network": "Select NetWork",
     "subnet_dns1": "DNS1",
     "subnet_dns2": "DNS2",
-    "subnet_id": "Sunnet ID",
+    "subnet_id": "Subnet ID",
     "version": "Version"
   },
   "zh-CN": {

@@ -8,7 +8,11 @@
   }, {
     "type": "group_select",
     "field": "subnet",
-    "data": []
+    "data": [],
+    "empty_text": {
+      "info": "no_router"
+    },
+    "hide": true
   }, {
     "type": "tip",
     "tip_type": "warning",

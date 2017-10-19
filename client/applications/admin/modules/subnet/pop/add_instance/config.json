@@ -10,7 +10,8 @@
     "field": "instance",
     "empty_text": {
       "info": "no_instance"
-    }
+    },
+    "hide": true
   }, {
     "type": "tip",
     "tip_type": "warning",

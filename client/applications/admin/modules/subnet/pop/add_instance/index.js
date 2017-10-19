@@ -15,10 +15,18 @@ function pop(obj, isDetail, parent, callback) {
         if (sameProject.length > 0) {
           refs.instance.setState({
             data: sameProject,
-            value: sameProject[0].id
+            value: sameProject[0].id,
+            hide: false
           });
           refs.btn.setState({
             disabled: false
+          });
+        } else {
+          refs.instance.setState({
+            hide: false
+          });
+          refs.btn.setState({
+            disabled: true
           });
         }
       });

@@ -247,63 +247,38 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
+
+    let refresh = () => {
+      this.refresh({
+        refreshList: true,
+        loadingTable: true,
+        refreshDetail: true
+      });
+    };
     switch (key) {
-      case 'refresh':
-        this.refresh({
-          refreshList: true,
-          refreshDetail: true,
-          loadingTable: true,
-          loadingDetail: true
-        });
-        break;
       case 'create':
         createSubnet(rows[0], null, () => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'connect_router':
         connectRouter(rows[0], null, () => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'disconnect_router':
         disconnectRouter(rows[0], null, () => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'add_instance':
         addInstance(rows[0], false, null, () => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'modify_subnet':
         modifySubnet(rows[0], null, () => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'delete':
@@ -315,16 +290,19 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteSubnets(rows).then((res) => {
               cb(true);
-              that.refresh({
-                refreshList: true,
-                refreshDetail: true,
-                loadingTable: true,
-                loadingDetail: true
-              });
+              refresh();
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
           }
+        });
+        break;
+      case 'refresh':
+        that.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
         });
         break;
       default:
@@ -500,8 +478,11 @@ class Model extends React.Component {
         let {rawItem, newName} = data;
         request.editSubnetName(rawItem, newName).then((res) => {
           this.refresh({
-            detailRefresh: true
-          }, true);
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
         });
         break;
       case 'rmv_port':

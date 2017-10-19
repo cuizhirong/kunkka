@@ -255,15 +255,18 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
+
+    let refresh = () => {
+      this.refresh({
+        refreshList: true,
+        loadingTable: true,
+        refreshDetail: true
+      });
+    };
     switch (key) {
       case 'create':
         createRouter(null, (res) => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'delete':
@@ -278,12 +281,7 @@ class Model extends React.Component {
           onDelete: function(_data, cb) {
             request.deleteRouters(rows).then((res) => {
               cb(true);
-              that.refresh({
-                refreshList: true,
-                refreshDetail: true,
-                loadingTable: true,
-                loadingDetail: true
-              });
+              refresh();
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
@@ -292,32 +290,17 @@ class Model extends React.Component {
         break;
       case 'en_gw':
         publicGateway(rows[0], null, (res) => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'dis_gw':
         disableGateway(rows[0], null, (res) => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'cnt_subnet':
         relatedSubnet(rows[0], null, (res) => {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true,
-            loadingTable: true,
-            loadingDetail: true
-          });
+          refresh();
         });
         break;
       case 'refresh':

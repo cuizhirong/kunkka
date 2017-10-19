@@ -11,6 +11,7 @@
     "empty_text": {
       "info": "no_router"
     },
+    "hide": true,
     "data": []
   }, {
     "type": "tip",

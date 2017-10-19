@@ -6,7 +6,7 @@
     "enable_vlan": "Vlan network",
     "net_address": "CIDR",
     "network_name": "Network Name",
-    "network_id": "Network id",
+    "network_id": "Network ID",
     "network_type": "Network Type",
     "no_network": "No available Virtual Network",
     "on": "ON",

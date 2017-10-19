@@ -79,9 +79,6 @@ function chooseFlat(refs, subnetChecked, netVlanstate, testFlat, flatState, test
 }
 
 function pop(parent, callback) {
-  if (!HALO.settings.is_show_vlan) {
-    config.fields[2].hide = true;
-  }
   let phyNet;
   if(typeof HALO.configs.neutron_network_vlanranges === 'string') {
     phyNet = HALO.configs.neutron_network_vlanranges.split(',');
