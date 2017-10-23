@@ -233,20 +233,10 @@ class ModalBase extends React.Component {
 
   createNotification(id, e) {
     createNotification(null, this.refs.modal, (notif) => {
-      let { notifications, notificationLists } = this.state;
-      notif.id = notif.uuid;
-      notifications.push(notif);
-
-      notificationLists.some((ele) => {
-        if (ele.id === id) {
-          ele.notification = notif.id;
-          return true;
-        }
-        return false;
-      });
-
-      this.setState({
-        notifications: notifications
+      request.getNofitications(true).then((data) => {
+        this.setState({
+          notifications: data
+        });
       });
     });
   }
