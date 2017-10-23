@@ -1,0 +1,62 @@
+{
+  "en": {
+    "memory": "Memory(GB)",
+    "disk": "Disk Capacity(GB)",
+    "vms": "Virtual Machine Amount",
+    "status": "Status",
+    "server": {
+      "name": "Name",
+      "flavor": "Flavor",
+      "flavorID": "FlavorID",
+      "flavorName": "Flavor Name",
+      "flavorCPU": "CPU",
+      "flavorRAM": "RAM",
+      "host": "Host",
+      "image": "Image",
+      "imageID": "Image ID",
+      "imageName": "Image Name",
+      "floatingIp": "Floating Ip",
+      "fixedIp": "Fixed Ip",
+      "userID": "UserID",
+      "userName": "User Name",
+      "projectID": "ProjectID",
+      "tenantName": "Project Name",
+      "status": "Status",
+      "security_groups": "Security Groups",
+      "volume": "Volumes",
+      "volumeCount": "Volumes Count",
+      "volumeSize": "Volumes Total Size",
+      "type": "Type"
+    }
+  },
+  "zh-CN": {
+    "memory": "内存使用量(GB)",
+    "disk": "硬盘使用量(GB)",
+    "vms": "虚拟机数量",
+    "status": "状态",
+    "server": {
+      "name": "名称",
+      "flavor": "配置",
+      "flavorID": "配置ID",
+      "flavorName": "配置名称",
+      "flavorCPU": "CPU",
+      "flavorRAM": "内存",
+      "host": "宿主主机",
+      "image": "镜像",
+      "imageID": "镜像ID",
+      "imageName": "镜像名称",
+      "floatingIp": "公网IP",
+      "fixedIp": "私网IP",
+      "userID": "用户ID",
+      "userName": "用户名",
+      "projectID": "项目ID",
+      "tenantName": "项目名称",
+      "status": "状态",
+      "security_groups": "安全组",
+      "volume": "硬盘",
+      "volumeCount": "硬盘总数",
+      "volumeSize": "硬盘总容量",
+      "type": "类型"
+    }
+  }
+}

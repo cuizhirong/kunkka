@@ -1,0 +1,18 @@
+{
+  "en": {
+    "floatingip": {
+      "floating_ip_address": "Floating IP Address",
+      "tenant_id": "Project ID",
+      "fixed_ip_address": "IP address",
+      "status": "Status"
+    }
+  },
+  "zh-CN": {
+    "floatingip": {
+      "floating_ip_address": "公网IP地址",
+      "tenant_id": "项目ID",
+      "fixed_ip_address": "IP地址",
+      "status": "状态"
+    }
+  }
+}

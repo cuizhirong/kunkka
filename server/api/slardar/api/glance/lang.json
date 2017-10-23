@@ -1,0 +1,18 @@
+{
+  "en": {
+    "image": {
+      "name": "Name",
+      "type": "Type",
+      "size": "Size(GB)",
+      "status": "Status"
+    }
+  },
+  "zh-CN": {
+    "image": {
+      "name": "名称",
+      "type": "类型",
+      "size": "容量(GB)",
+      "status": "状态"
+    }
+  }
+}
