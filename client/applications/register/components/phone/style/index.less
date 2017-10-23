@@ -1,0 +1,92 @@
+@import "../../../../../style/index.less";
+
+@input_border: @color_disabled_400;
+@loading: @color_grey_800;
+@input_border_active: @color_info;
+@warning: @color_delete;
+@submit_active: darken(@color_info, 3%);
+@width: 1366px;
+
+.phone-number {
+  position: relative;
+  @media screen and (min-width: @width) {
+    input[type="text"] {
+      width: 110px;
+    }
+  }
+  @media screen and (max-width: @width) {
+    input[type="text"] {
+      width: 90px;
+    }
+  }
+  input[type="text"] {
+    width: 100px;
+    display: inline-block;
+    padding-right: 18px;
+  }
+  input[type="button"] {
+    background-color: @input_border_active;
+    border: none;
+    color: #fff;
+    margin-left: 8px;
+    padding: 5px 2px;
+    display: inline-block;
+    overflow: hidden;
+    height: 26px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      background-color: @submit_active;
+      border: none;
+    }
+    &:disabled {
+      background-color: @input_border;
+    }
+  }
+  .error {
+    input {
+      border-bottom: 1px solid @warning !important;
+    }
+  }
+  @media screen and (min-width: @width) {
+    i {
+      left: 120px;
+    }
+    input[type="button"] {
+      width: 84px;
+    }
+    .code-test {
+      margin-left: 8px;
+      width: 80px !important;
+    }
+  }
+  @media screen and (max-width: @width) {
+    i {
+      left: 106px;
+    }
+    input[type="button"] {
+      width: 78px;
+    }
+    .code-test {
+      margin-left: 8px;
+      width: 60px !important;
+    }
+  }
+  i {
+    display: none;
+    position: absolute;
+    color: @input_border_active;
+    top: 24px;
+  }
+  .show {
+    display: block;
+  }
+  .tip-bottom {
+    div {
+      bottom: 30px;
+      word-wrap: break-word;
+    }
+  }
+}
