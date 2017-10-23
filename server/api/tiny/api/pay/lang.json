@@ -1,0 +1,20 @@
+{
+  "zh-CN":{
+    "RechargeSucceed":"充值成功。",
+    "RechargeFailed":"充值失败。",
+    "PaymentFailed":"支付失败。",
+    "PaymentMethodError":"支付方式错误。",
+    "TransactionHadBeenCompleted":"此交易已完成。",
+    "CancelPayment":"用户取消了支付",
+    "ParameterError":"回调参数错误。"
+  },
+  "en":{
+    "RechargeSucceed":"Recharge succeed.",
+    "RechargeFailed":"Recharge failed.",
+    "PaymentFailed":"Payment failed",
+    "PaymentMethodError":"Payment method error.",
+    "TransactionHadBeenCompleted":"This transaction had been completed.",
+    "CancelPayment":"The user canceled the payment.",
+    "ParameterError":"Callback parameter error"
+  }
+}
