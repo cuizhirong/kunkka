@@ -1,0 +1,19 @@
+{
+  "title": ["create", "host-aggregates"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "availability-zones"
+  }, {
+    "type": "select_group",
+    "field": "available_hosts",
+    "hide": true
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

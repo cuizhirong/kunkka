@@ -1,0 +1,73 @@
+{
+  "tabs": [{
+    "name": ["floating_ip"],
+    "key": "floating_ip",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["dissociate", "floating_ip"],
+    "key": "dissociate",
+    "icon": "dissociate",
+    "disabled": true
+  }, {
+    "value": ["allocate", "floating_ip"],
+    "key": "allocate",
+    "icon": "associate"
+  }, {
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "floating_ip_id"],
+    "width": 200
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "limit": 10,
+    "loading": true,
+    "column": [{
+      "title": ["floating_ip_address"],
+      "dataIndex": "floating_ip_address",
+      "key": "floating_ip",
+      "type": "captain",
+      "width": 130
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "tenant_id",
+      "key": "project"
+    }, {
+      "title": ["ip", "address"],
+      "dataIndex": "fixed_ip_address",
+      "key": "ip_address"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
+      }, {
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title": ["deactivate", "domain"],
+  "fields": [{
+    "type": "text",
+    "field": "de_domain_info",
+    "info": ""
+  }, {
+    "type": "checkbox",
+    "field": "de_domain_tip"
+  }],
+  "btn": {
+    "value": "disable",
+    "disabled": true
+  }
+}

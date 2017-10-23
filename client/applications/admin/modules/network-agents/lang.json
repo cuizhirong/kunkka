@@ -1,0 +1,18 @@
+{
+  "en": {
+    "agent_type": "Agent Type",
+    "agent_name": "Agent Name",
+    "view_routers": "View Routers",
+    "no_routers": "No Routers",
+    "external_network": "External Network",
+    "admin_state": "Admin State"
+  },
+  "zh-CN": {
+    "agent_type": "代理类型",
+    "agent_name": "代理名称",
+    "view_routers": "查看路由器",
+    "no_routers": "没有路由器",
+    "external_network": "外部网络",
+    "admin_state": "管理状态"
+  }
+}

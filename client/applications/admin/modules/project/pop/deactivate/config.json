@@ -1,0 +1,15 @@
+{
+  "title": ["deactivate", "project"],
+  "fields": [{
+    "type": "text",
+    "field": "de_project_info",
+    "info": ""
+  }, {
+    "type": "checkbox",
+    "field": "de_project_tip"
+  }],
+  "btn": {
+    "value": "disable",
+    "disabled": true
+  }
+}

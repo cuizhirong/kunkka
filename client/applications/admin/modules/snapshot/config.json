@@ -1,0 +1,92 @@
+{
+  "tabs": [{
+    "name": ["snapshot"],
+    "key": "snapshot",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "snapshot_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "snapshot_id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "select",
+      "key": "status",
+      "default": ["all", "status"]
+    }, {
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "snapshot_name"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "key": "size"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "os-extended-snapshot-attributes:project_id",
+      "key": "project_id"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }, {
+        "name": ["error"],
+        "key": "error",
+        "filterBy": "error"
+      }, {
+        "name": ["error_deleting"],
+        "key": "error_deleting",
+        "filterBy": "error_deleting"
+      }]
+    }, {
+      "title": ["created", "time"],
+      "dataIndex": "created_at",
+      "type": "time",
+      "key": "created_time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

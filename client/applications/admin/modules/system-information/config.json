@@ -1,0 +1,78 @@
+{
+  "tabs": [{
+    "name": ["services"],
+    "key": "system-information",
+    "default": "true"
+  }, {
+    "name": ["compute_services"],
+    "key": "compute-services"
+  }, {
+    "name": ["block_storage_services"],
+    "key": "block-storage-services"
+  }, {
+    "name": ["network_agents"],
+    "key": "network-agents"
+  }, {
+    "name": ["orchestration_services"],
+    "key": "orchestration-services"
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "service_name",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "service_name"]
+    }]
+  }, {
+    "group_key": "service_type",
+    "items": [{
+      "type": "input",
+      "key": "type",
+      "placeholder": ["pls_enter", "service_type"]
+    }]
+  }, {
+    "group_key": "service_region",
+    "items": [{
+      "type": "input",
+      "key": "region_name",
+      "placeholder": ["pls_enter", "service_region"]
+    }]
+  }, {
+    "group_key": "service_endpoints",
+    "items": [{
+      "type": "input",
+      "key": "endpoints",
+      "placeholder": ["pls_enter", "service_endpoints"]
+    }]
+  }],
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["service"],
+      "key": "type",
+      "dataIndex": "type",
+      "sort": true
+    }, {
+      "title": ["region"],
+      "key": "region",
+      "dataIndex": "region_name",
+      "sort": true
+    }, {
+      "title": ["endpoints"],
+      "key": "endpoints",
+      "sort": true
+    }],
+    "data": []
+  }
+}

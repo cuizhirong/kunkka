@@ -1,0 +1,24 @@
+@import "../../../../../style/theme.less";
+
+@reject_color: @color_delete;
+@accept_color: @color_success;
+.halo-module-show-members {
+  margin-left: 20px;
+  .loading {
+    position: relative;
+    left: 50%;
+  }
+  .operation {
+    span {
+      margin-right: 10px;
+      &.accept:hover, &.pending:hover {
+        cursor: pointer;
+        color: @accept_color;
+      }
+      &.reject:hover {
+        cursor: pointer;
+        color: @reject_color;
+      }
+    }
+  }
+}

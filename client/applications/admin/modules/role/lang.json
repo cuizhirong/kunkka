@@ -1,0 +1,10 @@
+{
+  "en": {
+    "assign": "Assign ",
+    "revoke": "Revoke "
+  },
+  "zh-CN": {
+    "assign": "分配",
+    "revoke": "取消"
+  }
+}

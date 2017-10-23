@@ -1,0 +1,19 @@
+{
+  "en": {
+    "service": "Service",
+    "endpoints": "Endpoints",
+    "region": "Region",
+    "service_type": "Service Type",
+    "service_region": "Service Region",
+    "service_endpoints": "Service Endpoints"
+
+  },
+  "zh-CN": {
+    "service": "服务",
+    "endpoints": "服务地址",
+    "region": "区域",
+    "service_type": "服务类型",
+    "service_region": "服务区域",
+    "service_endpoints": "服务地址"
+  }
+}

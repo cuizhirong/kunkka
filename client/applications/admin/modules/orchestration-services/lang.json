@@ -1,0 +1,12 @@
+{
+  "en": {
+    "hostname": "Hostname",
+    "engine_id": "Engine Id",
+    "topic": "Topic"
+  },
+  "zh-CN": {
+    "hostname": "主机名字",
+    "engine_id": "Engine Id",
+    "topic": "主题"
+  }
+}

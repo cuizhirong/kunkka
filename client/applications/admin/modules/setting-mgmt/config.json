@@ -1,0 +1,100 @@
+{
+  "tabs": [{
+    "name": ["setting-mgmt"],
+    "key": "setting-mgmt",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["modify", "configuration"],
+    "key": "modify",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [
+    {
+      "group_key": "configuration_name",
+      "items": [
+        {
+          "type": "input",
+          "key": "name",
+          "placeholder": [
+            "pls_enter",
+            "configuration",
+            "name"
+          ]
+        }
+      ]
+    },
+    {
+      "group_key": "configuration_desc",
+      "items": [
+        {
+          "type": "input",
+          "key": "description",
+          "placeholder": [
+            "pls_enter",
+            "configuration",
+            "description"
+          ]
+        }
+      ]
+    }
+  ],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "key": "name",
+      "dataIndex": "name",
+      "sort": true
+    }, {
+      "title": ["application"],
+      "dataIndex": "app",
+      "key": "app",
+      "filter": [{
+        "name": "Admin",
+        "key": "admin"
+      }, {
+        "name": "Approval",
+        "key": "approval"
+      }, {
+        "name": "Auth",
+        "key": "auth"
+      }, {
+        "name": "Bill",
+        "key": "bill"
+      }, {
+        "name": "Dashboard",
+        "key": "dashboard"
+      }, {
+        "name": "Global",
+        "key": "global"
+      }, {
+        "name": "Storage",
+        "key": "storage"
+      }, {
+        "name": "Ticket",
+        "key": "ticket"
+      }]
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["value"],
+      "dataIndex": "value",
+      "key": "value"
+    }, {
+      "title": ["description"],
+      "dataIndex": "description",
+      "key": "desc"
+    }],
+    "data": []
+  }
+}

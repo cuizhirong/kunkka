@@ -1,0 +1,16 @@
+{
+  "en": {
+    "binary": "Name",
+    "zone": "Zone",
+    "last_updated": "Last Updated",
+    "service_name": "Service Name",
+    "host_name": "Host Name"
+  },
+  "zh-CN": {
+    "binary": "名称",
+    "zone": "可用区域",
+    "last_updated": "最近更新",
+    "service_name": "服务名称",
+    "host_name": "主机名称"
+  }
+}

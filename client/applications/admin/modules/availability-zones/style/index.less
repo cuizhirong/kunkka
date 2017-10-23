@@ -1,0 +1,28 @@
+@import "../../../style/theme.less";
+@color_active: @color_info_600;
+
+.halo-module-availability-zones {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+
+  .table {
+    .table-body {
+      .row {
+        div {
+          .active {
+            color: @color_active;
+          }
+        }
+      }
+    }
+  }
+
+  .halo-com-table-detail {
+    .detail-content {
+      .active {
+        color: @color_active;
+      }
+    }
+  }
+}

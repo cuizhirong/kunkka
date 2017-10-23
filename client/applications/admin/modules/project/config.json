@@ -1,0 +1,96 @@
+{
+  "tabs": [{
+    "name": ["project"],
+    "key": "project",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "project"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "project"],
+    "key": "modify_project",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["activate", "project"],
+    "key": "activate_project",
+    "icon": "enable",
+    "disabled": true
+  }, {
+    "value": ["deactivate", "project"],
+    "key": "deactivate_project",
+    "icon": "disable",
+    "disabled": true
+  }, {
+    "value": ["modify", "quota"],
+    "key": "modify_quota",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "project",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "project", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "project", "name"]
+    }, {
+      "type": "select",
+      "key": "domain_id",
+      "default": ["all", "domain"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["status"],
+      "dataIndex": "",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["user"],
+        "key": "user"
+      }, {
+        "name": ["user-group"],
+        "key": "user-grp"
+      }, {
+        "name": ["quota"],
+        "key": "quota"
+      }]
+    }
+  }
+}

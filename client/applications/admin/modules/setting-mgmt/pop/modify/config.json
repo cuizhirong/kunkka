@@ -1,0 +1,21 @@
+{
+  "title": ["modify", "configuration"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "name",
+    "icon_type": "flavor-setting",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "value",
+    "value": ""
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": false
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "en": {
+    "allocate": "Allocate ",
+    "associate": "Associate ",
+    "dissociate_info": "This will dissociate the floating IP from this resource.",
+    "floating_ip_id": "Floating IP ID",
+    "target_project_id": "Target Project ID",
+    "line": "Line",
+    "tip_info_floating_ip": "Accidentally deleted floating IP can be recovered. In the case that the floating IP that have been applied by other users, it cannot be recovered.",
+    "tip_dissociate_into": "The instance will not reachable via public network after dissociate.It still can be visited from public network via router's SNAT"
+  },
+  "zh-CN": {
+    "allocate": "分配",
+    "associate": "绑定",
+    "dissociate_info": "解绑资源上的公网IP",
+    "floating_ip_id": "公网IP ID",
+    "target_project_id": "目标项目ID",
+    "line": "线路",
+    "tip_info_floating_ip": "可帮助用户恢复误删的公网IP；若该IP地址已经被其他用户申请了，则无法恢复。",
+    "tip_dissociate_into": "解除绑定之后云主机将不能通过公共网络使用,它仍然可以从公共网络通过路由器的SNAT访问。"
+  }
+}

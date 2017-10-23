@@ -1,0 +1,20 @@
+{
+  "title": ["enable", "public_gateway"],
+  "fields": [{
+    "type": "text",
+    "field": "en_gw",
+    "info": "en_gw"
+  }, {
+    "type": "select",
+    "field": "external_network",
+    "hide": true
+  }, {
+    "type": "tip",
+    "tip_type": "info",
+    "field": "info_en_gw"
+  }],
+  "btn": {
+    "value": "enable",
+    "disabled": false
+  }
+}

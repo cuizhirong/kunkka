@@ -1,0 +1,66 @@
+{
+  "tabs": [{
+    "name": ["port"],
+    "key": "port",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["delete"],
+    "key": "delete",
+    "disabled": true,
+    "type": "delete",
+    "icon": "delete"
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "port_id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["ip", "address"],
+      "key": "ip_address"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }, {
+        "name": ["n/a"],
+        "key": "n/a",
+        "filterBy": "N/A"
+      }, {
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
+      }]
+    }, {
+      "title": ["project", "id"],
+      "key": "project"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

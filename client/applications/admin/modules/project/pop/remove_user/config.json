@@ -1,0 +1,23 @@
+{
+  "title": ["remove", "user"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "project",
+    "icon_type": "project",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "user",
+    "icon_type": "user",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "role",
+    "is_warning": true
+  }],
+  "btn": {
+    "value": "remove",
+    "type": "delete",
+    "disabled": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": ["join", "user-group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user",
+    "icon_type": "user"
+  }, {
+    "type": "select",
+    "field": "user-group",
+    "empty_text": {
+      "info": "no_group"
+    }
+  }],
+  "btn": {
+    "value": "join",
+    "disabled": true
+  }
+}

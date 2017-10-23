@@ -1,0 +1,105 @@
+@import "../../../style/index.less";
+
+@strong_color: @color_delete;
+
+.halo-pop-com-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-left: 40px;
+  margin-top: 4px;
+  .title {
+    width: 100%;
+    height: 20px;
+    list-height: 20px;
+    >strong {
+      color: @strong_color
+    }
+  }
+  .select-all {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    box-sizing: border-box;
+    align-items: center;
+  }
+  .select-field {
+    margin-top: 4px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    min-height: 40px;
+    max-height: 100px;
+    background-color: #f1f1f1;
+    overflow: auto;
+    box-sizing: border-box;
+    .checkbox-wrapper {
+      display: flex;
+      aligin-items: center;
+      width: 96px;
+      height: 20px;
+      line-height: 20px;
+      padding-right: 4px;
+      margin-bottom: 10px;
+      input {
+        width: 18px;
+        height: 20px;
+        margin-top: 2px;
+      }
+      div {
+        width: 78px;
+        height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .hr {
+    margin-top: 10px;
+    width: 100%;
+    height: 2px;
+    background-color: #f1f1f1;
+  }
+  .select-filter {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px 10px 0 10px;
+    box-sizing: border-box;
+    align-items: center;
+    .title {
+      width: 100%;
+      height: 20px;
+      line-height: 20px;
+      color: #9d9d9d;
+    }
+    .filter {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      height: auto;
+      .label {
+        width: 60px;
+        height: 100%;
+        line-height: 40px;
+      }
+      .content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        .calendar-box {
+          margin-top: 4px;
+          margin-left: 2px;
+        }
+      }
+    }
+  }
+}

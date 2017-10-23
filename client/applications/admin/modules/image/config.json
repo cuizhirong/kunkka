@@ -1,0 +1,101 @@
+{
+  "tabs": [{
+    "name": ["public_image"],
+    "key": "image",
+    "default": true
+  }, {
+    "name": ["shared_image"],
+    "key": "shared-image"
+  }],
+  "btns": [{
+    "value": ["create", "image"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["edit", "image"],
+    "key": "edit_image",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "filter_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "image_id"]
+    }]
+  }, {
+    "group_key": "filter_type",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "image_name"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "key": "size"
+    }, {
+      "title": ["type"],
+      "key": "image_type",
+      "dataIndex": "image_type"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "active"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }, {
+      "title": ["visibility"],
+      "dataIndex": "visibility",
+      "key": "visibility"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["related_instance"],
+        "key": "instance"
+      }]
+    }
+  }
+}

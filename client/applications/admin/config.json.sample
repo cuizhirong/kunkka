@@ -1,0 +1,97 @@
+{
+  "modules": [{
+    "title": "compute_service",
+    "items": [
+      "host",
+      "host-overview",
+      "instance",
+      "host-aggregates",
+      "availability-zones",
+      "instance-restore",
+      "flavor",
+      "image",
+      "shared-image",
+      "snapshot-type"
+    ]
+  }, {
+    "title": "storage_service",
+    "items": [
+      "volume",
+      "volume-type",
+      "qos-spec",
+      "snapshot"
+    ]
+  }, {
+    "title": "network_service",
+    "items": [
+      "network",
+      "subnet",
+      "router",
+      "floating-ip",
+      "port"
+    ]
+  }, {
+    "title": "keystone",
+    "items": [
+      "domain",
+      "project",
+      "user",
+      "user-group",
+      "role"
+    ]
+  }, {
+    "title": "system-information",
+    "items": [
+      "system-information",
+      "compute-services",
+      "block-storage-services",
+      "network-agents",
+      "orchestration-services"
+    ]
+  }, {
+    "title": "setting-mgmt",
+    "items": [
+      "setting-mgmt"
+    ]
+  }],
+  "default_module": "host",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "host-overview",
+    "link": "host"
+  }, {
+    "key": "instance-restore",
+    "link": "instance"
+  }, {
+    "key": "availability-zones",
+    "link": "host-aggregates"
+  }, {
+    "key": "shared-image",
+    "link": "image"
+  }, {
+    "key": "subnet",
+    "link": "network"
+  }, {
+    "key": "volume-type",
+    "link": "volume"
+  }, {
+    "key": "qos-spec",
+    "link": "volume"
+  }, {
+    "key": "compute-services",
+    "link": "system-information"
+  }, {
+    "key": "block-storage-services",
+    "link": "system-information"
+  }, {
+    "key": "network-agents",
+    "link": "system-information"
+  }, {
+    "key": "orchestration-services",
+    "link": "system-information"
+  }],
+  "theme": "default"
+}

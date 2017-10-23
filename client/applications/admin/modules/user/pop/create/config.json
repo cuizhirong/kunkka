@@ -1,0 +1,48 @@
+{
+  "title": [],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "password",
+    "input_type": "password",
+    "required": true,
+    "tip_info": "pwd_tip"
+  }, {
+    "type": "input",
+    "field": "confirm_password",
+    "input_type": "password",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "domain",
+    "hide": true
+  }, {
+    "type": "input",
+    "field": "email"
+  }, {
+    "type": "textarea",
+    "field": "describe",
+    "value": ""
+  }, {
+    "type": "checkbox",
+    "field": "crt_user_project",
+    "checked": false,
+    "has_label": true
+  }, {
+    "type": "input",
+    "field": "project_name",
+    "hide": true
+  }, {
+    "type": "select",
+    "field": "role",
+    "hide": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

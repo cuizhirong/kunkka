@@ -1,0 +1,17 @@
+{
+  "title": ["dissociate", "floating_ip"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance"
+  }, {
+    "type": "select",
+    "data": [],
+    "field": "floating_ip",
+    "icon_type": "floating-ip"
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}

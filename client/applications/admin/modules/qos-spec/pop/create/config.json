@@ -1,0 +1,27 @@
+{
+  "title": ["create", "qos-spec"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "consumer",
+    "data": [{
+      "id": "back-end",
+      "name": "back-end"
+    }, {
+      "id": "front-end",
+      "name": "front-end"
+    }, {
+      "id": "both",
+      "name": "both"
+    }],
+    "value": "back-end"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": ["deactivate", "user"],
+  "fields": [{
+    "type": "text",
+    "field": "de_user_info",
+    "info": ""
+  }],
+  "btn": {
+    "value": "disable",
+    "disabled": false
+  }
+}

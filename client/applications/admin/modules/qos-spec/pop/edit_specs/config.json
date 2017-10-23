@@ -1,0 +1,11 @@
+{
+  "title": ["edit", "specs"],
+  "fields": [{
+    "type": "key_value_table",
+    "field": "specs",
+    "hasOperation": true
+  }],
+  "btn": {
+    "value": "confirm"
+  }
+}

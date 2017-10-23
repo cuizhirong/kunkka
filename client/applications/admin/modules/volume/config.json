@@ -1,0 +1,135 @@
+{
+  "tabs": [{
+    "name": ["volume"],
+    "key": "volume",
+    "default": true
+  }, {
+    "name": ["volume-type"],
+    "key": "volume-type"
+  }, {
+    "name": ["qos-spec"],
+    "key": "qos-spec"
+  }],
+  "btns": [{
+    "value": ["dissociate", "related"],
+    "key": "dissociate",
+    "icon": "dissociate",
+    "disabled": true
+  }, {
+    "value": ["export", "csv"],
+    "key": "export_csv",
+    "icon": "download",
+    "disabled": true
+  }, {
+    "value": ["manage", "volume"],
+    "key": "manage_volume",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "volume_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "volume", "id"]
+    }]
+  }, {
+      "group_key": "all_tenant",
+      "items": [{
+        "type": "select",
+        "key": "status",
+        "default": ["all", "status"]
+      }, {
+        "type": "input",
+        "key": "name",
+        "placeholder": ["pls_enter", "volume", "name"]
+      }]
+    }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["hosts"],
+      "key": "hosts"
+    }, {
+      "title": ["size"],
+      "key": "size"
+    }, {
+      "title": ["type"],
+      "key": "type"
+    }, {
+      "title": ["project", "id"],
+      "dataIndex": "os-vol-tenant-attr:tenant_id",
+      "key": "project_id"
+    }, {
+      "title": ["user", "id"],
+      "dataIndex": "user_id",
+      "key": "user_id"
+    }, {
+      "title": ["shared"],
+      "key": "shared"
+    }, {
+      "title": ["attributes"],
+      "key": "attributes"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }, {
+        "name": ["in-use"],
+        "key": "in-use",
+        "filterBy": "in-use"
+      }, {
+        "name": ["error"],
+        "key": "error",
+        "filterBy": "error"
+      }, {
+        "name": ["error_deleting"],
+        "key": "error_deleting",
+        "filterBy": "error_deleting"
+      }, {
+        "name": ["detaching"],
+        "key": "detaching",
+        "filterBy": "detaching"
+      }]
+    }, {
+      "title": ["created", "time"],
+      "dataIndex": "created_at",
+      "type": "time",
+      "key": "created_time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["monitor"],
+        "key": "monitor"
+      }]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "title": ["add_user_grp"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "project",
+    "icon_type": "project",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "user_grp_id",
+    "required": true
+  }, {
+    "type": "select_group",
+    "field": "role",
+    "empty_text": {
+      "info": "no_role"
+    },
+    "hide": true
+  }],
+  "btn": {
+    "value": "add",
+    "disabled": true
+  }
+}

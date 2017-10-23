@@ -1,0 +1,63 @@
+{
+  "tabs": [{
+    "name": ["role"],
+    "key": "role",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "role"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "role"],
+    "key": "modify_role",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "role",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "role", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "role", "name"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 2,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["id"],
+      "dataIndex": "id",
+      "key": "id"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": []
+    }
+  }
+}

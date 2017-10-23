@@ -1,0 +1,32 @@
+{
+  "en": {
+    "added": "Been added",
+    "available_hosts": "Available Hosts",
+    "available_metadata": "Available Metadata",
+    "custom": "Customized",
+    "exist_metadata": "Exist Metadata",
+    "manage_hosts": "Manage Hosts",
+    "metadata": "Metadata",
+    "metadata_tip": "You can specify the metadata of the resource by moving the left item to the right. The metadata definition in the Glance metadata directory (Metadata, Catalog) is on the left. Use the customize option to add metadata.",
+    "metadata_tip_holder": "Click on each entry to get the description",
+    "nodata": "No selected item",
+    "please_enter_correct": "Please enter correctly",
+    "update": "Update",
+    "update_metadata": "Update Metadata"
+  },
+  "zh-CN": {
+    "added": "已添加",
+    "available_hosts": "可用主机",
+    "available_metadata": "可用元数据",
+    "custom": "定制",
+    "exist_metadata": "已存在的元数据",
+    "manage_hosts": "管理主机",
+    "metadata": "元数据",
+    "metadata_tip": "你可以通过把左侧的条目移到右侧来指定资源的元数据。左侧是Glance元数据目录（Metadata Catalog）里的元数据定义。使用'定制'选项来增加元数据。",
+    "metadata_tip_holder": "点击每个条目来获取描述",
+    "nodata": "没有选中的数据",
+    "please_enter_correct": "请按正确格式输入",
+    "update": "更新",
+    "update_metadata": "更新元数据"
+  }
+}

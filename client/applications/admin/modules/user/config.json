@@ -1,0 +1,112 @@
+{
+  "tabs": [{
+    "name": ["user"],
+    "key": "user",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "user"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "user"],
+    "key": "modify_user",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "width": 160,
+      "items": [{
+        "items": [{
+          "title": ["reset", "password"],
+          "key": "reset_password",
+          "disabled": true
+        }, {
+          "title": ["modify", "main", "project"],
+          "key": "modify_project",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["activate", "user"],
+          "key": "activate_user",
+          "disabled": true
+        }, {
+          "title": ["deactivate", "user"],
+          "key": "deactivate_user",
+          "disabled": true
+        }]
+      }, {
+        "items": [{
+          "title": ["delete"],
+          "key": "delete",
+          "danger": true,
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "filter": [{
+    "group_key": "user",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "user", "id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "user", "name"]
+    }, {
+      "type": "select",
+      "key": "domain_id"
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["user_name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "width": 130,
+      "sort": true
+    }, {
+      "title": ["email"],
+      "dataIndex": "email",
+      "key": "email"
+    }, {
+      "title": ["main", "project"],
+      "dataIndex": "",
+      "key": "project"
+    }, {
+      "title": ["status"],
+      "dataIndex": "",
+      "key": "status"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }, {
+        "name": ["role"],
+        "key": "role"
+      }]
+    }
+  }
+}

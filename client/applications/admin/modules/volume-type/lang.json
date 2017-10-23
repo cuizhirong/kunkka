@@ -1,0 +1,32 @@
+{
+  "en": {
+    "associate_qos_spec": "Associate QoS Spec",
+    "cipher": "Cipher",
+    "control_location": "Control Location",
+    "create_encryption": "Create Encryption",
+    "encryption": "Encryption ",
+    "false": "False",
+    "information": "Information ",
+    "is_public": "Public",
+    "key_size": "Key Size (bits)",
+    "provider": "Provider",
+    "true": "True",
+    "volume_type_extra_specs": "Extra Specs",
+    "volume_type_public": "Public"
+  },
+  "zh-CN": {
+    "associate_qos_spec": "关联QoS规则",
+    "cipher": "Cipher",
+    "control_location": "控制地点",
+    "create_encryption": "创建加密",
+    "encryption": "加密",
+    "false": "否",
+    "information": "信息",
+    "is_public": "是否共享",
+    "key_size": "密钥大小(bits)",
+    "provider": "提供者",
+    "true": "是",
+    "volume_type_extra_specs": "扩展规格",
+    "volume_type_public": "共有"
+  }
+}

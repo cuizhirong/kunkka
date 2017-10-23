@@ -1,0 +1,19 @@
+{
+  "title": ["modify", "main", "project"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user",
+    "icon_type": "user",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "project",
+    "tip_info": "enter_project_tip",
+    "input-type": "text",
+    "require": true
+  }],
+  "btn": {
+    "value": "modify",
+    "disabled": true
+  }
+}
