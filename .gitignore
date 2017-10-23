@@ -53,11 +53,6 @@ client/libs/charts/output.js
 client/libs/charts/output.js.map
 
 # external modules
-client/applications/*
-server/api/**/
-server/drivers/**/
-server/plugins/**/
-package.json
 config.json
 
 client/assets/**/
