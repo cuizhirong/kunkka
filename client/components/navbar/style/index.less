@@ -24,20 +24,20 @@
     background-repeat: no-repeat;
   }
 
-  > ul.links {
-    float: right;
-    margin-right: 30px;
+  > ul.left,
+  > ul.right {
     > li {
       float: left;
       position: relative;
       padding: 0 16px;
       cursor: pointer;
       .link-title {
+        font-size: 12px;
         color: #fff;
         height: @navbar_height;
         line-height: @navbar_height;
         > i{
-          font-size: 16px;
+          font-size: 12px;
           margin-right: 8px;
         }
       }
@@ -75,6 +75,7 @@
         }
       }
 
+      &.selected,
       &:hover {
         background-color: @navbar_link_hover_bg_color;
         .link-dropdown {
@@ -82,5 +83,23 @@
         }
       }
     }
+
+    > li.big {
+      .link-title {
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  > ul.left {
+    float: left;
+    margin-left: 210px;
+  }
+
+  > ul.right {
+    float: right;
+    margin-right: 30px;
   }
 }

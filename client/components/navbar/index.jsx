@@ -14,6 +14,14 @@ class NavBar extends React.Component {
     return false;
   }
 
+  onSwitch(k) {
+    if (k === HALO.application.current_application) {
+      return false;
+    } else {
+      window.location = '/' + k;
+    }
+  }
+
   render() {
     let HALO = this.props.HALO;
     let { region, project, setting } = this.props;
@@ -45,7 +53,7 @@ class NavBar extends React.Component {
     return (
       <div className="halo-com-navbar">
         <div className="logo" style={logo}></div>
-        <ul className="links">
+        <ul className="left">
           {
             region ?
               <li>
@@ -53,9 +61,11 @@ class NavBar extends React.Component {
                   <i className="glyphicon icon-region"></i>
                   <span ref="name">{currentRegionName}</span>
                 </div>
-                <div className="link-dropdown">
-                  <Regions />
-                </div>
+                {
+                  HALO.region_list.length > 1 ? <div className="link-dropdown">
+                    <Regions />
+                  </div> : null
+                }
               </li> :
               null
           }
@@ -66,15 +76,33 @@ class NavBar extends React.Component {
                   <i className="glyphicon icon-project"></i>
                   <span ref="name">{currentProjectName}</span>
                 </div>
-                <div className="link-dropdown">
-                  <Projects />
-                </div>
+                {
+                  HALO.user.projects.length > 1 ? <div className="link-dropdown">
+                    <Projects />
+                  </div> : null
+                }
               </li> :
               null
           }
+        </ul>
+        <ul className="right">
+          {
+            HALO.application.application_list.map((m) => {
+              let k = Object.keys(m)[0];
+              let currentApp = HALO.application.current_application;
+              return (
+                <li key={k} onClick={this.onSwitch.bind(this, k)} className={currentApp === k ? 'small selected' : 'small'}>
+                  <div className="link-title">
+                    <i className={'glyphicon icon-g-' + k}></i>
+                    <span className="user-name">{m[k]}</span>
+                  </div>
+                </li>
+              );
+            })
+          }
           {
             setting ?
-              <li>
+              <li className="big">
                 <div className="link-title">
                   <i className="glyphicon icon-avatar"></i>
                   <span className="user-name">{HALO.user.username}</span>

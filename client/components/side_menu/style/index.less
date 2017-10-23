@@ -1,86 +1,19 @@
 @import "../../../style/index.less";
 
-@top_menu_bg_color: #3c4649;
-@top_menu_item_hover_bg_color: #343d40;
-@top_menu_item_selected_bg_color: #00afc8;
-@sub_menu_bg_color: #f6f6f6;
+@sub_menu_item_selected_bg_color: @color_info;
+@sub_menu_bg_color: @color_grey_900;
 
 .halo-com-menu {
   display: flex;
   position: relative;
   flex: 1;
-  .fixed-width(300px);
-
-  .scroll-pane {
-    position: absolute;
-    width: 8px;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    opacity: 0;
-    transition: .2s;
-    border-radius: 5px;
-    z-index: 100;
-    > .scroll-slider {
-      background: rgba(255,255,255,.5);
-      position: relative;
-      margin : 0 1px;
-      border-radius: 3px;
-      cursor: default;
-    }
-  }
-
-  > .top-menu {
-    float: left;
-    position: relative;
-    width: 120px;
-    max-width: 120px;
-    min-width: 120px;
-    color: #fff;
-    background-color: @top_menu_bg_color;
-    overflow-x: hidden;
-    overflow-y: auto;
-    z-index: 5;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    &:hover > .scroll-pane,
-    .scroll-pane.active {
-      opacity: 1;
-    }
-
-    > ul {
-      > li {
-        height: 44px;
-        line-height: 44px;
-        font-size: 14px;
-        padding: 0 0 0 16px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
-        > i {
-          margin-right: 8px;
-        }
-
-        &:hover {
-          background-color: @top_menu_item_hover_bg_color;
-          cursor: pointer;
-        }
-        &.selected {
-          background-color: @top_menu_item_selected_bg_color;
-          cursor: default;
-        }
-      }
-    }
-  }
+  .fixed-width(200px);
 
   > .sub-menu {
     position: relative;
-    width: 180px;
-    min-width: 180px;
-    max-width: 180px;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
     overflow-x: hidden;
     overflow-y: auto;
     background-color: @sub_menu_bg_color;
@@ -88,25 +21,31 @@
     &::-webkit-scrollbar {
       display: none;
     }
-    > .scroll-pane {
-      > .scroll-slider {
-        background: rgba(0,0,0,.3);
-      }
-    }
-
-    &:hover > .scroll-pane,
-    .scroll-pane.active {
-      opacity: 1;
-    }
 
     > ul.menu {
       background-color: @sub_menu_bg_color;
       border: 0;
-      .menu-item-selected {
-        border-top: 1px solid #fff;
-        border-bottom: 1px solid #fff;
+      li > div > h6 {
+        padding: 16px 30px 8px;
+      }
+      li > div > ul > li {
+        padding-left: 30px;
+        color: #fff;
+        height: 40px;
+        line-height: 40px;
+        font-weight: 200;
+        border: none;
+        &:hover {
+          background-color: @color_grey_800;
+        }
+        &.menu-item-selected {
+          background-color: @sub_menu_item_selected_bg_color;
+        }
       }
     }
   }
+}
 
+#main {
+  margin-left: -20px;
 }
