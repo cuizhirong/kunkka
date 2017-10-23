@@ -1,0 +1,21 @@
+{
+  "modules": [{
+    "title": "account_bill",
+    "items": [
+      "bill-overview",
+      "billing-record"
+    ]
+  }, {
+    "title": "bill_mgmt",
+    "items": [
+      "price-mgmt"
+    ]
+  }],
+  "default_module": "bill-overview",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [],
+  "theme": "default"
+}

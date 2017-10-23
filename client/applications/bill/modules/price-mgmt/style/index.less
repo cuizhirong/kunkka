@@ -1,0 +1,29 @@
+@import "../../../style/theme.less";
+
+@orange: @color_warning;
+@text_gray: @color_font_700;
+
+.halo-module-price-mgmt {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+
+  .halo-module-price-mgmt-price {
+    span {
+      color: @text_gray;
+    }
+  }
+
+  .table {
+    .table-body {
+      .row {
+        div {
+          .orange {
+            color: @orange;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}

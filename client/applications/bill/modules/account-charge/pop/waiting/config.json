@@ -1,0 +1,12 @@
+{
+  "title": ["waiting_payment"],
+  "fields": [{
+    "type": "tip",
+    "field": "tip_payment",
+    "tip_type": "success"
+  }],
+  "btn": {
+    "value": "finish_payment",
+    "disabled": false
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "tabs": [{
+    "name": ["charge-record"],
+    "key": "charge-record",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["account-charge"],
+    "key": "account-charge",
+    "icon": "account-charge",
+    "disabled": false
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+}

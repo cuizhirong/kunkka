@@ -1,0 +1,26 @@
+{
+  "en": {
+    "by_day": "Day",
+    "by_month": "Month",
+    "end_time": "End Time",
+    "from": "From",
+    "loading": "loading...",
+    "query": "Query",
+    "recent_consumption_record": "Recent consumption record",
+    "start_time": "Start Time",
+    "sum": "Sum",
+    "to": "To"
+  },
+  "zh-CN": {
+    "by_day": "按天",
+    "by_month": "按月",
+    "end_time": "结束时间",
+    "from": "从",
+    "loading": "加载中...",
+    "query": "查询",
+    "recent_consumption_record": "最近消费记录",
+    "start_time": "开始时间",
+    "sum": "金额",
+    "to": "到"
+  }
+}
