@@ -3,7 +3,6 @@ require('./style/index.less');
 const Echarts = require('echarts');
 const React = require('react');
 const {Tab} = require('client/uskin/index');
-let count = 0;
 
 class ChartLine extends React.Component {
   constructor(props) {
@@ -16,7 +15,6 @@ class ChartLine extends React.Component {
       tabItems: props.tabItems ? props.tabItems : [],
       start: props.start
     };
-    count ++;
   }
 
   componentDidMount() {
@@ -54,7 +52,6 @@ class ChartLine extends React.Component {
       };
       this.loadingChart(obj);
     }
-    count ++;
   }
 
   componentDidUpdate() {
@@ -63,7 +60,7 @@ class ChartLine extends React.Component {
 
   loadingChart(obj) {
     obj.data.forEach((ds, i) => {
-      let chart = document.getElementById('line-chart' + i + count);
+      let chart = document.getElementById('line-chart' + i);
       let myChart = Echarts.init(chart);
       let subText = this.props.__.unit + '(' + ds.unit + '), ' + this.props.__.interval + this.state.granularity + 's';
       myChart.showLoading('default', {
@@ -82,7 +79,16 @@ class ChartLine extends React.Component {
   renderLineChart(data, granularity) {
     if (data.length !== 0) {
       data.forEach((datas, i) => {
-        this.renderChart(datas.yAxisData, datas.xAxis, 'line-chart' + i + count, datas.unit, granularity, datas.title);
+        let para1 = document.getElementById('line-chart' + i);
+        let parent = para1.parentNode;
+        let child = para1.parentNode.childNodes[0];
+        parent.removeChild(child);
+        let div = document.createElement('div');
+        div.id = 'line-chart' + i;
+        div.key = i;
+        div.className = 'chart';
+        parent.appendChild(div);
+        this.renderChart(datas.yAxisData, datas.xAxis, 'line-chart' + i, datas.unit, granularity, datas.title);
       });
     }
   }
@@ -182,10 +188,10 @@ class ChartLine extends React.Component {
             {this.props.children}
             <Tab items={tabItems} type="sm" onClick={this.clickTabs.bind(this)}/>
           </div>
-          <div>
+          <div id="parent">
             {chartData.map((charts, i) => {
               return (
-                <div id={'line-chart' + i + count} key={i} className="chart">
+                <div id={'line-chart' + i} key={i} className="chart">
                 </div>
               );
             })}
