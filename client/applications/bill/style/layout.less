@@ -27,9 +27,18 @@ body,
       .fixed-width(296px);
     }
     #main {
+      position: relative;
       flex: 1;
-      display: flex;
       z-index: 8;
+      .inner {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
     }
   }
 }
