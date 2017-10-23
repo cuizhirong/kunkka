@@ -1,0 +1,206 @@
+@line_bg_gray: @color_grey;
+@line_text_gray: @color_grey_700;
+@input_bg_color: @color_disabled_400;
+@input_border_active: @color_info;
+@input_font_size: @color_font_700;
+@psw_eye_selected_color: @color_grey_800;
+@psw_input_danger_border_color: @color_delete;
+@login_submit_bg: @color_info;
+@login_submit_active_bg: darken(@color_info, 3%);
+
+body {
+  width: 100%;
+  height: 100%;
+  background: url(/static/assets/login/login_bg.png) center center no-repeat;
+  background-size: cover;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  .header {
+    flex: 1;
+  }
+  .content {
+    position: relative;
+    margin: 0 auto;
+    width: 360px;
+    height: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden;
+    transition: all 0.5s;
+  }
+  .footer {
+    flex: 2;
+    min-height: 80px;
+  }
+}
+
+.content {
+  .img-wrapper {
+    margin-top: 18px;
+    text-align: center;
+    img {
+      height: 80px;
+    }
+  }
+
+  .input-wrapper {
+    position: relative;
+    margin-top: 18px;
+    padding: 0 52px;
+    input {
+      display: block;
+      padding: 4px 10px;
+      width: 234px;
+      height: 26px;
+      line-height: 18px;
+      font-size: 14px;
+      border: none;
+      border: 1px solid @line_text_gray;
+      outline: none;
+      &:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+      }
+      &:hover,
+      &:focus {
+        border: 1px solid @input_border_active;
+      }
+      &.error {
+        border: 1px solid #ef5665;
+      }
+    }
+    .icon-eye {
+      position: absolute;
+      top: 60px;
+      right: 64px;
+      margin-left: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      color: @psw_eye_selected_color;
+      &:hover,
+      &.selected {
+        color: @input_border_active;
+      }
+    }
+    .icon-eye:hover + input {
+      border-color: @input_border_active;
+    }
+    .icon-eye:hover + input.error {
+      border-color: @psw_input_danger_border_color;
+    }
+    input:not(first-child) {
+      margin-top: 14px;
+    }
+    input[type="submit"] {
+      background: none;
+      background-color: @login_submit_bg;
+      border-color: @login_submit_bg;
+      height: 30px;
+      line-height: 2px;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      &:hover {
+        background-color: @login_submit_active_bg;
+        border-color: @login_submit_active_bg;
+        color: #fff;
+      }
+      &.disabled {
+        color: @input_font_size;
+        border-color: @input_bg_color;
+        cursor: not-allowed;
+        background-color: @input_bg_color;
+      }
+    }
+    .code-wrapper {
+      display: flex;
+      height: 32px;
+      background-color: #fff;
+      align-items: flex-end;
+      margin-top: 10px;
+      input {
+        width: 140px;
+        margin-right: 10px;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .img-wrapper {
+        width: 60px;
+        height: 30px;
+        margin-left: 2px;
+        background-color: #ccc;
+        img {
+          width: 60px;
+          height: 30px;
+        }
+      }
+      a {
+        margin-left: 2px;
+        display: block;
+        cursor: pointer;
+      }
+    }
+    select {
+      margin-top: 10px;
+      width: 234px;
+      height: 26px;
+      border: none;
+      border: 1px solid @line_text_gray;
+    }
+    .tip-wrapper {
+      height: 40px;
+      font-size: 14px;
+      color: #ef5665;
+      overflow: hidden;
+      .input-error {
+        margin-top: 8px;
+      }
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    .link {
+      width: 256px;
+      height: 44px;
+      margin: 14px 0 10px;
+      line-height: 44px;
+      text-align: center;
+      color: @line_text_gray;
+      border-top: 1px solid @line_text_gray;
+      a {
+        cursor: pointer;
+        color: @input_border_active;
+      }
+      span {
+        padding: 0 8px;
+      }
+    }
+  }
+
+  .find-Password {
+    height: 20px;
+    margin-top: 10px;
+    width: 100%;
+    text-align: right;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+  text-align: center;
+  justify-content: center;
+  color: #fff;
+  .footer-wrapper {
+    margin-bottom: 20px;
+  }
+}
