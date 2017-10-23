@@ -1,0 +1,36 @@
+@import "../../../style/index.less";
+
+@data_list_bg_color: #ecf0f2;
+@data_list_border_color: #e6ebee;
+
+.halo-com-modal-restore {
+  >span {
+    line-height: 14px;
+  }
+  ul.data-list {
+    padding: 20px;
+    margin-top: 16px;
+    background-color: @data_list_bg_color;
+    border: 1px solid @data_list_border_color;
+    max-height: 162px;
+    overflow-y: auto;
+
+    > li {
+      width: 50%;
+      line-height: 18px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: middle;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow:ellipsis;
+
+      .glyphicon {
+        margin-right: 8px;
+      }
+    }
+  }
+  .tip-row {
+    margin-top: 18px;
+  }
+}

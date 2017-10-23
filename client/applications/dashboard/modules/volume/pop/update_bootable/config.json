@@ -1,0 +1,12 @@
+{
+  "title": ["update_bootable"],
+  "fields": [{
+    "type": "text",
+    "field": "bootable_status",
+    "info": "bootable_status"
+  }],
+  "btn": {
+    "value": "update",
+    "disabled": false
+  }
+}

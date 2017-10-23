@@ -1,0 +1,30 @@
+{
+  "title": ["update", "tunnel"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "tunnel_type",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "remote_ip",
+    "required": true,
+    "tip_info": "remote_tip"
+  }, {
+    "type": "input",
+    "field": "key",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "target_network",
+    "required": true,
+    "tip_info": "target_tip"
+  }],
+  "btn": {
+    "value": "update",
+    "disabled": false
+  }
+}

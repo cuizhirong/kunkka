@@ -1,0 +1,20 @@
+{
+  "en": {
+    "ike": "IKE",
+    "ipsec": "IPsec",
+    "auth_algorithm": "Auth Algorithm",
+    "encryption_algorithm": "Encryption Algorithm",
+    "ike_version": "IKE Version",
+    "pfs": "PFS",
+    "sa_lifetime": "SA Lifetime"
+  },
+  "zh-CN": {
+    "ike": "IKE",
+    "ipsec": "IPsec",
+    "auth_algorithm": "验证算法",
+    "encryption_algorithm": "加密算法",
+    "ike_version": "IKE版本",
+    "pfs": "完整前向保密",
+    "sa_lifetime": "SA生存时间"
+  }
+}

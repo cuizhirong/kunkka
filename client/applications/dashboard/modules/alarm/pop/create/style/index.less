@@ -1,0 +1,342 @@
+@import "../../../../../style/theme.less";
+
+@create_alarm_label_strong_color: @color_delete;
+@create_alarm_add_notification_color: @color_info;
+@create_alarm_notification_list_bg_color: @color_grey_400;
+@craete_alarm_notification_remove_color: @color_font_700;
+
+@select_table_loading_color: @color_font_800;
+@select_table_title_bg: @color_cancel;
+@select_table_item_hover_bg: @color_info_100;
+@select_table_item_selected_bg: @color_info_200;
+
+.halo-com-modal-create-alarm {
+  &.modal-bd {
+    padding: 0 !important;
+
+    .row {
+      display: flex;
+      &:not(:first-child) {
+        margin-top: 12px;
+      }
+
+      .modal-label {
+        .fixed-width(100px);
+        height: 32px;
+        line-height: 32px;
+        text-align: right;
+        margin-right: 15px;
+        > strong {
+          color: @create_alarm_label_strong_color;
+        }
+
+        &.long-label {
+          .fixed-width(134px);
+        }
+      }
+
+      .modal-data {
+        flex: 1;
+
+        &.modal-data-long {
+          > * {
+            width: 200px;
+          }
+        }
+
+        &.modal-data-utilization {
+          > select {
+            width: 40px;
+            margin-right: 12px;
+          }
+          > input {
+            width: 20px;
+            margin-right: 4px;
+          }
+        }
+
+        &.modal-data-for {
+          > input {
+            width: 40px;
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+
+    .step-box {
+      width: 100%;
+      height: 60px;
+      padding-top: 30px;
+      > .steps {
+        margin: 0 auto;
+      }
+    }
+
+    .slide-box {
+      width: 300%;
+      height: 380px;
+      position: relative;
+      transition: left .3s;
+
+      &.page-0 {
+        left: 0%;
+      }
+      &.page-1 {
+        left: -100%;
+      }
+      &.page-2 {
+        left: -200%;
+      }
+
+      .page {
+        box-sizing: border-box;
+        float: left;
+        width: 33.3333%;
+        height: 100%;
+        padding: 30px 36px;
+
+        &.select-metric {
+          display: flex;
+          .select-box {
+            flex: 1;
+            width: 260px;
+            min-width: 260px;
+            max-width: 260px;
+            margin-right: 20px;
+            .select-table {
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              overflow: auto;
+              .select-table-content {
+                flex: 1;
+                overflow: auto;
+                user-select: none;
+                .loading-box {
+                  padding-top: 90px;
+                  text-align: center;
+                  .icon-loading {
+                    font-size: 36px;
+                    height: 36px;
+                    line-height: 36px;
+                    color: @select_table_loading_color;
+                    .loading-ani();
+                  }
+                }
+
+                .select-table-item {
+                  line-height: 20px;
+                  .select-table-item-title {
+                    cursor: pointer;
+                    height: 40px;
+                    line-height: 40px;
+                    padding-left: 16px;
+                    background-color: @select_table_title_bg;
+                    border-top: 1px solid #fff;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    > * {
+                      height: 40px;
+                      line-height: 40px;
+                    }
+                    > .icon-type {
+                      margin-right: 4px;
+                    }
+                    > span {
+                      display: inline-block;
+                      width: 180px;
+                      margin-right: 14px;
+                    }
+                    &:hover,
+                    &.selected {
+                      > .icon-type,
+                      > span {
+                        font-weight: 600;
+                      }
+                    }
+                  }
+                  .select-table-item-content {
+                    &.fold {
+                      display: none;
+                    }
+                    > ul {
+                      border-left: 1px solid @select_table_title_bg;
+                      border-right: 1px solid @select_table_title_bg;
+                      border-bottom: 1px solid @select_table_title_bg;
+                      > li {
+                        padding-left: 24px;
+                        line-height: 30px;
+                        cursor: pointer;
+                        &:hover {
+                          background-color: @select_table_item_hover_bg;
+                        }
+                        &.selected {
+                          background-color: @select_table_item_selected_bg;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .chart-box {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            .granularity-box {
+              flex: 1;
+              height: 40px;
+              max-height: 40px;
+              min-height: 40px;
+              .btn-group {
+                float: right;
+              }
+            }
+            .chart-content {
+              flex: 1;
+              position: relative;
+              height: 260px;
+              > div {
+                width: 100%;
+                height: 260px;
+                position: absolute;
+              }
+              > div.no-data-msg {
+                line-height: 260px;
+                text-align: center;
+                &.hide {
+                  display: none;
+                }
+              }
+            }
+          }
+        }
+
+        &.alarm-config {
+
+          > .alarm-threshold,
+          > .alarm-preview {
+            box-sizing: border-box;
+            width: 50%;
+            height: 100%;
+            float: left;
+
+            .alarm-config-title {
+              font-size: 16px;
+              height: 10%;
+            }
+
+            .alarm-config-content {
+              height: 90%;
+              .chart-box {
+                width: 100%;
+                height: 200px;
+              }
+            }
+          }
+
+          > .alarm-threshold {
+            padding-right: 20px;
+          }
+          > .alarm-preview {
+            .alarm-config-content {
+              height: 90%;
+              position: relative;
+              > div {
+                width: 100%;
+                height: 200px;
+              }
+              > div.no-data-msg {
+                position: absolute;
+                line-height: 200px;
+                text-align: center;
+                &.hide {
+                  display: none;
+                }
+              }
+            }
+          }
+        }
+
+        &.set-notification {
+          ul.notification-list {
+            max-height: 250px;
+            overflow: auto;
+
+            li {
+              background-color: @create_alarm_notification_list_bg_color;
+              border-radius: 2px;
+              margin-bottom: 12px;
+              padding: 10px 20px;
+              user-select: none;
+
+              * {
+                margin-right: 4px;
+              }
+
+              > select {
+                background-color: #fff;
+              }
+
+              > .create {
+                margin-left: 8px;
+                color: @create_alarm_add_notification_color;
+                cursor: pointer;
+              }
+
+              > i.icon-remove {
+                float: right;
+                margin-top: 9px;
+                color: @craete_alarm_notification_remove_color;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+
+                &:hover {
+                  color: @create_alarm_label_strong_color;
+                }
+              }
+            }
+          }
+
+          .add-notification {
+            margin-top: 12px;
+            font-size: 13px;
+            color: @create_alarm_add_notification_color;
+            cursor: pointer;
+            user-select: none;
+
+            i {
+              font-weight: 600;
+              margin-right: 4px;
+            }
+          }
+
+          .error-tip-box {
+            margin-top: 12px;
+            .tip-danger {
+              max-height: 70px;
+              overflow: hidden;
+              .tip-content {
+                max-height: 70px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+
+      }
+    }
+  }
+
+  &.modal-ft {
+    .left-side > * {
+      float: left;
+    }
+  }
+}

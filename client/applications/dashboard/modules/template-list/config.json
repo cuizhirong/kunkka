@@ -1,0 +1,59 @@
+{
+  "tabs": [{
+    "name": ["template-list"],
+    "key": "template-list",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["upload"],
+    "key": "upload",
+    "icon": "upload"
+  }, {
+    "value": ["download"],
+    "key": "download",
+    "icon": "download",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "name",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain"
+    }, {
+      "title": ["bytes"],
+      "dataIndex": "bytes",
+      "key": "bytes"
+    }, {
+      "title": ["last_modified"],
+      "dataIndex": "last_modified",
+      "key": "time",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title": ["rebuild", "instance"],
+  "fields": [{
+    "type": "group_select",
+    "field": "image",
+    "empty_text": {
+      "info": "no_image"
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}

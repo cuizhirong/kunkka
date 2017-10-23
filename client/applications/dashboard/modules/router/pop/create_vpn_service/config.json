@@ -1,0 +1,25 @@
+{
+  "title": ["create", "vpn_service"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "subnet",
+    "empty_text": {
+      "info": "no_subnet"
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

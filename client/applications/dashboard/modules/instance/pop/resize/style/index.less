@@ -1,0 +1,106 @@
+@import "../../../../../style/theme.less";
+
+@strong_color: @color_delete;
+@empty_text_label_color: @color_grey_800;
+
+@tip_warning_color: @color_warning;
+@tab_bg_color: @color_grey;
+@tab_hover_bg_color: @color_info_100;
+@tab_selected_bg_color: @color_info_200;
+@tab_font_color: @color_font_800;
+
+@dropdown_border_color: @color_grey;
+@dropdown_overview_border_hover_color: @color_info;
+
+.halo-com-modal-resize-instance {
+  padding-left: 0 !important;
+  margin-bottom: -36px;
+
+  >div {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+
+    .modal-label {
+      .fixed-width(100px);
+      text-align: right;
+      margin-right: 15px;
+      >strong {
+        color: @strong_color;
+      }
+    }
+
+    >div:last-child {
+      flex: 1;
+    }
+  }
+
+  .name-row {
+    margin-top: -14px;
+    padding-bottom: 6px;
+    .glyphicon {
+      margin-right: 8px;
+    }
+  }
+
+  .row-dropdown {
+    .modal-data {
+      .dropdown-overview {
+        width: 553px !important;
+        height: 22px;
+        line-height: 22px;
+        padding: 4px 10px;
+        border: 1px solid @dropdown_border_color;
+        border-radius: 2px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        user-select: none;
+      }
+      .dropdown-box {
+        width: 100%;
+        .dropdown-item {
+          width: 575px;
+          &:not(:first-child) {
+            margin-top: 6px;
+          }
+          &:last-child {
+            margin-bottom: 10px;
+          }
+          .dropdown-item-data {
+            > ul {
+              display: flex;
+              > li {
+                &:last-child {
+                  margin-right: 0;
+                }
+                flex: 1;
+                max-width: 120px;
+                display: inline-block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                padding: 0 12px;
+                margin-right: 10px;
+                height: 36px;
+                line-height: 36px;
+                text-align: center;
+                background-color: @tab_bg_color;
+                color: @tab_font_color;
+                cursor: pointer;
+                user-select: none;
+                &:hover {
+                  background-color: @tab_hover_bg_color;
+                }
+                &.selected {
+                  background-color: @tab_selected_bg_color;
+                  cursor: default;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

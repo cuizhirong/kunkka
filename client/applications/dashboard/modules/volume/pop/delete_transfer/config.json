@@ -1,0 +1,10 @@
+{
+  "title": ["cancel_transfer"],
+  "fields": [{
+    "type": "text",
+    "field": "transfer_name"
+  }],
+  "btn": {
+    "value": "confirm"
+  }
+}

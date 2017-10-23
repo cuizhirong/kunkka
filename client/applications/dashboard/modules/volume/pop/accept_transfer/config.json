@@ -1,0 +1,16 @@
+{
+  "title": ["accept_transfer"],
+  "fields": [{
+    "type": "input",
+    "field": "auth_key",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "transfer_id",
+    "required": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": true
+  }
+}

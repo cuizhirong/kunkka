@@ -1,0 +1,57 @@
+{
+  "tabs": [{
+    "name": ["security", "group"],
+    "key": "security-group",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "security", "group"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["modify", "security", "group"],
+    "key": "modify",
+    "type": "modify",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["description"],
+      "dataIndex": "description",
+      "key": "desc"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "title": ["back_up"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "input",
+    "field": "container"
+  }, {
+    "type": "input",
+    "field": "description"
+  }, {
+    "type": "checkbox",
+    "field": "incremental",
+    "checked": false,
+    "has_label": true
+  }, {
+    "type": "checkbox",
+    "field": "force",
+    "checked": false,
+    "has_label": true
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

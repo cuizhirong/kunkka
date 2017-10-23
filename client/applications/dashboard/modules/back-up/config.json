@@ -1,0 +1,71 @@
+{
+  "tabs": [{
+    "name": ["back_up"],
+    "key": "back-up",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["restart"],
+    "key": "restart",
+    "type": "create",
+    "icon": "restart",
+    "disabled": true
+  },{
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "size"
+    }, {
+      "title": ["resource"],
+      "dataIndex": "resource",
+      "key": "resource"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["available"],
+        "key": "available",
+        "filterBy": "available"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "created_at",
+      "key": "created",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

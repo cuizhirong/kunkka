@@ -1,0 +1,22 @@
+{
+  "title": ["detach", "instance"],
+  "fields": [{
+    "type": "text",
+    "field": "detach_instance",
+    "info": "detach_instance"
+  }, {
+    "type": "icon_label",
+    "field": "port",
+    "icon_type": "port",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": ""
+  }],
+  "btn": {
+    "value": "detach",
+    "disabled": false
+  }
+}

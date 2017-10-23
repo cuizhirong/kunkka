@@ -1,0 +1,75 @@
+{
+  "modules": [{
+    "items": [
+      "overview"
+    ]
+  }, {
+    "title": "compute",
+    "items": [
+      "instance",
+      "image",
+      "instance-snapshot",
+      "keypair",
+      "ike-policy",
+      "ipsec-policy"
+    ]
+  }, {
+    "title": "network",
+    "items": [
+      "topology",
+      "network",
+      "subnet",
+      "floating-ip",
+      "router",
+      "port",
+      "security-group",
+      "loadbalancer",
+      "resource-pool",
+      "ike-policy",
+      "ipsec-policy"
+    ]
+  }, {
+    "title": "storage",
+    "items": [
+      "volume",
+      "snapshot"
+    ]
+  }, {
+    "title": "monitor",
+    "items": [
+      "alarm",
+      "notification"
+    ]
+  }, {
+    "title": "orchestration",
+    "items": [
+      "heat-list",
+      "template-resource",
+      "template-version",
+      "template-list"
+    ]
+  }],
+  "default_module": "overview",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "subnet",
+    "link": "network"
+  }, {
+    "key": "resource-pool",
+    "link": "loadbalancer"
+  }, {
+    "key": "template-version",
+    "link": "heat-list"
+  }, {
+    "key": "template-resource",
+    "link": "heat-list"
+  }],
+  "hidden": [
+    "ike-policy",
+    "ipsec-policy"
+  ],
+  "theme": "default"
+}

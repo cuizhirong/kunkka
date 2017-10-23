@@ -1,0 +1,3 @@
+# spectre
+
+Openstack project client

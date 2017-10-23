@@ -1,0 +1,105 @@
+{
+  "tabs": [{
+    "name": ["port"],
+    "key": "port",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "port"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["associate", "to", "instance"],
+    "key": "assc_instance",
+    "icon": "associate",
+    "disabled": true
+  }, {
+    "value": ["detach", "instance"],
+    "key": "detach_instance",
+    "icon": "dissociate",
+    "disabled": true
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["modify", "security", "group"],
+          "key": "modify",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete",
+          "disabled": true,
+          "danger": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["ip", "address"],
+      "dataIndex": "",
+      "key": "ip_adrs",
+      "type": ""
+    }, {
+      "title": ["subnet"],
+      "dataIndex": "",
+      "key": "subnet"
+    }, {
+      "title": ["floating_ip"],
+      "dataIndex": "",
+      "key": "floating_ip"
+    }, {
+      "title": ["related", "resource"],
+      "dataIndex": "",
+      "key": "related_resource"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }, {
+        "name": ["down"],
+        "key": "down",
+        "filterBy": "DOWN"
+      }]
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+          "name": ["description"],
+          "key": "description",
+          "default": true
+        }]
+    }
+  }
+}

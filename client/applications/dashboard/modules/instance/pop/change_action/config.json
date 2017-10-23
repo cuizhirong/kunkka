@@ -1,0 +1,16 @@
+{
+  "title": ["instance"],
+  "fields": [{
+    "type": "text",
+    "field": "text"
+  }, {
+    "type": "data_list",
+    "icon": "instance",
+    "field": "list",
+    "info": "list"
+  }],
+  "btn": {
+    "value": "ok",
+    "disabled": false
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "tabs": [{
+    "name": ["ike", "policy"],
+    "key": "ike-policy",
+    "default": true
+  }, {
+    "name": ["ipsec", "policy"],
+    "key": "ipsec-policy"
+  }],
+  "btns": [{
+    "value": ["create", "policy"],
+    "key": "crt_policy",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["auth_algorithm"],
+      "dataIndex": "auth_algorithm",
+      "key": "auth_algorithm"
+    }, {
+      "title": ["encryption_algorithm"],
+      "dataIndex": "encryption_algorithm",
+      "key": "encryption_algorithm"
+    }, {
+      "title": ["ike_version"],
+      "dataIndex": "ike_version",
+      "key": "ike_version"
+    }, {
+      "title": ["pfs"],
+      "dataIndex": "pfs",
+      "key": "pfs"
+    }, {
+      "title": ["sa_lifetime"],
+      "dataIndex": "sa_lifetime",
+      "key": "sa_lifetime"
+    }],
+    "data":[]
+  }
+}

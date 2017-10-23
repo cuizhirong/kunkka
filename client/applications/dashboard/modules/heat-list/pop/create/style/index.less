@@ -1,0 +1,192 @@
+@import "../../../../../style/theme.less";
+
+@strong_color: @color_delete;
+@textarea_border: 1px solid @color_grey;
+@textarea_hover_border_color: @color_info;
+
+@keyframes moveToSecondPage {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes moveToThreePage {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
+}
+
+@keyframes moveToFirstPage {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.modal-bd.halo-com-modal-create-stack {
+  padding: 0 !important;
+  width: 1680px;
+  height: 464px;
+  overflow: hidden;
+  line-height: 18px;
+
+  .page {
+    width: 504px;
+    height: 400px;
+    overflow-y: auto;
+    padding: 30px 36px 30px 0px;
+    min-height: 18px;
+    display: inline-block;
+    float: left;
+
+    .param {
+      margin: 20px;
+      border-bottom: @textarea_border;
+    }
+
+    &.second-page {
+      transform: translateX(-100%);
+    }
+
+    .row-resource {
+      margin-top: 20px;
+    }
+    .error-tip-box {
+      margin-top: 12px;
+      margin-left: 50px;
+      .tip-danger {
+        max-height: 70px;
+        overflow: hidden;
+        .tip-content {
+          max-height: 70px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+    .hide {
+      display: none;
+    }
+    .row {
+      display: flex;
+      &:not(:first-child) {
+        margin-top: 20px;
+      }
+
+      .modal-label {
+        .fixed-width(130px);
+        height: 32px;
+        line-height: 32px;
+        text-align: right;
+        margin-right: 15px;
+        strong {
+          color: @strong_color;
+        }
+      }
+
+      .modal-data {
+        flex: 1;
+        position: relative;
+        span {
+          line-height: 32px;
+          word-break: break-all;
+        }
+        .label {
+          line-height: 24px;
+        }
+        .eye {
+          position: absolute;
+          top: 10px;
+          left: 94%;
+          font-size: 14px;
+          &:hover {
+            color: @textarea_hover_border_color;
+            cursor: pointer;
+          }
+        }
+        select {
+          width: 100%;
+          box-sizing: border-box;
+          background-color: #fff;
+          outline: none;
+          height: 32px;
+        }
+      }
+
+      &.row-textarea {
+        textarea {
+          height: 100px;
+          line-height: 22px;
+          width: 100%;
+          border: @textarea_border;
+          padding: 4px 10px;
+          overflow: auto;
+          box-sizing: border-box;
+          resize: none;
+          &:hover,
+          &:focus {
+            border-color: @textarea_hover_border_color;
+          }
+        }
+      }
+
+      &.row-input {
+        input {
+          width: 94%;
+        }
+        input[type='checkbox'] {
+          width: 16px;
+        }
+      }
+
+      &.row-select {
+        select {
+          width: 100%;
+          box-sizing: border-box;
+          background-color: #fff;
+          outline: none;
+          height: 32px;
+        }
+      }
+    }
+  }
+
+  .move-in {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: moveToSecondPage;
+  }
+
+  .move-to-three {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: moveToThreePage;
+  }
+
+  .move-out {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    animation-name: moveToFirstPage;
+  }
+}
+
+.modal-ft.halo-com-modal-create-stack {
+  .left-side {
+    > * {
+      float: left;
+    }
+  }
+  .right-side {
+    > * {
+      clear: both;
+    }
+  }
+}

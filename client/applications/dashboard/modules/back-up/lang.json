@@ -1,0 +1,13 @@
+{
+  "en": {
+    "availability_zone": "Availability Zone",
+    "msg_restore": "Do you want to {0} {1} {2}? This action can not be restored.",
+    "restart": "restart"
+
+  },
+  "zh-CN": {
+    "availability_zone": "可用域",
+    "msg_restore": "确认要{0}以下{1}<strong>（数量:{2}）</strong>？",
+    "restart": "重启"
+  }
+}

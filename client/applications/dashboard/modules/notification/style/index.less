@@ -1,0 +1,18 @@
+@import "../../../style/theme.less";
+
+@msg_color: @color_font_400;
+@info_color: @color_info_600;
+
+.halo-module-notification {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  .msg {
+    color: @msg_color;
+    float: right;
+    line-height: 38px;
+    &:hover {
+      color: @info_color;
+    }
+  }
+}
