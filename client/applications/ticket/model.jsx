@@ -140,14 +140,16 @@ class Model extends React.Component {
         <div id="main-wrapper">
           <SideMenu items={menus} application={HALO.application} />
           <div id="main">
-            {
-              state.modules.map((m, index) => {
-                let M = modules[m];
-                if (M) {
-                  return <M key={index} params={state.params} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
-                }
-              })
-            }
+            <div className="inner">
+              {
+                state.modules.map((m, index) => {
+                  let M = modules[m];
+                  if (M) {
+                    return <M key={index} params={state.params} style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}} />;
+                  }
+                })
+              }
+            </div>
           </div>
         </div>
       </div>
