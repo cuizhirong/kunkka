@@ -1,0 +1,82 @@
+@import "../../../../../../../style/index.less";
+
+@attach_bg_color: @color_grey;
+@attach_delete: @color_delete;
+@border_color: @color_grey_600;
+
+.modal-bd {
+  padding: 36px!important;
+}
+.halo-pop-attach {
+  .attach-label {
+    margin-bottom: 20px;
+    .attach-file {
+      padding-left: 70px!important;
+      .attach {
+        margin-left: 42px;
+        padding-left: 10px;
+        height: 30px;
+        line-height: 30px;
+        text-align: left;
+        background-color: @attach_bg_color;
+        
+        &.attach-create {
+          width: 346px;
+        }
+        .error {
+          color: @attach_delete;
+        }
+        .delete {
+          float: right;
+          width: 10px;
+          height: 20px;
+          margin-top: 10px;
+          margin-right: 10px;
+        }
+        .span-create {
+          display: inline-block;
+          width: 310px;
+        }
+        i:last-child {
+          &:hover {
+            color: @attach_delete;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+  .disabled {
+    color: @attach_bg_color;
+  }
+  .attach-info {
+    margin-left: 112px;
+    color: @border_color;
+    .btn-browse {
+      float: left;
+      position: relative;
+      margin: 0 40px 40px 6px;
+      a {
+        zoom: 1;
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        cursor: pointer;
+        .upload_file {
+          float: right;
+          margin-left: 2px;
+        }
+        .myfile {
+          opacity: 0;
+          padding: 0;
+          zoom: 0;
+          position: absolute;
+          right: 0;
+          width: 130px;
+          height: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

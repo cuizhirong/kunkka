@@ -1,0 +1,8 @@
+# Style files
+**/*.css
+
+# Mac file
+.DS_Store
+
+# Config file
+/config.json

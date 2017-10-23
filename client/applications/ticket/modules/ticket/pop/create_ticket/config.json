@@ -1,0 +1,24 @@
+{
+  "title": ["create_ticket"],
+  "fields": [{
+    "type": "input",
+    "field": "title",
+    "required": true
+  }, {
+    "type": "select",
+    "field": "select_type",
+    "data": []
+  }, {
+    "type": "textarea",
+    "field": "description",
+    "required": true
+  }, {
+    "type": "adapter",
+    "field": "attach_file"
+  }],
+  "btn": {
+    "value": "create",
+    "type": "create",
+    "disabled": true
+  }
+}

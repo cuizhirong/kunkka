@@ -1,0 +1,71 @@
+{
+  "tabs": [{
+    "name": ["create_ticket"],
+    "key": "create_tickets",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create"],
+    "key": "create",
+    "icon": "create",
+    "type": "create",
+    "disabled": false
+  }, {
+    "value": ["open"],
+    "key": "open",
+    "icon": "active",
+    "disabled": true
+  }, {
+    "value": ["close"],
+    "key": "close",
+    "icon": "remove",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["title"],
+      "dataIndex": "title",
+      "key": "title",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["num"],
+      "dataIndex": "number",
+      "key": "number"
+    }, {
+      "title": ["replies"],
+      "dataIndex": "reply",
+      "key": "reply"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status",
+      "type": "status"
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "createdAt",
+      "key": "createdAt",
+      "type": "time"
+    }, {
+      "title": ["update", "time"],
+      "dataIndex": "updatedAt",
+      "key": "updatedAt",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["ticket", "description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}
