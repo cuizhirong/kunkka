@@ -30,7 +30,7 @@ configs/*server.json
 configs/index.json
 
 # Mac file
-.DS_Store
+**/.DS_Store
 
 # Ignore the dev file script.
 dev-start.sh
