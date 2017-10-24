@@ -3,6 +3,8 @@
 # Halo
 Halo is a NodeJS based OpenStack Dashboard. It provides a web dashboad to do interaction between OpenStack services including Nova, Keystone, Swift and so on.
 
+[![Build Status](https://travis-ci.org/unitedstack/halo.svg?branch=develop)](https://travis-ci.org/unitedstack/halo)
+
 ![Unitedstack dashboard](./.github/dashboard.png)
 
 ## Related Modules
