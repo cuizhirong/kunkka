@@ -60,7 +60,18 @@
     "utf-8-validate": "^1.2.1",
     "vsphere-connect": "^1.1.0",
     "winston": "^2.1.1",
-    "ws": "^1.0.1"
+    "ws": "^1.0.1",
+    "ccap": "^0.6.10",
+    "multer": "^1.1.0",
+    "node-uuid": "^1.4.7",
+    "async": "^1.5.0",
+    "json2csv": "^3.7.0",
+    "lodash": "^4.17.0",
+    "paypal-rest-sdk": "1.6.9",
+    "xml2json": "^0.9.1",
+    "mysql": "^2.10.2",
+    "superagent": "^3.5.0",
+    "sequelize": "^3.23.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
