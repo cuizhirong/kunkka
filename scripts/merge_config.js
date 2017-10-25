@@ -193,9 +193,6 @@ const generateFile = function(arr) {
 const _arr = [{
   _path: path.join(__dirname, '../configs/server.json'),
   _str: baseConfig
-}, {
-  _path: path.join(__dirname, '../package.json'),
-  _str: basePackage
 }];
 
 generateFile(_arr);
