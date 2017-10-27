@@ -2,7 +2,19 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button, Tab, Calendar} = require('client/uskin/index');
-const Chart = require('echarts');
+/**
+ * echart parts list
+ * https://github.com/ecomfe/echarts/blob/master/index/part.js
+ *
+ * wrong: const Echarts = require('echarts');
+ * right: see below
+ */
+const Chart = require('echarts/lib/echarts');
+require('echarts/lib/chart/line');
+require('echarts/lib/chart/pie');
+require('echarts/lib/component/tooltip');
+require('echarts/lib/component/title');
+
 const moment = require('moment');
 
 const request = require('./request');
@@ -189,7 +201,7 @@ class Model extends React.Component {
     });
     if(resLength < 12) {
       for(let i = 0; i < 12 - resLength; i++) {
-        xAxisHolder[i] = moment(res[0][0]).subtract(12 - resLength - i, 'months').format().slice(0, 10);
+        xAxisHolder[i] = moment(resLength === 0 ? new Date() : res[0][0]).subtract(11 - resLength - i, 'months').format().slice(0, 10);
         dataHolder[i] = 0;
       }
       xAxis = xAxisHolder.concat(xAxis);
@@ -214,7 +226,7 @@ class Model extends React.Component {
     });
     if(resLength < 31) {
       for(let i = 0; i < 31 - resLength; i++) {
-        xAxisHolder[i] = moment(res[0][0]).subtract(31 - resLength - i, 'days').format().slice(0, 10);
+        xAxisHolder[i] = moment(resLength === 0 ? new Date() : res[0][0]).subtract(30 - resLength - i, 'days').format().slice(0, 10);
         dataHolder[i] = 0;
       }
       xAxis = xAxisHolder.concat(xAxis);
