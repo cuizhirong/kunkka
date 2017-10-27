@@ -10,6 +10,8 @@ const config = require('config');
 const sessionEngine = config('sessionEngine');
 const configMysql = config('mysql');
 
+const getModuleConfig = require('./moduleConfig');
+
 const databaseName = configMysql.database;
 const tableName = 'tusk';
 const sqlOption = {
@@ -55,8 +57,18 @@ const fs = require('fs');
     });
 });
 
+// add module config
+// this is used to control whether a module is display or not
+const moduleConfig = getModuleConfig();
+initSets.push({
+  app: 'global',
+  name: 'module_config',
+  value: JSON.stringify(moduleConfig),
+  type: 'text',
+  description: '模块开关'
+});
+
 initSets.forEach(set=> set.create_at = set.update_at = '2011-11-11 11:11:11');
-console.log(initSets);
 
 let num = initSets.length;
 let count = 0;
@@ -234,6 +246,35 @@ sql.updateCache = function findAll(next) {
   });
 };
 
+sql.updateModuleConfig = (next) => {
+  sql.connection.query(`SELECT * FROM ${tableName} WHERE name = "module_config" AND app = "global"`, (err, results) => {
+    if (err) {
+      console.log(err);
+      next();
+    } else {
+      let oldModuleConfig = JSON.parse(results[0].value);
+      Object.keys(oldModuleConfig).forEach(_app => {
+        if (moduleConfig[_app] !== undefined) {
+          Object.keys(oldModuleConfig[_app]).forEach(_module => {
+            if (moduleConfig[_app][_module] !== undefined) {
+              moduleConfig[_app][_module] = oldModuleConfig[_app][_module];
+            }
+          });
+        }
+      });
+      let str = JSON.stringify(moduleConfig);
+      sql.connection.query(`UPDATE ${tableName} SET VALUE = ? WHERE app = "global" AND name = "module_config"`, [str], (e, r) => {
+        if (e) {
+          console.log(e);
+        } else {
+          console.log('update module config successfully!!!');
+        }
+        next();
+      });
+    }
+  });
+};
+
 function initTable(sets, cb) {
   sets.forEach( e => {
     sql.createOne(e, function(err, result) {
@@ -248,16 +289,20 @@ function initTable(sets, cb) {
       }
       count++;
       if (count === num) {
-        /* update cache. */
-        sql.updateCache(function() {
-          /* cut off connection to mysql. */
-          sql.connection.end(function (error) {
-            if (error){
-              console.log(error);
-              sql.connection.destroy();
-            } else {
-              console.log('All done...\nConnection as mysql cut off at threadId!', sql.connection.threadId, '\n---------------------------');
-            }
+        // update module config if exist
+        sql.updateModuleConfig(() => {
+          /* update cache. */
+          console.log('update cache');
+          sql.updateCache(function() {
+            /* cut off connection to mysql. */
+            sql.connection.end(function (error) {
+              if (error){
+                console.log(error);
+                sql.connection.destroy();
+              } else {
+                console.log('All done...\nConnection as mysql cut off at threadId!', sql.connection.threadId, '\n---------------------------');
+              }
+            });
           });
         });
       }
