@@ -7,3 +7,4 @@ git submodule update
 #npm run merge
 npm install --unsafe-perm
 npm run build --production true
+rm configs/server.json
