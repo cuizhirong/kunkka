@@ -59,6 +59,7 @@ let resourceReady = false,
 
 const log = console.log;
 const scrollBarWidth = 16;
+const MAX_CANVAS_WIDTH = 8000;
 
 class Topology {
   constructor(wp, data) {
@@ -74,8 +75,13 @@ class Topology {
     w = container.clientWidth < maxWidth ?
       maxWidth + 20 :
       container.clientWidth - (h > wp.clientHeight ? scrollBarWidth : 0);
+    w = this.correctWidth(w);
 
     utils.bind(window, 'resize', this.onResize.bind(this));
+  }
+
+  correctWidth(mw) {
+    return mw >= MAX_CANVAS_WIDTH ? MAX_CANVAS_WIDTH : mw;
   }
 
   processData(data) {
@@ -774,6 +780,7 @@ class Topology {
     }
     h = this.calcPos();
     w = container.clientWidth < maxWidth ? maxWidth + 20 : container.clientWidth;
+    w = this.correctWidth(w);
     autoscale([canvas], {
       width: w,
       height: h
@@ -789,6 +796,7 @@ class Topology {
     d = this.processData(data);
     h = this.calcPos();
     w = container.clientWidth < maxWidth ? maxWidth + 20 : container.clientWidth;
+    w = this.correctWidth(w);
     autoscale([canvas], {
       width: w,
       height: h
