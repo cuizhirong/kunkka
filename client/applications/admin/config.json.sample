@@ -51,7 +51,8 @@
   }, {
     "title": "setting-mgmt",
     "items": [
-      "setting-mgmt"
+      "setting-mgmt",
+      "module-mgmt"
     ]
   }],
   "default_module": "host",
