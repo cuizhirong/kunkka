@@ -28,7 +28,8 @@ backendApps.forEach((a) => {
 global.window = {};
 global.document = {};
 global.HALO = {configs: {
-  renderer: 'server'
+  renderer: 'server',
+  init: true
 }};
 
 module.exports = (app) => {

@@ -1,0 +1,18 @@
+{
+  "en": {
+    "admin": "Admin",
+    "bill": "Bill",
+    "dashboard": "Dashboard",
+    "labelOff": "Off",
+    "labelOn": "On",
+    "ticket": "Ticket"
+  },
+  "zh-CN": {
+    "admin": "运营平台",
+    "bill": "消费",
+    "dashboard": "控制台",
+    "labelOff": "禁用",
+    "labelOn": "激活",
+    "ticket": "工单"
+  }
+}

@@ -143,6 +143,9 @@ View.prototype = {
     HALO.application.application_list = HALO.application.application_list.map(a => {
       return {[a]: __(`shared.${a}.application_name`)};
     });
+    global.HALO = JSON.parse(JSON.stringify(HALO));
+    global.HALO.configs.renderer = 'server';
+    global.HALO.configs.init = false;
     let templateObj = this.getTemplateObj(HALO, locale, setting, __);
     res.render(this.name, templateObj);
   }

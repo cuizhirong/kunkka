@@ -1,0 +1,65 @@
+@import '../../../../../style/index.less';
+
+@tab_row_disable_bg_color: @color_grey;
+@tab_row_font_color: @color_font_800;
+@tab_row_selected_bg_color: @color_info_100;
+@tab_row_hover_bg_color: darken(@color_info_200, 10%);
+
+.halo-module-module-mgmt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px 20px;
+  overflow: hidden;
+  .up {
+    width: 100%;
+    height: 64px;
+  }
+  .down {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .tabs-mini {
+      padding-left: 10px;
+    }
+    .content {
+      flex: 1;
+      padding: 10px 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      .items-wrapper {
+        display: flex;
+        flex-flow: wrap;
+        width: 100%;
+        height: 100%;
+        .outer {
+          padding-right: 10px;
+          box-sizing: border-box;
+          width: 50%;
+          height: 40px;
+          margin-bottom: 8px;
+          .item {
+            display: flex;
+            justify-content: space-between;
+            padding-right: 8px;
+            width: 100%;
+            height: 100%;
+            background-color: @tab_row_selected_bg_color;
+            box-sizing: border-box;
+            .text {
+              padding-left: 10px;
+              width: 160px;
+              height: 100%;
+              line-height: 40px;
+            }
+            .switch-inner {
+              margin-top: 9px;
+              margin-right: 8px;
+            }
+          }
+        }
+      }
+
+    }
+  }
+}

@@ -82,6 +82,8 @@ class Model extends React.Component {
         return 'flavor-setting';
       case 'snapshot-type':
         return 'snapshot';
+      case 'module-mgmt':
+        return 'applications';
       default:
         return name;
     }
