@@ -135,10 +135,7 @@ View.prototype = {
       favicon: setting.favicon ? setting.favicon : '/static/assets/favicon.ico',
       title: setting.title ? setting.title : 'UnitedStack 有云',
       viewCss: setting['view.css'] ? setting['view.css'] : '',
-      modelTmpl: this.reactDOMServer.renderToString(this.viewModelFactory({
-        __: __(`shared.${this.name}`),
-        HALO: HALO
-      }))
+      modelTmpl: ''
     };
   },
   renderTemplate: function(setting, HALO, locale, req, res, next) {

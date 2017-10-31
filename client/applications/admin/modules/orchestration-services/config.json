@@ -3,16 +3,16 @@
     "name": ["services"],
     "key": "system-information"
   }, {
-    "name": ["compute_services"],
+    "name": ["compute-services"],
     "key": "compute-services"
   }, {
-    "name": ["block_storage_services"],
+    "name": ["block-storage-services"],
     "key": "block-storage-services"
   }, {
-    "name": ["network_agents"],
+    "name": ["network-agents"],
     "key": "network-agents"
   }, {
-    "name": ["orchestration_services"],
+    "name": ["orchestration-services"],
     "key": "orchestration-services",
     "default": "true"
   }],

@@ -257,7 +257,7 @@ sql.updateModuleConfig = (next) => {
         if (moduleConfig[_app] !== undefined) {
           Object.keys(oldModuleConfig[_app]).forEach(_module => {
             if (moduleConfig[_app][_module] !== undefined) {
-              moduleConfig[_app][_module] = oldModuleConfig[_app][_module];
+              moduleConfig[_app][_module].show = oldModuleConfig[_app][_module].show;
             }
           });
         }

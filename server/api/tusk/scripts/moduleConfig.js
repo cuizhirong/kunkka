@@ -12,14 +12,15 @@ function getModuleConfig() {
       let config = {};
       try {
         config = require(path.join(clientAppPath, a, 'config.json'));
+        let lang = require(path.join(clientAppPath, a, 'locale/lang.json'));
         moduleDict[a] = {};
         config.modules.forEach( m => {
           m.items.forEach(i => {
-            moduleDict[a][i] = true;
+            moduleDict[a][i] = {lang: lang['zh-CN'][i] ? lang['zh-CN'][i] : i, show: true};
           });
         });
         if (config.default_hide_modules) {
-          config.default_hide_modules.forEach(h => moduleDict[a][h] = false);
+          config.default_hide_modules.forEach(h => moduleDict[a][h].show = false);
         }
       } catch (e) {
         console.log(e.code);
