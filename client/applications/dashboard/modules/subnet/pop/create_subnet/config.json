@@ -5,7 +5,7 @@
     "field": "subnet_name",
     "is_long_label": true
   }, {
-    "type": "input",
+    "type": "select",
     "field": "input_network",
     "is_long_label": true,
     "required": true
