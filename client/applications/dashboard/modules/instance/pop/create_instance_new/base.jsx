@@ -3,92 +3,39 @@ const ReactDOM = require('react-dom');
 const {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
 const __ = require('locale/client/dashboard.lang.json');
 const createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
+const createPortPop = require('client/applications/dashboard/modules/port/pop/create_port/index');
 const createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
-const request = require('../../../instance/request');
+const request = require('../../request');
 const unitConverter = require('client/utils/unit_converter');
 const priceConverter = require('../../../../utils/price');
 const getErrorMessage = require('../../../../utils/error_message');
+const initialState = require('./state');
+const helper = require('./helper');
+const constant = require('./constant');
+const TabStep = require('./tab_step');
+const getStatusIcon = require('../../../../utils/status_icon');
+const VolumeTip = require('./volume_tip');
+const DetailModal = require('./modal_detail');
+
+const FLAVOR_ID = 'flavor-container';
 
 const TITLE = __.create + __.instance;
 
 let tooltipHolder;
+let tooltipCreateVolume;
 
 class ModalBase extends React.Component {
 
   constructor(props) {
     super(props);
 
-    let imageTypes = [{
-      value: __.system_image,
-      key: 'image'
-    }, {
-      value: __.instance_snapshot,
-      key: 'snapshot'
-    }/*, {
-      value: __.volume,
-      key: 'bootableVolume'
-    }*/];
+    this.state = initialState.getInitialState(constant.imageTypes, constant.credentials);
 
-    let credentials = [{
-      key: 'keypair',
-      value: __.keypair
-    }, {
-      key: 'psw',
-      value: __.password
-    }];
-
-    this.state = {
-      visible: true,
-      ready: false,
-      disabled: false,
-      page: 1,
-      pagingAni: false,
-      name: '',
-      imageTypes: imageTypes,
-      imageType: imageTypes[0].key,
-      images: [],
-      image: null,
-      snapshots: [],
-      snapshot: null,
-      bootableVolumes: [],
-      bootableVolume: null,
-      flavorUnfold: false,
-      flavors: [],
-      flavor: null,
-      cpus: [],
-      cpu: null,
-      memories: [],
-      memory: null,
-      volumes: [],
-      volume: null,
-      networks: [],
-      network: null,
-      hideKeypair: false,
-      securityGroups: [],
-      securityGroup: {},
-      sgUnfold: false,
-      credentials: credentials,
-      credential: credentials[0].key,
-      keypairs: [],
-      keypairName: '',
-      username: '',
-      pwd: '',
-      pwdVisible: false,
-      pwdError: true,
-      showPwdTip: false,
-      confirmPwd: '',
-      confirmPwdVisible: false,
-      confirmPwdError: false,
-      price: '0.0000',
-      number: 1,
-      disabledNumber: false,
-      error: '',
-      showError: false
-    };
+    this.volumeTip;
+    this.detailRef;
 
     ['initialize', 'onPaging', 'onChangeName',
-    'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
-    'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
+    'unfoldSecurity', 'foldSecurity', 'createPort',
     'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
     'onChangePwd', 'onFocusPwd', 'onBlurPwd',
     'confirmPwdVisibleControl', 'onChangeConfirmPwd',
@@ -98,7 +45,10 @@ class ModalBase extends React.Component {
     try {
       tooltipHolder = document.createElement('div');
       tooltipHolder.id = 'tooltip_holder';
+      tooltipCreateVolume = document.createElement('div');
+      tooltipCreateVolume.id = 'tooltip_volume';
       document.body.appendChild(tooltipHolder);
+      document.body.appendChild(tooltipCreateVolume);
     } catch(e) {
       return;
     }
@@ -122,6 +72,7 @@ class ModalBase extends React.Component {
     let images = [];
     let snapshots = [];
     let bootableVolumes = [];
+    let volumeSnapshots = [];
 
     //sort image and snapshot
     res.image.forEach((ele) => {
@@ -139,6 +90,8 @@ class ModalBase extends React.Component {
       }
       return false;
     });
+
+    volumeSnapshots = res.snapshot;
 
     let imageSort = (a, b) => {
       if (a.image_label_order) {
@@ -171,7 +124,7 @@ class ModalBase extends React.Component {
     let selectedImage = selectDefault(images);
     let username = 'root';
 
-    if (selectedImage && selectedImage.image_meta) {
+    if (selectedImage.image_meta) {
       let meta = JSON.parse(selectedImage.image_meta);
       username = meta.os_username;
     }
@@ -182,6 +135,7 @@ class ModalBase extends React.Component {
     let image = selectDefault(images);
     let snapshot = selectDefault(snapshots);
     let bootableVolume = selectDefault(bootableVolumes);
+    let volumeSnapshot = selectDefault(volumeSnapshots);
     let currentImage = image;
     let imageType = 'image';
     let obj = this.props.obj;
@@ -202,6 +156,10 @@ class ModalBase extends React.Component {
       return !ele['router:external'] && ele.subnets.length > 0 ? true : false;
     });
 
+    let ports = res.port.filter(ele => {
+      return !ele.device_owner ? true : false;
+    });
+
     let sg = res.securitygroup;
 
     let keypairs = res.keypair;
@@ -209,6 +167,7 @@ class ModalBase extends React.Component {
 
     this.setState({
       ready: true,
+      ports: ports,
       imageType: imageType,
       images: images,
       image: image,
@@ -216,81 +175,53 @@ class ModalBase extends React.Component {
       snapshot: snapshot,
       bootableVolumes: bootableVolumes,
       bootableVolume: bootableVolume,
-      flavors: flavors,
+      volumeSnapshots: volumeSnapshots,
+      volumeSnapshot: volumeSnapshot,
       networks: networks,
-      network: selectDefault(networks),
       securityGroups: sg,
-      securityGroup: {},
       keypairs: keypairs,
       keypairName: selectedKeypair ? selectedKeypair.name : null,
       username: username,
       hideKeypair: hideKeypair,
-      credential: credential
+      credential: credential,
+      deviceSize: image.min_disk || 1
     });
 
   }
 
-  findCpu(flavors, cpu) {
-    let cpuKeys = {};
-    flavors.forEach((ele) => {
-      cpuKeys[ele.vcpus] = true;
-    });
-    let cpus = (Object.keys(cpuKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
-    if (typeof cpu === 'undefined') {
-      cpu = cpus[0];
-    }
-    return {
-      cpus: cpus,
-      cpu: cpu
-    };
-  }
+  onPaging(page, fromto, e) {
+    let {step, isDetail} = this.state,
+      stepData = constant.stepData;
 
-  findRam(flavors, cpu, ram) {
-    let rawRams = flavors.filter((ele) => ele.vcpus === cpu);
-    let ramKeys = {};
-    rawRams.forEach((ele) => {
-      ramKeys[ele.ram] = true;
-    });
-    let rams = (Object.keys(ramKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
-    if (typeof ram === 'undefined') {
-      ram = rams[0];
+    if (step.length > page) {
+      step.pop();
+    } else if (step.length <= page) {
+      step.push(stepData[page - 1].key);
     }
 
-    return {
-      rams: rams,
-      ram: ram
-    };
-  }
+    if (page === 4) {
+      this.detailRef && this.detailRef.setState({
+        isShow: true
+      });
 
-  findDisk(flavors, cpu, ram, disk) {
-    let rawDisks = flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram);
-    let diskKeys = {};
-    rawDisks.forEach((ele) => {
-      diskKeys[ele.disk] = true;
-    });
-    let disks = (Object.keys(diskKeys)).map((ele) => Number(ele)).sort(this.sortByNumber);
-    if (typeof disk === 'undefined') {
-      disk = disks[0];
+      this.setState({
+        isShowDetail: true
+      });
+    } else if (page !== 4 && !isDetail) {
+      this.detailRef && this.detailRef.setState({
+        isShow: false
+      });
+
+      this.setState({
+        isShowDetail: false
+      });
     }
 
-    return {
-      disks: disks,
-      disk: disk
-    };
-  }
-
-  findFlavor(flavors, cpu, ram, disk) {
-    return flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram && ele.disk === disk)[0];
-  }
-
-  sortByNumber(a, b) {
-    return a - b;
-  }
-
-  onPaging(page, e) {
     this.setState({
       page: page,
-      pagingAni: true
+      pagingAni: true,
+      step: step,
+      fromTo: fromto
     });
   }
 
@@ -302,24 +233,48 @@ class ModalBase extends React.Component {
     });
   }
 
+  onChangeDetail(e) {
+    this.detailRef && this.detailRef.setState({
+      isShow: true
+    });
+
+    this.setState({
+      isShowDetail: true,
+      isDetail: true
+    });
+  }
+
+  onAction() {
+    this.setState({
+      isShowDetail: false
+    });
+  }
+
   onChangeImageType(key, e) {
     let state = this.state;
     let image = state.images.length > 0 ? state.images[0] : null;
     let snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
     let bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
+    let volumeSnapshot = state.volumeSnapshots.length > 0 ? state.volumeSnapshots[0] : null;
 
     let username = 'root';
-    let objImage = null;
+    let objImage = null,
+      deviceSize = 1;
     switch(key) {
       case 'image':
         objImage = image;
+        deviceSize = image.min_disk || 1;
         break;
       case 'snapshot':
         objImage = snapshot;
+        deviceSize = snapshot.min_disk || 1;
         break;
       case 'bootableVolume':
         objImage = bootableVolume ? bootableVolume.volume_image_metadata : null;
         this.setState({number: 1});
+        break;
+      case 'volumeSnapshot':
+        objImage = volumeSnapshot ? volumeSnapshot.volume.volume_image_metadata : null;
         break;
       default:
         break;
@@ -346,7 +301,8 @@ class ModalBase extends React.Component {
       pwdError: true,
       pwd: '',
       pwdVisible: false,
-      disabledNumber: key === 'bootableVolume'
+      disabledNumber: key === 'bootableVolume',
+      deviceSize: deviceSize
     });
   }
 
@@ -371,6 +327,7 @@ class ModalBase extends React.Component {
           expectedSize = minDisk > expectedSize ? minDisk : expectedSize;
         }
       }
+
       let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
 
       let inArray = function(item, arr) {
@@ -378,26 +335,28 @@ class ModalBase extends React.Component {
       };
 
       if (inArray(type, ['all'])) {
-        let cpuOpt = this.findCpu(flavors);
+        let cpuOpt = helper.findCpu(flavors);
         cpus = cpuOpt.cpus;
         cpu = cpuOpt.cpu;
       }
+
       if (inArray(type, ['all', 'cpu'])) {
-        let ramOpt = this.findRam(flavors, cpu);
+        let ramOpt = helper.findRam(flavors, cpu);
         rams = ramOpt.rams;
         ram = ramOpt.ram;
       }
       if (inArray(type, ['all', 'cpu', 'ram'])) {
-        let diskOpt = this.findDisk(flavors, cpu, ram);
+        let diskOpt = helper.findDisk(flavors, cpu, ram);
         disks = diskOpt.disks;
         disk = diskOpt.disk;
       }
       if (inArray(type, ['all', 'cpu', 'ram', 'disk'])) {
-        flavor = this.findFlavor(flavors, cpu, ram, disk);
+        flavor = helper.findFlavor(flavors, cpu, ram, disk);
       }
 
       this.setState({
         flavor: flavor,
+        flavors: flavors,
         cpus: cpus,
         cpu: cpu,
         memories: rams,
@@ -410,7 +369,7 @@ class ModalBase extends React.Component {
 
   onChangeImage(item, e) {
     let username = 'root';
-    if (item && item.image_meta) {
+    if (item.image_meta) {
       let meta = JSON.parse(item.image_meta);
       username = meta.os_username;
     }
@@ -428,13 +387,14 @@ class ModalBase extends React.Component {
       credential: hideKeypair ? 'psw' : 'keypair',
       pwdError: true,
       pwd: '',
-      pwdVisible: false
+      pwdVisible: false,
+      deviceSize: item.min_disk || 1
     });
   }
 
   onChangeSnapshot(item, e) {
     let username = 'root';
-    if (item && item.image_meta) {
+    if (item.image_meta) {
       let meta = JSON.parse(item.image_meta);
       username = meta.os_username;
     }
@@ -452,20 +412,21 @@ class ModalBase extends React.Component {
       credential: hideKeypair ? 'psw' : 'keypair',
       pwdError: true,
       pwd: '',
-      pwdVisible: false
+      pwdVisible: false,
+      deviceSize: item.min_disk || 1
     });
   }
 
   onChangeBootableVolume(item, e) {
     let imageData = item.volume_image_metadata;
     let username = '';
-    if(imageData.image_meta) {
+    if(imageData && imageData.image_meta) {
       let meta = JSON.parse(imageData.image_meta);
       username = meta.os_username;
     }
 
     let hideKeypair = false;
-    if(imageData.image_label) {
+    if(imageData && imageData.image_label) {
       let label = imageData.image_label.toLowerCase();
       hideKeypair = label === 'windows';
     }
@@ -482,44 +443,32 @@ class ModalBase extends React.Component {
     });
   }
 
-  unfoldFlavorOptions(e) {
-    this.setState({
-      flavorUnfold: true
-    });
+  onChangeVolumeSnapshot(item, e) {
+    let imageData = item.volume.volume_image_metadata;
+    let username = 'root';
+    if (imageData && imageData.image_meta) {
+      let meta = JSON.parse(item.image_meta);
+      username = meta.os_username;
+    }
 
-    document.addEventListener('mouseup', this.foldFlavorOptions, false);
-    this.refs.drop_flavor.addEventListener('mouseup', this.preventFoldFlavorOptions, false);
-  }
+    let hideKeypair = false;
+    if (imageData && imageData.image_label) {
+      let label = imageData.image_label.toLowerCase();
+      hideKeypair = label === 'windows';
+    }
 
-  preventFoldFlavorOptions(e) {
-    e.stopPropagation();
-  }
-
-  foldFlavorOptions(e) {
-    this.setState({
-      flavorUnfold: false
-    });
-
-    document.removeEventListener('mouseup', this.foldFlavorOptions, false);
-    this.refs.drop_flavor.removeEventListener('mouseup', this.preventFoldFlavorOptions, false);
-  }
-
-  onChangeNetwork(e) {
-    let subnets = this.state.networks;
-    let selected = e.target.value;
-
-    let item;
-    subnets.some((ele) => {
-      if (ele.id === selected) {
-        item = ele;
-        return true;
-      }
-      return false;
-    });
+    this.setFlavor(imageData, 'all');
 
     this.setState({
-      network: item
+      volumeSnapshot: item,
+      username: username,
+      hideKeypair: hideKeypair,
+      credential: hideKeypair ? 'psw' : 'keypair',
+      pwdError: true,
+      pwd: '',
+      pwdVisible: false
     });
+
   }
 
   unfoldSecurity(e) {
@@ -610,8 +559,17 @@ class ModalBase extends React.Component {
   createNetwork() {
     createNetworkPop(this.refs.modal, (network) => {
       this.setState({
-        networks: [network],
-        network: network
+        networks: [network]
+      });
+    });
+
+    this.stopSliding();
+  }
+
+  createPort() {
+    createPortPop(null, this.refs.modal, (port) => {
+      this.setState({
+        ports: [port.port]
       });
     });
 
@@ -657,6 +615,8 @@ class ModalBase extends React.Component {
         return state.snapshot;
       case 'bootableVolume':
         return state.bootableVolume.volume_image_metadata;
+      case 'volumeSnapshot':
+        return state.volumeSnapshot.volume.volume_image_metadata;
       default:
         return null;
     }
@@ -677,32 +637,17 @@ class ModalBase extends React.Component {
     this.setFlavor(img, 'disk', disk);
   }
 
-  onChangeSecurityGroup(sg, e) {
-    let state = this.state;
-    let selects = state.securityGroup;
-
-    if (selects[sg.id]) {
-      delete selects[sg.id];
-    } else {
-      selects[sg.id] = true;
-    }
-
-    this.setState({
-      securityGroup: selects
-    });
-
-    e.stopPropagation();
-  }
-
   onConfirm() {
     let state = this.state;
+    let networks = [];
     if (state.disabled) {
       return;
     }
 
     let enable = state.name && state.flavor && state.network && state.number,
-      enableImage = false;
-    let selectedImage;
+      enableImage = false, enableVolumeImage = false;
+    let selectedImage, volumeTip = this.volumeTip.state;
+
     if (state.imageType === 'image') {
       enable = enable && state.image;
       enableImage = enable;
@@ -711,15 +656,31 @@ class ModalBase extends React.Component {
       enable = enable && state.snapshot;
       enableImage = enable;
       selectedImage = state.snapshot;
-    } else {
+    } else if (state.imageType === 'bootableVolume'){
       enable = enable && state.bootableVolume;
       selectedImage = state.bootableVolume;
+    } else {
+      enableVolumeImage = true;
+      selectedImage = state.volumeSnapshot;
     }
+
     if (state.credential === 'keypair') {
       enable = enable && state.keypairName;
     } else {
       enable = enable && !state.pwdError;
     }
+
+    state.network.forEach(ele => {
+      networks.push({
+        uuid: ele.id
+      });
+    });
+
+    state.port.forEach(ele => {
+      networks.push({
+        port: ele.id
+      });
+    });
 
     if (enable) {
       let data = {};
@@ -728,9 +689,40 @@ class ModalBase extends React.Component {
           name: state.name.trim(),
           imageRef: selectedImage.id,
           flavorRef: state.flavor.id,
-          networks: [{
-            uuid: state.network.id
+          networks: networks,
+          min_count: state.number,
+          max_count: state.number
+        };
+        if (volumeTip.checked === 'yes') {
+          data.block_device_mapping_v2 = [{
+            destination_type: 'volume',
+            boot_index: 0,
+            uuid: selectedImage.id,
+            source_type: 'image',
+            volume_size: volumeTip.deviceSize,
+            device_name: volumeTip.deviceName,
+            delete_on_termination: volumeTip.deleteVolume === 'yes'
+          }];
+          let dataVol = {};
+          dataVol.size = Number(volumeTip.deviceSize);
+          dataVol.imageRef = selectedImage.id;
+
+          request.createVolume(dataVol);
+        }
+      } else if (enableVolumeImage) {
+        let volumeSnapshot = state.volumeSnapshot;
+        data = {
+          name: state.name.trim(),
+          block_device_mapping_v2: [{
+            destination_type: 'volume',
+            boot_index: 0,
+            uuid: volumeSnapshot.id,
+            source_type: 'snapshot',
+            volume_size: volumeSnapshot.size,
+            delete_on_termination: volumeTip.deleteVolume === 'yes'
           }],
+          flavorRef: state.flavor.id,
+          networks: networks,
           min_count: state.number,
           max_count: state.number
         };
@@ -744,12 +736,10 @@ class ModalBase extends React.Component {
             uuid: bootVolume.id,
             source_type: 'volume',
             volume_size: bootVolume.size,
-            delete_on_termination: false
+            delete_on_termination: volumeTip.deleteVolume === 'yes'
           }],
           flavorRef: state.flavor.id,
-          networks: [{
-            uuid: state.network.id
-          }],
+          networks: networks,
           min_count: state.number,
           max_count: state.number
         };
@@ -775,19 +765,7 @@ class ModalBase extends React.Component {
         data.adminPass = state.pwd;
       }
 
-      let selectedSg = state.securityGroup;
-      let securitygroups = state.securityGroups;
-      let sg = [];
-      securitygroups.forEach((ele) => {
-        if (selectedSg[ele.id]) {
-          sg.push({
-            name: ele.name
-          });
-        }
-      });
-      if (sg.length > 0) {
-        data.security_groups = sg;
-      }
+      data.security_groups = state.securityGroup.map(ele => ({name: ele.name}));
 
       request.createInstance(data).then((res) => {
         this.props.callback && this.props.callback(res.server);
@@ -872,8 +850,9 @@ class ModalBase extends React.Component {
         backgroundSize: '20px 20px'
       };
     }
+
     let Images = (
-      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
+      <div id="images" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'image' ? '' : ' hide')} key="images">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -900,7 +879,7 @@ class ModalBase extends React.Component {
       </div>
     );
     let Snapshots = (
-      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'snapshot' ? '' : ' hide')} key="snapshots">
+      <div id="snapshot" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'snapshot' ? '' : ' hide')} key="snapshots">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -927,7 +906,7 @@ class ModalBase extends React.Component {
       </div>
     );
     let BootableVolumes = (
-      <div className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'bootableVolume' ? '' : ' hide')} key="bootableVolumes">
+      <div id="bootableVolume" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'bootableVolume' ? '' : ' hide')} key="bootableVolumes">
         {
           !state.ready ?
             <div className="alert-tip">
@@ -954,13 +933,138 @@ class ModalBase extends React.Component {
       </div>
     );
 
+    let VolumeSnapshots = (
+      <div id="volumeSnapshot" className={'row row-tab row-tab-single row-tab-images' + (selectedKey === 'volumeSnapshot' ? '' : ' hide')} key="volumeSnapshot">
+        {
+          !state.ready ?
+            <div className="alert-tip">
+              {__.loading}
+            </div>
+          : null
+        }
+        {
+          state.volumeSnapshots.map(ele =>
+            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.volumeSnapshot.id === ele.id ? 'selected' : ''}
+              onClick={state.volumeSnapshot.id === ele.id ? null : this.onChangeVolumeSnapshot.bind(this, ele)}>
+              <i className="glyphicon icon-volume" style={{'marginRight': '6px'}}></i>
+                {ele.name ? ele.name : ('(' + ele.id.substr(0, 8) + ')')}
+            </a>
+          )
+        }
+        {
+          state.ready && !state.volumeSnapshot ?
+            <div className="alert-tip">
+              {__.there_is_no + __.volume + __.snapshot}
+            </div>
+          : null
+        }
+      </div>
+    );
+
     let ret = [];
     ret.push(Types);
+    ret.push(<VolumeTip
+      key="volume_tip"
+      deviceSize={this.state.deviceSize}
+      state={this.state} {...props}
+      tooltipHolder={tooltipHolder}
+      ref={(ref) => this.volumeTip = ref}
+      onChangeNumber={this.onChangeNumber}/>);
     ret.push(Images);
     ret.push(Snapshots);
     ret.push(BootableVolumes);
+    ret.push(VolumeSnapshots);
 
     return ret;
+  }
+
+  onChangeFlavor(ele, e) {
+    let flavors = this.state.flavors;
+
+    let cpuOpt = helper.findCpu(flavors);
+    let cpus = cpuOpt.cpus;
+
+    let ramOpt = helper.findRam(flavors, ele.vcpus);
+    let rams = ramOpt.rams;
+
+    let diskOpt = helper.findDisk(flavors, ele.vcpus, ele.ram);
+    let disks = diskOpt.disks;
+
+    let flavor = helper.findFlavor(flavors, ele.vcpus, ele.ram, ele.disk);
+
+    this.setState({
+      cpus: cpus,
+      cpu: ele.vcpus,
+      memories: rams,
+      memory: ele.ram,
+      volumes: disks,
+      volume: ele.disk,
+      flavor: flavor
+    });
+  }
+
+  onClickFlavor(e) {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+
+    const prevFlavor = document.getElementById(FLAVOR_ID);
+    if (prevFlavor) {
+      this.destroyFlavor();
+    }
+
+    let compare = function (prop) {
+      return function (obj1, obj2) {
+        let val1 = obj1[prop];
+        let val2 = obj2[prop];
+        if (val1 < val2) {
+          return -1;
+        } else if (val1 > val2) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
+    };
+
+    let root = e.target.parentNode;
+
+    let flavor = this.state.flavor,
+      flavors = this.state.flavors.sort(compare('name'));
+
+    const flavorList = (
+      <div className="flavor-list">
+      {
+        flavors.map(ele =>
+          <a className="flavor-data" key={ele.id} onClick={this.onChangeFlavor.bind(this, ele)}>
+            <span>{ele.name + ' ( ' + ele.vcpus + ' vCPU / '
+              + unitConverter(ele.ram, 'MB').num + ' '
+              + unitConverter(ele.ram, 'MB').unit
+              + ' / ' + ele.disk + ' GB )'}</span>
+            <div className="flavor-selected"><i className={ele.id === flavor.id ? 'glyphicon icon-active-yes' : 'hide'} /></div>
+          </a>
+        )
+      }
+      </div>
+    );
+
+    let container = document.createElement('div');
+    container.id = FLAVOR_ID;
+
+    root.appendChild(container);
+    ReactDOM.render(flavorList, container);
+
+    document.addEventListener('click', this.destroyFlavor, false);
+  }
+
+  destroyFlavor() {
+    const flavorList = document.getElementById(FLAVOR_ID);
+    if (flavorList) {
+      let root = flavorList.parentNode;
+      ReactDOM.unmountComponentAtNode(flavorList);
+      root.removeChild(flavorList);
+    }
+
+    document.removeEventListener('click', this.destroyFlavor, false);
   }
 
   renderFlavors(props, state) {
@@ -996,6 +1100,7 @@ class ModalBase extends React.Component {
 
     let flavor = state.flavor;
     let flavorDetail;
+
     if (flavor) {
       let ram = unitConverter(flavor.ram, 'MB');
       flavorDetail = flavor.name + ' ( ' +
@@ -1007,101 +1112,273 @@ class ModalBase extends React.Component {
     }
 
     return (
-      <div className="row row-dropdown">
-        <div className="modal-label">
-          {__.flavor}
-        </div>
-        <div className="modal-data">
-          <div className="dropdown-overview" onClick={this.unfoldFlavorOptions}>
-            {flavorDetail}
-            <div className="triangle" />
+      <div key="flavor">
+        <div className="row row-dropdown">
+          <div className="modal-label">
+            {__.flavor}
           </div>
-          <div ref="drop_flavor" className={'dropdown-box' + (state.flavorUnfold ? '' : ' hide')}>
-            {
-              data.map((ele) =>
-                <div className="dropdown-item" key={ele.key}>
-                  <div className="dropdown-item-title">{ele.title}</div>
-                  <div className="dropdown-item-data">
-                    <ul>
-                      {
-                        ele.data.map((value) =>
-                          <li key={value} className={ele.selected === value ? 'selected' : null}
-                            onClick={ele.selected === value ? null : (ele.onChange).bind(this, value)}>
-                            {ele.render(value)}
-                          </li>
-                        )
-                      }
-                    </ul>
-                  </div>
-                </div>
-              )
-            }
-            <div className="dropdown-collapse">
-              <Button value={__.fold_up} onClick={this.foldFlavorOptions}/>
+          <div className="modal-data">
+            <div className="dropdown-overview" onClick={this.onClickFlavor.bind(this)}>
+              {flavorDetail}
+              <div className="triangle" />
             </div>
           </div>
         </div>
+        {
+          data.map((ele) =>
+            <div className="row row-dropdown" key={ele.key}>
+              <div className="modal-label">
+                {ele.title}
+              </div>
+              <div className="modal-data">
+                <div className={'dropdown-item ' + ele.key}>
+                  <ul>
+                    {
+                      ele.data.map((value) =>
+                        <li key={value} className={ele.selected === value ? 'selected' : null}
+                          onClick={ele.selected === value ? null : (ele.onChange).bind(this, value)}>
+                          {ele.render(value)}
+                        </li>
+                      )
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
     );
+  }
+
+  onClickNetwork(ele, key, e) {
+    this.state[key].push(ele);
+    this.setState({
+      [key]: this.state[key]
+    });
+  }
+
+  onDelete(index, key, e) {
+    this.state[key].splice(index, 1);
+
+    this.setState({
+      [key]: this.state[key]
+    });
+  }
+
+  onOpenNetwork(ele, e) {
+    e.stopPropagation();
+
+    let height = e.target.parentNode.nextSibling.style.height;
+    e.target.parentNode.nextSibling.style.height = !height || height === '0px' ? '190px' : '0';
+  }
+
+  getNetworkData(ele, key) {
+    switch(key) {
+      case 'physical_network':
+        return ele['provider:physical_network'];
+      case 'network_type':
+        return ele['provider:network_type'];
+      case 'vlan_id':
+        return ele['provider:segmentation_id'];
+      case 'status':
+        return getStatusIcon(ele.status);
+      case 'shared':
+        return ele.shared ? __.yes : __.no;
+      case 'ip_address':
+        return ele.fixed_ips.map((ritem, i) =>
+          ritem.ip_address + (i === ele.fixed_ips.length - 1 ? '' : ' / ')
+        );
+      case 'floatingip':
+        return ele.floatingip && ele.floatingip.floating_ip_address || '-';
+      case 'subnet':
+        let subnets = [];
+        ele.subnets && ele.subnets.map((_subnet, _i) => {
+          if(_subnet.id) {
+            _i && subnets.push(', ');
+            subnets.push(_subnet.name || '(' + _subnet.id.substr(0, 8) + ')');
+          }
+        });
+        return subnets;
+      default:
+        return ele[key];
+    }
   }
 
   renderNetworks(props, state) {
     let selected = state.network;
-    return (
-      <div className="row row-select">
+    let hasSelects = selected.length > 0 ? true : false;
+
+    let hasNetwork = state.networks.length > 0 ? true : false;
+
+    let networkSelected = (
+      <div className="row row-select" key="networkSelected">
         <div className="modal-label">
           {__.network}
         </div>
         <div className="modal-data">
-          {
-            selected ?
-              <select value={selected.id} onChange={this.onChangeNetwork}>
-                {
-                  state.networks.map((ele) =>
-                    <option key={ele.id} value={ele.id}>
-                      {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
-                    </option>
-                  )
-                }
-              </select>
-            : <div className="empty-text-label" onClick={this.createNetwork}>
-                {__.no_network + ' '}
-                <a>{__.create + __.network}</a>
-              </div>
-          }
+          <div className="row-network-select">
+            {
+              hasSelects ?
+                selected.map((ele, index) =>
+                  <a key={index} className="row-network-data" onClick={this.onDelete.bind(this, index, 'network')}>
+                    <span>{ele.name || '(' + ele.id.slice(0, 8) + ')'}</span>
+                    <i className="glyphicon icon-delete"/>
+                  </a>
+                )
+              : __.no_selected_nt
+            }
+          </div>
         </div>
       </div>
     );
+
+    let networks = (
+      <div className="row row-select" key="networks">
+        {
+          hasNetwork ?
+            <div className="row-network">
+              {
+                state.networks.map(ele =>
+                  <div key={ele.id} onClick={selected.some(select => ele.id === select.id) ? null : this.onClickNetwork.bind(this, ele, 'network')}>
+                    <div className={selected.some(select => ele.id === select.id) ? 'row-data selected' : 'row-data'}>
+                      {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
+                      <i className="glyphicon icon-arrow-down" onClick={this.onOpenNetwork.bind(this, ele)}/>
+                    </div>
+                    <div className="row-table">
+                      <table>
+                        <tbody>
+                          {
+                            constant.networkColume.map(col =>
+                              <tr key={col.key}>
+                                <td>{col.value}</td>
+                                <td>{this.getNetworkData(ele, col.key)}</td>
+                              </tr>
+                            )
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )
+              }
+            </div>
+          : <div className="empty-text-label" onClick={this.createNetwork}>
+              {__.no_network + ' '}
+              <a>{__.create + __.network}</a>
+            </div>
+        }
+      </div>
+    );
+
+    let ret = [];
+    ret.push(networkSelected);
+    ret.push(networks);
+
+    return ret;
+  }
+
+  renderPorts(props, state) {
+    let selected = state.port;
+    let hasSelects = selected.length > 0 ? true : false;
+
+    let hasPorts = state.ports.length > 0 ? true : false;
+
+    let portSelected = (
+      <div className="row row-select" key="port_selected">
+        <div className="modal-label">
+          {__.port}
+        </div>
+        <div className="modal-data">
+          <div className="row-network-select">
+            {
+              hasSelects ?
+                selected.map((ele, index) =>
+                  <a key={index} className="row-network-data" onClick={this.onDelete.bind(this, index, 'port')}>
+                    <span>{ele.name || '(' + ele.id.slice(0, 8) + ')'}</span>
+                    <i className="glyphicon icon-delete"/>
+                  </a>
+                )
+              : __.no_selected_pt
+            }
+          </div>
+        </div>
+      </div>
+    );
+
+    let ports = (
+      <div className="row row-select" key="ports">
+        {
+          hasPorts ?
+            <div className="row-network">
+              {
+                state.ports.map(ele =>
+                  <div key={ele.id} onClick={selected.some(select => ele.id === select.id) ? null : this.onClickNetwork.bind(this, ele, 'port')}>
+                    <div className={selected.some(select => ele.id === select.id) ? 'row-data selected' : 'row-data'}>
+                      {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
+                      <i className="glyphicon icon-arrow-down" onClick={this.onOpenNetwork.bind(this, ele)}/>
+                    </div>
+                    <div className="row-table">
+                      <table>
+                        <tbody>
+                          {
+                            constant.portColume.map(col =>
+                              <tr key={col.key}>
+                                <td>{col.value}</td>
+                                <td>{this.getNetworkData(ele, col.key)}</td>
+                              </tr>
+                            )
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )
+              }
+            </div>
+          : <div className="empty-text-label" onClick={this.createPort}>
+              {__.no_avail_port + ' '}
+              <a>{__.create + __.port}</a>
+            </div>
+        }
+      </div>
+    );
+
+    let ret = [];
+    ret.push(portSelected);
+    ret.push(ports);
+
+    return ret;
   }
 
   renderSecurityGroup(props, state) {
     let selects = state.securityGroup;
-    let hasSelects = Object.keys(selects).length > 0 ? true : false;
-    let selectObj = state.securityGroups.filter((ele) => selects[ele.id]);
-    let detail = selectObj.map((ele) => ele.name).join(', ');
+    let hasSelects = selects.length > 0 ? true : false;
 
     return (
-      <div className="row row-dropdown row-security-group">
+      <div className="row row-dropdown row-security-group" key="security_group">
         <div className="modal-label">
           {__.security_group}
         </div>
         <div className="modal-data">
           <div className={'dropdown-overview' + (hasSelects ? '' : ' no-data')} onClick={this.unfoldSecurity}>
-            {hasSelects ? detail : __.no_selected_sg}
-            <div className="triangle" />
+            {hasSelects ?
+              selects.map(ele => <div key={ele.id} className="overflow-data" onClick={this.onDelete.bind(this, ele, 'securityGroup')}>
+                <span>{ele.name}</span>
+                <i className="glyphicon icon-delete"/>
+              </div>)
+            : __.no_selected_sg}
           </div>
           <div ref="drop_security" className={'dropdown-box' + (state.sgUnfold ? '' : ' hide')}>
             <div className="dropdown-item">
-              <div className="dropdown-item-title">{__.security_group}</div>
               <div className="dropdown-item-data">
                 <ul>
                   {
                     state.securityGroups.map((ele) => {
-                      let selected = selects[ele.id];
                       return (
                         <li key={ele.id}
-                          className={selected ? 'selected' : null}
-                          onClick={this.onChangeSecurityGroup.bind(this, ele)}>
+                          className={selects.some(select => ele.id === select.id) ? 'selected' : null}
+                          onClick={selects.some(select => ele.id === select.id) ? null : this.onClickNetwork.bind(this, ele, 'securityGroup')}>
                           {ele.name}
                         </li>
                       );
@@ -1179,7 +1456,7 @@ class ModalBase extends React.Component {
                   )
                 }
               </select>
-            : <div className="empty-text-label" onClick={this.createKeypair}>
+            : <div className="empty-label" onClick={this.createKeypair}>
                 {__.no_keypair + ' '}
                 <a>{__.create + __.keypair}</a>
               </div>
@@ -1227,8 +1504,7 @@ class ModalBase extends React.Component {
 
     let CrdTips = (
       <div className="credential-tips" key="tips">
-        <i className="glyphicon icon-status-warning" />
-        {__.instance_credential_tip}
+        <Tip content={__.instance_credential_tip} type="warning" showIcon={true} width={556} />
       </div>
     );
 
@@ -1242,20 +1518,6 @@ class ModalBase extends React.Component {
   }
 
   renderCreateNum(props, state) {
-    let price = state.price;
-    let numPrice = price;
-    let monthlyPrice = price;
-
-    let enableCharge = HALO.settings.enable_charge;
-    if (enableCharge && state.flavor) {
-      let type = state.flavor.name;
-      if (HALO.prices) {
-        price = HALO.prices['instance:' + type] ? HALO.prices['instance:' + type].unit_price.price.segmented[0].price : HALO.prices[type].unit_price.price.segmented[0].price;
-        numPrice = (Number(price) * state.number).toFixed(4);
-        monthlyPrice = (Number(numPrice) * 24 * 30).toFixed(4);
-      }
-    }
-
     return (
       <div className="row row-select">
         <div className="modal-label">
@@ -1263,21 +1525,6 @@ class ModalBase extends React.Component {
         </div>
         <div className="modal-data">
           <InputNumber onChange={this.onChangeNumber} disabled={state.disabledNumber} min={1} value={state.number} width={120}/>
-          {
-            enableCharge ?
-              <div className="account-box">
-                <span className="account-sm">
-                  x <strong>{__.account.replace('{0}', +price)}</strong> / <span>{__.hour}</span> =
-                </span>
-                <span className="account-md">
-                  x <strong>{__.account.replace('{0}', +numPrice)}</strong> / <span>{__.hour}</span>
-                </span>
-                <span className="account-md account-gray">
-                  {'( ' + __.account.replace('{0}', +monthlyPrice) + ' / ' + __.month + ' )'}
-                </span>
-              </div>
-            : false
-          }
         </div>
       </div>
     );
@@ -1302,15 +1549,37 @@ class ModalBase extends React.Component {
         hasImage = state.bootableVolume;
       }
 
-      let enable = state.name.trim() && state.ready && hasImage;
+      let enable = state.ready && hasImage;
 
       return (
         <div className="right-side">
-          <Button value={__.next} disabled={!enable} type="create" onClick={this.onPaging.bind(this, 2)} />
+          <Button value={__.next} disabled={!enable} type="create" onClick={this.onPaging.bind(this, 2, '12')} />
         </div>
       );
-    } else {
-      let enable = state.flavor && state.network && state.number;
+    } else if (page === 2) {
+      return (
+        <div>
+          <div className="left-side">
+            <Button value={__.prev} type="cancel" onClick={this.onPaging.bind(this, page - 1, '21')} />
+          </div>
+          <div className="right-side">
+            <Button value={__.next} disabled={false} type="create" onClick={this.onPaging.bind(this, page + 1, '23')} />
+          </div>
+        </div>
+      );
+    } else if (page === 3) {
+      return (
+        <div>
+          <div className="left-side">
+            <Button value={__.prev} type="cancel" onClick={this.onPaging.bind(this, page - 1, '32')} />
+          </div>
+          <div className="right-side">
+            <Button value={__.next} disabled={false} type="create" onClick={this.onPaging.bind(this, page + 1, '34')} />
+          </div>
+        </div>
+      );
+    } else if (page === 4) {
+      let enable = state.flavor && (state.network.length >= 1 || state.port.length >= 1) && state.number;
       if (state.credential === 'keypair') {
         enable = enable && state.keypairName;
       } else {
@@ -1320,10 +1589,21 @@ class ModalBase extends React.Component {
       return (
         <div>
           <div className="left-side">
-            <Button value={__.prev} type="cancel" onClick={this.onPaging.bind(this, 1)} />
+            <Button value={__.prev} type="cancel" onClick={this.onPaging.bind(this, page - 1, '43')} />
           </div>
           <div className="right-side">
-            <Button value={__.create} disabled={state.disabled || !enable} type="create" onClick={this.onConfirm} />
+            <Button value={__.create} disabled={!state.name || state.disabled || !enable} type="create" onClick={this.onConfirm} />
+          </div>
+          <div className="middle-side">
+            <Button value={__.more + __.setting} type="cancel" onClick={this.onPaging.bind(this, page + 1, '45')} />
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <div className="left-side">
+            <Button value={__.prev} type="cancel" onClick={this.onPaging.bind(this, page - 1, '54')} />
           </div>
         </div>
       );
@@ -1336,32 +1616,62 @@ class ModalBase extends React.Component {
 
     let page = state.page;
     let slideClass = '';
-    if (state.pagingAni) {
-      slideClass = page === 1 ? ' move-out' : ' move-in';
-    } else {
-      slideClass = page === 1 ? '' : ' second-page';
+
+    let fromto = state.fromTo;
+    if(fromto === '12') {
+      slideClass = ' first-move-to-second';
+    } else if(fromto === '21') {
+      slideClass = ' second-move-to-first';
+    } else if(fromto === '23') {
+      slideClass = ' second-move-to-third';
+    } else if(fromto === '32') {
+      slideClass = ' third-move-to-second';
+    } else if(fromto === '34') {
+      slideClass = ' third-move-to-four';
+    } else if(fromto === '43') {
+      slideClass = ' four-move-to-third';
+    } else if(fromto === '45') {
+      slideClass = ' four-move-to-five';
+    } else if(fromto === '54') {
+      slideClass = ' five-move-to-four';
     }
 
     return (
-      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={726}>
-        <div className="modal-bd halo-com-modal-create-instance">
-          <div className={'page' + slideClass}>
-            {this.renderName(props, state)}
-            {this.renderImages(props, state)}
+      <div className="halo-modal-create-instance">
+        <Modal ref="modal" {...props} title={TITLE} key="modal" visible={state.visible} width={state.isShowDetail ? 1046 : 726}>
+          <div className="modal-bd halo-com-modal-create-instance">
+            <TabStep step={state.step}/>
+            <div className={'page' + slideClass}>
+              {this.renderImages(props, state)}
+            </div>
+            <div>
+              <DetailModal {...state} ref={(ref) => this.detailRef = ref} onAction={this.onAction.bind(this)}/>
+            </div>
+            <div className={'page' + slideClass}>
+              {this.renderFlavors(props, state)}
+            </div>
+            <div className={'page' + slideClass}>
+              {this.renderNetworks(props, state)}
+            </div>
+            <div className={'page error' + slideClass}>
+              {this.renderName(props, state)}
+              {this.renderSecurityGroup(props, state)}
+              {this.renderCredentials(props, state)}
+              {this.renderCreateNum(props, state)}
+              {this.renderErrorTip(props, state)}
+            </div>
+            <div className={'page' + slideClass}>
+              {this.renderPorts(props, state)}
+            </div>
           </div>
-          <div className={'page' + slideClass}>
-            {this.renderFlavors(props, state)}
-            {this.renderNetworks(props, state)}
-            {this.renderSecurityGroup(props, state)}
-            {this.renderCredentials(props, state)}
-            {this.renderCreateNum(props, state)}
-            {this.renderErrorTip(props, state)}
+          <div className="modal-ft halo-com-modal-create-instance">
+            {this.renderBtn(props, state, page)}
           </div>
-        </div>
-        <div className="modal-ft halo-com-modal-create-instance">
-          {this.renderBtn(props, state, page)}
-        </div>
-      </Modal>
+          <div className={this.state.isShowDetail ? 'detail-label hide' : 'detail-label'} onClick={this.onChangeDetail.bind(this)}>
+            <i className="glyphicon icon-arrow-right"/>
+          </div>
+        </Modal>
+      </div>
     );
   }
 }

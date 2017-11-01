@@ -4,9 +4,9 @@ module.exports = {
   getImageList: function() {
     return fetch.get({
       //url: '/api/v1/images'
-      url: '/proxy/glance/v2/images'
+      url: '/proxy-search/glance/v2/images'
     }).then(function(data) {
-      return data.images;
+      return data.list;
     });
   }
 };
