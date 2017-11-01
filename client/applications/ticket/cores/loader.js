@@ -13,6 +13,9 @@ if (!HALO.configs.renderer) { // Do not load modules in server-end
       modules[n] = require('../modules/' + n + '/model');
     });
   });
+  configs.linkedModules.forEach((m) => {
+    modules[m] = require('../modules/' + m + '/model');
+  });
 }
 
 module.exports = {

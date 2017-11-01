@@ -5,12 +5,13 @@
  */
 
 module.exports = (configs) => {
-
+  let linkedModules = [];
   const filterMenu = (modules) => {
     modules.forEach((m) => {
       m.items = m.items.filter((i) => {
         let b = configs.routers.some((n) => {
           if (n.key === i) {
+            linkedModules.push(i);
             return true;
           }
           return false;
@@ -40,10 +41,11 @@ module.exports = (configs) => {
 
   configs.modules = filterMenu(configs.modules);
 
+  configs.linkedModules = linkedModules;
+
   // check if defalut_module is hidden
   configs.default_module = ~configs.default_hide_modules.indexOf(configs.default_module) ?
     configs.modules.filter(m => m.items && m.items.length > 0)[0].items[0] : configs.default_module;
-
 
   return configs;
 };
