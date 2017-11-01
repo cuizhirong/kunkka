@@ -67,9 +67,11 @@
     "key": "template-resource",
     "link": "heat-list"
   }],
-  "hidden": [
+  "theme": "default",
+  "default_hide_modules": [
     "ike-policy",
-    "ipsec-policy"
-  ],
-  "theme": "default"
+    "ipsec-policy",
+    "instance-public",
+    "volume-public"
+  ]
 }

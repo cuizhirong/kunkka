@@ -9,6 +9,8 @@ require('./cores/watchdog');
 const loader = require('./cores/loader'),
   configs = loader.configs;
 
+const isPathValid = require('client/libs/path_valid');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -34,18 +36,22 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
-    let _moduleName = pathList[1],
-      modules = this.state.modules;
-    if (modules.indexOf(_moduleName) === -1) {
-      modules = modules.concat(_moduleName);
-    }
+    if (isPathValid(pathList, configs)) {
+      let _moduleName = pathList[1],
+        modules = this.state.modules;
+      if (modules.indexOf(_moduleName) === -1) {
+        modules = modules.concat(_moduleName);
+      }
 
-    this.setState({
-      modules: modules,
-      selectedModule: pathList[1],
-      selectedMenu: this._filterMenu(_moduleName),
-      params: pathList
-    });
+      this.setState({
+        modules: modules,
+        selectedModule: pathList[1],
+        selectedMenu: this._filterMenu(_moduleName),
+        params: pathList
+      });
+    } else {
+      router.replaceState('/bill/' + configs.default_module);
+    }
   }
 
   _filterMenu(item) {
@@ -98,7 +104,7 @@ class Model extends React.Component {
       isAdmin = HALO.user.roles.indexOf('admin') !== -1,
       menus = [];
 
-    props.menus.forEach((m) => {
+    configs.modules.forEach((m) => {
       let submenu = [];
       if (!isAdmin && m.title === 'bill_mgmt') {
         return;
@@ -144,24 +150,5 @@ class Model extends React.Component {
   }
 
 }
-
-function filterMenu(modules) {
-  modules.forEach((m) => {
-    m.items = m.items.filter((i) => {
-      let b = configs.routers.some((n) => {
-        if (n.key === i) {
-          return true;
-        }
-        return false;
-      });
-      return !b;
-    });
-  });
-  return modules;
-}
-
-Model.defaultProps = {
-  menus: filterMenu(configs.modules)
-};
 
 module.exports = Model;

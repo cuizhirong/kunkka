@@ -10,6 +10,8 @@ require('./cores/watchdog');
 const loader = require('./cores/loader'),
   configs = loader.configs;
 
+const isPathValid = require('client/libs/path_valid');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -35,7 +37,7 @@ class Model extends React.Component {
   }
 
   onChangeState(pathList) {
-    if (this.isValidPath(pathList)) {
+    if (isPathValid(pathList, configs)) {
       let _moduleName = pathList[1],
         modules = this.state.modules;
       if (modules.indexOf(_moduleName) === -1) {
@@ -49,48 +51,8 @@ class Model extends React.Component {
         params: pathList
       });
     } else {
-      router.replaceState('/dashboard/overview');
+      router.replaceState('/dashboard/' + configs.default_module);
     }
-  }
-
-  isValidPath(pathList) {
-    let isValid = true;
-
-    if (pathList.length > 1) {
-      isValid = this.menuKeys.some((ele) => ele === pathList[1]);
-    }
-
-    return isValid;
-  }
-
-  getMenuKeys() {
-    let menuKeys = [];
-
-    this.props.menus.forEach((ele) => {
-
-      if (ele.title !== 'monitor' && ele.title !== 'orchestration') {
-        ele.items.forEach((item) => {
-          menuKeys.push(item);
-        });
-      } else {
-        if (HALO.settings.enable_alarm || HALO.settings.enable_orchestration) {
-          ele.items.forEach((item) => {
-            menuKeys.push(item);
-          });
-        }
-      }
-
-    });
-
-    configs.routers.forEach(r => {
-      menuKeys.push(r.key);
-    });
-
-    configs.hidden.forEach(h => {
-      menuKeys.push(h);
-    });
-
-    return menuKeys;
   }
 
   _filterMenu(item) {
@@ -106,7 +68,6 @@ class Model extends React.Component {
   }
 
   componentDidMount() {
-    this.menuKeys = this.getMenuKeys();
     this.loadRouter();
   }
 
@@ -147,7 +108,7 @@ class Model extends React.Component {
       modules = loader.modules,
       menus = [];
 
-    props.menus.forEach((m) => {
+    configs.modules.forEach((m) => {
       let submenu = [];
       m.items.forEach((n, i) => {
         submenu.push({
@@ -207,30 +168,5 @@ class Model extends React.Component {
   }
 
 }
-
-function filterMenu(modules) {
-  modules.forEach((m) => {
-    m.items = m.items.filter((i) => {
-      let b = configs.routers.some((n) => {
-        if (n.key === i) {
-          return true;
-        }
-        return false;
-      });
-      let h = configs.hidden ? configs.hidden.some((hide) => {
-        if (hide === i) {
-          return true;
-        }
-        return false;
-      }) : null;
-      return !b && !h;
-    });
-  });
-  return modules;
-}
-
-Model.defaultProps = {
-  menus: filterMenu(configs.modules)
-};
 
 module.exports = Model;
