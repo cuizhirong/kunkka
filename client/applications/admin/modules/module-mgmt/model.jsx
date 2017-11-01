@@ -83,7 +83,7 @@ class Model extends React.Component {
     const state = this.state;
     let module = state.module;
     let modules = state.modules;
-    module[item] = !module[item];
+    module[item].show = !module[item].show;
     modules[state.currentApp] = module;
     const newData = {
       value: JSON.stringify(modules)
@@ -103,13 +103,13 @@ class Model extends React.Component {
         Object.keys(state.module).map((m, i) => {
           return <div className="outer" key={i}>
             <div className="item">
-              <div className="text">{m}</div>
+              <div className="text">{state.module[m].lang} | {m}</div>
               <Switch
                 onChange={this.onSwitch.bind(this, m)}
                 labelOn={__.labelOn}
                 labelOff={__.labelOff}
                 disabled={m === 'setting-mgmt' || m === 'module-mgmt'}
-                checked={state.module[m]} />
+                checked={state.module[m].show} />
             </div>
           </div>;
         })
