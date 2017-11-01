@@ -166,7 +166,7 @@ class Model extends React.Component {
       }
 
       this.setState({
-        config: config
+        config: this.state.config
       }, () => {
         if (detail && detailRefresh) {
           detail.refresh();

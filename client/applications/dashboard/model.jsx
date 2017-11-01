@@ -95,6 +95,10 @@ class Model extends React.Component {
         return 'backup';
       case 'orchestration':
         return 'template-list';
+      case 'volume-private':
+        return 'volume';
+      case 'volume-public':
+        return 'volume';
       default:
         return name;
     }
