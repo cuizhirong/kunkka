@@ -34,7 +34,7 @@ module.exports = (configs) => {
   if (!HALO.configs.init) {
     const moduleConfig = JSON.parse(HALO.settings.module_config)[HALO.application.current_application];
     Object.keys(moduleConfig).forEach(m => {
-      if(!moduleConfig[m] && !~configs.default_hide_modules.indexOf(m)) {
+      if(!moduleConfig[m].show && !~configs.default_hide_modules.indexOf(m)) {
         configs.default_hide_modules.push(m);
       }
     });

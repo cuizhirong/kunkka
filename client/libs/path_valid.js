@@ -15,7 +15,7 @@ const getMenuKeys = configs => {
   });
 
   configs.routers.forEach(r => {
-    if(!~hideModules.indexOf(r.link)) {
+    if(!~hideModules.indexOf(r.link) && !~hideModules.indexOf(r.key)) {
       menuKeys.push(r.key);
     }
   });
