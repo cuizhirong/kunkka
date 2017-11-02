@@ -2,6 +2,8 @@
   "en": {
     "all_volumes": "All Volumes",
     "all_gigabytes": "All Volumes Gigabytes",
+    "apply": "Apply",
+    "apply_quota": "Apply for Quota",
     "infinity": "Infinity",
     "information": " Information",
     "gigabyte": " Gigabyte",
@@ -12,6 +14,8 @@
   "zh-CN": {
     "all_volumes": "云硬盘总数",
     "all_gigabytes": "云硬盘容量总数",
+    "apply": "申请",
+    "apply_quota": "申请配额",
     "infinity": "无限",
     "quota": "配额",
     "information": "信息",

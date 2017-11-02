@@ -1,0 +1,84 @@
+{
+  "tabs": [{
+    "name": ["pending-registration-application"],
+    "key": "registration-approval",
+    "default": true
+  }, {
+    "name": ["approved-registration-application"],
+    "key": "approved-registration-application"
+  }],
+  "btns": [{
+    "value": ["agree-to-the-application"],
+    "key": "agree",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["refuse-to-the-application"],
+    "key": "refuse",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "account_name",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "account_name"]
+    }]
+  }, {
+    "group_key": "phone_number",
+    "items": [{
+      "type": "input",
+      "key": "phone",
+      "placeholder": ["pls_enter", "phone_number"]
+    }]
+  }, {
+    "group_key": "email",
+    "items": [{
+      "type": "input",
+      "key": "email",
+      "placeholder": ["pls_enter", "email"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["full_name"],
+      "dataIndex": "full_name",
+      "key": "full_name"
+    }, {
+      "title": ["phone_number"],
+      "key": "phone",
+      "dataIndex": "phone"
+      }, {
+      "title": ["email"],
+      "dataIndex": "email",
+      "key": "email"
+    }, {
+      "title": ["company"],
+      "dataIndex": "company",
+      "key": "company",
+      "sort": true
+    }, {
+      "title": ["registration_date"],
+      "dataIndex": "createdAt",
+      "key": "registration_date",
+      "type": "time",
+      "sort": true
+    }],
+    "data": []
+  }
+}

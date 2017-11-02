@@ -1,0 +1,10 @@
+{
+  "en": {
+    "pass_status": "Pass",
+    "refused_status": "Refused"
+  },
+  "zh-CN": {
+    "pass_status": "通过",
+    "refused_status": "拒绝"
+  }
+}

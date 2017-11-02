@@ -1,5 +1,12 @@
 {
   "modules": [{
+    "title": "operation_service",
+    "items": [
+      "registration-approval",
+      "approved-registration-application",
+      "quota-approval"
+    ]
+  }, {
     "title": "compute_service",
     "items": [
       "host",
@@ -93,6 +100,9 @@
   }, {
     "key": "orchestration-services",
     "link": "system-information"
+  }, {
+    "key": "approved-registration-application",
+    "link": "registration-approval"
   }],
   "theme": "default"
 }

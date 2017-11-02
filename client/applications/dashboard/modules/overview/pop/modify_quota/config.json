@@ -1,0 +1,11 @@
+{
+  "title": ["apply_quota"],
+  "fields": [{
+    "type": "adapter",
+    "field": "quota"
+  }],
+  "btn": {
+    "value": "apply",
+    "disabled": false
+  }
+}

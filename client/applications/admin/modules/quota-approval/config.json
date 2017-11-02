@@ -1,0 +1,67 @@
+{
+  "tabs": [{
+    "name": ["pending-quota-application"],
+    "key": "quota-approval",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["agree-to-the-application"],
+    "key": "agree",
+    "captain": true,
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["refuse-to-the-application"],
+    "key": "refuse",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "applicant"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["applicant"],
+      "key": "applicant",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["full_name"],
+      "key": "full_name",
+      "dataIndex": "host"
+    }, {
+      "title": ["project"],
+      "key": "project",
+      "dataIndex": "projectName",
+      "sort": true
+    }, {
+      "title": ["company"],
+      "key": "company",
+      "sort": true
+    }, {
+      "title": ["application_date"],
+      "dataIndex": "createdAt",
+      "key": "application_date",
+      "type": "time",
+      "sort": true
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["apply_detail"],
+        "key": "detail",
+        "default": true
+      }]
+    }
+  }
+}

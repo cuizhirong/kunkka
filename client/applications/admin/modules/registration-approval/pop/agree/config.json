@@ -1,0 +1,11 @@
+{
+  "title": ["agree-to-the-application"],
+  "fields": [{
+    "type": "adapter",
+    "field": "agree"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": ["refuse-to-the-application"],
+  "fields": [{
+    "type": "adapter",
+    "field": "refuse"
+  }, {
+    "type": "input",
+    "field": "refuse_reason"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "en": {
+    "applicant": "Applicant",
+    "application_date": "Application Date",
+    "apply_detail": "Quota application details",
+    "agree_quota_application_info_part1": "User",
+    "agree_quota_application_info_part2": "",
+    "quota_of_application": "Apply for Increased Quota",
+    "refuse_quota_application_info_part1": "Are you sure you want to reject the user",
+    "refuse_quota_application_info_part2": "quota application?"
+  },
+  "zh-CN": {
+    "applicant": "申请人",
+    "application_date": "申请日期",
+    "apply_detail": "配额申请详情",
+    "agree_quota_application_info_part1": "用户",
+    "agree_quota_application_info_part2": "申请的资源配额详情如下，是否同意其申请",
+    "quota_of_application": "申请增加的配额",
+    "refuse_quota_application_info_part1": "您确定要拒绝用户",
+    "refuse_quota_application_info_part2": "的配额申请吗？"
+  }
+}

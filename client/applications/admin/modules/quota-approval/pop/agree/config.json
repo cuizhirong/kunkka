@@ -1,0 +1,16 @@
+{
+  "title": ["agree-to-the-application"],
+  "fields": [{
+    "key": "agree",
+    "type": "adapter",
+    "field": "agree"
+  }, {
+    "key": "quota-info",
+    "type": "adapter",
+    "field": "quota-info"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create"
+  }
+}

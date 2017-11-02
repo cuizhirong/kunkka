@@ -1,0 +1,75 @@
+{
+  "tabs": [{
+    "name": ["pending-registration-application"],
+    "key": "registration-approval"
+  }, {
+    "name": ["approved-registration-application"],
+    "key": "approved-registration-application",
+    "default": true
+  }],
+  "btns": [ {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "account_name",
+    "items": [{
+      "type": "input",
+      "key": "name",
+      "placeholder": ["pls_enter", "account_name"]
+    }]
+  }, {
+    "group_key": "phone_number",
+    "items": [{
+      "type": "input",
+      "key": "phone",
+      "placeholder": ["pls_enter", "phone_number"]
+    }]
+  }, {
+    "group_key": "email",
+    "items": [{
+      "type": "input",
+      "key": "email",
+      "placeholder": ["pls_enter", "email"]
+    }]
+  }],
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["full_name"],
+      "dataIndex": "full_name",
+      "key": "full_name"
+    }, {
+      "title": ["phone_number"],
+      "key": "phone",
+      "dataIndex": "phone"
+      }, {
+      "title": ["email"],
+      "dataIndex": "email",
+      "key": "email"
+    }, {
+      "title": ["company"],
+      "dataIndex": "company",
+      "key": "company",
+      "sort": true
+    }, {
+      "title": ["status"],
+      "key": "status",
+      "sort": true
+    },{
+      "title": ["registration_date"],
+      "dataIndex": "createdAt",
+      "key": "registration_date",
+      "type": "time",
+      "sort": true
+    }],
+    "data": []
+  }
+}

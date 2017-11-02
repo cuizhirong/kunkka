@@ -52,6 +52,8 @@ class Model extends React.Component {
     }
     let data = {
       name: refs.name.state.value,
+      full_name: refs.fullName.state.value,
+      company: refs.company.state.value,
       email: refs.email.state.value,
       phone: refs.phone.state.value,
       code: refs.phone.state.code,
@@ -90,6 +92,7 @@ class Model extends React.Component {
       canSubmit = false,
       canSub = function() {
         canSubmit = refs.email.state.pass && refs.name.state.pass
+          && refs.fullName.state.pass && refs.company.state.pass
           && refs.password.state.pass && refs.confirm_password.state.pass
           && refs.phone.state.code.length === 6
           && refs.phone.state.pass && (that.props.HALO.settings.eula_content ? that.state.hasRead : true);
@@ -162,6 +165,20 @@ class Model extends React.Component {
               error(getErrorMessage(err));
             });
           }, 500);
+        }
+        break;
+      case 'fullName':
+        if (value.length > 30 || value.length < 1) {
+          error();
+        } else {
+          pass();
+        }
+        break;
+      case 'company':
+        if (value.length > 80 || value.length < 1) {
+          error();
+        } else {
+          pass();
         }
         break;
       case 'password':
@@ -246,6 +263,8 @@ class Model extends React.Component {
         <form method="POST" onSubmit={this.onSubmit}>
           <Input input_type="text" ref="email" name="email" __={__} tip={true} placeholder={__.email_placeholder} onChange={this.onChange} />
           <Input input_type="text" ref="name" name="name" __={__} tip={true} placeholder={__.name_placeholder} onChange={this.onChange} />
+          <Input input_type="text" ref="fullName" name="fullName" __={__} tip={true} placeholder={__.fullName_placeholder} onChange={this.onChange} />
+          <Input input_type="text" ref="company" name="company" __={__} tip={true} placeholder={__.company_placeholder} onChange={this.onChange} />
           <Input input_type="password" ref="password" name="password" __={__} tip={true} placeholder={__.password_placeholder} onChange={this.onChange} />
           <Input input_type="password" ref="confirm_password" name="confirm_password" onChange={this.onChange} placeholder={__.confirm_password_placeholder} />
           <Phone ref="phone" name="phone" __={__} onChange={this.onChange} />
