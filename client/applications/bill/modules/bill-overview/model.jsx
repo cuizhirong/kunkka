@@ -384,7 +384,7 @@ class Model extends React.Component {
                 <div className="item" onMouseOver={this.onHoverItem.bind(this, i)} onMouseLeave={this.onMoveOutItem.bind(this)} >
                   <div className="child-wrapper">
                     <div className="title">
-                      <i style={(i === state.hoverIndex) ? iconStyle : {}} className={'glyphicon icon-' + getIcons(p.name)}></i>{p.name}
+                      <i style={(i === state.hoverIndex) ? iconStyle : {}} className={'glyphicon icon-' + getIcons(p.name)}></i>{__[p.name]}
                     </div>
                     <div className="value">¥<span id={'counting_' + i}>...</span></div>
                   </div>

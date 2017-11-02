@@ -2,25 +2,43 @@
   "en": {
     "by_day": "Day",
     "by_month": "Month",
+    "compute": "Compute",
     "end_time": "End Time",
     "from": "From",
+    "lbass.listener": "Listener",
+    "lbass.loadbalancer": "Loadbalance",
     "loading": "loading...",
+    "network.floating": "Floating IP",
+    "network.router": "Router",
     "query": "Query",
+    "rate.limit.gw": "Gateway Rate Limit",
+    "rate.limit.fip": "Floating IP Rate Limit",
     "recent_consumption_record": "Recent consumption record",
     "start_time": "Start Time",
     "sum": "Sum",
-    "to": "To"
+    "to": "To",
+    "volume.snapshot": "Snapshot",
+    "volume.volume": "Volume"
   },
   "zh-CN": {
     "by_day": "按天",
     "by_month": "按月",
+    "compute": "云主机",
     "end_time": "结束时间",
     "from": "从",
+    "lbass.listener": "监听器",
+    "lbass.loadbalancer": "负载均衡",
     "loading": "加载中...",
+    "network.floating": "公网IP",
+    "network.router": "路由器",
     "query": "查询",
+    "rate.limit.gw": "网关限速",
+    "rate.limit.fip": "公网IP限速",
     "recent_consumption_record": "最近消费记录",
     "start_time": "开始时间",
     "sum": "金额",
-    "to": "到"
+    "to": "到",
+    "volume.snapshot": "快照",
+    "volume.volume": "云硬盘"
   }
 }
