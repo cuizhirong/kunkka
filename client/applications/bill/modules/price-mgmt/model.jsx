@@ -5,10 +5,9 @@ const Main = require('client/components/main_paged/index');
 const BasicProps = require('client/components/basic_props/index');
 const modifyPricePop = require('./pop/modify/index');
 const deleteModal = require('client/components/modal_delete/index');
-const Table = require('client/uskin/index').Table;
 const __ = require('locale/client/bill.lang.json');
 const config = require('./config.json');
-const moment = require('client/libs/moment');
+const router = require('client/utils/router');
 const request = require('./request');
 
 class Model extends React.Component {
@@ -16,10 +15,9 @@ class Model extends React.Component {
   constructor(props) {
     super(props);
 
-    moment.locale(HALO.configs.lang);
-
     this.state = {
-      config: config
+      config: config,
+      ready: false
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -41,49 +39,29 @@ class Model extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
-      this.loadingTable();
-      this.onInitialize(nextProps.params);
+      this.getList();
     }
   }
 
   tableColRender(columns) {
     columns.map((column) => {
+      column.formatter = (col, item, i) => {
+        return item.name ? item.name : '(' + item.mapping_id.substr(0, 8) + ')';
+      };
       switch (column.key) {
-        case 'base_price':
+        case 'service':
           column.render = (col, item, i) => {
-            let basePrice = item.unit_price.price.base_price;
-            return <span className="orange">{basePrice}</span>;
+            return item.resource_type;
           };
           break;
         case 'price':
           column.render = (col, item, i) => {
-            let price = item.unit_price.price;
-            if(price.segmented) {
-              return (
-                <div className="halo-module-price-mgmt-price">
-                  <span className="orange">{item.unit_price.price.segmented[0].price}</span>
-                  <span>{' (' + price.segmented.length + ')'}</span>
-                </div>
-              );
-            }
-            return '';
-          };
-          break;
-        case 'type':
-          column.render = (col, item, i) => {
-            let type = item.unit_price.price.type;
-            if(type === 'segmented') {
-              return __.gradient_charge;
-            } else {
-              return '';
-            }
+            return <span className="orange">{item.cost}</span>;
           };
           break;
         case 'region':
           column.render = (col, item, i) => {
-            let regions = HALO.region_list;
-            let regionName = regions.find((n) => n.id === item.region_id) ? regions.find((n) => n.id === item.region_id).name : item.region_id;
-            return regionName;
+            return HALO.current_region;
           };
           break;
         default:
@@ -93,58 +71,27 @@ class Model extends React.Component {
   }
 
   //initialize table data
-  onInitialize(params) {
-    this.getTableData();
+  onInitialize() {
+    this.getList();
   }
 
-  getInitializeListData() {
-    this.getTableData();
-  }
-
-  getSingle(id) {
-    let table = this.state.config.table;
-    request.getPriceById(id).then((res) => {
-      if (res) {
-        table.data = [res];
-      } else {
-        table.data = [];
-      }
-      this.updateTableData(table, res._url);
-    }).catch((res) => {
-      table.data = [];
-      this.updateTableData(table, res._url);
-    });
-  }
-
-  getSingleByName(name) {
-    let table = this.state.config.table;
-    request.getPriceByName(name).then((res) => {
-      if (res) {
-        table.data = res;
-      } else {
-        table.data = [];
-      }
-      this.updateTableData(table, res._url);
-    }).catch((res) => {
-      table.data = [];
-      this.updateTableData(table, res._url);
-    });
-  }
-
-  getList() {
-    this.clearState();
+  getList(refreshDetail) {
+    !refreshDetail && this.clearState();
     let table = this.state.config.table;
     request.getList().then((res) => {
-      let newTable = this.processTableData(table, res);
-      this.updateTableData(newTable, res._url);
+      this.setState({
+        ready: true
+      });
+      table.data = res;
+      this.updateTableData(table, refreshDetail);
     }).catch((res) => {
       table.data = [];
-      this.updateTableData(table, res._url);
+      this.updateTableData(table, refreshDetail);
     });
   }
 
   //rerender: update table data
-  updateTableData(table, currentUrl, refreshDetail, callback) {
+  updateTableData(table, refreshDetail, callback) {
     let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
@@ -157,36 +104,6 @@ class Model extends React.Component {
       if (detail && refreshDetail && params.length > 2) {
         detail.refresh();
       }
-    });
-  }
-
-  processTableData(table, res) {
-    if (res.products) {
-      table.data = res.products;
-    }
-    return table;
-  }
-
-  getTableData(detailRefresh) {
-    request.getList().then((res) => {
-      let table = this.state.config.table;
-      table.data = res.products;
-      table.loading = false;
-
-      let detail = this.refs.dashboard.refs.detail;
-      if (detail && detail.state.loading) {
-        detail.setState({
-          loading: false
-        });
-      }
-
-      this.setState({
-        config: config
-      }, () => {
-        if (detail && detailRefresh) {
-          detail.refresh();
-        }
-      });
     });
   }
 
@@ -206,8 +123,6 @@ class Model extends React.Component {
       if (data.clearState) {
         this.clearState();
       }
-
-      this.getInitializeListData();
     } else if (data.refreshList) {
       if (params[2]) {
         if (data.loadingDetail) {
@@ -220,7 +135,7 @@ class Model extends React.Component {
         }
       }
     }
-    this.getTableData(data.refreshDetail);
+    this.getList(data.refreshDetail);
   }
 
   loadingTable() {
@@ -255,7 +170,6 @@ class Model extends React.Component {
         this.onClickTable(actionType, refs, data);
         break;
       case 'detail':
-        this.loadingDetail();
         this.onClickDetailTabs(actionType, refs, data);
         break;
       default:
@@ -263,15 +177,74 @@ class Model extends React.Component {
     }
   }
 
+  onClickDetailTabs(tabKey, refs, data) {
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+
+    switch(tabKey) {
+      case 'description':
+        if (rows.length === 1) {
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
+
+          contents[tabKey] = (
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                tabKey={'description'}
+                items={basicPropsItem}
+                rawItem={rows[0]}
+                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+            </div>
+          );
+        }
+        break;
+      default:
+        break;
+    }
+
+    detail.setState({
+      contents: contents,
+      loading: false
+    });
+  }
+
+  getBasicPropsItems(item) {
+    let items = [{
+      title: __.name,
+      content: item.name || '(' + item.mapping_id.substring(0, 8) + ')'
+    }, {
+      title: __.price,
+      content: item.cost
+    }, {
+      title: __.mapping_id,
+      type: 'copy',
+      content: item.mapping_id
+    }, {
+      title: __.service,
+      content: item.resource_type
+    }, {
+      title: __.region,
+      content: HALO.current_region
+    }];
+
+    return items;
+  }
+
   onClickSearch(actionType, refs, data) {
     if (actionType === 'click') {
-      this.loadingTable();
-
       if(data.text) {
-        this.getSingleByName(data.text);
+        this.getSingleByMappingId(data.text);
       } else {
         this.getList();
       }
+    }
+  }
+
+  getSingleByMappingId(mappingId) {
+    if(HALO.stash.mappings.find(m => m.mapping_id === mappingId)) {
+      router.replaceState('/bill/price-mgmt/' + mappingId, null, null, false);
     }
   }
 
@@ -320,12 +293,14 @@ class Model extends React.Component {
 
     switch(key) {
       case 'create':
-        modifyPricePop(null, null, function() {
-          that.refresh({
-            refreshList: true,
-            refreshDetail: true
+        if(this.state.ready) {
+          modifyPricePop(null, null, function() {
+            that.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
           });
-        });
+        }
         break;
       case 'modify':
         modifyPricePop(rows[0], null, function() {
@@ -363,101 +338,6 @@ class Model extends React.Component {
       default:
         break;
     }
-  }
-
-  onClickDetailTabs(tabKey, refs, data) {
-    let {rows} = data;
-    let detail = refs.detail;
-    let contents = detail.state.contents;
-
-    switch (tabKey) {
-      case 'description':
-        if (rows.length === 1) {
-          let basicPropsItem = this.getBasicPropsItems(rows[0]);
-
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                items={basicPropsItem}
-                rawItem={rows[0]}
-                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-            </div>
-          );
-        }
-        break;
-      default:
-        break;
-    }
-    detail.setState({
-      contents: contents,
-      loading: false
-    });
-  }
-
-  getBasicPropsItems(item) {
-    let type = item.unit_price.price.type;
-    let tableConfig = {
-      datakey: item.id,
-      column: [{
-        title: __.range,
-        key: 'range',
-        dataIndex: 'range',
-        width: 100
-      }, {
-        title: __.price + ' (' + __.unit + ')',
-        dataIndex: 'price',
-        key: 'price',
-        width: 100,
-        render: function(col, colItem, index) {
-          return <div style={{color: '#f78913'}}>{colItem.price}</div>;
-        }
-      }],
-      data: []
-    };
-    item.unit_price.price.segmented.forEach((childItem, i) => {
-      let range = '>  ' + childItem.count,
-        price = childItem.price,
-        data = {
-          range: range,
-          price: price
-        };
-      tableConfig.data.push(data);
-    });
-
-    let price = <Table
-        __={__}
-        dataKey={tableConfig.dataKey}
-        column={tableConfig.column}
-        data={tableConfig.data}
-      />;
-    let items = [{
-      title: __.name,
-      content: item.name || '(' + item.id.substring(0, 8) + ')'
-    }, {
-      title: __.service,
-      content: item.service
-    }, {
-      title: __.price,
-      content: price
-    }, {
-      title: __.type,
-      content: (type === 'segmented') ? __.gradient_charge : '-'
-    }, {
-      title: __.region,
-      content: HALO.region_list.find((n) => n.id === item.region_id) ? HALO.region_list.find((n) => n.id === item.region_id).name : item.region_id
-    }, {
-      title: __.description,
-      content: item.description ? item.description : '-'
-    }, {
-      title: __.created + __.time,
-      type: 'time',
-      content: item.created_at
-    }];
-
-    return items;
   }
 
   render() {

@@ -27,11 +27,11 @@
     "disabled": true
   }],
   "search": {
-    "placeholder": ["pls_enter", "price", "name"]
+    "placeholder": ["pls_enter", "mapping_id"]
   },
   "table": {
     "checkbox": true,
-    "dataKey": "id",
+    "dataKey": "mapping_id",
     "loading": true,
     "column": [{
       "title": ["name"],
@@ -44,25 +44,13 @@
       "key": "service",
       "dataIndex": "service"
     }, {
-      "title": ["base_price"],
-      "key": "base_price",
-      "dataIndex": "base_price"
-    }, {
       "title": ["price"],
       "dataIndex": "price",
       "key": "price"
     }, {
-      "title": ["type"],
-      "dataIndex": "type",
-      "key": "type"
-    }, {
       "title": ["region"],
       "dataIndex": "region",
       "key": "region"
-    }, {
-      "title": ["description"],
-      "dataIndex": "description",
-      "key": "description"
     }],
     "data": [],
     "detail": {

@@ -26,9 +26,18 @@ class SelectSingle extends React.Component {
   }
 
   onChange(value) {
-    this.setState({
-      value: value
-    });
+    if(Object.prototype.toString.call(value) === '[object Object]') {
+      if(value.disabled) {
+        return;
+      }
+      this.setState({
+        value: value
+      });
+    } else {
+      this.setState({
+        value: value
+      });
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -68,14 +77,29 @@ class SelectSingle extends React.Component {
         for(let j = i; j < i + columnNum; j++) {
           if (j < data.length) {
             let value = data[j];
-            tabs.push(
-              <a key={value}
-                style={{width: width}}
-                className={value === state.value ? 'selected' : ''}
-                onClick={value === state.value ? null : that.onChange.bind(that, value)}>
-                {props.__[value] || value}
-              </a>
-            );
+            if(Object.prototype.toString.call(data[j]) === '[object Object]') {
+              let cn = value.name === state.value.name ? 'selected' : '';
+              if(value.disabled) {
+                cn += ' disabled';
+              }
+              tabs.push(
+                <a key={value.id}
+                  style={{width: width}}
+                  className={cn}
+                  onClick={value.name === state.value.name ? null : that.onChange.bind(that, value)}>
+                  {props.__[value.name] || value.name}
+                </a>
+              );
+            } else {
+              tabs.push(
+                <a key={value}
+                  style={{width: width}}
+                  className={value === state.value ? 'selected' : ''}
+                  onClick={value === state.value ? null : that.onChange.bind(that, value)}>
+                  {props.__[value] || value}
+                </a>
+              );
+            }
           }
         }
         ret.push(<div key={i}>{tabs}</div>);
@@ -87,6 +111,9 @@ class SelectSingle extends React.Component {
     return (
       <div className={className}>
         <div>
+          {
+            props.required && <strong>*</strong>
+          }
           {props.label}
         </div>
         <div>{renderTabs()}</div>

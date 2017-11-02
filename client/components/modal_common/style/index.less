@@ -21,6 +21,7 @@
 @tab_row_selected_bg_color: @color_info_200;
 
 @radio_row_disabled_bg_color: @color_grey;
+@select_single_disabled_bg_color: @color_disabled_300;
 
 @slider_tip_color: @color_grey_800;
 @progress_tip_color: @color_grey_800;
@@ -327,32 +328,42 @@
 
     &.select-single-row {
       align-items: baseline;
-      > div:last-child > div {
-        margin-bottom: 8px;
-        &:last-child {
-          margin-bottom: 0;
-        }
-        a {
-          width: 100%;
-          margin-right: 2%;
-          display: inline-block;
-          color: @tab_row_font_color;
-          background-color: @tab_row_bg_color;
-          height: 32px;
-          line-height: 32px;
-          border-radius: 2px;
-          text-align: center;
-
-          &:hover {
-            background-color: @tab_row_hover_bg_color;
-          }
-
-          &.selected {
-            background-color: @tab_row_selected_bg_color;
-          }
-
+      > div:last-child {
+        max-height: 200px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        > div {
+          margin-bottom: 8px;
           &:last-child {
-            margin-right: 0;
+            margin-bottom: 0;
+          }
+          a {
+            width: 100%;
+            margin-right: 2%;
+            display: inline-block;
+            color: @tab_row_font_color;
+            background-color: @tab_row_bg_color;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 2px;
+            text-align: center;
+
+            &:hover {
+              background-color: @tab_row_hover_bg_color;
+            }
+
+            &.selected {
+              background-color: @tab_row_selected_bg_color;
+            }
+
+            &.disabled {
+              background-color: @select_single_disabled_bg_color;
+              cursor: not-allowed;
+            }
+
+            &:last-child {
+              margin-right: 0;
+            }
           }
         }
       }

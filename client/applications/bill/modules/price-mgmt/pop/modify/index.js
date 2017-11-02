@@ -2,115 +2,111 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/bill.lang.json');
-const stageInput = require('./stageInput.jsx');
 const getErrorMessage = require('../../../../utils/error_message');
 
-const regionList = HALO.region_list;
-
 function pop(obj, parent, callback) {
-  config.fields[4].data = regionList;
+  let services = HALO.stash.services.map(s => {
+    return {
+      name: s.name,
+      id: s.service_id,
+      service_id: s.service_id
+    };
+  });
+  let fieldId = HALO.stash.field_id;
+  let compute = services.find(s => s.name === 'compute');
+  let mappings = HALO.stash.mappings;
+  let flavors = HALO.stash.flavors.map(f => {
+    let disable = !!mappings.find(m => m.value === f.id);
+    return {
+      name: f.name + (disable ? `   [${__.price_exist}]` : ''),
+      id: f.id,
+      disabled: disable
+    };
+  });
   if (obj) {
-    config.title = ['modify', 'price'];
-    config.fields[0].value = obj.name;
-    config.fields[1].value = obj.unit_price.price.base_price;
-    config.fields[3].value = obj.service;
-    config.fields[4].value = obj.region_id;
-    config.fields[5].value = obj.description;
+    config.fields[0].hide = true;
+    config.fields[2].value = obj.cost;
     config.btn.value = 'modify';
+    config.title = ['modify', 'price'];
   } else {
-    config.title = ['create', 'price'];
-    config.fields[0].value = '';
-    config.fields[1].value = '';
-    config.fields[4].value = HALO.current_region;
-    config.fields[5].value = '';
+    config.fields[0].hide = false;
+    config.fields[0].data = services;
+    config.fields[0].value = services[0].id;
+    config.fields[1].data = flavors;
+    config.fields[2].value = '';
     config.btn.value = 'create';
-    config.btn.type = 'create';
+    config.title = ['create', 'price'];
   }
-
   let props = {
     __: __,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      if(obj) {
-        let price = obj.unit_price.price.segmented;
-        refs.price.setState({
-          renderer: stageInput,
-          value: price
-        });
-        refs.btn.setState({
-          disabled: false
-        });
-      } else {
-        refs.price.setState({
-          renderer: stageInput,
-          value: []
-        });
-      }
     },
     onConfirm: function(refs, cb) {
-      let updateData = {
-        name: refs.name.state.value,
-        service: refs.service.state.value,
-        region_id: refs.region.state.value,
-        description: refs.description.state.value,
-        unit_price: {
-          price: {
-            base_price: refs.base_price.state.value,
-            type: 'segmented',
-            segmented: refs.price.state.value
-          }
-        }
+      let data = {
+        type: 'flat',
+        cost: refs.price.state.value
       };
-      refs.btn.setState({
-        disabled: true
-      });
-      if(obj) {
-        request.updatePriceById(obj.id, updateData).then((res) => {
+      if(!obj) {
+        if(refs.service.state.value === compute.service_id) {
+          data.field_id = fieldId;
+          data.value = refs.flavor.state.value.id;
+        } else {
+          data.service_id = refs.service.state.value;
+        }
+        request.createMapping(data).then(res => {
           callback && callback();
           cb(true);
-        }).catch((error) => {
-          refs.btn.setState({
-            disabled: false
-          });
-          cb(false, getErrorMessage('error'));
+        }).catch(err => {
+          cb(false, getErrorMessage(err));
         });
       } else {
-        if(refs.price.state.value.length === 0) {
-          updateData.unit_price.price.segmented = [{count: 0, price: 0}];
+        let d = {
+          cost: refs.price.state.value
+        };
+        if(obj.field_id) {
+          d.value = fieldId;
         }
-        request.addPrice(updateData).then((res) => {
+        request.updateMapping(obj.mapping_id, d).then(() => {
           callback && callback();
           cb(true);
-        }).catch((error) => {
-          refs.btn.setState({
-            disabled: false
-          });
-          cb(false, getErrorMessage(error));
+        }).catch(err => {
+          callback && callback();
+          cb(true);
         });
       }
     },
     onAction: function(field, state, refs) {
-      let disable = refs.name.state.error || refs.base_price.state.error || !refs.name.state.value || !refs.base_price.state.value;
+      let regNumber = /^([1-9]\d*|0)(\.\d+)?$/;
+      let price = refs.price.state.value;
+      let flavor = refs.flavor.state.value;
+      let disabled = true;
+      if(compute.id === refs.service.state.value) {
+        disabled = !(price && regNumber.test(price) && flavor);
+      } else {
+        disabled = !(price && regNumber.test(price));
+      }
       switch(field) {
-        case 'name':
-          let nameRegex = /^[a-zA-Z0-9_.:+-/\\\(\)\{\}]{1,}$/;
-          refs.name.setState({
-            error: !nameRegex.test(state.value)
-          }, () => {
-            refs.btn.setState({
-              disabled: disable
-            });
+        case 'service':
+          refs.flavor.setState({
+            hide: !(compute.service_id === state.value)
+          });
+          refs.btn.setState({
+            disabled: disabled
           });
           break;
-        case 'base_price':
-          let priceRegex = /^[0-9.]{1,}$/;
-          refs.base_price.setState({
-            error: !priceRegex.test(state.value)
-          }, () => {
-            refs.btn.setState({
-              disabled: disable
-            });
+        case 'flavor':
+          refs.btn.setState({
+            disabled: disabled
+          });
+          break;
+        case 'price':
+          refs.price.setState({
+            error: !regNumber.test(price)
+          });
+          refs.btn.setState({
+            disabled: disabled
           });
           break;
         default:
