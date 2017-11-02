@@ -88,6 +88,7 @@ class Detail extends React.Component {
               btnKey={btn.key}
               type={btn.type}
               disabled={btn.disabled}
+              hide={btn.hide}
               iconClass={btn.icon}
               initial={true}
               onClick={this.onClickBtnList.bind(this)} />
