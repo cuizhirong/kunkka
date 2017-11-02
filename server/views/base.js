@@ -104,7 +104,9 @@ View.prototype = {
         domain: user.domainName || this.domain,
         domainId: user.domainId,
         adminProjectId: this.config('admin_projectId'),
-        neutron_network_vlanranges: this.config('neutron_network_vlanranges')
+        neutron_network_vlanranges: this.config('neutron_network_vlanranges'),
+        enable_register: setting.enable_register,
+        enable_register_approve: setting.enable_register_approve
       },
       user: {
         projectId: user.projectId,

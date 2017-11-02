@@ -8,6 +8,7 @@ const base = require('../base');
 const config = require('config');
 const keystoneRemote = config('keystone');
 const domainName = config('domain') || 'Default';
+const adminEmail = config('admin_email');
 
 const createUserAsync = drivers.keystone.user.createUserAsync;
 const listDomainsAsync = drivers.keystone.domain.listDomainsAsync;
@@ -16,8 +17,8 @@ const listProjectsAsync = drivers.keystone.project.listProjectsAsync;
 const listRolesAsync = drivers.keystone.role.listRolesAsync;
 const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
 const assignRoleToUserOnProjectInSubtreeAsync = drivers.keystone.inherit.assignRoleToUserOnProjectInSubtreeAsync;
-const sendEmailAsync = drivers.kiki.email.sendEmailAsync;
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
+const sendEmailByTemplateAsync = drivers.email.sendEmailByTemplateAsync;
 
 function User(app) {
   this.app = app;
@@ -29,7 +30,7 @@ User.prototype = {
   reg: function (req, res, next) {
     const that = this, adminToken = req.admin.token;
     co(function *() {
-      const needed = ['name', 'password', 'email', 'phone', 'code'];
+      const needed = ['name', 'password', 'email', 'phone', 'code', 'full_name', 'company'];
       const lack = [];
       needed.forEach(item => {
         req.body[item] || lack.push(item);
@@ -37,12 +38,7 @@ User.prototype = {
       if (lack.length) {
         return next({status: 400, customRes: true, location: lack, msg: 'MissParams'});
       }
-
-      const email = req.body.email;
-      const name = req.body.name;
-      const password = req.body.password;
-      const phone = req.body.phone;
-      const code = req.body.code;
+      const {email, name, password, phone, code, full_name, company} = req.body;
 
       const domainRes = yield listDomainsAsync(adminToken, keystoneRemote, {name: domainName, enabled: true});
       const domains = domainRes.body.domains;
@@ -52,33 +48,35 @@ User.prototype = {
       }
       const domainId = domains[0].id;
 
-      const isCurrent = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCurrent = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      isCurrent = true;
       if (!isCurrent) {
         return next({status: 400, customRes: true, location: ['code'], msg: 'CodeError'});
       }
 
-      const userDB = yield userModel.create({
-        email, phone, name,
+      const userKeystoneRes = yield createUserAsync(adminToken, keystoneRemote, {
+        user: {name, password, email, domain_id: domainId, enabled: false}
+      });
+      console.log(userKeystoneRes);
+      let user = userKeystoneRes.body.user;
+
+      let userDB = yield userModel.create({
+        id: user.id, links: JSON.stringify(user.links), domain_id: user.domain_id,
+        email, phone, name, full_name, company, origin: 'register', status: 'pending',
         area_code: config('phone_area_code') || '86', enabled: false
       });
-      let user;
-      try {
-        const userKeystoneRes = yield createUserAsync(adminToken, keystoneRemote, {
-          user: {name, password, email, domain_id: domainId, enabled: false}
-        });
-        user = userKeystoneRes.body.user;
-      } catch (e) {
-        yield userDB.destroy({force: true});
-        return next(e);
-      }
-
-      user.links = JSON.stringify(user.links);
-      yield userModel.update(
-        {id: user.id, links: user.links, domain_id: user.domain_id},
-        {where: {userId: userDB.userId}}
-      );
-
       next({customRes: true, status: 200, msg: 'registerSuccess'});
+      sendEmailByTemplateAsync(
+        adminEmail, '有新用户注册申请，请审批',
+        {
+          content: `
+          <p>用户名：${userDB.name}</p>
+          <p>姓名：${userDB.full_name}</p>
+          <p>电话：${userDB.phone}</p>
+          <p>邮箱：${userDB.email}</p>
+          <p>公司：${userDB.company}</p>`
+        }
+      );
     }).catch(next);
 
   },
@@ -239,21 +237,41 @@ User.prototype = {
       }
 
       const email = user.email;
-      const token = yield base.func.emailTokenMemAsync(user, that.memClient);
-      const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
-      yield sendEmailAsync(
-        email,
-        __('api.register.UserEnable'),
-        `
-        <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
-        <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-        <p>${href}</p>
-        `,
-        req.admin.kikiRemote,
-        req.admin.token
-      );
+      try{
+        const token = yield base.func.emailTokenMemAsync(user, that.memClient);
+        const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
+        yield sendEmailByTemplateAsync(
+          email,
+          __('api.register.UserEnable'),
+          `
+          <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
+          <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+          <p>${href}</p>
+          `
+        );
+      } catch(e){
+        console.log(e);
+      }
       next({view: 'sendEmail', customRes: true, data: {email}});
 
+    }).catch(next);
+  },
+  regSuccessPending: (req, res, next) => {
+    co(function *() {
+      const query = {};
+      Object.assign(query, req.query);
+      if (!query.email && !query.name) {
+        return next({status: 404, customRes: true, msg: 'UserNotExist'});
+      }
+      const user = yield base.func.verifyUserAsync(req.admin.token, query);
+      if (!user) {
+        return next({status: 404, customRes: true, msg: 'UserNotExist'});
+      } else if (user.enabled) {
+        return next({status: 400, customRes: true, msg: 'Enabled'});
+      } else if (user.status === 'refused') {
+        return next({customRes: true, msg: 'regRefused'});
+      }
+      next({customRes: true, msg: 'regSuccessPending'});
     }).catch(next);
   },
 
@@ -320,6 +338,9 @@ User.prototype = {
     });
   },
   resendEmail: function (req, res, next) {
+    if (req.enableRegisterApprove) {
+      return next({customRes: true, msg: 'functionNotAvailable'});
+    }
     const __ = req.i18n.__.bind(req.i18n);
     const email = req.query.email;
     const that = this;
@@ -333,33 +354,30 @@ User.prototype = {
       const token = yield base.func.emailTokenMemAsync(user, that.memClient);
 
       const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
-      yield sendEmailAsync(
+      yield sendEmailByTemplateAsync(
         user.email,
         __('api.register.UserEnable'),
-        `
+        {content: `
         <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
         <p>${__('api.register.LinkFailedCopyTheHref')}</p>
         <p>${href}</p>
-        `,
-        req.admin.kikiRemote,
-        req.admin.token
+        `}
       );
       next({customRes: true, msg: 'SendSuccess'});
     }).catch(next);
   },
-
-
   initRoutes: function () {
-    this.app.use('/auth/register/*', base.middleware.adminLogin);
+    this.app.use('/auth/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.get('/auth/register/success', this.regSuccess.bind(this));
+    this.app.get('/auth/register/success-pending', this.regSuccessPending);
     this.app.get('/auth/register/enable', this.enable.bind(this));
     this.app.get('/auth/register/change-email', this.changeEmail.bind(this));
     this.app.post('/auth/register/change-email', this.changeEmailSubmit.bind(this));
     this.app.get('/auth/register/resend-email', this.resendEmail.bind(this));
     this.app.use('/auth/register/*', base.middleware.customResPage);
 
-    this.app.post('/api/register', base.middleware.adminLogin, this.reg.bind(this), base.middleware.customResApi);
-    this.app.post('/api/register/*', base.middleware.adminLogin);
+    this.app.post('/api/register', base.middleware.checkEnableRegister, base.middleware.adminLogin, this.reg.bind(this), base.middleware.customResApi);
+    this.app.post('/api/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.post('/api/register/phone', this.verifyPhone.bind(this));
     this.app.post('/api/register/change-email/phone', this.getPhoneCaptchaForChangeEmail.bind(this));
     this.app.post('/api/register/unique-name', this.uniqueName.bind(this));

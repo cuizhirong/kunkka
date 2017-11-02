@@ -14,6 +14,7 @@
     "SendSuccess": "激活邮件发送成功",
     "SendSmsSuccess": "短信验证码发送成功",
     "MissParams": "缺少参数",
+    "badRequest": "参数错误",
     "PhoneError": "手机号格式不正确",
     "EnableFailed": "激活失败",
     "EnableSuccess": "激活成功",
@@ -36,7 +37,16 @@
     "noDefaultProject": "你没有默认项目",
     "cannotDeleteDefaultProject": "禁止删除默认项目",
     "cannotDeleteYourself": "不能删除当前账户",
-    "cannotDisableYourself": "不能禁用当前账户"
+    "cannotDisableYourself": "不能禁用当前账户",
+    "adminAccessNeeded": "需要管理员权限",
+    "success": "成功",
+    "smsSendError": "短信发送失败",
+    "regSuccessPending": "注册成功！请等待管理员处理您的账号。",
+    "regRefused": "抱歉，您的注册申请已被拒绝",
+    "regPassed": "您的注册申请已被接受",
+    "registerIsProhibited": "注册功能已关闭",
+    "quotaPassed": "您的配额申请已经通过",
+    "quotaRefused": "您的配额申请已被拒绝"
   },
   "en": {
     "Name": "The Username",
@@ -53,6 +63,7 @@
     "SendSuccess": "Email Sent Successfully",
     "SendSmsSuccess": "an Authentication code has been sent to your phone",
     "MissParams": "Missing Parameters",
+    "badRequest": "Bad Request",    
     "PhoneError": "The phone number is not formatted correctly",
     "EnableFailed": "Enable Failed",
     "EnableSuccess": "Enable Success",
@@ -74,6 +85,15 @@
     "noDefaultProject": "You don't have the default project.",
     "cannotDeleteDefaultProject": "You cannot delete the Default Project.",
     "cannotDeleteYourself": "You cannot delete the current account.",
-    "cannotDisableYourself": "You cannot disable the current account."
+    "cannotDisableYourself": "You cannot disable the current account.",
+    "adminAccessNeeded": "Admin access needed.", 
+    "success": "Success.",
+    "smsSendError": "Error: sending sms failed.",
+    "regSuccessPending": "Register Success! Please wait for the administrator to process your account.",
+    "regRefused": "Sorry, your registration has been denied.",
+    "regPassed": "Congratulations, your registration had passed.",
+    "registerIsProhibited": "Register Is Prohibited.",
+    "quotaPassed": "Your quota application had passed",
+    "quotaRefused": "Your quota application had been denied"
   }
 }

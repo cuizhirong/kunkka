@@ -53,6 +53,12 @@ module.exports = {
       type: 'boolean',
       description: '开启注册功能'
     }, {
+      app: 'global',
+      name: 'enable_register_approve',
+      value: 'false',
+      type: 'boolean',
+      description: '注册-审批'
+    }, {
       app: 'auth',
       name: 'eula_content',
       value: '',

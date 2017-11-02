@@ -74,6 +74,26 @@ function _findAllByApp(name, cache) {
   }
 }
 
+function _findOneByAppAndName(app, name, cache) {
+  if (cache) {
+    cache = transformCacheBoolean(cache);
+    let back;
+    Object.keys(cache).some( s => {
+      cache[s].some( t => {
+        if (t.app === app && t.name === name) {
+          back = t;
+          return true;
+        }
+      });
+    });
+    return Promise.resolve(back);
+  } else {
+    return tusk.findOne({raw: true, where: {app, name} })
+    .then( data => Promise.resolve(transformSqlBoolean(data)))
+    .catch( err => Promise.reject);
+  }
+}
+
 function _findOneById(id, cache) {
   if (cache) {
     cache = transformCacheBoolean(cache);
@@ -157,6 +177,10 @@ exports.getAllSettings = function (refresh) {
 
 exports.getSettingsByApp = function (name, refresh) {
   return handleData(refresh, _findAllByApp.bind(undefined, name));
+};
+
+exports.getSettingByAppAndName = function (app, name, refresh) {
+  return handleData(refresh, _findOneByAppAndName.bind(undefined, app, name));
 };
 
 exports.getSettingById = function (id, refresh) {

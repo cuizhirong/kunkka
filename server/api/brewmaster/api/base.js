@@ -1,14 +1,12 @@
 'use strict';
-const config = require('config');
-const region = config('region');
 const co = require('co');
 const uuid = require('uuid');
 const glob = require('glob');
 
 const drivers = require('drivers');
 const userModel = require('../models').user;
-const regionId = (region && region[0] && region[0].id) || 'RegionOne';
 
+const config = require('config');
 const keystoneRemote = config('keystone');
 const TOKEN_EXPIRE = config('reg_token_expire') || 60 * 60 * 24;
 const SMS_CODE_EXPIRE = config('reg_sms_expire') || 60 * 10;
@@ -38,6 +36,7 @@ base.__listUsersAsync = function (objVar) {
 };
 
 base._getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
+base._getSettingByAppAndName = require('api/tusk/dao').getSettingByAppAndName;
 
 base.getVars = function (req, extra) {
   let objVar = {
@@ -72,29 +71,18 @@ base.func.phoneCaptchaMemAsync = function (phone, memClient, req, res, next) {
       memClient,
       expire: SMS_CODE_EXPIRE
     });
-
     let corporationName = 'UnitedStack 有云';
     let settings = yield base._getSettingsByApp('auth');
     settings.some(setting => {
       return setting.name === 'corporation_name' && (corporationName = setting.value);
     });
+    let result = yield drivers.sms.smsAsync(phone.toString(), `【${corporationName}】 ${req.i18n.__('api.register.VerificationCode')} ${code}`);
 
-    drivers.kiki.sms.sendSms(
-      config('phone_area_code') || '86',
-      phone.toString(),
-      `【${corporationName}】 ${req.i18n.__('api.register.VerificationCode')} ${code}`,
-      req.admin.kikiRemote,
-      req.admin.token,
-      function (errSend) {
-        if (errSend) {
-          memClient.delete(phone.toString(), () => {
-            next({type: 'SystemError', err: errSend});
-          });
-        } else {
-          res.send({type: 'message', message: __('api.register.SendSmsSuccess')});
-        }
-      }
-    );
+    if (result.text === '00') {
+      res.send({type: 'message', message: __('api.register.SendSmsSuccess')});
+    } else {
+      next({customRes: true, msg: 'smsSendError'});
+    }
   }).catch(next);
 };
 
@@ -145,7 +133,7 @@ base.middleware.adminLogin = function (req, res, next) {
     if (err) {
       next(err);
     } else {
-      req.admin = {token: result.token, kikiRemote: result.remote.kiki[regionId]};
+      req.admin = {token: result.token};
       next();
     }
   });
@@ -223,6 +211,7 @@ base.func.verifyUserAsync = function (adminToken, where) {
     }
     user.email = userDB.email;
     user.phone = userDB.phone;
+    user.status = userDB.status;
     return user;
   });
 };
@@ -292,5 +281,41 @@ base.func.setKeyValueAsync = (opt) => {
   });
 };
 
-
+base.middleware.checkEnableRegister = (req, res, next) => {
+  co(function* (){
+    let settings = yield base._getSettingsByApp('global');
+    let enableRegister, enableRegisterApprove = false;
+    let flag = 0;
+    settings.some(setting => {
+      if (setting.name === 'enable_register') {
+        enableRegister = setting.value;
+        flag++;
+      } else if (setting.name === 'enable_register_approve') {
+        enableRegisterApprove = setting.value;
+        flag++;
+      }
+      return flag === 2;
+    });
+    if (enableRegister) {
+      req.enableRegisterApprove = enableRegisterApprove;
+      next();
+    } else {
+      next({
+        customRes: true,
+        msg: 'registerIsProhibited'
+      });
+    }
+  }).catch(next);
+};
+base.middleware.checkAdmin = (req, res, next) => {
+  if (!req.session.user) {
+    return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
+  }
+  if (req.session.user.isAdmin) {
+    next();
+  } else {
+    res.status(403);
+    res.send({message: req.i18n.__('api.register.adminAccessNeeded')});
+  }
+};
 module.exports = base;

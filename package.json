@@ -17,6 +17,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./scripts/halo_build.sh",
+    "client_build": "./scripts/client_build.sh",
     "start": "./scripts/start.sh",
     "restart": "pm2 restart pm2.json",
     "test": "./scripts/test.sh",
@@ -27,7 +28,7 @@
     "transpile": "node ./scripts/client_i18n_build.js && node ./scripts/server_i18n_build.js",
     "assemble": "node ./scripts/assemble.js",
     "pull": "node ./scripts/pull.js && node ./scripts/merge_config.js",
-    "merge": "cp package.json.sample package.json && node ./scripts/merge_config.js OVERWRITE",
+    "merge": "node ./scripts/merge_config.js OVERWRITE",
     "release": "node ./scripts/get_tag.js",
     "tags": "node ./scripts/release.js",
     "add_eslint": "node ./scripts/add_eslint.js",

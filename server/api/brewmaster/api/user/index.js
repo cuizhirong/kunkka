@@ -38,6 +38,7 @@ User.prototype = {
       userObj.description = req.body.description;
       userObj.email = req.body.email;
 
+      let userCreated;
 
       if (!isCreateProject) {
         let result;
@@ -51,6 +52,7 @@ User.prototype = {
           }
         }
         if (result) {
+          userCreated = result.body.user;
           res.send(result.body);
         }
       } else {
@@ -84,11 +86,17 @@ User.prototype = {
         let project = yield drivers.keystone.project.createProjectAsync(token, remote,
           {project: {domain_id: req.body.domain_id, name: projectName}}
         );
-        user = user.body.user;
+        userCreated = user = user.body.user;
         project = project.body.project;
 
         yield drivers.keystone.role.addRoleToUserOnProjectAsync(project.id, user.id, role, token, remote);
         res.send({user, project});
+      }
+      if (userCreated) {
+        userModel.create({
+          id: userCreated.id,
+          name: userCreated.name
+        });
       }
     }).catch(next);
   },

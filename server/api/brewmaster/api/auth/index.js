@@ -6,7 +6,7 @@ const config = require('config');
 const region = config('region');
 const keystoneRemote = config('keystone');
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
-
+const userModel = require('../../models').user;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
 
@@ -67,6 +67,7 @@ Auth.prototype = {
       let adminToken = yield adminLogin();
 
       let unScopedRes;
+      let userToDatabase = {};
       try {
         unScopedRes = yield base.__unscopedAuthAsync({
           username: _username,
@@ -88,7 +89,9 @@ Auth.prototype = {
           return Promise.reject(e);
         }
       }
-
+      userToDatabase.id = unScopedRes.body.token.user.id;
+      userToDatabase.name = unScopedRes.body.token.user.name;
+      userToDatabase.enabled = 1;
       const userId = unScopedRes.body.token.user.id;
       let unScopeToken = unScopedRes.header['x-subject-token'];
       let cookies = getCookie(req, userId);
@@ -172,6 +175,14 @@ Auth.prototype = {
       } else {
         next();
       }
+
+      //TODO createUser
+      if (userToDatabase.id) {
+        let userDB = yield userModel.findOne({where:{id: userToDatabase.id}});
+        if (!userDB) {
+          userModel.create(userToDatabase);
+        }
+      }
     }).catch(next);
   },
   switchProject: function (req, res, next) {
@@ -188,9 +199,7 @@ Auth.prototype = {
       req.session.user.projectId = projectId;
       req.session.user.token = response.header['x-subject-token'];
       req.session.cookie.expires = new Date(response.body.token.expires_at);
-      req.session.user.isAdmin = response.body.token.roles.some(role => {
-        return role.name === 'admin';
-      });
+      req.session.user.isAdmin = response.body.token.roles.some(role => role.name === 'admin');
       req.session.user.roles = response.body.token.roles.map(role => {
         return role.name;
       });

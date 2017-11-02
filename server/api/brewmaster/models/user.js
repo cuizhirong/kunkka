@@ -1,13 +1,7 @@
 'use strict';
 const config = require('config');
 module.exports = function (mysql, DataTypes) {
-  return mysql.define('user', {
-
-    userId: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
+  const User = mysql.define('user', {
     area_code: {
       type: DataTypes.STRING(5),
       allowNull: false,
@@ -26,6 +20,7 @@ module.exports = function (mysql, DataTypes) {
 
     id: {
       type: DataTypes.STRING,
+      unique: true,
       primaryKey: true
     },
     name: {
@@ -61,9 +56,19 @@ module.exports = function (mysql, DataTypes) {
     company: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    origin: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
+
     paranoid: false,
     charset: 'utf8'
   });
+  return User;
 };
