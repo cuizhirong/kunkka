@@ -25,7 +25,7 @@ module.exports = (configs) => {
         return !b && !h;
       });
     });
-    return modules;
+    return modules.filter(m => m.items && m.items.length > 0);
   };
 
   configs.default_hide_modules = configs.default_hide_modules || [];
