@@ -1637,7 +1637,7 @@ class ModalBase extends React.Component {
     }
 
     return (
-      <div className="halo-modal-create-instance">
+      <div className="halo-modal-create-instance-new">
         <Modal ref="modal" {...props} title={TITLE} key="modal" visible={state.visible} width={state.isShowDetail ? 1046 : 726}>
           <div className="modal-bd halo-com-modal-create-instance">
             <TabStep step={state.step}/>

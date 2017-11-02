@@ -8,7 +8,8 @@
     "value": ["create", "image"],
     "key": "create_image",
     "icon": "create",
-    "type": "create"
+    "type": "create",
+    "hide": true
   }, {
     "value": ["create", "instance"],
     "key": "create",
@@ -19,22 +20,26 @@
     "value": ["edit", "image"],
     "key": "edit_image",
     "icon": "edit",
-    "disabled": true
+    "disabled": true,
+    "hide": true
   }, {
     "value": ["share", "image"],
     "key": "share_image",
     "icon": "file-sharing",
-    "disabled": true
+    "disabled": true,
+    "hide": true
   }, {
     "value": ["update", "status"],
     "key": "update_status",
-    "icon": "edit"
+    "icon": "edit",
+    "hide": true
   }, {
     "value": ["delete"],
     "key": "delete",
     "type": "delete",
     "disabled": true,
-    "icon": "delete"
+    "icon": "delete",
+    "hide": true
   }, {
     "key": "refresh",
     "icon": "refresh"
