@@ -28,13 +28,13 @@ module.exports = (configs) => {
     return modules.filter(m => m.items && m.items.length > 0);
   };
 
-  configs.default_hide_modules = configs.default_hide_modules || [];
+  configs.default_hide_modules = [];
 
   // server render init (can not get var HALO)
   if (!HALO.configs.init) {
     const moduleConfig = JSON.parse(HALO.settings.module_config)[HALO.application.current_application];
     Object.keys(moduleConfig).forEach(m => {
-      if(!moduleConfig[m].show && !~configs.default_hide_modules.indexOf(m)) {
+      if(!moduleConfig[m].show) {
         configs.default_hide_modules.push(m);
       }
     });
