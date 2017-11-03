@@ -74,7 +74,7 @@ function pop(obj, parent, callback) {
 
       request.associateFloatingIp(obj.id, data).then((res) => {
         if (HALO.settings.enable_floatingip_bandwidth) {
-          request.changeBandwidth(obj.id, {
+          request.changeBandwidth(refs.floating_ip.state.value, {
             fipratelimit: {}
           }).then(() => {
             callback && callback(res);
