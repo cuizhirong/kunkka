@@ -13,6 +13,11 @@
   }, {
     "type": "textarea",
     "field": "desc"
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": true
   }],
   "btn": {
     "value": "create",

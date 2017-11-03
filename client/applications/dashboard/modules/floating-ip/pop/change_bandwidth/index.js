@@ -4,12 +4,6 @@ const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
-function priceError(refs, error) {
-  refs.btn.setState({
-    disabled: false
-  });
-}
-
 function pop(obj, parent, callback) {
 
   let defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
@@ -43,15 +37,13 @@ function pop(obj, parent, callback) {
 
       if (enableCharge) {
         let bandwidth = currentBandwidth;
-        request.getFloatingIPPrice(bandwidth).then((res) => {
-          refs.charge.setState({
-            value: res.unit_price
-          });
+        refs.charge.setState({
+          value: Math.max.apply(null, HALO.prices.other['network.floating']) * bandwidth
+        });
 
-          refs.btn.setState({
-            disabled: false
-          });
-        }).catch(priceError.bind(this, refs));
+        refs.btn.setState({
+          disabled: false
+        });
       }
     },
     onConfirm: function(refs, cb) {
@@ -77,11 +69,9 @@ function pop(obj, parent, callback) {
             let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
-              request.getFloatingIPPrice(state.value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch(priceError.bind(this, refs));
+              refs.charge.setState({
+                value: Math.max.apply(null, HALO.prices.other['network.floating']) * state.value
+              });
             }
           }
           refs.btn.setState({

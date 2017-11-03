@@ -6,6 +6,7 @@ const getErrorMessage = require('client/applications/dashboard/utils/error_messa
 const enableCharge = HALO.settings.enable_charge;
 
 function pop(obj, parent, actionModify, callback) {
+  let price = Math.max.apply(null, HALO.prices.other['lbass.listener']);
   if(actionModify) {
     config.title = ['modify', 'listener'];
     config.btn.value = 'modify';
@@ -33,13 +34,11 @@ function pop(obj, parent, actionModify, callback) {
     onInitialize: function(refs) {
       let initValue = limitField.value;
       if (enableCharge) {
-        request.getPrice('listener', actionModify ? obj.connection_limit : initValue).then((res) => {
-          refs.charge.setState({
-            value: res.unit_price
-          });
-          this.cacheKey.push(initValue);
-          this.cacheValue.push(res.unit_price);
+        refs.charge.setState({
+          value: price
         });
+        this.cacheKey.push(initValue);
+        this.cacheValue.push(price);
       }
 
       if(actionModify) {
@@ -142,13 +141,11 @@ function pop(obj, parent, actionModify, callback) {
                   value: this.cacheValue[this.cacheKey.indexOf(conValue)]
                 });
               } else {
-                request.getPrice('listener', conValue).then((res) => {
-                  refs.charge.setState({
-                    value: res.unit_price
-                  });
-                  this.cacheKey.push(conValue);
-                  this.cacheValue.push(res.unit_price);
-                }).catch((error) => {});
+                refs.charge.setState({
+                  value: price * (parseInt(conValue / 10000, 10))
+                });
+                this.cacheKey.push(conValue);
+                this.cacheValue.push(price * (parseInt(conValue / 10000, 10)));
               }
             }
           }

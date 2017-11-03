@@ -176,13 +176,11 @@ function pop(obj, parent, callback) {
 
             if (ENABLE_CHARGE) {
               if (!isError) {
-                request.getVolumePrice(volumeType + '.volume.size', cap.min).then((res) => {
-                  setTypes();
-                  refs.charge.setState({
-                    value: res.unit_price,
-                    hide: false
-                  });
-                }).catch((error) => {});
+                setTypes();
+                refs.charge.setState({
+                  value: Math.max.apply(null, HALO.prices.other['volume.volume']) * cap.min,
+                  hide: false
+                });
               } else {
                 setTypes();
                 refs.charge.setState({
@@ -263,11 +261,9 @@ function pop(obj, parent, callback) {
 
             if (!isError) {
               if (sliderEvent || inputEvnet) {
-                request.getVolumePrice(volType + '.volume.size', value).then((res) => {
-                  refs.charge.setState({
-                    value: res.unit_price
-                  });
-                }).catch((error) => {});
+                refs.charge.setState({
+                  value: Math.max.apply(null, HALO.prices.other['volume.volume']) * value
+                });
               }
             } else {
               refs.charge.setState({
@@ -305,11 +301,9 @@ function pop(obj, parent, callback) {
           //set charge
           if (ENABLE_CHARGE) {
             if (!isError) {
-              request.getVolumePrice(volType + '.volume.size', min).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch((error) => {});
+              refs.charge.setState({
+                value: Math.max.apply(null, HALO.prices.other['volume.volume']) * min
+              });
             } else {
               refs.charge.setState({
                 value: DEFAULT_PRICE

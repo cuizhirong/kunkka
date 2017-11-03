@@ -151,7 +151,7 @@ class Model extends React.Component {
             if(rateLimit === 0) {
               return '';
             }
-            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' MBps');
           };
           break;
         default:

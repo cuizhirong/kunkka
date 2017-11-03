@@ -4,12 +4,6 @@ const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
-function priceError(refs, error) {
-  refs.btn.setState({
-    disabled: false
-  });
-}
-
 let externalNetwork = null;
 
 function pop(parent, callback) {
@@ -45,11 +39,9 @@ function pop(parent, callback) {
     onInitialize: function(refs) {
       if (enableCharge) {
         let bandwidth = config.fields[1].min;
-        request.getFloatingIPPrice(bandwidth).then((res) => {
-          refs.charge.setState({
-            value: res.unit_price
-          });
-        }).catch(priceError.bind(this, refs));
+        refs.charge.setState({
+          value: Math.max.apply(null, HALO.prices.other['network.floating']) * bandwidth
+        });
       }
 
       request.getNetworks().then((networks) => {
@@ -94,10 +86,10 @@ function pop(parent, callback) {
 
         request.createFloatingIp(data).then((res) => {
           if (enableBandwidth) {
-            limit.fipratelimit.floatingip_id = res.floatingip.id,
+            limit.fipratelimit.floatingip_id = res.floatingip.id;
             limit.fipratelimit.floatingip_address = res.floatingip.floating_ip_address;
-            request.createLimit(limit).then(res => {
-              callback && callback(res.floatingip);
+            request.createLimit(limit).then(r => {
+              callback && callback(r.floatingip);
               cb(true);
             });
           } else {
@@ -117,11 +109,9 @@ function pop(parent, callback) {
             let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
-              request.getFloatingIPPrice(state.value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch(priceError.bind(this, refs));
+              refs.charge.setState({
+                value: Math.max.apply(null, HALO.prices.other['network.floating']) * state.value
+              });
             }
           }
           break;

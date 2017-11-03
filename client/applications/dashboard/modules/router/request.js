@@ -81,11 +81,6 @@ module.exports = {
       return res.router;
     });
   },
-  getPrices: function() {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/products'
-    });
-  },
   editRouterName: function(item, newName) {
     let data = {};
     data.router = {};

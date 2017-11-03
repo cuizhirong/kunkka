@@ -15,8 +15,8 @@ module.exports = {
               if (limit.floatingip_id === ip.id) {
                 ip.rate_limit = limit.rate;
               }
-            })
-          })
+            });
+          });
         });
       }
       return data.floatingips;

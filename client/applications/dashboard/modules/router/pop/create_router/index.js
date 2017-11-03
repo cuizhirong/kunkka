@@ -3,7 +3,6 @@ const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('../../../../utils/error_message');
-const priceConverter = require('../../../../utils/price');
 
 let gatewayId = null;
 function pop(parent, callback) {
@@ -30,7 +29,7 @@ function pop(parent, callback) {
     config: config,
     onInitialize: function(refs) {
       function setPrice() {
-        let price = HALO.prices.router.unit_price.price.segmented[0].price;
+        let price = Math.max.apply(null, HALO.prices.other['network.router']);
 
         refs.charge.setState({
           value: price
@@ -56,14 +55,7 @@ function pop(parent, callback) {
       });
 
       if (HALO.settings.enable_charge) {
-        if (!HALO.prices) {
-          request.getPrices().then((res) => {
-            HALO.prices = priceConverter(res);
-            setPrice();
-          }).catch((error) => {});
-        } else {
-          setPrice();
-        }
+        setPrice();
       }
     },
     onConfirm: function(refs, cb) {

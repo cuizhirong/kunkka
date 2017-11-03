@@ -6,10 +6,13 @@ const getErrorMessage = require('client/applications/dashboard/utils/error_messa
 const __ = require('locale/client/dashboard.lang.json');
 
 function pop(obj, parent, callback) {
+  let enableCharge = HALO.settings.enable_charge;
   if(obj) {
+    config.fields[3].hide = true;
     config.title = ['modify', 'load', 'balancer'];
     config.btn.value = 'modify';
   } else {
+    config.fields[3].hide = !enableCharge;
     config.title = ['create', 'load', 'balancer'];
     config.btn.value = 'create';
   }
@@ -19,6 +22,16 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      function setPrice() {
+        let price = Math.max.apply(null, HALO.prices.other['lbass.loadbalancer']);
+
+        refs.charge.setState({
+          value: price
+        });
+      }
+      if(enableCharge) {
+        setPrice();
+      }
       let subnetGroup = [];
       Request.getSubnetSGList().then((data) => {
         let subnets = data.subnet.filter((sub) => sub.network['router:external'] === false);

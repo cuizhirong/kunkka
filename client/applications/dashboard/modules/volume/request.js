@@ -53,23 +53,6 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
     });
   },
-  getVolumePrice: function(type, size) {
-    let url = '/proxy/gringotts/v2/products/price' +
-      '?purchase.bill_method=hour' +
-      '&purchase.purchases[0].product_name=' + type +
-      '&purchase.purchases[0].service=block_storage' +
-      '&purchase.purchases[0].region_id=' + HALO.current_region +
-      '&purchase.purchases[0].quantity=' + size;
-
-    return fetch.get({
-      url: url
-    });
-  },
-  getPrices: function() {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/products'
-    });
-  },
   createVolume: function(_data) {
     let data = {};
     data.volume = _data;

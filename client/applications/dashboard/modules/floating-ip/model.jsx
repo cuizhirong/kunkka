@@ -149,7 +149,7 @@ class Model extends React.Component {
             if(rateLimit === 0) {
               return '';
             }
-            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' MBps');
           };
           break;
         case 'status':
@@ -252,7 +252,7 @@ class Model extends React.Component {
                   that.refresh({}, true);
                 }).catch((error) => {
                   cb(false, getErrorMessage(error));
-                });;
+                });
               } else {
                 cb(true);
                 that.refresh({}, true);
@@ -384,7 +384,7 @@ class Model extends React.Component {
     let rateLimit = Number(item.rate_limit);
     let bandwidth;
     if(rateLimit !== 0) {
-      bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+      bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / (1024 * 8) + ' MBps');
     } else {
       bandwidth = '-';
     }

@@ -1,10 +1,16 @@
 function formatPrice(data) {
   let prices = {};
-  for (let i = 0; i < data.length; i++) {
-    let key = data[i].name;
-    data[i].unit_price = data[i].unit_price;
-    prices[key] = data[i];
-  }
+  prices.compute = {};
+  prices.other = {};
+  data.forEach(d => {
+    if(d.resource_type === 'compute') {
+      prices.compute[d.name] = d.cost;
+    } else {
+      prices.other[d.resource_type] = prices.other[d.resource_type] ?
+        prices.other[d.resource_type].concat([d.cost]) :
+        [d.cost];
+    }
+  });
 
   return prices;
 }

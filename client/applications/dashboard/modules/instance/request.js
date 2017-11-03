@@ -8,11 +8,6 @@ module.exports = {
       return data.instance;
     });
   },
-  getPrices: function() {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/products'
-    });
-  },
   deleteItem: function(items) {
     let deferredList = [];
     items.forEach((item) => {
@@ -333,5 +328,5 @@ module.exports = {
       url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
       data: data
     });
-  },
+  }
 };

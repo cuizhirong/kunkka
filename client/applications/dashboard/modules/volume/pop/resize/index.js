@@ -68,20 +68,16 @@ function pop(obj, parent, callback) {
 
           if (enableCharge && !isError) {
             refs.charge.setState({
-              value: res.unit_price,
+              value: res,
               hide: false
             });
           }
         };
 
         if (HALO.settings.enable_charge) {
-          request.getVolumePrice('volume.size', obj.size).then((res) => {
-            setStates(res, true, false);
-          }).catch((error) => {
-            setStates(error, true, true);
-          });
+          setStates(Math.max.apply(null, HALO.prices.other['volume.volume']) * obj.size, true, false);
         } else {
-          setStates({}, false);
+          setStates('', false);
         }
       });
     },
@@ -111,11 +107,9 @@ function pop(obj, parent, callback) {
             let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
-              request.getVolumePrice('volume.size', state.value).then((res) => {
-                refs.charge.setState({
-                  value: res.unit_price
-                });
-              }).catch((error) => {});
+              refs.charge.setState({
+                value: Math.max.apply(null, HALO.prices.other['volume.volume']) * state.value
+              });
             }
           }
 

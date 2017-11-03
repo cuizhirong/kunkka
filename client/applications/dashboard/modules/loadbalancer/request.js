@@ -92,18 +92,6 @@ module.exports = {
       data: {'floatingip': {'port_id': portID}}
     });
   },
-  getPrice: function(type, size) {
-    let url = '/proxy/gringotts/v2/products/price' +
-      '?purchase.bill_method=hour' +
-      '&purchase.purchases[0].product_name=' + type +
-      '&purchase.purchases[0].service=network' +
-      '&purchase.purchases[0].region_id=' + HALO.current_region +
-      '&purchase.purchases[0].quantity=' + size;
-
-    return fetch.get({
-      url: url
-    });
-  },
   getPools: function() {
     return fetch.get({
       url: '/proxy/neutron/v2.0/lbaas/pools?tenant_id=' + HALO.user.projectId
@@ -116,5 +104,5 @@ module.exports = {
       url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
       data: data
     });
-  },
+  }
 };

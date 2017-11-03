@@ -12,6 +12,9 @@ const loader = require('./cores/loader'),
 
 const isPathValid = require('client/libs/path_valid');
 
+const price = require('client/utils/price');
+const priceConverter = require('./utils/price');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -65,6 +68,14 @@ class Model extends React.Component {
       return false;
     });
     return ret;
+  }
+
+  componentWillMount() {
+    if(HALO.settings.enable_charge && !HALO.prices) {
+      price.getList().then((res) => {
+        HALO.prices = priceConverter(res);
+      });
+    }
   }
 
   componentDidMount() {
