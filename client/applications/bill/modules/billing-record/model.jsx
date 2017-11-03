@@ -1,13 +1,11 @@
 require('./style/index.less');
 
 const React = require('react');
-const Record = require('./record/index');
-
+const Main = require('client/components/main_paged/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const getStatusIcon = require('../../utils/status_icon');
-const router = require('client/utils/router');
+const getTime = require('client/utils/time_unification');
 
 const __ = require('locale/client/bill.lang.json');
 
@@ -22,48 +20,45 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction', 'tableColRender',
-    'onNextPage', 'openDetail', 'onNextDetailPage'].forEach((m) => {
+    ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+    this.offset = 0;
   }
 
   componentWillMount() {
     this.tableColRender(this.state.config.table.column);
   }
 
-  componentDidMount() {
-    this.onInitialize();
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    }
+    return true;
   }
 
   componentWillReceiveProps(nextProps) {
-    let path = router.getPathList();
-    if(nextProps.style.display === 'flex' && this.props.style.display === 'none') {
-      if(path[2]) {
-        this.onInitialize();
-      }
+    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
+      this.onInitialize();
     }
   }
 
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
-        case 'price':
-          column.render = (col, item, i) => {
-            return <span className="price">{item.total_price}</span>;
-          };
-          break;
-        case 'unit_price':
-          column.render = (col, item, i) => {
-            return <span className="unit-price">{item.unit_price}</span>;
-          };
-          break;
         case 'resource_type':
           column.render = (col, item, i) => {
-            return (<span className="type">
-              <i className={'glyphicon icon-' + item.type}/>
-              {__[item.type]}
-            </span>);
+            return item.resource.type;
+          };
+          break;
+        case 'cost':
+          column.render = (col, item, i) => {
+            return <span className="price">{item.cost}</span>;
+          };
+          break;
+        case 'create_time':
+          column.render = (col, item, i) => {
+            return getTime(item.resource.started_at);
           };
           break;
         default:
@@ -72,214 +67,136 @@ class Model extends React.Component {
     });
   }
 
+  //initialize table data
   onInitialize() {
-    this.getFilters();
+    this.getList(this.offset);
   }
 
-  getFilters(cb) {
-    let path = router.getPathList();
-    let projects = Object.assign([], HALO.user.projects);
-    projects.unshift({
-      id: 'all',
-      name: __.all + __.project
-    });
-
-    let regions = Object.assign([], HALO.region_list);
-    regions.unshift({
-      id: 'all',
-      name: __.all + __.region
-    });
-
-    let status = [{
-      id: 'all',
-      name: __.all + __.status
-    }, {
-      id: 'running',
-      name: __.running
-    }, {
-      id: 'stopped',
-      name: __.stopped
-    }, {
-      id: 'deleted',
-      name: __.deleted
-    }, {
-      id: 'changing',
-      name: __.changing
-    }, {
-      id: 'error',
-      name: __.error
-    }];
-
-    let selectList = this.refs.record.refs.select_list;
-    selectList.setState({
-      projects: projects,
-      regions: regions,
-      region: regions[0],
-      statuses: status,
-      status: status[0]
-    }, () => {
-      let current = 1;
-      let limit = this.state.config.table.limit;
-      if(path[2]) {
-        let project = {
-          id: path[2]
-        };
-        selectList.setState({
-          project: project
-        }, () => {
-          this.getSales(current, limit);
-        });
-      } else {
-        this.getSales(current, limit);
-      }
+  getList(offset) {
+    let table = this.state.config.table;
+    request.getList(offset).then((res) => {
+      table.data = res.data;
+      this.setPagination(table, res);
+      this.updateTableData(table);
+    }).catch((res) => {
+      table.data = [];
+      this.updateTableData(table);
     });
   }
 
-  setTable(data, current, totalNum, limit) {
-    let state = this.state;
-    let newConfig = state.config;
-
-    let table = newConfig.table;
-    table.data = data;
-    table.loading = false;
-
-    if (totalNum > 0) {
-      let total = Math.ceil(totalNum / limit);
-      table.pagination = {
-        current: current,
-        total: total,
-        total_num: totalNum
-      };
-    } else {
-      table.pagination = null;
-    }
+  //rerender: update table data
+  updateTableData(table, callback) {
+    let newConfig = this.state.config;
+    newConfig.table = table;
+    newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
     });
   }
 
-  getSales(current, limit) {
-    if (current < 1) {
-      current = 1;
-    }
-    let state = this.refs.record.refs.select_list.state;
-    let data = {};
-    if (state.project.id && state.project.id !== 'all') {
-      data.project_id = state.project.id;
-    }
-    if (state.region.id && state.region.id !== 'all') {
-      data.region_id = state.region.id;
-    }
-    if (state.status.id && state.status.id !== 'all') {
-      data.status = state.status.id;
-    }
+  refresh() {
+    this.clearState();
+    this.clearOffset();
+    this.loadingTable();
+    this.getList(this.offset);
+  }
 
-    request.getSales((current - 1) * limit, limit, data).then((res) => {
-      this.setTable(res.orders, current, res.total_count, limit);
+  loadingTable() {
+    let _config = this.state.config;
+    _config.table.loading = true;
+
+    this.setState({
+      config: _config
     });
+  }
+
+  clearState() {
+    let dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
+  clearOffset() {
+    this.offset = 0;
   }
 
   onAction(field, actionType, refs, data) {
     switch (field) {
-      case 'select_list':
-        this.onClickSelectList(actionType, refs, data);
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
         break;
-      case 'detail':
-        if (actionType === 'open') {
-          this.openDetail(refs, data.data);
-        } else if (actionType === 'pagination') {
-          this.onNextDetailPage(refs, data);
-        }
-        break;
-      case 'pagination':
-        this.onNextPage(refs, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  onClickSelectList(key, refs, data) {
-    switch (key) {
       case 'search':
-      case 'reset':
-        refs.detail.close();
-
-        let current = 1;
-        let limit = this.state.config.table.limit;
-        router.replaceState('/bill/billing-record', null, null, true);
-        this.getSales(current, limit);
+        this.onClickSearch(actionType, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
         break;
       default:
         break;
     }
   }
 
-  setDetailTable(data, current, totalNum, limit) {
-    let detail = this.refs.record.refs.detail;
-
-    let content = detail.state.content;
-    content.table.data = data;
-
-    let pagination = null;
-    let total = Math.ceil(totalNum / limit);
-    if (data.length > 0 && total > 1) {
-      pagination = {
-        current: current,
-        total: total,
-        total_num: totalNum
-      };
+  onClickBtnList(key, refs, data) {
+    switch(key) {
+      case 'refresh':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
+        break;
+      default:
+        break;
     }
-    content.pagination = pagination;
-
-    detail.setState({
-      visible: true,
-      content: content
-    });
   }
 
-  getBillsByOrder(item, current, limit) {
-    if (current < 1) {
-      current = 1;
+
+  setPagination(table, res) {
+    let pagination = {};
+    pagination.nextUrl = Math.ceil(res.total / 10) > this.offset ? this.offset + 1 : null;
+    if (this.offset > 0) {
+      pagination.prevUrl = true;
     }
+    table.pagination = pagination;
 
-    request.getBillsByOrder(item.order_id, (current - 1) * limit, limit).then((res) => {
-      res.bills.forEach((bill) => {
-        bill.type = item.type;
-      });
-      this.setDetailTable(res.bills, current, res.total_count, limit);
-    });
+    return table;
   }
 
-  openDetail(refs, item) {
-    let limit = this.state.config.table.detail.table.limit;
-    let current = 1;
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'pagination':
+        if (data.direction === 'prev'){
+          this.offset --;
+        } else if (data.direction === 'next') {
+          this.offset = data.url;
+        } else {
+          this.clearOffset();
+          this.clearState();
+        }
 
-    this.getBillsByOrder(item, current, limit);
-  }
-
-  onNextDetailPage(refs, data) {
-    let limit = this.state.config.table.detail.table.limit;
-
-    this.getBillsByOrder(data.item, data.page, limit);
-  }
-
-  onNextPage(refs, page) {
-    let limit = this.state.config.table.limit;
-    router.replaceState('/bill/billing-record', null, null, true);
-    this.getSales(page, limit);
+        this.loadingTable();
+        this.getList(this.offset);
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
     return (
       <div className="halo-module-record" style={this.props.style}>
-        <Record
-          ref="record"
-          config={this.state.config}
-          visible={this.props.style}
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
           onAction={this.onAction}
-          getStatusIcon={getStatusIcon} />
+          __={__}
+          config={this.state.config}
+          params={this.props.params}
+        />
       </div>
     );
   }

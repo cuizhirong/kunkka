@@ -1,83 +1,34 @@
 {
+  "tabs": [{
+    "name": ["billing-record"],
+    "key": "billing-record",
+    "default": true
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
   "table": {
-    "dataKey": "order_id",
+    "dataKey": "id",
     "loading": true,
-    "limit": 10,
-    "hover": true,
     "column": [{
-      "title": ["resource"],
-      "dataIndex": "resource_name",
-      "key": "name",
-      "type": "captain"
+      "title": ["id"],
+      "key": "id",
+      "dataIndex": "id"
     }, {
-      "title": ["resource", "id"],
-      "dataIndex": "resource_id",
-      "key": "resource_id"
+      "title": ["resource_type"],
+      "key": "resource_type",
+      "dataIndex": "resource_type"
     }, {
-      "title": ["resource", "type"],
-      "dataIndex": "type",
-      "key": "resource_type"
+      "title": ["cost"],
+      "dataIndex": "cost",
+      "key": "cost"
     }, {
-      "title": ["status"],
-      "key": "status",
-      "type": "status",
-      "dataIndex": "status"
-    }, {
-      "title": ["total_amount"],
-      "key": "price",
-      "dataIndex": "total_price"
-    }, {
-      "title": ["unit_price"],
-      "key": "unit_price",
-      "dataIndex": "unit_price"
-    }, {
-      "title": ["region"],
-      "dataIndex": "region_id",
-      "key": "region"
-    }, {
-      "title": ["created", "time"],
-      "dataIndex": "created_at",
-      "key": "created_time",
-      "type": "time"
+      "title": ["create_time"],
+      "dataIndex": "create_time",
+      "key": "create_time"
     }],
-    "data": [],
-    "detail": {
-      "tabs": [{
-        "name": ["bill_detail"],
-        "key": "bill_detail",
-        "default": true
-      }],
-      "table": {
-        "dataKey": "_id",
-        "limit": 10,
-        "hover": true,
-        "column": [{
-          "title": ["start", "time"],
-          "dataIndex": "start_time",
-          "key": "start_time"
-        }, {
-          "title": ["end", "time"],
-          "dataIndex": "end_time",
-          "key": "end_time"
-        }, {
-          "title": ["resource", "type"],
-          "dataIndex": "type",
-          "key": "resource_type"
-        }, {
-          "title": ["total_amount"],
-          "key": "price",
-          "dataIndex": "total_price"
-        }, {
-          "title": ["unit_price"],
-          "key": "unit_price",
-          "dataIndex": "unit_price"
-        }, {
-          "title": ["commentary"],
-          "dataIndex": "remarks",
-          "key": "commentary"
-        }],
-        "data": []
-      }
-    }
+    "data": []
   }
 }

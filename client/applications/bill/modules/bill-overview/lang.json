@@ -17,6 +17,7 @@
     "start_time": "Start Time",
     "sum": "Sum",
     "to": "To",
+    "total_amount": "Total Amount",
     "volume.snapshot": "Snapshot",
     "volume.volume": "Volume"
   },
@@ -38,6 +39,7 @@
     "start_time": "开始时间",
     "sum": "金额",
     "to": "到",
+    "total_amount": "总金额",
     "volume.snapshot": "快照",
     "volume.volume": "云硬盘"
   }

@@ -1,36 +1,36 @@
 const fetch = require('client/applications/dashboard/cores/fetch');
-// let RSVP = require('rsvp');
-function getParams(obj) {
-  let params = Object.keys(obj).map((key) => {
-    return obj[key] ? key + '=' + obj[key] : '';
-  }).join('&');
-
-  return params;
-}
+let RSVP = require('rsvp');
 
 module.exports = {
-  getSales: function(offset = 0, limit = 10, data) {
+  getResourceList: function(offset) {
+    let url = `/proxy/gnocchi/v1/rating_resource?name=total.cost&limit=10&offset=${offset}&project_id=${HALO.user.projectId}`;
     return fetch.get({
-      url: '/proxy/gringotts/v2/orders?limit=' + limit + '&offset=' + offset + (Object.keys(data).length > 0 ? '&' + getParams(data) : '')
-    }).then((res) => {
-      res.orders.forEach((o) => {
-        if(o.type === 'floatingip') {
-          o.type = 'floating-ip';
-        }
-      });
-      return res;
+      url: url
     });
   },
-  getBillsByOrder: function(id, offset = 0, limit = 10) {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/orders/' + id + '?limit=' + limit + '&offset=' + offset
-    }).then((res) => {
-      let data = res.bills;
-      for (let i = 0; i < data.length; i++) {
-        data[i]._id = i;
-      }
-
-      return res;
+  getList: function(offset) {
+    let total = 0;
+    let list = [];
+    return this.getResourceList(offset).then(res => {
+      let queryList = [];
+      list = res[1];
+      total = res[0];
+      res[1].forEach(r => {
+        queryList.push(fetch.post({
+          url: '/proxy/gnocchi/v1/aggregation/resource/generic/metric/total.cost?aggregation=sum&granularit=86400&needed_overlap=0.0&refresh=False',
+          data: `{"=": {"id": "${r.id}"}}`
+        }));
+      });
+      return RSVP.all(queryList);
+    }).then(res => {
+      list.forEach((l, i) => {
+        l.resources = res[i];
+        l.cost = res[i].reduce((prev, next) => prev + next[2], 0);
+      });
+      return {
+        total: total,
+        data: list
+      };
     });
   }
 };

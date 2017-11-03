@@ -132,7 +132,7 @@ class Model extends React.Component {
       this.setState({
         services: res.services
       }, () => {
-        holderChart.dispose();
+        holderChart.hideLoading();
         res.services.forEach((r, i) => {
           request.getPriceByService(r.name, startTime, endTime).then((result) => {
             let services = this.state.services;
@@ -325,7 +325,7 @@ class Model extends React.Component {
 
   onQuery() {
     let state = this.state;
-    if(state.loadingPieChart && !state.startTime && !state.endTime) {
+    if(state.loadingPieChart || !state.startTime || !state.endTime) {
       return;
     }
     this.getList(state.startTime, state.endTime);

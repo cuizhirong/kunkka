@@ -93,7 +93,7 @@ function pop(parent, callback) {
         cb(false, getErrorMessage(error));
       });
     },
-    onAction: function(field, status, refs) {
+    onAction: function(field, state, refs) {
       switch(field) {
         case 'enable_public_gateway':
           if(refs.enable_public_gateway.state.checked && enableCharge) {
@@ -122,6 +122,18 @@ function pop(parent, callback) {
             refs.bandwidth.setState({
               hide: true
             });
+          }
+          break;
+        case 'bandwidth':
+          if (enableCharge) {
+            let sliderEvent = state.eventType === 'mouseup';
+            let inputEvnet = state.eventType === 'change' && !state.error;
+
+            if (sliderEvent || inputEvnet) {
+              refs.charge.setState({
+                value: Math.max.apply(null, HALO.prices.other['network.router']) * state.value
+              });
+            }
           }
           break;
         default:
