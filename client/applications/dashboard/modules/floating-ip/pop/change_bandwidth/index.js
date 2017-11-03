@@ -17,7 +17,7 @@ function pop(obj, parent, callback) {
     config.fields[0].max = defaultBandwidth;
   }
 
-  let currentBandwidth = obj.rate_limit / 1024;
+  let currentBandwidth = obj.rate_limit / (1024 * 8);
   if (currentBandwidth < 1) {
     currentBandwidth = 1;
   }
@@ -55,10 +55,10 @@ function pop(obj, parent, callback) {
       }
     },
     onConfirm: function(refs, cb) {
-      let bw = Number(refs.bandwidth.state.value) * 1024;
+      let bw = Number(refs.bandwidth.state.value) * 1024 * 8;
       let data = {
-        floatingip: {
-          rate_limit: bw
+        fipratelimit: {
+          rate: bw
         }
       };
 

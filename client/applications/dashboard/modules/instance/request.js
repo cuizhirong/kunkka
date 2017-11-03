@@ -327,5 +327,11 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
       data: data
     });
-  }
+  },
+  changeBandwidth: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
+      data: data
+    });
+  },
 };

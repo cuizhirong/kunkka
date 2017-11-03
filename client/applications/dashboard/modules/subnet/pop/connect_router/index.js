@@ -29,8 +29,19 @@ function pop(obj, parent, callback) {
       request.connectRouter(refs.router.state.value, {
         subnet_id: obj.id
       }).then((res) => {
-        callback && callback(res);
-        cb(true);
+        if (HALO.settings.enable_floatingip_bandwidth) {
+          request.changeBandwidth(refs.router.state.value, {
+            gwratelimit: {}
+          }).then(() => {
+            callback && callback(res);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          callback && callback(res);
+          cb(true);
+        }
       }).catch((err) => {
         refs.error.setState({
           value: getErrorMessage(err),

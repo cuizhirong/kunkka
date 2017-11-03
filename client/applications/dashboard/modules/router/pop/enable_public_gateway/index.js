@@ -7,7 +7,9 @@ let gatewayId = null;
 
 function pop(obj, parent, callback) {
   let name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';
+  let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
   config.fields[0].info = __[config.fields[0].field].replace('{0}', name);
+  config.fields[3].hide = !enableBandwidth;
 
   let props = {
     __: __,
@@ -39,8 +41,21 @@ function pop(obj, parent, callback) {
         }
       };
       request.updateRouter(obj.id, data).then((res) => {
-        callback && callback(res.router);
-        cb(true);
+        if (enableBandwidth) {
+          let limit = {
+            gwratelimit: {
+              rate: Number(refs.bandwidth.state.value) * 1024 * 8,
+              router_id: obj.id
+            }
+          };
+          request.createLimit(limit).then(() => {
+            callback && callback(res.router);
+            cb(true);
+          });
+        } else {
+          callback && callback(res.router);
+          cb(true);
+        }
       });
     },
     onAction: function() {}

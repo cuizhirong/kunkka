@@ -62,7 +62,10 @@
     }, {
       "title": ["ext_gatway"],
       "key": "ext_gw"
-      }, {
+    }, {
+      "title": ["bandwidth"],
+      "key": "bandwidth"
+    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",

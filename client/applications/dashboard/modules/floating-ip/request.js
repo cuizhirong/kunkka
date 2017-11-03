@@ -4,7 +4,12 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['floatingip', 'instance', 'network', 'loadbalancer'], forced).then(function(data) {
+    let storgeList = ['floatingip', 'instance', 'network', 'loadbalancer'];
+    if (HALO.settings.enable_floatingip_bandwidth) {
+      storgeList = storgeList.concat(['fplimit']);
+    }
+    return storage.getList(storgeList, forced).then(function(data) {
+
       data.floatingip.forEach((f) => {
         data.network.some(n => {
           if(n.id === f.floating_network_id) {
@@ -26,6 +31,15 @@ module.exports = {
           f.status = 'active';
         }
       });
+      if (HALO.settings.enable_floatingip_bandwidth) {
+        data.fplimit.forEach(fp => {
+          data.floatingip.some((r, index) => {
+            if (fp.floatingip_id === r.id) {
+              data.floatingip[index].rate_limit = fp.rate;
+            }
+          });
+        });
+      }
       return data.floatingip;
     });
   },
@@ -73,7 +87,7 @@ module.exports = {
   },
   changeBandwidth: function(id, data) {
     return fetch.put({
-      url: '/proxy/neutron/v2.0/floatingips/' + id,
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
       data: data
     });
   },
@@ -85,5 +99,26 @@ module.exports = {
       }));
     });
     return RSVP.all(deferredList);
+  },
+  createLimit: function(data) {
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits',
+      data: data
+    });
+  },
+  getLimit: function() {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits'
+    });
+  },
+  deleteLimit: function(id) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id
+    });
+  },
+  getLimitById: function(id) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id
+    });
   }
 };

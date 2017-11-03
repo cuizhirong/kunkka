@@ -79,7 +79,7 @@ function pop(parent, callback) {
     },
     onConfirm: function(refs, cb) {
       if (externalNetwork) {
-        let data = {};
+        let data = {}, limit = {fipratelimit: {}};
         data.floatingip = {};
         if(externalNetwork.length === 1) {
           data.floatingip.floating_network_id = externalNetwork[0].id;
@@ -88,13 +88,22 @@ function pop(parent, callback) {
         }
 
         if (enableBandwidth) {
-          let bandwidth = Number(refs.bandwidth.state.value) * 1024;
-          data.floatingip.rate_limit = bandwidth;
+          let bandwidth = Number(refs.bandwidth.state.value) * 1024 * 8;
+          limit.fipratelimit.rate = bandwidth;
         }
 
         request.createFloatingIp(data).then((res) => {
-          callback && callback(res.floatingip);
-          cb(true);
+          if (enableBandwidth) {
+            limit.fipratelimit.floatingip_id = res.floatingip.id,
+            limit.fipratelimit.floatingip_address = res.floatingip.floating_ip_address;
+            request.createLimit(limit).then(res => {
+              callback && callback(res.floatingip);
+              cb(true);
+            });
+          } else {
+            callback && callback(res.floatingip);
+            cb(true);
+          }
         }).catch((error) => {
           cb(false, getErrorMessage(error));
         });

@@ -8,6 +8,9 @@ module.exports = {
     if (HALO.settings.enable_ipsec) {
       storgeList = storgeList.concat(['ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy']);
     }
+    if (HALO.settings.enable_floatingip_bandwidth) {
+      storgeList = storgeList.concat(['gwlimit']);
+    }
     return storage.getList(storgeList, forced).then((res) => {
       let exNetworks = [];
       res.network.forEach((item) => {
@@ -63,6 +66,15 @@ module.exports = {
                 res.router[index].ipsec_site_connections.push(site);
               }
             });
+          });
+        });
+      }
+      if (HALO.settings.enable_floatingip_bandwidth) {
+        res.gwlimit.forEach(limit => {
+          res.router.some((r, index) => {
+            if (limit.router_id === r.id) {
+              res.router[index].rate_limit = limit.rate;
+            }
           });
         });
       }
@@ -203,6 +215,23 @@ module.exports = {
   deletePortForwarding: function(routerId, data) {
     return fetch.put({
       url: '/proxy/neutron/v2.0/routers/' + routerId + '/remove_router_portforwarding',
+      data: data
+    });
+  },
+  createLimit: function(data) {
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits',
+      data: data
+    });
+  },
+  deleteLimit: function(id) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id
+    });
+  },
+  changeBandwidth: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id,
       data: data
     });
   }

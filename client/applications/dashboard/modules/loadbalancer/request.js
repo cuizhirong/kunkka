@@ -110,5 +110,11 @@ module.exports = {
     }).then(function(data) {
       return data.pools;
     });
-  }
+  },
+  changeBandwidth: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
+      data: data
+    });
+  },
 };

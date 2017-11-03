@@ -145,6 +145,15 @@ class Model extends React.Component {
               <span className="label-active">{__.on}</span> : <span className="label-down">{__.off}</span>;
           };
           break;
+        case 'bandwidth':
+          column.render = (col, item, i) => {
+            let rateLimit = Number(item.rate_limit / (1024 * 8));
+            if(rateLimit === 0) {
+              return '';
+            }
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
+          };
+          break;
         default:
           break;
       }
@@ -218,7 +227,16 @@ class Model extends React.Component {
           tip: hasSubnet ? __.tip_router_has_subnet : null,
           onDelete: function(_data, cb) {
             request.deleteRouters(rows).then((res) => {
-              cb(true);
+              let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
+              if (enableBandwidth && rows[0].external_gateway_info) {
+                request.deleteLimit(rows[0].id).then(() => {
+                  cb(true);
+                }).catch((error) => {
+                  cb(false, getErrorMessage(error));
+                });
+              } else {
+                cb(true);
+              }
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });

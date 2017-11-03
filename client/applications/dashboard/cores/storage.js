@@ -34,6 +34,8 @@ const orchestration = require('../modules/heat-list/cache');
 const resourcetype = require('../modules/template-resource/cache');
 const templateversion = require('../modules/template-version/cache');
 const templatelist = require('../modules/template-list/cache');
+const gwlimit = require('../modules/router/cache');
+const fplimit = require('../modules/floating-ip/cache');
 
 const map = {
   network: ['subnet'],
@@ -93,6 +95,6 @@ Storage.prototype = {
 
 Object.assign(Storage.prototype, instance, backup, image, port, floatingip, keypair, network, router, securitygroup,
   snapshot, subnet, volume, loadbalancer, pool, listener, healthmonitor, member, vpnservice, ipsec, ikepolicy,
-  ipsecpolicy, notification, alarm, orchestration, resourcetype, templateversion, templatelist);
+  ipsecpolicy, notification, alarm, orchestration, resourcetype, templateversion, templatelist, gwlimit, fplimit);
 
 module.exports = new Storage();

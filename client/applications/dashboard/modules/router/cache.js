@@ -59,5 +59,12 @@ module.exports = {
       });
       return RSVP.all(_res);
     });
+  },
+  getGwlimitList: function() {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits'
+    }).then(res => {
+      return res.gwratelimits;
+    });
   }
 };

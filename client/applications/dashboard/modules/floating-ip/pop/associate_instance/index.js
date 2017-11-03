@@ -50,8 +50,19 @@ function pop(obj, parent, callback) {
       };
 
       request.associateInstance(serverID, data).then((res) => {
-        callback && callback(res);
-        cb(true);
+        if (HALO.settings.enable_floatingip_bandwidth) {
+          request.changeBandwidth(obj.id, {
+            fipratelimit: {}
+          }).then(() => {
+            callback && callback(res);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          callback && callback(res);
+          cb(true);
+        }
       }).catch((error) => {
         cb(false, getErrorMessage(error));
       });

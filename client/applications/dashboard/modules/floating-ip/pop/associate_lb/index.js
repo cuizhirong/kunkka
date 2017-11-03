@@ -28,8 +28,19 @@ function pop(obj, parent, callback) {
     onConfirm: function(refs, cb) {
       let portID = refs.port.state.value;
       request.associateFloatingIp(portID, obj.id).then((res) => {
-        callback && callback(res);
-        cb(true);
+        if (HALO.settings.enable_floatingip_bandwidth) {
+          request.changeBandwidth(obj.id, {
+            fipratelimit: {}
+          }).then(() => {
+            callback && callback(res);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          callback && callback(res);
+          cb(true);
+        }
       }).catch((error) => {
         cb(false, getErrorMessage(error));
       });

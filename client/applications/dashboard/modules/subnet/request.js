@@ -162,5 +162,11 @@ module.exports = {
       url: '/proxy/neutron/v2.0/ports',
       data: data
     });
+  },
+  changeBandwidth: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id,
+      data: data
+    });
   }
 };

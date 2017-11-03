@@ -461,7 +461,7 @@ class Model extends React.Component {
         value: item.connection_limit === -1 ? __.infinity : item.connection_limit
       }, {
         feild: wordsToLine(['default', 'resource_pool']),
-        value: item.default_pool_id ? pools.filter(pool => pool.id === items[0].default_pool_id)[0].name : '-'
+        value: item.default_pool_id && pools.filter(pool => pool.id === items[0].default_pool_id).length > 0 ? pools.filter(pool => pool.id === items[0].default_pool_id)[0].name : '-'
       }, {
         feild: __.enabled_state,
         value: item.admin_state_up ? __.enabled : __.disabled

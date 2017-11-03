@@ -9,7 +9,20 @@ let gatewayId = null;
 function pop(parent, callback) {
 
   let enableCharge = HALO.settings.enable_charge;
-  config.fields[3].hide = !enableCharge;
+  let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
+  let defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
+  let bandwidthField = config.fields[3];
+
+  config.fields[4].hide = !enableCharge;
+
+  if (enableBandwidth) {
+    if (defaultBandwidth) {
+      bandwidthField.max = defaultBandwidth;
+    }
+    bandwidthField.hide = false;
+  } else {
+    bandwidthField.hide = true;
+  }
 
   let props = {
     __: __,
@@ -57,14 +70,33 @@ function pop(parent, callback) {
       let data = {
         name: refs.name.state.value
       };
+      let limit = {
+        gwratelimit: {}
+      };
       if (refs.enable_public_gateway.state.checked) {
         data.external_gateway_info = {
           network_id: gatewayId ? gatewayId : refs.external_network.state.value
         };
       }
+
+      if (refs.enable_public_gateway.state.checked && enableBandwidth) {
+        let bandwidth = Number(refs.bandwidth.state.value) * 1024 * 8;
+        limit.gwratelimit.rate = bandwidth;
+      }
+
       request.createRouter(data).then((res) => {
-        callback && callback(res.router);
-        cb(true);
+        if (refs.enable_public_gateway.state.checked && enableBandwidth) {
+          limit.gwratelimit.router_id = res.router.id;
+          request.createLimit(limit).then(gl => {
+            callback && callback(res.router);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          callback && callback(res.router);
+          cb(true);
+        }
       }).catch((error) => {
         cb(false, getErrorMessage(error));
       });
@@ -87,6 +119,15 @@ function pop(parent, callback) {
             });
           } else {
             refs.external_network.setState({
+              hide: true
+            });
+          }
+          if(refs.enable_public_gateway.state.checked && enableBandwidth) {
+            refs.bandwidth.setState({
+              hide: false
+            });
+          } else {
+            refs.bandwidth.setState({
               hide: true
             });
           }

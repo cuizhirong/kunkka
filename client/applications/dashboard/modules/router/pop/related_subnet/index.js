@@ -79,8 +79,19 @@ function pop(obj, parent, callback) {
       request.addInterface(obj.id, {
         subnet_id: refs.subnet.state.value
       }).then((res) => {
-        callback && callback(res);
-        cb(true);
+        if (HALO.settings.enable_floatingip_bandwidth) {
+          request.changeBandwidth(obj.id, {
+            gwratelimit: {}
+          }).then(() => {
+            callback && callback(res);
+            cb(true);
+          }).catch((error) => {
+            cb(false, getErrorMessage(error));
+          });
+        } else {
+          callback && callback(res);
+          cb(true);
+        }
       }).catch((error) => {
         cb(false, getErrorMessage(error));
       });

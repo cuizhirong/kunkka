@@ -145,11 +145,11 @@ class Model extends React.Component {
           break;
         case 'bandwidth':
           column.render = (col, item, i) => {
-            let rateLimit = Number(item.rate_limit);
+            let rateLimit = Number(item.rate_limit / (1024 * 8));
             if(rateLimit === 0) {
               return '';
             }
-            return isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
           };
           break;
         case 'status':
@@ -236,6 +236,7 @@ class Model extends React.Component {
     switch (key) {
       case 'delete':
         let hasSource = rows.some((ele) => ele.association.type === 'server');
+        let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
         deleteModal({
           __: __,
           action: 'release',
@@ -245,8 +246,17 @@ class Model extends React.Component {
           tip: hasSource ? __.tip_fip_has_source : null,
           onDelete: function(_data, cb) {
             request.deleteFloatingIps(rows).then((res) => {
-              cb(true);
-              that.refresh({}, true);
+              if (enableBandwidth && rows[0].rate_limit) {
+                request.deleteLimit(rows[0].id).then((limit) => {
+                  cb(true);
+                  that.refresh({}, true);
+                }).catch((error) => {
+                  cb(false, getErrorMessage(error));
+                });;
+              } else {
+                cb(true);
+                that.refresh({}, true);
+              }
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });

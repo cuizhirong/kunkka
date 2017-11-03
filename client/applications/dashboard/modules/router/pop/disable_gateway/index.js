@@ -6,6 +6,7 @@ const getErrorMessage = require('client/applications/dashboard/utils/error_messa
 
 function pop(obj, parent, callback) {
   let name = obj.name ? obj.name : '(' + obj.id.substr(0, 8) + ')';
+  let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
   config.fields[0].info = __[config.fields[0].field].replace('{0}', name);
 
   let props = {
@@ -18,8 +19,15 @@ function pop(obj, parent, callback) {
         external_gateway_info: null
       };
       request.updateRouter(obj.id, data).then((res) => {
-        callback && callback(res.router);
-        cb(true);
+        if (enableBandwidth) {
+          request.deleteLimit(obj.id).then(() => {
+            callback && callback(res.router);
+            cb(true);
+          });
+        } else {
+          callback && callback(res.router);
+          cb(true);
+        }
       }).catch(function(error) {
         cb(false, getErrorMessage(error));
         refs.btn.setState({
