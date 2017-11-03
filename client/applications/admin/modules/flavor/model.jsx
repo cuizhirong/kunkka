@@ -420,7 +420,7 @@ class Model extends React.Component {
       content: disk.num + ' ' + disk.unit
     }, {
       title: __.enable,
-      content: __[item['OS-FLV-DISABLED:disabled']] ? __.disable : __.enable
+      content: item['OS-FLV-DISABLED:disabled'] ? __.disable : __.enable
     }, {
       title: __.temporary_disk_unit,
       content: item.temporary ? item.temporary + ' ' + memory.unit : '-'

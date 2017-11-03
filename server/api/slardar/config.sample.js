@@ -9,18 +9,18 @@ module.exports = {
   'config': {
     'region': [{
       'name': {
-        'en': 'RegionOne',
+        'en': 'regionOne',
         'zh-CN': '一区'
       },
-      'id': 'RegionOne'
+      'id': 'regionOne'
     }],
     'domain': 'Default',
     'cookie': {
       'maxAge': 1000 * 60 * 60 * 24 * 7
     },
     'admin_username': 'admin',
-    'admin_password': 'da2d728652d52ec8b09ca1be',
-    'admin_projectId': '1f3a2befce114130a121632782adec42',
+    'admin_password': 'JDHbTxDE8cbMMH8WQKt7TJvxQ',
+    'admin_projectId': 'ff0d125cf38746b1b0a93149b8f6ed70',
     'neutron_network_vlanranges': ['datacentre:1:1000', 'datacentre2:1001:2000'],
     'endpoint_type': 'internal'
   },

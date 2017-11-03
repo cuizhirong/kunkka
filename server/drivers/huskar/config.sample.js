@@ -5,7 +5,7 @@ module.exports = {
     'superagent': '^3.5.0'
   },
   'config': {
-    'keystone': 'http://10.0.200.37:5000',
+    'keystone': 'http://10.0.176.30:5000',
     'endpoint_type': 'public',
     'no_services': []
   }

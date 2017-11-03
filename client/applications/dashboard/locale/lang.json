@@ -1,7 +1,7 @@
 {
   "en": {
     "graphic": "Graphic",
-    "application_name": "Project",
+    "application_name": "Dashboard",
     "account_placeholder": "Please enter username or email",
     "active": "Active",
     "add": "Add ",
@@ -130,7 +130,7 @@
   },
   "zh-CN": {
     "graphic": "图表",
-    "application_name": "项目",
+    "application_name": "控制台",
     "account_placeholder": "请输入账号",
     "active": "运行中",
     "add": "挂载",
