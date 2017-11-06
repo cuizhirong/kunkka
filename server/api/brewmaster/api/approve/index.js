@@ -15,6 +15,7 @@ const listProjectsAsync = drivers.keystone.project.listProjectsAsync;
 const listRolesAsync = drivers.keystone.role.listRolesAsync;
 const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
+const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const Quota = require('api/slardar/api/nova/quota');
 const sendEmailByTemplateAsync = drivers.email.sendEmailByTemplateAsync;
 
@@ -89,29 +90,41 @@ Approve.prototype = {
           }
         }
 
-        //GET ROLE billing_owner, project_owner
+        //GET ROLE Member, rating
         let roles = yield listRolesAsync(req.admin.token, keystoneRemote, {});
         roles = roles.body.roles;
 
         const roleId = {
-          'Member': ''
+          'Member': '',
+          'rating': ''
         };
         roles.some(role => {
-          if (role.name === 'Member') {
+          if (role.name === 'Member' || role.name === 'rating') {
             roleId[role.name] = role.id;
-            return roleId.Member;
+            return roleId.Member && roleId.rating;
           }
         });
-        if (!roleId.Member) {
-          return next('Role "Member" NotExist');
+        if (!roleId.Member || !roleId.rating) {
+          return next('Role "Member" or "rating" NotExist');
         }
 
+        const queryCloudkitty = yield listUsersAsync(req.admin.token, keystoneRemote, {name: 'cloudkitty'});
+        if (!queryCloudkitty.body.users.length) {
+          return next('User "cloudkitty" NotExist');
+        }
         //Assign Role & Update User
         yield [
           addRoleToUserOnProjectAsync(
             projectId,
             user.id,
             roleId.Member,
+            req.admin.token,
+            keystoneRemote
+          ),
+          addRoleToUserOnProjectAsync(
+            projectId,
+            queryCloudkitty.body.users[0].id,
+            roleId.rating,
             req.admin.token,
             keystoneRemote
           ),

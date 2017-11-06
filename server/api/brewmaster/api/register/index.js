@@ -57,7 +57,6 @@ User.prototype = {
       const userKeystoneRes = yield createUserAsync(adminToken, keystoneRemote, {
         user: {name, password, email, domain_id: domainId, enabled: false}
       });
-      console.log(userKeystoneRes);
       let user = userKeystoneRes.body.user;
 
       let userDB = yield userModel.create({
@@ -66,19 +65,20 @@ User.prototype = {
         area_code: config('phone_area_code') || '86', enabled: false
       });
       next({customRes: true, status: 200, msg: 'registerSuccess'});
-      sendEmailByTemplateAsync(
-        adminEmail, '有新用户注册申请，请审批',
-        {
-          content: `
-          <p>用户名：${userDB.name}</p>
-          <p>姓名：${userDB.full_name}</p>
-          <p>电话：${userDB.phone}</p>
-          <p>邮箱：${userDB.email}</p>
-          <p>公司：${userDB.company}</p>`
-        }
-      );
+      if (req.enableRegisterApprove) {
+        sendEmailByTemplateAsync(
+          adminEmail, '有新用户注册申请，请审批',
+          {
+            content: `
+            <p>用户名：${userDB.name}</p>
+            <p>姓名：${userDB.full_name}</p>
+            <p>电话：${userDB.phone}</p>
+            <p>邮箱：${userDB.email}</p>
+            <p>公司：${userDB.company}</p>`
+          }
+        );
+      }
     }).catch(next);
-
   },
 
   enable: function (req, res, next) {
@@ -138,6 +138,16 @@ User.prototype = {
         }
       });
 
+      if (!roles.billing_owner || !roleId.project_owner) {
+        sendEmailByTemplateAsync(
+          adminEmail, '注册用户激活失败，请检查角色billing_owner和project_owner',
+          {
+            content: `${roleId.billing_owner || '<p>billing_owner 角色不存在，需创建</p>'}`
+            + `${roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}`
+          }
+        );
+        return next('SystemError');
+      }
       //Assign Role & Update User
       yield [
         addRoleToUserOnProjectAsync(
@@ -221,58 +231,61 @@ User.prototype = {
   },
 
   regSuccess: function (req, res, next) {
-    const that = this;
-    co(function *() {
-      const __ = req.i18n.__.bind(req.i18n);
-      const query = {};
-      Object.assign(query, req.query);
-      if (!query.email && !query.name) {
-        return next({status: 404, customRes: true, msg: 'UserNotExist'});
-      }
-      const user = yield base.func.verifyUserAsync(req.admin.token, query);
-      if (!user) {
-        return next({status: 404, customRes: true, msg: 'UserNotExist'});
-      } else if (user.enabled) {
-        return next({status: 400, customRes: true, msg: 'Enabled'});
-      }
+    if (req.enableRegisterApprove) {
+      co(function *() {
+        const query = {};
+        Object.assign(query, req.query);
+        if (!query.email && !query.name) {
+          return next({status: 404, customRes: true, msg: 'UserNotExist'});
+        }
+        const user = yield base.func.verifyUserAsync(req.admin.token, query);
+        if (!user) {
+          return next({status: 404, customRes: true, msg: 'UserNotExist'});
+        } else if (user.enabled) {
+          return next({status: 400, customRes: true, msg: 'Enabled'});
+        } else if (user.status === 'refused') {
+          return next({customRes: true, msg: 'regRefused'});
+        }
+        next({customRes: true, msg: 'regSuccessPending'});
+      }).catch(next);
+    } else {
+      const that = this;
+      co(function *() {
+        const __ = req.i18n.__.bind(req.i18n);
+        const query = {};
+        Object.assign(query, req.query);
+        if (!query.email && !query.name) {
+          return next({status: 404, customRes: true, msg: 'UserNotExist'});
+        }
+        const user = yield base.func.verifyUserAsync(req.admin.token, query);
+        if (!user) {
+          return next({status: 404, customRes: true, msg: 'UserNotExist'});
+        } else if (user.enabled) {
+          return next({status: 400, customRes: true, msg: 'Enabled'});
+        }
 
-      const email = user.email;
-      try{
-        const token = yield base.func.emailTokenMemAsync(user, that.memClient);
-        const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
-        yield sendEmailByTemplateAsync(
-          email,
-          __('api.register.UserEnable'),
-          `
-          <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
-          <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-          <p>${href}</p>
-          `
-        );
-      } catch(e){
-        console.log(e);
-      }
-      next({view: 'sendEmail', customRes: true, data: {email}});
+        const email = user.email;
+        try{
+          const token = yield base.func.emailTokenMemAsync(user, that.memClient);
+          const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
+          yield sendEmailByTemplateAsync(
+            email,
+            __('api.register.UserEnable'),
+            {
+              content: `
+              <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
+              <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+              <p>${href}</p>
+              `
+            }
+          );
+        } catch(e){
+          console.log(e);
+        }
+        next({view: 'sendEmail', customRes: true, data: {email}});
 
-    }).catch(next);
-  },
-  regSuccessPending: (req, res, next) => {
-    co(function *() {
-      const query = {};
-      Object.assign(query, req.query);
-      if (!query.email && !query.name) {
-        return next({status: 404, customRes: true, msg: 'UserNotExist'});
-      }
-      const user = yield base.func.verifyUserAsync(req.admin.token, query);
-      if (!user) {
-        return next({status: 404, customRes: true, msg: 'UserNotExist'});
-      } else if (user.enabled) {
-        return next({status: 400, customRes: true, msg: 'Enabled'});
-      } else if (user.status === 'refused') {
-        return next({customRes: true, msg: 'regRefused'});
-      }
-      next({customRes: true, msg: 'regSuccessPending'});
-    }).catch(next);
+      }).catch(next);
+    }
   },
 
   changeEmail: function (req, res, next) {
@@ -357,11 +370,13 @@ User.prototype = {
       yield sendEmailByTemplateAsync(
         user.email,
         __('api.register.UserEnable'),
-        {content: `
-        <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
-        <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-        <p>${href}</p>
-        `}
+        {
+          content: `
+          <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
+          <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+          <p>${href}</p>
+          `
+        }
       );
       next({customRes: true, msg: 'SendSuccess'});
     }).catch(next);
@@ -369,7 +384,6 @@ User.prototype = {
   initRoutes: function () {
     this.app.use('/auth/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.get('/auth/register/success', this.regSuccess.bind(this));
-    this.app.get('/auth/register/success-pending', this.regSuccessPending);
     this.app.get('/auth/register/enable', this.enable.bind(this));
     this.app.get('/auth/register/change-email', this.changeEmail.bind(this));
     this.app.post('/auth/register/change-email', this.changeEmailSubmit.bind(this));
