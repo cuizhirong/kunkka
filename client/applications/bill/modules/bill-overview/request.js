@@ -22,7 +22,7 @@ module.exports = {
       `/proxy/gnocchi/v1/aggregation/resource/generic/metric/${serviceName}.cost?aggregation=sum&granularity=${GRANULARITY.day}&needed_overlap=0.0&refresh=False`;
     return fetch.post({
       url: url,
-      data: `{"and": [{">": {"started_at": "2015-01-01T00:00"}}], "=": {"project_id": ${HALO.user.projectId}}}`
+      data: {'and': [{'>': {'started_at': '2015-01-01T00:00'}}, {'=': {'project_id': HALO.user.projectId}}]}
     });
   },
   getTrend: () => {
@@ -34,11 +34,11 @@ module.exports = {
     let urlByMonth = `/proxy/gnocchi/v1/aggregation/resource/generic/metric/total.cost?aggregation=sum&granularity=${GRANULARITY.month}&needed_overlap=0.0&refresh=False&start=${lastYear}&stop=${now}`;
     queryList[0] = fetch.post({
       url: urlByMonth,
-      data: '{"and": [{">": {"started_at": "2015-01-01T00:00"}}]}'
+      data: {'and': [{'>': {'started_at': '2015-01-01T00:00'}}, {'=': {'project_id': HALO.user.projectId}}]}
     });
     queryList[1] = fetch.post({
       url: urlByDay,
-      data: '{"and": [{">": {"started_at": "2015-01-01T00:00"}}]}'
+      data: {'and': [{'>': {'started_at': '2015-01-01T00:00'}}, {'=': {'project_id': HALO.user.projectId}}]}
     });
     return RSVP.all(queryList);
   },
