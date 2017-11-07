@@ -63,7 +63,12 @@ class Model extends React.Component {
       isSubmitting: true
     });
     request.registerAccount(data).then((res) => {
-      window.location = '/auth/register/success?email=' + data.email;
+      const approvalSetting = that.props.HALO.settings.enable_register_approve;
+      if(approvalSetting === true) {
+        window.location = '/auth/register/success-pending?email=' + data.email;
+      } else {
+        window.location = '/auth/register/success?email=' + data.email;
+      }
     }).catch((err) => {
       let errorMsg = getErrorMessage(err, true);
       that.setState({
