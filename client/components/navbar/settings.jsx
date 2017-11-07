@@ -21,7 +21,7 @@ class Settings extends React.Component {
           });
         };
         let haloMenu = document.getElementsByClassName('halo-com-menu')[0];
-        setWidth(haloMenu, '120px');
+        setWidth(haloMenu, '180px');
         document.getElementById('main').style.display = 'none';
 
         let wrapper = document.getElementById('main-wrapper');
