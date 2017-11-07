@@ -25,7 +25,8 @@ class DetailModal extends React.Component {
     let className = 'modal-detail';
     className += this.state.isShow ? '' : ' hide';
 
-    let {imageType, price, flavor, number, keypairName} = this.props;
+    let {imageType, price, flavor, keypairName} = this.props;
+    let state = this.state;
 
     function getData(props, key) {
       let ele = props[key];
@@ -60,8 +61,8 @@ class DetailModal extends React.Component {
     if (enableCharge && flavor) {
       let type = flavor.name;
       if (HALO.prices) {
-        price = HALO.prices['instance:' + type] ? HALO.prices['instance:' + type].unit_price.price.segmented[0].price : HALO.prices[type].unit_price.price.segmented[0].price;
-        numPrice = (Number(price) * number).toFixed(4);
+        price = HALO.prices.compute[type] ? HALO.prices.compute[type] : 0;
+        numPrice = (Number(price) * state.number).toFixed(4);
         monthlyPrice = (Number(numPrice) * 24 * 30).toFixed(4);
       }
     }

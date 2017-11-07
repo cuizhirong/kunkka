@@ -29,7 +29,7 @@ function pop(parent, callback) {
     config: config,
     onInitialize: function(refs) {
       function setPrice() {
-        let price = Math.max.apply(null, HALO.prices.other['network.router']);
+        let price = HALO.prices ? Math.max.apply(null, HALO.prices.other['network.router']).toFixed(4) : 0;
 
         refs.charge.setState({
           value: price
@@ -131,7 +131,7 @@ function pop(parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: Math.max.apply(null, HALO.prices.other['network.router']) * state.value
+                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.router']) * state.value).toFixed(4) : 0
               });
             }
           }

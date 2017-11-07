@@ -129,7 +129,7 @@ function pop(obj, parent, callback) {
             if (!isError) {
               setTypes();
               refs.charge.setState({
-                value: Math.max.apply(null, HALO.prices.other['volume.volume']) * cap.min,
+                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['volume.volume']) * cap.min).toFixed(4) : 0,
                 hide: false
               });
             } else {
@@ -199,7 +199,7 @@ function pop(obj, parent, callback) {
             if (!isError) {
               if (sliderEvent || inputEvnet) {
                 refs.charge.setState({
-                  value: Math.max.apply(null, HALO.prices.other['volume.volume']) * value
+                  value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['volume.volume']) * value).toFixed(4) : 0
                 });
               }
             } else {

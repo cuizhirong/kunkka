@@ -40,7 +40,7 @@ function pop(parent, callback) {
       if (enableCharge) {
         let bandwidth = config.fields[1].min;
         refs.charge.setState({
-          value: Math.max.apply(null, HALO.prices.other['network.floating']) * bandwidth
+          value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.floating']) * bandwidth).toFixed(4) : 0
         });
       }
 
@@ -110,7 +110,7 @@ function pop(parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: Math.max.apply(null, HALO.prices.other['network.floating']) * state.value
+                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.floating']) * state.value).toFixed(4) : 0
               });
             }
           }

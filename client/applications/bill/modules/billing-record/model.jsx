@@ -46,6 +46,11 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch (column.key) {
+        case 'id':
+          column.render = (col, item, i) => {
+            return item.resource.id;
+          };
+          break;
         case 'resource_type':
           column.render = (col, item, i) => {
             return item.resource.type;
@@ -157,6 +162,9 @@ class Model extends React.Component {
   setPagination(table, res) {
     let pagination = {};
     pagination.nextUrl = Math.ceil(res.total / 10) > this.offset ? this.offset + 1 : null;
+    if(res.total <= 10) {
+      pagination.nextUrl = null;
+    }
     if (this.offset > 0) {
       pagination.prevUrl = true;
     }

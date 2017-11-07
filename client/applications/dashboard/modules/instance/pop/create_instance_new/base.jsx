@@ -7,7 +7,6 @@ const createPortPop = require('client/applications/dashboard/modules/port/pop/cr
 const createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
 const request = require('../../request');
 const unitConverter = require('client/utils/unit_converter');
-const priceConverter = require('../../../../utils/price');
 const getErrorMessage = require('../../../../utils/error_message');
 const initialState = require('./state');
 const helper = require('./helper');
@@ -56,12 +55,6 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getData().then(this.initialize);
-
-    if (HALO.settings.enable_charge && !HALO.prices) {
-      request.getPrices().then((res) => {
-        HALO.prices = priceConverter(res);
-      }).catch((error) => {});
-    }
   }
 
   initialize(res) {
