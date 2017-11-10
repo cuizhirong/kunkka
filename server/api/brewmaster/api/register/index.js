@@ -59,25 +59,12 @@ User.prototype = {
       });
       let user = userKeystoneRes.body.user;
 
-      let userDB = yield userModel.create({
+      yield userModel.create({
         id: user.id, links: JSON.stringify(user.links), domain_id: user.domain_id,
-        email, phone, name, full_name, company, origin: 'register', status: 'pending',
+        email, phone, name, full_name, company, origin: 'register', status: 'verify-email',
         area_code: config('phone_area_code') || '86', enabled: false
       });
       next({customRes: true, status: 200, msg: 'registerSuccess'});
-      if (req.enableRegisterApprove) {
-        sendEmailByTemplateAsync(
-          adminEmail, '有新用户注册申请，请审批',
-          {
-            content: `
-            <p>用户名：${userDB.name}</p>
-            <p>姓名：${userDB.full_name}</p>
-            <p>电话：${userDB.phone}</p>
-            <p>邮箱：${userDB.email}</p>
-            <p>公司：${userDB.company}</p>`
-          }
-        );
-      }
     }).catch(next);
   },
 
@@ -231,63 +218,83 @@ User.prototype = {
   },
 
   regSuccess: function (req, res, next) {
-    if (req.enableRegisterApprove) {
-      co(function *() {
-        const query = {};
-        Object.assign(query, req.query);
-        if (!query.email && !query.name) {
-          return next({status: 404, customRes: true, msg: 'UserNotExist'});
-        }
-        const user = yield base.func.verifyUserAsync(req.admin.token, query);
-        if (!user) {
-          return next({status: 404, customRes: true, msg: 'UserNotExist'});
-        } else if (user.enabled) {
-          return next({status: 400, customRes: true, msg: 'Enabled'});
-        } else if (user.status === 'refused') {
-          return next({customRes: true, msg: 'regRefused'});
-        }
-        next({customRes: true, msg: 'regSuccessPending'});
-      }).catch(next);
-    } else {
-      const that = this;
-      co(function *() {
-        const __ = req.i18n.__.bind(req.i18n);
-        const query = {};
-        Object.assign(query, req.query);
-        if (!query.email && !query.name) {
-          return next({status: 404, customRes: true, msg: 'UserNotExist'});
-        }
-        const user = yield base.func.verifyUserAsync(req.admin.token, query);
-        if (!user) {
-          return next({status: 404, customRes: true, msg: 'UserNotExist'});
-        } else if (user.enabled) {
-          return next({status: 400, customRes: true, msg: 'Enabled'});
-        }
+    const that = this;
+    co(function *() {
+      const __ = req.i18n.__.bind(req.i18n);
+      const query = {};
+      Object.assign(query, req.query);
+      if (!query.email && !query.name) {
+        return next({status: 404, customRes: true, msg: 'UserNotExist'});
+      }
+      const user = yield base.func.verifyUserAsync(req.admin.token, query);
+      if (!user) {
+        return next({status: 404, customRes: true, msg: 'UserNotExist'});
+      } else if (user.enabled) {
+        return next({status: 400, customRes: true, msg: 'Enabled'});
+      }
 
-        const email = user.email;
-        try{
-          const token = yield base.func.emailTokenMemAsync(user, that.memClient);
-          const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
-          yield sendEmailByTemplateAsync(
-            email,
-            __('api.register.UserEnable'),
-            {
-              content: `
-              <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
-              <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-              <p>${href}</p>
-              `
-            }
-          );
-        } catch(e){
-          console.log(e);
-        }
-        next({view: 'sendEmail', customRes: true, data: {email}});
+      const email = user.email;
+      try{
+        const token = yield base.func.emailTokenMemAsync(user, that.memClient);
+        const href = `${req.protocol}://${req.hostname}/auth/register/${req.enableRegisterApprove ? 'verify-email' : 'enable'}?user=${user.id}&token=${token}`;
+        let subject = __(`api.register.${req.enableRegisterApprove ? 'verifyEmail' : 'UserEnable'}`);
+        yield sendEmailByTemplateAsync(
+          email,
+          subject,
+          {
+            content: `
+            <p><a href="${href}">${subject}</a></p>
+            <p>${__('api.register.LinkFailedCopyTheHref')}</p>
+            <p>${href}</p>
+            `
+          }
+        );
+      } catch(e){
+        console.log(e);
+      }
+      next({view: 'sendEmail', customRes: true, data: {email}});
 
-      }).catch(next);
-    }
+    }).catch(next);
   },
+  verifyEmail: function (req, res, next) {
+    const that = this;
+    co(function* (){
+      const tokenUrl = req.query.token;
+      const userId = req.query.user;
+      if (!userId || !tokenUrl) {
+        return next({customRes: true, status: 400, msg: 'LinkError'});
+      }
+      const user = yield base.func.verifyUserByIdAsync(req.admin.token, userId);
+      if (!user) {
+        return next({customRes: true, status: 404, msg: 'UserNotExist'});
+      } else if (user.enabled) {
+        return next({customRes: true, status: 400, msg: 'Enabled'});
+      } else if (user.status !== 'verify-email') {
+        return next({status: 200, customRes: true, msg: 'verifyEmailSuccess'});
+      }
 
+      const isCorrect = yield base.func.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
+      if (!isCorrect) {
+        return next({customRes: true, status: 400, msg: 'LinkError'});
+      }
+      yield [
+        userModel.update({status: 'pending'}, {where: {id: user.id}}),
+        that.memClient.deleteAsync(user.id),
+        sendEmailByTemplateAsync(
+          adminEmail, '有新用户注册申请，请审批',
+          {
+            content: `
+            <p>用户名：${user.name}</p>
+            <p>姓名：${user.full_name}</p>
+            <p>电话：${user.phone}</p>
+            <p>邮箱：${user.email}</p>
+            <p>公司：${user.company}</p>`
+          }
+        )
+      ];
+      next({status: 200, customRes: true, msg: 'verifyEmailSuccess'});
+    }).catch(next);
+  },
   changeEmail: function (req, res, next) {
     co(function *() {
       const email = req.query.email;
@@ -384,6 +391,7 @@ User.prototype = {
   initRoutes: function () {
     this.app.use('/auth/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.get('/auth/register/success', this.regSuccess.bind(this));
+    this.app.get('/auth/register/verify-email', this.verifyEmail.bind(this));
     this.app.get('/auth/register/enable', this.enable.bind(this));
     this.app.get('/auth/register/change-email', this.changeEmail.bind(this));
     this.app.post('/auth/register/change-email', this.changeEmailSubmit.bind(this));
