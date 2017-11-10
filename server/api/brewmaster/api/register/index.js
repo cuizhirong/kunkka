@@ -110,40 +110,29 @@ User.prototype = {
         }
       }
 
-      //GET ROLE billing_owner, project_owner
+      //GET ROLE project_owner
       let roles = yield listRolesAsync(req.admin.token, keystoneRemote, {});
       roles = roles.body.roles;
 
       const roleId = {
-        'billing_owner': '',
         'project_owner': ''
       };
       roles.some(role => {
-        if (role.name === 'billing_owner' || role.name === 'project_owner') {
+        if (role.name === 'project_owner') {
           roleId[role.name] = role.id;
-          return roleId.billing_owner && roleId.project_owner;
+          return roleId.project_owner;
         }
       });
 
-      if (!roles.billing_owner || !roleId.project_owner) {
+      if (!roleId.project_owner) {
         sendEmailByTemplateAsync(
-          adminEmail, '注册用户激活失败，请检查角色billing_owner和project_owner',
-          {
-            content: `${roleId.billing_owner || '<p>billing_owner 角色不存在，需创建</p>'}`
-            + `${roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}`
-          }
+          adminEmail, '注册用户激活失败，请检查角色project_owner',
+          {content: roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}
         );
         return next('SystemError');
       }
       //Assign Role & Update User
       yield [
-        addRoleToUserOnProjectAsync(
-          projectId,
-          user.id,
-          roleId.billing_owner,
-          req.admin.token,
-          keystoneRemote
-        ),
         addRoleToUserOnProjectAsync(
           projectId,
           user.id,
