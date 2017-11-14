@@ -33,6 +33,7 @@
     "checkbox": true,
     "dataKey": "mapping_id",
     "loading": true,
+    "hideLimit": true,
     "column": [{
       "title": ["name"],
       "key": "name",

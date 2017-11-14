@@ -11,7 +11,9 @@ let basePieOption = function(style) {
     color: COLOR_LIST,
     tooltip: {
       trigger: 'item',
-      formatter: '{b}占比 {d}%',
+      formatter: params => {
+        return `${__[params.name]}占比${params.percent}%`;
+      },
       borderColor: '#00afc8',
       borderWidth: 1,
       textStyle: {
