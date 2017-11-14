@@ -74,6 +74,7 @@ class Model extends React.Component {
   }
 
   onInitialize() {
+    this.loadingTable();
     this.getList();
   }
 
@@ -94,7 +95,7 @@ class Model extends React.Component {
   getList() {
     this.clearState();
     let table = this.state.config.table,
-      pageLimit = table.limit || 10;
+      pageLimit = localStorage.getItem('page_limit');
 
     request.getList(pageLimit).then((res) => {
       table.data = res.quota;
@@ -110,7 +111,7 @@ class Model extends React.Component {
   //request: get next list
   getNextList(url, refreshDetail) {
     let table = this.state.config.table;
-    const pageLimit = table.limit || 10;
+    const pageLimit = localStorage.getItem('page_limit');
     request.getNextList(url, pageLimit).then((res) => {
       if (res.quota) {
         table.data = res.quota;
@@ -182,6 +183,9 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

@@ -88,7 +88,8 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if(params[2]) {
+    this.loadingTable();
+    if(params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getList();
@@ -122,7 +123,8 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getList(table.limit).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+    request.getList(pageLimit).then((res) => {
       table.data = res.ports;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
@@ -274,6 +276,9 @@ class Model extends React.Component {
             });
           }
         });
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

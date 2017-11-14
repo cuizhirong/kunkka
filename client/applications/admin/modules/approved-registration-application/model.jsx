@@ -54,14 +54,15 @@ class Model extends React.Component {
     });
   }
 
-  onInitialize(params) {
+  onInitialize() {
+    this.loadingTable();
     this.getList();
   }
 
   getList() {
     this.clearState();
     let table = this.state.config.table,
-      pageLimit = table.limit || 10;
+      pageLimit = localStorage.getItem('page_limit');
 
     request.getList(pageLimit).then((res) => {
       table.data = res.users;
@@ -77,7 +78,7 @@ class Model extends React.Component {
   //request: get next list
   getNextList(url) {
     let table = this.state.config.table;
-    const limit = table.limit || 10;
+    const limit = localStorage.getItem('page_limit');
     request.getNextList(url, limit).then((res) => {
       if (res.users) {
         table.data = res.users;
@@ -142,6 +143,9 @@ class Model extends React.Component {
         break;
       case 'filter':
         this.onFilterSearch(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

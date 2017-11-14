@@ -32,6 +32,7 @@
     "checkbox": true,
     "dataKey": "id",
     "loading": true,
+    "hideLimit": true,
     "limit": 10,
     "column": [{
       "title": ["name"],

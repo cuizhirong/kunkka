@@ -91,7 +91,8 @@ class Model extends React.Component {
 
 //initialize table data
   onInitialize(params) {
-    if (params[2]) {
+    this.loadingTable();
+    if (params && params[2]) {
       this.getHypervisorById(params[2]);
       this.getHypervisorListToStore();
     } else {
@@ -117,7 +118,7 @@ class Model extends React.Component {
   }
 
   getHypervisorListToStore() {
-    let pageLimit = this.state.config.table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
     request.getHypervisorList(pageLimit).then((res) => {
       this.stores.hosts = res.hypervisors;
     });
@@ -127,7 +128,7 @@ class Model extends React.Component {
   getHypervisorList() {
     this.clearState();
 
-    let pageLimit = this.state.config.table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
     request.getHypervisorList(pageLimit).then((res) => {
       let table = this.processTableData(this.state.config.table, res);
       this.stores.hosts = res.hypervisors;
@@ -268,6 +269,9 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

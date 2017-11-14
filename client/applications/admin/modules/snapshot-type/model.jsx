@@ -63,7 +63,8 @@ class Model extends React.Component {
    * @param {Array<string>} params path list
    */
   onInitialize(params) {
-    if (params[2]) {
+    this.loadingTable();
+    if (params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getList();
@@ -120,8 +121,8 @@ class Model extends React.Component {
   getList() {
     this.clearState();
 
-    const table = this.state.config.table,
-      pageLimit = table.limit;
+    const table = this.state.config.table;
+    const pageLimit = localStorage.getItem('page_limit');
 
     request.getList(pageLimit).then((res) => {
       table.data = res.list;
@@ -315,6 +316,9 @@ class Model extends React.Component {
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
         break;
+      case 'page_limit':
+        this.onInitialize();
+        break;
       default:
         break;
     }
@@ -407,7 +411,7 @@ class Model extends React.Component {
       } else if (nameData){
         this.clearState();
 
-        let pageLimit = this.state.config.table.limit;
+        let pageLimit = localStorage.getItem('page_limit');
         this.getSnapshotByName(nameData, pageLimit);
       } else {
         const r = {};

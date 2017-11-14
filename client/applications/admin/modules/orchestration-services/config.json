@@ -50,6 +50,7 @@
   "table": {
     "dataKey": "id",
     "loading": true,
+    "hideLimit": true,
     "column": [{
       "title": ["hostname"],
       "dataIndex": "hostname",
