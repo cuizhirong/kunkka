@@ -346,37 +346,6 @@ User.prototype = {
       }
     });
   },
-  resendEmail: function (req, res, next) {
-    if (req.enableRegisterApprove) {
-      return next({customRes: true, msg: 'functionNotAvailable'});
-    }
-    const __ = req.i18n.__.bind(req.i18n);
-    const email = req.query.email;
-    const that = this;
-    co(function *() {
-      const user = yield base.func.verifyUserAsync(req.admin.token, {email: email});
-      if (!user) {
-        return next({status: 404, msg: 'UserNotExist', customRes: true});
-      } else if (user.enabled) {
-        return next({status: 400, msg: 'Enabled', customRes: true});
-      }
-      const token = yield base.func.emailTokenMemAsync(user, that.memClient);
-
-      const href = `${req.protocol}://${req.hostname}/auth/register/enable?user=${user.id}&token=${token}`;
-      yield sendEmailByTemplateAsync(
-        user.email,
-        __('api.register.UserEnable'),
-        {
-          content: `
-          <p><a href="${href}">${__('api.register.clickHereToEnableYourAccount')}</a></p>
-          <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-          <p>${href}</p>
-          `
-        }
-      );
-      next({customRes: true, msg: 'SendSuccess'});
-    }).catch(next);
-  },
   initRoutes: function () {
     this.app.use('/auth/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.get('/auth/register/success', this.regSuccess.bind(this));
@@ -384,7 +353,7 @@ User.prototype = {
     this.app.get('/auth/register/enable', this.enable.bind(this));
     this.app.get('/auth/register/change-email', this.changeEmail.bind(this));
     this.app.post('/auth/register/change-email', this.changeEmailSubmit.bind(this));
-    this.app.get('/auth/register/resend-email', this.resendEmail.bind(this));
+    this.app.get('/auth/register/resend-email', this.regSuccess.bind(this));
     this.app.use('/auth/register/*', base.middleware.customResPage);
 
     this.app.post('/api/register', base.middleware.checkEnableRegister, base.middleware.adminLogin, this.reg.bind(this), base.middleware.customResApi);
