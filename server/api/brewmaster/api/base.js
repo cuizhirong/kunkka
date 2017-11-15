@@ -163,9 +163,11 @@ base.func.verifyUserByNameAsync = function (adminToken, name) {
 
 base.func.verifyUserByIdAsync = (adminToken, userId) => {
   return co(function *() {
-    let result;
+    let user;
+    let userDB = yield userModel.findOne({where: {id: userId}});
     try {
-      result = yield getUserAsync(adminToken, keystoneRemote, userId);
+      let result = yield getUserAsync(adminToken, keystoneRemote, userId);
+      user = result.body.user;
     } catch (e) {
       if (e.statusCode === 404) {
         yield userModel.destroy({where: {id: userId}, force: true});
@@ -174,7 +176,12 @@ base.func.verifyUserByIdAsync = (adminToken, userId) => {
         return Promise.reject(e);
       }
     }
-    return result.body.user;
+    if (!userDB) {
+      userModel.create(user);
+    } else {
+      Object.assign(user, JSON.parse(JSON.stringify(userDB)));
+    }
+    return user;
   });
 };
 
