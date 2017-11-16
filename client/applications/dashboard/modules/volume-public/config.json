@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["volume"],
-    "key": "volume",
+    "name": ["volume-public"],
+    "key": "volume-public",
     "default": true
   }],
   "btns": [{
