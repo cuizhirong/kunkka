@@ -1,5 +1,6 @@
 {
   "en": {
+    "active_connections": "Active Connections",
     "admin_state": "Administrative State",
     "assoc_pool_policy_tip": "The default pool must have compatible protocol with listener.",
     "clear_pool": "Update",
@@ -21,9 +22,11 @@
     "policy": "Policy",
     "protocol_port": "Protocol Port",
     "required_port_range": "Port range: 1~65535",
-    "tip_lb_assoc_fip": "The network which Loadbalancer locates should connect to the outer network, otherwise this action may fail."
+    "tip_lb_assoc_fip": "The network which Loadbalancer locates should connect to the outer network, otherwise this action may fail.",
+    "total_connections": "Total Connections"
   },
   "zh-CN": {
+    "active_connections": "活跃连接数",
     "admin_state": "管理状态",
     "assoc_pool_policy_tip": "默认资源池和监听器的协议必须相同。",
     "clear_pool": "修改",
@@ -45,6 +48,7 @@
     "policy": "策略",
     "protocol_port": "监听端口",
     "required_port_range": "端口范围：1~65535",
-    "tip_lb_assoc_fip": "负载均衡器所在网络必须能够连接外网，否则绑定公网ip可能不成功。"
+    "tip_lb_assoc_fip": "负载均衡器所在网络必须能够连接外网，否则绑定公网ip可能不成功。",
+    "total_connections": "连接总数"
   }
 }

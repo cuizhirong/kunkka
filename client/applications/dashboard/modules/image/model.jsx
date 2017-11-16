@@ -358,7 +358,7 @@ class Model extends React.Component {
     for (let key in item) {
       let element = item[key];
       let dataObj = {
-        name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
+        name: <a data-type="router" href={'/dashboard/instance/' + element.id}>{element.name}</a>,
         id: element.id,
         status: getStatusIcon(element.status),
         created: getTime(element.created, false)
