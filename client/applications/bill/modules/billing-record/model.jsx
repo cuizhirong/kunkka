@@ -74,12 +74,14 @@ class Model extends React.Component {
 
   //initialize table data
   onInitialize() {
+    this.loadingTable();
     this.getList(this.offset);
   }
 
   getList(offset) {
     let table = this.state.config.table;
-    request.getList(offset).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+    request.getList(offset, pageLimit).then((res) => {
       table.data = res.data;
       this.setPagination(table, res);
       this.updateTableData(table);
@@ -137,6 +139,9 @@ class Model extends React.Component {
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

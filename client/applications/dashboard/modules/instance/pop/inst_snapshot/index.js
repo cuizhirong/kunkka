@@ -2,13 +2,13 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
-const priceConverter = require('../../../../utils/price');
 
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
 
-  let enableCharge = HALO.settings.enable_charge;
+  // let enableCharge = HALO.settings.enable_charge;
+  let enableCharge = false;
   config.fields[2].hide = !enableCharge;
 
   let props = {
@@ -29,7 +29,6 @@ function pop(obj, parent, callback) {
       if (enableCharge) {
         if (!HALO.prices) {
           request.getPrices().then((res) => {
-            HALO.prices = priceConverter(res);
             setPrice();
           }).catch((error) => {});
         } else {
