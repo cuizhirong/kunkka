@@ -1,0 +1,7 @@
+var path = require('path')
+
+module.exports = {
+  'config': path.resolve(__dirname, '../../db_migration/config.json'),
+  'migrations-path': path.resolve(__dirname, 'migrations'),
+  'name': 'kunkka'
+}
