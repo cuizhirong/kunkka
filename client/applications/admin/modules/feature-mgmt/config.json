@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["setting-mgmt"],
-    "key": "setting-mgmt",
+    "name": ["feature-mgmt"],
+    "key": "feature-mgmt",
     "default": true
   }],
   "btns": [{

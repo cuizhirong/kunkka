@@ -1,7 +1,7 @@
 {
   "tabs": [{
-    "name": ["volume"],
-    "key": "volume",
+    "name": ["volume-private"],
+    "key": "volume-private",
     "default": true
   }],
   "btns": [{

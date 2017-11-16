@@ -1,6 +1,7 @@
 {
   "en": {
     "admin": "Admin",
+    "approval": "Approval",
     "bill": "Bill",
     "dashboard": "Dashboard",
     "labelOff": "Off",
@@ -9,6 +10,7 @@
   },
   "zh-CN": {
     "admin": "运营平台",
+    "approval": "审批",
     "bill": "消费",
     "dashboard": "控制台",
     "labelOff": "禁用",
