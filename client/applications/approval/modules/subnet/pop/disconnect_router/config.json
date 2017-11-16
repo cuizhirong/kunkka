@@ -1,0 +1,22 @@
+{
+  "title": ["disconnect", "router"],
+  "fields": [{
+    "type": "text",
+    "field": "dis_router",
+    "info": "dis_router"
+  }, {
+    "type": "icon_label",
+    "field": "subnet",
+    "icon_type": "subnet",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "router",
+    "icon_type": "router",
+    "text": ""
+  }],
+  "btn": {
+    "value": "disconnect",
+    "disabled": false
+  }
+}

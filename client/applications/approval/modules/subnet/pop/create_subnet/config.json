@@ -1,0 +1,69 @@
+{
+  "title": ["apply_", "subnet"],
+  "fields": [{
+    "type": "input",
+    "field": "subnet_name",
+    "is_long_label": true
+  }, {
+    "type": "select",
+    "field": "select_network",
+    "data": [],
+    "empty_text": {
+      "info": "no_network"
+    },
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "net_address",
+    "tip_info": "cidr_tip",
+    "is_long_label": true,
+    "required": true
+  }, {
+    "type": "checkbox",
+    "field": "show_more",
+    "has_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_gw",
+    "checked": true,
+    "hide": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "gw_address",
+    "tip_info": "gw_tip",
+    "hide": true,
+    "is_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_dhcp",
+    "checked": true,
+    "hide": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns1",
+    "hide": true,
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_dns2",
+    "hide": true,
+    "is_long_label": true
+  }, {
+    "type": "tip",
+    "tip_type": "error",
+    "field": "error",
+    "hide": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description",
+    "value": "",
+    "hide": "true"
+  }],
+  "btn": {
+    "value": "apply_",
+    "type": "apply",
+    "disabled": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "en": {
+    "total_count": "Total Count",
+    "verified_count": "Verified Count",
+    "add_endpoint": "Add Endpoint",
+    "notify": "Once verified the SMS or Email, You will receive the alarm notifications. If not, resend the verification after 1 minute.",
+    "endpoint": "Endpoint",
+    "uuid": "UUID",
+    "category": "Category",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "send": "Send ",
+    "resend": "Resend",
+    "verifying": "Verifying"
+  },
+  "zh-CN": {
+    "total_count": "总邀请数量",
+    "verified_count": "已验证数量",
+    "add_endpoint": "添加终端",
+    "notify": "当手机和邮箱通过验证后才能收到报警通知。若未收到验证通知，1分钟后可重新发送。",
+    "endpoint": "终端",
+    "uuid": "UUID",
+    "category": "类别",
+    "verified": "已验证",
+    "unverified": "未验证",
+    "send": "发送验证",
+    "resend": "重新发送",
+    "verifying": "验证已发送"
+  }
+}

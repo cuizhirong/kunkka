@@ -1,0 +1,44 @@
+{
+  "title": ["apply_", "resource", "pool"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "input_type": "text"
+  }, {
+    "type": "select",
+    "field": "protocol",
+    "empty_text": {
+      "info": "loading"
+    },
+    "data": [{
+      "name": "TCP",
+      "id": "TCP"
+    }, {
+      "name": "HTTP",
+      "id": "HTTP"
+    }]
+  }, {
+    "type": "select",
+    "field": "listener",
+    "empty_text": {
+      "info": "no_listener"
+    }
+  }, {
+    "type": "select",
+    "field": "load_algorithm",
+    "empty_text": {
+      "info": "loading"
+    }
+  }, {
+    "type": "textarea",
+    "field": "desc"
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
+  }],
+  "btn": {
+    "value": "apply_",
+    "type": "create",
+    "disabled": true
+  }
+}

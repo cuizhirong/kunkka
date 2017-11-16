@@ -1,0 +1,21 @@
+{
+  "title": ["modify", "security_group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance"
+  }, {
+    "type": "select",
+    "field": "port",
+    "empty_text": "no_port",
+    "data": []
+  }, {
+    "type": "select_group",
+    "field": "security_group",
+    "data": []
+  }],
+  "btn": {
+    "value": "save",
+    "disabled": true
+  }
+}

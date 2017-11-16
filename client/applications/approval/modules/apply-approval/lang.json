@@ -1,0 +1,14 @@
+{
+  "en": {
+    "accept": "Accept",
+    "waiting_approve": "Waiting Approve",
+    "refuse": "Refuse",
+    "refuse_explain": "Refuse Explanation"
+  },
+  "zh-CN": {
+    "accept": "接受",
+    "waiting_approve": "待审批",
+    "refuse": "拒绝",
+    "refuse_explain": "拒绝原因"
+  }
+}

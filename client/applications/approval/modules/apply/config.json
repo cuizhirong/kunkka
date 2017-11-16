@@ -1,0 +1,91 @@
+{
+  "tabs": [{
+    "name": ["apply"],
+    "key": "apply",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["modify", "application"],
+    "key": "modify_application",
+    "icon": "property",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "filter": [{
+    "group_key": "application_id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "application_id"]
+    }]
+  }, {
+    "group_key": "all_tenant",
+    "items": [{
+      "type": "select",
+      "key": "status",
+      "default": ["all", "status"]
+    }]
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "limit": 10,
+    "loading": true,
+    "column": [{
+      "title": ["id"],
+      "type": "captain",
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["applicant"],
+      "dataIndex": "username",
+      "key": "username"
+    }, {
+      "title": ["project", "name"],
+      "key": "project_name"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status",
+      "type": "status",
+      "filter": [{
+        "name": ["pending"],
+        "key": "pending",
+        "filterBy": "pending"
+      }, {
+        "name": ["approving"],
+        "key": "approving",
+        "filterBy": "approving"
+      }, {
+        "name": ["pass"],
+        "key": "pass",
+        "filterBy": "pass"
+      }, {
+        "name": ["refused"],
+        "key": "refused",
+        "filterBy": "refused"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "createdAt",
+      "key": "create_time",
+      "type": "time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

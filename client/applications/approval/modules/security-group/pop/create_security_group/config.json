@@ -1,0 +1,24 @@
+{
+	"title": ["apply_", "security_group"],
+  "fields": [{
+    "type": "tip",
+    "tip_type": "info",
+    "field": "tip_info_security"
+  }, {
+    "type": "input",
+    "field": "name",
+    "input-type": "text",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "desc"
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
+  }],
+  "btn": {
+    "value": "apply_",
+    "type": "create",
+    "disabled": true
+  }
+}

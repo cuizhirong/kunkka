@@ -1,0 +1,25 @@
+{
+  "title": ["apply_", "snapshot"],
+  "fields": [{
+    "type": "tip",
+    "tip_type": "info",
+    "field": "tip_volume_snapshot"
+  }, {
+    "type": "icon_label",
+    "field": "volume",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "snapshot_name",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description"
+  }],
+  "btn": {
+    "value": "apply_",
+    "type": "create",
+    "disabled": true
+  }
+}

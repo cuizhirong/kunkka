@@ -1,0 +1,12 @@
+{
+  "title": ["apply_", "resize"],
+  "fields": [{
+    "type": "textarea",
+    "field": "apply_description",
+    "value": ""
+  }],
+  "btn": {
+    "value": "apply_",
+    "disabled": true
+  }
+}

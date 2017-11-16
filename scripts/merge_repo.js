@@ -110,6 +110,18 @@ const items = [
     'directory': 'client/applications'
   }
 ];
+let approvalItems = [
+  {
+    'name': 'lich',
+    'git': 'git@github.com:unitedstack/lich.git',
+    'directory': 'server/api'
+  },
+  {
+    'name': 'approval',
+    'git': 'git@github.com:unitedstack/pudge.git',
+    'directory': 'client/applications'
+  }
+];
 
 const cp = require('child_process');
 const path = require('path');
@@ -118,9 +130,9 @@ const path = require('path');
 cp.execSync('rm -rf ~/subitems');
 
 const itemFatherDir = path.join('~/subitems');
-for(let i = 0; i < items.length; i++) {
+for(let i = 0; i < approvalItems.length; i++) {
 
-  let item = items[i];
+  let item = approvalItems[i];
   let itemDir = path.join(itemFatherDir, item.name);
   //console.log(itemDir);
   //console.log(cp.spawnSync('rm',['.gitignore'] , {cwd: itemDir}));
@@ -131,6 +143,6 @@ for(let i = 0; i < items.length; i++) {
   cp.execSync(`cd ${__dirname}`);
   cp.execSync(`git remote add ${item.name} ${itemDir}`);
   cp.execSync(`git fetch ${item.name}`);
-  cp.execSync(`git merge ${item.name}/master -m 'merge project ${item.directory}/${item.name}'`);
+  cp.execSync(`git merge ${item.name}/master --allow-unrelated-histories -m 'merge project ${item.directory}/${item.name}'`);
   cp.execSync(`git remote rm ${item.name}`);
 }

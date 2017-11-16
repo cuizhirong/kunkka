@@ -1,0 +1,18 @@
+{
+  "title": ["delete", "instance"],
+  "fields": [{
+    "type": "data_list",
+    "field": "instances",
+    "icon": "instance",
+    "hasStatus": true
+  }, {
+    "type": "checkbox",
+    "field": "delete_instance_tip",
+    "hide": true
+  }],
+  "btn": {
+    "value": "delete",
+    "type": "delete",
+    "disabled": true
+  }
+}

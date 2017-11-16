@@ -1,0 +1,67 @@
+{
+  "tabs": [{
+    "name": ["waiting_approve"],
+    "key": "apply-approval"
+  }, {
+    "name": ["approved"],
+    "key": "approved",
+    "default": true
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "application_id"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "limit": 10,
+    "loading": true,
+    "column": [{
+      "title": ["id"],
+      "type": "captain",
+      "dataIndex": "id",
+      "key": "id"
+    }, {
+      "title": ["applicant"],
+      "dataIndex": "username",
+      "key": "username"
+    }, {
+      "title": ["project", "name"],
+      "key": "project_name"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "key": "status",
+      "type": "status",
+      "filter": [{
+        "name": ["approving"],
+        "key": "approving",
+        "filterBy": "approving"
+      }, {
+        "name": ["pass"],
+        "key": "pass",
+        "filterBy": "pass"
+      }, {
+        "name": ["refused"],
+        "key": "refused",
+        "filterBy": "refused"
+      }]
+    }, {
+      "title": ["create", "time"],
+      "dataIndex": "createdAt",
+      "key": "create_time",
+      "type": "time"
+    }],
+    "data":[],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}
