@@ -108,9 +108,7 @@ const items = [
     'name': 'bill',
     'git': 'git@github.com:unitedstack/viper.git',
     'directory': 'client/applications'
-  }
-];
-let approvalItems = [
+  },
   {
     'name': 'lich',
     'git': 'git@github.com:unitedstack/lich.git',
@@ -130,9 +128,9 @@ const path = require('path');
 cp.execSync('rm -rf ~/subitems');
 
 const itemFatherDir = path.join('~/subitems');
-for(let i = 0; i < approvalItems.length; i++) {
+for(let i = 0; i < items.length; i++) {
 
-  let item = approvalItems[i];
+  let item = items[i];
   let itemDir = path.join(itemFatherDir, item.name);
   //console.log(itemDir);
   //console.log(cp.spawnSync('rm',['.gitignore'] , {cwd: itemDir}));
