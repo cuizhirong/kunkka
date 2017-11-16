@@ -136,12 +136,12 @@ Approve.prototype = {
           )
         ];
 
-        yield userModel.update({enabled: true, default_project_id: projectId}, {where: {id: user.id}});
+        yield user.update({enabled: true, default_project_id: projectId});
       }
 
       yield user.update({status});
 
-      res.status(204).end();
+      res.send({user});
       sendEmailByTemplateAsync(
         user.email,
         req.i18n.__(`api.register.${status === 'pass' ? 'regPassed' : 'regRefused'}`),
