@@ -1,0 +1,17 @@
+{
+  "title": ["chg_owner"],
+  "fields": [{
+    "type": "input",
+    "field": "chg_owner"
+  }, {
+    "type": "tip",
+    "tip_type": "error",
+    "field": "error",
+    "hide": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create",
+    "disabled": false
+  }
+}

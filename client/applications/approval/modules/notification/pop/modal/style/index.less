@@ -1,0 +1,102 @@
+@import "../../../../../style/theme.less";
+
+@delete_color: @color_delete;
+@success_color: @color_success;
+@disabled_color: @color_grey_700;
+@cancel_color: @color_cancel;
+@info_color: @color_info_600;
+@time_color: @color_grey_700;
+
+.halo-pop-com-endpoint {
+  margin-top: 18px;
+  padding-left: 0px!important;
+  align-items: baseline!important;
+  .terminal {
+    .endpoint-content {
+      margin-top: 10px;
+      border-bottom: 1px solid transparent;
+      select {
+        width: 46px;
+      }
+      input {
+        margin-left: 8px;
+        width: 186px;
+      }
+      .btn {
+        margin-left: 12px;
+      }
+      .input-area {
+        margin-left: 8px;
+        width: 70px;
+      }
+      .input-sms {
+        margin-left: 8px;
+        width: 102px;
+      }
+      .input-email {
+        margin-left: 8px;
+        width: 202px;
+      }
+      .hide {
+        display: none;
+      }
+      .error {
+        border: 1px solid @delete_color;
+      }
+    }
+    .terminal-list {
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid @cancel_color;
+      height: 32px;
+      line-height: 32px;
+      span {
+        display: inline-block;
+      }
+      .protocol {
+        padding-left: 12px;
+        width: 76px;
+      }
+      .endpoint {
+        width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+      }
+      .time {
+        color: @time_color;
+        vertical-align: middle;
+      }
+      .verified {
+        color: @success_color;
+        width: 82px;
+        margin-left: 8px;
+      }
+      .resend {
+        width: 90px;
+        vertical-align: middle;
+        .msg {
+          color: @disabled_color;
+          cursor: pointer;
+          font-size: 16px;
+          float: right;
+          &:hover {
+            color: @info_color;
+          }
+        }
+      }
+      .delete {
+        margin-top: -2px;
+        .msg {
+          color: @disabled_color;
+          margin-left: 8px;
+          line-height: 38px;
+          cursor: pointer;
+          font-size: 16px;
+          &:hover {
+            color: red;
+          }
+        }
+      }
+    }
+  }
+}

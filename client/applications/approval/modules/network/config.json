@@ -1,0 +1,69 @@
+{
+  "tabs": [{
+    "name": ["network"],
+    "key": "network",
+    "default": true
+  }, {
+    "name": ["subnet"],
+    "key": "subnet"
+  }],
+  "btns": [{
+    "value": ["apply_", "prv_network"],
+    "key": "create",
+    "type": "create",
+    "icon": "create"
+  }, {
+    "value": ["apply_", "subnet"],
+    "key": "crt_subnet",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["subnet"],
+      "dataIndex": "",
+      "key": "subnet"
+    }, {
+      "title": ["status"],
+      "dataIndex": "status",
+      "type": "status",
+      "key": "status",
+      "filter": [{
+        "name": ["active"],
+        "key": "active",
+        "filterBy": "ACTIVE"
+      }]
+    }, {
+      "title": ["security", "restrict"],
+      "dataIndex": "restrict",
+      "key": "restrict",
+      "type": ""
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["description"],
+        "key": "description",
+        "default": true
+      }]
+    }
+  }
+}

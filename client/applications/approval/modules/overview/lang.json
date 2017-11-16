@@ -1,0 +1,22 @@
+{
+  "en": {
+    "all_volumes": "All Volumes",
+    "all_gigabytes": "All Volumes Gigabytes",
+    "infinity": "Infinity",
+    "information": " Information",
+    "gigabyte": " Gigabyte",
+    "quota": " Quota",
+    "ram": "RAM",
+    "unit_gb": "(GB)"
+  },
+  "zh-CN": {
+    "all_volumes": "云硬盘总数",
+    "all_gigabytes": "云硬盘容量总数",
+    "infinity": "无限",
+    "quota": "配额",
+    "information": "信息",
+    "gigabyte": "容量",
+    "ram": "内存",
+    "unit_gb": "(GB)"
+  }
+}

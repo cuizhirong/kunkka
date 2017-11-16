@@ -1,0 +1,413 @@
+require('./style/index.less');
+
+const React = require('react');
+const Main = require('client/components/main/index');
+
+const SecurityDetail = require('client/components/security_detail/index');
+
+const createSecurityGroup = require('./pop/create_security_group/index');
+const createRule = require('./pop/create_rule/index');
+
+const config = require('./config.json');
+const request = require('./request');
+const router = require('client/utils/router');
+const __ = require('locale/client/approval.lang.json');
+
+class Model extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      config: config
+    };
+
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
+  }
+
+  componentWillMount() {
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.style.display === 'none' && !nextState.config.table.loading) {
+      return false;
+    }
+    return true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
+      if (this.state.config.table.loading) {
+        this.loadingTable();
+      } else {
+        this.getTableData(false);
+      }
+    }
+  }
+
+  onInitialize(params) {
+    this.getTableData(false);
+  }
+
+  getTableData(forceUpdate, detailRefresh) {
+    request.getList(forceUpdate).then((res) => {
+      let table = this.state.config.table;
+      table.data = res;
+      table.loading = false;
+
+      let detail = this.refs.dashboard.refs.detail;
+      if (detail && detail.state.loading) {
+        detail.setState({
+          loading: false
+        });
+      }
+
+      this.setState({
+        config: config
+      }, () => {
+        if (detail && detailRefresh) {
+          detail.refresh();
+        }
+      });
+    });
+  }
+
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    let that = this;
+    switch (key) {
+      case 'create':
+        createSecurityGroup(null, function() {
+          that.refresh(null, true);
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          tableLoading: true,
+          detailLoading: true,
+          clearState: true,
+          detailRefresh: true
+        }, true);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    let {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    let noDefault = true;
+    rows.forEach((ele) => {
+      noDefault = noDefault && (ele.name === 'default' ? false : true);
+    });
+    for(let key in btns) {
+      switch (key) {
+        case 'modify':
+          btns[key].disabled = (rows.length === 1 && noDefault) ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length > 0 && noDefault) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    let {rows} = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+
+    let isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch(tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          let itemKeys = ['ingress', 'egress'];
+          let items = this.getSecurityDetailData(rows[0], this);
+
+          contents[tabKey] = (
+            <SecurityDetail
+              title={__.security_group + __.rules}
+              btnValue={__.apply_ + __.add_ + __.rules}
+              defaultUnfold={true}
+              itemKeys={itemKeys}
+              defaultKey="ingress"
+              tabKey="description"
+              items={items}
+              rawItem={rows[0]}
+              onClick={this.onDetailAction.bind(this)} />
+          );
+        }
+        break;
+      default:
+        break;
+    }
+
+    detail.setState({
+      contents: contents
+    });
+  }
+
+  getSecurityDetailData(item, that) {
+    let allRulesData = [],
+      ingressRulesData = [],
+      egressRulesData = [];
+
+    let getPortRange = function(_ele) {
+      if(_ele.protocol === null) {
+        return __.all_ports;
+      } else if(_ele.protocol === 'tcp' || _ele.protocol === 'udp') {
+        if(_ele.port_range_min === _ele.port_range_max) {
+          return _ele.port_range_min;
+        } else {
+          return _ele.port_range_min + ' - ' + _ele.port_range_max;
+        }
+      } else {
+        return '-';
+      }
+    };
+
+    let getICMPTypeCode = function(_ele) {
+      if (_ele.protocol === 'icmp') {
+        let min = _ele.port_range_min === null ? '' : _ele.port_range_min;
+        let max = _ele.port_range_max === null ? '' : _ele.port_range_max;
+        return min + '/' + max;
+      } else {
+        return '-';
+      }
+    };
+
+    let getSourceType = function(_ele) {
+      if(_ele.remote_ip_prefix) {
+        return _ele.remote_ip_prefix;
+      } else if (_ele.remote_group_id) {
+        let data = that.state.config.table.data;
+        let source = data.filter((d) => d.id === _ele.remote_group_id)[0];
+
+        return (
+          <span>
+            <i className="glyphicon icon-security-group" />
+            <a data-type="router" href={'/approval/security-group/' + source.id}>{source.name}</a>
+          </span>
+        );
+      }
+    };
+
+    item.security_group_rules.forEach((ele) => {
+      let sourceOrTarget = getSourceType(ele);
+
+      allRulesData.push({
+        id: ele.id,
+        direction: ele.direction,
+        protocol: ele.protocol ? ele.protocol.toUpperCase() : __.all_protocols,
+        port_range: getPortRange(ele),
+        icmp_type_code: getICMPTypeCode(ele),
+        source_type: sourceOrTarget,
+        target: sourceOrTarget,
+        action: '-'
+      });
+    });
+    allRulesData.forEach((rule) => {
+      if(rule.direction === 'ingress') {
+        ingressRulesData.push(rule);
+      } else {
+        egressRulesData.push(rule);
+      }
+    });
+
+    let data = {
+      ingress: {
+        value: __.ingress,
+        tip: {
+          title: __.ingress + __.security_group + __.rules,
+          content: __.ingress_tip
+        },
+        table: {
+          column: [{
+            title: __.protocol,
+            key: 'protocol',
+            dataIndex: 'protocol'
+          }, {
+            title: __.port + __.range,
+            key: 'port_range',
+            dataIndex: 'port_range'
+          }, {
+            title: __.icmp_type_code,
+            key: 'icmp_type_code',
+            dataIndex: 'icmp_type_code'
+          }, {
+            title: __.source_type,
+            key: 'source_type',
+            dataIndex: 'source_type'
+          }, {
+            title: __.operation,
+            key: 'action',
+            dataIndex: 'action'
+          }],
+          data: ingressRulesData,
+          dataKey: 'id'
+        }
+      },
+      egress: {
+        value: __.egress,
+        tip:  {
+          title: __.egress + __.security_group + __.rules,
+          content: __.egress_tip
+        },
+        table: {
+          column: [{
+            title: __.protocol,
+            key: 'protocol',
+            dataIndex: 'protocol'
+          }, {
+            title: __.port + __.range,
+            key: 'port_range',
+            dataIndex: 'port_range'
+          }, {
+            title: __.icmp_type_code,
+            key: 'icmp_type_code',
+            dataIndex: 'icmp_type_code'
+          }, {
+            title: __.target,
+            key: 'target',
+            dataIndex: 'target'
+          }, {
+            title: __.operation,
+            key: 'action',
+            dataIndex: 'action'
+          }],
+          data: egressRulesData,
+          dataKey: 'id'
+        }
+      }
+    };
+
+    return data;
+  }
+
+  refresh(data, forceUpdate) {
+    if (data) {
+      let path = router.getPathList();
+      if (path[2]) {
+        if (data.detailLoading) {
+          this.refs.dashboard.refs.detail.loading();
+        }
+      } else {
+        if (data.tableLoading) {
+          this.loadingTable();
+        }
+        if (data.clearState) {
+          this.refs.dashboard.clearState();
+        }
+      }
+    }
+
+    this.getTableData(forceUpdate, data ? data.detailRefresh : false);
+  }
+
+  loadingTable() {
+    let _config = this.state.config;
+    _config.table.loading = true;
+
+    this.setState({
+      config: _config
+    });
+  }
+
+  onDetailAction(tabKey, actionType, data) {
+    switch(tabKey) {
+      case 'description':
+        this.onDescriptionAction(actionType, data);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onDescriptionAction(actionType, data) {
+    let {tab, rawItem} = data;
+
+    let that = this;
+    switch(actionType) {
+      case 'create_rule':
+        let securityGroups = this.state.config.table.data;
+        createRule(rawItem, tab, securityGroups, function() {
+          that.refresh({
+            detailRefresh: true
+          }, true);
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  render() {
+    return (
+      <div className="halo-module-security-group" style={this.props.style}>
+        <Main
+          ref="dashboard"
+          visible={this.props.style.display === 'none' ? false : true}
+          onInitialize={this.onInitialize}
+          onAction={this.onAction}
+          onClickDetailTabs={this.onClickDetailTabs.bind(this)}
+          config={this.state.config}
+          params={this.props.params}
+          __={__} />
+      </div>
+    );
+  }
+}
+
+module.exports = Model;

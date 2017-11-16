@@ -1,0 +1,105 @@
+const commonModal = require('client/components/modal_common/index');
+const config = require('./config.json');
+const request = require('../../request');
+const __ = require('locale/client/approval.lang.json');
+
+function pop(obj, parent, callback) {
+  let props = {
+    __: __,
+    parent: parent,
+    config: config,
+    onInitialize: function(refs) {
+      request.getList(false).then(res => {
+        refs.resource_pool.setState({
+          data: res,
+          value: res[0].id
+        });
+      });
+      refs.probe_type.setState({
+        value: refs.probe_type.state.data[0].id
+      });
+
+    },
+    onConfirm: function(refs, cb) {
+      let data = {};
+      data.description = refs.apply_description.state.value;
+      data.detail = {};
+      data.detail.create = [];
+      data.detail.type = 'direct';
+      data.detail.resourceType = 'healthMonitor';
+      let createDetail = data.detail.create;
+      let monitorParam = {
+        _type: 'HealthMonitor',
+        _identity: 'monitor',
+        type: refs.probe_type.state.value,
+        delay: refs.delay.state.value,
+        timeout: refs.timeout.state.value,
+        max_retries: refs.max_retries.state.value,
+        pool_id: refs.resource_pool.state.value
+      };
+      createDetail.push(monitorParam);
+
+      request.createApplication(data).then(res => {
+        callback && callback();
+        cb(true);
+      });
+    },
+    onAction: function(field, status, refs) {
+      let delay = refs.delay.state,
+        timeout = refs.timeout.state,
+        retries = refs.max_retries.state,
+        fullFilled = delay.value && timeout.value && retries.value && !delay.error && !timeout.error && !retries.error;
+      switch(field) {
+        case 'delay':
+          if(delay.value > 1 && delay.value < 61) {
+            refs.delay.setState({
+              error: false
+            });
+          } else {
+            refs.delay.setState({
+              error: true
+            });
+          }
+          break;
+        case 'timeout':
+          if(timeout.value > 4 && timeout.value < 301) {
+            refs.timeout.setState({
+              error: false
+            });
+          } else {
+            refs.timeout.setState({
+              error: true
+            });
+          }
+          break;
+        case 'max_retries':
+          if(retries.value > 0 && retries.value < 11) {
+            refs.max_retries.setState({
+              error: false
+            });
+          } else {
+            refs.max_retries.setState({
+              error: true
+            });
+          }
+          break;
+        default:
+          break;
+      }
+
+      if(fullFilled) {
+        refs.btn.setState({
+          disabled: false
+        });
+      } else {
+        refs.btn.setState({
+          disabled: true
+        });
+      }
+    }
+  };
+
+  commonModal(props);
+}
+
+module.exports = pop;

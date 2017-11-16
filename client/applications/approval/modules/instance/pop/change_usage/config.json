@@ -1,0 +1,13 @@
+{
+  "title": ["chg_usage"],
+  "fields": [{
+    "type": "input",
+    "field": "chg_usage",
+    "required": true
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create",
+    "disabled": false
+  }
+}

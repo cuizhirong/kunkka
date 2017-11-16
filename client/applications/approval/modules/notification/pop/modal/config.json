@@ -1,0 +1,30 @@
+{
+  "title": ["create", "notification"],
+  "fields": [{
+    "type": "input",
+    "field": "name",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "description",
+    "input-type": "text"
+  }, {
+    "type": "checkbox",
+    "field": "add_endpoint",
+    "checked": true,
+    "has_label": true
+  }, {
+    "type": "adapter",
+    "field": "endpoint",
+    "required": true
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "notify"
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": false,
+    "type": "create"
+  }
+}

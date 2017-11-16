@@ -1,0 +1,53 @@
+{
+  "title": ["apply_", "prv_network"],
+  "fields": [{
+    "type": "tip",
+    "tip_type": "info",
+    "field": "prv_info"
+  }, {
+    "type": "input",
+    "field": "network_name",
+    "is_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "enable_vlan",
+    "checked": false,
+    "has_long_label": true
+  },{
+    "type": "input",
+    "field": "vlan_id",
+    "is_long_label": true,
+    "hide": true,
+    "tip_info": "vlan_tip"
+  }, {
+    "type": "checkbox",
+    "field": "enable_security",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "checkbox",
+    "field": "apply_subnet",
+    "checked": true,
+    "has_long_label": true
+  }, {
+    "type": "input",
+    "field": "subnet_name",
+    "is_long_label": true
+  }, {
+    "type": "input",
+    "field": "net_address",
+    "is_long_label": true,
+    "tip_info": "cidr_tip",
+    "required": true
+  }, {
+    "type": "textarea",
+    "field": "apply_description",
+    "is_long_label": true,
+    "value": ""
+  }],
+  "btn": {
+    "value": "apply_",
+    "type": "apply",
+    "disabled": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "title": ["modify", "application"],
+  "fields": [{
+    "type": "textarea",
+    "field": "apply_desc"
+  }],
+  "btn": {
+    "value": "modify"
+  }
+}

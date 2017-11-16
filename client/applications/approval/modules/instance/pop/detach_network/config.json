@@ -1,0 +1,22 @@
+{
+  "title": ["dissociate", "network"],
+  "fields": [{
+    "type": "text",
+    "field": "dissociate",
+    "info": "msg_diss_network"
+  }, {
+    "type": "icon_label",
+    "field": "instance",
+    "icon_type": "instance",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "networks",
+    "icon_type": "network",
+    "text": ""
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}
