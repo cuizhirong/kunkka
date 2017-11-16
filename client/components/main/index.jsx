@@ -8,6 +8,7 @@ const converter = require('client/components/main/converter');
 const moment = require('client/libs/moment');
 const router = require('client/utils/router');
 const getTime = require('client/utils/time_unification');
+const tabFilter = require('client/libs/tab');
 
 class Modal extends React.Component {
   constructor(props) {
@@ -338,7 +339,7 @@ class Modal extends React.Component {
   }
 
   render() {
-    let _config = this.props.config,
+    let _config = tabFilter(this.props.config),
       tabs = _config.tabs,
       title = _config.tabs.filter((tab) => tab.default)[0].name,
       btns = _config.btns,

@@ -1,7 +1,7 @@
 {
   "tabs": [{
     "name": ["floating_ip"],
-    "key": "floating_ip",
+    "key": "floating-ip",
     "default": true
   }],
   "btns": [{

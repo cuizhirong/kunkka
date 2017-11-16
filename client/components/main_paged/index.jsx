@@ -10,6 +10,7 @@ const converter = require('./converter');
 const moment = require('client/libs/moment');
 const router = require('client/utils/router');
 const getTime = require('client/utils/time_unification');
+const tabFilter = require('client/libs/tab');
 
 const PAGE_LIMIT = [10, 20, 50, 100, 200];
 
@@ -425,7 +426,7 @@ class Main extends React.Component {
 
     let __ = props.__;
 
-    let _config = props.config,
+    let _config = tabFilter(props.config),
       tabs = _config.tabs,
       title = _config.tabs.filter((tab) => tab.default)[0].name,
       btns = _config.btns,

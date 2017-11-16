@@ -32,7 +32,8 @@ module.exports = (configs) => {
 
   // server render init (can not get var HALO)
   if (!HALO.configs.init) {
-    const moduleConfig = JSON.parse(HALO.settings.module_config)[HALO.application.current_application];
+    const cur = HALO.application.current_application;
+    const moduleConfig = JSON.parse(HALO.settings.module_config)[cur];
     Object.keys(moduleConfig).forEach(m => {
       if(!moduleConfig[m].show) {
         configs.default_hide_modules.push(m);
@@ -46,7 +47,8 @@ module.exports = (configs) => {
 
   // check if defalut_module is hidden
   configs.default_module = ~configs.default_hide_modules.indexOf(configs.default_module) ?
-    configs.modules.filter(m => m.items && m.items.length > 0)[0].items[0] : configs.default_module;
+    configs.modules.filter(m => m.items && m.items.length > 0)[0].items[0] :
+    configs.default_module;
 
   return configs;
 };
