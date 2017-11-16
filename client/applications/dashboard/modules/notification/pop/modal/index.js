@@ -82,6 +82,7 @@ function pop(obj, parent, callback) {
           cb(false, getErrorMessage(error));
         });
       } else {
+        refs.endpoint.refs.endpoints.state.subscriptions.length > 0 && request.deleteSubs('undefined', refs.endpoint.refs.endpoints.state.subscriptions);
         data.name = refs.name.state.value;
         data.description = refs.description.state.value;
         request.addQueueWidthSubscriptions(data).then(res => {
