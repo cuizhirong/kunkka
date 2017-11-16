@@ -1,7 +1,7 @@
 {
   "tabs": [{
     "name": ["user-group"],
-    "key": "user_group",
+    "key": "user-group",
     "default": true
   }],
   "btns": [{
