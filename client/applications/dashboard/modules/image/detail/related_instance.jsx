@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Table, Pagination} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+const __ = require('locale/client/dashboard.lang.json');
 
 class RelatedInstance extends React.Component {
   constructor(props) {

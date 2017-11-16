@@ -301,19 +301,24 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          let basicPropsItem = this.getBasicPropsItems(rows[0]);
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                items={basicPropsItem}
-                rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)}
-                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-            </div>
-          );
+          syncUpdate = false;
+          update(contents, true);
+          request.getConnections(rows[0].id).then(res => {
+            let basicPropsItem = this.getBasicPropsItems(rows[0], res);
+            contents[tabKey] = (
+              <div>
+                <BasicProps
+                  title={__.basic + __.properties}
+                  defaultUnfold={true}
+                  tabKey={'description'}
+                  items={basicPropsItem}
+                  rawItem={rows[0]}
+                  onAction={this.onDetailAction.bind(this)}
+                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+              </div>
+            );
+            update(contents);
+          });
         }
         break;
       case 'listener':
@@ -345,7 +350,7 @@ class Model extends React.Component {
     }
   }
 
-  getBasicPropsItems(item) {
+  getBasicPropsItems(item, res) {
     let items = [{
       title: __.name,
       content: item.name || '(' + item.id.slice(0, 8) + ')',
@@ -380,6 +385,12 @@ class Model extends React.Component {
     }, {
       title: __.operation + __.status,
       content: __[item.operating_status.toLowerCase()]
+    }, {
+      title: __.active_connections,
+      content: res.stats.active_connections
+    }, {
+      title: __.total_connections,
+      content: res.stats.total_connections
     }, {
       title: __.desc,
       content: item.description

@@ -4,11 +4,16 @@ const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 
 function pop(parent, callback) {
+  let securityGroups = [];
   let props = {
     __: __,
     parent: parent,
     config: config,
-    onInitialize: function(refs) {},
+    onInitialize: function(refs) {
+      request.getList().then(res => {
+        securityGroups = res;
+      });
+    },
     onConfirm: function(refs, cb) {
       let data = {
         name: refs.name.state.value,
@@ -19,7 +24,21 @@ function pop(parent, callback) {
         cb(true);
       });
     },
-    onAction: function(filed, status, refs) {}
+    onAction: function(filed, status, refs) {
+      switch(filed) {
+        case 'name':
+          let hasName = securityGroups.some(sg => sg.name === refs.name.state.value);
+          refs.name.setState({
+            error: hasName
+          });
+          refs.btn.setState({
+            disabled: hasName
+          });
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   commonModal(props);

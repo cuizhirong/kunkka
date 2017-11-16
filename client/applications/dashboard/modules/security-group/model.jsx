@@ -8,12 +8,16 @@ const SecurityDetail = require('client/components/security_detail/index');
 const deleteModal = require('client/components/modal_delete/index');
 const createSecurityGroup = require('./pop/create_security_group/index');
 const modifySecurityGroup = require('./pop/modify_security_group/index');
+const RelatedInstance = require('../image/detail/related_instance');
 const createRule = require('./pop/create_rule/index');
 
 const config = require('./config.json');
 const request = require('./request');
 const router = require('client/utils/router');
 const __ = require('locale/client/dashboard.lang.json');
+
+const getStatusIcon = require('../../utils/status_icon');
+const getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 
@@ -182,6 +186,8 @@ class Model extends React.Component {
     let detail = refs.detail;
     let contents = detail.state.contents;
 
+    let syncUpdate = true;
+
     let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
         contents[tabKey] = (
@@ -215,13 +221,96 @@ class Model extends React.Component {
           );
         }
         break;
+      case 'instance':
+        let insData = [], that = this, limit = 20, current = data.current || 1;
+        request.getInstances().then(instances => {
+          instances.forEach(instance => {
+            instance.security_groups.forEach(sg => {
+              if (sg.name === rows[0].name) {
+                insData.push(instance);
+              }
+            });
+          });
+
+          let pagination = {
+            current: current,
+            total: Math.ceil(insData.length / limit),
+            total_num: insData.length
+          };
+
+          let instanceConfig = this.getRelatedInstance(insData.slice((current - 1) * limit, current * limit), pagination);
+
+          contents[tabKey] = (
+            <RelatedInstance
+              tableConfig={instanceConfig}
+              onDetailAction={(actionType, _refs, _data) => {
+                that.onClickDetailTabs('instance', refs, {
+                  rows: rows,
+                  current: _data.page
+                });
+              }}/>
+          );
+
+          detail.setState({
+            contents: contents,
+            loading: false
+          });
+        });
+        break;
       default:
         break;
     }
 
-    detail.setState({
-      contents: contents
-    });
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    } else {
+      detail.setState({
+        loading: true
+      });
+    }
+  }
+
+  getRelatedInstance(item, pagination) {
+    let dataContent = [];
+    for (let key in item) {
+      let element = item[key];
+      let dataObj = {
+        name: <a data-type="router" href={'/dashboard/instance/' + element.id}>{element.name}</a>,
+        id: element.id,
+        status: getStatusIcon(element.status),
+        created: getTime(element.created, false)
+      };
+      dataContent.push(dataObj);
+    }
+
+    let tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.id,
+        key: 'id',
+        dataIndex: 'id'
+      }, {
+        title: __.status,
+        key: 'status',
+        dataIndex: 'status'
+      }, {
+        title: __.create + __.time,
+        key: 'created',
+        dataIndex: 'created'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true,
+      pagination: pagination
+    };
+
+    return tableConfig;
   }
 
   getSecurityDetailData(item, that) {

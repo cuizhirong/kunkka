@@ -12,7 +12,6 @@
   }, {
     "value": ["modify", "security", "group"],
     "key": "modify",
-    "type": "modify",
     "icon": "edit",
     "disabled": true
   }, {
@@ -50,6 +49,10 @@
       "tabs": [{
         "name": ["description"],
         "key": "description",
+        "default": true
+      }, {
+        "name": ["related_instance"],
+        "key": "instance",
         "default": true
       }]
     }

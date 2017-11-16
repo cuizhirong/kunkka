@@ -54,5 +54,10 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-security-group-rules/' + item.id
     });
+  },
+  getInstances: function() {
+    return storage.getList(['instance'], false).then(data => {
+      return data.instance;
+    });
   }
 };

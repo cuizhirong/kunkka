@@ -104,5 +104,10 @@ module.exports = {
       url: '/proxy/neutron/v2.0/uplugin/fipratelimits/' + id,
       data: data
     });
+  },
+  getConnections: function(id) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/lbaas/loadbalancers/' + id + '/stats'
+    });
   }
 };
