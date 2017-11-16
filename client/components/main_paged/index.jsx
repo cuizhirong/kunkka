@@ -11,6 +11,8 @@ const moment = require('client/libs/moment');
 const router = require('client/utils/router');
 const getTime = require('client/utils/time_unification');
 
+const PAGE_LIMIT = [10, 20, 50, 100, 200];
+
 class Main extends React.Component {
   constructor(props) {
     super(props);
@@ -21,8 +23,34 @@ class Main extends React.Component {
       rows: []
     };
 
-    ['onNextPage'].forEach((func) => {
+    ['onNextPage', 'changePageLimit'].forEach((func) => {
       this[func] = this[func].bind(this);
+    });
+
+    this.setLocalStorage();
+  }
+
+  setLocalStorage() {
+    if(!localStorage.getItem('page_limit')) {
+      localStorage.setItem('page_limit', 10);
+    }
+  }
+
+  setPageLimit() {
+    this.setState({
+      page_limit: localStorage.getItem('page_limit')
+    });
+  }
+
+  changePageLimit(e) {
+    this.setState({
+      page_limit: e.target.value
+    }, () => {
+      let limit = this.state.page_limit;
+      localStorage.setItem('page_limit', limit);
+      this.onAction('page_limit', 'page_limit', {
+        limit: limit
+      });
     });
   }
 
@@ -45,6 +73,7 @@ class Main extends React.Component {
 
     converter.convertLang(this.props.__, config);
     this.tableColRender(config.table.column);
+    this.setPageLimit();
   }
 
   tableColRender(columns) {
@@ -392,6 +421,7 @@ class Main extends React.Component {
 
   render() {
     let props = this.props;
+    let state = this.state;
 
     let __ = props.__;
 
@@ -474,9 +504,21 @@ class Main extends React.Component {
               hover={table.hover}
               striped={this.striped} />
           }
-          {!table.loading && hasPagi ?
+          {!table.loading && !table.hideLimit ?
             <div className="pagination-box">
-              <Pagination labelOnly={true} label={pagiLabel} onClickLabel={this.onNextPage}/>
+              <div className="num">
+                <span>{__.number_per_page}</span>
+                <select value={state.page_limit} onChange={this.changePageLimit}>
+                  {
+                    PAGE_LIMIT.map(p => {
+                      return <option key={p} value={p}>{p}</option>;
+                    })
+                  }
+                </select>
+              </div>
+              {
+                hasPagi ? <Pagination labelOnly={true} label={pagiLabel} onClickLabel={this.onNextPage}/> : null
+              }
             </div>
             : null
           }

@@ -3,11 +3,7 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(pageLimit) {
-    if(isNaN(Number(pageLimit))) {
-      pageLimit = 10;
-    }
-
-    let url = '/proxy/keystone/v3/domains?limit=' + pageLimit;
+    let url = '/proxy/keystone/v3/domains';
     return fetch.get({
       url: url
     }).then((res) => {

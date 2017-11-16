@@ -243,7 +243,8 @@ class Model extends React.Component {
 
   //initialize table data
   onInitialize(params) {
-    if (params[2]) {
+    this.loadingTable();
+    if (params && params[2]) {
       this.getServerByIDInitialize(params[2]);
     } else {
       this.getListInitialize();
@@ -291,7 +292,7 @@ class Model extends React.Component {
   getInitialListData() {
     this.clearState();
 
-    let pageLimit = this.state.config.table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
     request.getList(pageLimit).then((res) => {
       let table = this.processTableData(this.state.config.table, res);
       this.updateTableData(table, res._url);
@@ -306,7 +307,7 @@ class Model extends React.Component {
       filter = _config.filter,
       table = _config.table;
 
-    let pageLimit = this.state.config.table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
     request.getListInitialize(pageLimit).then((res) => {
       this.addTypesToStore(res[1]);
       this.initializeFilter(filter, res[1]);
@@ -333,7 +334,7 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    filterData.limit = this.state.config.table.limit;
+    filterData.limit = localStorage.getItem('page_limit');
     request.filterFromAll(filterData).then((res) => {
       table.data = res.servers;
       table = this.processTableData(table, res);
@@ -509,6 +510,9 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

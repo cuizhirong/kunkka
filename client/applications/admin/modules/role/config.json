@@ -42,6 +42,7 @@
   }],
   "table": {
     "checkbox": true,
+    "hideLimit": true,
     "dataKey": "id",
     "loading": true,
     "limit": 2,

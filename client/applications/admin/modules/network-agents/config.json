@@ -46,6 +46,7 @@
   "table": {
     "dataKey": "index",
     "loading": true,
+    "hideLimit": true,
     "column": [{
       "title": ["type"],
       "dataIndex": "agent_type",

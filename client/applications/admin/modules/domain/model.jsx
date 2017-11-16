@@ -105,7 +105,7 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getList(table.limit).then((res) => {
+    request.getList().then((res) => {
       table.data = res.domains;
       this.updateTableData(table, res._url);
     });

@@ -80,7 +80,8 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if (params[2]) {
+    this.loadingTable();
+    if (params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getList();
@@ -114,9 +115,12 @@ class Model extends React.Component {
 
     let table = this.state.config.table;
     let filter = this.state.config.filter;
-    request.getList(table.limit).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+
+    request.getList(pageLimit).then((res) => {
       table.data = res.list;
       this.initializeFilter(filter);
+      this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
@@ -141,11 +145,14 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getFilteredList(data, table.limit).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+    request.getFilteredList(data, pageLimit).then((res) => {
       table.data = res.list;
+      this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
+      this.setPaginationData(table, res);
       this.updateTableData(table, res._url);
     });
   }
@@ -158,6 +165,7 @@ class Model extends React.Component {
       } else {
         table.data = [];
       }
+      this.setPaginationData(table, res);
       this.updateTableData(table, res._url, refreshDetail);
     });
   }
@@ -264,6 +272,24 @@ class Model extends React.Component {
     });
   }
 
+  setPaginationData(table, res) {
+    let pagination = {},
+      next = res.links.next ? res.links.next : null;
+
+    if (next) {
+      pagination.nextUrl = next;
+    }
+
+    let history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
+    table.pagination = pagination;
+
+    return table;
+  }
+
   refresh(data, params) {
     if (!data) {
       data = {};
@@ -339,6 +365,9 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

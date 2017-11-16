@@ -135,9 +135,10 @@ class Model extends React.Component {
 
   onInitialize(params) {
     let _config = this.state.config;
+    this.loadingTable();
     this.initializeFilter(_config.filter);
 
-    if (params[2]) {
+    if (params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getList();
@@ -152,7 +153,7 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    let pageLimit = table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
 
     request.getList(pageLimit).then((res) => {
       table.data = res.list;
@@ -169,7 +170,7 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    let pageLimit = table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
 
     request.getVolumeByID(volumeID, pageLimit).then((res) => {
       table.data = res.list;
@@ -198,7 +199,7 @@ class Model extends React.Component {
 
   getFilteredList(data) {
     let table = this.state.config.table;
-    let pageLimit = table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
     request.filterFromAll(data, pageLimit).then((res) => {
       table.data = res.list;
       this.setPaginationData(table, res);
@@ -354,6 +355,9 @@ class Model extends React.Component {
         } else {
           this.onClickDetailTabs(actionType, refs, data);
         }
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

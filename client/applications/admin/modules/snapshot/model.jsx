@@ -94,9 +94,10 @@ class Model extends React.Component {
 
   onInitialize(params) {
     let filter = this.state.config.filter;
+    this.loadingTable();
     this.initializeFilter(filter);
 
-    if (params[2]) {
+    if (params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getList();
@@ -127,7 +128,7 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    let pageLimit = table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
 
     request.getList(pageLimit).then((res) => {
       table.data = res.list;
@@ -160,8 +161,9 @@ class Model extends React.Component {
 
   getFilteredList(data) {
     let table = this.state.config.table;
+    let pageLimit = localStorage.getItem('page_limit');
 
-    request.filterFromAll(data, table.limit).then((res) => {
+    request.filterFromAll(data, pageLimit).then((res) => {
       table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
@@ -302,6 +304,9 @@ class Model extends React.Component {
         break;
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;
