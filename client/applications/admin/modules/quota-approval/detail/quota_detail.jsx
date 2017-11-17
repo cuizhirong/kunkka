@@ -17,7 +17,15 @@ class QuotaDetail extends React.Component {
   }
 
   componentWillMount() {
-    let types = ['ssd', 'sata'];
+    let types = [];
+    let originQuota = this.state.originQuota;
+
+    for(let i in originQuota) {
+      if(i.indexOf('volumes_') !== -1) {
+        types.push(i.slice(8));
+      }
+    }
+
     let quota = [{
       title: __.compute,
       items: [{
@@ -125,11 +133,7 @@ class QuotaDetail extends React.Component {
               {ele.items.map((item, i) => {
                 let used, total, inUse, inUseClassName, appliedAmount;
 
-                if(addedQuota[item.key] === -1) {
-                  appliedAmount = __.infinity;
-                } else {
-                  appliedAmount = addedQuota[item.key];
-                }
+                appliedAmount = addedQuota[item.key];
 
                 if (originQuota[item.key]) {
                   if (originQuota[item.key].total > -1) {

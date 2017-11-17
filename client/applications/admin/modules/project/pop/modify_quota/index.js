@@ -4,6 +4,7 @@ const __ = require('locale/client/admin.lang.json');
 const request = require('../../request');
 const resourceQuota = require('./quota_pop');
 const getErrorMessage = require('../../../../utils/error_message');
+const checkVolumeTotalLegality = require('client/utils/check_total_legality').checkVolumeTotalLegality;
 
 function pop(obj, parent, callback) {
 
@@ -22,27 +23,13 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       let data = refs.quota.state.overview;
-      function getTotalVolumes() {
-        let t = 0;
-        for(let o in data) {
-          if(o.indexOf('volumes_') > -1) {
-            t += data[o].total;
-          }
-        }
-        return t;
-      }
-      function getTotalGigabytes() {
-        let t = 0;
-        for(let o in data) {
-          if(o.indexOf('gigabytes_') > -1) {
-            t += data[o].total;
-          }
-        }
-        return t;
-      }
-      if(data.volumes.total < getTotalVolumes()) {
+
+      let volumesTotalLegal = checkVolumeTotalLegality(data, 'volumes');
+      let volumesTotalGigaLegal = checkVolumeTotalLegality(data, 'gigabytes');
+
+      if(!volumesTotalLegal) {
         cb(false, __.volumes_small_than_total);
-      } else if(data.gigabytes.total < getTotalGigabytes()) {
+      } else if(!volumesTotalGigaLegal) {
         cb(false, __.gigabytes_small_than_total);
       } else {
         request.modifyQuota(data, obj.rawItem.id).then((res) => {

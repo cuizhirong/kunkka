@@ -115,18 +115,21 @@ class QuotaPop extends React.Component {
     let overview = this.state.overview;
     let total = overview[key].total;
     let newNumber = Number(e.target.value);
-    if (e.target.value) {
+    if (!isNaN(newNumber)) {
       if (key === 'ram') {
         newNumber *= 1024;
       }
 
-      if(total === -1) {
-        this.state.targetQuota[key].total = newNumber;
-      } else {
-        this.state.targetQuota[key].total = Number(total) + newNumber;
+      if(total !== -1) {
+        this.state.targetQuota[key].total = (Number(total) + newNumber >= 0) ?
+          Number(total) + newNumber : 0;
       }
       this.state.addedQuota[key] = newNumber;
+    } else {
+      this.state.targetQuota[key].total = total;
+      this.state.addedQuota[key] = 0;
     }
+
     this.setState({
       value: e.target.value,
       addedQuota: this.state.addedQuota,
