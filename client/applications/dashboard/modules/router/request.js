@@ -78,6 +78,17 @@ module.exports = {
           });
         });
       }
+
+      res.router.forEach((r) => {
+        r.gateway_info = [];
+        r.external_gateway_info && r.external_gateway_info.external_fixed_ips.forEach((i, index) => {
+          res.subnet.filter((item) => {
+            if(i.subnet_id === item.id) {
+              r.gateway_info.push(item.gateway_ip);
+            }
+          });
+        });
+      });
       return res.router;
     });
   },
