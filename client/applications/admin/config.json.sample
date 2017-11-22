@@ -58,7 +58,7 @@
   }, {
     "title": "setting-mgmt",
     "items": [
-      "setting-mgmt",
+      "feature-mgmt",
       "module-mgmt"
     ]
   }],
