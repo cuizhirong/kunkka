@@ -27,8 +27,8 @@ class Model extends PendModel {
 
   getList() {
     this.stores.urls.length = 0;
-    let table = this.state.config.table,
-      pageLimit = table.limit;
+    let table = this.state.config.table;
+    let pageLimit = localStorage.getItem('page_limit');
 
     request.getList('proceeding', pageLimit).then((res) => {
       let _tickets = [];
