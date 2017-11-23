@@ -63,6 +63,10 @@
       "title": ["ext_gatway"],
       "key": "ext_gw"
     }, {
+      "title": ["gatway_ip"],
+      "dataIndex": "gatwayip",
+      "key": "gatway_ip"
+    }, {
       "title": ["bandwidth"],
       "key": "bandwidth"
     }, {

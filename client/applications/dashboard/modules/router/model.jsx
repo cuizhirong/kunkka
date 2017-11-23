@@ -139,6 +139,11 @@ class Model extends React.Component {
             return fip;
           };
           break;
+        case 'gatway_ip':
+          column.render = (col, item, i) => {
+            return item.gateway_info.join();
+          };
+          break;
         case 'ext_gw':
           column.render = (col, item, i) => {
             return item.external_gateway_info ?
@@ -451,6 +456,7 @@ class Model extends React.Component {
     };
 
     let fip = '-';
+    let fipGateway;
     if (exGateway) {
       exGateway.external_fixed_ips.some((ip) => {
         if (ip.ip_address.indexOf(':') < 0) {
@@ -460,6 +466,7 @@ class Model extends React.Component {
         return false;
       });
     }
+    fipGateway = item.external_gateway_info ? item.gateway_info.join() : '-';
     let items = [{
       title: __.name,
       type: 'editable',
@@ -473,6 +480,9 @@ class Model extends React.Component {
     }, {
       title: __.ext_gatway,
       content: getGatewayState()
+    }, {
+      title: __.gatway_ip,
+      content: fipGateway
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
