@@ -74,19 +74,25 @@ class Model extends React.Component {
 
   //initialize table data
   onInitialize(params) {
+    this.loadingTable();
     this.getList();
   }
 
   //request: get list
   getList() {
-    let table = this.state.config.table,
-      pageLimit = table.limit;
+    let table = this.state.config.table;
+    let pageLimit = localStorage.getItem('page_limit');
     request.initContainer().then(_res => {
       request.getList(pageLimit).then((res) => {
         table.data = res.tickets;
         this.setPagination(table, res);
         this.updateTableData(table, res._url);
       });
+    }).catch(e => {
+      table.data = [];
+      this.setPagination(table, []);
+      this.updateTableData(table);
+      throw e;
     });
   }
 
@@ -230,6 +236,9 @@ class Model extends React.Component {
           refreshList: true,
           refreshDetail: true
         });
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;

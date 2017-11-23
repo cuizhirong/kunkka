@@ -81,7 +81,8 @@ class Model extends React.Component {
     });
   }
 
-  onInitialize(params) {
+  onInitialize() {
+    this.loadingTable();
     this.getList();
   }
 
@@ -136,8 +137,8 @@ class Model extends React.Component {
 
   getList() {
     this.stores.urls.length = 0;
-    let table = this.state.config.table,
-      pageLimit = table.limit;
+    let table = this.state.config.table;
+    let pageLimit = localStorage.getItem('page_limit');
 
     request.getList('pending', pageLimit).then((res) => {
       table.data = res.tickets;
@@ -290,6 +291,9 @@ class Model extends React.Component {
           refreshDetail: true
         });
         break;
+      case 'page_limit':
+        this.onInitialize();
+        break;
       default:
         break;
     }
@@ -326,7 +330,7 @@ class Model extends React.Component {
           }
         });
 
-        let pageLimit = this.state.config.table.limit;
+        let pageLimit = localStorage.getItem('page_limit');
         request.filter(status, start, pageLimit).then((res) => {
           let table = this.state.config.table;
           table.data = res.tickets;

@@ -4,9 +4,12 @@ const __ = require('locale/client/dashboard.lang.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const enableCharge = HALO.settings.enable_charge;
+let price = 0;
 
 function pop(obj, parent, actionModify, callback) {
-  let price = Math.max.apply(null, HALO.prices.other['lbass.listener']);
+  if(enableCharge) {
+    price = Math.max.apply(null, HALO.prices.other['lbass.listener']);
+  }
   if(actionModify) {
     config.title = ['modify', 'listener'];
     config.btn.value = 'modify';

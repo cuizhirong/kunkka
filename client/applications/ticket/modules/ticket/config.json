@@ -1,7 +1,7 @@
 {
   "tabs": [{
     "name": ["create_ticket"],
-    "key": "create_tickets",
+    "key": "ticket",
     "default": true
   }],
   "btns": [{
