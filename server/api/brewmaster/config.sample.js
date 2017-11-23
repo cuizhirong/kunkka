@@ -59,6 +59,12 @@ module.exports = {
       type: 'boolean',
       description: '注册-审批'
     }, {
+      app: 'global',
+      name: 'enable_register_approve_create_resource',
+      value: 'false',
+      type: 'boolean',
+      description: '注册-审批通过后创建资源'
+    }, {
       app: 'auth',
       name: 'eula_content',
       value: '',
