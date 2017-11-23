@@ -148,7 +148,8 @@ class Model extends React.Component {
         }
         break;
       case 'name':
-        if(value.length > 20 || value.length < 1) {
+        let nameRegExp = /^[a-zA-Z0-9_+-]{1,20}$/;
+        if(!(nameRegExp.test(value))) {
           if(this.state.timer) {
             clearTimeout(this.state.timer);
           }
@@ -168,7 +169,8 @@ class Model extends React.Component {
         }
         break;
       case 'fullName':
-        if (value.length > 30 || value.length < 1) {
+        let fullNameRegExp = /^[a-zA-Z0-9_+-]{1,30}$/;
+        if (!(fullNameRegExp.test(value))) {
           error();
         } else {
           pass();
