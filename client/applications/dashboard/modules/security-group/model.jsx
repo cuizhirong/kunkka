@@ -225,7 +225,7 @@ class Model extends React.Component {
         let insData = [], that = this, limit = 20, current = data.current || 1;
         request.getInstances().then(instances => {
           instances.forEach(instance => {
-            instance.security_groups.forEach(sg => {
+            instance.security_groups && instance.security_groups.forEach(sg => {
               if (sg.name === rows[0].name) {
                 insData.push(instance);
               }
@@ -279,7 +279,7 @@ class Model extends React.Component {
       let element = item[key];
       let dataObj = {
         name: <a data-type="router" href={'/dashboard/instance/' + element.id}>{element.name}</a>,
-        id: element.id,
+        id: element.id + key,
         status: getStatusIcon(element.status),
         created: getTime(element.created, false)
       };
