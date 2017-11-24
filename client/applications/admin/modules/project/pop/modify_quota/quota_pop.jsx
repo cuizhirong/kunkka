@@ -3,7 +3,6 @@ require('./style/index.less');
 const React = require('react');
 const __ = require('locale/client/admin.lang.json');
 const unitConverter = require('client/utils/unit_converter');
-const request = require('../../request');
 
 class QuotaPop extends React.Component {
   constructor(props) {
@@ -13,7 +12,7 @@ class QuotaPop extends React.Component {
       quota: [],
       value: '',
       itemName: this.props.overview,
-      overview: {}
+      overview: this.clone(this.props.overview)
     };
   }
 
@@ -111,25 +110,31 @@ class QuotaPop extends React.Component {
     });
   }
 
-  componentDidMount() {
-    request.getQuotas(this.props.rawItem.id).then((res) => {
-      this.setState({
-        overview: res.overview_usage
-      });
-    });
+  clone(objectToBeCloned) {
+    if (!(objectToBeCloned instanceof Object)) {
+      return objectToBeCloned;
+    }
+
+    const Constructor = objectToBeCloned.constructor;
+    let objectClone = new Constructor();
+    for (let prop in objectToBeCloned) {
+      objectClone[prop] = this.clone(objectToBeCloned[prop]);
+    }
+
+    return objectClone;
   }
 
+
   onChange(key, e) {
-    let overview = this.state.overview;
-    let total = overview[key].total;
+    let originTotal = this.state.overview[key].total;
     let newNumber = Number(e.target.value);
-    if (!e.target.value) {
-      this.state.itemName[key].total = total;
-    } else {
+    if (!isNaN(newNumber) && newNumber >= -1) {
       if (key === 'ram') {
         newNumber *= 1024;
       }
-      this.state.itemName[key].total = Number(total) + newNumber;
+      this.state.itemName[key].total = newNumber;
+    } else {
+      this.state.itemName[key].total = originTotal;
     }
     this.setState({
       value: e.target.value,
@@ -198,7 +203,7 @@ class QuotaPop extends React.Component {
                           <div className={inUseClassName} style={{width: inUse + '%'}}/>
                         </div>
                       </div>
-                      <div><input onChange={this.onChange.bind(this, item.key)} placeholder={__.quantity}/></div>
+                      <div><input onChange={this.onChange.bind(this, item.key)} placeholder={__.total_quota}/></div>
                     </li>
                   );
                 })}

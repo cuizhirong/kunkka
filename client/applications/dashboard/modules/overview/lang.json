@@ -7,9 +7,12 @@
     "infinity": "Infinity",
     "information": " Information",
     "gigabyte": " Gigabyte",
+    "gigabytes_small_than_total": "Total gigabytes cannot be smaller than the sum of quota of each type",
+    "quantity": "Quantity",
     "quota": " Quota",
     "ram": "RAM",
-    "unit_gb": "(GB)"
+    "unit_gb": "(GB)",
+    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type"
   },
   "zh-CN": {
     "all_volumes": "云硬盘总数",
@@ -17,10 +20,13 @@
     "apply": "申请",
     "apply_quota": "申请配额",
     "infinity": "无限",
+    "quantity": "增加数量",
     "quota": "配额",
     "information": "信息",
     "gigabyte": "容量",
+    "gigabytes_small_than_total": "云硬盘容量总数不能小于所有类型云硬盘容量额度之和",
     "ram": "内存",
-    "unit_gb": "(GB)"
+    "unit_gb": "(GB)",
+    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和"
   }
 }
