@@ -169,8 +169,7 @@ class Model extends React.Component {
         }
         break;
       case 'fullName':
-        let fullNameRegExp = /^[a-zA-Z0-9_+-]{1,30}$/;
-        if (!(fullNameRegExp.test(value))) {
+        if (value.length > 30 || value.length < 1) {
           error();
         } else {
           pass();
