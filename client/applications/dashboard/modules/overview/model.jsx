@@ -1,13 +1,10 @@
 require('./style/index.less');
 
 const React = require('react');
-const {Tab, Button} = require('client/uskin/index');
-const ResourceInfo = require('./info');
 const ResourceQuota = require('./quota');
 const modifyQuota = require('./pop/modify_quota/index');
 
 const request = require('./request');
-const __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -36,15 +33,6 @@ class Model extends React.Component {
       return false;
     }
     return true;
-  }
-
-  getProjectName() {
-    let projectID = HALO.user.projectId,
-      projects = HALO.user.projects;
-
-    let ret = projects.filter((project) => project.id === projectID);
-
-    return ret[0] ? ret[0].name : '';
   }
 
   onBtnClick() {
@@ -78,37 +66,14 @@ class Model extends React.Component {
   }
 
   render() {
-    let overviewTab = [{
-      name: __.overview,
-      key: 'overview',
-      default: true
-    }];
-
-    let applyBtnConfig = {
-      value: __.apply_quota,
-      key: 'apply',
-      icon: 'create',
-      type: 'create',
-      onClick: this.onBtnClick.bind(this)
-    };
 
     let overview = this.state.overview;
     let types = this.state.types;
 
     return (
       <div className="halo-module-overview" style={this.props.style}>
-        <div className="overview-header" >
-          <Tab items={overviewTab} />
-          { this.state.hideBtn ? null : <Button {...applyBtnConfig} />}
-        </div>
-        <div className="project-name">{this.getProjectName()}</div>
         <div className="project-resources">
-          <div className="left-side">
-            <ResourceInfo overview={overview} />
-          </div>
-          <div className="right-side">
-            <ResourceQuota overview={overview} types={types} />
-          </div>
+          <ResourceQuota overview={overview} types={types} hideBtn={this.state.hideBtn} onBtnClick={this.onBtnClick.bind(this)} />
         </div>
       </div>
     );
