@@ -32,6 +32,9 @@ module.exports = {
         item.name = this.getLangValue(lang, item.name);
       });
     }
+    if (config.search.placeholder) {
+      config.search.placeholder = this.getLangValue(lang, config.search.placeholder);
+    }
     if (config.btns) {
       config.btns.forEach((btn) => {
         if (btn.value) {

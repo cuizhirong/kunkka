@@ -18,6 +18,8 @@ const __ = require('locale/client/dashboard.lang.json');
 
 const getStatusIcon = require('../../utils/status_icon');
 const getTime = require('client/utils/time_unification');
+const BasicProps = require('client/components/basic_props/index');
+const DetailMinitable = require('client/components/detail_minitable/index');
 
 class Model extends React.Component {
 
@@ -257,6 +259,35 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'flow':
+        if (isAvailableView(rows)) {
+          syncUpdate = false;
+          request.getDetail(rows[0].id).then(res => {
+            let basicPropsItem = this.getBasicPropsItems(res[0]);
+            let flowConfig = this.getDetailTableConfig(res);
+            contents[tabKey] = (
+              <div>
+                <BasicProps
+                  title={__.basic + __.properties}
+                  defaultUnfold={true}
+                  tabKey={'description'}
+                  items={basicPropsItem}
+                  rawItem={rows[0]}
+                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                <DetailMinitable
+                  __={__}
+                  title={__.flow}
+                  defaultUnfold={true}
+                  tableConfig={flowConfig ? flowConfig : []} />
+              </div>
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
+        }
+        break;
       default:
         break;
     }
@@ -271,6 +302,79 @@ class Model extends React.Component {
         loading: true
       });
     }
+  }
+
+  getDetailTableConfig(item) {
+    let dataContent = [], flow, port, instance;
+    for (let key in item[0].flow) {
+      flow = item[0].flow[key];
+      port = item[1].port.filter(p => {return p.id === key;})[0] || {};
+      instance = item[1].instance.filter(ins => {return ins.id === flow.Device_ID;})[0] || {};
+      let dataObj = {
+        id: key + 1,
+        instance: instance.id ?
+          <div>
+            <i className="glyphicon icon-instance" />
+            <a data-type="router" href={'/dashboard/instance/' + flow.Device_ID}>{instance.name || '(' + flow.Device_ID.substring(0, 8) + ')'}</a>
+          </div> :
+          <div>
+            <i className="glyphicon icon-instance" />{'(' + flow.Device_ID.substring(0, 8) + ')'}
+          </div>,
+        port: port.id ?
+          <div>
+            <i className="glyphicon icon-port" />
+            <a data-type="router" href={'/dashboard/port/' + key}>{port.name || '(' + key.substring(0, 8) + ')'}</a>
+          </div> :
+          <div>
+            <i className="glyphicon icon-port" />{'(' + key.substring(0, 8) + ')'}
+          </div>,
+        txflow: flow['txkB/s'],
+        rxflow: flow['rxkB/s']
+      };
+      dataContent.push(dataObj);
+    }
+
+    let tableConfig = {
+      column: [{
+        title: __.instance,
+        key: 'instance',
+        dataIndex: 'instance'
+      }, {
+        title: __.port,
+        key: 'port',
+        dataIndex: 'port'
+      }, {
+        title: __.txflow,
+        key: 'txflow',
+        dataIndex: 'txflow'
+      }, {
+        title: __.rxflow,
+        key: 'rxflow',
+        dataIndex: 'rxflow'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true
+    };
+
+    return tableConfig;
+  }
+
+  getBasicPropsItems(item) {
+    let txflow = 0, rxflow = 0;
+    for (let key in item.flow) {
+      rxflow += Number(item.flow[key]['rxkB/s']);
+      txflow += Number(item.flow[key]['txkB/s']);
+    }
+    let items = [{
+      title: __.total_txflow,
+      content: txflow + ' kB/s'
+    }, {
+      title: __.total_rxflow,
+      content: rxflow + ' kB/s'
+    }];
+
+    return items;
   }
 
   getRelatedInstance(item, pagination) {

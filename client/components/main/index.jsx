@@ -366,6 +366,7 @@ class Modal extends React.Component {
               ref="search"
               type="light"
               width={search.width}
+              placeholder={search.placeholder}
               onChange={this.changeSearchInput.bind(this)} />
             : null
           }

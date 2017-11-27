@@ -52,8 +52,10 @@
         "default": true
       }, {
         "name": ["related_instance"],
-        "key": "instance",
-        "default": true
+        "key": "instance"
+      }, {
+        "name": ["flow"],
+        "key": "flow"
       }]
     }
   }

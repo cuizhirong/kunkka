@@ -59,5 +59,13 @@ module.exports = {
     return storage.getList(['instance'], false).then(data => {
       return data.instance;
     });
+  },
+  getDetail: function(id) {
+    let deferredList = [];
+    deferredList.push(fetch.get({
+      url: '/api/v1/' + HALO.user.projectId + '/security/' + id
+    }));
+    deferredList.push(storage.getList(['instance', 'port']));
+    return RSVP.all(deferredList);
   }
 };

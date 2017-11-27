@@ -1,0 +1,60 @@
+{
+  "tabs": [{
+    "name": ["action_log_instance"],
+    "key": "action-log"
+  }, {
+    "name": ["action_log_port"],
+    "key": "action-log-port",
+    "default": true
+  }, {
+    "name": ["action_log_volume"],
+    "key": "action-log-volume"
+  }, {
+    "name": ["action_log_router"],
+    "key": "action-log-router"
+  }, {
+    "name": ["action_log_network"],
+    "key": "action-log-network"
+  }, {
+    "name": ["action_log_subnet"],
+    "key": "action-log-subnet"
+  }],
+  "btns": [{
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "column": {
+      "resource_id": true
+    },
+    "placeholder": ["pls_enter", "resource", "id"]
+  },
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "column": [{
+      "title": ["resource", "name"],
+      "dataIndex": "name",
+      "key": "name"
+    }, {
+      "title": ["resource", "id"],
+      "key": "resource_id",
+      "dataIndex": "resource_id"
+    }, {
+      "title": ["operation"],
+      "key": "operation",
+      "dataIndex": "operation"
+    }, {
+      "title": ["user_id"],
+      "key": "user_id",
+      "dataIndex": "user_id"
+    }, {
+      "title": ["operation", "time"],
+      "key": "operation_time"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": []
+    }
+  }
+}
