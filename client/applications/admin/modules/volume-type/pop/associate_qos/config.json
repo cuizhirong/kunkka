@@ -1,0 +1,22 @@
+{
+  "title": ["associate_qos_spec"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "volumn",
+    "icon_type": "subnet",
+    "text": ""
+  }, {
+    "type": "select",
+    "field": "spec",
+    "empty_text": {
+      "info": "no_qos",
+      "link_info": ["create", "qos-spec"]
+    },
+    "data": [],
+    "hide": true
+  }],
+  "btn": {
+    "value": "related",
+    "disabled": true
+  }
+}
