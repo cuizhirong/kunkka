@@ -8,13 +8,13 @@ const promisifyMemcachedClientAPI = function (memcachedClient) {
   //todo:batch defining async function
   memcachedClient.setAsync = function (key, value, expires) {
     return new Promise(function (resolve, reject) {
-      memcachedClient.set(key, value, function (err) {
+      memcachedClient.set(key, value, {expires}, function (err) {
         if (err) {
           reject(err);
         } else {
           resolve(Array.prototype.slice.call(arguments, 1));
         }
-      }, expires);
+      });
     });
   };
 
