@@ -2,8 +2,9 @@
   "en": {
     "account_name": "Account Name",
     "agree-to-the-application": "Agree to the application",
-    "registration_date": "Registration Data",
-    "refuse-to-the-application": "Refuse to the application",
+    "creating_network_msg1": "Creating network, subnet and router for user ",
+    "creating_network_msg2": " , please wait a second.",
+    "error_happened": "Oops, there is an error occured, the creation failed.",
     "full_name": "Full Name",
     "phone_number": "Phone Number",
     "company": "Company",
@@ -11,13 +12,17 @@
     "agree_application_info_part2": "?",
     "refuse_application_info_part1": "Refuse the application for account",
     "refuse_application_info_part2": ".",
-    "refuse_reason": "Refuse Reason"
+    "refuse_reason": "Refuse Reason",
+    "refuse-to-the-application": "Refuse to the application",
+    "registration_date": "Registration Data",
+    "successful_creation": "Successful Creation"
   },
   "zh-CN": {
     "account_name": "用户名",
     "agree-to-the-application": "同意申请",
-    "registration_date": "注册日期",
-    "refuse-to-the-application": "拒绝申请",
+    "creating_network_msg1": "正在为用户 ",
+    "creating_network_msg2": " 创建网络、子网及路由器，请稍候。",
+    "error_happened": "出现了一个错误，创建失败",
     "full_name": "姓名",
     "phone_number": "手机号码",
     "company": "公司",
@@ -25,6 +30,9 @@
     "agree_application_info_part2": "的申请吗？",
     "refuse_application_info_part1": "拒绝账号 ",
     "refuse_application_info_part2": "申请.",
-    "refuse_reason": "拒绝原因"
+    "refuse_reason": "拒绝原因",
+    "refuse-to-the-application": "拒绝申请",
+    "registration_date": "注册日期",
+    "successful_creation": "创建成功"
   }
 }

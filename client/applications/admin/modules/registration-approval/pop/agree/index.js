@@ -6,7 +6,6 @@ const info = require('./info.jsx');
 const getErrorMessage = require('../../../../utils/error_message');
 
 function pop(obj, callback) {
-  console.log(obj);
 
   let props = {
     __: __,
@@ -20,7 +19,7 @@ function pop(obj, callback) {
     },
     onConfirm: function(refs, cb) {
       request.agreeApplication(obj.id).then((res) => {
-        callback && callback();
+        callback && callback(res);
         cb(true);
       }).catch((error) => {
         cb(false, getErrorMessage(error));
