@@ -47,7 +47,7 @@
     "gw_address": "网关地址",
     "gw_tip": "如不填，系统将自动生成。这个地址可以被用于该私有网络内其他主机的缺省网关。",
     "host_routes": "主机路由",
-    "input_network": "私有网络ID",
+    "input_network": "网络ID",
     "join_network_tip": "加入多个网络可能会引发云主机路由问题而导致连不上外网，请谨慎操作。",
     "msg_disconnect_inst": "是否断开云主机?",
     "mount": "挂载",

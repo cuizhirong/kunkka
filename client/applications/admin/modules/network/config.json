@@ -8,7 +8,7 @@
     "key": "subnet"
   }],
   "btns": [{
-    "value": ["create", "prv_network"],
+    "value": ["create", "network"],
     "key": "create",
     "type": "create",
     "icon": "create"

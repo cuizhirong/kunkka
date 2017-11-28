@@ -1,5 +1,7 @@
 {
   "en": {
+    "create_external": "External Network",
+    "create_shared": "Shared Network",
     "create_subnet": "Create Subnet",
     "cidr_tip": "Please fill in the blank matching format such as 192.168.1.0/24",
     "enable_security": "Enable security restrict(Once be set, it can not be changed)",
@@ -26,12 +28,14 @@
     "vlan_tip": "VLAN ID range is from {0} to {1}."
   },
   "zh-CN": {
+    "create_external": "外部网络",
+    "create_shared": "共享网络",
     "create_subnet": "创建子网",
     "cidr_tip": "请参照格式填写网络地址，如192.168.1.0/24",
     "enable_security": "开启安全限制（设置后不能更改）",
     "enable_vlan": "Vlan网络",
     "net_address": "网络地址",
-    "network_name": "私有网络名称",
+    "network_name": "网络名称",
     "network_id": "网络 ID",
     "network_type": "网络类型",
     "no_network": "没有可用的虚拟网络",

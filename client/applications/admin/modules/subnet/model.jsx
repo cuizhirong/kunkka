@@ -375,7 +375,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'connect_router':
-          if (length === 1 && !rows[0].router.id && !shared && !external && rows[0].gateway_ip) {
+          if (length === 1 && !shared && !external && !rows[0].router.id && rows[0].gateway_ip) {
             btns[key].disabled = false;
           } else {
             btns[key].disabled = true;
@@ -392,13 +392,10 @@ class Model extends React.Component {
           btns[key].disabled = (length === 1 && !external) ? false : true;
           break;
         case 'modify_subnet':
-          btns[key].disabled = (length === 1 && !shared && !external) ? false : true;
+          btns[key].disabled = length === 1 ? false : true;
           break;
         case 'delete':
-          let disableDelete = rows.some((row) => {
-            return row.network.shared || row.network['router:external'];
-          });
-          btns[key].disabled = (rows.length >= 1 && !disableDelete) ? false : true;
+          btns[key].disabled = rows.length >= 1 ? false : true;
           break;
         default:
           break;
@@ -579,6 +576,9 @@ class Model extends React.Component {
     }, {
       title: __.share_network,
       content: item.network.shared ? __.yes : __.no
+    }, {
+      title: __.create_external,
+      content: item.network['router:external'] ? __.yes : __.no
     }, {
       title: __.host_routes,
       content: item.host_routes.length > 0 ? <div>{
