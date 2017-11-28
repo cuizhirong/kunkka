@@ -126,6 +126,7 @@ class Main extends React.Component {
     if (!nextProps.visible) {
       this.clearAllState(nextProps.visible);
     } else {
+      this.setPageLimit();
       if (nextProps.config.table.data.length > 0) {
         if (this.props.params[1] === nextProps.params[1]) {
           this.onChangeParams(nextProps.params);
