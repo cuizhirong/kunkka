@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 const React = require('react');
-
+const {Button} = require('client/uskin/index');
 const __ = require('locale/client/dashboard.lang.json');
 const unitConverter = require('client/utils/unit_converter');
 
@@ -123,18 +123,33 @@ class ResourceQuota extends React.Component {
     });
   }
 
+  onBtnClick() {
+    this.props.onBtnClick();
+  }
+
   render() {
     let overview = this.props.overview,
       quota = this.state.quota;
 
+    let applyBtnConfig = {
+      value: __.apply_quota,
+      key: 'apply',
+      icon: 'create',
+      type: 'create',
+      onClick: this.onBtnClick.bind(this)
+    };
+
     return (
       <div className="resource-quota">
-        <div className="title">{__.resource + __.quota}</div>
+        <div className="title">
+          <div>{__.resource + __.quota}</div>
+          {this.props.hideBtn ? null : <Button {...applyBtnConfig} />}
+        </div>
         <div className="content">
           {quota.map((ele, index) =>
             <div key={index}>
               <h3>{ele.title}</h3>
-              <ul className="quota-list">
+              <ul className="quota-list clearfix">
                 {ele.items.map((item, i) => {
                   let used, total, inUse, inUseClassName;
 

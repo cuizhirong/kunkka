@@ -1,10 +1,6 @@
 @import "../../../style/theme.less";
 
-@default-font-color: @color_font;
 @resource-box-color: @color_grey;
-@resource-info-item-usage-color: @color_info;
-@resource-info-item-hover-color: @color_info_200;
-@resource-quota-title-color: @color_font_400;
 @resource-quota-strip-bg-color: @color_grey_400;
 @resource-quota-strip-default-color: @color_info;
 @resource-quota-strip-general-color: @color_warning;
@@ -12,16 +8,17 @@
 
 .resource-box-title() {
   height: 48px;
-  line-height: 48px;
-  font-size: 16px;
-  padding: 0 24px;
+  line-height: 24px;
+  padding: 0 20px;
   background-color: @resource-box-color;
+  font-size: 18px;
+  color: #333333;
+  letter-spacing: 0.6px;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
 }
 
 .resource-box-content() {
-  padding: 20px;
   overflow: auto;
   border: 1px solid @resource-box-color;
 }
@@ -39,111 +36,58 @@
   padding: 0 20px;
   overflow: auto;
 
-  .overview-header {
-    display: flex;
-    border-bottom: 3px solid #ecf0f2;
-    ul.tabs {
-      flex: 1;
-      border-bottom: none;
-      height: 45px;
-      li {
-        border-bottom: none;
-      }
-    }
-    .btn {
-      height: 35.5px;
-      margin: 5px 0;
-    }
-  }
-
-  .project-name {
-    flex: 1;
-    min-height: 48px;
-    max-height: 48px;
-    margin: 10px 0 20px;
-    .resource-box-title();
-  }
-
   .project-resources {
     flex: 1;
     display: flex;
-
-    .left-side {
-      flex: 1;
-      margin-right: 20px;
-
-      .resource-info {
-        margin-bottom: 20px;
-        .title {
-          .resource-box-title();
+    padding-top: 20px;
+    .clearfix::after {
+      display: table;
+      content: '';
+      clear: both;
+    }
+    .resource-quota {
+      width: 100%;
+      margin-bottom: 20px;
+      .title {
+        .resource-box-title();
+        > div {
+          padding-top: 13px;
+          float: left;
         }
-        .content {
-          .resource-box-content();
-          padding: 16px 12px;
-          display: flex;
-          > div {
-            flex: 1;
-            .item {
-              height: 28px;
-              line-height: 28px;
-              cursor: pointer;
-              padding: 0 10px;
-              &:hover {
-                background-color: @resource-info-item-hover-color;
-              }
-              > div:first-child {
-                width: 60%;
-                float: left;
-                .text-overflow();
-              }
-              > div:last-child {
-                width: 40%;
-                float: right;
-                text-align: right;
-                color: @resource-info-item-usage-color;
-              }
-            }
-          }
-          > div:first-child {
-            padding-right: 10px;
-            border-right: 1px solid @resource-box-color;
-          }
-          > div:last-child {
-            padding-left: 10px;
-          }
+        .btn {
+          float: right;
+          font-size: 14px;
+          letter-spacing: 0.47px;
+          height: 32px;
+          padding: 6px 15px 5px;
+          line-height: 19px;
+          margin-top: 9px;
         }
       }
-    }
-
-    .right-side {
-      flex: 1;
-      .resource-quota {
-        margin-bottom: 20px;
-        .title {
-          .resource-box-title();
-        }
-        .content {
-          .resource-box-content();
-          padding: 8px 24px;
-          > div {
-            overflow: auto;
-
+      .content {
+        .resource-box-content();
+        padding: 21px 20px 20px;
+        > div {
+          overflow: auto;
+          &:nth-child(n+2) {
+            margin-top: 40px;
+          }
           h3 {
-            font-size: 16px;
+            font-size: 18px;
+            color: #999999;
+            letter-spacing: 0.6px;
             font-weight: 300;
-            padding: 16px 0;
-            color: @resource-quota-title-color;
           }
           ul > li {
             float: left;
             width: 50%;
-            margin-bottom: 20px;
+            margin-top: 20px;
             box-sizing: border-box;
             &:nth-child(2n+1) {
-              padding-right: 16px;
+              padding-right: 20px;
             }
             &:nth-child(2n) {
-              padding-left: 16px;
+              padding-left: 20px;
             }
             .description {
               height: 20px;
@@ -179,9 +123,8 @@
               }
             }
           }
-          }
         }
       }
-    }
+    }  
   }
 }
