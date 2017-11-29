@@ -4,7 +4,7 @@ const __ = require('locale/client/dashboard.lang.json');
 const request = require('../../request');
 const resourceQuota = require('./quota_pop');
 const getErrorMessage = require('../../../../utils/error_message');
-const checkVolumeTotalLegality = require('client/utils/check_total_legality').checkVolumeTotalLegality;
+const quotaValidate = require('client/utils/quota_validate').quotaValidate;
 
 
 function pop(obj, parent, callback) {
@@ -27,13 +27,10 @@ function pop(obj, parent, callback) {
       let overview = refs.quota.state.overview;
       let targetQuota = refs.quota.state.targetQuota;
       let addedQuota = refs.quota.state.addedQuota;
-      let totalLegal = checkVolumeTotalLegality(targetQuota, 'volumes');
-      let totalGigaLegal = checkVolumeTotalLegality(targetQuota, 'gigabytes');
+      const validateResult = quotaValidate(targetQuota, __);
 
-      if(!totalLegal) {
-        cb(false, __.volumes_small_than_total);
-      } else if(!totalGigaLegal) {
-        cb(false, __.gigabytes_small_than_total);
+      if(validateResult.status === 'fail') {
+        cb(false, validateResult.errorMessage);
       } else {
         request.applyQuotas(addedQuota, overview, targetQuota).then((res) => {
           callback && callback();

@@ -128,7 +128,7 @@ class QuotaPop extends React.Component {
   onChange(key, e) {
     let originTotal = this.state.overview[key].total;
     let newNumber = Number(e.target.value);
-    if (!isNaN(newNumber) && newNumber >= -1) {
+    if (!isNaN(newNumber) && newNumber >= -1 && e.target.value !== '') {
       if (key === 'ram') {
         newNumber *= 1024;
       }
