@@ -3,11 +3,16 @@
     "name": ["public_image"],
     "key": "image"
   }, {
-    "name": ["shared_image"],
-    "key": "shared-image",
+    "name": ["private_image"],
+    "key": "private-image",
     "default": true
   }],
   "btns": [{
+    "value": ["create", "image"],
+    "key": "create_image",
+    "icon": "create",
+    "type": "create"
+    }, {
     "value": ["edit", "image"],
     "key": "modify_image",
     "icon": "edit",
@@ -16,6 +21,12 @@
     "value": ["update", "status"],
     "key": "update_status",
     "icon": "edit"
+  }, {
+    "value": ["delete"],
+    "key": "delete",
+    "icon": "delete",
+    "type": "delete",
+    "disabled": true
   }, {
     "key": "refresh",
     "icon": "refresh"

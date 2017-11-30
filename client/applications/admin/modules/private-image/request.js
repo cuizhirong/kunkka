@@ -60,5 +60,10 @@ module.exports = {
       url: '/proxy/glance/v2/images/' + member.id + '/members/' + member.member_id,
       data: data
     });
+  },
+  deleteImage: function(id) {
+    return fetch.delete({
+      url: '/proxy/glance/v2/images/' + id
+    });
   }
 };

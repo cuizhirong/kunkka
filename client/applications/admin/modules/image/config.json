@@ -4,8 +4,8 @@
     "key": "image",
     "default": true
   }, {
-    "name": ["shared_image"],
-    "key": "shared-image"
+    "name": ["private_image"],
+    "key": "private-image"
   }],
   "btns": [{
     "value": ["create", "image"],
