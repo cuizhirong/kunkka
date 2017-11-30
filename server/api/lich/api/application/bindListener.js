@@ -2,7 +2,7 @@
 const co = require('co');
 const emitter = require('helpers/emitter');
 const drivers = require('drivers');
-const sendEmailAsync = drivers.kiki.email.sendEmailAsync;
+const sendEmailByTemplateAsync = drivers.email.sendEmailByTemplateAsync;
 const getUserAsync = drivers.keystone.user.getUserAsync;
 const _getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
 const adminLogin = require('api/slardar/common/adminLogin');
@@ -31,7 +31,6 @@ module.exports = (e) => {
       if (!isSend || !req || !apply || !status) return;
       const __ = req.i18n.__.bind(req.i18n);
       const adminToken = (yield adminLogin()).token;
-      const kikiRemote = req.session.endpoint.kiki[req.session.user.regionId];
       const keystoneRemote = req.session.endpoint.keystone[req.session.user.regionId];
       let user = yield getUserAsync(adminToken, keystoneRemote, apply.userId);
       user = user.body.user;
@@ -40,7 +39,7 @@ module.exports = (e) => {
       const subject = __('api.application.yourApplication') + __(`api.application.${status === 'pass' ? 'approved' : 'rejected'}`);
       const url = `${req.protocol}://${req.hostname}/approval/apply/${apply.id}`;
       const content = `<h2>${subject}</h2><p><a href="${url}">${url}</a></p>`;
-      yield sendEmailAsync(user.email, subject, content, kikiRemote, adminToken);
+      yield sendEmailByTemplateAsync(user.email, subject, {content});
     }).catch(console.error);
 
   }).on('approver_message', (data) => {
@@ -51,7 +50,6 @@ module.exports = (e) => {
       let apply = data.apply;
       if (!isSend || !role || !req) return;
 
-      const kikiRemote = req.session.endpoint.kiki[req.session.user.regionId];
       const keystoneRemote = req.session.endpoint.keystone[req.session.user.regionId];
       const __ = req.i18n.__.bind(req.i18n);
 
@@ -66,8 +64,8 @@ module.exports = (e) => {
       }
 
       let assignments = yield drivers.keystone.role.roleAssignmentsAsync(adminToken, keystoneRemote, {
-        'role.id': roleId,
-        'scope.project.id': apply.projectId
+        'role.id': roleId
+        //'scope.project.id': apply.projectId
       });
       assignments = assignments.body.role_assignments;
       let users = new Set(), groups = new Set();
@@ -101,11 +99,15 @@ module.exports = (e) => {
       const subject = __('api.application.newApplication');
       const url = `${req.protocol}://${req.hostname}/approval/apply-approval/${apply.id}`;
       const content = `<h2>${subject}</h2> <p><a href="${url}">${url}</a></p>`;
-      users.forEach(u => {
-        if (userDictionary[u].email) {
-          sendEmailAsync(userDictionary[u].email, subject, content, kikiRemote, adminToken).then();
+      for (let user of users) {
+        if (userDictionary[user] && userDictionary[user].email) {
+          try {
+            yield sendEmailByTemplateAsync(userDictionary[user].email, subject, {content});
+          } catch(sendErr) {
+            console.log(sendErr.code);
+          }
         }
-      });
+      }
     }).catch(console.error);
   });
 };
