@@ -7,6 +7,7 @@ const Base = require('../base.js');
 const driver = new Base();
 const config = require('config');
 const smtpConfig = config('smtp');
+const getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
 
 const templates = {};
 fs.readdirSync(path.join(__dirname, 'templates'))
@@ -28,16 +29,40 @@ transporter.sendEmailAsync = (data) => {
 };
 
 /*** Promise ***/
-driver.sendEmailAsync = function (to, subject, text) {
-  return transporter.sendEmailAsync({to, subject, text, from: smtpConfig.auth.user});
+driver.sendEmailAsync = function * (to, subject, text) {
+  return yield transporter.sendEmailAsync({to, subject, text, from: smtpConfig.auth.user});
 };
 
 /*** Promise ***/
-driver.sendEmailByTemplateAsync = function (to, subject, data, templateName) {
+driver.sendEmailByTemplateAsync = function * (to, subject, data, templateName) {
   if (templateName && templates[templateName] === undefined) {
     throw new Error('模板不存在');
   }
-  let content = ejs.render(templates[templateName || 'default'], data);
-  return transporter.sendEmailAsync({to, subject, html: content, from: smtpConfig.auth.user});
+  let corData = {
+    corporationName: '',
+    emailLogoUrl: '',
+    homeUrl: ''
+  };
+  let settings = yield getSettingsByApp('auth');
+  settings.some(setting => {
+    switch (setting.name) {
+      case 'corporation_name':
+        corData.corporationName = setting.value;
+        break;
+      case 'email_logo_url':
+        corData.emailLogoUrl = setting.value;
+        break;
+      case 'home_url':
+        corData.homeUrl = setting.value;
+        break;
+      default:
+        break;
+    }
+    setting.name === 'corporation_name' && (corData.corporationName = setting.value);
+    setting.name === 'email_logo_url' && (corData.emailLogoUrl = setting.value);
+    setting.name === 'home_url' && (corData.homeUrl = setting.value);
+  });
+  let content = ejs.render(templates[templateName || 'default'], Object.assign(corData, data));
+  return yield transporter.sendEmailAsync({to, subject, html: content, from: smtpConfig.auth.user});
 };
 module.exports = driver;

@@ -125,7 +125,7 @@ User.prototype = {
       });
 
       if (!roleId.project_owner) {
-        sendEmailByTemplateAsync(
+        yield sendEmailByTemplateAsync(
           adminEmail, '注册用户激活失败，请检查角色project_owner',
           {content: roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}
         );
