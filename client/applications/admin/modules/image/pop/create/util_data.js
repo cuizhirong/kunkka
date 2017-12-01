@@ -1,4 +1,4 @@
-const __ = require('locale/client/dashboard.lang.json');
+const __ = require('locale/client/admin.lang.json');
 
 const untilData = {
 
@@ -69,16 +69,16 @@ const untilData = {
     return architectureData;
   },
 
-  getProtectedData: function() {
-    let protectedData = [{
-      name: __.yes,
-      id: true
+  getVisibility: function() {
+    let visibilityData = [{
+      name: __.public,
+      id: 'public'
     }, {
-      name: __.no,
-      id: false
+      name: __.private,
+      id: 'private'
     }];
 
-    return protectedData;
+    return visibilityData;
   },
 
   getResourceType: function() {

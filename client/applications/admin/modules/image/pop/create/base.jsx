@@ -58,6 +58,10 @@ class ImageBase extends React.Component {
         value: imageInfo.name.state.value
       }, {
         op: 'replace',
+        path: '/visibility',
+        value: imageInfo.visibility.state.value
+      }, {
+        op: 'replace',
         path: '/min_disk',
         value: parseInt(imageInfo.min_disk.state.value, 10)
       }, {
@@ -67,7 +71,7 @@ class ImageBase extends React.Component {
       }, {
         op: 'replace',
         path: '/protected',
-        value: imageInfo.protected.state.value === 'true'
+        value: imageInfo.protected.state.checked
       }];
       if (this.props.obj.item.description) {
         data.push({
@@ -127,7 +131,7 @@ class ImageBase extends React.Component {
         if (imageInfo.more.state.checked) {
           imageData.input.image_properties.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
           imageData.input.image_properties.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
-          imageData.input.image_properties.protected = imageInfo.protected.state.value.toString() === 'true';
+          imageData.input.image_properties.protected = imageInfo.protected.state.checked;
         }
 
         if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
@@ -163,7 +167,7 @@ class ImageBase extends React.Component {
         if (imageInfo.more.state.checked) {
           imageData.min_disk = parseInt(imageInfo.min_disk.state.value, 10) || 0;
           imageData.min_ram = parseInt(imageInfo.min_ram.state.value, 10) || 0;
-          imageData.protected = imageInfo.protected.state.value.toString() === 'true';
+          imageData.protected = imageInfo.protected.state.checked;
         }
 
         if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
@@ -305,6 +309,8 @@ class ImageBase extends React.Component {
 
   onChangeFormat() {}
 
+  onChangeProtected() {}
+
   onAddUserToTable() {
     let metaData = this.state.metaData;
     let addMetaData = this.state.addMetaData;
@@ -335,7 +341,7 @@ class ImageBase extends React.Component {
     switch(type) {
       case 'public':
         return 'public';
-      case 'shared-image':
+      case 'private-image':
         return 'private';
       default:
         return '';

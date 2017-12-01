@@ -8,9 +8,10 @@ const Main = require('client/components/main/index');
 const BasicProps = require('client/components/basic_props/index');
 
 //pop modal
+const deleteModal = require('client/components/modal_delete/index');
 const RelatedInstance = require('../image/detail/related_instance');
 const updateStatus = require('./pop/update_status/index');
-const image = require('../image/pop/create/index');
+const createImage = require('../image/pop/create/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/admin.lang.json');
@@ -106,10 +107,7 @@ class Model extends React.Component {
     request.getList().then((res) => {
       let _config = this.state.config;
       let table = _config.table;
-      let data = res.filter((ele) => {
-        return ele.owner !== HALO.user.projectId;
-      });
-      table.data = data;
+      table.data = res;
       table.loading = false;
 
       let detail = this.refs.dashboard.refs.detail;
@@ -147,11 +145,20 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
+    let that = this;
     switch (key) {
+      case 'create_image':
+        this.state.config.tabs.forEach(tab => tab.default && createImage({type: tab.key}, null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailRefresh: true
+          }, true);
+        }));
+        break;
       case 'modify_image':
         this.state.config.tabs.forEach(tab => {
           tab.default &&
-          image({item: rows[0], type: tab.key}, null, () => {
+          createImage({item: rows[0], type: tab.key}, null, () => {
             this.refresh({
               tableLoading: true,
               detailRefresh: true
@@ -164,6 +171,24 @@ class Model extends React.Component {
           this.refresh({
             detailRefresh: true
           }, true);
+        });
+        break;
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'image',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteImage(rows[0].id).then((res) => {
+              cb(true);
+              that.refresh({
+                refreshList: true,
+                detailRefresh: true,
+                tableLoading: true
+              });
+            });
+          }
         });
         break;
       case 'refresh':
@@ -204,6 +229,9 @@ class Model extends React.Component {
       switch (key) {
         case 'modify_image':
           btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
           break;
         default:
           break;

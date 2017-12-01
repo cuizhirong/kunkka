@@ -17,7 +17,7 @@
       "instance-restore",
       "flavor",
       "image",
-      "shared-image",
+      "private-image",
       "snapshot-type"
     ]
   }, {
@@ -77,7 +77,7 @@
     "key": "availability-zones",
     "link": "host-aggregates"
   }, {
-    "key": "shared-image",
+    "key": "private-image",
     "link": "image"
   }, {
     "key": "subnet",

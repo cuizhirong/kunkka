@@ -7,7 +7,7 @@ const Checkbox = require('client/components/modal_common/subs/checkbox/index');
 
 const formatData = utilData.getFormatData(),
   resourceType = utilData.getResourceType(),
-  protectedData = utilData.getProtectedData(),
+  visibility = utilData.getVisibility(),
   architectureData = utilData.getArchitectureData();
 
 class ImageInfo extends React.Component {
@@ -55,28 +55,42 @@ class ImageInfo extends React.Component {
     this.props.onChangeName && this.props.onChangeName(name, item, state.resourceType);
   }
 
+  onChangeVisibility() {
+    this.setState({
+      visibility: this.refs.visibility.state.value
+    });
+  }
+
   onCheckbox(e) {
     this.setState({
       checked: !this.state.checked
     });
   }
 
-  onChangeFormat() {}
+  onChangeFormat() {
+
+  }
+  onChangeProtected() {
+    this.setState({
+      protected: !this.state.protected
+    });
+  }
 
   getInitialState() {
     let state = {
-      nmae: '',
+      name: '',
       min_ram: '',
       min_disk: '',
       fileValue: '',
       direct_url: '',
       checked: false,
+      protected: false,
       disabled: false,
       description: '',
       resourceType: 'url',
+      visibility: 'private',
       key: this.props.displayKey,
       disk_format: formatData[0].id,
-      protected: protectedData[0].id,
       architecture: architectureData[0].id
     };
 
@@ -91,6 +105,7 @@ class ImageInfo extends React.Component {
       disabled: true,
       name: item.name,
       resourceType: 'url',
+      visibility: item.visibility,
       key: this.props.displayKey,
       direct_url: item.direct_url,
       disk_format: item.disk_format,
@@ -98,7 +113,7 @@ class ImageInfo extends React.Component {
       architecture: item.architecture,
       min_ram: item.min_ram.toString(),
       min_disk: item.min_disk.toString(),
-      protected: item.protected.toString()
+      protected: item.protected
     };
 
     return state;
@@ -150,15 +165,26 @@ class ImageInfo extends React.Component {
         data={formatData}
         disabled={state.disabled}
         onAction={this.onChangeFormat.bind(this)} />
-      <div className="modal-row label-row">
-        <div>{__.visibility}</div>&nbsp;{__[this.props.changeType(this.props.type)]}
-      </div>
+      {state.name === '' ? <div className="modal-row label-row">
+        <div>
+          {__.visibility}</div>&nbsp;{__[this.props.changeType(this.props.type)]}
+        </div> :
+        <Select ref="visibility" className="hide"
+          value={state.visibility}
+          label={__.visibility}
+          data={visibility}
+          onAction={this.onChangeVisibility.bind(this)} />}
       <div className="checkbox-wrapper">
         <Checkbox ref="more"
           checked={state.checked}
           onAction={this.onCheckbox.bind(this)}/>&nbsp;{__.more}
       </div>
       <div className={state.checked ? '' : 'hide'}>
+        <div className="checkbox-wrapper">
+          <Checkbox ref="protected"
+            checked={state.protected}
+            onAction={this.onChangeProtected.bind(this)} />&nbsp;{__.protected}
+        </div>
         <Select ref="architecture"
           value={state.architecture}
           label={__.architecture}
@@ -173,11 +199,6 @@ class ImageInfo extends React.Component {
           value={state.min_ram}
           label={__.min_ram}
           onAction={this.onChangeName} />
-        <Select ref="protected"
-          value={state.protected}
-          label={__.protected}
-          data={protectedData}
-          onAction={this.onChangeFormat.bind(this)} />
       </div>
     </div>);
   }

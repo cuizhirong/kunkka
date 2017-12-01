@@ -383,7 +383,8 @@ class Model extends React.Component {
               cb(true);
               that.refresh({
                 refreshList: true,
-                refreshDetail: true
+                refreshDetail: true,
+                loadingTable: true
               });
             });
           }
@@ -594,8 +595,8 @@ class Model extends React.Component {
       title: __.status,
       content: getStatusIcon(item.status)
     }, {
-      title: __.visibility,
-      content: item.visibility
+      title: __.protected,
+      content: item.protected && item.protected === true ? __.yes : __.no
     }, {
       title: __.created + __.time,
       type: 'time',
