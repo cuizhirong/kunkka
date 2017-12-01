@@ -166,7 +166,7 @@ class Model extends React.Component {
 
   setPagination(table, res) {
     let pagination = {};
-    pagination.nextUrl = Math.ceil(res.total / 10) > this.offset ? this.offset + 1 : null;
+    pagination.nextUrl = res.total > this.offset + 10 ? this.offset + 10 : null;
     if(res.total <= 10) {
       pagination.nextUrl = null;
     }
@@ -182,7 +182,7 @@ class Model extends React.Component {
     switch (actionType) {
       case 'pagination':
         if (data.direction === 'prev'){
-          this.offset --;
+          this.offset -= 10;
         } else if (data.direction === 'next') {
           this.offset = data.url;
         } else {
