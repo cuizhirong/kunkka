@@ -5,7 +5,6 @@ const __ = require('locale/client/approval.lang.json');
 const createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
 const request = require('../../request');
 const unitConverter = require('client/utils/unit_converter');
-const priceConverter = require('../../../../utils/price');
 const getErrorMessage = require('../../../../utils/error_message');
 const utils = require('../../../../utils/utils');
 
@@ -103,12 +102,6 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getData().then(this.initialize);
-
-    if (HALO.settings.enable_charge && !HALO.prices) {
-      request.getPrices().then((res) => {
-        HALO.prices = priceConverter(res);
-      }).catch((error) => {});
-    }
   }
 
   initialize(res) {
@@ -1063,7 +1056,7 @@ class ModalBase extends React.Component {
     if (enableCharge && state.flavor) {
       let type = state.flavor.name;
       if (HALO.prices) {
-        price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
+        price = HALO.prices.compute[type] ? HALO.prices.compute[type] : 0;
         numPrice = (Number(price) * state.number).toFixed(4);
         monthlyPrice = (Number(numPrice) * 24 * 30).toFixed(4);
       }

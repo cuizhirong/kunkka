@@ -4,7 +4,6 @@ const applyResizeDesc = require('../apply_resize_desc/index');
 const __ = require('locale/client/approval.lang.json');
 const unitConverter = require('client/utils/unit_converter');
 const request = require('../../request');
-const priceConverter = require('../../../../utils/price');
 
 class ModalBase extends React.Component {
 
@@ -34,12 +33,6 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getFlavors().then(this.setFlavor);
-
-    if (HALO.settings.enable_charge && !HALO.prices) {
-      request.getPrices().then((res) => {
-        HALO.prices = priceConverter(res);
-      }).catch((error) => {});
-    }
   }
 
   sortByNumber(a, b) {
@@ -263,7 +256,7 @@ class ModalBase extends React.Component {
     if (enableCharge && flavor) {
       let type = flavor.name;
       if (HALO.prices) {
-        price = HALO.prices['instance:' + type].unit_price.price.segmented[0].price;
+        price = HALO.prices.compute[type] ? HALO.prices.compute[type] : 0;
         monthlyPrice = (Number(price) * 24 * 30).toFixed(4);
       }
     }

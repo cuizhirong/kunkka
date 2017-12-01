@@ -3,6 +3,9 @@ const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/approval.lang.json');
 const utils = require('client/applications/approval/utils/utils');
+const ENABLE_CHARGE = HALO.settings.enable_charge;
+// const DEFAULT_PRICE = '0.0000';
+// const UNITNUMBER = 1024 * 1024 * 1024;
 
 const copyObj = function(obj) {
   let newobj = obj.constructor === Array ? [] : {};
@@ -136,6 +139,13 @@ function pop(obj, parent, callback) {
             }
           };
           setFields();
+          if (ENABLE_CHARGE) {
+            refs.charge.setState({
+              // value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['volume.volume']) * cap.min).toFixed(4) : 0,
+              value: 0,
+              hide: false
+            });
+          }
         } else {
           refs.no_tip.setState({
             value: __.no_avail_type,
@@ -215,9 +225,26 @@ function pop(obj, parent, callback) {
             });
 
           }
+          if (ENABLE_CHARGE) {
+            refs.charge.setState({
+              // value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['volume.volume']) * min).toFixed(4) : 0
+              value: 0
+            });
+          }
           break;
         case 'capacity_size':
           if(volumeTypes.length > 0) {
+            if (ENABLE_CHARGE) {
+              let sliderEvent = state.eventType === 'mouseup';
+              let inputEvnet = state.eventType === 'change' && !state.error;
+              let value = state.min >= state.max ? state.min : refs.capacity_size.state.value;
+
+              if (sliderEvent || inputEvnet) {
+                refs.charge.setState({
+                  value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['volume.volume']) * value).toFixed(4) : 0
+                });
+              }
+            }
             refs.btn.setState({
               disabled: state.error
             });

@@ -55,7 +55,8 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    if(params[2]) {
+    this.loadingTable();
+    if(params && params[2]) {
       this.getSingle(params[2]);
     } else {
       this.getTableData();
@@ -64,8 +65,9 @@ class Model extends React.Component {
 
   getTableData() {
     let table = this.state.config.table,
-      filter = this.state.config.filter;
-    request.getList().then((res) => {
+      filter = this.state.config.filter,
+      pageLimit = localStorage.getItem('page_limit');
+    request.getList(pageLimit).then((res) => {
       table.data = res.Applies;
       this.initializeFilter(filter);
       this.setPagination(table, res);
@@ -131,8 +133,9 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table,
-      filter = this.state.config.filter;
-    request.getList(table.limit).then((res) => {
+      filter = this.state.config.filter,
+      pageLimit = localStorage.getItem('page_limit');
+    request.getList(pageLimit).then((res) => {
       table.data = res.Applies;
       this.initializeFilter(filter);
       this.setPagination(table, res);
@@ -185,7 +188,7 @@ class Model extends React.Component {
   setPagination(table, res) {
     let pagination = {},
       next = res.next ? res.next : null,
-      limit = table.limit ? table.limit : 10;
+      pageLimit = localStorage.getItem('page_limit');
 
     if(next) {
       let currUrl = res._url.split('/apply/')[1],
@@ -199,7 +202,7 @@ class Model extends React.Component {
     if(history.length > 0) {
       pagination.prevUrl = history[history.length - 1];
     }
-    table.pagination = res.count > limit ? pagination : {};
+    table.pagination = res.count > pageLimit ? pagination : {};
 
     return table;
   }
@@ -293,6 +296,9 @@ class Model extends React.Component {
       case 'detail':
         this.onClickDetailTabs(actionType, refs, data);
         break;
+      case 'page_limit':
+        this.onInitialize();
+        break;
       default:
         break;
     }
@@ -319,7 +325,8 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    filterData.limit = this.state.config.table.limit;
+    let pageLimit = localStorage.getItem('page_limit');
+    filterData.limit = pageLimit;
     request.filterFromAll(filterData).then((res) => {
       table.data = res.Applies;
       this.setPagination(table, res);

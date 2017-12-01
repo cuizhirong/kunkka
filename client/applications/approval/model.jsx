@@ -10,6 +10,10 @@ require('./cores/watchdog');
 const loader = require('./cores/loader'),
   configs = loader.configs;
 
+const isPathValid = require('client/libs/path_valid');
+const price = require('client/utils/price');
+const priceConverter = require('./utils/price');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -31,8 +35,8 @@ class Model extends React.Component {
     let approval = HALO.configs.approval,
       enableApply = approval.showApply,
       showMyApply = approval.showMyApplication,
-      showMgmtApply = approval.showManageApplication,
-      showAlarm = HALO.settings.enable_alarm;
+      showMgmtApply = approval.showManageApplication;
+      // showAlarm = HALO.settings.enable_alarm;
 
     if (pathList.length <= 1) {
       if(enableApply) {
@@ -80,30 +84,34 @@ class Model extends React.Component {
         });
       }
 
-      if (!showAlarm) {
-        if(enableApply) {
-          pathList[1] = configs.default_module;
-        } else {
-          pathList[1] = 'apply-approval';
-        }
-      }
+      // if (!showAlarm) {
+      //   if(enableApply) {
+      //     pathList[1] = configs.default_module;
+      //   } else {
+      //     pathList[1] = 'apply-approval';
+      //   }
+      // }
     }
     router.replaceState('/approval/' + pathList.slice(1).join('/'), null, null, true);
   }
 
   onChangeState(pathList) {
-    let _moduleName = pathList[1],
-      modules = this.state.modules;
-    if (modules.indexOf(_moduleName) === -1) {
-      modules = modules.concat(_moduleName);
-    }
+    if (isPathValid(pathList, configs)) {
+      let _moduleName = pathList[1],
+        modules = this.state.modules;
+      if (modules.indexOf(_moduleName) === -1) {
+        modules = modules.concat(_moduleName);
+      }
 
-    this.setState({
-      modules: modules,
-      selectedModule: pathList[1],
-      selectedMenu: this._filterMenu(_moduleName),
-      params: pathList
-    });
+      this.setState({
+        modules: modules,
+        selectedModule: pathList[1],
+        selectedMenu: this._filterMenu(_moduleName),
+        params: pathList
+      });
+    } else {
+      router.replaceState('/approval/' + configs.default_module);
+    }
   }
 
   _filterMenu(item) {
@@ -120,6 +128,11 @@ class Model extends React.Component {
 
   componentDidMount() {
     this.loadRouter();
+    if(HALO.settings.enable_charge && !HALO.prices) {
+      price.getList().then((res) => {
+        HALO.prices = priceConverter(res);
+      });
+    }
   }
 
   componentWillUpdate() {
@@ -166,7 +179,7 @@ class Model extends React.Component {
       showMgmtApply = approval.showManageApplication,
       showAlarm = HALO.settings.enable_alarm;
 
-    props.menus.forEach((m) => {
+    configs.modules.forEach((m) => {
       if(!enableApply) {
         switch(m.title) {
           case 'compute':
@@ -229,17 +242,19 @@ class Model extends React.Component {
         <div id="main-wrapper">
           <SideMenu items={menus} application={HALO.application} />
           <div id="main">
-            {
-              state.modules.map((m, index) => {
-                let M = modules[m];
-                if (M) {
-                  return (<M
-                    key={index}
-                    style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}}
-                    params={state.params} />);
-                }
-              })
-            }
+            <div className="inner">
+              {
+                state.modules.map((m, index) => {
+                  let M = modules[m];
+                  if (M) {
+                    return (<M
+                      key={index}
+                      style={state.selectedModule === m ? {display: 'flex'} : {display: 'none'}}
+                      params={state.params} />);
+                  }
+                })
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -247,24 +262,5 @@ class Model extends React.Component {
   }
 
 }
-
-function filterMenu(modules) {
-  modules.forEach((m) => {
-    m.items = m.items.filter((i) => {
-      let b = configs.routers.some((n) => {
-        if (n.key === i) {
-          return true;
-        }
-        return false;
-      });
-      return !b;
-    });
-  });
-  return modules;
-}
-
-Model.defaultProps = {
-  menus: filterMenu(configs.modules)
-};
 
 module.exports = Model;

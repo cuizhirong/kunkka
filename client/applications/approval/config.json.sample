@@ -60,5 +60,22 @@
     "key": "approved",
     "link": "apply-approval"
   }],
-  "theme": "default"
+  "theme": "default",
+  "default_hide_modules": [
+    "overview",
+    "instance-create",
+    "image",
+    "instance-snapshot",
+    "keypair",
+    "network",
+    "subnet",
+    "router",
+    "port",
+    "security-group",
+    "loadbalancer",
+    "resource-pool",
+    "snapshot",
+    "alarm",
+    "notification"
+  ]
 }

@@ -37,6 +37,11 @@
     "type": "textarea",
     "field": "apply_description"
   }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": true
+  }, {
     "type": "tip",
     "tip_type": "warning",
     "field": "no_tip",
