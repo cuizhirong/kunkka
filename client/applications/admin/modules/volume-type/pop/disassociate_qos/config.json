@@ -1,0 +1,21 @@
+{
+  "title": ["disassociate_qos_spec"],
+  "fields": [{
+    "type": "text",
+    "field": "dis_qos_spec",
+    "info": "dis_qos_spec"
+  }, {
+    "type": "icon_label",
+    "field": "volumn",
+    "icon_type": "volume",
+    "text": ""
+  }, {
+    "type": "icon_label",
+    "field": "spec",
+    "text": ""
+  }],
+  "btn": {
+    "value": "dissociate",
+    "disabled": false
+  }
+}

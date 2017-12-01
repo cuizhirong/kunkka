@@ -68,11 +68,20 @@ module.exports = {
     });
   },
   getNextList: function(url) {
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
+    return this.getQosSpecs().then((resQos) => {
+      let specs = resQos.qos_specs;
+      return fetch.get({
+        url: url
+      }).then((res) => {
+        res.volume_types = res.volume_types.map((type) => {
+          if (type.qos_specs_id) {
+            type._qos_specs = specs.find((spec) => spec.id === type.qos_specs_id);
+          }
+          return type;
+        });
+        res._url = url;
+        return res;
+      });
     });
   },
   getQosSpecs: function() {
@@ -106,6 +115,16 @@ module.exports = {
     return fetch.put({
       url: '/proxy/cinder/v2/' + PROJECT_ID + '/types/' + id,
       data: data
+    });
+  },
+  connectQos: function(id, data) {
+    return fetch.get({
+      url: '/proxy/cinder/v2/' + PROJECT_ID + '/qos-specs/' + id + '/associate?vol_type_id=' + data
+    });
+  },
+  disconnectQos: function(id, data) {
+    return fetch.get({
+      url: '/proxy/cinder/v2/' + PROJECT_ID + '/qos-specs/' + id + '/disassociate?vol_type_id=' + data
     });
   }
 };

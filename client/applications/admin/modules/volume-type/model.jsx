@@ -9,6 +9,8 @@ const {Button} = require('uskin');
 const createEncryption = require('./pop/create_encryption');
 const createType = require('./pop/create');
 const editSpecs = require('./pop/edit_specs');
+const associateQos = require('./pop/associate_qos');
+const disassociateQos = require('./pop/disassociate_qos');
 
 const config = require('./config.json');
 const __ = require('locale/client/admin.lang.json');
@@ -100,6 +102,10 @@ class Model extends React.Component {
     });
   }
 
+  getInitializeListData() {
+    this.getList();
+  }
+
   getSingle(volumeTypeID) {
     this.clearState();
 
@@ -114,7 +120,7 @@ class Model extends React.Component {
     });
   }
 
-  getNextListData(url) {
+  getNextListData(url, refreshDetail) {
     let table = this.state.config.table;
 
     request.getNextList(url).then((res) => {
@@ -125,7 +131,7 @@ class Model extends React.Component {
       } else {
         table.data = [];
       }
-      this.updateTableData(table, res._url);
+      this.updateTableData(table, res._url, refreshDetail);
     }).catch((res) => {
       table.data = [];
       this.updateTableData(table, res._url);
@@ -243,6 +249,26 @@ class Model extends React.Component {
           refresh();
         });
         break;
+      case 'associate_qos_spec_btn':
+        associateQos(rows[0], null, (res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
+      case 'disassociate_qos_spec_btn':
+        disassociateQos(rows[0], null, (res) => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
       case 'edit_type':
         createType(rows[0], null, (res) => {
           refresh();
@@ -274,12 +300,12 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     let len = rows.length;
     let isSingle = (len === 1);
-
     btns.create_encryption.disabled = !isSingle;
     btns.delete.disabled = !(len > 0);
     btns.edit_extra_specs.disabled = !isSingle;
     btns.edit_type.disabled = !isSingle;
-
+    btns.associate_qos_spec_btn.disabled = !(isSingle && rows[0] && rows[0]._qos_specs === undefined);
+    btns.disassociate_qos_spec_btn.disabled = !(isSingle && rows[0] && rows[0]._qos_specs !== undefined);
     return btns;
   }
 
@@ -399,11 +425,14 @@ class Model extends React.Component {
       content: (
         <div>
           { specsKeys.length > 0 ?
-              specsKeys.map((key) => <div>{key + ' = ' + specs[key]}</div>)
+              specsKeys.map((key, index) => <div key={index}>{key + ' = ' + specs[key]}</div>)
             : '-'
           }
         </div>
       )
+    }, {
+      title: __.associate_qos_spec,
+      content: item._qos_specs ? item._qos_specs.name : '-'
     }];
 
     return items;
@@ -504,7 +533,7 @@ class Model extends React.Component {
         this.clearState();
       }
 
-      this.getInitialListData();
+      this.getInitializeListData();
     } else if (data.refreshList) {
       if (params[2]) {
         if (data.loadingDetail) {

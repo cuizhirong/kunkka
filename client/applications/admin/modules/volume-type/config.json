@@ -38,6 +38,14 @@
           "key": "edit_type",
           "disabled": true
         }, {
+          "title": ["associate_qos_spec"],
+          "key": "associate_qos_spec_btn",
+          "disabled": true
+        }, {
+          "title": ["disassociate_qos_spec"],
+          "key": "disassociate_qos_spec_btn",
+          "disabled": true
+        }, {
           "title": ["delete"],
           "key": "delete",
           "danger": true,
