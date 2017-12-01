@@ -341,13 +341,10 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'crt_subnet':
-          btns[key].disabled = (length === 1 && !rows[0].shared && !rows[0]['router:external']) ? false : true;
+          btns[key].disabled = length === 1 ? false : true;
           break;
         case 'delete':
-          let disableDelete = rows.some((row) => {
-            return row.shared || row['router:external'];
-          });
-          btns[key].disabled = (length > 0 && !disableDelete) ? false : true;
+          btns[key].disabled = length > 0 ? false : true;
           break;
         default:
           break;
@@ -395,7 +392,7 @@ class Model extends React.Component {
                 title={__.subnet}
                 defaultUnfold={true}
                 tableConfig={subnetConfig ? subnetConfig : []}>
-                <Button value={__.create + __.subnet} disabled={rows[0].shared || rows[0]['router:external']} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
+                <Button value={__.create + __.subnet} onClick={this.onDetailAction.bind(this, 'description', 'crt_subnet', {
                   rawItem: rows[0]
                 })}/>
               </DetailMinitable>
@@ -516,7 +513,7 @@ class Model extends React.Component {
             <i className="glyphicon icon-router"/>
             <a data-type="router" href={'/admin/router/' + element.router.id}>{element.router.name || '(' + element.router.id.substr(0, 8) + ')'}</a>
           </span> : '',
-        operation: (item.shared || item['router:external']) ? '-' : <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'rmv_subnet', {
           rawItem: item,
           childItem: element
         })} />

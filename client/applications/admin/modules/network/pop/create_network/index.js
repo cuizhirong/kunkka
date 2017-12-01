@@ -154,6 +154,13 @@ function pop(parent, callback) {
         data.port_security_enabled = false;
       }
 
+      if (refs.create_external.state.checked) {
+        data['router:external'] = true;
+      }
+      if (refs.create_shared.state.checked) {
+        data.shared = true;
+      }
+
       if(refs.create_subnet.state.checked) {
         request.createNetwork(data).then((res) => {
           data = {
@@ -439,6 +446,17 @@ function pop(parent, callback) {
             default:
               break;
           }
+          break;
+        case 'show_more':
+          refs.enable_security.setState({
+            hide: !status.checked
+          });
+          refs.create_external.setState({
+            hide: !status.checked
+          });
+          refs.create_shared.setState({
+            hide: !status.checked
+          });
           break;
         default:
           break;
