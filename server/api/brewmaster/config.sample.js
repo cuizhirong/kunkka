@@ -36,6 +36,18 @@ module.exports = {
       description: '登录界面-公司名称'
     }, {
       app: 'auth',
+      name: 'home_url',
+      value: 'https://www.ustack.com',
+      type: 'string',
+      description: '主页网址'
+    }, {
+      app: 'auth',
+      name: 'email_logo_url',
+      value: 'https://www.tfcloud.com/static/assets/logo1.png',
+      type: 'string',
+      description: 'logo的链接，用于邮件中'
+    }, {
+      app: 'auth',
       name: 'enable_domain',
       value: 'false',
       type: 'boolean',

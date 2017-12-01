@@ -400,13 +400,14 @@ Application.prototype = {
   },
 
   //get applications that need me to approve.
+  //update: admins from other projects can approve the applicantion
   getApprovingList: function (req, res, next) {
     let approver = {approved: false};
     approver.approverRole = this._getCurrentRole(req.session.user.roles);
     req.getListOptions = {approver: approver};
-    if (flow[flow.length - 1] !== approver.approverRole) {
-      req.getListOptions.projectId = req.session.user.projectId;
-    }
+    // if (flow[flow.length - 1] !== approver.approverRole) {
+    //   req.getListOptions.projectId = req.session.user.projectId;
+    // }
     next();
 
   },

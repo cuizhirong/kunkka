@@ -142,7 +142,7 @@ Approve.prototype = {
       yield user.update({status});
 
       res.send({user});
-      sendEmailByTemplateAsync(
+      yield sendEmailByTemplateAsync(
         user.email,
         req.i18n.__(`api.register.${status === 'pass' ? 'regPassed' : 'regRefused'}`),
         {
@@ -181,10 +181,8 @@ Approve.prototype = {
       });
       res.send('ok');
       let userDB = yield userModel.findOne({where: {id: userId}});
-      if (!userDB) {
-        return;
-      } else {
-        sendEmailByTemplateAsync(
+      if (userDB) {
+        yield sendEmailByTemplateAsync(
           adminEmail, `${projectName}有新的配额申请`,
           {
             content: `
@@ -222,7 +220,7 @@ Approve.prototype = {
       } else {
         res.send({message: req.i18n.__('api.register.success')});
       }
-      sendEmailByTemplateAsync(
+      yield sendEmailByTemplateAsync(
         quota.user.email,
         req.i18n.__('api.register.' + (status === 'pass' ? 'quotaPassed' : 'quotaRefused')),
         {content: req.i18n.__('api.register.' + (status === 'pass' ? 'quotaPassed' : 'quotaRefused'))}

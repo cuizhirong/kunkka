@@ -43,7 +43,7 @@
     "ccap": "^0.6.10",
     "clipboard-plus": "^1.0.0",
     "co": "^4.6.0",
-    "connect-memjs": "0.1.0",
+    "connect-memjs": "^0.2.1",
     "connect-redis": "^3.0.1",
     "cookie-parser": "^1.4.0",
     "echarts": "^3.3.2",
