@@ -8,7 +8,7 @@ let price = 0;
 
 function pop(obj, parent, actionModify, callback) {
   if(enableCharge) {
-    price = Math.max.apply(null, HALO.prices.other['lbass.listener']);
+    price = Math.max.apply(null, HALO.prices.other['lbaas.listener']);
   }
   if(actionModify) {
     config.title = ['modify', 'listener'];

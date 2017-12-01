@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       function setPrice() {
-        let price = HALO.prices ? Math.max.apply(null, HALO.prices.other['lbass.loadbalancer']).toFixed(4) : 0;
+        let price = HALO.prices ? Math.max.apply(null, HALO.prices.other['lbaas.loadbalancer']).toFixed(4) : 0;
 
         refs.charge.setState({
           value: price

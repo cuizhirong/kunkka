@@ -6,9 +6,9 @@ function getIcons(name) {
       return 'router';
     case 'network.floating':
       return 'floating-ip';
-    case 'lbass.listener':
+    case 'lbaas.listener':
       return 'listener';
-    case 'lbass.loadbalancer':
+    case 'lbaas.loadbalancer':
       return 'lb';
     case 'volume.volume':
       return 'volume';
