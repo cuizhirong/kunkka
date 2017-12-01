@@ -1,0 +1,20 @@
+{
+  "en": {
+    "action-log": "Action Log",
+    "action_log_instance": "Instance Action Log",
+    "action_log_network": "Netork Action Log",
+    "action_log_port": "Port Action Log",
+    "action_log_router": "Router Action Log",
+    "action_log_subnet": "Subnet Action Log",
+    "action_log_volume": "Volume Action Log"
+  },
+  "zh-CN": {
+    "action-log": "操作日志",
+    "action_log_instance": "云主机",
+    "action_log_network": "网络",
+    "action_log_port": "网络端口",
+    "action_log_router": "路由器",
+    "action_log_subnet": "子网",
+    "action_log_volume": "云硬盘"
+  }
+}

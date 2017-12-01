@@ -25,6 +25,7 @@
     "icmp_code": "ICMP Code",
     "icmp_type": "ICMP Type",
     "icmp_type_code": "ICMP Type Code",
+    "flow": "Flow",
     "fragment_required": "Fragmentation Required, and DF Flag Set",
     "fragment_time_exceeded": "Fragment Reassembly Time Exceeded",
     "host_adminly_prohibited": "Host Administratively Prohibited",
@@ -63,7 +64,11 @@
     "timestamp": "Timestamp Request",
     "timestamp_reply": "Timestamp Reply",
     "tip_info_security": "Security Group is the whitelist in the virtual interface on an instance.",
-    "ttl_expired_in_transit": "TTL Expired in Transit"
+    "total_rxflow": "Total Downstream Flow",
+    "total_txflow": "Total Upstream Flow",
+    "txflow": "Upstream Flow(kB/s)",
+    "ttl_expired_in_transit": "TTL Expired in Transit",
+    "rxflow": "Downstream Flow(kB/s)"
   },
   "zh-CN": {
     "address_mask_request": "地址掩码请求",
@@ -91,6 +96,7 @@
     "icmp_code": "ICMP编码值",
     "icmp_type": "ICMP类型",
     "icmp_type_code": "类型值/编码值",
+    "flow": "流量",
     "fragment_required": "要求分段并设置DF Flag标志",
     "fragment_time_exceeded": "在数据报组装期间生存时间为0",
     "host_adminly_prohibited": "禁止访问的主机",
@@ -129,6 +135,10 @@
     "timestamp": "时间戳请求",
     "timestamp_reply": "时间戳应答",
     "tip_info_security": "安全组是云主机的虚拟网卡上行和下行流量的白名单防火墙，即在名单中的安全组规则允许流量通过。",
-    "ttl_expired_in_transit": "TTL在传输中过期"
+    "total_rxflow": "总下行流量",
+    "total_txflow": "总上行流量",
+    "txflow": "上行流量(kB/s)",
+    "ttl_expired_in_transit": "TTL在传输中过期",
+    "rxflow": "下行流量(kB/s)"
   }
 }

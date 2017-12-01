@@ -254,6 +254,14 @@ class Model extends React.Component {
       table.data = res;
       table.loading = false;
 
+      res.forEach(r => {
+        if (r['OS-EXT-STS:task_state'] && r['OS-EXT-STS:task_state'] === 'powering-on') {
+          r.status = 'powering_on';
+        } else if (r['OS-EXT-STS:task_state'] && r['OS-EXT-STS:task_state'] === 'powering-off') {
+          r.status = 'powering_off';
+        }
+      });
+
       let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({

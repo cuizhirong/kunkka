@@ -25,7 +25,7 @@ function pop(obj, parent, callback) {
         return false;
       });
 
-      if (!hasVolume) {
+      if (!hasVolume && ele.volume_type) {
         volumeData[ele.volume_type].push(ele);
       }
     }

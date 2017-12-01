@@ -110,6 +110,8 @@ class Model extends React.Component {
         return 'volume';
       case 'volume-public':
         return 'volume';
+      case 'action-log':
+        return 'log';
       default:
         return name;
     }
