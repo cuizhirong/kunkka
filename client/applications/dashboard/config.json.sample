@@ -49,6 +49,16 @@
       "template-version",
       "template-list"
     ]
+  }, {
+    "title": "action-log",
+    "items": [
+      "action-log",
+      "action-log-network",
+      "action-log-subnet",
+      "action-log-port",
+      "action-log-router",
+      "action-log-volume"
+    ]
   }],
   "default_module": "overview",
   "languages": [
@@ -67,6 +77,21 @@
   }, {
     "key": "template-resource",
     "link": "heat-list"
+  }, {
+    "key": "action-log-network",
+    "link": "action-log"
+  }, {
+    "key": "action-log-port",
+    "link": "action-log"
+  }, {
+    "key": "action-log-router",
+    "link": "action-log"
+  }, {
+    "key": "action-log-subnet",
+    "link": "action-log"
+  }, {
+    "key": "action-log-volume",
+    "link": "action-log"
   }],
   "theme": "default",
   "default_hide_modules": [
