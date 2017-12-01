@@ -10,7 +10,8 @@ const config = require('./config.json');
 const __ = require('locale/client/admin.lang.json');
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
-
+const Notification = require('client/uskin/index').Notification;
+const getErrorMessage = require('../../utils/error_message');
 class Model extends React.Component {
 
   constructor(props) {
@@ -205,11 +206,15 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
+    const enableCreateNetwork = HALO.settings.enable_register_approve_create_resource;
 
     switch (key) {
       case 'agree':
         if (rows.length === 1) {
           agreeApplicationModal(rows[0], (res) => {
+            if(enableCreateNetwork) {
+              that.createNetworkAndSoOn(res);
+            }
             that.refresh({
               refreshList: true,
               loadingTable: true
@@ -236,6 +241,46 @@ class Model extends React.Component {
       default:
         break;
     }
+  }
+
+  createNetworkAndSoOn(res) {
+    const pId = res.user.default_project_id;
+    const userName = res.user.name;
+
+    Notification.addNotice({
+      id: pId,
+      content: __.creating_network_msg1 + userName +
+        __.creating_network_msg2,
+      type: 'info',
+      isAutoHide: false,
+      showIcon: true,
+      icon: 'loading-notification'
+    });
+
+    request.createNetworkAndSoOn(pId).then(() => {
+      Notification.updateNotice({
+        id: pId,
+        content: __.successful_creation,
+        type: 'success',
+        isAutoHide: true,
+        icon: 'icon-status-active'
+      });
+    }).catch((err) => {
+      let errorContent = '';
+      if(err.name === 'noExNetwork') {
+        errorContent = __.error_happened;
+      } else {
+        errorContent = getErrorMessage(err);
+      }
+
+      Notification.updateNotice({
+        id: pId,
+        content: errorContent,
+        type: 'danger',
+        isAutoHide: true,
+        icon: 'icon-status-warning'
+      });
+    });
   }
 
   onClickTable(actionType, refs, data) {
