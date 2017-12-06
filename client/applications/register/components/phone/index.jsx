@@ -2,6 +2,7 @@ const React = require('react');
 const request = require('../../request.js');
 const getErrorMessage = require('../../utils/error_message.js');
 const Tooltip = require('client/uskin/index').Tooltip;
+const pop = require('../captcha/index');
 require('./style/index.less');
 
 class Phone extends React.Component {
@@ -20,6 +21,17 @@ class Phone extends React.Component {
   }
 
   onClick() {
+    const that = this;
+    pop(null, null, function(res) {
+      that.setState({
+        captcha: res
+      }, () => {
+        that.onSubmit(res);
+      });
+    });
+  }
+
+  onSubmit(captcha) {
     let count = 60,
       timer,
       state = this.state,
@@ -30,7 +42,7 @@ class Phone extends React.Component {
       textValue: __.sending
     });
 
-    request.getVerification(state.value).then(() => {
+    request.getVerification(state.value, captcha).then(() => {
       this.setState({
         wait: true,
         textValue: __.sendAgain.replace('{0}', count),

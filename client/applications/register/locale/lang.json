@@ -1,7 +1,10 @@
 {
   "en": {
+    "cancel": "Cancel",
+    "captcha": "Captcha",
     "company_placeholder": "Please enter Company",
     "company_tip": "Please enter company limit 80",
+    "confirm": "Confirm",
     "confirm_password_placeholder": "Please enter password again",
     "code_placeholder": "Verification code",
     "email_placeholder": "Please enter email",
@@ -26,8 +29,11 @@
     "name_exist_tip": "This account already exists"
   },
   "zh-CN": {
+    "cancel": "取消",
+    "captcha": "验证码",
     "company_placeholder": "请输入公司",
     "company_tip": "请输入80个字符以内的公司名",
+    "confirm": "确认",
     "confirm_password_placeholder": "确认密码",
     "code_placeholder": "验证码",
     "email_placeholder": "请输入邮箱",

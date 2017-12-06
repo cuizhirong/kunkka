@@ -1,3 +1,0 @@
-# luna
-
-Login client
