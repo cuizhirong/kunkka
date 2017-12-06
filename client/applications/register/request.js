@@ -1,12 +1,13 @@
 const ajax = require('client/libs/ajax');
 
 module.exports = {
-  getVerification: function(phone) {
+  getVerification: function(phone, captcha) {
     return ajax.post({
       url: '/api/register/phone',
       contentType: 'application/json',
       data:{
-        phone: phone
+        phone: phone,
+        captcha: captcha
       }
     });
   },

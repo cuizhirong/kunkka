@@ -1,3 +1,0 @@
-# lion
-
-Register client
