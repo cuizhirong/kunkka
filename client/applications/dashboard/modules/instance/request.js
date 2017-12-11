@@ -104,6 +104,14 @@ module.exports = {
       return data.subnet;
     });
   },
+  getSubnetAndFIPList: function() {
+    return storage.getList(['subnet', 'floatingip']).then(function(data) {
+      return {
+        subnet: data.subnet,
+        floatingip: data.floatingip
+      };
+    });
+  },
   getPortList: function() {
     return storage.getList(['port']).then(function(data) {
       return data.port;

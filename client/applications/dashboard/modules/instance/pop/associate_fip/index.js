@@ -5,6 +5,37 @@ const createFloatingIp = require('client/applications/dashboard/modules/floating
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const __ = require('locale/client/dashboard.lang.json');
 
+/**
+ * Filter out those local IPs that are not bound to the router that has enabled
+ * public network gateway
+ * @param {Array} ports local UPs
+ * @param {Array} subnetList
+ * @return {Array} filtered local IPs
+ */
+function filter(ports, subnetList) {
+  let filteredPorts = [];
+
+  let portsMap = {};
+  ports.forEach((port) => {
+    portsMap[port.subnetId] = port;
+  });
+
+  let filteredSubnets = subnetList.filter((subnet) => {
+    if(subnet.id in portsMap) {
+      return true;
+    }
+    return false;
+  });
+
+  filteredSubnets.forEach((subnet) => {
+    if(subnet.router && subnet.router.external_gateway_info) {
+      filteredPorts.push(portsMap[subnet.id]);
+    }
+  });
+
+  return filteredPorts;
+}
+
 function pop(obj, parent, callback) {
 
   config.fields[0].text = obj.name;
@@ -17,6 +48,7 @@ function pop(obj, parent, callback) {
       if (ele['OS-EXT-IPS:type'] === 'fixed') {
         ports.push({
           id: ele.port.id,
+          subnetId: ele.subnet.id,
           name: ele.addr
         });
       }
@@ -28,16 +60,19 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      if(ports.length > 0) {
-        refs.local_ip.setState({
-          data: ports,
-          value: ports[0].id
-        });
-      }
-      request.getFloatingIpList().then((data) => {
-        if(data.length > 0) {
-          let dataArray = [];
-          data.some((_data) => {
+      request.getSubnetAndFIPList().then((data) => {
+        ports = filter(ports, data.subnet);
+        let dataArray = [];
+
+        if(ports.length > 0) {
+          refs.local_ip.setState({
+            data: ports,
+            value: ports[0].id
+          });
+        }
+
+        if(data.floatingip.length > 0) {
+          data.floatingip.some((_data) => {
             if((!_data.association.type || _data.association.type !== 'server') && !_data.fixed_ip_address) {
               _data.name = _data.floating_ip_address;
               dataArray.push(_data);
@@ -47,6 +82,9 @@ function pop(obj, parent, callback) {
             data: dataArray,
             value: dataArray[0] ? dataArray[0].id : ''
           });
+        }
+
+        if(ports.length > 0 && dataArray.length > 0) {
           refs.btn.setState({
             disabled: false
           });
@@ -101,9 +139,11 @@ function pop(obj, parent, callback) {
                 value: res.id,
                 clicked: false
               });
-              refs.btn.setState({
-                disabled: false
-              });
+              if(ports.length > 0) {
+                refs.btn.setState({
+                  disabled: false
+                });
+              }
             });
           }
           break;
