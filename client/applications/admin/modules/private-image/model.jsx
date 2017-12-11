@@ -54,6 +54,15 @@ class Model extends React.Component {
     }
   }
 
+  getMetadataCatalog() {
+    request.getMetadata().then((res) => {
+      this.setState({
+        metadataCatalog: res,
+        hasLoadedCatalog: true
+      });
+    });
+  }
+
   tableColRender(column) {
     column.map((col) => {
       switch (col.key) {
@@ -110,6 +119,7 @@ class Model extends React.Component {
       table.data = res;
       table.loading = false;
 
+      this.getMetadataCatalog();
       let detail = this.refs.dashboard.refs.detail;
       if (detail && detail.state.loading) {
         detail.setState({
@@ -146,9 +156,11 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let rows = data.rows;
     let that = this;
+    const currPjtId = HALO.user.projectId;
+
     switch (key) {
       case 'create_image':
-        this.state.config.tabs.forEach(tab => tab.default && createImage({type: tab.key}, null, () => {
+        this.state.config.tabs.forEach(tab => tab.default && createImage({type: tab.key, metadataCatalog: that.state.metadataCatalog}, null, () => {
           this.refresh({
             tableLoading: true,
             detailRefresh: true
@@ -158,7 +170,7 @@ class Model extends React.Component {
       case 'modify_image':
         this.state.config.tabs.forEach(tab => {
           tab.default &&
-          createImage({item: rows[0], type: tab.key}, null, () => {
+          createImage({item: rows[0], type: tab.key, metadataCatalog: that.state.metadataCatalog, pId: currPjtId}, null, () => {
             this.refresh({
               tableLoading: true,
               detailRefresh: true
@@ -225,10 +237,15 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    let hasLoadedCatalog = this.state.hasLoadedCatalog;
+
     for (let key in btns) {
       switch (key) {
+        case 'create_image':
+          btns[key].disabled = !hasLoadedCatalog;
+          break;
         case 'modify_image':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true;
+          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true || !hasLoadedCatalog;
           break;
         case 'delete':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;

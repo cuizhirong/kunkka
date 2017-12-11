@@ -36,6 +36,7 @@ function modal(obj, parent, callback) {
   }
 
   let _props = {
+    width: 800,
     onAfterClose: onAfterClose,
     parent: parent,
     obj: obj,
