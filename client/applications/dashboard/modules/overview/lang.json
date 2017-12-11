@@ -10,6 +10,7 @@
     "gigabytes_small_than_total": "Total gigabytes cannot be smaller than the sum of quota of each type",
     "quantity": "Quantity",
     "quota": " Quota",
+    "quota_total_less_than_used": "quotas can not be less than the current usage",
     "ram": "RAM",
     "unit_gb": "(GB)",
     "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type"
@@ -22,6 +23,7 @@
     "infinity": "无限",
     "quantity": "增加数量",
     "quota": "配额",
+    "quota_total_less_than_used": "配额量不能少于当前使用量",
     "information": "信息",
     "gigabyte": "容量",
     "gigabytes_small_than_total": "云硬盘容量总数不能小于所有类型云硬盘容量额度之和",
