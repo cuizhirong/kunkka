@@ -89,7 +89,7 @@ class ModalBase extends React.Component {
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
     'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
-    'onChangePwd', 'onFocusPwd', 'onBlurPwd',
+    'onChangePwd', 'onFocusPwd', 'onBlurPwd', 'onChangeFlavor',
     'confirmPwdVisibleControl', 'onChangeConfirmPwd',
     'createNetwork', 'createKeypair', 'onConfirm'].forEach((func) => {
       this[func] = this[func].bind(this);
@@ -119,10 +119,12 @@ class ModalBase extends React.Component {
     //sort image and snapshot
     res.image.forEach((ele) => {
       let type = ele.image_type;
-      if (type !== 'snapshot') {
-        images.push(ele);
-      } else {
-        snapshots.push(ele);
+      if (ele.status === 'active') {
+        if (type !== 'snapshot') {
+          images.push(ele);
+        } else {
+          snapshots.push(ele);
+        }
       }
     });
 
@@ -134,28 +136,7 @@ class ModalBase extends React.Component {
     });
 
     let imageSort = (a, b) => {
-      if (a.image_label_order) {
-        a.image_label_order = 9999;
-      }
-      if (b.image_label_order) {
-        b.image_label_order = 9999;
-      }
-
-      let aLabel = Number(a.image_label_order);
-      let bLabel = Number(b.image_label_order);
-      if (aLabel === bLabel) {
-        if (a.image_name_order) {
-          a.image_name_order = 9999;
-        }
-        if (b.image_name_order) {
-          b.image_name_order = 9999;
-        }
-        let aName = Number(a.image_name_order);
-        let bName = Number(b.image_name_order);
-        return aName - bName;
-      } else {
-        return aLabel - bLabel;
-      }
+      return b.name < a.name;
     };
     images.sort(imageSort);
     snapshots.sort(imageSort);
@@ -956,7 +937,181 @@ class ModalBase extends React.Component {
     return ret;
   }
 
+  onChangeFlavor(e) {
+    let selected = e.target.value;
+
+    let flavors = this.state.flavors;
+
+    let item;
+    flavors.some(ele => {
+      if (ele.id === selected) {
+        item = ele;
+        return true;
+      }
+      return false;
+    });
+
+    this.setState({
+      flavor: item
+    });
+  }
+
+  onTable(key, e) {
+    this.state.flavors.some(flavor => {
+      if (flavor.id === key && this.state.flavor.id !== key) {
+        this.setState({
+          flavor: flavor
+        });
+        this.foldFlavorOptions(e);
+        return true;
+      }
+      return false;
+    });
+  }
+
   renderFlavors(props, state) {
+    let flavor = state.flavor;
+    let flavors = state.flavors;
+    let data = [];
+
+    flavors.forEach(fl => {
+      data.push({
+        id: fl.id,
+        name: fl.name,
+        vcpu: fl.vcpus,
+        ram: fl.ram,
+        disk: fl.disk
+      });
+    });
+
+    let sortFg = (a, b) => {
+      if (a.vcpu !== b.vcpu) {
+        return a.vcpu - b.vcpu;
+      } else if (a.ram !== b.ram) {
+        return a.ram - b.ram;
+      } else if (a.disk !== b.disk) {
+        return a.disk - b.disk;
+      } else {
+        return a.name > b.name;
+      }
+    };
+
+    data.sort(sortFg);
+
+    data.forEach(d => {
+      d.ram = unitConverter(d.ram, 'MB').num + unitConverter(d.ram, 'MB').unit;
+      d.disk = d.disk + 'GB';
+    });
+
+    let column = [{
+      title: __.name,
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: __.cpu,
+      dataIndex: 'vcpu',
+      key: 'vcpu'
+    }, {
+      title: __.memory,
+      dataIndex: 'ram',
+      key: 'ram'
+    }, {
+      title: __.disk,
+      dataIndex: 'disk',
+      key: 'disk'
+    }];
+
+    return (
+      <div className="row row-dropdown">
+        <div className="modal-label">
+          {__.flavor}
+        </div>
+        <div className="modal-data">
+          {
+            flavors.length > 0 ?
+              <div className="options">
+                <div>{flavor.name + ' ( ' + flavor.vcpus + ' vCPU / ' + unitConverter(flavor.ram, 'MB').num + ' ' + unitConverter(flavor.ram, 'MB').unit + ' / ' + flavor.disk + ' GB )'}</div>
+                <div className="flavor-option" onClick={this.unfoldFlavorOptions}>
+                  {__.flavor_option}
+                </div>
+                <div className="modal-data">
+                  <div ref="drop_flavor" id="flavor" className={'dropdown-box flavor' + (state.flavorUnfold ? '' : ' hide')}>
+                    <div className="dropdown-item">
+                      <div className="dropdown-item-data">
+                        <div className="table-header">
+                          <div className="checkbox">
+                            <input type="checkbox"/>
+                          </div>
+                          {
+                            column.map((col, index) => {
+                              return (
+                                <div key={col.key}>
+                                  <span className="title">
+                                    {col.title}
+                                  </span>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                        {
+                          data.map((item, index) => {
+                            let key = item.id;
+                            let checked = flavor.id === key;
+
+                            return (
+                              <div key={key} className={'table-body' + (checked ? ' selected' : '')} onClick={this.onTable.bind(this, key)}>
+                                <div className="checkbox">
+                                  <input value={key}
+                                    type="checkbox"
+                                    onChange={() => {}}
+                                    checked={checked} />
+                                </div>
+                                {
+                                  column.map((col, colIndex) => {
+                                    return (
+                                      <div key={col.key}>
+                                        {item[col.dataIndex]}
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
+                            );
+                          })
+                        }
+                      </div>
+                      <div className="dropdown-collapse">
+                        <Button value={__.fold_up} onClick={this.foldFlavorOptions}/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            : <div className="empty-text-label">
+                {__.no_flavor}
+              </div>
+          }
+        </div>
+      </div>
+    );
+  }
+
+  /*renderFlavors(props, state) {
+    <ul>
+      {
+        state.securityGroups.map((ele) => {
+          let selected = selects[ele.id];
+          return (
+            <li key={ele.id}
+              className={selected ? 'selected' : null}
+              onClick={this.onChangeSecurityGroup.bind(this, ele)}>
+              {ele.name}
+            </li>
+          );
+        })
+      }
+    </ul>
     let data = [{
       key: 'cpu',
       title: __.cpu + __.type,
@@ -1036,7 +1191,7 @@ class ModalBase extends React.Component {
         </div>
       </div>
     );
-  }
+  }*/
 
   renderNetworks(props, state) {
     let selected = state.network;

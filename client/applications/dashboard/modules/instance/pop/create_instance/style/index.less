@@ -24,6 +24,11 @@
 @psw_eye_color: @color_grey_700;
 @psw_eye_selected_color: @color_grey_800;
 
+@table_bd_border: 1px solid @color_grey;
+@table_selected_bg_color: @color_info_200;
+@table_hd_bg_color: @color_grey;
+@table_hd_font_color: @color_font_800;
+
 @tip_warning_color: @color_warning;
 
 @keyframes moveToSecondPage {
@@ -67,6 +72,22 @@
       height: 32px;
       line-height: 32px;
       user-select: none;
+      >select {
+        line-height: 24px;
+        color: #000;
+      }
+    }
+
+    .options {
+      color: @tab_font_color;
+      line-height: 32px;
+      user-select: none;
+      .flavor-option {
+        margin-top: 10px;
+        line-height: 10px;
+        color: @psw_input_border_color;
+        cursor: pointer;
+      }
     }
 
     .row {
@@ -222,6 +243,11 @@
             background-color: #fff;
             z-index: 1001;
             box-shadow: 0 0 2px rgba(0, 0, 0, .1);
+            &.flavor {
+              margin-top: 10px;
+              max-height: 300px;
+              overflow-y: auto;
+            }
             &.hide {
               display: none !important;
             }
@@ -261,6 +287,65 @@
                       background-color: @tab_selected_bg_color;
                       cursor: default;
                     }
+                  }
+                }
+                .table-header {
+                  display: flex;
+                  user-select: none;
+                  min-height: 36px;
+                  height: 36px;
+                  max-height: 36px;
+                  > div {
+                    flex: 1;
+                    box-sizing: border-box;
+                    height: 36px;
+                    line-height: 36px;
+                    padding-left: 16px;
+                    background-color: @table_hd_bg_color;
+                    color: @table_hd_font_color;
+                    border-right: 1px solid #fff;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    &.checkbox {
+                      width: 36px;
+                      flex: none;
+                      padding: 0 10px;
+                    }
+                  }
+                }
+
+                .table-body {
+                  display: flex;
+                  border-bottom: @table_bd_border;
+                  &:hover {
+                    cursor: pointer;
+                    background-color: @table_selected_bg_color !important;
+                  }
+                  > div {
+                    flex: 1;
+                    box-sizing: border-box;
+                    height: 40px;
+                    line-height: 40px;
+                    padding-left: 16px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+
+                    &:last-child {
+                      border-right: none;
+                    }
+
+                    &.checkbox {
+                      width: 36px;
+                      flex: none;
+                      padding: 0 10px;
+                    }
+                  }
+
+                  &.selected {
+                    cursor: default;
+                    background-color: @table_selected_bg_color !important;
                   }
                 }
               }
