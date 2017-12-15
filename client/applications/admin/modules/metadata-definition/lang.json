@@ -1,0 +1,32 @@
+{
+  "en": {
+    "action_cannot_undone": "This action cannot be undone.",
+    "associcated_resource": "Associated Resource Types",
+    "confirm_action": "Please confirm your action. ",
+    "content": "Contents",
+    "created_date": "Created Date",
+    "display_name": "Display Name",
+    "prefix": "Prefix",
+    "property_target": "Property Target",
+    "namespace": "Namespace",
+    "none": "None",
+    "resource_types": "Resource Types",
+    "updated_date": "Updated Date",
+    "will_delete_namespace": "You will delete namespace"
+  },
+  "zh-CN": {
+    "action_cannot_undone": "该操作不可撤销.",
+    "associcated_resource": "关联的资源类型",
+    "confirm_action": "请确认您的操作.",
+    "content": "内容",
+    "created_date": "创建日期",
+    "display_name": "显示名称",
+    "prefix": "前缀",
+    "property_target": "属性目标",
+    "namespace": "命名空间",
+    "none": "无",
+    "resource_types": "资源类型",
+    "updated_date": "更新日期",
+    "will_delete_namespace": "您将删除命名空间"
+  }
+}

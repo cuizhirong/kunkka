@@ -1,0 +1,17 @@
+@import "../../../../../style/theme.less";
+
+@code_background: @color_disabled_200;
+@code_border: @color_disabled_300;
+
+.detail-content .namespace-content{
+  margin: 20px 0 0 20px;
+  pre {
+    margin-bottom: 20px;
+    border-radius: 4px;
+    padding: 8px;
+    width: calc(~"100% - 30px");
+    border: 1px solid @code_border;
+    background: @code_background;
+    overflow: auto;
+  }
+}

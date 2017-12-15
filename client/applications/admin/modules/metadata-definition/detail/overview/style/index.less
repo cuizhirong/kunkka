@@ -1,0 +1,57 @@
+@import "../../../../../style/theme.less";
+
+@title_color: @color_grey_800;
+@resource_title_border_color: @color_grey_600;
+
+.detail-content .overview-container {
+  margin-left: 60px;
+  .overview {
+    margin-top: 30px;
+    .info-row {
+      line-height: 24px;
+      padding: 5px 0;
+      .info-title {
+        color: @title_color;
+        float: left;
+        width: 70px;
+        text-align: right;
+      }
+      .content {
+        float: left;
+        margin-left: 15px;
+        width: calc(~"100% - 95px");
+        word-break: break-all;
+      }
+    }
+  }
+  .associated-resource {
+    margin: 20px 20px 20px 0;
+    .title {
+      font-size: 16px;
+      line-height: 32px;
+      border-bottom: 1px solid @resource_title_border_color;
+      margin-bottom: 10px;
+      padding-left: 3px;
+    }
+    .type-row {
+      line-height: 24px;
+      padding-top: 5px;
+      .type-title {
+        color: @title_color;
+        float: left;
+        width: 140px;
+        text-align: right;
+      }
+      .type-title + div {
+        margin-left: 15px;
+        float: left;
+        width: calc(~"100% - 165px");
+      }
+    }
+  }
+  .clearfix::after {
+    content: '';
+    clear: both;
+    display: table;
+  }
+}

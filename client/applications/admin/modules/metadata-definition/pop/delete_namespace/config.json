@@ -1,0 +1,11 @@
+{
+  "title": ["delete", "namespace"],
+  "fields": [{
+    "type": "adapter",
+    "field": "text"
+  }],
+  "btn": {
+    "value": "delete",
+    "type": "delete"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "tabs": [{
+    "name": ["metadata-definition"],
+    "key": "metadata-definition",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["edit", "namespace"],
+    "key": "edit",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete", "namespace"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "resource_types"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "namespace",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "display_name",
+      "key": "display_name",
+      "type": "captain",
+      "sort": true
+    }, {
+      "title": ["description"],
+      "key": "description"
+    }, {
+      "title": ["resource_type"],
+      "key": "resource_type"
+    }, {
+      "title": ["visibility"],
+      "key": "visibility",
+      "width": 80
+    }, {
+      "title": ["protected"],
+      "key": "protected",
+      "width": 80
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["namespace", "overview"],
+        "key": "overview",
+        "default": true
+      }, {
+        "name": ["content"],
+        "key": "content"
+      }]
+    }
+  }
+}

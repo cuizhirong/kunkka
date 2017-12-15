@@ -53,7 +53,8 @@
       "compute-services",
       "block-storage-services",
       "network-agents",
-      "orchestration-services"
+      "orchestration-services",
+      "metadata-definition"
     ]
   }, {
     "title": "setting-mgmt",
