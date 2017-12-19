@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const Main = require('client/components/main_paged/index');
-const {Button} = require('client/uskin/index');
+const {Button, Table} = require('client/uskin/index');
 const BasicProps = require('client/components/basic_props/index');
 const DetailMinitable = require('client/components/detail_minitable/index');
 const ResourceQuota = require('./quota');
@@ -23,6 +23,7 @@ const moment = require('client/libs/moment');
 const __ = require('locale/client/admin.lang.json');
 const getStatusIcon = require('../../utils/status_icon');
 const router = require('client/utils/router');
+const unitConverter = require('client/utils/unit_converter.js');
 
 class Model extends React.Component {
 
@@ -571,6 +572,30 @@ class Model extends React.Component {
           });
         }
         break;
+      case 'instance-list':
+        if(rows.length === 1) {
+          syncUpdate = false;
+          const listTableCfg = this.getInsListTableCfg();
+
+          request.getInstanceUsage(rows[0].id).then((res) => {
+            if(res.server_usages !== undefined) {
+              listTableCfg.data = res.server_usages;
+            }
+          }).finally(() => {
+            contents[tabKey] = (
+              <div>
+                <Table {...listTableCfg} />
+                {listTableCfg.data.length === 0 ? <p>{__.there_is_no + __.instance}</p> : null}
+              </div>
+            );
+
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
+          });
+        }
+        break;
       case 'quota':
         if (rows.length === 1) {
           syncUpdate = false;
@@ -805,6 +830,57 @@ class Model extends React.Component {
     }];
 
     return items;
+  }
+
+  getInsListTableCfg() {
+    const tableCfg = {
+      checkbox: false,
+      loading: false,
+      dataKey: 'instance_id',
+      limit: 10,
+      column: [{
+        title: __.instance + __.name,
+        key: 'name',
+        render: (col, item) => {
+          return (
+            <a data-type="router" key={item.instance_id} href={'/admin/instance/' + item.instance_id}>{item.name}</a>
+          );
+        },
+        sortBy: (item1, item2) => {
+          return item1.name.localeCompare(item2.name);
+        }
+      }, {
+        title: __.vcpus,
+        key: 'vcpu',
+        dataIndex: 'vcpus'
+      }, {
+        title: __.disk,
+        key: 'disk',
+        render: (col, item) => {
+          const DiskObj = unitConverter(item.local_gb, 'GB');
+          return DiskObj.num + DiskObj.unit;
+        }
+      }, {
+        title: __.ram,
+        key: 'ram',
+        render: (col, item) => {
+          const ramObj = unitConverter(item.memory_mb, 'MB');
+          return ramObj.num + ramObj.unit;
+        }
+      }, {
+        title: __.time_since_created,
+        key: 'time-since-created',
+        render: (col, item) => {
+          return moment.duration(item.uptime, 'seconds').humanize();
+        },
+        sortBy: (item1, item2) => {
+          return item1.uptime - item2.uptime;
+        }
+      }],
+      data: []
+    };
+
+    return tableCfg;
   }
 
   onDetailAction(tabKey, actionType, data) {
