@@ -16,6 +16,7 @@ module.exports = {
         data.subnet.some(s => {
           if(lb.vip_subnet_id === s.id) {
             lb.subnet = s.name;
+            lb.router = s.router;
             return true;
           }
           return false;

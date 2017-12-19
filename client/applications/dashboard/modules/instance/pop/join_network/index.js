@@ -45,7 +45,6 @@ function pop(obj, parent, callback) {
       hasAvailableSubnet = true;
     }
 
-
     if (hasAvailableSubnet) {
       subnets.forEach((subnet) => {
         let hasGroup = subnetGroup.some((group) => {
@@ -77,6 +76,7 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getSubnetList().then((data) => {
+        data = copyObj(data);
         if (data.length > 0) {
           let subnetGroup = getSubnetGroup(data);
 

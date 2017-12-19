@@ -17,6 +17,11 @@ function pop(obj, parent, callback) {
           if(lb.floatingip) {
             return false;
           }
+
+          if(!lb.router.external_gateway_info) {
+            return false;
+          }
+
           return true;
         });
         refs.lb.setState({

@@ -53,6 +53,11 @@ module.exports = {
       return data.instance;
     });
   },
+  getFIPAndSubnetList: function() {
+    return storage.getList(['subnet', 'floatingip']).then(function(data) {
+      return data;
+    });
+  },
   createFloatingIp: function(data) {
     return fetch.post({
       url: '/proxy/neutron/v2.0/floatingips',

@@ -252,6 +252,9 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    // wheather it has been added to a subnet that is bound to a router that has enabled public gateway
+    const hasBoundRouter = rows.length === 1 && rows[0].router.external_gateway_info;
+
     for(let key in btns) {
       switch (key) {
         case 'modify':
@@ -259,7 +262,7 @@ class Model extends React.Component {
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'assoc_fip':
-          btns[key].disabled = (rows.length === 1 && !rows[0].floatingip) ? false : true;
+          btns[key].disabled = hasBoundRouter && !rows[0].floatingip ? false : true;
           break;
         case 'dissoc_fip':
           btns[key].disabled = (rows.length === 1 && rows[0].floatingip) ? false : true;
