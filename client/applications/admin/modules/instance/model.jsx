@@ -725,36 +725,45 @@ class Model extends React.Component {
     switch (tabKey) {
       case 'description':
         if (rows.length === 1) {
-          let basicPropsItem = this.getBasicPropsItems(rows[0]);
-          let falutDetails = this.getFalutDetails(rows[0]);
+          let userName, projectName;
 
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                items={basicPropsItem}
-                rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)}
-                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-              {
-                rows[0].fault ?
-                  <BasicProps
-                    title={__.fault_info}
-                    defaultUnfold={true}
-                    tabKey={'description'}
-                    items={falutDetails}
-                    rawItem={rows[0]}
-                    onAction={this.onDetailAction.bind(this)}
-                    dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-                : null
-              }
-            </div>
-          );
-          detail.setState({
-            contents: contents,
-            loading: false
+          request.getPjtAndUserName(rows[0].tenant_id, rows[0].user_id).then((res) => {
+            userName = res.user.name;
+            projectName = res.project.name;
+          }).catch((err) => {
+            userName = '';
+            projectName = '';
+          }).finally(() => {
+            let basicPropsItem = this.getBasicPropsItems(rows[0], userName, projectName);
+            let falutDetails = this.getFalutDetails(rows[0]);
+            contents[tabKey] = (
+              <div>
+                <BasicProps
+                  title={__.basic + __.properties}
+                  defaultUnfold={true}
+                  tabKey={'description'}
+                  items={basicPropsItem}
+                  rawItem={rows[0]}
+                  onAction={this.onDetailAction.bind(this)}
+                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                {
+                  rows[0].fault ?
+                    <BasicProps
+                      title={__.fault_info}
+                      defaultUnfold={true}
+                      tabKey={'description'}
+                      items={falutDetails}
+                      rawItem={rows[0]}
+                      onAction={this.onDetailAction.bind(this)}
+                      dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
+                  : null
+                }
+              </div>
+            );
+            detail.setState({
+              contents: contents,
+              loading: false
+            });
           });
         }
         break;
@@ -922,7 +931,7 @@ class Model extends React.Component {
     return tableConfig;
   }
 
-  getBasicPropsItems(item) {
+  getBasicPropsItems(item, userName, projectName) {
     let flavor = this.findItemByID(this.stores.flavorTypes, item.flavor.id),
       image = this.findItemByID(this.stores.imageTypes, item.image.id),
       fixedIps = (function() {
@@ -975,11 +984,19 @@ class Model extends React.Component {
       title: __.floating_ip,
       content: item._floatingIP.length ? item._floatingIP.join(', ') : '-'
     }, {
+      title: __.user_name,
+      type: 'copy',
+      content: userName
+    }, {
       title: __.user + __.id,
       type: 'copy',
       content: item.user_id
     }, {
-      title: __.project,
+      title: __.project_name,
+      type: 'copy',
+      content: projectName
+    }, {
+      title: __.project_id,
       type: 'copy',
       content: item.tenant_id
     }, {

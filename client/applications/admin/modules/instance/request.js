@@ -220,6 +220,21 @@ module.exports = {
       url: '/proxy/csv-field/servers'
     });
   },
+  getPjtAndUserName: function(pId, uId) {
+    return RSVP.hash({
+      project: fetch.get({
+        url: '/proxy/keystone/v3/projects/' + pId
+      }),
+      user: fetch.get({
+        url: '/proxy/keystone/v3/users/' + uId
+      })
+    }).then((res) => {
+      return {
+        user: res.user.user,
+        project: res.project.project
+      };
+    });
+  },
   exportCSV(fields) {
     return this.getDomains().then((domains) => {
       let currentDomain = HALO.configs.domain;
