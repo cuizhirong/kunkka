@@ -73,6 +73,14 @@ function bindRouter(subnetId, routerId) {
   });
 }
 
+function deleteUser(userId) {
+  let url = '/proxy/keystone/v3/users/' + userId;
+
+  return fetch.delete({
+    url: url
+  });
+}
+
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
@@ -130,6 +138,7 @@ module.exports = {
       }
     }).then((res) => {
       res._url = url;
+      deleteUser(userId);
       return res;
     });
   },
