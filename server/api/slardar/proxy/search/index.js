@@ -48,6 +48,10 @@ const paginate = (page, limit, list, path, query) => {
   return result;
 };
 
+const isCurrentUserType = (username, type, endpoint) =>
+  (endpoint[username] && type === 'service')
+  || (!endpoint[username] && type === 'person');
+
 const detailRegExp = /s\/detail$/;
 /**
  *
@@ -57,7 +61,7 @@ const detailRegExp = /s\/detail$/;
  * @return object {list:[], links:{next}}
  */
 module.exports = (req, res, next) => {
-  co(function *() {
+  co(function* () {
     const token = req.session.user.token;
     const endpoint = req.session.endpoint;
     const region = req.session.user.regionId;
@@ -67,9 +71,11 @@ module.exports = (req, res, next) => {
     const target = endpoint[service][region] + '/' + pathSplit.slice(3).join('/');
     const searchId = req.query.id ? req.query.id.trim() : '';
     const search = req.query.search ? req.query.search.trim() : '';
+    const re = new RegExp(search, 'i');
+
     const page = toNaturalNumber(req.query.page) || 1;
     const limit = toNaturalNumber(req.query.limit);
-    delete req.query.search;
+    const pureQuery = _.omit(req.query, ['search', 'page', 'limit', 'marker', 'id']);
 
     let obj,
       data,   //data that OpenStack returned
@@ -83,8 +89,28 @@ module.exports = (req, res, next) => {
       try {
         const singleUrl = detailRegExp.test(target) ? target.replace(detailRegExp, 's/' + searchId) : target + '/' + searchId;
         let rs = yield request.get(singleUrl).set('X-Auth-Token', token);
-        rs = obj.singleKey === false ? rs.body : rs.body[obj.name];
-        result = {list: [rs], links: {next: null}};
+        if (obj.name === 'image') {
+          rs = rs.body;
+          let imageType = pureQuery.image_type;
+          let visibility = pureQuery.visibility;
+
+          if (rs && imageType && (imageType === 'snapshot' ^ rs.image_type === 'snapshot')) {
+            rs = null;
+          }
+          if (rs && visibility && rs.visibility !== visibility) {
+            rs = null;
+          }
+        } else if (obj.name === 'user') {
+          rs = rs.body.user;
+          let userType = pureQuery.user_type;
+          if (rs && userType && !isCurrentUserType(rs.name, userType, endpoint)) {
+            rs = null;
+          }
+        } else {
+          rs = rs.body[obj.name];
+        }
+
+        result = {list: rs ? [rs] : [], links: {next: null}};
       } catch (e) {
         if (e.status === 404) {
           result = {list: [], links: {next: null}};
@@ -92,13 +118,37 @@ module.exports = (req, res, next) => {
           throw e;
         }
       }
-    } else if (!search && !(pathSplit[4] === 'images' && req.query.image_type)) {
-      data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
+    } else if (obj.name === 'image') {
+      let images = [];
+      let queryToOpenStack = _.omit(pureQuery, ['image_type']);
+      queryToOpenStack.limit = 9999;
+      yield listImageRecursive(queryToOpenStack, '', token, endpoint[service][region], images);
+
+      let imageType = pureQuery.image_type;
+      let isFilterSnapshot = imageType === 'snapshot';
+      let list = images;
+      if (search) {
+        list = list.filter(image => re.test(image[obj.match || 'name']));
+      }
+      if (imageType) {
+        list = list.filter(image => {
+          return isFilterSnapshot ? image.image_type === 'snapshot' : image.image_type !== 'snapshot';
+        });
+      }
+
+      if (limit) {
+        result = paginate(page, limit, list, path, Object.assign({search}, pureQuery));
+      } else {
+        result = {list, links: {next: null, prev: null}};
+      }
+    } else if (!search) {
+      data = yield request.get(target + getQueryString(pureQuery)).set('X-Auth-Token', token);
       data = data.body;
-      delete req.query.page;
-      delete req.query.id;
+      if (obj.name === 'user' && pureQuery.user_type) {
+        data.users = data.users.filter(user => isCurrentUserType(user.name, pureQuery.user_type, endpoint));
+      }
       if (!obj.hasPagination && limit) {
-        result = paginate(page, limit, data[obj.name + 's'], path, req.query);
+        result = paginate(page, limit, data[obj.name + 's'], path, pureQuery);
       } else {
         result = {list: data[obj.name + 's'], links: {prev: null, next: null}};
         if (obj.linkKey === null) {
@@ -113,57 +163,21 @@ module.exports = (req, res, next) => {
           });
         }
       }
+
     } else {
-      delete req.query.page;
-      delete req.query.limit;
-      delete req.query.marker;
-      delete req.query.id;
-
-      const re = new RegExp(search, 'i');
-      let list;
-      if (pathSplit[4] === 'images') {
-        let images = [];
-        let queryToOpenstack = _.omit(req.query, ['image_type']);
-        queryToOpenstack.limit = 9999;
-        yield listImageRecursive(queryToOpenstack, '', token, endpoint[service][region], images);
-
-        let imageType = req.query.image_type;
-        let isFilterSnapshot = (imageType === 'snapshot');
-        if (imageType && search) {
-          if(isFilterSnapshot){
-            list = images.filter(image => {
-              return re.test(image[obj.match || 'name']) && image.image_type === 'snapshot';
-            });
-          } else {
-            list = images.filter(image => {
-              return image.image_type !== 'snapshot' && re.test(image[obj.match || 'name']);
-            });
-          }
-        } else if(!search) {
-          if(isFilterSnapshot){
-            list = images.filter(image => {
-              return image.image_type === 'snapshot';
-            });
-          } else {
-            list = images.filter(image => {
-              return image.image_type !== 'snapshot';
-            });
-          }
-        } else {
-          list = images.filter(image => {
-            return re.test(image[obj.match || 'name']);
-          });
-        }
-      } else {
-        data = yield request.get(target + getQueryString(req.query)).set('X-Auth-Token', token);
-        list = data.body[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
+      data = yield request.get(target + getQueryString(pureQuery)).set('X-Auth-Token', token);
+      data = data.body;
+      if (obj.name === 'user' && pureQuery.user_type) {
+        data.users = data.users.filter(user => isCurrentUserType(user.name, pureQuery.user_type, endpoint));
       }
+      let list = data[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
       if (limit) {
-        result = paginate(page, limit, list, path, Object.assign({search}, req.query));
+        result = paginate(page, limit, list, path, Object.assign({search}, pureQuery));
       } else {
         result = {list, links: {next: null, prev: null}};
       }
     }
+
     if (obj.networkHandler) {
       yield handleNetwork(result.list, {objServer, obj, region, token, endpoint});
     }
