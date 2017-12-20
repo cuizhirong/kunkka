@@ -208,20 +208,21 @@ module.exports = {
     });
   },
   getPortForwarding: function(routerId) {
-    return fetch.put({
-      url: '/proxy/neutron/v2.0/routers/' + routerId + '/get_router_portforwarding'
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/uplugin/portforwardings?router_id=' + routerId
+    }).then(res => {
+      return res.portforwardings;
     });
   },
   createPortForwarding: function(routerId, data) {
-    return fetch.put({
-      url: '/proxy/neutron/v2.0/routers/' + routerId + '/add_router_portforwarding',
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/uplugin/portforwardings',
       data: data
     });
   },
-  deletePortForwarding: function(routerId, data) {
-    return fetch.put({
-      url: '/proxy/neutron/v2.0/routers/' + routerId + '/remove_router_portforwarding',
-      data: data
+  deletePortForwarding: function(ruleId) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/uplugin/portforwardings/' + ruleId
     });
   },
   createLimit: function(data) {
