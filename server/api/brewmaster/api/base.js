@@ -58,7 +58,7 @@ base.getVars = function (req, extra) {
 };
 
 base.func.phoneCaptchaMemAsync = function (phone, memClient, req, res, next) {
-  return co(function *() {
+  return co(function* () {
     let __ = req.i18n.__.bind(req.i18n);
     let isFrequently = yield base.func.checkFrequentlyAsync(phone.toString(), memClient);
     if (isFrequently) {
@@ -76,7 +76,9 @@ base.func.phoneCaptchaMemAsync = function (phone, memClient, req, res, next) {
     settings.some(setting => {
       return setting.name === 'corporation_name' && (corporationName = setting.value);
     });
-    let result = yield drivers.sms.smsAsync(phone.toString(), `【${corporationName}】 ${req.i18n.__('api.register.VerificationCode')} ${code}`);
+
+    let smsContent = `【${corporationName}】 ${req.i18n.__('api.register.VerificationCode')} ${code}`;
+    let result = yield drivers.sms.smsAsync(phone.toString(), smsContent);
 
     if (result.text === '00') {
       res.send({type: 'message', message: __('api.register.SendSmsSuccess')});
@@ -100,7 +102,7 @@ base.middleware.customResApi = function (err, req, res, next) {
 
 base.middleware.customResPage = function (err, req, res, next) {
   const __ = req.i18n.__.bind(req.i18n);
-  co(function *() {
+  co(function* () {
     if (err.customRes && err.msg) {
       err.message = __('api.register.' + err.msg || err.message);
     }
@@ -149,7 +151,7 @@ base.middleware.checkLogin = function (req, res, next) {
 
 /*** Promise ***/
 base.func.verifyUserByNameAsync = function (adminToken, name) {
-  return co(function*() {
+  return co(function* () {
     const result = yield listUsersAsync(adminToken, keystoneRemote, {name});
     const users = result.body.users;
     if (Array.isArray(users) && users.length) {
@@ -162,7 +164,7 @@ base.func.verifyUserByNameAsync = function (adminToken, name) {
 };
 
 base.func.verifyUserByIdAsync = (adminToken, userId) => {
-  return co(function *() {
+  return co(function* () {
     let user;
     let userDB = yield userModel.findOne({where: {id: userId}});
     try {
@@ -186,7 +188,7 @@ base.func.verifyUserByIdAsync = (adminToken, userId) => {
 };
 
 base.func.emailTokenMemAsync = function (user, memClient) {
-  return co(function*() {
+  return co(function* () {
     let isFrequently = yield base.func.checkFrequentlyAsync(user.id, memClient);
     if (isFrequently) {
       return Promise.reject({status: 400, customRes: true, msg: 'Frequently'});
@@ -199,7 +201,7 @@ base.func.emailTokenMemAsync = function (user, memClient) {
 };
 
 base.func.verifyUserAsync = function (adminToken, where) {
-  return co(function *() {
+  return co(function* () {
     const userDB = yield userModel.findOne({where});
     if (!userDB) {
       return false;
@@ -224,7 +226,7 @@ base.func.verifyUserAsync = function (adminToken, where) {
 };
 
 base.func.getTemplateObjAsync = () => {
-  return co(function *() {
+  return co(function* () {
     let settings = yield [
       base._getSettingsByApp('global'),
       base._getSettingsByApp('auth')
@@ -238,7 +240,7 @@ base.func.getTemplateObjAsync = () => {
 
 
 base.func.checkUserEnabledAsync = function (adminToken, where) {
-  return co(function *() {
+  return co(function* () {
     const result = yield base.func.verifyUserAsync(adminToken, where);
     const user = result.user;
     if (!result.exist) {
@@ -252,7 +254,7 @@ base.func.checkUserEnabledAsync = function (adminToken, where) {
 };
 
 base.func.checkFrequentlyAsync = function (key, memClient) {
-  return co(function *() {
+  return co(function* () {
     let valOld = yield memClient.getAsync(key);
     valOld = valOld[0] && valOld[0].toString();
     if (!valOld) {
@@ -265,7 +267,7 @@ base.func.checkFrequentlyAsync = function (key, memClient) {
 };
 
 base.func.verifyKeyValueAsync = (key, value, memClient) => {
-  return co(function *() {
+  return co(function* () {
     let memValue = yield memClient.getAsync(key.toString());
     memValue = memValue[0] && memValue[0].toString();
     if (!memValue) {
@@ -278,7 +280,7 @@ base.func.verifyKeyValueAsync = (key, value, memClient) => {
 };
 
 base.func.setKeyValueAsync = (opt) => {
-  return co(function *() {
+  return co(function* () {
     const key = opt.key;
     const value = opt.value;
     const expire = opt.expire;
@@ -289,7 +291,7 @@ base.func.setKeyValueAsync = (opt) => {
 };
 
 base.middleware.checkEnableRegister = (req, res, next) => {
-  co(function* (){
+  co(function* () {
     let settings = yield base._getSettingsByApp('global');
     let enableRegister, enableRegisterApprove = false;
     let flag = 0;

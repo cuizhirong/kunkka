@@ -39,7 +39,7 @@ module.exports = (e) => {
       const subject = __('api.application.yourApplication') + __(`api.application.${status === 'pass' ? 'approved' : 'rejected'}`);
       const url = `${req.protocol}://${req.hostname}/approval/apply/${apply.id}`;
       const content = `<h2>${subject}</h2><p><a href="${url}">${url}</a></p>`;
-      yield sendEmailByTemplateAsync(user.email, subject, {content});
+      sendEmailByTemplateAsync(user.email, subject, {content});
     }).catch(console.error);
 
   }).on('approver_message', (data) => {
