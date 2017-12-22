@@ -26,7 +26,7 @@ module.exports = {
       let domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
       let urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
-      let url = '/proxy-search/keystone/v3/users?user_type=person&limit=' + pageLimit + urlParam;
+      let url = '/proxy-search/keystone/v3/users?user_type=service&limit=' + pageLimit + urlParam;
       return fetch.get({
         url: url
       }).then((res) => {
@@ -46,7 +46,7 @@ module.exports = {
       let defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
       let domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
       let urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
-      let url = '/proxy-search/keystone/v3/users?user_type=person&limit=' + pageLimit + requestParams(data) + (data.domain_id ? '' : urlParam);
+      let url = '/proxy-search/keystone/v3/users?user_type=service&limit=' + pageLimit + requestParams(data) + (data.domain_id ? '' : urlParam);
 
       return fetch.get({
         url: url
@@ -68,7 +68,7 @@ module.exports = {
     });
   },
   getUserByID: function(userID) {
-    let url = '/proxy-search/keystone/v3/users?user_type=person&id=' + userID;
+    let url = '/proxy-search/keystone/v3/users?user_type=service&id=' + userID;
     return fetch.get({
       url: url
     }).then((res) => {

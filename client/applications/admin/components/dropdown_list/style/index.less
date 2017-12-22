@@ -1,0 +1,61 @@
+.halo-admin-comp-dropdown-list {
+  width: 100px;
+  font-size: 12px;
+  color: #252F3D;
+  letter-spacing: 0;
+  line-height: 16px;
+  position: relative;
+  overflow: visible;
+  height: 32px;
+  .holder-row {
+    .required-field {
+      margin-right: 5px;
+      color: #F75353;
+      vertical-align: -2px;
+    }
+    .glyphicon {
+      font-size: 10px;
+      vertical-align: 1px;
+      margin-left: 8px;
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+  .show {
+    display: block;
+  }
+  .dropdown-list {
+    position: absolute;
+    top: calc(~"100% - 8px");
+    right: 0;
+    width: 90px;
+    color: #252F3D;
+    padding-bottom: 10px;
+    box-shadow: 0 0 8px 2px #F1F1F1;
+    text-align: left;
+    li {
+      height: 16px;
+      padding: 8px 0 8px 15px;
+      background: white;
+      cursor: pointer;
+    }
+    li.selected {
+      background: white;
+      color: #01AFC9;
+    }
+    li:hover {
+      background: #B9F1F9;
+      cursor: pointer;
+    }
+    li.selected:hover {
+      cursor: default;
+      background: white;
+    }
+    .icon-correct {
+      margin-left: 6px;
+      vertical-align: 1px;
+    }
+  }
+}

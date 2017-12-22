@@ -1,0 +1,17 @@
+{
+  "title": ["leave", "user-group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user",
+    "icon_type": "user"
+  }, {
+    "type": "select_group",
+    "field": "user-group",
+    "is_warning": true
+  }],
+  "btn": {
+    "value": "leave",
+    "type": "delete",
+    "disabled": true
+  }
+}

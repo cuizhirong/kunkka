@@ -6,9 +6,8 @@
     "icon_type": "project",
     "text": ""
   }, {
-    "type": "input",
-    "field": "user_id",
-    "required": true
+    "type": "adapter",
+    "field": "user_field"
   }, {
     "type": "select_group",
     "field": "role",

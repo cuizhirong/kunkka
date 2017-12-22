@@ -1,0 +1,24 @@
+{
+  "title": ["reset", "password"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "user",
+    "icon_type": "user",
+    "text": ""
+  }, {
+    "type": "input",
+    "field": "password",
+    "input_type": "password",
+    "required": true,
+    "tip_info": "pwd_tip"
+  }, {
+    "type": "input",
+    "field": "confirm_password",
+    "input_type": "password",
+    "required": true
+  }],
+  "btn": {
+    "value": "reset",
+    "disabled": true
+  }
+}
