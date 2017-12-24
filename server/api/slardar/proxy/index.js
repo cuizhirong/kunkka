@@ -18,7 +18,7 @@ const regionId = (configRegion && configRegion[0] && configRegion[0].id) || 'Reg
 
 module.exports = (app) => {
   app.get('/proxy-zaqar/confirm-subscriptions/email', function (req, res, next) {
-    co(function *() {
+    co(function* () {
       const adminToken = yield adminLogin();
       const remote = adminToken.remote.zaqar[regionId];
       const target = remote + req.query.Paths;
@@ -37,29 +37,6 @@ module.exports = (app) => {
     }).catch(next);
   }, customResPage);
 
-  app.get([
-    '/proxy/kiki/v1/subscriptions/:id/confirm',
-    '/proxy/kiki/v1/subscriptions/confirm'
-  ], function (req, res, next) {
-    co(function *() {
-      const adminToken = yield adminLogin();
-      const target = adminToken.remote.kiki[regionId] + '/' + req.path.split('/').slice(3).join('/');
-
-      request.post(target)
-        .set('X-Auth-Token', adminToken.token)
-        .send(Object.assign({}, req.query))
-        .end((err, payload) => {
-          if (err) {
-            next({status: 500, message: req.i18n.__('api.keystone.confirmError')});
-          } else {
-            next({message: req.i18n.__('api.keystone.confirmSuccess')});
-          }
-        });
-
-    }).catch(err => {
-      next({message: req.i18n.__('api.keystone.confirmError')});
-    });
-  }, customResPage);
   // check session
   app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/', '/proxy-swift/', '/proxy-glance/'], function (req, res, next) {
     if (req.session.user) {
@@ -68,119 +45,9 @@ module.exports = (app) => {
       return res.status(401).json({error: req.i18n.__('api.keystone.unauthorized')});
     }
   });
-  app.put('/proxy-swift/init-container', (req, res, next) => {
-    co(function *() {
-      let endpoint = req.session.endpoint;
-      let region = req.session.user.regionId;
-      if (!endpoint.swift) {
-        res.status(503).json({
-          status: 503,
-          message: req.i18n.__('api.swift.unavailable')
-        });
-      }
-      const containers = ['template', 'ticket'];
 
-      let token = req.session.user.token;
-      let swiftHost = endpoint.swift[region];
-      if (swiftHost.indexOf('AUTH_') > -1 ) {
-        let adminToken = yield adminLogin();
-        token = adminToken.token;
-      }
-      let projectId = req.session.user.projectId;
-      yield Promise.all(containers.map(container => {
-        return request.put(`${swiftHost}/${projectId}_${container}`)
-          .set('X-Auth-Token', token)
-          .set('X-Container-write', `${projectId}:*`)
-          .set('X-Container-read', '.r:*,.rlistings');
-      }));
-      res.end();
-    }).catch(next);
-  });
-  app.put('/proxy-swift/:container/:obj', (req, res, next) => {
-    let service = 'swift';
-    let endpoint = req.session.endpoint;
-    let region = req.session.user.regionId;
-    if (!endpoint[service]) {
-      res.status(503).json({
-        status: 503,
-        message: service + req.i18n.__('api.swift.unavailable')
-      });
-    }
-    const swiftHost = endpoint[service][region];
-    const hostnameAndPort = swiftHost.split('://')[1].split('/')[0];
-    const urlPrefix = swiftHost.split('://')[1].slice(hostnameAndPort.length);
-    const headers = _.omit(req.headers, ['cookie']);
-    headers['X-Auth-Token'] = req.session.user.token;
-    const url = urlPrefix + '/' + req.path.split('/').slice(2).join('/') + getQueryString(req.query);
-    const options = {
-      hostname: hostnameAndPort.split(':')[0],
-      port: hostnameAndPort.split(':')[1],
-      path: url,
-      method: 'get',
-      headers: headers
-    };
-    http.request(options, resGet => {
-      if (resGet.statusCode === 200) {
-        res.status(400).send({
-          status: 400,
-          message: req.i18n.__('api.swift.nameToken')
-        });
-      } else {
-        options.method = 'put';
-        const swiftReq = http.request(options, resPut => {
-          res.set(resPut.headers);
-          res.status(resPut.statusCode);
-          resPut.pipe(res);
-          resPut.on('end', () => {
-            res.end();
-          });
-        }).on('error', errPut => {
-          res.status(500).send(errPut);
-        });
-        req.pipe(swiftReq);
-      }
-    }).on('error', errGet => {
-      res.status(500).send(errGet);
-    }).end();
+  require('./swift')(app);
 
-  });
-
-  app.use(['/proxy-swift/'], (req, res, next) => {
-    let service = 'swift';
-    let endpoint = req.session.endpoint;
-    let region = req.session.user.regionId;
-    if (!endpoint[service]) {
-      res.status(503).json({
-        status: 503,
-        message: service + req.i18n.__('api.swift.unavailable')
-      });
-    }
-    const swiftHost = endpoint[service][region];
-    const hostnameAndPort = swiftHost.split('://')[1].split('/')[0];
-    const urlPrefix = swiftHost.split('://')[1].slice(hostnameAndPort.length);
-    const headers = _.omit(req.headers, ['cookie']);
-    headers['X-Auth-Token'] = req.session.user.token;
-    const url = urlPrefix + '/' + req.path.split('/').slice(1).join('/') + getQueryString(req.query);
-    const options = {
-      hostname: hostnameAndPort.split(':')[0],
-      port: hostnameAndPort.split(':')[1],
-      path: url,
-      method: req.method,
-      headers: headers
-    };
-    const swiftReq = http.request(options, (response) => {
-      res.set(response.headers);
-      res.status(response.statusCode);
-      response.pipe(res);
-      response.on('end', () => {
-        res.end();
-      });
-    });
-    req.pipe(swiftReq);
-    swiftReq.on('error', (e) => {
-      res.status(500).send(e);
-    });
-  });
   app.use(['/proxy-glance/'], (req, res, next) => {
     let service = req.originalUrl.split('/')[1].slice(6);
     let endpoint = req.session.endpoint;
