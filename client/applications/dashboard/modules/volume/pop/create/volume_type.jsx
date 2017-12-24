@@ -23,6 +23,8 @@ class VolumeType extends React.Component {
   onAction(field, state) {
     this.setState({
       value: state.value
+    }, () => {
+      this.props.onAction(field, this.state);
     });
   }
 

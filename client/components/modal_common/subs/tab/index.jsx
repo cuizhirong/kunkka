@@ -27,6 +27,8 @@ class Tab extends React.Component {
   onChange(value) {
     this.setState({
       value: value
+    }, () => {
+      this.props.onAction(this.props.field, this.state);
     });
   }
 
