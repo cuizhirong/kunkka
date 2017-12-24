@@ -1,0 +1,49 @@
+{
+  "breadcrumb": [{
+    "name": "容器",
+    "key": "all_bucket",
+    "type": "all"
+  }],
+  "btns": [{
+    "value": ["create_bucket"],
+    "key": "crt_bucket",
+    "type": "create",
+    "icon": "create",
+    "disabled": true
+  }, {
+    "value": ["delete"],
+    "key": "delete_bucket",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh",
+    "disabled": true
+  }],
+  "search": {
+    "column": {
+      "name": true
+    }
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "name",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["count"],
+      "dataIndex": "count",
+      "key": "count"
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "resource_size"
+    }],
+    "data": []
+  }
+}

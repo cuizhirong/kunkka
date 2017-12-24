@@ -1,0 +1,72 @@
+{
+  "btns": [{
+    "value": ["upload"],
+    "key": "upload",
+    "type": "create",
+    "icon": "upload",
+    "disabled": false
+  }, {
+    "value": ["create_folder"],
+    "key": "crt_folder",
+    "type": "create",
+    "icon": "create",
+    "disabled": false
+  }, {
+    "value": ["more"],
+    "key": "more",
+    "iconClass": "more",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["download"],
+          "key": "download",
+          "disabled": true
+        }, {
+          "title": ["edit"],
+          "key": "edit",
+          "disabled": true
+        }, {
+          "title": ["attribute"],
+          "key": "attribute",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete_folder",
+          "danger": true,
+          "disabled": true
+        }]
+      }]
+    }
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "name",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "resource_size"
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["update_time"],
+      "dataIndex": "update_time",
+      "key": "update_time"
+    },  {
+      "title": ["operation"],
+      "dataIndex": "operation",
+      "key": "operation"
+    }],
+    "data": []
+  }
+}
