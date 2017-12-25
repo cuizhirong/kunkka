@@ -46,6 +46,10 @@ module.exports = (app) => {
 
   //check exist before create an object.
   app.put('/proxy-swift/:container/*', (req, res, next) => {
+    if (req.query.replace) {
+      return next();
+    }
+
     const swiftHost = req.swiftHost;
     const headers = _.omit(req.headers, ['cookie']);
     headers['X-Auth-Token'] = req.session.user.token;
