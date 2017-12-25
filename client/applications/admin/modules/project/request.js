@@ -368,6 +368,13 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
+  getInstanceUsage: function(projectId) {
+    return fetch.get({
+      url: '/proxy/nova/v2.1/os-simple-tenant-usage/' + projectId
+    }).then((res) => {
+      return res.tenant_usage;
+    });
+  },
   linkProject: (projectId) => {
     return RSVP.all([fetch.get({
       url: '/proxy/keystone/v3/roles?name=rating'

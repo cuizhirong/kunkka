@@ -88,6 +88,9 @@
         "name": ["user-group"],
         "key": "user-grp"
       }, {
+        "name": ["instance_list"],
+        "key": "instance-list"
+      }, {
         "name": ["quota"],
         "key": "quota"
       }]

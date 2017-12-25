@@ -17,6 +17,7 @@
     "infinity": "Infinity",
     "input_placeholder_id": "Please Enter User ID",
     "input_placeholder_name": "Please Enter User Name",
+    "instance_list": "Instance List",
     "keypair": "Keypair",
     "listener": "Listener",
     "loadbalancer": "Loadbalancer",
@@ -34,6 +35,7 @@
     "sata": "SATA ",
     "ssd": "SSD ",
     "total_quota": "Total Quota",
+    "time_since_created": "Time Since Created",
     "unit_gb": "(GB)",
     "user_already_exist": "This user already exist",
     "user_group_already_exist": "This user group already exist",
@@ -41,9 +43,10 @@
     "user_id_not_exist": "The ID you entered is not exist",
     "user_is_not_in_domain": "User is not in the domain",
     "user_name_not_exist": "The name you entered is not exist",
-    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type",
     "user_grp_name": "User Group Name",
-    "user_grp_id": "User Group ID"
+    "user_grp_id": "User Group ID",
+    "vcpus": "VCPUs",
+    "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type"
   },
   "zh-CN": {
     "add": "添加",
@@ -63,6 +66,7 @@
     "infinity": "无限",
     "input_placeholder_id": "请输入用户ID",
     "input_placeholder_name": "请输入用户名",
+    "instance_list": "云主机列表",
     "keypair": "密钥",
     "listener": "监听器",
     "loadbalancer": "负载均衡",
@@ -80,6 +84,7 @@
     "sata": "容量型",
     "ssd": "性能型",
     "total_quota": "配额总量",
+    "time_since_created": "创建至今的时间",
     "unit_gb": "(GB)",
     "user_already_exist": "该用户已经存在",
     "user_group_already_exist": "该用户组已经存在",
@@ -87,8 +92,9 @@
     "user_id_not_exist": "你输入的ID不存在",
     "user_is_not_in_domain": "用户不在域中",
     "user_name_not_exist": "你输入的用户名不存在",
-    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和",
     "user_grp_name": "用户组名称",
-    "user_grp_id": "用户组ID"
+    "user_grp_id": "用户组ID",
+    "vcpus": "VCPU 数量",
+    "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和"
   }
 }
