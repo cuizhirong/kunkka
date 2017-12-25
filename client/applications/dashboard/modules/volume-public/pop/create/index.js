@@ -167,7 +167,7 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
-      let volType = refs.type.state.value;
+      let volType = refs.type.refs.volume_type ? refs.type.refs.volume_type.state.value : refs.type.state.data;
 
       switch (field) {
         case 'capacity_size': {
@@ -220,7 +220,7 @@ function pop(obj, parent, callback) {
             isError = cap.max < cap.min || cap.max <= 0;
           }
 
-          refs.type.state.data && refs.capacity_size.setState({
+          volType && refs.capacity_size.setState({
             min: min || 1,
             max: max,
             value: min,
