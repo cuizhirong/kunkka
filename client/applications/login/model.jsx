@@ -163,9 +163,8 @@ class Model extends React.Component {
             HALO.settings.enable_login_captcha || typeof HALO.settings.enable_login_captcha === 'undefined' ? <div className="code-wrapper">
               <input type="text" ref="code" name="code" className={state.captchaEmptyError ? 'error' : ''} placeholder={__.code_placeholder} />
               <div className="img-wrapper">
-                <img ref="captcha" src="/api/captcha" />
+                <img ref="captcha" onClick={this.onClick.bind(this)} title={__.changeCode} src="/api/captcha" />
               </div>
-              <a onClick={this.onClick.bind(this)} >{__.changeCode}</a>
             </div> : null
           }
           <div className="tip-wrapper">
