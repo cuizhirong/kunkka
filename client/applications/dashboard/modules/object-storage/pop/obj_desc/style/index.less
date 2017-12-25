@@ -1,0 +1,42 @@
+@import "../../../style/index.less";
+@icon-close-color: #bbbfc5;
+@icon-close-hover-color: #626f7e;
+.object-storage-description {
+  .modal-hd {
+    position: relative;
+    padding-left: 48px;
+    height: 46px;
+    background-color: #ecf0f2;
+    h6 {
+      display: inline-block;
+      height: 46px;
+      line-height: 46px;
+      font-size: 18px;
+      font-weight: 400;
+    }
+    .icon-close {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      color: @icon-close-color;
+      cursor: pointer;
+      float: right;
+      margin-right: 30px;
+      margin-top: 18px;
+      &:before {
+        font-size: 14px;
+      }
+      &:hover {
+        color: @icon-close-hover-color
+      }
+    }
+  }
+  .modal-bd {
+    padding: 20px 36px;
+    p {
+      span {
+        padding-left: 20px;
+      }
+    }
+  }
+}

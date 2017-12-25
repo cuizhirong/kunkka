@@ -70,5 +70,13 @@ module.exports = {
         tab.name = this.getLangValue(lang, tab.name);
       });
     }
+
+    if (config.btn) {
+      config.btn.forEach((b) => {
+        if (b.value) {
+          b.value = this.getLangValue(lang, b.value);
+        }
+      });
+    }
   }
 };

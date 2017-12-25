@@ -1,0 +1,14 @@
+{
+	"title": ["create_folder"],
+	"fields": [{
+		"type": "input",
+		"field": "name",
+		"tip_info": "tip_folder_name",
+		"requried": true
+	}],
+	"btn": {
+		"value": "create",
+		"type": "create",
+		"disabled": true
+	}
+}

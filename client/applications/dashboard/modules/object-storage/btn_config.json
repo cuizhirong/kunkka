@@ -1,0 +1,58 @@
+{
+  "btns": [{
+    "value": ["download"],
+    "key": "download",
+    "iconClass": "download",
+    "dropdown": {
+      "items": [{
+        "items": [{
+          "title": ["edit"],
+          "key": "edit",
+          "disabled": true
+        }, {
+          "title": ["attribute"],
+          "key": "attribute",
+          "disabled": true
+        }, {
+          "title": ["delete"],
+          "key": "delete_folder",
+          "danger": true,
+          "disabled": true
+        }]
+      }]
+    }
+  }],
+  "btn":[{
+      "value": ["delete"],
+      "key": "delete_folder",
+      "iconClass": "delete"
+    }],
+  "table": {
+    "checkbox": true,
+    "dataKey": "name",
+    "loading": true,
+    "column": [{
+      "title": ["name"],
+      "dataIndex": "name",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["size"],
+      "dataIndex": "size",
+      "key": "resource_size"
+    }, {
+      "title": ["type"],
+      "dataIndex": "type",
+      "key": "type"
+    }, {
+      "title": ["update_time"],
+      "dataIndex": "update_time",
+      "key": "update_time"
+    },  {
+      "title": ["operation"],
+      "dataIndex": "operation",
+      "key": "operation"
+    }],
+    "data": []
+  }
+}

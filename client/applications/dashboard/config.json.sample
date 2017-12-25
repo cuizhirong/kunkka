@@ -33,7 +33,8 @@
     "items": [
       "volume-private",
       "volume-public",
-      "snapshot"
+      "snapshot",
+      "object-storage"
     ]
   }, {
     "title": "monitor",
