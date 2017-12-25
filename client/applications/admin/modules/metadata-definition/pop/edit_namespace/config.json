@@ -1,0 +1,16 @@
+{
+  "title": ["edit", "namespace"],
+  "fields": [{
+    "type": "checkbox",
+    "label": "public",
+    "field": "public"
+  }, {
+    "type": "checkbox",
+    "label": "protected",
+    "field": "protected"
+  }],
+  "btn": {
+    "value": "confirm",
+    "type": "create"
+  }
+}
