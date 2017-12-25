@@ -43,6 +43,7 @@
       "domain",
       "project",
       "user",
+      "service-user"
       "user-group",
       "role"
     ]
@@ -89,6 +90,9 @@
   }, {
     "key": "qos-spec",
     "link": "volume"
+  }, {
+    "key": "service-user"
+    "link": "user"
   }, {
     "key": "compute-services",
     "link": "system-information"
