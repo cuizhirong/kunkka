@@ -26,7 +26,9 @@ class Model extends React.Component {
     moment.locale(HALO.configs.lang);
 
     this.state = {
-      config: config
+      config: config,
+      metadataCatalog: {},
+      hasLoadedCatalog: false
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
@@ -55,6 +57,15 @@ class Model extends React.Component {
       this.loadingTable();
       this.getList();
     }
+  }
+
+  getMetadataCatalog() {
+    request.getMetadata().then((res) => {
+      this.setState({
+        metadataCatalog: res,
+        hasLoadedCatalog: true
+      });
+    });
   }
 
   getImageLabel(item) {
@@ -124,6 +135,7 @@ class Model extends React.Component {
         let pathList = router.getPathList();
         router.replaceState('/admin/' + pathList.slice(1).join('/'), null, null, true);
       });
+      this.getMetadataCatalog();
     }).catch((res) => {
       table.data = [];
       table.pagination = null;
@@ -142,6 +154,7 @@ class Model extends React.Component {
       table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
+      this.getMetadataCatalog();
     }).catch((res) => {
       table.data = [];
       table.pagination = null;
@@ -161,6 +174,7 @@ class Model extends React.Component {
 
       this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
+      this.getMetadataCatalog();
     }).catch((res) => {
       table.data = [];
       table.pagination = null;
@@ -335,6 +349,7 @@ class Model extends React.Component {
           table.data = res.list;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
+          this.getMetadataCatalog();
         }).catch((res) => {
           table.data = [];
           table.pagination = null;
@@ -350,9 +365,11 @@ class Model extends React.Component {
   onClickBtnList(key, refs, data) {
     let {rows} = data;
     let that = this;
+    const currPjtId = HALO.user.projectId;
     switch(key) {
       case 'create':
-        image({type: 'public'}, null, (res) => {
+        image({type: 'public',
+        metadataCatalog: that.state.metadataCatalog}, null, (res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true
@@ -360,7 +377,7 @@ class Model extends React.Component {
         });
         break;
       case 'edit_image':
-        image({item: rows[0], type: 'public'}, null, (res) => {
+        image({item: rows[0], type: 'public', metadataCatalog: that.state.metadataCatalog, pId: currPjtId}, null, (res) => {
           this.refresh({
             refreshList: true,
             refreshDetail: true
@@ -421,6 +438,7 @@ class Model extends React.Component {
           table.data = res.list;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
+          this.getMetadataCatalog();
         });
       } else {
         let r = {};
@@ -445,12 +463,16 @@ class Model extends React.Component {
 
   btnListRender(rows, btns) {
     let sole = rows.length === 1 ? rows[0] : null;
+    let hasLoadedCatalog = this.state.hasLoadedCatalog;
 
     for(let key in btns) {
       switch (key) {
+        case 'create':
+          btns[key].disabled = !hasLoadedCatalog;
+          break;
         case 'edit_name':
         case 'edit_image':
-          btns[key].disabled = sole ? false : true;
+          btns[key].disabled = sole ? false : true || !hasLoadedCatalog;
           break;
         case 'export_csv':
           btns[key].disabled = false;

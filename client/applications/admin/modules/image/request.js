@@ -142,5 +142,29 @@ module.exports = {
       url: '/proxy/glance/v2/tasks',
       data: data
     });
+  },
+  getMetadata: function() {
+    let namespaces;
+
+    return fetch.get({
+      url: '/proxy/glance/v2/metadefs/namespaces?resource_types=OS::Glance::Image'
+    }).then((res) => {
+      namespaces = res.namespaces.sort((a, b) => {
+        return a.display_name.localeCompare(b.display_name);
+      });
+      const detailRequests = [];
+      namespaces.forEach((namespace) => {
+        detailRequests.push(fetch.get({
+          url: '/proxy/glance/v2/metadefs/namespaces/' + namespace.namespace + '?resource_type=OS::Glance::Image'
+        }));
+      });
+      return RSVP.all(detailRequests);
+    }).then((details) => {
+      namespaces.forEach((namespace, index) => {
+        namespace.properties = details[index].properties;
+        namespace.objects = details[index].objects;
+      });
+      return namespaces;
+    });
   }
 };

@@ -1,31 +1,47 @@
 const React = require('react');
-const {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
+const {Modal, Button, Tab, Tip} = require('client/uskin/index');
 const __ = require('locale/client/admin.lang.json');
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 const ImageInfo = require('./image_info');
+const Metadata = require('../../../../components/metadata/index');
 
 class ImageBase extends React.Component {
 
   constructor(props) {
     super(props);
+
+    let nonMetaProps = [
+      'architecture', 'container_format', 'disk_format', 'created_at',
+      'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
+      'visibility', 'name', 'is_public', 'protected', 'min_disk',
+      'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
+      'kernel_id', 'ramdisk_id', 'direct_url', 'self', 'description'
+    ];
+
+    let originalKeys;
+
+    if (props.obj.item !== undefined) {
+      originalKeys = this.getOriginalKeys(props.obj.item, nonMetaProps);
+    } else {
+      originalKeys = [];
+    }
+
     this.state = {
       displayKey: '0',
       checked: props.obj.item ? true : false,
-      metaData: [],
-      addMetaData: [],
+      metadata: {},
       btnEnable: true,
       item: props.obj.item,
       errorMessage: '',
-      removeMetaData: []
+      originalKeys: originalKeys,
+      nonMetaProps: nonMetaProps,
+      showMetaTab: this.showMetaTab()
     };
-
-    this.id = 0;
 
     this.mask = document.querySelector('.modal-mask');
 
-    ['onCancel', 'onCreateImage', 'onSwitchTab', 'renderMetaData',
-    'onChangeName', 'onAddUserToTable'].forEach((func) => {
+    ['onCancel', 'onCreateImage', 'onSwitchTab', 'onChangeName'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
@@ -36,6 +52,61 @@ class ImageBase extends React.Component {
         disabled: false
       });
     }
+  }
+
+  getOriginalKeys(imageData, nonMetaProps) {
+    const originalKeys = [];
+    for(let i in imageData) {
+      if(nonMetaProps.indexOf(i) === -1) {
+        originalKeys.push(i);
+      }
+    }
+    return originalKeys;
+  }
+
+  getMetadata() {
+    const properties = this.state.metadata;
+    const originalKeys = this.state.originalKeys;
+    const metadata = [];
+
+    originalKeys.forEach((key) => {
+      if(properties[key] === undefined) {
+        metadata.push({
+          op: 'remove',
+          path: '/' + key
+        });
+      }
+    });
+
+    for(let prop in properties) {
+      if(originalKeys.indexOf(prop) !== -1) {
+        metadata.push({
+          op: 'replace',
+          path: '/' + prop,
+          value: properties[prop]
+        });
+      } else {
+        metadata.push({
+          op: 'add',
+          path: '/' + prop,
+          value: properties[prop]
+        });
+      }
+    }
+
+    return metadata;
+  }
+
+  onModifyMetadata(propKey, propValue, isRemoved) {
+    const metadata = this.state.metadata;
+
+    if(!isRemoved) {
+      metadata[propKey] = propValue;
+    } else {
+      delete metadata[propKey];
+    }
+
+    this.setState(metadata);
   }
 
   onCancel() {
@@ -51,6 +122,7 @@ class ImageBase extends React.Component {
     let callback = this.props.callback;
     let refs = this.refs, data = {}, that = this;
     let imageInfo = refs.image_info.refs;
+    // 修改
     if (this.props.obj.item) {
       data = [{
         op: 'replace',
@@ -86,20 +158,12 @@ class ImageBase extends React.Component {
           value: imageInfo.describe.state.value
         });
       }
-      this.state.addMetaData.forEach(addData => {
-        data.push({
-          op: 'add',
-          path: '/' + addData.metaKey,
-          value: addData.metaValue
-        });
-      });
 
-      this.state.removeMetaData.forEach(removeData => {
-        data.push({
-          op: 'remove',
-          path: '/' + removeData
-        });
-      });
+      if(this.state.showMetaTab) {
+        const metadata = this.getMetadata();
+
+        data = data.concat(metadata);
+      }
 
       request.updateImage(this.props.obj.item.id, data).then(_res => {
         this.onCancel();
@@ -138,8 +202,8 @@ class ImageBase extends React.Component {
           imageData.input.image_properties.architecture = imageInfo.architecture.state.value;
         }
 
-        for(let i in this.state.metaData) {
-          imageData.input.image_properties[this.state.metaData[i].key] = this.state.metaData[i].value;
+        for (let i in this.state.metadata) {
+          imageData.input.image_properties[i] = this.state.metadata[i];
         }
 
         request.createTask(imageData).then(_res => {
@@ -154,6 +218,7 @@ class ImageBase extends React.Component {
           });
         });
       } else {
+        // 新建文件类型
         let imageData = {
           name: imageInfo.name.state.value,
           container_format: 'bare',
@@ -172,6 +237,10 @@ class ImageBase extends React.Component {
 
         if (imageInfo.more.state.checked && imageInfo.architecture.state.value !== 'no') {
           imageData.architecture = imageInfo.architecture.state.value;
+        }
+
+        for(let i in this.state.metadata) {
+          imageData[i] = this.state.metadata[i];
         }
 
         let file = refs.image_info.state.fileValue;
@@ -247,37 +316,8 @@ class ImageBase extends React.Component {
   }
 
   onSwitchTab(e, status) {
-    let obj = this.props.obj.item;
-    if (status.key === '1') {
-      let _attrs = [
-        'architecture', 'container_format', 'disk_format', 'created_at',
-        'owner', 'size', 'id', 'status', 'updated_at', 'checksum',
-        'visibility', 'name', 'is_public', 'protected', 'min_disk',
-        'min_ram', 'file', 'locations', 'schema', 'tags', 'virtual_size',
-        'kernel_id', 'ramdisk_id', 'direct_url', 'self', 'description'
-      ];
-
-      let singleData, id;
-      if (this.state.metaData.length === 0 && this.state.removeMetaData.length === 0) {
-        this.state.metaData = [];
-
-        for(let key in obj) {
-          if (_attrs.indexOf(key) === -1) {
-            id = this.id ++;
-            singleData = {
-              key: key,
-              id: id,
-              value: obj[key],
-              op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
-            };
-            this.state.metaData.push(singleData);
-          }
-        }
-      }
-    }
     this.setState({
-      displayKey: status.key,
-      metaData: this.state.metaData
+      displayKey: status.key
     });
   }
 
@@ -311,32 +351,6 @@ class ImageBase extends React.Component {
 
   onChangeProtected() {}
 
-  onAddUserToTable() {
-    let metaData = this.state.metaData;
-    let addMetaData = this.state.addMetaData;
-    let metaKey = this.refs.metaKey.value;
-    let metaValue = this.refs.metaValue.value;
-    let singleData, id;
-    if (metaKey) {
-      id = this.id ++;
-      singleData = {
-        key: metaKey,
-        id: id,
-        value: metaValue,
-        op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
-      };
-      addMetaData.push({metaKey, metaValue});
-      metaData.push(singleData);
-      this.setState({
-        metaData: metaData,
-        addMetaData: addMetaData
-      }, () => {
-        this.refs.metaKey.value = '';
-        this.refs.metaValue.value = '';
-      });
-    }
-  }
-
   changeType(type) {
     switch(type) {
       case 'public':
@@ -348,46 +362,17 @@ class ImageBase extends React.Component {
     }
   }
 
-  removeUserData(id) {
-    let metaData = this.state.metaData,
-      removeMetaData = this.state.removeMetaData;
-    metaData.forEach((data, index) => {
-      if (data.id === id) {
-        removeMetaData.push(data.key);
-        metaData.splice(index, 1);
+  showMetaTab() {
+    const data = this.props.obj;
+    if(data.item === undefined) {
+      return true;
+    } else {
+      if(data.item.owner === data.pId) {
+        return true;
+      } else {
+        return false;
       }
-    });
-    this.setState({
-      metaData: metaData,
-      removeMetaData: removeMetaData
-    });
-  }
-
-  renderMetaData(key) {
-    let state = this.state;
-    let columns = [{
-      title: __.key_value,
-      key: 'key',
-      dataIndex: 'key'
-    }, {
-      title: __.value,
-      key: 'value',
-      dataIndex: 'value'
-    }, {
-      title: __.operation,
-      key: 'op',
-      dataIndex: 'op'
-    }];
-    return <div className={'meta-data' + (key === '1' ? '' : ' hide')}>
-      <div className="meta-header">
-        <input ref="metaKey" className="key-input" placeholder={__.key_value} type="text" />
-        <input ref="metaValue" className="key-input" placeholder={__.value} type="text" />
-        <Button value={__.add_data} type="create" onClick={this.onAddUserToTable} />
-      </div>
-      <div className="meta-content">
-        <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
-      </div>
-    </div>;
+    }
   }
 
   render() {
@@ -397,11 +382,16 @@ class ImageBase extends React.Component {
       name: '* ' + __.image + __.info,
       key: '0',
       default: state.displayKey === '0'
-    }, {
-      name: __.meta_data,
-      key: '1',
-      default: state.displayKey === '1'
     }];
+
+    if (state.showMetaTab) {
+      items.push({
+        name: __.meta_data,
+        key: '1',
+        default: state.displayKey === '1'
+      });
+    }
+
     return (
       <Modal refs="modal" {...props} title={props.obj.item ? __.edit + __.image : __.create + __.image} visible={state.visible}>
         <div className="modal-bd halo-com-modal-create-image">
@@ -411,7 +401,9 @@ class ImageBase extends React.Component {
             </div>
             <div className="modal-content">
               <ImageInfo ref="image_info" displayKey={state.displayKey} type={props.obj.type} item={state.item} changeType={this.changeType.bind(this)} onChangeName={this.onChangeName}/>
-              {this.renderMetaData(state.displayKey)}
+
+              {state.showMetaTab ? <Metadata ref="metadata" obj={this.props.obj} displayKey={state.displayKey} __={__} nonMetaProps={this.state.nonMetaProps}
+              onModifyMetadata={this.onModifyMetadata.bind(this)} /> : null}
             </div>
             <div className={'error-wrapper' + (state.errorMessage ? '' : ' hide')}>
               <Tip content={state.errorMessage} showIcon={true} type={'danger'} />
