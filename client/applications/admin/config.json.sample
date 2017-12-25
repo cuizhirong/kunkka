@@ -91,7 +91,7 @@
     "key": "qos-spec",
     "link": "volume"
   }, {
-    "key": "service-user"
+    "key": "service-user",
     "link": "user"
   }, {
     "key": "compute-services",
