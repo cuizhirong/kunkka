@@ -84,10 +84,14 @@ function pop(router, callback) {
       let targetPort = refs.target_ip.state.data.find((port) => port.id === targetIpId);
 
       let data = {
-        protocol: refs.protocol.state.value,
-        outside_port: refs.source_port.state.value,
-        inside_addr: targetPort.fixed_ips[0].ip_address,
-        inside_port: refs.target_port.state.value
+        portforwarding: {
+          router_id: router.id,
+          outside_port: refs.source_port.state.value,
+          outside_addr: router.gateway_info[0],
+          inside_port: refs.target_port.state.value,
+          inside_addr: targetPort.fixed_ips[0].ip_address,
+          protocol: refs.protocol.state.value
+        }
       };
 
       request.createPortForwarding(router.id, data).then((res) => {

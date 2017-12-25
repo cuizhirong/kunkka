@@ -232,16 +232,7 @@ class Model extends React.Component {
           tip: hasSubnet ? __.tip_router_has_subnet : null,
           onDelete: function(_data, cb) {
             request.deleteRouters(rows).then((res) => {
-              let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
-              if (enableBandwidth && rows[0].external_gateway_info) {
-                request.deleteLimit(rows[0].id).then(() => {
-                  cb(true);
-                }).catch((error) => {
-                  cb(false, getErrorMessage(error));
-                });
-              } else {
-                cb(true);
-              }
+              cb(true);
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
@@ -731,11 +722,7 @@ class Model extends React.Component {
         });
         break;
       case 'delete':
-        let routerId = data.router.id;
-        let portData = {
-          id: data.portFrwd.id
-        };
-        request.deletePortForwarding(routerId, portData).then((res) => {
+        request.deletePortForwarding(data.portFrwd.id).then((res) => {
           this.refresh({
             detailRefresh: true
           }, true);

@@ -236,7 +236,6 @@ class Model extends React.Component {
     switch (key) {
       case 'delete':
         let hasSource = rows.some((ele) => ele.association.type === 'server');
-        let enableBandwidth = HALO.settings.enable_floatingip_bandwidth;
         deleteModal({
           __: __,
           action: 'release',
@@ -246,17 +245,8 @@ class Model extends React.Component {
           tip: hasSource ? __.tip_fip_has_source : null,
           onDelete: function(_data, cb) {
             request.deleteFloatingIps(rows).then((res) => {
-              if (enableBandwidth && rows[0].rate_limit) {
-                request.deleteLimit(rows[0].id).then((limit) => {
-                  cb(true);
-                  that.refresh({}, true);
-                }).catch((error) => {
-                  cb(false, getErrorMessage(error));
-                });
-              } else {
-                cb(true);
-                that.refresh({}, true);
-              }
+              cb(true);
+              that.refresh({}, true);
             }).catch((error) => {
               cb(false, getErrorMessage(error));
             });
