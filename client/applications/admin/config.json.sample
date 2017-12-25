@@ -43,7 +43,7 @@
       "domain",
       "project",
       "user",
-      "service-user"
+      "service-user",
       "user-group",
       "role"
     ]
