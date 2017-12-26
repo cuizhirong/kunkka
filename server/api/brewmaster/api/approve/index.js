@@ -153,6 +153,8 @@ Approve.prototype = {
           <p>邮箱：${user.email}</p>
           <p>公司：${user.company}</p>
           <p>${req.i18n.__('api.register.' + (status === 'pass' ? 'regPassed' : 'regRefused'))}</p>
+
+          <p>${req.body.message ? '理由：' + req.body.message : ''}</p>
           `
         }
       );
@@ -192,7 +194,7 @@ Approve.prototype = {
             <p>邮箱：${userDB.email}</p>
             <p>公司：${userDB.company}</p>
 
-            <p><a href="http://localhost:5678/admin/quota-approval/${quotaDetail.id}">查看详情</a></p>
+            <p><a href="${req.protocol}://${req.hostname}/admin/quota-approval/${quotaDetail.id}">查看详情</a></p>
             `
           }
         );
@@ -220,11 +222,15 @@ Approve.prototype = {
       } else {
         res.send({message: req.i18n.__('api.register.success')});
       }
-      sendEmailByTemplateAsync(
-        quota.user.email,
-        req.i18n.__('api.register.' + (status === 'pass' ? 'quotaPassed' : 'quotaRefused')),
-        {content: req.i18n.__('api.register.' + (status === 'pass' ? 'quotaPassed' : 'quotaRefused'))}
-      );
+
+      if (quota.user.email) {
+        let content = req.i18n.__('api.register.' + (status === 'pass' ? 'quotaPassed' : 'quotaRefused'));
+        let subject = content;
+        if (status !== 'pass' && req.body.message) {
+          content += `<p>理由：${req.body.message}</p>`;
+        }
+        sendEmailByTemplateAsync(quota.user.email, subject, {content: content});
+      }
     }).catch(next);
   },
   listApproveQuota: (req, res, next) => {
