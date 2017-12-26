@@ -4,36 +4,53 @@
 @bg_color: @color_info_200;
 @color_font: @color_font_700;
 @chart_bg_color: @color_info_100;
+@chart_border_color: #F6F6F6;
 @color_port_name: @color_warning;
 .halo-com-line-chart {
+  padding: 0 20px;
+  background-color: #FCFCFC;
   .tabs_sm {
-    margin-top: 20px;
-    height: 24px;
+    margin: 16px auto;
     .btn {
-      margin-left: 3%;
+      float: right;
+      background-color: #01AFC9;
     }
     .tabs-mini {
-      background-color: #fff;
-      float: right;
+      background-color: #FCFCFC;
       margin: -4px 3% 0 0;
+      padding-left: 0;
       .tab {
-        background-color: @tab_color;
+        background-color: #fff;
         margin-right: 1px;
+        a {
+          color: #616F7E;
+        }
         &:hover {
-          background-color: @bg_color;
+          background-color: #B9F1F9;
         }
       }
       .selected  {
-        background-color: @bg_color;
+        background-color: #B9F1F9;
       }
     }
   }
   .chart {
     position: relative;
-    width: 95%;
-    height: 300px;
-    margin: 20px auto;
-    background-color: @chart_bg_color;
+    float: left;
+    width: 32.6%;
+    padding: 10px;
+    height: 200px;
+    margin-bottom: 8px;
+    margin-right: 1%;
+    border: 1px solid @chart_border_color;
+    border-radius: 2px;
+    box-sizing: border-box;
+    cursor: pointer;
+    div {
+      canvas {
+        cursor: pointer;
+      }
+    }
     .legendWp {
       position: absolute;
       width: 40%;
@@ -46,6 +63,12 @@
       vertical-align: middle;
       text-align: center;
       line-height: 300px;
+    }
+    &:nth-of-type(3n) {
+      margin-right: 0;
+    }
+    &:hover {
+      box-shadow: 0 0 8px 2px #EAEAEA;
     }
   }
   .detail-loading {

@@ -14,7 +14,6 @@ let helper = {
   getMetricUnit: function(resourceType, metricType) {
     switch (metricType) {
       case 'cpu_util':
-      case 'cpu.util':
         return '%';
       case 'disk.device.read.bytes.rate':
       case 'disk.device.write.bytes.rate':
@@ -34,13 +33,23 @@ let helper = {
   },
 
   getGranularity: function(granularity) {
+    let telemerty = HALO.configs.telemerty,
+      hour = telemerty.hour,
+      day = telemerty.day,
+      week = telemerty.week,
+      month = telemerty.month,
+      year = telemerty.year;
     switch(granularity.toString()) {
       case '300':
+        return hour;
       case '900':
+        return day;
       case '3600':
-        return '60';
+        return week;
       case '21600':
-        return '3600';
+        return month;
+      case '86400':
+        return year;
       default:
         return '60';
     }

@@ -1,0 +1,56 @@
+@import "../../../../../style/theme.less";
+
+.modal-bd.halo-com-modal-alarm-detail{
+  padding: 0 !important;
+  height: 464px;
+  width: 7300px;
+  overflow: hidden;
+  line-height: 18px;
+  .modal-content {
+    .detail-content {
+      background-color: #fff;
+      position: absolute;
+      .halo-com-line-chart {
+        background-color: #fff;
+        .tabs_sm {
+          .tabs-mini {
+            background-color: #fff;
+          }
+          .btn {
+            min-width: auto;
+          }
+        }
+
+        .chart {
+          width: 700px;
+          height: 374px;
+          margin: 0 20px;
+          float: left;
+          position: relative;
+        }
+      }
+    }
+  }
+  .left, .right {
+    width: 34px;
+    height: 82px;
+    background: #EBEFF1;
+    border-radius: 2px;
+    cursor: pointer;
+    line-height: 82px;
+    text-align: center;
+    position: relative;
+    top: 150px;
+    z-index: 999;
+    &.hidden {
+      visibility: hidden;
+    }
+  }
+  .left {
+    float: left;
+  }
+  .right {
+    float: right;
+  }
+}
+

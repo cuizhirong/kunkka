@@ -244,6 +244,14 @@ class Modal extends React.Component {
     let recentDay = __.recent_day.replace('{0}', constant.RECENT_DAY);
     let recentWeek = __.recent_week.replace('{0}', constant.RECENT_WEEK);
     let recentMonth = __.recent_month.replace('{0}', constant.RECENT_MONTH);
+    let recentYear = __.recent_year.replace('{0}', constant.RECENT_YEAR);
+
+    let telemerty = HALO.configs.telemerty,
+      hour = telemerty.hour,
+      day = telemerty.day,
+      week = telemerty.week,
+      month = telemerty.month,
+      year = telemerty.year;
 
     return (
       <div className="page select-metric">
@@ -253,10 +261,11 @@ class Modal extends React.Component {
         <div className="chart-box">
           <div className="granularity-box">
             <ButtonGroup>
-              <Button btnKey={'60,300'} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
-              <Button btnKey={'60,900'} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
-              <Button btnKey={'60,3600'} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
-              <Button btnKey={'3600,21600'} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
+              <Button btnKey={hour + ',300'} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
+              <Button btnKey={day + ',900'} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
+              <Button btnKey={week + ',3600'} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
+              <Button btnKey={month + ',21600'} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
+              <Button btnKey={year + ',86400'} value={recentYear} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_YEAR} />
             </ButtonGroup>
           </div>
           <div className="chart-content">

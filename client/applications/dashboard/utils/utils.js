@@ -29,6 +29,9 @@ module.exports = {
       case 'month':
         date = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
         break;
+      case 'year':
+        date = new Date(now.getTime() - 365 * 24 * 3600 * 1000);
+        break;
       default:
         date = new Date(now.getTime() - 3 * 3600 * 1000 - 20 * 60 * 1000);
         break;

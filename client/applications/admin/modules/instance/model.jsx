@@ -9,6 +9,7 @@ const DetailMinitable = require('client/components/detail_minitable/index');
 const deleteModal = require('client/components/modal_delete/index');
 const dissociateFIP = require('./pop/dissociate_fip/index');
 const migratePop = require('./pop/migrate/index');
+const alarmDetail = require('./pop/alarm_detail/index');
 
 const request = require('./request');
 const config = require('./config.json');
@@ -780,38 +781,63 @@ class Model extends React.Component {
           let time = data.time;
 
           let resourceId = rows[0].id,
+            telemerty = HALO.configs.telemerty,
             instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
+            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'],
+            hour = telemerty.hour,
+            day = telemerty.day,
+            week = telemerty.week,
+            month = telemerty.month,
+            year = telemerty.year;
+
           let tabItems = [{
             name: __.three_hours,
             key: '300',
+            value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
+            value: day,
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
+            value: week,
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
+            value: month,
             time: 'month'
+          }, {
+            name: __.one_year,
+            key: '22600',
+            value: year,
+            time: 'year'
           }];
 
-          let granularity = '';
+          let granularity = '', key = '';
           if (data.granularity) {
             granularity = data.granularity;
+            key = data.key;
           } else {
-            granularity = '300';
+            granularity = hour;
+            key = '300';
             contents[tabKey] = (<div/>);
             updateDetailMonitor(contents, true);
           }
 
-          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+          tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
           let updateContents = (arr) => {
+            let chartDetail = {
+              key: key,
+              item: rows[0],
+              data: arr,
+              granularity: granularity,
+              time: time
+            };
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -823,8 +849,15 @@ class Model extends React.Component {
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
                     rows: rows,
-                    granularity: tab.key,
+                    granularity: tab.value,
+                    key: tab.key,
                     time: tab.time
+                  });
+                }}
+                clickParent={(page) => {
+                  that.onDetailAction('description', 'chart_zoom', {
+                    chartDetail: chartDetail,
+                    page: page
                   });
                 }} />
             );
@@ -837,26 +870,24 @@ class Model extends React.Component {
           request.getResourceMeasures(resourceId, instanceMetricType, granularity, utils.getTime(time)).then((res) => {
             let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
-              unit: utils.getUnit('instance', instanceMetricType[index]),
-              xAxis: utils.getChartData(r, granularity, utils.getTime(time)),
-              yAxisData: utils.getChartData(r, granularity, utils.getTime(time), 'instance')
+              unit: utils.getUnit('instance', instanceMetricType[index], r),
+              color: utils.getColor(instanceMetricType[index]),
+              xAxis: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index]),
+              yAxisData: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index], 'instance')
             }));
             request.getNetworkResourceId(resourceId).then(_data => {
               request.getPort(_data).then(datas => {
                 request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
                   let portData = resourceData.map((_rd, index) => ({
                     title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
-                    unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
-                    yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), 'instance'),
-                    xAxis: utils.getChartData(_rd, granularity, utils.getTime(time))
+                    unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                    color: utils.getColor(portMetricType[index % 2]),
+                    yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
+                    xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
                   }));
                   updateContents(arr.concat(portData));
-                }).catch(error => {
-                  updateContents([{}]);
                 });
               });
-            }).catch(error => {
-              updateContents([{}]);
             });
           }).catch(error => {
             updateContents([{}]);
@@ -1043,7 +1074,14 @@ class Model extends React.Component {
 
   onDescriptionAction(actionType, data) {
     switch (actionType) {
-      default: break;
+      case 'chart_zoom':
+        alarmDetail({
+          type: 'chart',
+          item: data
+        });
+        break;
+      default:
+        break;
     }
   }
 

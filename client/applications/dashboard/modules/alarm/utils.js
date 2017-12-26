@@ -1,8 +1,20 @@
 const React = require('react');
 const __ = require('locale/client/dashboard.lang.json');
-const constant = require('./pop/create/constant');
+//const constant = require('./pop/create/constant');
+const unitConverter = require('client/utils/unit_converter');
+const UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 module.exports = {
+  max: function(arr) {
+    let max = arr[0];
+    let len = arr.length;
+    for (let i = 1; i < len; i++){
+      if (arr[i] > max) {
+        max = arr[i];
+      }
+    }
+    return max;
+  },
 
   getISOTime: function(number) {
     let date = new Date();
@@ -31,7 +43,6 @@ module.exports = {
     if (metric) {
       switch (metric) {
         case 'cpu_util':
-        case 'cpu.util':
           return __.cpu_utilization;
         case 'disk.device.read.bytes.rate':
           return __.disk_device_read_rate;
@@ -48,11 +59,39 @@ module.exports = {
         case 'memory.usage':
           return __.memory_usage;
         case 'network.incoming.bytes.rate':
-          return __.network_incoming_bytes_rate;
+          return ip ? ip + ' ' + __.network_incoming_bytes_rate : __.network_incoming_bytes_rate;
         case 'network.outgoing.bytes.rate':
-          return __.network_outgoing_bytes_rate;
+          return ip ? ip + ' ' + __.network_outgoing_bytes_rate : __.network_outgoing_bytes_rate;
         default:
           return metric;
+      }
+    }
+    return '';
+  },
+
+  getColor: function(metric) {
+    if(metric) {
+      switch(metric) {
+        case 'cpu.util':
+        case 'disk.device.read.bytes.rate':
+          return '#E0DE5D';
+        case 'disk.read.bytes.rate':
+        case 'disk.device.write.bytes.rate':
+          return '#47C1A6';
+        case 'disk.write.bytes.rate':
+        case 'disk.device.read.requests.rate':
+          return '#0A98E4';
+        case 'memory.usage':
+        case 'disk.device.write.requests.rate':
+          return '#EFB16A';
+        case 'network.incoming.bytes.rate':
+          return '#6390EC';
+        case 'network.outgoing.bytes.rate':
+          return '#8787E5';
+        case 'disk.usage':
+          return '#87CEFA';
+        default:
+          return '#8787E5';
       }
     }
     return '';
@@ -83,37 +122,53 @@ module.exports = {
     }
   },
 
-  getChartData(data, granularity, startTime, resourceType) {
+  getMax(arr) {
+    let arrData = [];
+    arr.forEach(a => {
+      arrData.push(a[2]);
+    });
+
+    return this.max(arrData);
+  },
+
+  getChartData(data, granularity, startTime, metricType, resourceType) {
     let _data = [];
-    if (resourceType /*&& (resourceType === 'instance' || resourceType === 'volume')*/) {
-      data.forEach((d) => {
-        _data.push(d[2].toFixed(2));
-      });
-    } else {
-      data.forEach((d) => {
-        let date = new Date(d[0]);
-        _data.push(this.getDateStr(date));
-      });
-    }
+    if (data.length !== 0) {
+      if (resourceType) {
+        let num = 0;
+        if (metricType === 'disk.write.bytes.rate' || metricType === 'disk.read.bytes.rate'
+          || metricType === 'network.incoming.bytes.rate' || metricType === 'network.outgoing.bytes.rate'
+          || metricType === 'disk.device.read.bytes.rate' || metricType === 'disk.device.write.bytes.rate') {
+          num = UNITS.indexOf(unitConverter(this.getMax(data)).unit);
+        }
+        data.forEach((d) => {
+          _data.push(d[2].toFixed(2) / Math.pow(1024, num));
+        });
+      } else {
+        data.forEach((d) => {
+          let date = new Date(d[0]);
+          _data.push(this.getDateStr(date));
+        });
+      }
 
-    let prev;
-    if (data.length > 0) {
-      prev = new Date(data[0][0]);
-    } else {
-      prev = new Date();
-    }
-    const DOTS_TIME = this.getTime(granularity);
-    const DOTS_NUM = this.getDotsNumber(granularity, prev);
+      let prev;
+      if (data.length > 0) {
+        prev = new Date(data[0][0]);
+      } else {
+        prev = new Date();
+      }
 
-    if (data.length < DOTS_NUM) {
-      let length = DOTS_NUM - data.length;
+      const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
+      if (data.length < DOTS_NUM) {
+        let length = DOTS_NUM - data.length;
 
-      while (length > 0 && DOTS_TIME < prev.getTime()) {
-        prev = this.getNextPeriodDate(prev, granularity);
-        let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
-        _data.unshift(unData);
-        length--;
+        while (length > 0) {
+          prev = this.getNextPeriodDate(prev, granularity);
+          let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
+          _data.unshift(unData);
+          length--;
+        }
       }
     }
 
@@ -136,6 +191,9 @@ module.exports = {
       case 21600:
         date = now.getTime() - 30 * 24 * 3600 * 1000;
         break;
+      case 86400:
+        date = now.getTime() - 365 * 24 * 3600 * 1000;
+        break;
       default:
         date = now.getTime() - 3 * 3600 * 1000;
         break;
@@ -143,25 +201,27 @@ module.exports = {
     return date;
   },
 
-  getUnit: function(resourceType, metricType) {
+  getUnit: function(resourceType, metricType, arr) {
     switch(metricType) {
       case 'cpu_util':
       case 'cpu.util':
+      case 'disk.usage':
         return '%';
       case 'memory.usage':
         return 'MB';
+      case 'disk.write.bytes.rate':
+      case 'disk.read.bytes.rate':
+      case 'network.incoming.bytes.rate':
+      case 'network.outgoing.bytes.rate':
+        return unitConverter(this.getMax(arr)).unit + '/s';
+      case 'disk.device.read.bytes.rate':
+      case 'disk.device.write.bytes.rate':
+        return unitConverter(this.getMax(arr)).unit + '/s';
       case 'disk.device.read.requests.rate':
       case 'disk.device.write.requests.rate':
         return 'Requests/s';
-      case 'disk.device.read.bytes.rate':
-      case 'disk.device.write.bytes.rate':
-      case 'disk.read.bytes.rate':
-      case 'disk.write.bytes.rate':
-      case 'network.incoming.bytes.rate':
-      case 'network.outgoing.bytes.rate':
-        return 'B/s';
       default:
-        return '';
+        return 'B/s';
     }
   },
 
@@ -184,8 +244,9 @@ module.exports = {
     function format(num) {
       return (num < 10 ? '0' : '') + num;
     }
+
     switch(granularity) {
-      case constant.GRANULARITY_HOUR:
+      /*case constant.GRANULARITY_HOUR:
         return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
           ' ' + format(date.getHours()) + ':' + format(date.getMinutes() - 5);
       case constant.GRANULARITY_DAY:
@@ -197,9 +258,10 @@ module.exports = {
       case constant.GRANULARITY_MONTH:
         return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
           ' ' + format(date.getHours() - 6) + ':' + format(date.getMinutes());
+      case 3600:
+        return [format(date.getFullYear()) + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');*/
       default:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
     }
   },
 

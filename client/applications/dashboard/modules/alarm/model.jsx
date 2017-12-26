@@ -14,6 +14,7 @@ const createAlarm = require('./pop/create/index');
 const enableAlarm = require('./pop/enable_alarm/index');
 const deleteModal = require('client/components/modal_delete/index');
 const addNotification = require('./pop/add_notification/index');
+const alarmDetail = require('./pop/alarm_detail/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -269,6 +270,13 @@ class Model extends Main {
           syncUpdate = false;
           let that = this;
 
+          let telemerty = HALO.configs.telemerty,
+            hour = telemerty.hour,
+            day = telemerty.day,
+            week = telemerty.week,
+            month = telemerty.month,
+            year = telemerty.year;
+
           let granularity = '', key = '';
           if (data.granularity) {
             granularity = data.granularity;
@@ -281,37 +289,52 @@ class Model extends Main {
           let time = data.time;
 
           let rule = rows[0].gnocchi_resources_threshold_rule;
+
           let tabItems = [{
             name: __.three_hours,
             key: '300',
-            value: '60',
+            value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
-            value: '60',
+            value: day,
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
-            value: '60',
+            value: week,
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
-            value: '3600',
+            value: month,
             time: 'month'
+          }, {
+            name: __.one_year,
+            key: '22600',
+            value: year,
+            time: 'year'
           }];
+
           tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
-          let updateContents = (graphs) => {
+          let updateContents = (arr) => {
+            let chartDetail = {
+              key: key,
+              item: rows[0],
+              data: arr,
+              granularity: granularity,
+              time: time
+            };
             contents[tabKey] = (
               <LineChart
                 __={__}
                 item={rows[0]}
-                data={graphs}
+                data={arr}
                 granularity={granularity}
                 tabItems={tabItems}
+                className={'alarm'}
                 start={timeUtils.getTime(time)}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('monitor', refs, {
@@ -319,6 +342,12 @@ class Model extends Main {
                     granularity: tab.value,
                     key: tab.key,
                     time: tab.time
+                  });
+                }}
+                clickParent={(page) => {
+                  that.onDetailAction('description', 'chart_zoom', {
+                    chartDetail: chartDetail,
+                    page: page
                   });
                 }} />
             );
@@ -330,14 +359,29 @@ class Model extends Main {
             updateContents([]);
           }
 
+          let graphs;
           request.getResourceMeasures(rule.resource_id, rule.metric, granularity, timeUtils.getTime(time)).then((measures) => {
-            let graphs = [measures].map((arr) => ({
-              title: utils.getMetricName(rule.metric),
-              unit: utils.getUnit(rule.resource_type, rule.metric),
-              yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.resource_type),
-              xAxis: utils.getChartData(arr, key, timeUtils.getTime(time))
-            }));
-            updateContents(graphs);
+            if (rule._port_id && rule._port_exist) {
+              request.getPortById(rule._port_id).then(port => {
+                graphs = [measures].map((arr) => ({
+                  title: utils.getMetricName(rule.metric, port.port.fixed_ips[0].ip_address),
+                  color: utils.getColor(rule.metric),
+                  unit: utils.getUnit(rule.resource_type, rule.metric, arr),
+                  yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric, rule.resource_type),
+                  xAxis: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric)
+                }));
+                updateContents(graphs);
+              });
+            } else {
+              graphs = [measures].map((arr) => ({
+                title: utils.getMetricName(rule.metric),
+                color: utils.getColor(rule.metric),
+                unit: utils.getUnit(rule.resource_type, rule.metric, arr),
+                yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric, rule.resource_type),
+                xAxis: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric)
+              }));
+              updateContents(graphs);
+            }
           }).catch((err) => {
             updateContents([{}]);
           });
@@ -398,6 +442,12 @@ class Model extends Main {
         break;
       case 'add_alarm_notification':
         addNotification(data.rawItem, this.refreshForce);
+        break;
+      case 'chart_zoom':
+        alarmDetail({
+          type: 'chart',
+          item: data
+        });
         break;
       default:
         break;
