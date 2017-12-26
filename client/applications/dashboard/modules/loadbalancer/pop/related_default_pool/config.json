@@ -1,0 +1,23 @@
+{
+  "title": ["related", "default", "resource", "pool"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "listener",
+    "icon_type": "listener"
+  }, {
+    "type": "select",
+    "field": "resource_pool",
+    "empty_text": {
+      "info": "no_matching_pool"
+    },
+    "hide": true
+  }, {
+    "type": "tip",
+    "tip_type": "info",
+    "field": "no_pool_tip"
+  }],
+  "btn": {
+    "value": "related",
+    "disabled": true
+  }
+}

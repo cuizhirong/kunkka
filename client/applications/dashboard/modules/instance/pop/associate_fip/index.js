@@ -118,7 +118,11 @@ function pop(obj, parent, callback) {
             callback && callback(res);
             cb(true);
           }).catch((error) => {
-            cb(false, getErrorMessage(error));
+            if (error.status !== 404) {
+              cb(false, getErrorMessage(error));
+            } else {
+              cb(true);
+            }
           });
         } else {
           callback && callback(res);

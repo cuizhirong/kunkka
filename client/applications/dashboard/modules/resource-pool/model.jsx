@@ -224,7 +224,7 @@ class Model extends React.Component {
           btns[key].disabled = !(rows.length === 1 && rows[0].healthmonitor);
           break;
         case 'delete':
-          btns[key].disabled = rows.length > 0 ? false : true;
+          btns[key].disabled = rows.length > 0 && !(rows.some(row => row.healthmonitor)) ? false : true;
           break;
         default:
           break;
