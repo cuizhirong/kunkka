@@ -180,6 +180,7 @@ Auth.prototype = {
       if (userToDatabase.id) {
         let userDB = yield userModel.findOne({where:{id: userToDatabase.id}});
         if (!userDB) {
+          yield userModel.destroy({where: {name: userToDatabase.name}});
           userModel.create(userToDatabase);
         }
       }
