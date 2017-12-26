@@ -1,5 +1,5 @@
 require('./style/index.less');
-import React from 'react';
+const React = require('react');
 
 class Button extends React.Component {
 

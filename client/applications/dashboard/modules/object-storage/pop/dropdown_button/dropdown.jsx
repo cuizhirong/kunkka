@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 class Dropdown extends React.Component {
 
@@ -49,4 +49,4 @@ Dropdown.defaultProps = {
   items: []
 };
 
-export default Dropdown;
+module.exports = Dropdown;
