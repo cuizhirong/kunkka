@@ -98,7 +98,6 @@
   "default_hide_modules": [
     "ike-policy",
     "ipsec-policy",
-    "instance-public",
     "volume-public"
   ]
 }
