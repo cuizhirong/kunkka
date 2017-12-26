@@ -23,6 +23,10 @@
           "key": "modify",
           "disabled": true
         }, {
+          "title": ["modify", "security_group"],
+          "key": "modify_security",
+          "disabled": true
+        }, {
           "title": ["associate", "floating_ip"],
           "key": "assoc_fip",
           "disabled": true

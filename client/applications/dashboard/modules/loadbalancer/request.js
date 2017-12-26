@@ -42,6 +42,25 @@ module.exports = {
       url: '/proxy/neutron/v2.0/lbaas/loadbalancers/' + item.id
     });
   },
+  getPortList: function() {
+    return storage.getList(['port']).then(function(data) {
+      return data.port;
+    });
+  },
+  getPortListById: function(id) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/ports/' + id
+    });
+  },
+  getSecuritygroupList: function(forced) {
+    return storage.getList(['securitygroup'], forced);
+  },
+  editSecurityGroup: function(data, id) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/ports/' + id,
+      data: data
+    });
+  },
   createListener: function(data) {
     return fetch.post({
       url: '/proxy/neutron/v2.0/lbaas/listeners',

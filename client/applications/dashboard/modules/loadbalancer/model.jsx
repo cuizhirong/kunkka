@@ -17,6 +17,7 @@ const dissocFip = require('./pop/dissoc_fip/index');
 const createListener = require('./pop/create_listener/index');
 const updateListenerState = require('./pop/update_listener_state/index');
 const relatedDefaultPool = require('./pop/related_default_pool/index');
+const modifySecurity = require('./pop/modify_security/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -197,13 +198,15 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     let {rows} = data;
-
     switch(key) {
       case 'create':
         createLb();
         break;
       case 'modify':
         createLb(rows[0]);
+        break;
+      case 'modify_security':
+        modifySecurity(rows[0]);
         break;
       case 'assoc_fip':
         assocFip(rows[0]);
@@ -264,6 +267,7 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'modify':
+        case 'modify_security':
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'delete':
