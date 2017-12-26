@@ -106,7 +106,8 @@ View.prototype = {
         adminProjectId: this.config('admin_projectId'),
         neutron_network_vlanranges: this.config('neutron_network_vlanranges'),
         enable_register: setting.enable_register,
-        enable_register_approve: setting.enable_register_approve
+        enable_register_approve: setting.enable_register_approve,
+        telemerty: this.config('telemetry')
       },
       user: {
         projectId: user.projectId,
