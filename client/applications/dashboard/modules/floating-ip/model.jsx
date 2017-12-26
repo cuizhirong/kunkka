@@ -135,7 +135,7 @@ class Model extends React.Component {
                 <span>
                   <i className="glyphicon icon-lb" />
                   <a data-type="router" href={'/dashboard/loadbalancer/' + item.lbaas.id}>
-                    {item.lbaas.name}
+                    {item.lbaas.name || '(' + item.lbaas.id.substring(0, 8) + ')'}
                   </a>
                 </span>
               );

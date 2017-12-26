@@ -16,6 +16,7 @@ const assocFip = require('./pop/assoc_fip/index');
 const dissocFip = require('./pop/dissoc_fip/index');
 const createListener = require('./pop/create_listener/index');
 const updateListenerState = require('./pop/update_listener_state/index');
+const relatedDefaultPool = require('./pop/related_default_pool/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
@@ -25,6 +26,7 @@ const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');
 const notify = require('client/applications/dashboard/utils/notify');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const unitConverter = require('client/utils/unit_converter');
 
 class Model extends React.Component {
 
@@ -62,7 +64,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', data => {
       if(this.props.style.display !== 'none') {
-        if(data.resource_type === 'loadbalancer' || data.resource_type === 'floatingip' || data.resource_type === 'listener') {
+        if(data.resource_type === 'loadbalancer' || data.resource_type === 'floatingip') {
           this.refresh({
             detailRefresh: true
           }, true);
@@ -70,6 +72,10 @@ class Model extends React.Component {
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
             router.replaceState('/dashboard/loadbalancer');
           }
+        } else if (data.resource_type === 'listener' && data.stage === 'end') {
+          this.refresh({
+            detailRefresh: true
+          }, true);
         }
       }
     });
@@ -258,8 +264,10 @@ class Model extends React.Component {
     for(let key in btns) {
       switch (key) {
         case 'modify':
-        case 'delete':
           btns[key].disabled = rows.length === 1 ? false : true;
+          break;
+        case 'delete':
+          btns[key].disabled = rows.length === 1 && rows[0].listeners.length === 0 ? false : true;
           break;
         case 'assoc_fip':
           btns[key].disabled = hasBoundRouter && !rows[0].floatingip ? false : true;
@@ -279,7 +287,6 @@ class Model extends React.Component {
     let {rows} = data;
     let detail = refs.detail;
     let contents = detail.state.contents;
-    let syncUpdate = true;
 
     let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -304,7 +311,6 @@ class Model extends React.Component {
     switch(tabKey) {
       case 'description':
         if (isAvailableView(rows)) {
-          syncUpdate = false;
           update(contents, true);
           request.getConnections(rows[0].id).then(res => {
             let basicPropsItem = this.getBasicPropsItems(rows[0], res);
@@ -326,7 +332,6 @@ class Model extends React.Component {
         break;
       case 'listener':
         if (isAvailableView(rows)) {
-          syncUpdate = false;
           update(contents, true);
           request.getPools().then(pools => {
             request.getRelatedListeners(rows[0].listeners).then(res => {
@@ -348,12 +353,11 @@ class Model extends React.Component {
         break;
     }
 
-    if (syncUpdate) {
-      update(contents);
-    }
   }
 
   getBasicPropsItems(item, res) {
+    let bytesIn = unitConverter(res.stats.bytes_in),
+      bytesOut = unitConverter(res.stats.bytes_out);
     let items = [{
       title: __.name,
       content: item.name || '(' + item.id.slice(0, 8) + ')',
@@ -394,6 +398,12 @@ class Model extends React.Component {
     }, {
       title: __.total_connections,
       content: res.stats.total_connections
+    }, {
+      title: __.bytes_in,
+      content: bytesIn.num + ' ' + bytesIn.unit
+    }, {
+      title: __.bytes_out,
+      content: bytesOut.num + ' ' + bytesOut.unit
     }, {
       title: __.desc,
       content: item.description
@@ -446,6 +456,10 @@ class Model extends React.Component {
     let getlistenerDropdown = function(item) {
       let dropdown = [{
         items: [{
+          title: __.related + __.default + __.resource + __.pool,
+          key: 'related',
+          disabled: item.default_pool_id
+        }, {
           title: __.enable,
           key: 'enable',
           disabled: item.admin_state_up
@@ -464,6 +478,7 @@ class Model extends React.Component {
     };
 
     let getListenerDetail = function(item) {
+      //console.log(items)
       let itemDetail = [{
         feild: __.protocol,
         value: item.protocol
@@ -475,7 +490,7 @@ class Model extends React.Component {
         value: item.connection_limit === -1 ? __.infinity : item.connection_limit
       }, {
         feild: wordsToLine(['default', 'resource_pool']),
-        value: item.default_pool_id && pools.filter(pool => pool.id === items[0].default_pool_id).length > 0 ? pools.filter(pool => pool.id === items[0].default_pool_id)[0].name : '-'
+        value: item.default_pool_id && pools.filter(pool => pool.id === item.default_pool_id).length > 0 ? pools.filter(pool => pool.id === item.default_pool_id)[0].name || '(' + pools.filter(pool => pool.id === item.default_pool_id)[0].id.substring(0, 8) + ')' : '-'
       }, {
         feild: __.enabled_state,
         value: item.admin_state_up ? __.enabled : __.disabled
@@ -483,6 +498,7 @@ class Model extends React.Component {
 
       return itemDetail;
     };
+
 
     items.map((item, i) => {
       configs.push({listener: item});
@@ -530,6 +546,9 @@ class Model extends React.Component {
             });
           }
         });
+        break;
+      case 'related':
+        relatedDefaultPool(data.childItem);
         break;
       default:
         break;
