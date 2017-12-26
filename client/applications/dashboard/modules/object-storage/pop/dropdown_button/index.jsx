@@ -1,8 +1,8 @@
 require('./style/index.less');
-import React from 'react';
-import DropIcon from './dropIcon.jsx';
-import Dropdown from './dropdown.jsx';
-import Button from './button.jsx';
+const React = require('react');
+const DropIcon = require('./dropicon.jsx');
+const Dropdown = require('./dropdown.jsx');
+const Button = require('./button.jsx');
 
 class DropdownButton extends React.Component {
 

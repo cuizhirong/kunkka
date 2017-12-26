@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+const React = require('react');
 
 class DropIcon extends React.Component {
 
@@ -35,17 +35,8 @@ class DropIcon extends React.Component {
 
 }
 
-DropIcon.propTypes = {
-  onClick: PropTypes.func,
-  value: PropTypes.string,
-  btnKey: PropTypes.string,
-  disabled: PropTypes.bool,
-  dropdown: PropTypes.bool,
-  hide: PropTypes.bool
-};
-
 DropIcon.defaultProps = {
   dropdown: false
 };
 
-export default DropIcon;
+module.exports = DropIcon;

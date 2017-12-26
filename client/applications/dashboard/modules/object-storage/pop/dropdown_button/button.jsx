@@ -1,4 +1,4 @@
-import React from 'react';
+const React = require('react');
 
 class Button extends React.Component {
 
@@ -45,4 +45,4 @@ Button.defaultProps = {
   hide: false
 };
 
-export default Button;
+module.exports = Button;
