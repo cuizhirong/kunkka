@@ -50,16 +50,27 @@ Instance.prototype = {
                 }
               });
             }
-          } else { // floating
-            obj.floatingips.some(function(floatingip) {
-              return e.addr === floatingip.floating_ip_address && (_floatingip = floatingip);
-            });
           }
         }
       });
       ipv6.reverse().forEach(function(i) {
         addresses[el].splice(i, 1);
       });
+    });
+    obj.floatingips.some(fip => {
+      if (fip.port_id) {
+        obj.ports.some(function (p) {
+          if (p.id === fip.port_id) {
+            if (p.device_owner === 'compute:nova' || p.device_owner === 'compute:None') {
+              return server.id === p.device_id && (_floatingip = fip);
+            }
+          } else {
+            return false;
+          }
+        });
+      } else {
+        return false;
+      }
     });
     server.fixed_ips = _fixedIps;
     server.floating_ip = _floatingip;
