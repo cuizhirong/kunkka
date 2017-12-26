@@ -53,6 +53,15 @@ module.exports = function(grunt) {
         src: '**',
         dest: 'client/dist/uskin'
       }
+    },
+
+    jsonlint: {
+      client: {
+        src: ['client/applications/**/*.json'],
+        options: {
+          formatter: 'prose'
+        }
+      }
     }
 
   });
