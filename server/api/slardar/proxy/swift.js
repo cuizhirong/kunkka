@@ -66,7 +66,7 @@ module.exports = (app) => {
         });
       } else {
         options.method = 'put';
-        const swiftReq = request['https:'].request(options, resPut => {
+        const swiftReq = request[options.protocol].request(options, resPut => {
           res.set(resPut.headers);
           res.status(resPut.statusCode);
           resPut.pipe(res);
