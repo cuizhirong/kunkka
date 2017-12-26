@@ -472,7 +472,7 @@ class Model extends React.Component {
           break;
         case 'edit_name':
         case 'edit_image':
-          btns[key].disabled = sole ? false : true || !hasLoadedCatalog;
+          btns[key].disabled = (sole ? false : true) || !hasLoadedCatalog;
           break;
         case 'export_csv':
           btns[key].disabled = false;
