@@ -245,7 +245,7 @@ class Model extends React.Component {
           btns[key].disabled = !hasLoadedCatalog;
           break;
         case 'modify_image':
-          btns[key].disabled = (rows.length === 1 && rows[0].status === 'active') ? false : true || !hasLoadedCatalog;
+          btns[key].disabled = ((rows.length === 1 && rows[0].status === 'active') ? false : true) || !hasLoadedCatalog;
           break;
         case 'delete':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;

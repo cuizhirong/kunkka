@@ -59,7 +59,18 @@ function quotaValidate(quota, __) {
           msgPrefix = __.all_gigabytes;
           break;
         default:
-          msgPrefix = __[item];
+          if(item.indexOf('volumes_') !== -1) {
+            const type = item.slice(8);
+            msgPrefix = (__[type] !== undefined ? __[type] : type) + __.volume;
+          } else if(item.indexOf('gigabytes_') !== -1) {
+            const type = item.slice(10);
+            msgPrefix = (__[type] !== undefined ? __[type] : type) + __.volume + __.gigabyte + __.unit_gb;
+          } else if(item.indexOf('snapshots_') !== -1) {
+            const type = item.slice(10);
+            msgPrefix = (__[type] !== undefined ? __[type] : type) + __.snapshot;
+          } else {
+            msgPrefix = __[item] !== undefined ? __[item] : item;
+          }
       }
 
       result.errorMessage = msgPrefix + __.quota_total_less_than_used;

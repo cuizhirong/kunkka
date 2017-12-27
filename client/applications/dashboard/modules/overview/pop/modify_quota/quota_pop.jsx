@@ -59,7 +59,7 @@ class QuotaPop extends React.Component {
         key: 'listener',
         link: 'listener'
       }, {
-        title: __.pool,
+        title: __.resource_pool,
         key: 'pool',
         link: 'pool'
       }, {
