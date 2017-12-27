@@ -3,8 +3,9 @@ require('./style/index.less');
 const React = require('react');
 const ResourceQuota = require('./quota');
 const modifyQuota = require('./pop/modify_quota/index');
-
+const { Modal } = require('client/uskin/index');
 const request = require('./request');
+const __ = require('locale/client/dashboard.lang.json');
 
 class Model extends React.Component {
 
@@ -48,7 +49,15 @@ class Model extends React.Component {
       types: this.clone(state.types),
       targetQuota: this.clone(state.overview),
       addedQuota: addedQuota
-    }, null, () => {});
+    }, null, () => {
+      setTimeout(function() {
+        Modal.info({
+          title: __.message,
+          content: __.apply_success,
+          okText: __.confirm
+        });
+      }, 200);
+    });
   }
 
   clone(objectToBeCloned) {
