@@ -33,8 +33,8 @@ function pop(obj, parent, callback) {
         cb(false, validateResult.errorMessage);
       } else {
         request.applyQuotas(addedQuota, overview, targetQuota).then((res) => {
-          callback && callback();
           cb(true);
+          callback && callback();
         }).catch(error => {
           cb(false, getErrorMessage(error));
         });
