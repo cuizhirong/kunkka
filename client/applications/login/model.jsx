@@ -18,7 +18,7 @@ class Model extends React.Component {
       domains: (props.HALO.settings.domains.indexOf('Default') > -1 ? 'Default' : props.HALO.settings.domains[0])
     };
 
-    ['onSubmit', 'onChange'].forEach(item => {
+    ['onSubmit', 'onChange', 'onClick'].forEach(item => {
       this[item] = this[item].bind(this);
     });
   }
@@ -104,6 +104,8 @@ class Model extends React.Component {
         notActivate: code === 403 ? true : false,
         isSubmitting: false
       });
+      // 验证码刷新
+      that.refs.captcha.src = '/api/captcha?' + Math.random();
     });
   }
 
@@ -163,7 +165,7 @@ class Model extends React.Component {
             HALO.settings.enable_login_captcha || typeof HALO.settings.enable_login_captcha === 'undefined' ? <div className="code-wrapper">
               <input type="text" ref="code" name="code" className={state.captchaEmptyError ? 'error' : ''} placeholder={__.code_placeholder} />
               <div className="img-wrapper">
-                <img ref="captcha" onClick={this.onClick.bind(this)} title={__.changeCode} src="/api/captcha" />
+                <img ref="captcha" onClick={this.onClick} title={__.changeCode} src="/api/captcha" />
               </div>
             </div> : null
           }
