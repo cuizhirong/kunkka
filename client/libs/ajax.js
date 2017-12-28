@@ -42,7 +42,15 @@ module.exports = (function(m) {
             return;
           }
           if (this.status >= 200 && this.status < 300) {
-            resolve(request.converters(o.dataType, this.response));
+            if(o.needHeader){
+              resolve({
+                body:request.converters(o.dataType, this.response),
+                headers: this.getAllResponseHeaders(),
+                that: this
+              });
+            } else {
+              resolve(request.converters(o.dataType, this.response));
+            }
           } else {
             reject(this);
           }
@@ -60,6 +68,7 @@ module.exports = (function(m) {
         if (o.contentType !== false) {
           xhr.setRequestHeader('Content-Type', o.contentType);
         }
+
         xhr.setRequestHeader('Accept', m.dataTypes[o.dataType] || m.dataTypes._default);
 
         for (let i in o.headers) {

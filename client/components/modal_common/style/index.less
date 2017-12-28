@@ -520,7 +520,6 @@
       .item,
       .item-name,
       .item-status {
-        overflow: hidden;
         white-space: nowrap;
         text-overflow:ellipsis;
         display: inline-block;
@@ -541,10 +540,14 @@
         }
         &.has-status {
           .item-name,
+          .item-number,
           .item-status {
             width: 50%;
             padding: 0 6px 0 1px;
             box-sizing: border-box;
+            strong {
+              color: @color_delete;
+            }
           }
         }
       }

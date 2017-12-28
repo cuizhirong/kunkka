@@ -53,7 +53,7 @@ class ModalBase extends React.Component {
       __ = props.__,
       action = __[props.action],
       type = Array.isArray(props.type) ? props.type.map(t => __[t]).join('') : __[props.type],
-      num = props.data.length,
+      num = props.num || props.data.length,
       cancel = __.cancel,
       content = __.msg_delete.replace('{0}', action).replace('{1}', type).replace('{2}', num);
 
@@ -78,7 +78,7 @@ class ModalBase extends React.Component {
             }
           </ul>
           <div className={'modal-row tip-row' + (state.tip ? '' : ' hide')}>
-            <Tip type={state.tipType} content={state.tip} showIcon={true} width={442}/>
+            <Tip type={state.tipType} content={state.tip} showIcon={true} width={462}/>
           </div>
         </div>
         <div className="modal-ft">

@@ -1,0 +1,18 @@
+{
+  "title": ["delete", "folder"],
+  "fields": [{
+    "type": "data_list",
+    "field": "delete_folder",
+    "icon": "folder",
+    "hasNumber": true
+  }, {
+    "type": "checkbox",
+    "field": "delete_folder_tip",
+    "hide": true
+  }],
+  "btn": {
+    "value": "delete",
+    "type": "delete",
+    "disabled": true
+  }
+}

@@ -1,4 +1,5 @@
 const React = require('react');
+const __ = require('locale/client/dashboard.lang.json');
 
 class DataList extends React.Component {
   constructor(props) {
@@ -40,6 +41,15 @@ class DataList extends React.Component {
                     {' ( '}
                     {props.getStatusIcon(ele.status)}
                     {' )'}
+                  </span>
+                : null
+              }
+              {
+                props.hasNumber && props.number > 0 ?
+                  <span className="item-number">
+                    {' ( ' + __.folder_number_tip}
+                    <strong>{props.number}</strong>
+                    {__.folder_number_tips + ' )'}
                   </span>
                 : null
               }

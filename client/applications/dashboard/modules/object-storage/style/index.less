@@ -4,8 +4,11 @@
 @table-down-color: @color_font_800;
 @breadcrumb-item-color: #130000;
 @breadcrumb-item-select-color: #616F7E;
+@breadcrumb-item-select-hover-color: #00afc8;
 @container-detail-color: #F0F0F0;
 @container-detail-font-color: #616F7E;
+@copyid-color: @color_font_800;
+@copyid-hover-color: @color_info_700;
 .halo-module-object-storage {
   flex: 1;
   display: flex;
@@ -24,6 +27,9 @@
           color: @breadcrumb-item-select-color;
           letter-spacing: 0.3px;
           font-weight: normal;
+          &:hover {
+            color: @breadcrumb-item-select-hover-color;
+          }
         }
         span {
           font-size: 18px;
@@ -57,7 +63,7 @@
     margin-top: 13px;
     .per {
       display: inline-block;
-      width: 49%;
+      width: 23.5%;
       height: 100px;
       margin-right: 2%;
       border: 1px solid #EBEFF1;
@@ -139,6 +145,13 @@
       }
       .label-down {
         color: @table-down-color;
+      }
+      .storage-link {
+        cursor: pointer;
+        color: @copyid-color;
+        &:hover {
+          color: @copyid-hover-color;
+        }
       }
     }
     .table-mini {

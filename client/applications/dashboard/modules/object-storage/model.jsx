@@ -3,6 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const ButtonList = require('client/components/main/button_list');
 const {InputSearch, Modal, Breadcrumb, Table} = require('client/uskin/index');
+const copylink = require('clipboard-plus');
 
 //pops
 const deleteModal = require('client/components/modal_delete/index');
@@ -12,6 +13,7 @@ const uploadObj = require('./pop/upload/index');
 const objDesc = require('./pop/obj_desc/index.jsx');
 const DropdownButton = require('./pop/dropdown_button/index.jsx');
 const Button = require('./pop/delete_button/index.jsx');
+const deleteFolder = require('./pop/delete_folder/index');
 
 const config = require('./config.json');
 const bucketConfig = require('./bucket_config.json');
@@ -45,14 +47,17 @@ class Model extends React.Component {
       sortCol: undefined,
       sortDirection: undefined,
       filterColKey: {},
-      filterBy: undefined
+      filterBy: undefined,
+      objectCount: '',
+      containerCount: '',
+      bytesUsed: ''
     };
 
     this.stores = {
       rows: []
     };
 
-    ['onInitialize', 'onAction', 'sortByName', 'onClickBucket', 'onClickBreadcrumb', 'getDifficon', 'getDiffColor', 'copyArr'].forEach((m) => {
+    ['onInitialize', 'onAction', 'sortByName', 'onClickBucket', 'onClickBreadcrumb', 'getDifficon', 'getDiffColor', 'copyArr', 'updateBuckets'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -187,9 +192,12 @@ class Model extends React.Component {
             request.deleteBucket({
               Bucket: deleteBread.concat(item.name)
             }).then(() => {
+              that.updatecontainer(that.state.breadcrumb);
               cb(true);
               that.refresh({
-                detailRefresh: true
+                detailRefresh: true,
+                tableLoading: true,
+                clearState: true
               });
             });
           }
@@ -197,8 +205,11 @@ class Model extends React.Component {
         break;
       case 'edit':
         uploadObj(item, null, this.state.breadcrumb, () => {
-          that.refresh({
-            detailRefresh: true
+          this.updatecontainer(this.state.breadcrumb);
+          this.refresh({
+            detailRefresh: true,
+            tableLoading: true,
+            clearState: true
           });
         });
         break;
@@ -210,6 +221,7 @@ class Model extends React.Component {
   mainButtonClick(item, ele) {
     request.downloadItem({name: item.name}, this.state.breadcrumb);
   }
+
   onClickDeleteButton(item, ele) {
     let keyName, deletei;
     let arr1 = [];
@@ -227,23 +239,13 @@ class Model extends React.Component {
     deletei = arr1.map(i => {
       return this.state.breadcrumb[0] + '/' + i.name;
     }).join('\n');
-    deleteModal({
-      __: __,
-      action: 'delete',
-      type: 'folder',
-      data: [item],
-      onDelete: function(_data, cb) {
-        request.deleteFolder(deletei).then(() => {
-          that.refresh({
-            detailRefresh: true
-          });
-        }).then(() => {
-          cb(true);
-          that.refresh({
-            detailRefresh: true
-          });
-        });
-      }
+    deleteFolder(arr1, deletei, null, () => {
+      that.updatecontainer(this.state.breadcrumb);
+      this.refresh({
+        detailRefresh: true,
+        clearState: true,
+        tableLoading: true
+      }, true);
     });
   }
 
@@ -351,14 +353,40 @@ class Model extends React.Component {
             );
           };
           break;
+        case 'link':
+          column.render = (col, item, i) => {
+            let linkHref, jointLink;
+            item.type === 'folder' ? jointLink = this.state.breadcrumb.join('/') + '/' + item.name + '/' : jointLink = this.state.breadcrumb.join('/') + '/' + item.name;
+            linkHref = HALO.configs.swift_url + '/' + jointLink;
+            return (item.headerType === '.r:*' ? <div className="storage-link" onClick={this.oncopylink.bind(this, linkHref)}>{__.copy + __.link}
+            </div> : '-'
+            );
+          };
+          break;
         default:
           break;
       }
     });
   }
 
+  oncopylink(linkHref) {
+    copylink(linkHref);
+  }
+
   onInitialize() {
-    this.getTableData(true);
+    this.getTableData(true, true);
+  }
+
+  updatecontainer(breadcrumb) {
+    request.listBuckets().then(res => {
+      res.forEach(item => {
+        if(item.name === breadcrumb[0]) {
+          this.setState({
+            conDetail: item
+          });
+        }
+      });
+    });
   }
 
   getTableData(detailRefresh) {
@@ -368,7 +396,23 @@ class Model extends React.Component {
     switch(this.state.config.breadcrumb.length) {
       case 1:
         request.listBuckets().then(res => {
-          table.data = res;
+          this.setState({
+            objectCount: res[0] && res[0].objectCount,
+            containerCount: res[0] && res[0].containerCount,
+            bytesUsed: res[0] && res[0].bytesUsed
+          });
+          let newres = [], resultres = [];
+          res.forEach(item => {
+            if(item.name.indexOf('_template') === -1) {
+              newres.push(item);
+            }
+          });
+          newres.forEach(item => {
+            if(item.name.indexOf('_ticket') === -1) {
+              resultres.push(item);
+            }
+          });
+          table.data = resultres;
           state.config.btns[0].disabled = false;
           state.config.btns[2].disabled = false;
           table.loading = false;
@@ -468,6 +512,15 @@ class Model extends React.Component {
           breadcrumb: []
         }, () => {
           this.onClickBucket(item);
+          request.listBuckets().then(res => {
+            res.forEach(i => {
+              if(i.name === item.name) {
+                this.setState({
+                  conDetail: i
+                });
+              }
+            });
+          });
         });
         break;
       case 'folder':
@@ -510,28 +563,7 @@ class Model extends React.Component {
     return res;
   }
 
-  onClickBucket(item) {
-    this.state.config.btns = objConfig.btns;
-    this.state.config.table = objConfig.table;
-    if(item) {
-      let a = this.state.breadcrumb;
-      let buname = item.name;
-      a.push(buname);
-
-      this.setState({
-        breadcrumb: a,
-        conDetail: item
-      });
-
-      this.state.config.breadcrumb.push({
-        name: item.Name ? item.Name : item.name,
-        key: item.name,
-        bytes: item.bytes,
-        count: item.count,
-        type: item.type ? item.type : ''
-      });
-    }
-    this.loadingTable();
+  updateBuckets() {
     request.listBucketObjects({
       Bucket: this.state.config.breadcrumb[1].name
     }).then(rawItem => {
@@ -541,6 +573,7 @@ class Model extends React.Component {
         if (_item.name.split('/')[1] || _item.name.split('/')[1] === '') {
           _item.type = 'folder';
           _item.name = _item.name.split('/')[0];
+          _item.headerType = _item.headerType;
         }
         tree.push(_item);
       });
@@ -556,7 +589,8 @@ class Model extends React.Component {
           name: arr[key].name,
           type: arr[key].type,
           bytes: arr[key].bytes ? arr[key].bytes : '',
-          modify_time: arr[key].last_modified ? arr[key].last_modified : ''
+          modify_time: arr[key].last_modified ? arr[key].last_modified : '',
+          headerType: arr[key].headerType ? arr[key].headerType : ''
         };
         dataContent.push(dataObj);
       }
@@ -575,6 +609,29 @@ class Model extends React.Component {
         tree: tree
       });
     });
+  }
+
+  onClickBucket(item) {
+    this.state.config.btns = objConfig.btns;
+    this.state.config.table = objConfig.table;
+    if(item) {
+      let a = this.state.breadcrumb;
+      let buname = item.name;
+      a.push(buname);
+      this.setState({
+        breadcrumb: a,
+        conDetail: item
+      });
+      this.state.config.breadcrumb.push({
+        name: item.Name ? item.Name : item.name,
+        key: item.name,
+        bytes: item.bytes,
+        count: item.count,
+        type: item.type ? item.type : ''
+      });
+    }
+    this.loadingTable();
+    this.updateBuckets();
   }
 
   onClickFolder(item, newBreadcrumb) {
@@ -655,25 +712,31 @@ class Model extends React.Component {
     switch (key) {
       case 'crt_bucket':
         createBucket(null, null, () => {
-          this.clearState();
           that.refresh({
-            detailRefresh: true
-          });
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
         });
         break;
       case 'crt_folder':
         createFolder(null, null, breadcrumb, () => {
-          this.clearState();
+          this.updatecontainer(breadcrumb);
           that.refresh({
-            detailRefresh: true
-          });
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
         });
         break;
       case 'upload':
         uploadObj(null, null, breadcrumb, () => {
-          this.clearState();
+          this.updatecontainer(breadcrumb);
+          that.clearState();
           that.refresh({
-            detailRefresh: true
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
           });
         });
         break;
@@ -682,10 +745,12 @@ class Model extends React.Component {
         break;
       case 'edit':
         uploadObj(rows[0], null, breadcrumb, () => {
-          this.clearState();
+          this.updatecontainer(breadcrumb);
           that.refresh({
-            detailRefresh: true
-          });
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
         });
         break;
       case 'delete_bucket':
@@ -702,9 +767,12 @@ class Model extends React.Component {
                 request.deleteBucket({
                   Bucket: rows[0].name
                 }).then(() => {
+                  that.updatecontainer(breadcrumb);
                   cb(true);
                   that.refresh({
-                    detailRefresh: true
+                    detailRefresh: true,
+                    clearState: true,
+                    tableLoading: true
                   });
                 });
               }
@@ -737,24 +805,13 @@ class Model extends React.Component {
           deletei = arr1.map(i => {
             return this.state.breadcrumb[0] + '/' + i.name;
           }).join('\n');
-
-          deleteModal({
-            __: __,
-            action: 'delete',
-            type: 'folder',
-            data: rows,
-            onDelete: function(_data, cb) {
-              request.deleteFolder(deletei).then(() => {
-                that.refresh({
-                  detailRefresh: true
-                });
-              }).then(() => {
-                cb(true);
-                that.refresh({
-                  detailRefresh: true
-                });
-              });
-            }
+          deleteFolder(arr1, deletei, null, () => {
+            that.updatecontainer(breadcrumb);
+            that.refresh({
+              detailRefresh: true,
+              clearState: true,
+              tableLoading: true
+            }, true);
           });
         } else {
           deleteModal({
@@ -766,9 +823,12 @@ class Model extends React.Component {
               request.deleteBucket({
                 Bucket: deleteBread.concat(rows[0].name)
               }).then(() => {
+                that.updatecontainer(breadcrumb);
                 cb(true);
                 that.refresh({
-                  detailRefresh: true
+                  detailRefresh: true,
+                  clearState: true,
+                  tableLoading: true
                 });
               });
             }
@@ -991,7 +1051,7 @@ class Model extends React.Component {
       alarmClass = alarmClass + ' visible';
     }
     let v = state.conDetail.bytes && unitConverter(state.conDetail.bytes);
-
+    let alarmBytes = state.bytesUsed && unitConverter(state.bytesUsed);
     return (
      <div className="halo-module-object-storage" style={this.props.style}>
         <div className="breadcrumb-list">
@@ -1010,7 +1070,16 @@ class Model extends React.Component {
             {__.number_container}
             </div>
             <div className="per-content">
-              <span className="change-data">1223</span>
+              <span className="change-data">{this.state.containerCount}</span>
+              <span className="data-unit">{__.number}</span>
+            </div>
+          </div>
+          <div className="per">
+            <div className="per-head">
+            {__.number_object}
+            </div>
+            <div className="per-content">
+              <span className="change-data">{this.state.objectCount}</span>
               <span className="data-unit">{__.number}</span>
             </div>
           </div>
@@ -1019,8 +1088,8 @@ class Model extends React.Component {
             {__.capacity_container}
             </div>
             <div className="per-content">
-              <span className="change-data">121324</span>
-              <span className="data-unit">{__.bytes}</span>
+              <span className="change-data">{alarmBytes && alarmBytes.num}</span>
+              <span className="data-unit">{alarmBytes && alarmBytes.unit}</span>
             </div>
           </div>
         </div>

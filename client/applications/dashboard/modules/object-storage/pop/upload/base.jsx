@@ -185,12 +185,14 @@ class ModalBase extends React.Component {
           file: this.result
         });
       });
-
       reader.onload = function() {
         let xhr = new XMLHttpRequest();
         let url = '/proxy-swift/' + breadcrumb + '/' + obj.name + '?replace=1';
         xhr.open('PUT', url, true);
         xhr.onreadystatechange = function () {
+          if(xhr.status === 201){
+            props.callback && props.callback();
+          }
           that.setState({
             visible: false
           });
@@ -198,9 +200,6 @@ class ModalBase extends React.Component {
         xhr.onerror = function(error) {
         };
         xhr.send(reader.result);
-        if (xhr.status === 201){
-          props.callback && props.callback();
-        }
       };
     } else {
       if(state.catalogueType === 'current') {
@@ -251,14 +250,13 @@ class ModalBase extends React.Component {
     let breadcrumb = props.breadcrumb.join('/');
     let selectName = __.add_file;
     let src = '/static/assets/dashboard/icon-storage.png';
-
     if(props.obj !== null) {
-      src = '/static/assets/dashboard/icon-floder.png';
+      src = '/static/assets/dashboard/icon-folder.png';
       selectName = __.reupload;
     }
     return (
        <Modal ref="modal" {...props} title={props.obj !== null ? __.edit + __.file : __.upload_file} visible={state.visible} width={540}>
-        <div className="modal-bd halo-com-modal-upload-file" style={props.obj !== null ? {height: '280px'} : {height: '400px'}}>
+        <div className="modal-bd halo-com-modal-upload-file" style={props.obj !== null ? {height: '300px'} : {height: '400px'}}>
           {this.renderTabs(props, state)}
           <div className={'catalogue-type' + (props.obj !== null ? ' hide' : '') }><p>{__.catalogue_address}</p>
             <div className={state.catalogueType === 'current' ? '' : 'hide'}>{breadcrumb}</div>

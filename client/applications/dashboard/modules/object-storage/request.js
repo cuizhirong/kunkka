@@ -3,14 +3,17 @@ const fetch = require('client/applications/dashboard/cores/fetch');
 module.exports = {
   listBuckets: function() {
     return fetch.get({
-      url: '/proxy-swift/?format=json'
+      url: '/proxy-swift/?format=json',
+      needHeader: true
     }).then(function(data) {
-      data.forEach(b => {
+      data.body.forEach(b => {
         b.type = 'bucket';
         b.id = b.name;
+        b.containerCount = data.that.getResponseHeader('x-account-container-count');
+        b.objectCount = data.that.getResponseHeader('x-account-object-count');
+        b.bytesUsed = data.that.getResponseHeader('x-account-bytes-used');
       });
-
-      return data;
+      return data.body;
     });
   },
   listBucketObjects: function(params) {
@@ -23,20 +26,22 @@ module.exports = {
   },
   listObjects: function(params) {
     return fetch.get({
-      url: '/proxy-swift/' + params.Bucket + '?format=json'
-    }).then(function(res) {
+      url: '/proxy-swift/' + params.Bucket + '?format=json',
+      needHeader: true
+    }).then(function(data) {
       let len, name;
-      res.forEach(obj => {
+      data.body.forEach(obj => {
         obj.id = obj.hash + Math.random();
         name = obj.name.split('/');
         len = name.length;
+        obj.headerType = data.that.getResponseHeader('x-container-read');
         if (name[len - 1]) {
           obj.type = 'object';
         } else {
           obj.type = 'folder';
         }
       });
-      return res;
+      return data.body;
     });
   },
   downloadItem: function(item, breadcrumb) {
