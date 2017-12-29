@@ -86,9 +86,9 @@ function pop(router, callback) {
       let data = {
         portforwarding: {
           router_id: router.id,
-          outside_port: refs.source_port.state.value,
-          outside_addr: router.gateway_info[0],
-          inside_port: refs.target_port.state.value,
+          outside_port: Number(refs.source_port.state.value),
+          outside_addr: router.external_gateway_info.external_fixed_ips[0].ip_address,
+          inside_port: Number(refs.target_port.state.value),
           inside_addr: targetPort.fixed_ips[0].ip_address,
           protocol: refs.protocol.state.value
         }
@@ -102,14 +102,28 @@ function pop(router, callback) {
       });
     },
     onAction: function(field, status, refs) {
+      let sourcePort = refs.source_port.state.value,
+        targetPort = refs.target_port.state.value,
+        re = /^[1-9]+[0-9]*]*$/,
+        testSource = re.test(sourcePort),
+        testTarget = re.test(targetPort);
       switch(field) {
         case 'source_port':
-        case 'target_port':
-          let sourcePort = refs.source_port.state.value;
-          let targetPort = refs.target_port.state.value;
+          refs.source_port.setState({
+            error: !testSource
+          });
 
           refs.btn.setState({
-            disabled: !(sourcePort && targetPort)
+            disabled: !(sourcePort && targetPort && testSource && testTarget)
+          });
+          break;
+        case 'target_port':
+          refs.target_port.setState({
+            error: !testTarget
+          });
+
+          refs.btn.setState({
+            disabled: !(sourcePort && targetPort && testSource && testTarget)
           });
           break;
         default:
