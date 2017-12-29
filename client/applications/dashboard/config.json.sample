@@ -98,6 +98,7 @@
   "default_hide_modules": [
     "ike-policy",
     "ipsec-policy",
-    "volume-public"
+    "volume-public"，
+    "object-storage"
   ]
 }
