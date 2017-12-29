@@ -29,6 +29,10 @@
           "key": "dis_gw",
           "disabled": true
         }, {
+          "title": ["clear_rules"],
+          "key": "clear_rules",
+          "disabled": true
+        }, {
           "title": ["connect", "subnet"],
           "key": "cnt_subnet",
           "disabled": true

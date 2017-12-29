@@ -247,5 +247,10 @@ module.exports = {
       url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id,
       data: data
     });
+  },
+  clearRules: function(routerId) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/uplugin/portforwarding/' + routerId
+    });
   }
 };
