@@ -20,6 +20,11 @@
     "value": 1,
     "unit": "MBps",
     "hide": true
+  }, {
+    "type": "charge",
+    "field": "charge",
+    "has_label": true,
+    "hide": true
   }],
   "btn": {
     "value": "enable",

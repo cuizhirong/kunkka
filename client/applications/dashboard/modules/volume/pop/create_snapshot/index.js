@@ -3,7 +3,8 @@ const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const __ = require('locale/client/dashboard.lang.json');
-const priceConverter = require('../../../../utils/price');
+
+const NAME = 'volume.snapshot';
 
 function pop(obj, parent, callback) {
   config.fields[1].text = obj.name + '(' + obj.volume_type + ' | ' + obj.size + 'G' + ')';
@@ -16,9 +17,8 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      let type = 'snapshot.size';
       function setPrice() {
-        let unitPrice = HALO.prices[type].unit_price.price.segmented[0].price;
+        let unitPrice = HALO.prices.other[NAME][0];
         let volumeSize = obj.size;
         let price = Number(unitPrice * volumeSize).toFixed(4);
 
@@ -27,13 +27,8 @@ function pop(obj, parent, callback) {
         });
       }
 
-      if (HALO.settings.enable_charge) {
-        if (!HALO.prices) {
-          request.getPrices().then((res) => {
-            HALO.prices = priceConverter(res);
-            setPrice();
-          }).catch((error) => {});
-        } else {
+      if (enableCharge) {
+        if (HALO.prices) {
           setPrice();
         }
       }

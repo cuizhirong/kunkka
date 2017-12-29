@@ -5,6 +5,7 @@ const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 let externalNetwork = null;
+const NAME = 'rate.limit.fip';
 
 function pop(parent, callback) {
 
@@ -40,7 +41,7 @@ function pop(parent, callback) {
       if (enableCharge) {
         let bandwidth = config.fields[1].min;
         refs.charge.setState({
-          value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.floating']) * bandwidth).toFixed(4) : 0
+          value: HALO.prices ? (Math.max.apply(null, HALO.prices.other[NAME]) * bandwidth).toFixed(4) : 0
         });
       }
 
@@ -110,7 +111,7 @@ function pop(parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.floating']) * state.value).toFixed(4) : 0
+                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other[NAME]) * state.value).toFixed(4) : 0
               });
             }
           }

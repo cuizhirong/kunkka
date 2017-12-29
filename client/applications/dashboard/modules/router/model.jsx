@@ -239,6 +239,9 @@ class Model extends React.Component {
           }
         });
         break;
+      case 'gw_limit':
+        publicGateway(rows[0], null, null, true);
+        break;
       case 'en_gw':
         publicGateway(rows[0]);
         break;
@@ -278,6 +281,10 @@ class Model extends React.Component {
       switch (key) {
         case 'en_gw':
           btns[key].disabled = (rows.length === 1 && !rows[0].external_gateway_info) ? false : true;
+          break;
+        case 'gw_limit':
+          // 必须开启公网网关且enable_floatingip_bandwidth开关开启
+          btns[key].disabled = (rows.length === 1 && rows[0].external_gateway_info && HALO.settings.enable_floatingip_bandwidth) ? false : true;
           break;
         case 'dis_gw':
           btns[key].disabled = (rows.length === 1 && rows[0].external_gateway_info) ? false : true;
