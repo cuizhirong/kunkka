@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const Base = require('./base');
 
-function modal(obj, parent, breadcrumb, callback) {
+function modal(obj, parent, callback) {
 
   let container = null;
 
@@ -40,8 +40,7 @@ function modal(obj, parent, breadcrumb, callback) {
     onAfterClose: onAfterClose,
     parent: parent,
     obj: obj,
-    callback: callback,
-    breadcrumb: breadcrumb
+    callback: callback
   };
 
   return ReactDOM.render(<Base {..._props}/>, container);

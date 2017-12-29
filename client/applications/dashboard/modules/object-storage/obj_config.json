@@ -66,6 +66,10 @@
       "title": ["operation"],
       "dataIndex": "operation",
       "key": "operation"
+    }, {
+      "title": ["link"],
+      "dataIndex": "link",
+      "key": "link"
     }],
     "data": []
   }

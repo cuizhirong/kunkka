@@ -89,6 +89,7 @@ class ModalBase extends React.Component {
           that.setState({
             visible: false
           });
+          that.props.callback && that.props.callback();
         }).catch((err) => {
           let errorTip = getErrorMessage(err);
           this.setState({
@@ -97,6 +98,9 @@ class ModalBase extends React.Component {
           });
         });
       }
+    });
+    this.refs.btn.setState({
+      disabled: true
     });
   }
 
