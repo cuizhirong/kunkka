@@ -1,0 +1,12 @@
+{
+  "title": ["clear_rules"],
+  "fields": [{
+    "type": "text",
+    "field": "tip_dis_gw",
+    "info": "tip_dis_gw"
+  }],
+  "btn": {
+    "value": "confirm",
+    "disable": false
+  }
+}

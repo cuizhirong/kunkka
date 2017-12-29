@@ -81,30 +81,30 @@ function pop(obj, parent, callback, resize) {
           network_id: gatewayId ? gatewayId : refs.external_network.state.value
         }
       };
-      request.updateRouter(obj.id, data).then((res) => {
-        if (enableBandwidth) {
-          let limit = {
-            gwratelimit: {
-              rate: Number(refs.bandwidth.state.value) * 1024 * 8
-            }
-          };
-          if(resize) {
-            request.updateLimit(obj.id, limit).then(() => {
-              callback && callback();
-              cb(true);
-            });
-          } else {
+      let limit = {
+        gwratelimit: {
+          rate: Number(refs.bandwidth.state.value) * 1024 * 8
+        }
+      };
+      if(resize) {
+        request.updateLimit(obj.id, limit).then(() => {
+          callback && callback();
+          cb(true);
+        });
+      } else {
+        request.updateRouter(obj.id, data).then((res) => {
+          if (enableBandwidth) {
             limit.gwratelimit.router_id = obj.id;
             request.createLimit(limit).then(() => {
               callback && callback(res.router);
               cb(true);
             });
+          } else {
+            callback && callback(res.router);
+            cb(true);
           }
-        } else {
-          callback && callback(res.router);
-          cb(true);
-        }
-      });
+        });
+      }
     },
     onAction: function(field, state, refs) {
       switch(field) {

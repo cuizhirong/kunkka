@@ -2,6 +2,8 @@
   "en": {
     "add_interface": "Bind ",
     "clear_gateway": "Disable external gateway",
+    "clear_rules": "Clear rules",
+    "clear_rules_info": "Confirm clear all forwarding rules?",
     "en_gw": "Do you want to enable the public network gateway of router \"{0}\"?",
     "enable_public_gateway": "Enable public gateway",
     "ext_gatway": "External Gateway",
@@ -46,6 +48,8 @@
   "zh-CN": {
     "add_interface": "绑定",
     "clear_gateway": "禁用公网网关",
+    "clear_rules": "清空转发规则",
+    "clear_rules_info": "确认清空所有转发规则？",
     "en_gw": "是否开启路由器\"{0}\"上的公网网关？",
     "enable_public_gateway": "开启公网网关",
     "ext_gatway": "公网网关",

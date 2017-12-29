@@ -23,6 +23,9 @@ function pop(obj, parent, callback) {
           request.deleteLimit(obj.id).then(() => {
             callback && callback(res.router);
             cb(true);
+          }).then(() => {
+            // 禁用公网网关之后，清空所有转发规则
+            request.clearRules(obj.id);
           });
         } else {
           callback && callback(res.router);
