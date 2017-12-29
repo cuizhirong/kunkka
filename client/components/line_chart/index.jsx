@@ -13,20 +13,39 @@ class ChartLine extends React.Component {
       granularity: props.granularity,
       item: props.item,
       tabItems: props.tabItems ? props.tabItems : [],
-      start: props.start
+      start: props.start,
+      className: props.className || 'line-chart' + parseInt(Math.random() * 100, 10),
+      charts: []
     };
   }
 
   componentDidMount() {
+    this.getChartInstance();
+  }
+
+  getChartInstance() {
     let that = this;
-    this.state.data ? this.renderLineChart(this.state.data, this.state.granularity) : '';
-    try {
-      window.onresize = function() {
-        that.state.data ? that.renderLineChart(that.state.data, that.state.granularity) : '';
-      };
-    } catch (e) {
-      return;
-    }
+    let myCharts = [], myChart;
+
+    this.state.data.forEach((ds, i) => {
+      let chart = document.getElementById(this.state.className + i);
+      myCharts[i] && myCharts[i].dispose();
+      myChart = Echarts.init(chart);
+      myCharts.push(myChart);
+    });
+
+    this.setState({
+      charts: myCharts
+    }, () => {
+      this.state.data ? this.renderLineChart(this.state.data, this.state.granularity) : '';
+      try {
+        window.onresize = function() {
+          that.state.data ? that.renderLineChart(that.state.data, that.state.granularity) : '';
+        };
+      } catch (e) {
+        return;
+      }
+    });
   }
 
   shouldComponentUpdate(nextProps) {
@@ -60,8 +79,8 @@ class ChartLine extends React.Component {
 
   loadingChart(obj) {
     obj.data.forEach((ds, i) => {
-      let chart = document.getElementById('line-chart' + i);
-      let myChart = Echarts.init(chart);
+      let myChart = this.state.charts[i];
+
       let subText = this.props.__.unit + '(' + ds.unit + '), ' + this.props.__.interval + this.state.granularity + 's';
       myChart.showLoading('default', {
         text: this.props.__.loading,
@@ -70,7 +89,7 @@ class ChartLine extends React.Component {
         maskColor: 'rgba(255, 255, 255, 0.8)',
         zlevel: 0
       });
-      let option = this.chart(ds.title, subText, [], ds.yAxisData, true);
+      let option = this.chart(ds.title, subText, [], ds.yAxisData, true, ds.color);
 
       myChart.setOption(option);
     });
@@ -79,33 +98,19 @@ class ChartLine extends React.Component {
   renderLineChart(data, granularity) {
     if (data.length !== 0) {
       data.forEach((datas, i) => {
-        let para1 = document.getElementById('line-chart' + i);
-        let parent = para1.parentNode;
-        let child = para1.parentNode.childNodes[0];
-        parent.removeChild(child);
-        let div = document.createElement('div');
-        div.id = 'line-chart' + i;
-        div.key = i;
-        div.className = 'chart';
-        parent.appendChild(div);
-        this.renderChart(datas.yAxisData, datas.xAxis, 'line-chart' + i, datas.unit, granularity, datas.title);
+        this.renderChart(datas.yAxisData, datas.xAxis, this.state.className + i, datas.unit, granularity, datas.title, i, datas.color);
       });
     }
   }
 
-  renderChart(data, xAxis, ele, unit, granularity, title, i) {
-    if (data && data.length !== 0) {
-      let chart = document.getElementById(ele);
-      let myChart = Echarts.init(chart);
-      let subText = this.props.__.unit + '(' + unit + '), ' + this.props.__.interval + granularity + 's';
-      let option = this.chart(title, subText, xAxis, data, false);
-      myChart.hideLoading();
-      myChart.setOption(option);
-    } else {
-      let charts = document.getElementById(ele);
-      while(charts.hasChildNodes()) {
-        charts.removeChild(charts.firstChild);
+  renderChart(data, xAxis, ele, unit, granularity, title, i, color) {
+    let charts = document.getElementById(ele);
+    charts.childNodes.forEach((child, index) => {
+      if (child.className === 'legendWp') {
+        charts.removeChild(child);
       }
+    });
+    if (data && data.length === 0) {
       let legendWp = document.createElement('div');
       let label = document.createElement('label');
       label.className = 'no-data';
@@ -114,13 +119,22 @@ class ChartLine extends React.Component {
       legendWp.className = 'legendWp';
       charts.appendChild(legendWp);
     }
+    let myChart = this.state.charts[i];
+    let subTexty = this.props.__.unit + '(' + unit + '), ' + this.props.__.interval + granularity + 's';
+    let option = this.chart(title, subTexty, xAxis, data, false, color);
+    myChart.hideLoading();
+    myChart.setOption(option);
   }
 
-  chart(title, subText, xAxis, chartData, receiveProps) {
+  chart(title, subTexty, xAxis, chartData, receiveProps, colors) {
     let option = {
       title: {
         text: title,
-        subtext: subText
+        subtext: subTexty,
+        textStyle: {
+          fontSize: 14,
+          color: '#252F3D'
+        }
       },
       grid: {
         left: '3%',
@@ -134,7 +148,7 @@ class ChartLine extends React.Component {
         data: xAxis,
         axisLine: {
           lineStyle: {
-            color: ['#939ba3']
+            color: ['#999999']
           }
         }
       },
@@ -142,7 +156,7 @@ class ChartLine extends React.Component {
         type: 'value',
         axisLine: {
           lineStyle: {
-            color: ['#939ba3']
+            color: ['#999999']
           }
         }
       },
@@ -152,11 +166,11 @@ class ChartLine extends React.Component {
         data: chartData
       }],
       animation: false,
-      color: ['#f2994b'],
+      color: [colors],
       textStyle: {
-        fontFamily: 'Helvetica,arial'
+        fontFamily: 'MicrosoftYaHei'
       },
-      backgroundColor: ['#f5fdfe']
+      backgroundColor: ['#ffffff']
     };
 
     option.tooltip = receiveProps ? {} : {
@@ -171,6 +185,17 @@ class ChartLine extends React.Component {
     };
 
     return option;
+  }
+
+
+  chartZoom(e){
+    let ev = e || window.event, page,
+      target = ev.target || ev.srcElement;
+    if (target.nodeName.toLocaleLowerCase() === 'canvas') {
+      page = parseInt(target.parentNode.parentNode.id.split(this.state.className)[1], 10);
+    }
+
+    this.props.clickParent && this.props.clickParent(page + 1);
   }
 
   clickTabs(e, tabItem) {
@@ -188,10 +213,10 @@ class ChartLine extends React.Component {
             {this.props.children}
             <Tab items={tabItems} type="sm" onClick={this.clickTabs.bind(this)}/>
           </div>
-          <div id="parent">
+          <div id="parent" style={this.props.style} onClick={this.chartZoom.bind(this)}>
             {chartData.map((charts, i) => {
               return (
-                <div id={'line-chart' + i} key={i} className="chart">
+                <div id={this.state.className + i} key={i} className="chart">
                 </div>
               );
             })}

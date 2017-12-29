@@ -321,7 +321,7 @@ class ModalBase extends React.Component {
       return newobj;
     };
     reqData = cloneObj(data);
-    if(obj && obj.item) {
+    if(obj && obj.item && obj.item.gnocchi_resources_threshold_rule) {
       delete reqData.status;
       reqData.gnocchi_resources_threshold_rule.resource_id = obj.item.gnocchi_resources_threshold_rule.resource_id;
     }

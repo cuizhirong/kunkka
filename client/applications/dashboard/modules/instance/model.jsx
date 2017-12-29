@@ -32,6 +32,7 @@ const detachNetwork = require('./pop/detach_network/index');
 const resizeInstance = require('./pop/resize/index');
 const deleteInstance = require('./pop/delete/index');
 const createAlarm = require('../alarm/pop/create/index');
+const chartZoom = require('./pop/chart_zoom/index');
 const rebuildInstance = require('./pop/rebuild_instance/index');
 const rescueInstance = require('./pop/rescue_instance/index');
 const changeAction = require('./pop/change_action/index');
@@ -58,7 +59,7 @@ class Model extends React.Component {
     let enableAlarm = HALO.settings.enable_alarm;
     if (enableAlarm) {
       tabs.push({
-        name: ['monitor'],
+        name: ['console'],
         key: 'monitor'
       }, {
         name: ['alarm'],
@@ -715,28 +716,40 @@ class Model extends React.Component {
           let time = data.time;
 
           let resourceId = rows[0].id,
-            instanceMetricType = ['cpu.util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
-            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
+            telemerty = HALO.configs.telemerty,
+            instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+            portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'],
+            hour = telemerty.hour,
+            day = telemerty.day,
+            week = telemerty.week,
+            month = telemerty.month,
+            year = telemerty.year;
+
           let tabItems = [{
             name: __.three_hours,
             key: '300',
-            value: '60',
+            value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
-            value: '60',
+            value: day,
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
-            value: '60',
+            value: week,
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
-            value: '3600',
+            value: month,
             time: 'month'
+          }, {
+            name: __.one_year,
+            key: '22600',
+            value: year,
+            time: 'year'
           }];
 
           let granularity = '', key = '';
@@ -744,7 +757,7 @@ class Model extends React.Component {
             granularity = data.granularity;
             key = data.key;
           } else {
-            granularity = '60';
+            granularity = hour;
             key = '300';
             contents[tabKey] = (<div/>);
             updateDetailMonitor(contents, true);
@@ -752,7 +765,14 @@ class Model extends React.Component {
 
           tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
-          let updateContents = (arr, xAxisData) => {
+          let updateContents = (arr) => {
+            let chartDetail = {
+              key: key,
+              item: rows[0],
+              data: arr,
+              granularity: granularity,
+              time: time
+            };
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -768,7 +788,13 @@ class Model extends React.Component {
                     key: tab.key,
                     time: tab.time
                   });
-                }} >
+                }}
+                clickParent={(page) => {
+                  that.onDetailAction('description', 'chart_zoom', {
+                    chartDetail: chartDetail,
+                    page: page
+                  });
+                }}>
                 <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
               </LineChart>
             );
@@ -781,9 +807,10 @@ class Model extends React.Component {
           request.getResourceMeasures(resourceId, instanceMetricType, granularity, timeUtils.getTime(time)).then((res) => {
             let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
-              unit: utils.getUnit('instance', instanceMetricType[index]),
-              yAxisData: utils.getChartData(r, key, timeUtils.getTime(time), 'instance'),
-              xAxis: utils.getChartData(r, key, timeUtils.getTime(time))
+              color: utils.getColor(instanceMetricType[index]),
+              unit: utils.getUnit('instance', instanceMetricType[index], r),
+              yAxisData: utils.getChartData(r, key, timeUtils.getTime(time), instanceMetricType[index], 'instance'),
+              xAxis: utils.getChartData(r, key, timeUtils.getTime(time), instanceMetricType[index])
             }));
             request.getNetworkResourceId(resourceId).then(_data => {
               const addresses = rows[0].addresses;
@@ -800,17 +827,14 @@ class Model extends React.Component {
               }
               request.getNetworkResource(granularity, timeUtils.getTime(time), rows[0], _datas).then(resourceData => {
                 let portArr = resourceData.map((_rd, index) => ({
-                  title: ips[parseInt(index / 2, 10)] + ' ' + utils.getMetricName(portMetricType[index % 2]),
-                  unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)]),
-                  yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), 'instance'),
-                  xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time))
+                  title: utils.getMetricName(portMetricType[index % 2], ips[parseInt(index / 2, 10)]),
+                  color: utils.getColor(portMetricType[index % 2]),
+                  unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                  yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), portMetricType[index % 2], 'instance'),
+                  xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time), portMetricType[index % 2])
                 }));
                 updateContents(arr.concat(portArr));
-              }).catch(error => {
-                updateContents([{}]);
               });
-            }).catch(error => {
-              updateContents([{}]);
             });
           }).catch(error => {
             updateContents([{}]);
@@ -1291,6 +1315,12 @@ class Model extends React.Component {
         createAlarm({
           type: 'instance',
           item: data.rawItem
+        });
+        break;
+      case 'chart_zoom':
+        chartZoom({
+          type: 'chart',
+          item: data
         });
         break;
       default:

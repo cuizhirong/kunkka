@@ -79,7 +79,7 @@
         "key": "description",
         "default": true
       }, {
-        "name": ["monitor"],
+        "name": ["console"],
         "key": "monitor"
       }, {
         "name": ["history"],

@@ -1,7 +1,19 @@
 const __ = require('locale/client/admin.lang.json');
 const constant = require('./constant');
+const unitConverter = require('client/utils/unit_converter');
+const UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 module.exports = {
+  max: function(arr) {
+    let max = arr[0];
+    let len = arr.length;
+    for (let i = 1; i < len; i++){
+      if (arr[i] > max) {
+        max = arr[i];
+      }
+    }
+    return max;
+  },
   getVolumeType: function(item) {
     switch(item.volume_type) {
       case 'sata':
@@ -46,6 +58,9 @@ module.exports = {
         break;
       case 'month':
         date = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
+        break;
+      case 'year':
+        date = new Date(now.getTime() - 365 * 24 * 3600 * 1000);
         break;
       default:
         date = new Date(now.getTime() - 3 * 3600 * 1000);
@@ -100,53 +115,73 @@ module.exports = {
     }
   },
 
-  getChartData(data, granularity, startTime, resourceType) {
+  getMax(arr) {
+    let arrData = [];
+    arr.forEach(a => {
+      arrData.push(a[2]);
+    });
+
+    return this.max(arrData);
+  },
+
+  getChartData(data, granularity, startTime, metricType, resourceType) {
     let _data = [];
-    if (resourceType) {
-      data.forEach((d) => {
-        _data.push(d[2].toFixed(2));
-      });
-    } else {
-      data.forEach((d) => {
-        let date = new Date(d[0]);
-        _data.push(this.getDateStr(date));
-      });
-    }
+    if (data.length !== 0) {
+      if (resourceType) {
+        let num = 0;
+        if (metricType === 'disk.write.bytes.rate' || metricType === 'disk.read.bytes.rate'
+          || metricType === 'network.incoming.bytes.rate' || metricType === 'network.outgoing.bytes.rate'
+          || metricType === 'disk.device.read.bytes.rate' || metricType === 'disk.device.write.bytes.rate') {
+          num = UNITS.indexOf(unitConverter(this.getMax(data)).unit);
+        }
+        data.forEach((d) => {
+          _data.push(d[2].toFixed(2) / Math.pow(1024, num));
+        });
+      } else {
+        data.forEach((d) => {
+          let date = new Date(d[0]);
+          _data.push(this.getDateStr(date));
+        });
+      }
 
-    let prev;
-    if (data.length > 0) {
-      prev = new Date(data[0][0]);
-    } else {
-      prev = new Date();
-    }
+      let prev;
+      if (data.length > 0) {
+        prev = new Date(data[0][0]);
+      } else {
+        prev = new Date();
+      }
 
-    const DOTS_NUM = this.getDotsNumber(granularity, prev);
+      const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
-    if (data.length < DOTS_NUM) {
-      let length = DOTS_NUM - data.length;
+      if (data.length < DOTS_NUM) {
+        let length = DOTS_NUM - data.length;
 
-      while (length > 0) {
-        prev = this.getNextPeriodDate(prev, granularity);
-        let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
-        _data.unshift(unData);
-        length--;
+        while (length > 0) {
+          prev = this.getNextPeriodDate(prev, granularity);
+          let unData = resourceType ? 0 : this.getDateStr(prev, granularity);
+          _data.unshift(unData);
+          length--;
+        }
       }
     }
 
     return _data;
   },
 
-  getUnit: function(resourceType, metricType) {
+  getUnit: function(resourceType, metricType, arr) {
     if (resourceType === 'instance') {
       switch(metricType) {
         case 'cpu_util':
+        case 'cpu.util':
+        case 'disk.usage':
           return '%';
         case 'memory.usage':
           return 'MB';
-        case 'disk.read.bytes.rate':
         case 'disk.write.bytes.rate':
+        case 'disk.read.bytes.rate':
         case 'network.incoming.bytes.rate':
         case 'network.outgoing.bytes.rate':
+          return unitConverter(this.getMax(arr)).unit + '/s';
         default:
           return 'B/s';
       }
@@ -154,7 +189,7 @@ module.exports = {
       switch(metricType) {
         case 'disk.device.read.bytes.rate':
         case 'disk.device.write.bytes.rate':
-          return 'B/s';
+          return unitConverter(this.getMax(arr)).unit + '/s';
         case 'disk.device.read.requests.rate':
         case 'disk.device.write.requests.rate':
           return 'Requests/s';
@@ -185,7 +220,7 @@ module.exports = {
       return (num < 10 ? '0' : '') + num;
     }
     switch(granularity) {
-      case constant.GRANULARITY_HOUR:
+      /*case constant.GRANULARITY_HOUR:
         return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
           ' ' + format(date.getHours()) + ':' + format(date.getMinutes() - 5);
       case constant.GRANULARITY_DAY:
@@ -196,10 +231,9 @@ module.exports = {
           ' ' + format(date.getHours() - 1) + ':' + format(date.getMinutes());
       case constant.GRANULARITY_MONTH:
         return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours() - 6) + ':' + format(date.getMinutes());
+          ' ' + format(date.getHours() - 6) + ':' + format(date.getMinutes());*/
       default:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
     }
   },
 
@@ -209,5 +243,33 @@ module.exports = {
     num = Number(ip[0]) * 256 * 256 * 256 + Number(ip[1]) * 256 * 256 + Number(ip[2]) * 256 + Number(ip[3]);
     num = num >>> 0;
     return num;
+  },
+
+  getColor: function(metric) {
+    if(metric) {
+      switch(metric) {
+        case 'cpu.util':
+        case 'disk.device.read.bytes.rate':
+          return '#E0DE5D';
+        case 'disk.read.bytes.rate':
+        case 'disk.device.write.bytes.rate':
+          return '#47C1A6';
+        case 'disk.write.bytes.rate':
+        case 'disk.device.read.requests.rate':
+          return '#0A98E4';
+        case 'memory.usage':
+        case 'disk.device.write.requests.rate':
+          return '#EFB16A';
+        case 'network.incoming.bytes.rate':
+          return '#6390EC';
+        case 'network.outgoing.bytes.rate':
+          return '#8787E5';
+        case 'disk.usage':
+          return '#87CEFA';
+        default:
+          return '#8787E5';
+      }
+    }
+    return '';
   }
 };

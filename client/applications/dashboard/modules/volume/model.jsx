@@ -23,6 +23,7 @@ const createTransfer = require('./pop/create_transfer');
 const deleteTransfer = require('./pop/delete_transfer');
 const acceptTransfer = require('./pop/accept_transfer');
 const updateBootable = require('./pop/update_bootable');
+const alarmDetail = require('./pop/alarm_detail/index');
 // const backupVolumn = require('./pop/backup_volumn/index');
 
 const config = require('./config.json');
@@ -436,36 +437,61 @@ class Model extends React.Component {
           updateDetailMonitor(contents, true);
 
           let metricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+          let telemerty = HALO.configs.telemerty,
+            hour = telemerty.hour,
+            day = telemerty.day,
+            week = telemerty.week,
+            month = telemerty.month,
+            year = telemerty.year;
+
           let tabItems = [{
             name: __.three_hours,
             key: '300',
+            value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
             key: '900',
+            value: day,
             time: 'day'
           }, {
             name: __.one_week,
             key: '3600',
+            value: week,
             time: 'week'
           }, {
             name: __.one_month,
             key: '21600',
+            value: month,
             time: 'month'
+          }, {
+            name: __.one_year,
+            key: '22600',
+            value: year,
+            time: 'year'
           }];
 
-          let granularity = '';
+          let granularity = '', key = '';
           if (data.granularity) {
             granularity = data.granularity;
+            key = data.key;
           } else {
-            granularity = '300';
+            granularity = hour;
+            key = '300';
             contents[tabKey] = (<div/>);
             updateDetailMonitor(contents, true);
           }
 
-          tabItems.some((ele) => ele.key === granularity ? (ele.default = true, true) : false);
+          tabItems.some((ele) => ele.key === key ? (ele.default = true, true) : false);
 
           let updateContents = (arr, xAxisData) => {
+            let chartDetail = {
+              key: key,
+              item: rows[0],
+              data: arr,
+              granularity: granularity,
+              time: time
+            };
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -473,14 +499,22 @@ class Model extends React.Component {
                 data={arr}
                 granularity={granularity}
                 tabItems={tabItems}
+                className={'volume'}
                 start={utils.getTime(time)}
                 clickTabs={(e, tab, item) => {
                   that.onClickDetailTabs('console', refs, {
                     rows: rows,
-                    granularity: tab.key,
+                    granularity: tab.value,
+                    key: tab.key,
                     time: tab.time
                   });
-                }} >
+                }}
+                clickParent={(page) => {
+                  that.onDetailAction('description', 'chart_zoom', {
+                    chartDetail: chartDetail,
+                    page: page
+                  });
+                }}>
                 <Button value={__.create + __.alarm} onClick={this.onDetailAction.bind(this, 'description', 'create_alarm', { rawItem: rows[0] })}/>
               </LineChart>
             );
@@ -502,14 +536,20 @@ class Model extends React.Component {
                 request.getMeasures(ids, granularity, utils.getTime(time)).then((_r) => {
                   let arr = _r.map((r, index) => ({
                     title: alarmUtils.getMetricName(metricType[index]),
-                    unit: alarmUtils.getUnit('volume', metricType[index]),
-                    yAxisData: alarmUtils.getChartData(r, granularity, utils.getTime(time), 'volume'),
-                    xAxis: alarmUtils.getChartData(r, granularity, utils.getTime(time))
+                    color: alarmUtils.getColor(metricType[index]),
+                    unit: alarmUtils.getUnit('volume', metricType[index], r),
+                    yAxisData: alarmUtils.getChartData(r, granularity, utils.getTime(time), metricType[index], 'volume'),
+                    xAxis: alarmUtils.getChartData(r, granularity, utils.getTime(time), metricType[index])
                   }));
                   updateContents(arr);
                 });
               } else {
-                updateContents([{}]);
+                contents[tabKey] = (
+                  <div className="no-data-desc">
+                    <p>{__.view_is_unavailable}</p>
+                  </div>
+                );
+                updateDetailMonitor(contents, false);
               }
             }).catch(error => {
               updateContents([{}]);
@@ -782,6 +822,12 @@ class Model extends React.Component {
         createAlarm({
           type: 'volume',
           item: data.rawItem
+        });
+        break;
+      case 'chart_zoom':
+        alarmDetail({
+          type: 'chart',
+          item: data
         });
         break;
       default:

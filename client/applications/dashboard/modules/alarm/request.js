@@ -156,5 +156,10 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/aodh/v2/alarms/' + id
     });
+  },
+  getPortById: function(id) {
+    return fetch.get({
+      url: '/api/v1/' + HALO.user.projectId + '/ports/' + id + '?tenant_id=' + HALO.user.projectId
+    });
   }
 };

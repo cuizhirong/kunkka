@@ -107,7 +107,7 @@ function pop(obj, parent, callback) {
           });
           refs.select_interface.setState({
             data: filteredData,
-            value: filteredData[0].id
+            value: filteredData[0] ? filteredData[0].id : ''
           });
         }
       });
