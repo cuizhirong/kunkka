@@ -45,7 +45,8 @@ const map = {
   floatingip: ['instance', 'port'],
   instance: ['port', 'volume', 'image'],
   image: ['instance'],
-  backup: ['volume', 'snapshot']
+  backup: ['volume', 'snapshot'],
+  loadbalancer: ['securitygroup', 'port']
 };
 
 function Storage() {

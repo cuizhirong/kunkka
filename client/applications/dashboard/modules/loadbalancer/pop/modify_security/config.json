@@ -1,0 +1,26 @@
+{
+  "title": ["modify", "security_group"],
+  "fields": [{
+    "type": "icon_label",
+    "field": "loadbalancer",
+    "icon_type": "lb",
+    "text": ""
+  }, {
+    "type": "select_group",
+    "field": "security_group",
+    "hide": false,
+    "empty_text": {
+      "info": "no_security_group"
+    },
+    "hide": true
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "security_group_info",
+    "hide": true
+  }],
+  "btn": {
+    "value": "edit",
+    "disabled": true
+  }
+}

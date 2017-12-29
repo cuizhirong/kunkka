@@ -56,7 +56,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'port' || data.resource_type === 'router' || data.resource_type === 'instance' || data.resource_type === 'floatingip') {
+        if (data.resource_type === 'port' || data.resource_type === 'router' || data.resource_type === 'instance' || data.resource_type === 'floatingip' || data.resource_type === 'loadbalancer') {
           this.refresh({
             detailRefresh: true
           }, false);
