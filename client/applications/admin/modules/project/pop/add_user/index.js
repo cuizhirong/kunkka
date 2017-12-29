@@ -5,15 +5,18 @@ const __ = require('locale/client/admin.lang.json');
 const renderer = require('./user_field');
 const getErrorMessage = require('../../../../utils/error_message');
 
-function checkUserInDomains(type, data, users) {
-  let inDomain = users.find((user) => {
+function checkUserInDomains(type, data, users, domainId) {
+  let inDomain;
+  let currUser = users.find((user) => {
     return user[type] === data;
   });
-  if(inDomain !== undefined) {
+
+  if(currUser !== undefined && currUser.domain_id === domainId) {
     inDomain = true;
   } else {
     inDomain = false;
   }
+
   return inDomain;
 }
 
@@ -49,7 +52,7 @@ function pop(obj, parent, callback) {
       refs.user_field.setState({
         renderer: renderer,
         rendererData: {
-          field: 'id',
+          field: 'name',
           value: '',
           onValueChange: (data, value) => {
             const rendererData = Object.assign({}, data, { value: value});
@@ -69,11 +72,11 @@ function pop(obj, parent, callback) {
             required: true,
             selectedIndex: 0,
             items: [{
-              key: 'id',
-              title: __.user_id
-            }, {
               key: 'name',
               title: __.user_name
+            }, {
+              key: 'id',
+              title: __.user_id
             }]
           }
         }
@@ -84,7 +87,7 @@ function pop(obj, parent, callback) {
       const rendererData = refs.user_field.state.rendererData;
       const fieldType = rendererData.field;
       const fieldValue = rendererData.value.trim();
-      const userInDomain = checkUserInDomains(fieldType, fieldValue, currDomainUsers);
+      const userInDomain = checkUserInDomains(fieldType, fieldValue, currDomainUsers, obj.domain_id);
       let userId;
 
       if(!userInDomain) {

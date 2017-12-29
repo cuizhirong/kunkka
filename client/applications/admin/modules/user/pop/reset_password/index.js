@@ -8,22 +8,28 @@ function pop(obj, parent, callback) {
 
   let props = {
     __: __,
+    width: 550,
     parent: parent,
     config: config,
     onInitialize: function(refs) {},
     onConfirm: function(refs, cb) {
-      if (refs.password.state.value !== refs.confirm_password.state.value) {
+      const passwd = refs.password.state.value;
+      const cfmPasswd = refs.confirm_password.state.value;
+
+      if(passwd !== cfmPasswd || !/^\w{8,20}$/.test(passwd) || !/\d+/.test(passwd) || !/[a-z]+/.test(passwd) || !/[A-Z]+/.test(passwd)) {
         refs.password.setState({
           error: true
         });
         refs.confirm_password.setState({
           error: true
         });
+        cb(false, __.passwd_not_meet_requirement);
         return;
       }
+
       let data = {
         name: obj.name,
-        password: refs.password.state.value
+        password: passwd
       };
 
       request.editUser(obj.id, data).then((res) => {
