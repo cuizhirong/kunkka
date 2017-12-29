@@ -231,6 +231,12 @@ module.exports = {
       data: data
     });
   },
+  updateLimit: function(id, data) {
+    return fetch.put({
+      url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id,
+      data: data
+    });
+  },
   deleteLimit: function(id) {
     return fetch.delete({
       url: '/proxy/neutron/v2.0/uplugin/gwratelimits/' + id

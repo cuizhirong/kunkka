@@ -12,7 +12,7 @@ function pop(parent, callback) {
   let defaultBandwidth = HALO.settings.max_floatingip_bandwidth;
   let bandwidthField = config.fields[3];
 
-  config.fields[4].hide = !enableCharge;
+  // 路由器不收费，公网网关限速收费
 
   if (enableBandwidth) {
     if (defaultBandwidth) {
@@ -28,8 +28,10 @@ function pop(parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
+      const bandwidth = refs.bandwidth.state.value;
+      config.fields[4].hide = !enableCharge || !refs.enable_public_gateway.state.checked;
       function setPrice() {
-        let price = HALO.prices ? Math.max.apply(null, HALO.prices.other['network.router']).toFixed(4) : 0;
+        let price = HALO.prices ? ( Math.max.call(null, HALO.prices.other['rate.limit.gw']) * bandwidth ).toFixed(4) : 0;
 
         refs.charge.setState({
           value: price
@@ -131,7 +133,7 @@ function pop(parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other['network.router']) * state.value).toFixed(4) : 0
+                value: HALO.prices ? (Math.max.call(null, HALO.prices.other['rate.limit.gw']) * state.value).toFixed(4) : 0
               });
             }
           }

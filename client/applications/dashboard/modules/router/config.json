@@ -17,6 +17,10 @@
       "width": 160,
       "items": [{
         "items": [{
+          "title": ["gateway_limit"],
+          "key": "gw_limit",
+          "disabled": true
+        }, {
           "title": ["enable", "ext_gatway"],
           "key": "en_gw",
           "disabled": true
