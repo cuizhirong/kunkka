@@ -89,7 +89,7 @@ function pop(type, obj, parent, callback) {
             refs.project.setState({
               renderer: renderer,
               rendererData: {
-                field: 'id',
+                field: 'name',
                 value: '',
                 onValueChange: (data, value) => {
                   const rendererData = Object.assign({}, data, { value: value });
@@ -109,11 +109,11 @@ function pop(type, obj, parent, callback) {
                   required: true,
                   selectedIndex: 0,
                   items: [{
-                    key: 'id',
-                    title: __.project_id
-                  }, {
                     key: 'name',
                     title: __.project_name
+                  }, {
+                    key: 'id',
+                    title: __.project_id
                   }]
                 }
               }

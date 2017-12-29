@@ -35,6 +35,7 @@ function pop(obj, parent, callback) {
 
   let props = {
     __: __,
+    width: 550,
     parent: parent,
     config: config,
     onInitialize: function(refs) {
@@ -77,7 +78,15 @@ function pop(obj, parent, callback) {
             cb(false, getErrorMessage(error));
           });
         } else {
-          data.password = refs.password.state.value;
+          const passwd = refs.password.state.value;
+          const cfmPasswd = refs.confirm_password.state.value;
+
+          if(passwd !== cfmPasswd || !/^\w{8,20}$/.test(passwd) || !/\d+/.test(passwd) || !/[a-z]+/.test(passwd) || !/[A-Z]+/.test(passwd)) {
+            cb(false, __.passwd_not_meet_requirement);
+            return;
+          }
+
+          data.password = passwd;
           let hasPrj = refs.crt_user_project.state.checked;
           data.is_create_project = hasPrj;
 
