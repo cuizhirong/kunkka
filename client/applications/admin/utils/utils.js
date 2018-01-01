@@ -1,7 +1,12 @@
 const __ = require('locale/client/admin.lang.json');
-const constant = require('./constant');
 const unitConverter = require('client/utils/unit_converter');
 const UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+const hour = Number(HALO.configs.telemerty.hour),
+  day = Number(HALO.configs.telemerty.day),
+  week = Number(HALO.configs.telemerty.week),
+  month = Number(HALO.configs.telemerty.month),
+  year = Number(HALO.configs.telemerty.year);
 
 module.exports = {
   max: function(arr) {
@@ -101,15 +106,19 @@ module.exports = {
     }
     return '';
   },
+
   getNextPeriodDate: function(prev, granularity) {
     switch (Number(granularity)) {
-      case constant.GRANULARITY_HOUR:
+      case hour:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
+      case day:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
-      case constant.GRANULARITY_DAY:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 15);
-      case constant.GRANULARITY_WEEK:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1);
-      case constant.GRANULARITY_MONTH:
+      case week:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 10);
+      case month:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1, prev.getMinutes());
+      case year:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 3);
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }
@@ -140,7 +149,7 @@ module.exports = {
       } else {
         data.forEach((d) => {
           let date = new Date(d[0]);
-          _data.push(this.getDateStr(date));
+          _data.push(this.getDateStr(date, granularity));
         });
       }
 
@@ -201,15 +210,16 @@ module.exports = {
 
   getDotsNumber(granularity, prev) {
     switch (Number(granularity)) {
-      case constant.GRANULARITY_HOUR:
-        return 36;
-      case constant.GRANULARITY_DAY:
-        return 96;
-      case constant.GRANULARITY_WEEK:
-        return 168;
-      case constant.GRANULARITY_MONTH:
-        let date = new Date(prev.getFullYear(), prev.getMonth(), 0);
-        return 4 * date.getDate();
+      case hour:
+        return (60 * 60 * 3) / hour;
+      case day:
+        return (60 * 60 * 24) / day;
+      case week:
+        return (60 * 60 * 24 * 7) / week;
+      case month:
+        return (60 * 60 * 24 * 30) / month;
+      case year:
+        return (60 * 60 * 24 * 365) / year;
       default:
         return 0;
     }
@@ -219,19 +229,20 @@ module.exports = {
     function format(num) {
       return (num < 10 ? '0' : '') + num;
     }
-    switch(granularity) {
-      /*case constant.GRANULARITY_HOUR:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours()) + ':' + format(date.getMinutes() - 5);
-      case constant.GRANULARITY_DAY:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours()) + ':' + format(date.getMinutes() - 15);
-      case constant.GRANULARITY_WEEK:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours() - 1) + ':' + format(date.getMinutes());
-      case constant.GRANULARITY_MONTH:
-        return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-          ' ' + format(date.getHours() - 6) + ':' + format(date.getMinutes());*/
+
+    switch(Number(granularity)) {
+      /*case hour:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 1)].join('\n');
+      case day:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 5)].join('\n');
+      case week:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 10)].join('\n');
+      case month:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours() - 1) + ':' + format(date.getMinutes())].join('\n');
+      case year:
+        return [format(date.getFullYear()) + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours() - 3) + ':' + format(date.getMinutes())].join('\n');*/
+      case year:
+        return [format(date.getFullYear()) + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
       default:
         return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
     }

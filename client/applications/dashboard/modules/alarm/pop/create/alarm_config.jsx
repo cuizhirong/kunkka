@@ -6,6 +6,11 @@ const contant = require('./constant');
 const helper = require('./helper');
 
 let lineChart;
+const hour = Number(HALO.configs.telemerty.hour),
+  day = Number(HALO.configs.telemerty.day),
+  week = Number(HALO.configs.telemerty.week),
+  month = Number(HALO.configs.telemerty.month),
+  year = Number(HALO.configs.telemerty.year);
 
 class Modal extends React.Component {
 
@@ -30,7 +35,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity, threshold) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + helper.getGranularity(granularity) + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let measures = [];
     let xAxis = [];
     function fixMeasure(num) {
@@ -40,7 +45,7 @@ class Modal extends React.Component {
     data.forEach((ele) => {
       measures.push(fixMeasure(ele[2]));
       let date = new Date(ele[0]);
-      xAxis.push(helper.getDateStr(date));
+      xAxis.push(helper.getDateStr(date, granularity));
     });
 
     let prev;
@@ -58,7 +63,7 @@ class Modal extends React.Component {
 
       while (length > 0 && DOTS_TIME < prev.getTime()) {
         prev = this.getNextPeriodDate(prev, granularity);
-        xAxis.unshift(helper.getDateStr(prev));
+        xAxis.unshift(helper.getDateStr(prev, granularity));
         measures.unshift(0);
         length--;
       }
@@ -88,6 +93,9 @@ class Modal extends React.Component {
       case contant.GRANULARITY_MONTH:
         date = now.getTime() - 30 * 24 * 3600 * 1000;
         break;
+      case contant.GRANULARITY_YEAR:
+        date = now.getTime() - 365 * 24 * 3600 * 1000;
+        break;
       default:
         date = now.getTime() - 3 * 3600 * 1000;
         break;
@@ -96,27 +104,34 @@ class Modal extends React.Component {
   }
 
   getDotsNumber(granularity, prev) {
-    switch (granularity) {
-      case contant.GRANULARITY_HOUR:
-        return 180;
-      case contant.GRANULARITY_DAY:
-        return 1440;
-      case contant.GRANULARITY_WEEK:
-        return 10080;
-      case contant.GRANULARITY_MONTH:
-        return 720;
+    switch (Number(granularity)) {
+      case hour:
+        return (60 * 60 * 3) / hour;
+      case day:
+        return (60 * 60 * 24) / day;
+      case week:
+        return (60 * 60 * 24 * 7) / week;
+      case month:
+        return (60 * 60 * 24 * 30) / month;
+      case year:
+        return (60 * 60 * 24 * 365) / year;
       default:
         return 0;
     }
   }
 
   getNextPeriodDate(prev, granularity) {
-    switch (granularity) {
-      case contant.GRANULARITY_HOUR:
-      case contant.GRANULARITY_DAY:
-      case contant.GRANULARITY_WEEK:
+    switch (Number(granularity)) {
+      case hour:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
-      case contant.GRANULARITY_MONTH:
+      case day:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
+      case week:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 10);
+      case month:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1, prev.getMinutes());
+      case year:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 3);
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }

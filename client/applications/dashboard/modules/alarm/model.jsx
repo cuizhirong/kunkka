@@ -282,8 +282,8 @@ class Model extends Main {
             granularity = data.granularity;
             key = data.key;
           } else {
-            granularity = '60';
-            key = '300';
+            granularity = hour;
+            key = hour;
             detailLoading();
           }
           let time = data.time;
@@ -292,27 +292,27 @@ class Model extends Main {
 
           let tabItems = [{
             name: __.three_hours,
-            key: '300',
+            key: hour,
             value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
-            key: '900',
+            key: day,
             value: day,
             time: 'day'
           }, {
             name: __.one_week,
-            key: '3600',
+            key: week,
             value: week,
             time: 'week'
           }, {
             name: __.one_month,
-            key: '21600',
+            key: month,
             value: month,
             time: 'month'
           }, {
             name: __.one_year,
-            key: '22600',
+            key: year,
             value: year,
             time: 'year'
           }];

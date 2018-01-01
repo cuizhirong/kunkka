@@ -11,6 +11,11 @@ const createNotification = require('../../../notification/pop/modal/index');
 const getErrorMessage = require('../../../../utils/error_message');
 const {getTime} = require('../../../../utils/utils');
 const utils = require('../../utils');
+const hour = Number(HALO.configs.telemerty.hour),
+  day = Number(HALO.configs.telemerty.day),
+  week = Number(HALO.configs.telemerty.week),
+  month = Number(HALO.configs.telemerty.month),
+  year = Number(HALO.configs.telemerty.year);
 
 let title;
 let measureData = [];
@@ -100,14 +105,16 @@ class ModalBase extends React.Component {
 
   getStartTime(granularity) {
     switch(granularity) {
-      case 300:
+      case hour:
         return getTime('hour');
-      case 900:
+      case day:
         return getTime('day');
-      case 3600:
+      case week:
         return getTime('week');
-      case 21600:
+      case month:
         return getTime('month');
+      case year:
+        return getTime('year');
       default:
         return granularity;
     }
