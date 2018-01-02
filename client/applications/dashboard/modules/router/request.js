@@ -250,7 +250,7 @@ module.exports = {
   },
   clearRules: function(routerId) {
     return fetch.delete({
-      url: '/proxy/neutron/v2.0/uplugin/portforwarding/' + routerId
+      url: '/proxy/neutron/v2.0/uplugin/portforwardings/' + routerId
     });
   }
 };

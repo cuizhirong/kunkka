@@ -266,11 +266,11 @@ class Modal extends React.Component {
         <div className="chart-box">
           <div className="granularity-box">
             <ButtonGroup>
-              <Button btnKey={hour} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
-              <Button btnKey={day} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
-              <Button btnKey={week} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
-              <Button btnKey={month} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
-              <Button btnKey={year} value={recentYear} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_YEAR} />
+              <Button btnKey={hour + ''} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
+              <Button btnKey={day + ''} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
+              <Button btnKey={week + ''} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
+              <Button btnKey={month + ''} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
+              <Button btnKey={year + ''} value={recentYear} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_YEAR} />
             </ButtonGroup>
           </div>
           <div className="chart-content">
