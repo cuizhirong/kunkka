@@ -8,6 +8,7 @@ const copylink = require('clipboard-plus');
 //pops
 const deleteModal = require('client/components/modal_delete/index');
 const createBucket = require('./pop/create_bucket/index');
+const modifyBucket = require('./pop/modify_bucket/index');
 const createFolder = require('./pop/create_folder/index');
 const uploadObj = require('./pop/upload/index');
 const objDesc = require('./pop/obj_desc/index.jsx');
@@ -33,6 +34,14 @@ class Model extends React.Component {
     super(props);
     moment.locale(HALO.configs.lang);
 
+    let accessTypes = [{
+      value: __.private,
+      key: 'private'
+    }, {
+      value: __.public,
+      key: 'public'
+    }];
+
     this.state = {
       config: config,
       bucketConfig: bucketConfig,
@@ -50,7 +59,9 @@ class Model extends React.Component {
       filterBy: undefined,
       objectCount: '',
       containerCount: '',
-      bytesUsed: ''
+      bytesUsed: '',
+      accessTypes: accessTypes,
+      accessType: accessTypes[0].key
     };
 
     this.stores = {
@@ -357,7 +368,7 @@ class Model extends React.Component {
           column.render = (col, item, i) => {
             let linkHref, jointLink;
             item.type === 'folder' ? jointLink = this.state.breadcrumb.join('/') + '/' + item.name + '/' : jointLink = this.state.breadcrumb.join('/') + '/' + item.name;
-            linkHref = HALO.configs.swift_url + '/' + jointLink;
+            linkHref = window.location.protocol + '//' + window.location.hostname + ':' + HALO.configs.swift_port + '/' + jointLink;
             return (item.headerType === '.r:*' ? <div className="storage-link" onClick={this.oncopylink.bind(this, linkHref)}>{__.copy + __.link}
             </div> : '-'
             );
@@ -396,25 +407,34 @@ class Model extends React.Component {
     switch(this.state.config.breadcrumb.length) {
       case 1:
         request.listBuckets().then(res => {
-          this.setState({
-            objectCount: res[0] && res[0].objectCount,
-            containerCount: res[0] && res[0].containerCount,
-            bytesUsed: res[0] && res[0].bytesUsed
-          });
-          let newres = [], resultres = [];
+          let newRes = [];
+          let additionObject, additionBytes, addObjectArr = [], addBytesArr = [];
           res.forEach(item => {
-            if(item.name.indexOf('_template') === -1) {
-              newres.push(item);
+            if(item.name.indexOf('_template') === -1 && item.name.indexOf('_ticket') === -1) {
+              newRes.push(item);
             }
           });
-          newres.forEach(item => {
-            if(item.name.indexOf('_ticket') === -1) {
-              resultres.push(item);
-            }
+
+          newRes.forEach((add) => {
+            addObjectArr.push(add.count);
+            addBytesArr.push(add.bytes);
+            additionObject = addObjectArr.reduce((x, y) => {
+              return x + y;
+            }, 0);
+            additionBytes = addBytesArr.reduce((x, y) => {
+              return x + y;
+            }, 0);
           });
-          table.data = resultres;
+
+          this.setState({
+            objectCount: additionObject || 0,
+            containerCount: newRes.length || 0,
+            bytesUsed: additionBytes || 0
+          });
+
+          table.data = newRes;
           state.config.btns[0].disabled = false;
-          state.config.btns[2].disabled = false;
+          state.config.btns[3].disabled = false;
           table.loading = false;
           this.setState({
             config: this.state.config
@@ -635,6 +655,7 @@ class Model extends React.Component {
   }
 
   onClickFolder(item, newBreadcrumb) {
+    this.tableColRender(this.state.config.table.column);
     let rawItem = this.state.rawItem,
       items = JSON.parse(JSON.stringify(rawItem)),
       arr1 = [],
@@ -658,7 +679,8 @@ class Model extends React.Component {
         key: foname,
         bytes: item.bytes ? item.bytes : '',
         modify_time: item.modify_time,
-        type: item.type ? item.type : 'folder'
+        type: item.type ? item.type : 'folder',
+        headerType: item.headerType
       });
 
       if(newBreadcrumb) {
@@ -689,7 +711,8 @@ class Model extends React.Component {
         name: arr[key].name,
         type: arr[key].type || 'folder',
         bytes: arr[key].bytes ? arr[key].bytes : '',
-        modify_time: arr[key].last_modified ? arr[key].last_modified : ''
+        modify_time: arr[key].last_modified ? arr[key].last_modified : '',
+        headerType: arr[key].headerType
       };
       dataContent.push(dataObj);
     }
@@ -712,6 +735,15 @@ class Model extends React.Component {
     switch (key) {
       case 'crt_bucket':
         createBucket(null, null, () => {
+          that.refresh({
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
+        });
+        break;
+      case 'modify_bucket':
+        modifyBucket(rows[0], null, () => {
           that.refresh({
             detailRefresh: true,
             clearState: true,
@@ -854,6 +886,9 @@ class Model extends React.Component {
     for (let key in btns) {
       switch (key) {
         case 'delete_bucket':
+          btns[key].disabled = (rows.length === 1) ? false : true;
+          break;
+        case 'modify_bucket':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'empty_bucket':
@@ -1089,7 +1124,7 @@ class Model extends React.Component {
             </div>
             <div className="per-content">
               <span className="change-data">{alarmBytes && alarmBytes.num}</span>
-              <span className="data-unit">{alarmBytes && alarmBytes.unit}</span>
+              <span className="data-unit">{alarmBytes ? alarmBytes.unit : 'B'}</span>
             </div>
           </div>
         </div>
