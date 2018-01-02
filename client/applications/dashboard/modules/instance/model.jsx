@@ -231,7 +231,7 @@ class Model extends React.Component {
             let ret = '';
             if (item.flavor.name) {
               let ram = unitConverter(item.flavor.ram, 'MB');
-              ret = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB';
+              ret = item.flavor.name + ' (' + item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB' + ')';
             } else {
               ret = '(' + item.flavor.id.substr(0, 8) + ')';
             }
@@ -991,7 +991,7 @@ class Model extends React.Component {
     let flavor = '';
     if (item.flavor.name) {
       let ram = unitConverter(item.flavor.ram, 'MB');
-      flavor = item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB';
+      flavor = item.flavor.name + ' (' + item.flavor.vcpus + 'CPU / ' + ram.num + ram.unit + ' / ' + item.flavor.disk + 'GB' + ')';
     } else {
       flavor = '(' + item.flavor.id.substr(0, 8) + ')';
     }
