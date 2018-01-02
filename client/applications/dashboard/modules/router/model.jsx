@@ -32,6 +32,8 @@ const utils = require('../../utils/utils');
 
 // 是否显示网关限速按钮
 config.btns[1].dropdown.items[0].items[0].hide = !HALO.settings.enable_floatingip_bandwidth;
+// 是否显示清空转发规则按钮
+config.btns[1].dropdown.items[0].items[3].hide = !HALO.settings.enable_router_portforwarding;
 
 class Model extends React.Component {
 
@@ -254,10 +256,24 @@ class Model extends React.Component {
         }, true);
         break;
       case 'en_gw':
-        publicGateway(rows[0]);
+        publicGateway(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'dis_gw':
-        disableGateway(rows[0]);
+        disableGateway(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'cnt_subnet':
         relatedSubnet(rows[0]);
