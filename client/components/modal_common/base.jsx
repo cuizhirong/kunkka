@@ -106,7 +106,7 @@ class ModalBase extends React.Component {
     this.refs.btn.setState({
       disabled: true
     });
-    this.props.onConfirm && this.props.onConfirm(refs, (success, errorMessage) => {
+    this.props.onConfirm && this.props.onConfirm(refs, (success, errorMessage, scrollToErrorMsg) => {
       if (success) {
         this.setState({
           visible: false
@@ -120,6 +120,10 @@ class ModalBase extends React.Component {
         if (errorMessage) {
           this.setState({
             errorMessage: errorMessage
+          }, () => {
+            if(scrollToErrorMsg) {
+              this.refs['modal-bd'].scrollTop = this.refs['modal-bd'].scrollHeight;
+            }
           });
           this.refs.btn.setState({
             disabled: false
@@ -169,7 +173,7 @@ class ModalBase extends React.Component {
 
     return (
       <Modal ref="modal" {...props} title={title} visible={state.visible}>
-        <div className="modal-bd halo-com-modal-common">
+        <div className="modal-bd halo-com-modal-common" ref="modal-bd">
           {this.initialize()}
           <div className={state.errorMessage ? 'modal-row tip-row' : 'modal-row tip-row hide'}>
             <UskinTip type="danger" content={state.errorMessage} showIcon={true} width={466} />

@@ -26,13 +26,13 @@ function pop(obj, parent, callback) {
       const validateResult = quotaValidate(data, __);
 
       if(validateResult.status === 'fail') {
-        cb(false, validateResult.errorMessage);
+        cb(false, validateResult.errorMessage, true);
       } else {
         request.modifyQuota(data, obj.rawItem.id).then((res) => {
           callback && callback();
           cb(true);
         }).catch(error => {
-          cb(false, getErrorMessage(error));
+          cb(false, getErrorMessage(error), true);
         });
       }
     },
