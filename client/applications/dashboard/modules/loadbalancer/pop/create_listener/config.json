@@ -30,11 +30,6 @@
     "value": 10000,
     "unit": "",
     "isHideInput": true
-  }, {
-    "type": "charge",
-    "field": "charge",
-    "hide": true,
-    "has_label": true
   }],
   "btn": {
     "value": "create",

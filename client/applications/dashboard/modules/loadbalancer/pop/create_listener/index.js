@@ -3,13 +3,8 @@ const config = require('./config.json');
 const __ = require('locale/client/dashboard.lang.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
-const enableCharge = HALO.settings.enable_charge;
-let price = 0;
 
 function pop(obj, parent, actionModify, callback) {
-  if(enableCharge) {
-    price = Math.max.apply(null, HALO.prices.other['lbaas.listener']);
-  }
   if(actionModify) {
     config.title = ['modify', 'listener'];
     config.btn.value = 'modify';
@@ -23,27 +18,11 @@ function pop(obj, parent, actionModify, callback) {
   let limitFieldTextPrefix = 10000 + '~' + HALO.settings.listener_max_connection + ' / ' + __.current + ':';
   limitField.text = limitFieldTextPrefix + limitField.value;
 
-  const chargeField = config.fields[4];
-  if (enableCharge) {
-    chargeField.hide = false;
-  }
-
   let props = {
     __: __,
     parent: parent,
     config: config,
-    cacheKey : [],
-    cacheValue: [],
     onInitialize: function(refs) {
-      let initValue = limitField.value;
-      if (enableCharge) {
-        refs.charge.setState({
-          value: price
-        });
-        this.cacheKey.push(initValue);
-        this.cacheValue.push(price);
-      }
-
       if(actionModify) {
         refs.name.setState({
           value: obj.name
@@ -137,20 +116,6 @@ function pop(obj, parent, actionModify, callback) {
             refs.connection_limit.setState({
               text: limitFieldTextPrefix + conValue
             });
-
-            if (HALO.settings.enable_charge) {
-              if(this.cacheKey.includes(conValue)) {
-                refs.charge.setState({
-                  value: this.cacheValue[this.cacheKey.indexOf(conValue)]
-                });
-              } else {
-                refs.charge.setState({
-                  value: price * (parseInt(conValue / 10000, 10))
-                });
-                this.cacheKey.push(conValue);
-                this.cacheValue.push(price * (parseInt(conValue / 10000, 10)));
-              }
-            }
           }
           break;
         default:
