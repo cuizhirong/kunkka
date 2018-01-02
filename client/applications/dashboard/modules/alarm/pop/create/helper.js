@@ -1,14 +1,29 @@
 const __ = require('locale/client/dashboard.lang.json');
+const year = Number(HALO.configs.telemerty.year);
 
 let helper = {
 
-  getDateStr: function(date) {
+  getDateStr: function(date, granularity) {
     function format(num) {
       return (num < 10 ? '0' : '') + num;
     }
 
-    return format(date.getMonth() + 1) + '-' + format(date.getDate()) +
-      ' ' + format(date.getHours()) + ':' + format(date.getMinutes());
+    switch(Number(granularity)) {
+      /*case hour:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 1)].join('\n');
+      case day:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 5)].join('\n');
+      case week:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes() - 10)].join('\n');
+      case month:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours() - 1) + ':' + format(date.getMinutes())].join('\n');
+      case year:
+        return [format(date.getFullYear()) + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours() - 3) + ':' + format(date.getMinutes())].join('\n');*/
+      case year:
+        return [format(date.getFullYear()) + '-' + format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
+      default:
+        return [format(date.getMonth() + 1) + '-' + format(date.getDate()), format(date.getHours()) + ':' + format(date.getMinutes())].join('\n');
+    }
   },
 
   getMetricUnit: function(resourceType, metricType) {
@@ -29,29 +44,6 @@ let helper = {
         return 'MB';
       default:
         return '';
-    }
-  },
-
-  getGranularity: function(granularity) {
-    let telemerty = HALO.configs.telemerty,
-      hour = telemerty.hour,
-      day = telemerty.day,
-      week = telemerty.week,
-      month = telemerty.month,
-      year = telemerty.year;
-    switch(granularity.toString()) {
-      case '300':
-        return hour;
-      case '900':
-        return day;
-      case '3600':
-        return week;
-      case '21600':
-        return month;
-      case '86400':
-        return year;
-      default:
-        return '60';
     }
   }
 

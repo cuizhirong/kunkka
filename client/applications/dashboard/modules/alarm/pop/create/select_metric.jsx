@@ -10,13 +10,19 @@ const helper = require('./helper');
 let lineChart;
 let lineChartMsg;
 
+const hour = Number(HALO.configs.telemerty.hour),
+  day = Number(HALO.configs.telemerty.day),
+  week = Number(HALO.configs.telemerty.week),
+  month = Number(HALO.configs.telemerty.month),
+  year = Number(HALO.configs.telemerty.year);
+
 class Modal extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      granularity: 60
+      granularity: hour
     };
 
     ['onClickPeriod', 'onClickResource', 'onChangeSearch'].forEach((func) => {
@@ -69,7 +75,7 @@ class Modal extends React.Component {
   updateChartData(data, granularity) {
     const state = this.props.state;
     let unit = helper.getMetricUnit(state.resourceType, state.metricType);
-    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + helper.getGranularity(granularity) + 's';
+    let title = __.unit + '(' + unit + '), ' + __.alarm_interval + granularity + 's';
     let yAxis = [];
     let xAxis = [];
     function fixMeasure(num) {
@@ -87,7 +93,7 @@ class Modal extends React.Component {
       }
 
       let date = new Date(ele[0]);
-      xAxis.push(helper.getDateStr(date));
+      xAxis.push(helper.getDateStr(date, granularity));
     });
 
     let prev;
@@ -97,15 +103,14 @@ class Modal extends React.Component {
       prev = new Date();
     }
 
-    const DOTS_TIME = this.getTime(granularity);
     const DOTS_NUM = this.getDotsNumber(granularity, prev);
 
     if (data.length < DOTS_NUM) {
       let length = DOTS_NUM - data.length;
 
-      while (length > 0 && DOTS_TIME < prev.getTime()) {
+      while (length > 0) {
         prev = this.getNextPeriodDate(prev, granularity);
-        xAxis.unshift(helper.getDateStr(prev));
+        xAxis.unshift(helper.getDateStr(prev, granularity));
         yAxis.unshift(0);
         length--;
       }
@@ -138,27 +143,34 @@ class Modal extends React.Component {
   }
 
   getDotsNumber(granularity, prev) {
-    switch (granularity) {
-      case constant.GRANULARITY_HOUR:
-        return 180;
-      case constant.GRANULARITY_DAY:
-        return 1440;
-      case constant.GRANULARITY_WEEK:
-        return 10080;
-      case constant.GRANULARITY_MONTH:
-        return 720;
+    switch (Number(granularity)) {
+      case hour:
+        return (60 * 60 * 3) / hour;
+      case day:
+        return (60 * 60 * 24) / day;
+      case week:
+        return (60 * 60 * 24 * 7) / week;
+      case month:
+        return (60 * 60 * 24 * 30) / month;
+      case year:
+        return (60 * 60 * 24 * 365) / year;
       default:
         return 0;
     }
   }
 
   getNextPeriodDate(prev, granularity) {
-    switch (granularity) {
-      case constant.GRANULARITY_HOUR:
-      case constant.GRANULARITY_DAY:
-      case constant.GRANULARITY_WEEK:
+    switch (Number(granularity)) {
+      case hour:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 1);
-      case constant.GRANULARITY_MONTH:
+      case day:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 5);
+      case week:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours(), prev.getMinutes() - 10);
+      case month:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1, prev.getMinutes());
+      case year:
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 3);
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }
@@ -225,8 +237,8 @@ class Modal extends React.Component {
       this.props.onChangeState('loadingChart', true);
     }
 
-    this.props.onChangeState('measureGranularity', Number(granularity.split(',')[0]));
-    this.props.onChangeState('granularityKey', Number(granularity.split(',')[1]));
+    this.props.onChangeState('measureGranularity', Number(granularity));
+    this.props.onChangeState('granularityKey', Number(granularity));
   }
 
   onChangeSearch(text, isClicked) {
@@ -246,13 +258,6 @@ class Modal extends React.Component {
     let recentMonth = __.recent_month.replace('{0}', constant.RECENT_MONTH);
     let recentYear = __.recent_year.replace('{0}', constant.RECENT_YEAR);
 
-    let telemerty = HALO.configs.telemerty,
-      hour = telemerty.hour,
-      day = telemerty.day,
-      week = telemerty.week,
-      month = telemerty.month,
-      year = telemerty.year;
-
     return (
       <div className="page select-metric">
         <div className="select-box">
@@ -261,11 +266,11 @@ class Modal extends React.Component {
         <div className="chart-box">
           <div className="granularity-box">
             <ButtonGroup>
-              <Button btnKey={hour + ',300'} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
-              <Button btnKey={day + ',900'} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
-              <Button btnKey={week + ',3600'} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
-              <Button btnKey={month + ',21600'} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
-              <Button btnKey={year + ',86400'} value={recentYear} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_YEAR} />
+              <Button btnKey={hour} value={recentHour} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_HOUR} />
+              <Button btnKey={day} value={recentDay} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_DAY} />
+              <Button btnKey={week} value={recentWeek} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_WEEK} />
+              <Button btnKey={month} value={recentMonth} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_MONTH} />
+              <Button btnKey={year} value={recentYear} type="status" onClick={this.onClickPeriod} selected={granularityKey === constant.GRANULARITY_YEAR} />
             </ButtonGroup>
           </div>
           <div className="chart-content">

@@ -1,5 +1,7 @@
 const utils = require('../../utils');
 
+const hour = Number(HALO.configs.telemerty.hour);
+
 let initialState = {
 
   getInitialState: function() {
@@ -16,15 +18,15 @@ let initialState = {
       resourceType: undefined,
       metricType: undefined,
       resources: [],
-      measureGranularity: 60,
-      granularityKey: 300,
+      measureGranularity: hour,
+      granularityKey: hour,
       searchResource: '',
 
       //alarm config
       name: '',
       descrition: '',
       evaluationPeriods: 1,
-      granularity: 60,
+      granularity: hour,
       aggregationMethod: 'mean',
       comparisonOperator: 'gt',
       threshold: 5,
@@ -91,8 +93,8 @@ let initialState = {
       resourceType: rule.resource_type,
       metricType: rule.metric,
       resources: [], //after update
-      measureGranularity: 60,
-      granularityKey: 300,
+      measureGranularity: hour,
+      granularityKey: hour,
       searchResource: '',
 
       //alarm config

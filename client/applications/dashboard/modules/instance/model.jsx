@@ -727,27 +727,27 @@ class Model extends React.Component {
 
           let tabItems = [{
             name: __.three_hours,
-            key: '300',
+            key: hour,
             value: hour,
             time: 'hour'
           }, {
             name: __.one_day,
-            key: '900',
+            key: day,
             value: day,
             time: 'day'
           }, {
             name: __.one_week,
-            key: '3600',
+            key: week,
             value: week,
             time: 'week'
           }, {
             name: __.one_month,
-            key: '21600',
+            key: month,
             value: month,
             time: 'month'
           }, {
             name: __.one_year,
-            key: '22600',
+            key: year,
             value: year,
             time: 'year'
           }];
@@ -758,7 +758,7 @@ class Model extends React.Component {
             key = data.key;
           } else {
             granularity = hour;
-            key = '300';
+            key = hour;
             contents[tabKey] = (<div/>);
             updateDetailMonitor(contents, true);
           }
@@ -809,8 +809,8 @@ class Model extends React.Component {
               title: utils.getMetricName(instanceMetricType[index]),
               color: utils.getColor(instanceMetricType[index]),
               unit: utils.getUnit('instance', instanceMetricType[index], r),
-              yAxisData: utils.getChartData(r, key, timeUtils.getTime(time), instanceMetricType[index], 'instance'),
-              xAxis: utils.getChartData(r, key, timeUtils.getTime(time), instanceMetricType[index])
+              yAxisData: utils.getChartData(r, granularity, timeUtils.getTime(time), instanceMetricType[index], 'instance'),
+              xAxis: utils.getChartData(r, granularity, timeUtils.getTime(time), instanceMetricType[index])
             }));
             request.getNetworkResourceId(resourceId).then(_data => {
               const addresses = rows[0].addresses;
