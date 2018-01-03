@@ -9,9 +9,6 @@ module.exports = {
       data.body.forEach(b => {
         b.type = 'bucket';
         b.id = b.name;
-        b.containerCount = data.that.getResponseHeader('x-account-container-count');
-        b.objectCount = data.that.getResponseHeader('x-account-object-count');
-        b.bytesUsed = data.that.getResponseHeader('x-account-bytes-used');
       });
       return data.body;
     });
@@ -73,7 +70,7 @@ module.exports = {
     let headervalue;
     if(params.type === 'public') {
       headervalue = '.r:*';
-    } else if (params.type === 'private') {
+    } else {
       headervalue = HALO.user.projectId + ':*';
     }
     return fetch.put({
@@ -83,6 +80,21 @@ module.exports = {
       }
     });
   },
+  modifyBucket: function(params) {
+    let headervalue;
+    if(params.type === 'public') {
+      headervalue = '.r:*';
+    } else {
+      headervalue = HALO.user.projectId + ':*';
+    }
+    return fetch.post({
+      url: '/proxy-swift/' + params.Bucket,
+      headers: {
+        'X-Container-Read': headervalue
+      }
+    });
+  },
+
   deleteBucket: function(data) {
     return fetch.delete({
       url: '/proxy-swift/' + data.Bucket

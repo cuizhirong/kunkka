@@ -19,7 +19,7 @@ function pop(arr, parent, breadcrumb, callback) {
         callback && callback(res);
         cb(true);
       }).catch(err => {
-        cb(false, 'ERROR');
+        cb(false, JSON.parse(err.responseText).message || 'ERROR');
       });
     },
     onAction: function(field, state, refs) {

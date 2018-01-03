@@ -11,6 +11,11 @@
     "icon": "create",
     "disabled": true
   }, {
+    "value": ["modify", "bucket"],
+    "key": "modify_bucket",
+    "icon": "edit",
+    "disabled": true
+  }, {
     "value": ["delete"],
     "key": "delete_bucket",
     "type": "delete",

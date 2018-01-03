@@ -13,8 +13,7 @@ function pop(obj, objj, parent, callback) {
   config.fields[0].data = [obj[0]];
   config.fields[0].data[0].name = deleteShow;
   config.fields[0].getStatusIcon = getStatusIcon;
-  config.fields[0].number = obj.length - 1;
-
+  config.fields[0].number = obj.length;
   let props = {
     __: __,
     parent: parent,

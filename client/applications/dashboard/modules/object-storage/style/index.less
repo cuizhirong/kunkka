@@ -24,12 +24,9 @@
         a {
           font-size: 18px;
           line-height: 51px;
-          color: @breadcrumb-item-select-color;
+          color: @breadcrumb-item-select-hover-color;
           letter-spacing: 0.3px;
           font-weight: normal;
-          &:hover {
-            color: @breadcrumb-item-select-hover-color;
-          }
         }
         span {
           font-size: 18px;
@@ -63,7 +60,7 @@
     margin-top: 13px;
     .per {
       display: inline-block;
-      width: 23.5%;
+      width: 32%;
       height: 100px;
       margin-right: 2%;
       border: 1px solid #EBEFF1;
@@ -148,10 +145,10 @@
       }
       .storage-link {
         cursor: pointer;
-        color: @copyid-color;
-        &:hover {
-          color: @copyid-hover-color;
-        }
+        color: @copyid-hover-color;
+      }
+      .switch {
+        margin-top: 10px;
       }
     }
     .table-mini {

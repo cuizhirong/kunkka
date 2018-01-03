@@ -23,10 +23,13 @@ class ModalBase extends React.Component {
       files: [],
       catalogueAddress: '',
       currentFile: props.obj && props.obj.name,
-      uploadData: {}
+      uploadData: {},
+      showError: false,
+      nameConflict: __.name_conflict,
+      showNumberError: false
     };
 
-    ['onConfirm', 'renderTabs', 'onCancel'].forEach(f => {
+    ['onConfirm', 'renderTabs', 'onCancel', 'requestData', 'closePop'].forEach(f => {
       this[f] = this[f].bind(this);
     });
   }
@@ -165,83 +168,123 @@ class ModalBase extends React.Component {
 
   onConfirm() {
     let props = this.props,
-      breadcrumb = props.breadcrumb;
-    let state = this.state;
-    let reader = new FileReader();
-    let transmitData = [],
-      that = this;
+      breadcrumb = props.breadcrumb,
+      state = this.state;
     breadcrumb = props.breadcrumb.join('/');
-    this.setState({
-      disabled: true
-    });
+    let obj = this.props.obj;
     if(this.props.obj) {
-      let obj = this.props.obj;
-      state.files.forEach((f) => {
-        reader.readAsArrayBuffer(f);
-        transmitData.push({
-          Bucket: breadcrumb,
-          bytes: f.bytes,
-          Name: f.name,
-          file: this.result
-        });
+      this.requestData('/proxy-swift/' + breadcrumb + '/' + obj.name + '?replace=1', this.state.files[0]).then(() => {
+        this.closePop();
       });
-      reader.onload = function() {
-        let xhr = new XMLHttpRequest();
-        let url = '/proxy-swift/' + breadcrumb + '/' + obj.name + '?replace=1';
-        xhr.open('PUT', url, true);
-        xhr.onreadystatechange = function () {
-          if(xhr.status === 201){
-            props.callback && props.callback();
-          }
-          that.setState({
-            visible: false
-          });
-        };
-        xhr.onerror = function(error) {
-        };
-        xhr.send(reader.result);
-      };
     } else {
       if(state.catalogueType === 'current') {
-        state.files.forEach((f) => {
-          reader.readAsArrayBuffer(f);
-          transmitData.push({
-            Bucket: breadcrumb,
-            bytes: f.bytes,
-            Name: f.name,
-            file: this.result
+        this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[0].name, this.state.files[0]).then(() => {
+          this.state.files[1] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[1].name, this.state.files[1]).then(() => {
+            this.state.files[2] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[2].name, this.state.files[2]).then(() => {
+              this.state.files[3] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[3].name, this.state.files[3]).then(() => {
+                this.state.files[4] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[4].name, this.state.files[4]).then(() => {
+                  this.state.files[5] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[5].name, this.state.files[5]).then(() => {
+                    this.closePop();
+                  }) : this.closePop();
+                }) : this.closePop();
+              }) : this.closePop();
+            }) : this.closePop();
+          }) : this.closePop();
+        });
+        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).catch(() => {
+          this.setState({
+            showNumberError: true
           });
         });
       } else {
-        state.files.forEach((f) => {
-          reader.readAsArrayBuffer(f);
-          transmitData.push({
-            Bucket: state.catalogueAddress,
-            bytes: f.bytes,
-            Name: f.name,
-            file: this.result
+        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).then(() => {
+          this.state.files[1] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[1].name, this.state.files[1]).then(() => {
+            this.state.files[2] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[2].name, this.state.files[2]).then(() => {
+              this.state.files[3] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[3].name, this.state.files[3]).then(() => {
+                this.state.files[4] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[4].name, this.state.files[4]).then(() => {
+                  this.state.files[5] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[5].name, this.state.files[5]).then(() => {
+                    this.closePop();
+                  }) : this.closePop();
+                }) : this.closePop();
+              }) : this.closePop();
+            }) : this.closePop();
+          }) : this.closePop();
+        });
+        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).catch(() => {
+          this.setState({
+            showNumberError: true
           });
         });
       }
-      reader.onload = function() {
-        let xhr = new XMLHttpRequest();
-        let url;
-        transmitData.forEach(item => {
-          url = '/proxy-swift/' + item.Bucket + '/' + item.Name;
-        });
-
-        xhr.open('PUT', url, true);
-        xhr.onreadystatechange = function () {
-          if(xhr.status === 201){
-            props.callback && props.callback();
-          }
-          that.setState({
-            visible: false
-          });
-        };
-        xhr.send(reader.result);
-      };
     }
+  }
+
+  closePop() {
+    this.props.callback && this.props.callback();
+    this.setState({
+      visible: false
+    });
+  }
+
+  requestData(url, file) {
+    let that = this;
+    let ot;
+    return new Promise(function(resolve, reject) {
+      let xhr = new XMLHttpRequest();
+      let oloaded;
+      xhr.open('PUT', url, true);
+      xhr.upload.onprogress = function progressFunction(evt) {
+        let uploadProgress = document.getElementById('uploadProgress' + file.id);
+        let progressBar = document.getElementById('progressBar' + file.id);
+        let percentageDiv = document.getElementById('percentage' + file.id);
+        uploadProgress.style.display = 'flex';
+        uploadProgress.style['margin-bottom'] = '8px';
+        if (evt.lengthComputable) {
+          progressBar.max = evt.total;
+          progressBar.value = evt.loaded;
+          percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
+        }
+        let time = document.getElementById('time' + file.id);
+        let nt = new Date().getTime();
+        let pertime = (nt - ot) / 1000;
+        ot = new Date().getTime() - 1;
+
+        let perload = evt.loaded - oloaded;
+        oloaded = evt.loaded;
+        //上传速度计算
+        let speed = perload / pertime;
+        let bspeed = speed;
+        let units = 'b/s';//单位名称
+        if(speed / 1024 > 1){
+          speed = speed / 1024;
+          units = 'k/s';
+        }
+        if(speed / 1024 > 1){
+          speed = speed / 1024;
+          units = 'M/s';
+        }
+        speed = speed.toFixed(1);
+        let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+        time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
+        if (bspeed === 0) {
+          time.innerHTML = __.upload_canael;
+        }
+      };
+      xhr.onload = function uploadComplete(evt) {
+        if(xhr.readyState === 4 && that.state.files.length < 6) {
+          resolve(xhr.responseText);
+        } else {
+          reject(xhr);
+        }
+        if(xhr.status === 400) {
+          that.setState({
+            showError: true,
+            nameConflict: JSON.parse(xhr.responseText).message
+          });
+        }
+      };
+      xhr.send(file);
+    });
   }
 
   render() {
@@ -266,7 +309,6 @@ class ModalBase extends React.Component {
           <p className="select-file">{__.select_file}</p>
           <div className="drag-box">
             <img src={src}/>
-            <p className="tip-dragbox">{__.tip_dragbox}</p>
             <div className="add-btn" onClick={this.onClickAdd}>
               <span>{selectName}</span>
               <input ref="fileselect" type="file" multiple id="file-select" onChange={this.fileUpload.bind(this)}/>
@@ -278,9 +320,18 @@ class ModalBase extends React.Component {
               let uploadFile = f.name.length > 20 ? f.name.slice(0, 20) + '...' : f.name;
               return (
                 <li key={f.id} className="file-item">
-                  <i className="glyphicon icon-file" style={{color: '#cacdd0'}}/>
-                  <span>{uploadFile + ' (' + size.num + ' ' + size.unit + ')'}</span>
-                  <i className="glyphicon icon-remove" onClick={this.onClickRemove.bind(this, f)}/>
+                  <div className="file-item-li">
+                    <i className="glyphicon icon-file" style={{color: '#cacdd0'}}/>
+                    <span>{uploadFile + ' (' + size.num + ' ' + size.unit + ')'}</span>
+                    <i className="glyphicon icon-remove" onClick={this.onClickRemove.bind(this, f)}/>
+                  </div>
+                  <div id={'uploadProgress' + f.id} style={{display: 'none'}} className="modal-row input-row label-row">
+                    <div style={{width: '15%'}}>{__.upload_progress}</div>
+                    <div style={{width: '100%'}}>
+                      <progress id={'progressBar' + f.id} value="0" max="100" style={{width: '100%'}}></progress>
+                      <span id={'percentage' + f.id}></span><span id={'time' + f.id}></span>
+                    </div>
+                  </div>
                 </li>
               );
             }) : null}
@@ -295,6 +346,26 @@ class ModalBase extends React.Component {
               {__.upload_tip}
             </div>
           </div>
+          {state.showError ? <div className="tip obj-tip-error">
+            <div className="obj-tip-icon">
+              <strong>
+                <i className="glyphicon icon-status-warning" />
+              </strong>
+            </div>
+            <div className="obj-tip-content" style={{width: 320 + 'px'}}>
+              {this.state.nameConflict}
+            </div>
+          </div> : null}
+          {state.showNumberError ? <div className="tip obj-tip-error">
+            <div className="obj-tip-icon">
+              <strong>
+                <i className="glyphicon icon-status-warning" />
+              </strong>
+            </div>
+            <div className="obj-tip-content" style={{width: 320 + 'px'}}>
+              {__.number_tip}
+            </div>
+          </div> : null}
         </div>
         <div className="modal-ft halo-com-modal-upload-file">
           <Button value={props.obj !== null ? __.edit : __.upload} disabled={state.disabled} type="create" onClick={this.onConfirm} />
