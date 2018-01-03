@@ -76,7 +76,7 @@ class ModalBase extends React.Component {
       for(let i = 0; i < newFiles.length; i++) {
         let f = newFiles[i];
         f.id = f.name + Date.now();
-        if(files.length < 1) {
+        if(files.length < 5) {
           files.push(f);
         }
       }
@@ -190,8 +190,7 @@ class ModalBase extends React.Component {
               }) : this.closePop();
             }) : this.closePop();
           }) : this.closePop();
-        });
-        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).catch(() => {
+        }).catch(() => {
           this.setState({
             showNumberError: true
           });
@@ -209,8 +208,7 @@ class ModalBase extends React.Component {
               }) : this.closePop();
             }) : this.closePop();
           }) : this.closePop();
-        });
-        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).catch(() => {
+        }).catch(() => {
           this.setState({
             showNumberError: true
           });
