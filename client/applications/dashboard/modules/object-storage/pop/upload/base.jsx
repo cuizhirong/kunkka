@@ -99,10 +99,12 @@ class ModalBase extends React.Component {
   }
   onClickRemove(item) {
     let files = this.state.files;
-    let newFiles = files.filter(ele => {
+    let newFiles = [];
+    files.filter(ele => {
       if(ele.id === item.id) {
         return false;
       }
+      newFiles.push(ele);
       return true;
     });
 
@@ -110,7 +112,8 @@ class ModalBase extends React.Component {
       files: newFiles,
       disabled: newFiles.length > 0 ? false : true
     });
-    if(this.state.files.length > 6) {
+
+    if(newFiles.length > 5) {
       this.setState({
         disabled: true
       });
