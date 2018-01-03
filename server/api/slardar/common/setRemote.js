@@ -2,20 +2,31 @@
 
 const config = require('config');
 const endpointType = config('endpoint_type') || 'internal';
+const Url = require('url');
 
 module.exports = function setRemote(catalog) {
-  let remote = {};
-  let oneRemote;
-  for (let i = 0, l = catalog.length, service = catalog[0]; i < l; i++, service = catalog[i]) {
-    if (!remote[service.name]) {
-      remote[service.name] = oneRemote = {};
+  const remotes = {};
+  catalog.forEach(service => {
+    let oneRemote;
+    if (!remotes[service.name]) {
+      remotes[service.name] = oneRemote = {};
     }
-    for (let j = 0, m = service.endpoints.length, endpoint = service.endpoints[0]; j < m; j++, endpoint = service.endpoints[j]) {
-      if (endpoint.interface === endpointType) {
-        oneRemote[endpoint.region_id] = service.name === 'swift' ? endpoint.url : endpoint.url.split('/').slice(0, 3).join('/');
-        break;
-      }
+    if (service.name === 'swift') {
+      service.endpoints.forEach(endpoint => {
+        if (endpoint.interface === endpointType) {
+          oneRemote[endpoint.region_id] = endpoint.url;
+        }
+        if(endpoint.interface === 'public') {
+          oneRemote[endpoint.region_id + '_PUBLICPORT'] = Url.parse(endpoint.url).port;
+        }
+      });
+    } else {
+      service.endpoints.forEach(endpoint => {
+        if (endpoint.interface === endpointType) {
+          oneRemote[endpoint.region_id] = endpoint.url.split('/').slice(0, 3).join('/');
+        }
+      });
     }
-  }
-  return remote;
+  });
+  return remotes;
 };
