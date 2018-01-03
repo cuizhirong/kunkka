@@ -17,16 +17,14 @@ function pop(obj, parent, callback) {
           if(lb.floatingip) {
             return false;
           }
-
-          if(!lb.router.external_gateway_info) {
-            return false;
-          }
-
           return true;
         });
         refs.lb.setState({
           data: lbs,
           value: lbs[0] ? lbs[0].id : ''
+        });
+        refs.btn.setState({
+          disabled: lbs.length === 0 || !lbs[0].router.external_gateway_info
         });
       });
     },
@@ -65,7 +63,7 @@ function pop(obj, parent, callback) {
                 value: ports[0].id
               });
               refs.btn.setState({
-                disabled: false
+                disabled: !lb.router.external_gateway_info
               });
             }
           });

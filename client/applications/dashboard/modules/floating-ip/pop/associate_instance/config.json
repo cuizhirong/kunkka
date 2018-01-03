@@ -19,6 +19,14 @@
   }, {
     "type": "select",
     "field": "port",
+    "hide": false,
+    "empty_text": {
+      "info": "no_port_can_bound"
+    }
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "port_can_not_bound",
     "hide": true
   }],
   "btn": {
