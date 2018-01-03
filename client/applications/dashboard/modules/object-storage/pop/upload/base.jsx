@@ -244,11 +244,11 @@ class ModalBase extends React.Component {
         let units = 'b/s';//单位名称
         if(speed / 1024 > 1){
           speed = speed / 1024;
-          units = 'k/s';
+          units = 'kb/s';
         }
         if(speed / 1024 > 1){
           speed = speed / 1024;
-          units = 'M/s';
+          units = 'Mb/s';
         }
         speed = speed.toFixed(1);
         let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
