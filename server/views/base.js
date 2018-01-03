@@ -84,9 +84,9 @@ View.prototype = {
         HALO.configs.kiki_url = req.session.endpoint.kiki[user.regionId];
       }
       if (req.session.endpoint.swift) {
-        let url = req.session.endpoint.swift[user.regionId];
-        HALO.configs.swift_url = url;
-        HALO.configs.swift_port = this.Url.parse(url).port;
+        let swift = req.session.endpoint.swift;
+        HALO.configs.swift_url = swift[user.regionId];
+        HALO.configs.swift_port = swift[user.regionId + '_PUBLICPORT'];
       }
       if (this.plugins) {
         this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
