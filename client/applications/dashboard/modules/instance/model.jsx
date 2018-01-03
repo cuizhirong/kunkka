@@ -1070,12 +1070,13 @@ class Model extends React.Component {
 
   getRelatedSourcesItems(items) {
     let attchVolumes = [];
+    let module = JSON.parse(HALO.settings.module_config).dashboard['volume-private'].show ? '/dashboard/volume-private/' : '/dashboard/volume-public/';
     items.volume.forEach((volume, i) => {
       let vid = '(' + volume.id.slice(0, 8) + ')',
         vname = volume.name || vid;
       attchVolumes.push({
         key: volume.name,
-        data: <a data-type="router" href={'/dashboard/volume/' + volume.id}>
+        data: <a data-type="router" href={module + volume.id}>
             {vname + ' ( ' + volume.volume_type + ' | ' + volume.size + 'GB )'}
           </a>,
         childItem: volume
