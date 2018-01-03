@@ -25,8 +25,7 @@ class ModalBase extends React.Component {
       currentFile: props.obj && props.obj.name,
       uploadData: {},
       showError: false,
-      nameConflict: __.name_conflict,
-      showNumberError: false
+      nameConflict: __.name_conflict
     };
 
     ['onConfirm', 'renderTabs', 'onCancel', 'requestData', 'closePop'].forEach(f => {
@@ -111,6 +110,11 @@ class ModalBase extends React.Component {
       files: newFiles,
       disabled: newFiles.length > 0 ? false : true
     });
+    if(this.state.files.length > 6) {
+      this.setState({
+        disabled: true
+      });
+    }
   }
 
   fileUpload() {
@@ -123,10 +127,16 @@ class ModalBase extends React.Component {
       files.push(f);
     }
 
-    this.setState({
-      files: files,
-      disabled: files.length > 0 ? false : true
-    });
+    if(this.state.files.length > 5) {
+      this.setState({
+        disabled: true
+      });
+    } else {
+      this.setState({
+        files: files,
+        disabled: files.length > 0 ? false : true
+      });
+    }
   }
 
   onChangeCatalogueType(key, e) {
@@ -177,43 +187,19 @@ class ModalBase extends React.Component {
         this.closePop();
       });
     } else {
-      if(state.catalogueType === 'current') {
-        this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[0].name, this.state.files[0]).then(() => {
-          this.state.files[1] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[1].name, this.state.files[1]).then(() => {
-            this.state.files[2] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[2].name, this.state.files[2]).then(() => {
-              this.state.files[3] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[3].name, this.state.files[3]).then(() => {
-                this.state.files[4] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[4].name, this.state.files[4]).then(() => {
-                  this.state.files[5] ? this.requestData('/proxy-swift/' + breadcrumb + '/' + this.state.files[5].name, this.state.files[5]).then(() => {
-                    this.closePop();
-                  }) : this.closePop();
-                }) : this.closePop();
-              }) : this.closePop();
-            }) : this.closePop();
-          }) : this.closePop();
-        }).catch(() => {
-          this.setState({
-            showNumberError: true
-          });
+      let urlfolder = state.catalogueType === 'current' ? breadcrumb : state.catalogueAddress;
+      let that = this;
+      let files = that.state.files;
+
+      Promise.all(files.map((file, index) => that.requestData('/proxy-swift/' + urlfolder + '/' + file.name, file))).then(() => {
+        that.closePop();
+      }).catch((err) => {
+        that.setState({
+          showError: true,
+          nameConflict: JSON.parse(err.responseText).message,
+          visible: true
         });
-      } else {
-        this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[0].name, this.state.files[0]).then(() => {
-          this.state.files[1] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[1].name, this.state.files[1]).then(() => {
-            this.state.files[2] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[2].name, this.state.files[2]).then(() => {
-              this.state.files[3] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[3].name, this.state.files[3]).then(() => {
-                this.state.files[4] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[4].name, this.state.files[4]).then(() => {
-                  this.state.files[5] ? this.requestData('/proxy-swift/' + state.catalogueAddress + '/' + this.state.files[5].name, this.state.files[5]).then(() => {
-                    this.closePop();
-                  }) : this.closePop();
-                }) : this.closePop();
-              }) : this.closePop();
-            }) : this.closePop();
-          }) : this.closePop();
-        }).catch(() => {
-          this.setState({
-            showNumberError: true
-          });
-        });
-      }
+      });
     }
   }
 
@@ -231,6 +217,9 @@ class ModalBase extends React.Component {
       let xhr = new XMLHttpRequest();
       let oloaded;
       xhr.open('PUT', url, true);
+      that.setState({
+        disabled: true
+      });
       xhr.upload.onprogress = function progressFunction(evt) {
         let uploadProgress = document.getElementById('uploadProgress' + file.id);
         let progressBar = document.getElementById('progressBar' + file.id);
@@ -269,16 +258,10 @@ class ModalBase extends React.Component {
         }
       };
       xhr.onload = function uploadComplete(evt) {
-        if(xhr.readyState === 4 && that.state.files.length < 6) {
+        if(xhr.readyState === 4 && xhr.status === 201 && that.state.files.length < 6) {
           resolve(xhr.responseText);
         } else {
           reject(xhr);
-        }
-        if(xhr.status === 400) {
-          that.setState({
-            showError: true,
-            nameConflict: JSON.parse(xhr.responseText).message
-          });
         }
       };
       xhr.send(file);
@@ -307,6 +290,7 @@ class ModalBase extends React.Component {
           <p className="select-file">{__.select_file}</p>
           <div className="drag-box">
             <img src={src}/>
+            <p className="tip-dragbox">{__.tip_dragbox}</p>
             <div className="add-btn" onClick={this.onClickAdd}>
               <span>{selectName}</span>
               <input ref="fileselect" type="file" multiple id="file-select" onChange={this.fileUpload.bind(this)}/>
@@ -341,7 +325,7 @@ class ModalBase extends React.Component {
               </strong>
             </div>
             <div className="obj-tip-content" style={{width: 320 + 'px'}}>
-              {__.upload_tip}
+              {__.number_tip}
             </div>
           </div>
           {state.showError ? <div className="tip obj-tip-error">
@@ -352,16 +336,6 @@ class ModalBase extends React.Component {
             </div>
             <div className="obj-tip-content" style={{width: 320 + 'px'}}>
               {this.state.nameConflict}
-            </div>
-          </div> : null}
-          {state.showNumberError ? <div className="tip obj-tip-error">
-            <div className="obj-tip-icon">
-              <strong>
-                <i className="glyphicon icon-status-warning" />
-              </strong>
-            </div>
-            <div className="obj-tip-content" style={{width: 320 + 'px'}}>
-              {__.number_tip}
             </div>
           </div> : null}
         </div>
