@@ -30,13 +30,13 @@ function pop(obj, parent, callback) {
       const validateResult = quotaValidate(targetQuota, __);
 
       if(validateResult.status === 'fail') {
-        cb(false, validateResult.errorMessage);
+        cb(false, validateResult.errorMessage, true);
       } else {
         request.applyQuotas(addedQuota, overview, targetQuota).then((res) => {
           cb(true);
           callback && callback();
         }).catch(error => {
-          cb(false, getErrorMessage(error));
+          cb(false, getErrorMessage(error), true);
         });
       }
     },
