@@ -5,7 +5,7 @@ const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 function filterPorts(ports, subnets, floatingips) {
-  let filteredPorts = [];
+  let returnedPorts = [];
   let filteredFips = [];
 
   let portsMap1 = {};
@@ -29,16 +29,18 @@ function filterPorts(ports, subnets, floatingips) {
     return false;
   });
 
-  // 先将加入了开启公网网关路由器中的子网端口加入数组
+  // 设置是否关联了开启外部网关的路由器的端口的 enableBindFIP 字段
   filteredSubnets.forEach((subnet) => {
     if (subnet.router && subnet.router.external_gateway_info) {
-      filteredPorts.push(portsMap1[subnet.id]);
+      returnedPorts.push(Object.assign({}, portsMap1[subnet.id], { enableBindFIP: true }));
+    } else {
+      returnedPorts.push(Object.assign({}, portsMap1[subnet.id], { enableBindFIP: false }));
     }
   });
 
-  // 然后过滤掉已经绑定了公网 IP 的子网端口
+  // 过滤掉已经绑定了公网 IP 的端口
   filteredFips.forEach((fip) => {
-    filteredPorts = filteredPorts.filter((port) => {
+    returnedPorts = returnedPorts.filter((port) => {
       if(fip.port_id === port.id && fip.fixed_ip_address === port.fixedIp) {
         return false;
       }
@@ -46,7 +48,7 @@ function filterPorts(ports, subnets, floatingips) {
     });
   });
 
-  return filteredPorts;
+  return returnedPorts;
 }
 
 function pop(obj, parent, callback) {
@@ -138,26 +140,41 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, status, refs) {
+      let instanceList = refs.instance.state.data;
+      let selectedId = refs.instance.state.value;
+
+      let selectedInst = instanceList.filter((instance) => instance.id === selectedId)[0];
+
+      let ports = portsMap[selectedInst.id];
+
       switch (field) {
         case 'instance':
-          let instanceList = refs.instance.state.data;
-          let selected = refs.instance.state.value;
-
-          let item = instanceList.filter((instance) => instance.id === selected)[0];
-
-          let ports = portsMap[item.id];
           if (instanceList.length > 0) {
 
             refs.port.setState({
               data: ports,
-              value: ports.length > 0 && ports[0].id,
-              hide: ports.length > 0 ? false : true
+              value: ports.length > 0 && ports[0].id
             });
 
+            refs.port_can_not_bound.setState({
+              hide: ports.length === 0 || ports[0].enableBindFIP
+            });
             refs.btn.setState({
-              disabled: ports.length > 0 ? false : true
+              disabled: ports.length === 0 || !ports[0].enableBindFIP
             });
           }
+          break;
+        case 'port':
+          let selectedIndex = ports.findIndex((port) => {
+            return port.id === refs.port.state.value;
+          });
+
+          refs.port_can_not_bound.setState({
+            hide: selectedIndex === -1 || ports[selectedIndex].enableBindFIP
+          });
+          refs.btn.setState({
+            disabled: selectedIndex === -1 || !ports[selectedIndex].enableBindFIP
+          });
           break;
         default:
           break;

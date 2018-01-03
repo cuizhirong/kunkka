@@ -20,6 +20,11 @@
     },
     "long_label": true,
     "data": []
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "router_did_not_enable_external_gateway",
+    "hide": true
   }],
   "btn": {
     "value": "associate",

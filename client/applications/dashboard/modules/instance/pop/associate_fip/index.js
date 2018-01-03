@@ -5,16 +5,8 @@ const createFloatingIp = require('client/applications/dashboard/modules/floating
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const __ = require('locale/client/dashboard.lang.json');
 
-/**
- * Filter out those local IPs that are not bound to the router that has enabled
- * public network gateway
- * @param {Array} ports local UPs
- * @param {Array} subnetList
- * @return {Array} filtered local IPs
- */
-function filter(ports, subnetList) {
-  let filteredPorts = [];
-
+function addEnaleBindFIPField(ports, subnetList) {
+  let returnedPorts = [];
   let portsMap = {};
   ports.forEach((port) => {
     portsMap[port.subnetId] = port;
@@ -29,11 +21,13 @@ function filter(ports, subnetList) {
 
   filteredSubnets.forEach((subnet) => {
     if(subnet.router && subnet.router.external_gateway_info) {
-      filteredPorts.push(portsMap[subnet.id]);
+      returnedPorts.push(Object.assign({}, portsMap[subnet.id], { enableBindFIP: true }));
+    } else {
+      returnedPorts.push(Object.assign({}, portsMap[subnet.id], { enableBindFIP: false }));
     }
   });
 
-  return filteredPorts;
+  return returnedPorts;
 }
 
 function pop(obj, parent, callback) {
@@ -61,13 +55,16 @@ function pop(obj, parent, callback) {
     config: config,
     onInitialize: function(refs) {
       request.getSubnetAndFIPList().then((data) => {
-        ports = filter(ports, data.subnet);
+        ports = addEnaleBindFIPField(ports, data.subnet);
         let dataArray = [];
 
         if(ports.length > 0) {
           refs.local_ip.setState({
             data: ports,
             value: ports[0].id
+          });
+          refs.router_did_not_enable_external_gateway.setState({
+            hide: ports[0].enableBindFIP
           });
         }
 
@@ -81,12 +78,6 @@ function pop(obj, parent, callback) {
           refs.floating_ip.setState({
             data: dataArray,
             value: dataArray[0] ? dataArray[0].id : ''
-          });
-        }
-
-        if(ports.length > 0 && dataArray.length > 0) {
-          refs.btn.setState({
-            disabled: false
           });
         }
       });
@@ -133,6 +124,10 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
+      const selectedIndex = ports.findIndex((port) => {
+        return port.id === refs.local_ip.state.value;
+      });
+
       switch(field) {
         case 'floating_ip':
           if(refs.floating_ip.state.clicked) {
@@ -143,13 +138,24 @@ function pop(obj, parent, callback) {
                 value: res.id,
                 clicked: false
               });
-              if(ports.length > 0) {
-                refs.btn.setState({
-                  disabled: false
-                });
-              }
+
+              refs.btn.setState({
+                disabled: selectedIndex === -1 || !ports[selectedIndex].enableBindFIP
+              });
+            });
+          } else {
+            refs.btn.setState({
+              disabled: refs.floating_ip.state.data.length === 0 || selectedIndex === -1 || !ports[selectedIndex].enableBindFIP
             });
           }
+          break;
+        case 'local_ip':
+          refs.router_did_not_enable_external_gateway.setState({
+            hide: selectedIndex === -1 || ports[selectedIndex].enableBindFIP
+          });
+          refs.btn.setState({
+            disabled: refs.floating_ip.state.data.length === 0 || selectedIndex === -1 || !ports[selectedIndex].enableBindFIP
+          });
           break;
         default:
           break;
