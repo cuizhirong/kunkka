@@ -2,40 +2,14 @@
 
 const request = require('superagent');
 const http = require('http');
-const co = require('co');
-const uuid = require('uuid');
 const _ = require('lodash');
 
 const getQueryString = require('helpers/getQueryString.js');
 const noBodyMethodList = ['get', 'head', 'delete'];
 const csv = require('./csv');
-const customResPage = require('../../brewmaster/api/base').middleware.customResPage;
-const adminLogin = require('../common/adminLogin');
-const config = require('config');
-const configRegion = config('region');
-const regionId = (configRegion && configRegion[0] && configRegion[0].id) || 'RegionOne';
-
 
 module.exports = (app) => {
-  app.get('/proxy-zaqar/confirm-subscriptions/email', function (req, res, next) {
-    co(function* () {
-      const adminToken = yield adminLogin();
-      const remote = adminToken.remote.zaqar[regionId];
-      const target = remote + req.query.Paths;
-
-      request.put(target)
-        .set('X-Auth-Token', adminToken.token)
-        .set('Client-ID', uuid.v1())
-        .send({confirmed: true})
-        .end((err) => {
-          if (err) {
-            next({status: 500, message: req.i18n.__('api.keystone.confirmError')});
-          } else {
-            next({message: req.i18n.__('api.keystone.confirmSuccess')});
-          }
-        });
-    }).catch(next);
-  }, customResPage);
+  require('./zaqar_confirm')(app);
 
   // check session
   app.use(['/api/v1/', '/proxy/', '/proxy-search/', '/proxy-zaqar/', '/proxy-swift/', '/proxy-glance/'], function (req, res, next) {
@@ -84,46 +58,6 @@ module.exports = (app) => {
     });
   });
 
-  app.patch('/proxy-zaqar/v2/queues/:queue_name', function (req, res, next) {
-    let queueName = req.params.queue_name;
-    let endpoint = req.session.endpoint;
-    let region = req.session.user.regionId;
-    let host = endpoint.zaqar[region];
-
-    const postData = JSON.stringify(req.body);
-    const options = {
-      hostname: host.split('://')[1].split(':')[0],
-      port: host.split('://')[1].split(':')[1],
-      path: '/v2/queues/' + queueName,
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/openstack-messaging-v2.0-json-patch',
-        'Content-Length': Buffer.byteLength(postData),
-        'X-Auth-Token': req.session.user.token,
-        'Client-ID': uuid.v1()
-      }
-    };
-
-    const patchReq = http.request(options, (response, www) => {
-      response.setEncoding('utf8');
-      let body;
-      response.on('data', (chunk) => {
-        body = chunk;
-      });
-      response.on('end', () => {
-        res.set(response.headers);
-        res.status(response.statusCode).json(JSON.parse(body));
-      });
-    });
-
-    patchReq.on('error', (e) => {
-      res.status(500).send(e);
-    });
-
-    patchReq.write(postData);
-    patchReq.end();
-
-  });
   /**
    * /proxy/csv-field/os-hypervisors
    * /proxy/csv-field/floatingips
@@ -162,10 +96,14 @@ module.exports = (app) => {
           }
         });
     } else {
+      let reqBody = req.body;
+      if (req.headers['content-type'] === 'application/openstack-messaging-v2.0-json-patch' && Array.isArray(reqBody)) {
+        reqBody = JSON.stringify(reqBody);
+      }
       request[method](target + getQueryString(req.query))
         .set(req.headers)
         .set('X-Auth-Token', req.session.user.token)
-        .send(req.body)
+        .send(reqBody)
         .end((err, payload) => {
           if (err) {
             next(err);

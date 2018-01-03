@@ -55,7 +55,9 @@ function setup() {
   app.use(bodyParser.urlencoded({
     extended: true
   }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({
+    type: ['application/json', 'application/openstack-messaging-v2.0-json-patch']
+  }));
 
   const i18n = require('../middlewares/i18n');
   i18n(app);
