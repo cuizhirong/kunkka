@@ -115,10 +115,11 @@ Driver.prototype.patchMethodAsync = function (url, token, theBody) {
   }
 };
 
-Driver.prototype.postMethodAsync = function (url, token, theBody) {
+Driver.prototype.postMethodAsync = function (url, token, theBody, header = {}) {
   if (token) {
     return request
       .post(url)
+      .set(header)
       .send(theBody)
       .set('X-Auth-Token', token);
   } else {

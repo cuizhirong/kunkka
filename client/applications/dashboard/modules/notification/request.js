@@ -38,11 +38,10 @@ module.exports = {
   },
   addSubscriptions: function(name, data) {
     let updateList = [];
-    let url = '/proxy/zaqar/v2/queues/' + name + '/subscriptions';
     data.subcribers && data.subcribers.forEach((s) => {
       if(s.op === 'add') {
         updateList.push(fetch.post({
-          url: url,
+          url: '/api/zaqar/v2/queues/' + name + '/subscriptions',
           data: {
             ttl: data.ttl,
             subscriber: s.subscriber
@@ -81,7 +80,11 @@ module.exports = {
   updateQueueWidthSubscriptions: function(data) {
     return fetch.patch({
       // only you
-      url: '/proxy-zaqar/v2/queues/' + data.name,
+      url: '/proxy/zaqar/v2/queues/' + data.name,
+      headers: {
+        'Client-ID': HALO.user.userId
+      },
+      contentType: 'application/openstack-messaging-v2.0-json-patch',
       data: [{
         'op': 'replace',
         'path': '/metadata/description',
@@ -122,7 +125,7 @@ module.exports = {
     return RSVP.all(deferredList);
   },
   resendVerify: function(sub) {
-    let url = '/proxy/zaqar/v2/queues/' + sub.source + '/subscriptions';
+    let url = '/api/zaqar/v2/queues/' + sub.source + '/subscriptions';
     return fetch.post({
       url: url,
       data: {
