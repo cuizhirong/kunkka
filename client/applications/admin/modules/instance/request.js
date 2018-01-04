@@ -1,7 +1,7 @@
 const storage = require('client/applications/admin/cores/storage');
 const fetch = require('../../cores/fetch');
 const RSVP = require('rsvp');
-const Promise = RSVP.Promise;
+const download = require('client/utils/download');
 
 function getParameters(fields) {
   let ret = '';
@@ -241,16 +241,7 @@ module.exports = {
       let domainID = domains.find((ele) => ele.name === currentDomain).id;
 
       let url = '/proxy/csv/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1' + getParameters(fields) + '&domain_id=' + domainID;
-      function ret() {
-        let linkNode = document.createElement('a');
-        linkNode.href = url;
-        linkNode.click();
-        linkNode = null;
-        return 1;
-      }
-      return new Promise((resolve, reject) => {
-        resolve(ret());
-      });
+      return download(url);
     });
   },
   getDomains: function() {

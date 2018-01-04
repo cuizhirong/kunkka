@@ -1,6 +1,6 @@
 const fetch = require('../../cores/fetch');
 const RSVP = require('rsvp');
-const Promise = RSVP.Promise;
+const download = require('client/utils/download');
 
 function getParameters(fields) {
   let ret = '';
@@ -113,15 +113,6 @@ module.exports = {
   },
   exportCSV(fields) {
     let url = '/proxy/csv/cinder/v2/' + HALO.user.projectId + '/snapshots/detail?all_tenants=1' + getParameters(fields);
-    function ret() {
-      let linkNode = document.createElement('a');
-      linkNode.href = url;
-      linkNode.click();
-      linkNode = null;
-      return 1;
-    }
-    return new Promise((resolve, reject) => {
-      resolve(ret());
-    });
+    return download(url);
   }
 };
