@@ -52,7 +52,7 @@ function pop(obj, parent, callback) {
         dest = refs.migrate_to_other.state.value;
 
         request.getHypervisorById(dest).then(host => {
-          request.migrate(currentHost, dest, randomly);
+          request.migrate(currentHost, host.hypervisor.hypervisor_hostname, randomly);
           cb(true);
         }).catch((err) => {
           cb(false, getErrorMessage(err));
