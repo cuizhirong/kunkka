@@ -5,7 +5,7 @@ const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 let externalNetwork = null;
-const NAME = 'rate.limit.fip';
+const NAME = 'ratelimit.fip';
 
 function pop(parent, callback) {
 

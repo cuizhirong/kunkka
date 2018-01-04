@@ -14,9 +14,9 @@ function getIcons(name) {
       return 'volume';
     case 'volume.snapshot':
       return 'snapshot';
-    case 'rate.limit.fip':
+    case 'ratelimit.fip':
       return 'bw-in';
-    case 'rate.limit.gw':
+    case 'ratelimit.gw':
       return 'bw-out';
     default:
       return name;
