@@ -211,6 +211,19 @@ class Model extends React.Component {
           }
         });
         break;
+      case 'delete_snapshot':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'image',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteImage(rows[0].id).then((res) => {
+              cb(true);
+            });
+          }
+        });
+        break;
       case 'share_image':
         sharedImage(rows[0]);
         break;
@@ -258,6 +271,9 @@ class Model extends React.Component {
           break;
         case 'delete':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
+          break;
+        case 'delete_snapshot':
+          btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'share_image':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private') ? false : true;

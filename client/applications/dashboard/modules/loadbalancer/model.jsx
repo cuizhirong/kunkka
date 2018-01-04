@@ -28,6 +28,7 @@ const utils = require('../../utils/utils');
 const notify = require('client/applications/dashboard/utils/notify');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
 const unitConverter = require('client/utils/unit_converter');
+const Tip = require('client/components/modal_common/subs/tip/index');
 
 class Model extends React.Component {
 
@@ -65,7 +66,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', data => {
       if(this.props.style.display !== 'none') {
-        if(data.resource_type === 'loadbalancer' || data.resource_type === 'floatingip') {
+        if(data.resource_type === 'loadbalancer' || data.resource_type === 'floatingip' || (data.resource_type === 'listener' && data.stage === 'end')) {
           this.refresh({
             detailRefresh: true
           }, true);
@@ -73,10 +74,6 @@ class Model extends React.Component {
           if (data.action === 'delete' && data.stage === 'end' && data.resource_id === router.getPathList()[2]) {
             router.replaceState('/dashboard/loadbalancer');
           }
-        } else if (data.resource_type === 'listener' && data.stage === 'end') {
-          this.refresh({
-            detailRefresh: true
-          }, true);
         }
       }
     });
@@ -220,6 +217,12 @@ class Model extends React.Component {
           action: 'delete',
           type: 'lb',
           data: rows,
+          disabled: rows[0].listeners.length !== 0 ? true : false,
+          children: rows[0].listeners.length !== 0 ?
+            <Tip
+              __={__}
+              tip_type="error"
+              label={__.delete_lb_tip} /> : null,
           onDelete: function(_data, cb) {
             request.deleteLb(rows[0]).then(res => {
               cb(true);
@@ -271,7 +274,7 @@ class Model extends React.Component {
           btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = rows.length === 1 && rows[0].listeners.length === 0 ? false : true;
+          btns[key].disabled = rows.length === 1 ? false : true;
           break;
         case 'assoc_fip':
           btns[key].disabled = hasBoundRouter && !rows[0].floatingip ? false : true;
