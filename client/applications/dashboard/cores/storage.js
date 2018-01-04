@@ -43,7 +43,7 @@ const map = {
   port: ['subnet', 'instance'],
   router: ['subnet', 'port', 'network'],
   floatingip: ['instance', 'port'],
-  instance: ['port', 'volume', 'image'],
+  instance: ['port', 'volume', 'image', 'floatingip'],
   image: ['instance'],
   backup: ['volume', 'snapshot'],
   loadbalancer: ['securitygroup', 'port']
