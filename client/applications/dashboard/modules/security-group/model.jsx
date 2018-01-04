@@ -114,13 +114,29 @@ class Model extends React.Component {
           type: 'security_group',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteSecurityGroup(rows).then(() => {
-              if (router.getPathList()[2]) {
-                router.replaceState('/dashboard/security-group');
+            request.getInstances().then(res => {
+              const exist = res.some(r => {
+                let addresses = r.addresses;
+                for (let address in addresses) {
+                  for (let ele of addresses[address]) {
+                    return ele.security_groups.some(sg => {
+                      return rows.some(row => sg.id === row.id);
+                    });
+                  }
+                }
+              });
+              if(exist) {
+                cb(false, __.sg_used);
+              } else {
+                request.deleteSecurityGroup(rows).then(() => {
+                  if (router.getPathList()[2]) {
+                    router.replaceState('/dashboard/security-group');
+                  }
+                  that.refresh(null, true);
+                });
+                cb(true);
               }
-              that.refresh(null, true);
             });
-            cb(true);
           }
         });
         break;

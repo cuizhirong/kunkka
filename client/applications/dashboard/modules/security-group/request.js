@@ -67,5 +67,10 @@ module.exports = {
     }));
     deferredList.push(storage.getList(['instance', 'port']));
     return RSVP.all(deferredList);
+  },
+  getSecuritygroupList: function() {
+    return storage.getList(['securitygroup']).then((data) => {
+      return data.securitygroup;
+    });
   }
 };

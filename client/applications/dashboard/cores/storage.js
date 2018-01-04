@@ -82,7 +82,7 @@ Storage.prototype = {
           return;
         }
       }
-      promises[type] = that['get' + type[0].toUpperCase() + type.slice(1) + 'List']().then(function(data) {
+      promises[type] = that['get' + type[0].toUpperCase() + type.slice(1).replace('_', '') + 'List']().then(function(data) {
         that.cache[type] = data;
         return data;
       });
