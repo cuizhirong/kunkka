@@ -90,7 +90,7 @@ function pop(parent, callback) {
             limit.fipratelimit.floatingip_id = res.floatingip.id;
             limit.fipratelimit.floatingip_address = res.floatingip.floating_ip_address;
             request.createLimit(limit).then(r => {
-              callback && callback(r.floatingip);
+              callback && callback(res.floatingip);
               cb(true);
             });
           } else {
