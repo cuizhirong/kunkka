@@ -1,4 +1,5 @@
 const fetch = require('client/applications/dashboard/cores/fetch');
+const download = require('client/utils/download');
 
 module.exports = {
   listBuckets: function() {
@@ -44,18 +45,7 @@ module.exports = {
   downloadItem: function(item, breadcrumb) {
     let bread = breadcrumb.join('/');
     let url = '/proxy-swift/' + bread + '/' + item.name;
-    function addLink() {
-      let linkNode = document.createElement('a');
-      if (linkNode.download !== undefined) {
-        linkNode.download = item.name;
-      }
-      linkNode.href = url;
-      linkNode.click();
-      return 1;
-    }
-    return new Promise((resolve, reject) => {
-      resolve(addLink());
-    });
+    return download(url, 'image', item.name);
   },
   listFolderObjects: function(params, folder) {
     return this.listObjects(params).then(res => {
