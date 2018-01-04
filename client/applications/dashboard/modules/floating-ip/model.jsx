@@ -73,7 +73,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', (data) => {
       if (this.props.style.display !== 'none') {
-        if (data.resource_type === 'floatingip' || data.resource_type === 'instance') {
+        if (data.resource_type === 'floatingip') {
           this.refresh({
             detailRefresh: true
           }, false);
@@ -83,6 +83,11 @@ class Model extends React.Component {
             && data.resource_id === router.getPathList()[2]) {
             router.replaceState('/dashboard/floating-ip');
           }
+        }
+        if(data.resource_type === 'instance' && data.action === 'delete' && data.stage === 'end') {
+          this.refresh({
+            detailRefresh: true
+          }, false);
         }
       }
     });
