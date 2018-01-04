@@ -22,7 +22,7 @@ function pop(obj, parent, callback) {
 
     for (let key in obj.addresses) {
       for (let item of obj.addresses[key]) {
-        if (item['OS-EXT-IPS:type'] === 'fixed') {
+        if (item['OS-EXT-IPS:type'] === 'fixed' && item.subnet) {
           joinedSubnet.push(item.subnet);
         }
       }
