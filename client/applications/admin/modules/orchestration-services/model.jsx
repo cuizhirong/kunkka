@@ -158,8 +158,10 @@ class Model extends React.Component {
     }
   }
 
-  onFilterSearchClick(action, refs, data) {
+  onFilterSearchClick(action, data) {
     if(action === 'search') {
+      this.loadingTable();
+
       const hostnameGroup = data.hostname,
         engineIdGroup = data.engine_id,
         topicGroup = data.topic;
