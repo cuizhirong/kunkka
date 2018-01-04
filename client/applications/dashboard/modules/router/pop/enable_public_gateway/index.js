@@ -46,7 +46,7 @@ function pop(obj, parent, callback, resize) {
       }
       // 调整带宽限速
       if(resize && obj) {
-        let rateLimit = Number(obj.rate_limit / (1024 * 8));
+        let rateLimit = obj.rate_limit ? Number(obj.rate_limit / (1024 * 8)) : 1;
         refs.bandwidth.setState({
           value: rateLimit,
           inputValue: rateLimit

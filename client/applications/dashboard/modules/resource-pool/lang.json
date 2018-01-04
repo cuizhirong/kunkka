@@ -2,6 +2,7 @@
   "en": {
     "delay": "Delay",
     "delay_tip": "Range: 2~60s",
+    "delete_pool_tip": "The resource pool associated with the healthmonitor can not be deleted",
     "edit": "Edit ",
     "enable_pool": "{0} resource pool \"{1}\"?",
     "enable_resource": "{0} resource \"{1}\"?",
@@ -29,6 +30,7 @@
   "zh-CN": {
     "delay": "间隔时间",
     "delay_tip": "范围：2~60秒",
+    "delete_pool_tip": "资源池关联了健康检查，无法删除",
     "edit": "编辑",
     "enable_pool": "确定{0}资源池\"{1}\"?",
     "enable_resource": "确定{0}资源\"{1}\"?",

@@ -4,7 +4,7 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    return storage.getList(['loadbalancer', 'floatingip', 'subnet'], forced).then(function(data) {
+    return storage.getList(['loadbalancer', 'floatingip', 'subnet', 'pool'], forced).then(function(data) {
       data.loadbalancer.forEach(lb => {
         data.floatingip.some(fip => {
           if(lb.vip_port_id === fip.port_id) {

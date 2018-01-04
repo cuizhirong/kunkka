@@ -80,6 +80,7 @@ class ModalBase extends React.Component {
           <div className={'modal-row tip-row' + (state.tip ? '' : ' hide')}>
             <Tip type={state.tipType} content={state.tip} showIcon={true} width={462}/>
           </div>
+          {props.children}
         </div>
         <div className="modal-ft">
           <Button value={action} disabled={state.disabled} btnKey="create" type="delete" onClick={this.onDelete}/>

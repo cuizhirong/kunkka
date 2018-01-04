@@ -23,6 +23,7 @@ const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const notify = require('client/applications/dashboard/utils/notify');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
+const Tip = require('client/components/modal_common/subs/tip/index');
 
 class Model extends React.Component {
 
@@ -44,7 +45,7 @@ class Model extends React.Component {
 
     msgEvent.on('dataChange', data => {
       if (this.props.style.display !== 'none') {
-        if(data.resource_type === 'pool' || data.resource_type === 'member' || data.resource_type === 'healthmonitor') {
+        if(data.resource_type === 'pool' || data.resource_type === 'member' || data.resource_type === 'healthmonitor' || (data.resource_type === 'listener' && data.stage === 'end')) {
           this.refresh({
             detailRefresh: true
           }, true);
@@ -168,11 +169,18 @@ class Model extends React.Component {
         modifyMonitor(rows[0]);
         break;
       case 'delete':
+        let hasHealth = rows.some(r => r.healthmonitor_id);
         deleteModal({
           __: __,
           action: 'delete',
           type: 'resource_pool',
           data: rows,
+          disabled: hasHealth ? true : false,
+          children: hasHealth ?
+            <Tip
+              __={__}
+              tip_type="error"
+              label={__.delete_pool_tip} /> : null,
           onDelete: function(_data, cb) {
             request.deletePools(rows).then(res => {
               cb(true);
@@ -224,7 +232,7 @@ class Model extends React.Component {
           btns[key].disabled = !(rows.length === 1 && rows[0].healthmonitor);
           break;
         case 'delete':
-          btns[key].disabled = rows.length > 0 && !(rows.some(row => row.healthmonitor)) ? false : true;
+          btns[key].disabled = rows.length > 0 ? false : true;
           break;
         default:
           break;

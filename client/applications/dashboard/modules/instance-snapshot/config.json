@@ -12,7 +12,7 @@
     "disabled": true
   }, {
     "value": ["delete"],
-    "key": "delete",
+    "key": "delete_snapshot",
     "type": "delete",
     "icon": "delete",
     "disabled": true
