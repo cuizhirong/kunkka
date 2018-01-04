@@ -5,6 +5,8 @@ const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('../../../../utils/error_message');
 
 let gatewayId = null;
+const NAME = 'ratelimit.gw';
+
 function pop(parent, callback) {
 
   let enableCharge = HALO.settings.enable_charge;
@@ -31,7 +33,7 @@ function pop(parent, callback) {
       const bandwidth = refs.bandwidth.state.value;
       config.fields[4].hide = !enableCharge || !refs.enable_public_gateway.state.checked;
       function setPrice() {
-        let price = HALO.prices ? ( Math.max.call(null, HALO.prices.other['rate.limit.gw']) * bandwidth ).toFixed(4) : 0;
+        let price = HALO.prices ? ( Math.max.call(null, HALO.prices.other[NAME]) * bandwidth ).toFixed(4) : 0;
 
         refs.charge.setState({
           value: price
@@ -133,7 +135,7 @@ function pop(parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: HALO.prices ? (Math.max.call(null, HALO.prices.other['rate.limit.gw']) * state.value).toFixed(4) : 0
+                value: HALO.prices ? (Math.max.call(null, HALO.prices.other[NAME]) * state.value).toFixed(4) : 0
               });
             }
           }

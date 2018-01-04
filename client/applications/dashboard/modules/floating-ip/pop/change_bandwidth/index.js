@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
-const NAME = 'rate.limit.fip';
+const NAME = 'ratelimit.fip';
 
 function pop(obj, parent, callback) {
 

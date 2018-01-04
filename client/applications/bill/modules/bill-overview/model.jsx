@@ -70,6 +70,8 @@ class Model extends React.Component {
     } catch(e) {
       return;
     }
+    // 为了解决ie下无法自动初始化宽度的bug，手动调用resize。
+    lineChart.resize();
     this.onInitialize();
   }
 
@@ -346,7 +348,9 @@ class Model extends React.Component {
     };
     return (
       <div className="halo-module-bill-overview" style={this.props.style}>
-        <Tab items={tabs} />
+        <div className="tab-wrapper">
+          <Tab items={tabs} />
+        </div>
         <div className="header">
           <select value={HALO.current_region} onChange={this.onSwitchRegion}>
             {
