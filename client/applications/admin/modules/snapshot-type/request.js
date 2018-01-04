@@ -1,6 +1,5 @@
 const fetch = require('../../cores/fetch');
-const RSVP = require('rsvp');
-const Promise = RSVP.Promise;
+const download = require('client/utils/download');
 
 function requestParams(obj) {
   let str = '';
@@ -87,16 +86,7 @@ module.exports = {
   },
   exportCSV(fields) {
     let url = '/proxy/csv/glance/v2/images' + getParams(fields);
-    function ret() {
-      let linkNode = document.createElement('a');
-      linkNode.href = url;
-      linkNode.click();
-      linkNode = null;
-      return 1;
-    }
-    return new Promise((resolve, reject) => {
-      resolve(ret());
-    });
+    return download(url);
   },
   getInstances() {
     let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
