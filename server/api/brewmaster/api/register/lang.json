@@ -52,7 +52,8 @@
     "dontHavePhone": "您没有登记手机号",
     "usageReauth": "您正在二次验证，",
     "usageResetPassword": "您正在重置密码，",
-    "usageRegister": "您正在注册，"
+    "usageRegister": "您正在注册，",
+    "tooManyFailures": "失败次数太多，请稍后再试。"
   },
   "en": {
     "Name": "The Username",
@@ -106,6 +107,7 @@
     "dontHavePhone": "You do not have a phone number",
     "usageReauth": "For 2-Step Verifing, ",
     "usageResetPassword": "For resetting password, ",
-    "usageRegister": "For register, "
+    "usageRegister": "For register, ",
+    "tooManyFailures": "Please try again later for too many failures."
   }
 }

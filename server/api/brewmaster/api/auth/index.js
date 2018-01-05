@@ -10,6 +10,7 @@ const userModel = require('../../models').user;
 const loginModel = require('../../models').loginlog;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
+const FORBIDDEN_EXPIRES = 30 * 60;
 
 const base = require('../base');
 
@@ -35,6 +36,8 @@ Auth.prototype = {
   authentication: function (req, res, next) {
     const that = this;
     co(function *() {
+      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      enableSafety = enableSafety ? enableSafety.value : true;
       const captchaSetting = yield base._getSettingByAppAndName('auth', 'enable_login_captcha');
       let enableLoginCaptcha = true;
       if (captchaSetting) {
@@ -52,6 +55,17 @@ Auth.prototype = {
       }
 
       let {username, password, domain = config('domain') || 'Default'} = req.body;
+      if (enableSafety) {
+        let failedNumber = yield that.memClient.getAsync('loginFailedUsername' + username);
+        failedNumber = failedNumber[0] && failedNumber[0].toString();
+        failedNumber = parseInt(failedNumber, 10);
+        if (failedNumber > 4) {
+          return Promise.reject({
+            status: 400,
+            message: {message: req.i18n.__('api.register.tooManyFailures'), code: 400}
+          });
+        }
+      }
       let adminToken = yield adminLogin();
 
       let unScopedRes;
@@ -101,10 +115,7 @@ Auth.prototype = {
       }
 
       //scope
-      const scopedRes = yield base.__scopedAuthAsync({
-        projectId: projectId,
-        token: unScopeToken
-      });
+      const scopedRes = yield base.__scopedAuthAsync({projectId, token: unScopeToken});
 
       const payload = scopedRes.body;
       let scopeToken = scopedRes.header['x-subject-token'];
@@ -151,8 +162,6 @@ Auth.prototype = {
       }
 
       //online in devices
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
-      enableSafety = enableSafety ? enableSafety.value : true;
       if (enableSafety) {
         const memClient = that.memClient;
         let oldSessionId = yield memClient.getAsync('sessionID' + userId);
@@ -172,6 +181,12 @@ Auth.prototype = {
         }
       }
     }).catch(e => {
+      if (e.status === 401) {
+        that.memClient.increment(
+          'loginFailedUsername' + req.body.username, 1,
+          {expires: FORBIDDEN_EXPIRES, initial: 1}
+        );
+      }
       //log
       loginModel.create({
         type: 'login', ip: req.ip, username: req.body.username,
