@@ -15,6 +15,7 @@ const base = require('../base');
 
 function Auth(app) {
   this.app = app;
+  this.memClient = app.get('CacheClient');
 }
 
 function getCookie(req, userId) {
@@ -32,28 +33,17 @@ function getCookie(req, userId) {
 
 Auth.prototype = {
   authentication: function (req, res, next) {
-
+    const that = this;
     co(function *() {
-
-      const authSettings = yield base._getSettingsByApp('auth');
+      const captchaSetting = yield base._getSettingByAppAndName('auth', 'enable_login_captcha');
       let enableLoginCaptcha = true;
-
-      authSettings.some(s => {
-        if (s.name === 'enable_login_captcha') {
-          enableLoginCaptcha = s.value;
-          return true;
-        }
-      });
-
+      if (captchaSetting) {
+        enableLoginCaptcha = captchaSetting.value;
+      }
       if (enableLoginCaptcha) {
-        if (req.body.captcha && req.session.captcha) {
-          if (req.body.captcha.toString().toLowerCase() !== req.session.captcha.toString().toLowerCase()) {
-            return Promise.reject({
-              status: 400,
-              message: {message: req.i18n.__('api.register.CaptchaError'), code: 400}
-            });
-          }
-        } else {
+        let ctBody = req.body.captcha;
+        let ctSession = req.session.captcha;
+        if (!ctBody || !ctSession || String(ctBody).toLowerCase() !== String(ctSession).toLowerCase()) {
           return Promise.reject({
             status: 400,
             message: {message: req.i18n.__('api.register.CaptchaError'), code: 400}
@@ -61,27 +51,16 @@ Auth.prototype = {
         }
       }
 
-      let _username = req.body.username;
-      let _password = req.body.password;
-      let _domain = req.body.domain || config('domain') || 'Default';
-
+      let {username, password, domain = config('domain') || 'Default'} = req.body;
       let adminToken = yield adminLogin();
 
       let unScopedRes;
       let userToDatabase = {};
       try {
-        unScopedRes = yield base.__unscopedAuthAsync({
-          username: _username,
-          password: _password,
-          domain: _domain
-        });
+        unScopedRes = yield base.__unscopedAuthAsync({username, password, domain});
       } catch (e) {
-        let user = yield listUsersAsync(
-          adminToken.token,
-          keystoneRemote,
-          {name: req.body.username}
-        );
-        if (user.body.users.length && !user.body.users[0].enabled) {
+        let users = yield listUsersAsync(adminToken.token, keystoneRemote, {name: username});
+        if (users.body.users.length && !users.body.users[0].enabled) {
           return Promise.reject({
             status: 403,
             message: {message: req.i18n.__('api.register.unEnabled'), code: 403}
@@ -100,7 +79,7 @@ Auth.prototype = {
       //projects
       const results = yield {
         project: base.__userProjectsAsync({userId: userId, token: unScopeToken}),
-        domain: drivers.keystone.domain.listDomainsAsync(adminToken.token, keystoneRemote, {name: _domain})
+        domain: drivers.keystone.domain.listDomainsAsync(adminToken.token, keystoneRemote, {name: domain})
       };
       let projectId, domainId;
       const projects = results.project.body.projects;
@@ -129,7 +108,6 @@ Auth.prototype = {
 
       const payload = scopedRes.body;
       let scopeToken = scopedRes.header['x-subject-token'];
-      let username = payload.token.user.name;
       let regionId = region[0].id;
       region.some(r => {
         if (r.id === cookies.region) {
@@ -152,34 +130,40 @@ Auth.prototype = {
       }), opt);
       req.session.cookie.expires = expireDate;
       let isAdmin = false;
-      let _roles = payload.token.roles.map(role => {
+      let roles = payload.token.roles.map(role => {
         if (role.name === 'admin') {
           isAdmin = true;
         }
         return role.name;
       });
       req.session.user = {
-        'domainName': _domain,
-        domainId: domainId,
-        'regionId': regionId,
-        'projectId': projectId,
-        'userId': userId,
-        'token': scopeToken,
-        'username': username,
-        'projects': projects,
-        'isAdmin': isAdmin,
-        'roles': _roles
+        domainName: domain, domainId, regionId,
+        projectId, projects, isAdmin, roles,
+        userId, username, token: scopeToken
       };
       req.session.endpoint = setRemote(payload.token.catalog);
       //log
-      loginModel.create({ip: req.ip, name: username, success: true});
+      loginModel.create({type: 'login', ip: req.ip, username, success: true});
       if (!req.isAuthNotReturn) {
         res.json({success: 'login success'});
       } else {
         next();
       }
 
-      //TODO createUser
+      //online in devices
+      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      enableSafety = enableSafety ? enableSafety.value : true;
+      if (enableSafety) {
+        const memClient = that.memClient;
+        let oldSessionId = yield memClient.getAsync('sessionID' + userId);
+        oldSessionId = oldSessionId[0] && oldSessionId[0].toString();
+        if (oldSessionId) {
+          yield memClient.deleteAsync(oldSessionId);
+        }
+        yield memClient.setAsync('sessionID' + userId, req.sessionID);
+      }
+
+      //createUser in database
       if (userToDatabase.id) {
         let userDB = yield userModel.findOne({where:{id: userToDatabase.id}});
         if (!userDB) {
@@ -189,7 +173,10 @@ Auth.prototype = {
       }
     }).catch(e => {
       //log
-      loginModel.create({ip: req.ip, name: req.body.username, success: false});
+      loginModel.create({
+        type: 'login', ip: req.ip, username: req.body.username,
+        success: false, message: e.message.message
+      });
       next(e);
     });
   },
@@ -198,10 +185,7 @@ Auth.prototype = {
     let token = req.session.user.token;
 
     co(function *() {
-      const response = yield base.__scopedAuthAsync({
-        projectId: projectId,
-        token: token
-      });
+      const response = yield base.__scopedAuthAsync({projectId, token});
 
       req.session.endpoint = setRemote(response.body.token.catalog);
       req.session.user.projectId = projectId;
@@ -230,6 +214,10 @@ Auth.prototype = {
     res.status(200).json({success: 'switch region successfully'});
   },
   logout: function (req, res) {
+    if (req.session && req.session.user) {
+      let log = {type: 'logout', username: req.session.user.username, success: true, ip: req.ip};
+      loginModel.create(log);
+    }
     req.session.destroy();
     res.redirect('/');
   },

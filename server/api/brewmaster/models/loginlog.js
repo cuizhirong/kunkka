@@ -7,7 +7,11 @@ module.exports = function (mysql, DataTypes) {
       unique: true,
       primaryKey: true
     },
-    name: {
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    username: {
       type: DataTypes.STRING,
       allowNull: false
     },
