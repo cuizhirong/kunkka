@@ -267,7 +267,14 @@ class Model extends React.Component {
         }, true);
         break;
       case 'create':
-        applyModal();
+        applyModal(null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'dissociate':
         dissociateRelated(rows[0]);
