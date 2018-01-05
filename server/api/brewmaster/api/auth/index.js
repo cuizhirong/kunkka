@@ -7,6 +7,7 @@ const region = config('region');
 const keystoneRemote = config('keystone');
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const userModel = require('../../models').user;
+const loginModel = require('../../models').loginlog;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
 
@@ -170,6 +171,8 @@ Auth.prototype = {
         'roles': _roles
       };
       req.session.endpoint = setRemote(payload.token.catalog);
+      //log
+      loginModel.create({ip: req.ip, name: username, success: true});
       if (!req.isAuthNotReturn) {
         res.json({success: 'login success'});
       } else {
@@ -184,7 +187,11 @@ Auth.prototype = {
           userModel.create(userToDatabase);
         }
       }
-    }).catch(next);
+    }).catch(e => {
+      //log
+      loginModel.create({ip: req.ip, name: req.body.username, success: false});
+      next(e);
+    });
   },
   switchProject: function (req, res, next) {
     let projectId = req.body.projectId ? req.body.projectId : req.params.projectId;

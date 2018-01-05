@@ -38,6 +38,7 @@
     "async": "^1.5.0",
     "aws-sdk": "2.3.15",
     "babel-polyfill": "^6.26.0",
+    "bcrypt": "^1.0.3",
     "body-parser": "~1.14.1",
     "bufferutil": "^1.2.1",
     "ccap": "^0.6.10",

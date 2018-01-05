@@ -29,7 +29,10 @@ Password.prototype = {
       if (!user) {
         next({msg: 'UserNotExist', customRes: true, status: 400});
       } else {
-        base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
+        next(yield base.func.phoneCaptchaMemAsync({
+          phone, usage: 'usageResetPassword',
+          __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+        }));
       }
 
     }).catch(next);

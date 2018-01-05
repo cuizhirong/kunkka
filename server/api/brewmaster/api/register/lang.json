@@ -48,7 +48,11 @@
     "quotaPassed": "您的配额申请已经通过",
     "quotaRefused": "您的配额申请已被拒绝",
     "verifyEmail": "验证邮箱",
-    "verifyEmailSuccess": "验证邮箱成功，请等待管理员处理您的账号。"
+    "verifyEmailSuccess": "验证邮箱成功，请等待管理员处理您的账号。",
+    "dontHavePhone": "您没有登记手机号",
+    "usageReauth": "您正在二次验证，",
+    "usageResetPassword": "您正在重置密码，",
+    "usageRegister": "您正在注册，"
   },
   "en": {
     "Name": "The Username",
@@ -98,6 +102,10 @@
     "quotaPassed": "Your quota application had passed",
     "quotaRefused": "Your quota application had been denied",
     "verifyEmail": "verify email",
-    "verifyEmailSuccess": "Verify Email Success! Please wait for the administrator to process your account."
+    "verifyEmailSuccess": "Verify Email Success! Please wait for the administrator to process your account.",
+    "dontHavePhone": "You do not have a phone number",
+    "usageReauth": "For 2-Step Verifing, ",
+    "usageResetPassword": "For resetting password, ",
+    "usageRegister": "For register, "
   }
 }

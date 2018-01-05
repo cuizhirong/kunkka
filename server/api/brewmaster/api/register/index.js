@@ -172,21 +172,23 @@ User.prototype = {
       let cs = req.session.captcha;
       let cb = req.body.captcha;
       req.session.captcha = '';
-      if (cb && cs && cb.toString().toLowerCase() === cs.toString().toLowerCase()) {
-        const phone = parseInt(req.body.phone, 10);
-        if (!(/^1[34578]\d{9}$/.test(phone))) {
-          return next({customRes: true, status: 400, msg: 'PhoneError'});
-        }
-        const user = yield base.func.verifyUserAsync(req.admin.token, {phone});
-        if (user) {
-          next({customRes: true, status: 400, msg: 'Used'});
-        } else {
-          base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
-        }
-      } else {
+      if (!cb || cs || cb.toString().toLowerCase() !== cs.toString().toLowerCase()){
         return next({
           customRes: true, status: 400, msg: 'CaptchaError'
         });
+      }
+      const phone = parseInt(req.body.phone, 10);
+      if (!(/^1[34578]\d{9}$/.test(phone))) {
+        return next({customRes: true, status: 400, msg: 'PhoneError'});
+      }
+      const user = yield base.func.verifyUserAsync(req.admin.token, {phone});
+      if (user) {
+        next({customRes: true, status: 400, msg: 'Used'});
+      } else {
+        next(yield base.func.phoneCaptchaMemAsync({
+          phone, usage: 'usageRegister',
+          __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+        }));
       }
     }).catch(next);
   },
@@ -318,8 +320,10 @@ User.prototype = {
       } else if (user.enabled) {
         return next({customRes: true, msg: 'Enabled'});
       }
-
-      base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
+      next(yield base.func.phoneCaptchaMemAsync({
+        phone, usage: '',
+        __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+      }));
     }).catch(next);
   },
   changeEmailSubmit: function (req, res, next) {

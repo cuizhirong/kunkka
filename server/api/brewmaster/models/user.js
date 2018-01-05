@@ -40,6 +40,10 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     password_expires_at: {
       type: DataTypes.DATE,
       allowNull: true
@@ -66,7 +70,6 @@ module.exports = function (mysql, DataTypes) {
       allowNull: true
     }
   }, {
-
     paranoid: false,
     charset: 'utf8'
   });

@@ -4,7 +4,7 @@ const uuid = require('uuid');
 const glob = require('glob');
 
 const drivers = require('drivers');
-const userModel = require('../models').user;
+const userModel = require('../../models').user;
 
 const config = require('config');
 const keystoneRemote = config('keystone');
@@ -57,35 +57,33 @@ base.getVars = function (req, extra) {
   return objVar;
 };
 
-base.func.phoneCaptchaMemAsync = function (phone, memClient, req, res, next) {
-  return co(function* () {
-    let __ = req.i18n.__.bind(req.i18n);
-    let isFrequently = yield base.func.checkFrequentlyAsync(phone.toString(), memClient);
-    if (isFrequently) {
-      return res.status(500).send({type: 'message', message: __('api.register.Frequently')});
-    }
-    let code = Math.random() * 900000 | 100000;
-    yield base.func.setKeyValueAsync({
-      key: phone.toString(),
-      value: code,
-      memClient,
-      expire: SMS_CODE_EXPIRE
-    });
-    let corporationName = 'UnitedStack 有云';
-    let settings = yield base._getSettingsByApp('auth');
-    settings.some(setting => {
-      return setting.name === 'corporation_name' && (corporationName = setting.value);
-    });
+base.func.phoneCaptchaMemAsync = function* (opts) {
+  const {__, phone, memClient, usage = ''} = opts;
+  let isFrequently = yield base.func.checkFrequentlyAsync(phone.toString(), memClient);
+  if (isFrequently) {
+    return {customRes: true, msg: 'Frequently', status: 400};
+  }
+  let code = Math.random() * 900000 | 100000;
+  yield base.func.setKeyValueAsync({
+    key: phone.toString(),
+    value: code,
+    memClient,
+    expire: SMS_CODE_EXPIRE
+  });
+  let corporationName = 'UnitedStack 有云';
+  let settings = yield base._getSettingsByApp('auth');
+  settings.some(setting => {
+    return setting.name === 'corporation_name' && (corporationName = setting.value);
+  });
 
-    let smsContent = `【${corporationName}】 ${req.i18n.__('api.register.VerificationCode')} ${code}`;
-    let result = yield drivers.sms.smsAsync(phone.toString(), smsContent);
+  let smsContent = `【${corporationName}】${usage && __('api.register.' + usage)}${__('api.register.VerificationCode')} ${code}`;
+  let result = yield drivers.sms.smsAsync(phone.toString(), smsContent);
 
-    if (result.text === '00') {
-      res.send({type: 'message', message: __('api.register.SendSmsSuccess')});
-    } else {
-      next({customRes: true, msg: 'smsSendError'});
-    }
-  }).catch(next);
+  if (result.text === '00') {
+    return {customRes: true, msg: 'SendSmsSuccess', status: 200};
+  } else {
+    return {customRes: true, msg: 'smsSendError', status: 500};
+  }
 };
 
 base.middleware.customResApi = function (err, req, res, next) {
@@ -101,6 +99,7 @@ base.middleware.customResApi = function (err, req, res, next) {
 };
 
 base.middleware.customResPage = function (err, req, res, next) {
+  console.log(err);
   const __ = req.i18n.__.bind(req.i18n);
   co(function* () {
     if (err.customRes && err.msg) {
@@ -123,7 +122,8 @@ base.middleware.customResPage = function (err, req, res, next) {
       corporation_name: 'UnitedStack 有云',
       subtitle: '',
       message: __('api.register.SystemError'),
-      locale: req.i18n.locale
+      locale: req.i18n.locale,
+      uskinFile: uskinFile
     };
     res.render('single', obj);
   });
