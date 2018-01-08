@@ -176,7 +176,7 @@ User.prototype = {
       let cs = req.session.captcha;
       let cb = req.body.captcha;
       req.session.captcha = '';
-      if (!cb || cs || cb.toString().toLowerCase() !== cs.toString().toLowerCase()){
+      if (!cb || !cs || cb.toString().toLowerCase() !== cs.toString().toLowerCase()){
         return next({
           customRes: true, status: 400, msg: 'CaptchaError'
         });
