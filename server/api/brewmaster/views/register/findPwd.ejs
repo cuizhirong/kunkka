@@ -46,7 +46,7 @@
     </div>
     <div class="content-wrapper">
       <h4>Reset Password</h4>
-      <form id="uform" method="post" action="/auth/password/phone/reset">
+      <form id="uform" method="post" action="/auth/password/reset">
         <div>
           <input id="phone" name="phone" type="text" placeholder="please enter phone number" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -117,7 +117,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/api/password/phone/captcha", true);
+        req.open("POST", "/api/password/reset/phone-captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {
@@ -202,7 +202,7 @@
     </div>
     <div class="content-wrapper">
       <h4>重置密码</h4>
-      <form id="uform" method="post" action="/auth/password/phone/reset">
+      <form id="uform" method="post" action="/auth/password/reset">
         <div>
           <input id="phone" name="phone" type="text" placeholder="请输入手机号" autofocus="autofocus"/>
           <div class="brewmaster_icon icon_phone"></div>
@@ -273,7 +273,7 @@
           'phone': phone.value
         });
         var req = createXMLHTTPRequest();
-        req.open("POST", "/api/password/phone/captcha", true);
+        req.open("POST", "/api/password/reset/phone-captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(phoneData);
         req.onreadystatechange = function () {

@@ -332,12 +332,6 @@ base.middleware.checkAdmin = (req, res, next) => {
 };
 
 base.func.checkPasswordAvailable = function* (userId, reqPass) {
-  let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
-  enableSafety = enableSafety ? enableSafety.value : true;
-  if (!enableSafety) {
-    return true;
-  }
-
   const passwords = yield passwordModel.findAll({
     where: {userId},
     order: [['createdAt', 'DESC']],

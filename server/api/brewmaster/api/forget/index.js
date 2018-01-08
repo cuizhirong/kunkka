@@ -7,6 +7,7 @@ const config = require('config');
 const keystoneRemote = config('keystone');
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
 const passwordModel = require('../../models').user_password;
+const userModel = require('../../models').user;
 const changePasswordAsync = drivers.keystone.user.changePasswordAsync;
 
 function Password(app) {
@@ -57,9 +58,13 @@ Password.prototype = {
         return next({customRes: true, status: 400, msg: 'UserNotExist'});
       }
 
-      const isAvailable = yield base.func.checkPasswordAvailable(user.id, password);
-      if (!isAvailable) {
-        return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      enableSafety = enableSafety ? enableSafety.value : true;
+      if (enableSafety) {
+        const isAvailable = yield base.func.checkPasswordAvailable(user.id, password);
+        if (!isAvailable) {
+          return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+        }
       }
 
       //CREATE PASSWORD TO DATABASE
@@ -75,14 +80,27 @@ Password.prototype = {
   },
   //Change self password
   changeMyselfPassword: function (req, res, next) {
+    const that = this;
     co(function* () {
       const userId = req.session.user.userId;
       const password = req.body.password;
       const originalPassword = req.body.original_password;
 
-      const isAvailable = yield base.func.checkPasswordAvailable(userId, password);
-      if (!isAvailable) {
-        return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      enableSafety = enableSafety ? enableSafety.value : true;
+      if (enableSafety) {
+
+        const phone = req.session.user.phone;
+        const code = parseInt(req.body.captcha, 10);
+        let isPhoneCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+        if (!isPhoneCorrect) {
+          return next({msg: 'CodeError', customRes: true, status: 400});
+        }
+
+        const isAvailable = yield base.func.checkPasswordAvailable(userId, password);
+        if (!isAvailable) {
+          return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+        }
       }
 
       yield changePasswordAsync(
@@ -96,6 +114,23 @@ Password.prototype = {
       res.end();
     }).catch(next);
   },
+  sendCaptchaNoPhone: function (req, res, next) {
+    const that = this;
+    co(function *() {
+      const user = yield userModel.findOne({where: {id: req.session.user.userId}});
+      let phone = user && user.phone;
+      if (!phone) {
+        return next({customRes: true, msg: 'dontHavePhone'});
+      }
+
+      req.session.user.phone = phone;
+      next(yield base.func.phoneCaptchaMemAsync({
+        phone, usage: 'usageResetPassword',
+        __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+      }));
+    });
+
+  },
 
   initRoutes: function () {
     this.app.get(
@@ -104,13 +139,13 @@ Password.prototype = {
       base.middleware.customResPage
     );
     this.app.post(
-      '/api/password/phone/captcha',
+      '/api/password/reset/phone-captcha',
       base.middleware.adminLogin,
       this.sendCaptcha.bind(this),
       base.middleware.customResApi
     );
     this.app.post(
-      '/auth/password/phone/reset',
+      '/auth/password/reset',
       base.middleware.adminLogin,
       this.resetViaPhone.bind(this),
       base.middleware.customResPage
@@ -119,6 +154,12 @@ Password.prototype = {
       '/api/password/change',
       base.middleware.checkLogin,
       this.changeMyselfPassword.bind(this),
+      base.middleware.customResApi
+    );
+    this.app.post(
+      '/api/password/change/phone-captcha',
+      base.middleware.checkLogin,
+      this.sendCaptchaNoPhone.bind(this),
       base.middleware.customResApi
     );
   }
