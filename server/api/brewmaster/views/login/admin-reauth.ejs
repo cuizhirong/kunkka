@@ -8,152 +8,416 @@
   <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
   <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
   <style>
-    body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
-    .wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
-    .wrapper > .header { flex: 1; }
-    .wrapper > .content { margin: 0 auto; width: 500px; height: auto; }
-    .wrapper > .content > .img-wrapper { text-align: center; }
-    .wrapper > .content > .img-wrapper > img { height: 50px; }
-    .wrapper > .content > .content-wrapper > h4 { margin-top: 80px; color: #42b9e5; }
-    .wrapper > .content > .content-wrapper > form > div { position: relative; background: none; width: 100%; height: 36px; }
-    .wrapper > .content > .content-wrapper > form > div:first-child { margin-top: 34px; }
-    .wrapper > .content > .content-wrapper > form > div:not(:first-child) { margin-top: 12px; }
-    .wrapper > .content > .content-wrapper > form > div > input { border: none; background: rgba(255, 255, 255, 0.1); color: #92959a; width: 480px; height: 28px; font-size: 14px; }
-    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > input { display: inline-block; width: 366px; }
-    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .get_captcha { display: inline-block; margin-left: 10px; width: 100px; height: 34px; line-height: 34px; background-color: #42b9e5; border-radius: 2px; color: #fff; font-size: 14px; text-align: center; cursor: pointer; }
-    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #bbbfc5; }
-    .wrapper > .content > .content-wrapper > form > input { margin-top: 34px; width: 480px; height: 28px; font-size: 14px; border: none; background-color: #42b9e5; color: #ffffff; }
-    .wrapper > .content > .content-wrapper > a {display:block;margin-top: 6px;float: right;}
-    .phone_tip,
-    .captcha_tip,
-    .pwd_tip,
-    .confirm_pwd_tip { margin-top: 4px; color: red; font-size: 12px; display: none; }
-    .brewmaster_icon { position: absolute; top: 6px; right: 10px; width: 18px; height: 24px; background: url(/static/assets/login/brewmaster_icons.png); background-size: 114px 36px; }
-    .icon_phone { background-position: -36px -6px; }
-    .icon_captcha { right: 124px !important; background-position: -62px -6px; }
-    .icon_pwd { background-position: -90px -6px; }
-    .wrapper > .footer { flex: 2; }
-    .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      background-color: #0d1b30;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .wrapper {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wrapper .header {
+      -webkit-box-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
+    }
+
+    .wrapper .content {
+      position: relative;
+      margin: 0 auto;
+      width: 460px;
+      height: auto;
+      overflow: hidden;
+      transition: all 0.5s;
+    }
+
+    .wrapper .footer {
+      -webkit-box-flex: 2;
+          -ms-flex: 2;
+              flex: 2;
+      min-height: 80px;
+    }
+
+    .content .img-wrapper {
+      text-align: center;
+    }
+
+    .content .img-wrapper img {
+      height: 50px;
+    }
+
+    .content .input-wrapper {
+      position: relative;
+      margin-top: 80px;
+      padding: 0 52px;
+    }
+
+    .content .captcha-row {
+      font-size: 0;
+    }
+    .content .input-wrapper input {
+      display: inline-block;
+      padding: 4px 10px;
+      width: 180px;
+      height: 26px;
+      line-height: 18px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #92959a;
+      border: none;
+      outline: none;
+    }
+    .content .input-wrapper input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    }
+
+    .content .input-wrapper button {
+      float: right;
+      width: 140px;
+      height: 36px;
+      background: none;
+      background-color: #42b9e5;
+      border: none;
+      line-height: 2px;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: 1px;
+      border-radius: 2px;
+    }
+
+    .content .input-wrapper button:hover {
+      background-color: #00a2b9;
+      color: #fff;
+    }
+    .content .input-wrapper button[disabled] {
+      color: #939ba3;
+      cursor: not-allowed;
+      background-color: #bbbfc5;
+    }
+
+    .content .error-msg {
+      line-height: 30px;
+      font-size: 14px;
+      color: #ef5665;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .content .input-wrapper input[type="submit"] {
+      width: 336px;
+      margin: 8px 0;
+      background: none;
+      background-color: #42b9e5;
+      height: 30px;
+      line-height: 2px;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: 1px;
+      border-radius: 2px;
+    }
+    .content .input-wrapper input[type="submit"]:hover {
+      background-color: #00a2b9;
+      color: #fff;
+    }
+    .content .input-wrapper input[type="submit"].disabled {
+      color: #939ba3;
+      cursor: not-allowed;
+      background-color: #bbbfc5;
+    }
+
+    .footer {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: end;
+          -ms-flex-align: end;
+              align-items: flex-end;
+      text-align: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      color: #fff;
+    }
+
+    .footer p {
+      position: absolute;
+      text-align: center;
+      color: #fff;
+      bottom: 10px;
+    }
   </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="header"></div>
-  <div class="content">
-    <div class="img-wrapper">
-      <img src="<%= single_logo_url %>"/>
-    </div>
-    <div class="content-wrapper">
-      <h4>admin reauth</h4>
-      <form id="uform" method="post" action="/auth/admin-reauth">
-        <div>
+  <% if (locale == 'en') { %>
+    <div class="wrapper">
+      <div class="header"></div>
+      <div class="content">
+        <div class="img-wrapper">
+          <img src="<%= single_logo_url %>"/>
         </div>
-        <span class="phone_tip"></span>
-        <div>
-          <input id="captcha" name="captcha" type="text" placeholder="请输入验证码"/>
-          <div id="get_captcha" class="get_captcha">发送验证码</div>
-          <div class="brewmaster_icon icon_captcha"></div>
+        <div class="input-wrapper">
+          <form id="subForm">
+            <div class="captcha-row">
+              <input type="text" name="captcha" id="captcha" placeholder="Captcha">
+              <button class="get-captcha" id="getBtn" disabled>Sending after 60 seconds</button>
+            </div>
+            <div class="error-msg" id="errorMsg"></div>
+            <input type="submit" class="login-btn" id="loginBtn" value="Login" />
+          </form>
         </div>
-        <span class="captcha_tip"></span>
-        <span class="confirm_pwd_tip"></span>
-        <input id="usubmit" name="usubmit" type="button" value="提交"/>
-      </form>
-      <a href="/">返回</a>
+      </div>
+
+      <div class="footer">
+        <p><%= company %></p>
+      </div>
     </div>
-  </div>
-  <div class="footer">
-    <p><%= company %></p>
-  </div>
-</div>
-<script>
-  var phone = document.getElementById('phone'),
-          captcha = document.getElementById('captcha'),
-          get_captcha = document.getElementById('get_captcha'),
-          pwd = document.getElementById('pwd'),
-          confirm_pwd = document.getElementById('confirm_pwd'),
-          usubmit = document.getElementById('usubmit'),
-          phone_tip = document.getElementsByClassName('phone_tip')[0],
-          captcha_tip = document.getElementsByClassName('captcha_tip')[0],
-          pwd_tip = document.getElementsByClassName('pwd_tip')[0],
-          confirm_pwd_tip = document.getElementsByClassName('confirm_pwd_tip')[0],
-          uform = document.getElementById('uform'),
-          enable_getcaptcha = true,
-          enable_phone = false,
-          enable_captcha = false,
-          enable_pwd = false,
-          enable_confirm_pwd = false,
-          timer = null;
-  //ajax request
-  function createXMLHTTPRequest() {
-    var xmlHttpRequest;
-    if (window.XMLHttpRequest) {
-      xmlHttpRequest = new XMLHttpRequest();
-      if (xmlHttpRequest.overrideMimeType) {
-        xmlHttpRequest.overrideMimeType("text/xml");
-      }
-    } else if (window.ActiveXObject) {
-      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    return xmlHttpRequest;
-  }
-  function sendCaptcha() {
-    var count = 60;
-    if (enable_getcaptcha) {
-      if (/^\d{11}$/.test(phone.value)) {
-        phone_tip.style.display = "none";
-        var phoneData = JSON.stringify({
-          'phone': phone.value
-        });
-        var req = createXMLHTTPRequest();
-        req.open("POST", "/api/password/phone/captcha", true);
-        req.setRequestHeader("Content-Type", "application/json");
-        req.send(phoneData);
-        req.onreadystatechange = function () {
-          if (req.readyState == 4) {
-            if (req.status == 200) {
-              enable_getcaptcha = false;
-              get_captcha.className += ' disabled';
-              get_captcha.innerHTML = '重新发送(' + count + ')秒';
-              timer = setInterval(function () {
-                if (count > 0) {
-                  get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
-                } else {
-                  clearInterval(timer);
-                  enable_getcaptcha = true;
-                  get_captcha.className = 'get_captcha';
-                  get_captcha.innerHTML = '发送验证码';
-                }
-              }, 1000);
+    
+    <script>
+      var captchaElem = document.getElementById('captcha'),
+        getBtnElem = document.getElementById('getBtn'),
+        errorMsgElem = document.getElementById('errorMsg'),
+        loginBtnElem = document.getElementById('loginBtn'),
+        formElem = document.getElementById('subForm')
+
+      var canGetCaptcha = false,
+        count = 60,
+        timer;
+      
+      beginTimer();
+
+
+      getBtnElem.addEventListener('click', getCaptcha);
+
+      formElem.addEventListener('submit', submitForm);
+
+      function getCaptcha(evt) {
+        if(!canGetCaptcha) {
+          return;
+        }
+
+        evt.target.disabled = true;
+        canGetCaptcha = false;
+        evt.target.innerHTML = 'Sending';
+  
+        var request = createXMLHTTPRequest();
+        request.open("POST", "/api/auth/admin-reauth/phone-captcha", true);
+        request.send();
+        request.onreadystatechange = function () {
+          if (request.readyState == 4) {
+            if (request.status == 200) {
+              beginTimer();
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
-              phone_tip.style.display = 'block';
+              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
             }
           }
         }
-      } else {
-        phone_tip.innerHTML = '请输入正确的格式';
-        phone_tip.style.display = 'block';
       }
-    }
-  }
-  function verifySubmit(e) {
-    e.preventDefault();
-    //captcha
-    if (/^\d{6}$/.test(captcha.value)) {
-      captcha_tip.style.display = 'none';
-      enable_captcha = true;
-    } else {
-      captcha_tip.innerHTML = '请输入正确的格式';
-      captcha_tip.style.display = 'block';
-      enable_captcha = false;
-    }
-    if (enable_captcha) {
-      uform.submit();
-    }
-  }
-  get_captcha.onclick = sendCaptcha;
-  usubmit.onclick = verifySubmit;
-</script>
+
+      function createXMLHTTPRequest() {
+        var xmlHttpRequest;
+        if (window.XMLHttpRequest) {
+          xmlHttpRequest = new XMLHttpRequest();
+          if (xmlHttpRequest.overrideMimeType) {
+            xmlHttpRequest.overrideMimeType("text/xml");
+          }
+        } else if (window.ActiveXObject) {
+          xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        return xmlHttpRequest;
+      }
+
+      function beginTimer() {
+        timer = setInterval(function() {
+          if(count === 0) {
+            clearInterval(timer);
+            timer = null;
+            canGetCaptcha = true;
+            getBtnElem.disabled = false;
+            getBtnElem.innerHTML = 'Get captcha';
+            return;
+          } else {
+            count--;
+            getBtnElem.innerHTML = 'Sending after ' + count + ' seconds';
+          }
+        }, 1000);
+      }
+
+      function submitForm(evt) {
+        evt.preventDefault();
+        var captcha = captchaElem.value.trim();
+
+        if(!/^\d{6}$/.test(captcha)) {
+          if(!/\berror\b/.test(captchaElem.className)) {
+            captchaElem.className +=' error';
+          }
+          errorMsgElem.innerHTML = 'Captcha error, please check your input.';
+          return;
+        }
+
+        loginBtnElem.disabled = true;
+        var request = createXMLHTTPRequest();
+        req.open("POST", "/auth/admin-reauth", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.send(JSON.stringify({
+          captcha: captcha
+        }));
+
+        req.onreadystatechange = function () {
+          if (req.readyState == 4) {
+            if (req.status == 200) {
+              loginBtnElem.disabled = false;
+              window.location = '/admin';
+            } else {
+              loginBtnElem.disabled = false;
+              errorMsgElem.innerHTML = JSON.parse(req.responseText).message;
+            }
+          }
+        }
+      }
+    </script>
+  <% } else { %>
+
+    <div class="wrapper">
+      <div class="header"></div>
+
+      <div class="content">
+        <div class="img-wrapper">
+          <img src="<%= single_logo_url %>"/>
+        </div>
+      
+        <div class="input-wrapper">
+          <form id="subForm">
+            <div class="captcha-row">
+              <input type="text" name="captcha" id="captcha" placeholder="短信验证码">
+              <button class="get-captcha" id="getBtn" disabled>60秒后重新发送</button>
+            </div>
+            <div class="error-msg" id="errorMsg"></div>
+            <input type="submit" class="login-btn" id="loginBtn" value="登录" />      
+          </form>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p><%= company %></p>
+      </div>
+    </div>
+    
+    <script>
+      var captchaElem = document.getElementById('captcha'),
+        getBtnElem = document.getElementById('getBtn'),
+        errorMsgElem = document.getElementById('errorMsg'),
+        loginBtnElem = document.getElementById('loginBtn'),
+        formElem = document.getElementById('subForm')
+
+      var canGetCaptcha = false,
+        count = 60,
+        timer;
+
+      beginTimer();
+
+      getBtnElem.addEventListener('click', getCaptcha);
+
+      formElem.addEventListener('submit', submitForm);
+
+      function getCaptcha(evt) {
+        if(!canGetCaptcha) {
+          return;
+        }
+
+        evt.target.disabled = true;
+        canGetCaptcha = false;
+        evt.target.innerHTML = '发送中';
+  
+        var request = createXMLHTTPRequest();
+        request.open("POST", "/api/auth/admin-reauth/phone-captcha", true);
+        request.send();
+        request.onreadystatechange = function () {
+          if (request.readyState == 4) {
+            if (request.status == 200) {
+              beginTimer();
+            } else {
+              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+            }
+          }
+        }
+      }
+
+      function createXMLHTTPRequest() {
+        var xmlHttpRequest;
+        if (window.XMLHttpRequest) {
+          xmlHttpRequest = new XMLHttpRequest();
+          if (xmlHttpRequest.overrideMimeType) {
+            xmlHttpRequest.overrideMimeType("text/xml");
+          }
+        } else if (window.ActiveXObject) {
+          xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        return xmlHttpRequest;
+      }
+
+      function beginTimer() {
+        timer = setInterval(function() {
+          if(count === 0) {
+            clearInterval(timer);
+            timer = null;
+            canGetCaptcha = true;
+            getBtnElem.disabled = false;
+            getBtnElem.innerHTML = '获取短信验证码';
+            return;
+          } else {
+            count--;
+            getBtnElem.innerHTML = count + '秒后重新发送'
+          }
+        }, 1000);
+      }
+
+      function submitForm(evt) {
+        evt.preventDefault();
+        var captcha = captchaElem.value.trim();
+
+        if(!/^\d{6}$/.test(captcha)) {
+          if(!/\berror\b/.test(captchaElem.className)) {
+            captchaElem.className +=' error';
+          }
+          errorMsgElem.innerHTML = '验证码错误，请检查您的输入。';
+          return;
+        }
+
+        loginBtnElem.disabled = true;
+        var request = createXMLHTTPRequest();
+        request.open("POST", "/auth/admin-reauth", true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify({
+          captcha: captcha
+        }));
+
+        request.onreadystatechange = function () {
+          if (request.readyState == 4) {
+            if (request.status == 200) {
+              loginBtnElem.disabled = false;
+              window.location = '/admin';
+            } else {
+              loginBtnElem.disabled = false;
+              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+            }
+          }
+        }
+      }
+    </script>
+  <% } %>
 
 </body>
 </html>

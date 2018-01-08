@@ -7,6 +7,7 @@ const converter = require('./converter');
 
 const config = require('./config.json');
 const ajax = require('client/libs/ajax');
+const fetch = require('client/libs/fetch');
 
 class Model extends React.Component {
 
@@ -15,7 +16,18 @@ class Model extends React.Component {
 
     this.state = {
       config: config,
-      toggle: true
+      toggle: true,
+      btnText: props.__.get_captcha,
+      enable_send: true,
+      showCaptchaError: false,
+      captchaErrorMsg: '',
+      showError: false,
+      errorMsg: ''
+    };
+
+    this.store = {
+      timer: null,
+      count: 60
     };
 
     ['toggle', 'onAction', 'modify', 'back'].forEach((m) => {
@@ -55,21 +67,52 @@ class Model extends React.Component {
   modify() {
     let newPwd = this.refs.new_pwd.state.value,
       confirmPwd = this.refs.confirm_pwd.state.value;
+    const __ = this.props.__;
+
     ['original_pwd', 'new_pwd', 'confirm_pwd'].forEach(m => {
       this.refs[m].setState({
         error: !this.refs[m].state.value
       });
     });
+
+    this.setState({
+      showError: false,
+      errorMsg: '',
+      showCaptchaError: false,
+      captchaErrorMsg: ''
+    });
+
+    let isAdminRole = false;
+    if(HALO.user && Array.isArray(HALO.user.roles)) {
+      isAdminRole = HALO.user.roles.some((role) => {
+        return role === 'admin';
+      });
+    }
+
     if (newPwd !== confirmPwd) {
       this.refs.confirm_pwd.setState({
         error: true
       });
-    } else {
-      let data = {
-        original_password: this.refs.original_pwd.state.value,
-        password: newPwd
-      };
+      return;
+    }
 
+    if(isAdminRole) {
+      const captcha = this.refs.captcha.value.trim();
+      if(!/^\d{6}$/.test(captcha)) {
+        this.setState({
+          showCaptchaError: true,
+          captchaErrorMsg: __.captcha_error
+        });
+        return;
+      }
+    }
+
+    let data = {
+      original_password: this.refs.original_pwd.state.value,
+      password: newPwd
+    };
+
+    if(!isAdminRole) {
       ajax.post({
         url: '/proxy/keystone/v3/users/' + HALO.user.userId + '/password',
         dataType: 'json',
@@ -86,9 +129,99 @@ class Model extends React.Component {
         this.refs.original_pwd.setState({
           error: true
         });
-        document.getElementsByClassName('pwd_fail')[0].classList.remove('hide');
+        this.setState({
+          showError: true,
+          errorMsg: __.modify_fail
+        });
+      });
+    } else {
+      data.captcha = this.refs.captcha.value.trim();
+      fetch.post({
+        url: '/api/password/change',
+        data: data
+      }).then((res) => {
+        window.location = '/auth/logout';
+      }).catch((error) => {
+        let errorMsg;
+        try {
+          errorMsg = JSON.parse(error.responseText).message;
+        } catch(e) {
+          errorMsg = __.unknown_error;
+        }
+
+        this.setState({
+          showError: true,
+          errorMsg: errorMsg
+        });
       });
     }
+  }
+
+  startTimer() {
+    const __ = this.props.__;
+
+    this.store.timer = setInterval(() => {
+      if(this.store.count === 0) {
+        clearInterval(this.store.timer);
+        this.store.timer = null;
+        this.setState({
+          enable_send: true,
+          btnText: __.get_captcha
+        });
+      } else {
+        this.store.count--;
+        this.setState({
+          btnText: __.resend_captcha.replace(/\{0\}/, this.store.count)
+        });
+      }
+    }, 1000);
+  }
+
+  getCaptcha() {
+    const __ = this.props.__;
+    this.setState({
+      enable_send: false,
+      btnText: __.sending,
+      showCaptchaError: false,
+      captchaErrorMsg: ''
+    });
+
+    fetch.post({
+      url: '/api/password/change/phone-captcha'
+    }).then((res) => {
+      this.startTimer();
+    }).catch((err) => {
+      let errorMsg;
+      try {
+        errorMsg = JSON.parse(err.responseText).message;
+      } catch(e) {
+        errorMsg = __.unknown_error;
+      }
+      this.setState({
+        enable_send: true,
+        btnText: __.get_captcha,
+        showCaptchaError: true,
+        captchaErrorMsg: errorMsg
+      });
+    });
+  }
+
+  renderCaptcha() {
+    const __ = this.props.__;
+    const state = this.state;
+
+    return (
+      <div className="captcha-wrapper">
+        <div className="modal-row captcha-row">
+          <span>{__.sms_captcha} </span>
+          <input type="text" ref="captcha" className={ state.showCaptchaError ? 'error' : '' } />
+          <Button value={state.btnText} onClick={this.getCaptcha.bind(this)} ref="get_captcha_btn" disabled={!state.enable_send} />
+        </div>
+        <div className={'error-tip' + (state.showCaptchaError ? '' : ' hide')}>
+          { state.captchaErrorMsg }
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -97,6 +230,14 @@ class Model extends React.Component {
       inputs = _config.fields,
       __ = this.props.__,
       state = this.state;
+
+    let isAdminRole = false;
+    if(HALO.user && HALO.user.roles !== undefined) {
+      isAdminRole = HALO.user.roles.some((role) => {
+        return role === 'admin';
+      });
+    }
+
     return (
       <div className="halo-module-password" style={this.props.style}>
         {tabs ?
@@ -120,10 +261,11 @@ class Model extends React.Component {
                   return <InputPassword key={m.field} ref={m.field} label={__[m.field]} __={__} onAction={this.onAction}/>;
                 })
               }
+              { isAdminRole ? this.renderCaptcha() : null }
               <div className="row"><Button value={__.modify} onClick={this.modify}/></div>
-              <div className="row pwd_fail hide">
+              <div className={'row pwd_fail' + (state.showError ? '' : ' hide')}>
                 <i className="glyphicon icon-status-warning" />
-                <span>{__.modify_fail}</span>
+                <span>{state.errorMsg}</span>
               </div>
             </div>
           </div>
