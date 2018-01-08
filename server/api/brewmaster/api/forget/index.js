@@ -6,6 +6,8 @@ const drivers = require('drivers');
 const config = require('config');
 const keystoneRemote = config('keystone');
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
+const passwordModel = require('../../models').user_passwords;
+const changePasswordAsync = drivers.keystone.user.changePasswordAsync;
 
 function Password(app) {
   this.app = app;
@@ -14,9 +16,7 @@ function Password(app) {
 
 Password.prototype = {
 
-  pageForget: (req, res, next) => {
-    next({customRes: true, status: 200, view: 'findPwd'});
-  },
+  pageResetPassword: (req, res, next) => next({customRes: true, status: 200, view: 'findPwd'}),
   sendCaptcha: function (req, res, next) {
     const that = this;
     co(function *() {
@@ -52,11 +52,20 @@ Password.prototype = {
         return next({msg: 'CodeError', customRes: true, status: 400});
       }
 
-      let user = yield yield base.func.verifyUserAsync(req.admin.token, {phone});
+      let user = yield base.func.verifyUserAsync(req.admin.token, {phone});
       if (!user) {
         return next({customRes: true, status: 400, msg: 'UserNotExist'});
       }
+
+      const isAvailable = yield base.func.checkPasswordAvailable(user.id, password);
+      if (!isAvailable) {
+        return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+      }
+
+      //CREATE PASSWORD TO DATABASE
+      const passworHash = yield base.password.hash(password);
       yield [
+        passwordModel.create({userId: user.id, password: passworHash}),
         updateUserAsync(req.admin.token, keystoneRemote, user.id, {user: {password}}),
         that.memClient.deleteAsync(phone.toString())
       ];
@@ -64,11 +73,34 @@ Password.prototype = {
       next({msg: 'ResetSuccess', customRes: true, status: 200});
     }).catch(next);
   },
+  //Change self password
+  changeMyselfPassword: function (req, res, next) {
+    co(function* () {
+      const userId = req.session.user.userId;
+      const password = req.body.password;
+      const originalPassword = req.body.original_password;
+
+      const isAvailable = yield base.func.checkPasswordAvailable(userId, password);
+      if (!isAvailable) {
+        return next({customRes: true, status: 400, msg: 'cannotUseHistoricalPassword'});
+      }
+
+      yield changePasswordAsync(
+        req.session.user.token, keystoneRemote, userId,
+        {user: {password, original_password: originalPassword}}
+      );
+
+      //CREATE PASSWORD TO DATABASE
+      const passworHash = yield base.password.hash(password);
+      yield passwordModel.create({userId, password: passworHash});
+      res.end();
+    }).catch(next);
+  },
 
   initRoutes: function () {
     this.app.get(
       '/auth/password',
-      this.pageForget.bind(this),
+      this.pageResetPassword.bind(this),
       base.middleware.customResPage
     );
     this.app.post(
@@ -82,6 +114,11 @@ Password.prototype = {
       base.middleware.adminLogin,
       this.resetViaPhone.bind(this),
       base.middleware.customResPage
+    );
+    this.app.post(
+      '/api/password/change',
+      base.middleware.checkLogin,
+      this.changeMyselfPassword.bind(this)
     );
   }
 };

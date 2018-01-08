@@ -3,6 +3,7 @@
 const co = require('co');
 
 const userModel = require('../../models').user;
+const passwordModel = require('../../models').user_passwords;
 const drivers = require('drivers');
 const base = require('../base');
 const config = require('config');
@@ -63,6 +64,9 @@ User.prototype = {
         email, phone, name, full_name, company, origin: 'register', status: 'verify-email',
         area_code: config('phone_area_code') || '86', enabled: false
       });
+      //CREATE PASSWORD TO DATABASE
+      const passworHash = yield base.password.hash(password);
+      yield passwordModel.create({userId: user.id, password: passworHash});
       next({customRes: true, status: 200, msg: 'registerSuccess'});
     }).catch(next);
   },

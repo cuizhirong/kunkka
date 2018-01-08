@@ -16,7 +16,10 @@ const getUserAsync = drivers.keystone.user.getUserAsync;
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const uskinFile = glob.sync('*.uskin.min.css', {cwd: 'client/dist/uskin'})[0];
 
-const base = {func: {}, middleware: {}};
+const password = require('./password');
+const passwordModel = require('../../models').user_passwords;
+
+const base = {func: {}, middleware: {}, password};
 
 
 base.__getUserAsync = function (objVar) {
@@ -326,5 +329,29 @@ base.middleware.checkAdmin = (req, res, next) => {
     res.status(403);
     res.send({message: req.i18n.__('api.register.adminAccessNeeded')});
   }
+};
+
+base.func.checkPasswordAvailable = function* (userId, reqPass) {
+  let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+  enableSafety = enableSafety ? enableSafety.value : true;
+  if (!enableSafety) {
+    return true;
+  }
+
+  const passwords = yield passwordModel.findAll({
+    where: {userId},
+    order: ['createdAt', 'DESC'],
+    limit: 3
+  });
+  let isAvailable = true;
+
+  for (let i = 0; i < passwords.length; i++) {
+    let compare = yield base.password.compare(reqPass, passwords[i].password);
+    if (compare) {
+      isAvailable = false;
+      break;
+    }
+  }
+  return isAvailable;
 };
 module.exports = base;
