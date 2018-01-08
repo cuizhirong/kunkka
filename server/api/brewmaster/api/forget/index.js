@@ -151,6 +151,12 @@ Password.prototype = {
       base.middleware.customResPage
     );
     this.app.post(
+      '/api/password/reset',
+      base.middleware.adminLogin,
+      this.resetViaPhone.bind(this),
+      base.middleware.customResApi
+    );
+    this.app.post(
       '/api/password/change',
       base.middleware.checkLogin,
       this.changeMyselfPassword.bind(this),
