@@ -17,7 +17,7 @@ const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const uskinFile = glob.sync('*.uskin.min.css', {cwd: 'client/dist/uskin'})[0];
 
 const password = require('./password');
-const passwordModel = require('../../models').user_passwords;
+const passwordModel = require('../../models').user_password;
 
 const base = {func: {}, middleware: {}, password};
 
@@ -340,7 +340,7 @@ base.func.checkPasswordAvailable = function* (userId, reqPass) {
 
   const passwords = yield passwordModel.findAll({
     where: {userId},
-    order: ['createdAt', 'DESC'],
+    order: [['createdAt', 'DESC']],
     limit: 3
   });
   let isAvailable = true;

@@ -3,7 +3,7 @@
 const co = require('co');
 
 const userModel = require('../../models').user;
-const passwordModel = require('../../models').user_passwords;
+const passwordModel = require('../../models').user_password;
 const drivers = require('drivers');
 const base = require('../base');
 const config = require('config');

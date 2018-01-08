@@ -8,6 +8,7 @@ const keystoneRemote = config('keystone');
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const userModel = require('../../models').user;
 const loginModel = require('../../models').loginlog;
+const passwordModel = require('../../models').user_password;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
 const FORBIDDEN_EXPIRES = 30 * 60;
@@ -36,7 +37,7 @@ Auth.prototype = {
   authentication: function (req, res, next) {
     const that = this;
     co(function *() {
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enable');
       enableSafety = enableSafety ? enableSafety.value : true;
       const captchaSetting = yield base._getSettingByAppAndName('auth', 'enable_login_captcha');
       let enableLoginCaptcha = true;
@@ -48,12 +49,14 @@ Auth.prototype = {
         let ctSession = req.session.captcha;
         if (!ctBody || !ctSession || String(ctBody).toLowerCase() !== String(ctSession).toLowerCase()) {
           return Promise.reject({
-            status: 400,
-            message: {message: req.i18n.__('api.register.CaptchaError'), code: 400}
+            code: 400,
+            type: 'captchaError',
+            message: req.i18n.__('api.register.CaptchaError')
           });
         }
       }
 
+      //many failures
       let {username, password, domain = config('domain') || 'Default'} = req.body;
       if (enableSafety) {
         let failedNumber = yield that.memClient.getAsync('loginFailedUsername' + username);
@@ -61,8 +64,9 @@ Auth.prototype = {
         failedNumber = parseInt(failedNumber, 10);
         if (failedNumber > 4) {
           return Promise.reject({
-            status: 400,
-            message: {message: req.i18n.__('api.register.tooManyFailures'), code: 400}
+            code: 403,
+            type: 'manyFailures',
+            message: req.i18n.__('api.register.tooManyFailures')
           });
         }
       }
@@ -76,8 +80,9 @@ Auth.prototype = {
         let users = yield listUsersAsync(adminToken.token, keystoneRemote, {name: username});
         if (users.body.users.length && !users.body.users[0].enabled) {
           return Promise.reject({
-            status: 403,
-            message: {message: req.i18n.__('api.register.unEnabled'), code: 403}
+            code: 403,
+            type: 'unEnabled',
+            message: req.i18n.__('api.register.unEnabled')
           });
         } else {
           return Promise.reject(e);
@@ -87,6 +92,26 @@ Auth.prototype = {
       userToDatabase.name = unScopedRes.body.token.user.name;
       userToDatabase.enabled = 1;
       const userId = unScopedRes.body.token.user.id;
+
+      //password expires
+      if (enableSafety) {
+        let passwords = yield passwordModel.findAll({
+          where: {userId},
+          limit: 1,
+          order: [['createdAt', 'DESC']]
+        });
+        let expireDay = yield base._getSettingByAppAndName('auth', 'password_expires');
+        expireDay = expireDay ? (expireDay.value || 30) : 30;
+        let newestPass = passwords[0];
+        if (newestPass && new Date() - newestPass.createdAt > expireDay * 24 * 60 * 60 * 1000) {
+          return Promise.reject({
+            code: 403,
+            type: 'passwordExpired',
+            message: req.i18n.__('api.register.passwordExpired')
+          });
+        }
+      }
+
       let unScopeToken = unScopedRes.header['x-subject-token'];
       let cookies = getCookie(req, userId);
 
@@ -98,7 +123,11 @@ Auth.prototype = {
       let projectId, domainId;
       const projects = results.project.body.projects;
       if (projects.length < 1) {
-        return Promise.reject({error: 'no project'});
+        return Promise.reject({
+          code: 403,
+          type: 'noProject',
+          message: 'no project'
+        });
       } else {
         projectId = projects[0].id;
         if (cookies.project) {
@@ -109,7 +138,11 @@ Auth.prototype = {
       }
       const domains = results.domain.body.domains;
       if (!domains.length) {
-        return Promise.reject({error: 'no domain'});
+        return Promise.reject({
+          code: 403,
+          type: 'noDomain',
+          message: 'no domain'
+        });
       } else {
         domainId = domains[0].id;
       }
@@ -186,13 +219,17 @@ Auth.prototype = {
           'loginFailedUsername' + req.body.username, 1,
           {expires: FORBIDDEN_EXPIRES, initial: 1}
         );
+        e = {
+          code: 401,
+          message: req.i18n.__('api.register.passwordError')
+        };
       }
       //log
       loginModel.create({
         type: 'login', ip: req.ip, username: req.body.username,
-        success: false, message: e.message.message
+        success: false, message: e.message
       });
-      next(e);
+      res.status(e.status || e.code).send({error: e});
     });
   },
   switchProject: function (req, res, next) {

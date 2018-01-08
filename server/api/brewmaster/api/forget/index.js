@@ -6,7 +6,7 @@ const drivers = require('drivers');
 const config = require('config');
 const keystoneRemote = config('keystone');
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
-const passwordModel = require('../../models').user_passwords;
+const passwordModel = require('../../models').user_password;
 const changePasswordAsync = drivers.keystone.user.changePasswordAsync;
 
 function Password(app) {
@@ -118,7 +118,8 @@ Password.prototype = {
     this.app.post(
       '/api/password/change',
       base.middleware.checkLogin,
-      this.changeMyselfPassword.bind(this)
+      this.changeMyselfPassword.bind(this),
+      base.middleware.customResApi
     );
   }
 };

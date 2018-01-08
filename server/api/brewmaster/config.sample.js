@@ -94,6 +94,12 @@ module.exports = {
       value: 'false',
       type: 'boolean',
       description: '开启子账户功能'
+    }, {
+      app: 'auth',
+      name: 'password_expires',
+      value: 30,
+      type: 'number',
+      description: '密码过期时间（天），默认值30'
     }
   ]
 };

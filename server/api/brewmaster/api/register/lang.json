@@ -8,6 +8,7 @@
     "Available": "可用",
     "UserNotExist": "用户不存在",
     "UserNotHaveEmail": "用户没有绑定邮箱",
+    "passwordError": "用户名或密码错误",
     "LinkError": "链接错误或已失效",
     "CodeError": "验证码错误或已失效",
     "TokenError": "token错误或者已过期",
@@ -54,7 +55,8 @@
     "usageResetPassword": "您正在重置密码，",
     "usageRegister": "您正在注册，",
     "tooManyFailures": "失败次数太多，请稍后再试。",
-    "cannotUseHistoricalPassword": "不能设置以前的密码"
+    "cannotUseHistoricalPassword": "不能设置以前的密码",
+    "passwordExpired": "密码已过期，请重置密码后登录"
   },
   "en": {
     "Name": "The Username",
@@ -65,6 +67,7 @@
     "Available": " is available",
     "UserNotExist": "User is not exist",
     "UserNotHaveEmail": "User doesn't have a email bound",
+    "passwordError": "ERROR Incorrect username or password",
     "LinkError": "The link is error or expired",
     "CodeError": "The captcha is error or expired",
     "TokenError": "The token is error or expired",
@@ -110,6 +113,7 @@
     "usageResetPassword": "For resetting password, ",
     "usageRegister": "For register, ",
     "tooManyFailures": "Please try again later for too many failures.",
-    "cannotUseHistoricalPassword": "Historical password cannot be used"
+    "cannotUseHistoricalPassword": "Historical password cannot be used",
+    "passwordExpired": "Your password had expired, so reset it before login."
   }
 }
