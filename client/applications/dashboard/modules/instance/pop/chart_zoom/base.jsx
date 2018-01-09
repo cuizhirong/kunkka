@@ -225,7 +225,7 @@ class ModalBase extends React.Component {
           request.getNetworkResource(granularity, timeUtils.getTime(time), rawItem.item, _datas).then(resourceData => {
             let portArr = resourceData.map((_rd, index) => ({
               title: utils.getMetricName(portMetricType[index % 2], ips[parseInt(index / 2, 10)]),
-              color: utils.getColor(portMetricType[index % 2]),
+              color: utils.getPortColor(index),
               unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
               yAxisData: utils.getChartData(_rd, granularity, timeUtils.getTime(time), portMetricType[index % 2], 'instance'),
               xAxis: utils.getChartData(_rd, granularity, timeUtils.getTime(time), portMetricType[index % 2])

@@ -133,7 +133,8 @@ class ChartLine extends React.Component {
         subtext: subTexty,
         textStyle: {
           fontSize: 14,
-          color: '#252F3D'
+          color: '#252F3D',
+          fontWeight: 'normal'
         }
       },
       grid: {
@@ -142,16 +143,19 @@ class ChartLine extends React.Component {
         bottom: '3%',
         containLabel: true
       },
-      xAxis:  {
+      xAxis: [{
         type: 'category',
         boundaryGap: false,
         data: xAxis,
+        splitLine: {
+          show: true
+        },
         axisLine: {
           lineStyle: {
             color: ['#999999']
           }
         }
-      },
+      }],
       yAxis: {
         type: 'value',
         axisLine: {
@@ -165,21 +169,24 @@ class ChartLine extends React.Component {
         type: 'line',
         data: chartData
       }],
-      animation: false,
       color: [colors],
       textStyle: {
         fontFamily: 'MicrosoftYaHei'
       },
-      backgroundColor: ['#ffffff']
+      backgroundColor: ['#ffffff'],
+      tooltip: {
+        trigger: 'none',
+        axisPointer: {
+          type: 'cross'
+        }
+      }
     };
 
     option.tooltip = receiveProps ? {} : {
       trigger: 'axis',
       axisPointer: {
-        type: 'line',
         lineStyle: {
-          color: '#939ba3',
-          width: 2
+          color: '#939ba3'
         }
       }
     };

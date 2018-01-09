@@ -881,7 +881,7 @@ class Model extends React.Component {
                   let portData = resourceData.map((_rd, index) => ({
                     title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
                     unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
-                    color: utils.getColor(portMetricType[index % 2]),
+                    color: utils.getPortColor(portMetricType[index % 2]),
                     yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
                     xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
                   }));

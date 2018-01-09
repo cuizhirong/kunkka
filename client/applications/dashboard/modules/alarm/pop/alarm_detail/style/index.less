@@ -27,6 +27,9 @@
           margin: 0 20px;
           float: left;
           position: relative;
+          &:hover {
+            box-shadow: inherit;
+          }
         }
       }
     }
@@ -34,7 +37,7 @@
   .left, .right {
     width: 34px;
     height: 82px;
-    background: #EBEFF1;
+    background: #EDEDED;
     border-radius: 2px;
     cursor: pointer;
     line-height: 82px;
@@ -42,6 +45,15 @@
     position: relative;
     top: 150px;
     z-index: 999;
+    i {
+      color: #999999;
+    }
+    &:hover {
+      background: #B9F1F9;
+      i {
+        color: #01AFC9;
+      }
+    }
     &.hidden {
       visibility: hidden;
     }
