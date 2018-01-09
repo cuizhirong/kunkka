@@ -55,7 +55,7 @@
     "usageResetPassword": "您正在重置密码，",
     "usageRegister": "您正在注册，",
     "tooManyFailures": "失败次数太多，请稍后再试。",
-    "cannotUseHistoricalPassword": "不能设置以前的密码",
+    "cannotUseHistoricalPassword": "不能设置为最近3次使用的密码",
     "passwordExpired": "密码已过期，请重置密码后登录"
   },
   "en": {
@@ -113,7 +113,7 @@
     "usageResetPassword": "For resetting password, ",
     "usageRegister": "For register, ",
     "tooManyFailures": "Please try again later for too many failures.",
-    "cannotUseHistoricalPassword": "Historical password cannot be used",
+    "cannotUseHistoricalPassword": "Can not set to the password which is used in the last 3 passwords",
     "passwordExpired": "Your password had expired, so reset it before login."
   }
 }

@@ -48,7 +48,7 @@ Password.prototype = {
         return next({msg: 'PhoneError', customRes: true, status: 400});
       }
 
-      let isCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCorrect) {
         return next({msg: 'CodeError', customRes: true, status: 400});
       }
@@ -58,8 +58,7 @@ Password.prototype = {
         return next({customRes: true, status: 400, msg: 'UserNotExist'});
       }
 
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
-      enableSafety = enableSafety ? enableSafety.value : true;
+      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       if (enableSafety) {
         const isAvailable = yield base.func.checkPasswordAvailable(user.id, password);
         if (!isAvailable) {
@@ -86,13 +85,11 @@ Password.prototype = {
       const password = req.body.password;
       const originalPassword = req.body.original_password;
 
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
-      enableSafety = enableSafety ? enableSafety.value : true;
+      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       if (enableSafety) {
-
         const phone = req.session.user.phone;
         const code = parseInt(req.body.captcha, 10);
-        let isPhoneCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+        let isPhoneCorrect = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
         if (!isPhoneCorrect) {
           return next({msg: 'CodeError', customRes: true, status: 400});
         }

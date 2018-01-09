@@ -91,7 +91,7 @@ View.prototype = {
       return;
     }
 
-    if (this.name === 'admin' && setting.safety_enable && !ssUser.authAdmin) {
+    if (this.name === 'admin' && setting.enable_safety && !ssUser.authAdmin) {
       res.redirect('/auth/admin-reauth?cb=' + encodeURI(req.originalUrl));
       return;
     }

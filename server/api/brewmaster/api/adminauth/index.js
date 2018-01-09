@@ -17,8 +17,7 @@ Password.prototype = {
     const that = this;
     const __ = req.i18n.__.bind(req.i18n);
     co(function* () {
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
-      enableSafety = enableSafety ? enableSafety.value : true;
+      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       //judge
       if (!enableSafety || req.session.user.authAdmin) {
         res.redirect(req.query.cb || '/admin');
@@ -48,7 +47,7 @@ Password.prototype = {
   sendCaptcha: function (req, res, next) {
     const that = this;
     co(function *() {
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enablae');
+      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       enableSafety = enableSafety ? enableSafety.value : true;
       //judge
       if (!enableSafety || req.session.user.authAdmin) {
@@ -82,7 +81,7 @@ Password.prototype = {
       let code = parseInt(req.body.captcha, 10);
       let phone = req.session.user.phone;
 
-      let isCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCorrect) {
         next({customRes: true, status: 400, msg: 'CodeError', view: 'admin-reauth'});
         return;

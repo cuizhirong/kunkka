@@ -100,6 +100,12 @@ module.exports = {
       value: 30,
       type: 'number',
       description: '密码过期时间（天），默认值30'
+    }, {
+      app: 'auth',
+      name: 'lock_minutes',
+      value: 1,
+      type: 'number',
+      description: '账户锁定时间（分钟），默认值1'
     }
   ]
 };

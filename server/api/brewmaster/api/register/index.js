@@ -49,7 +49,7 @@ User.prototype = {
       }
       const domainId = domains[0].id;
 
-      let isCurrent = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCurrent = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCurrent) {
         return next({status: 400, customRes: true, location: ['code'], msg: 'CodeError'});
       }
@@ -86,7 +86,7 @@ User.prototype = {
         return next({customRes: true, status: 400, msg: 'Enabled'});
       }
 
-      let isCorrect = yield base.func.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
       if (!isCorrect) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
@@ -276,7 +276,7 @@ User.prototype = {
         return next({status: 200, customRes: true, msg: 'verifyEmailSuccess'});
       }
 
-      const isCorrect = yield base.func.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
+      const isCorrect = yield base.mem.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
       if (!isCorrect) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
@@ -343,7 +343,7 @@ User.prototype = {
       } else if (user.enabled) {
         return next({customRes: true, msg: 'Enabled'});
       }
-      let isCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCorrect) {
         return next({status: 400, customRes: true, msg: 'CodeError'});
       }

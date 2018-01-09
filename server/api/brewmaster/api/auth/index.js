@@ -11,7 +11,6 @@ const loginModel = require('../../models').loginlog;
 const passwordModel = require('../../models').user_password;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
-const FORBIDDEN_EXPIRES = 30 * 60;
 
 const base = require('../base');
 
@@ -37,14 +36,9 @@ Auth.prototype = {
   authentication: function (req, res, next) {
     const that = this;
     co(function *() {
-      let enableSafety = yield base._getSettingByAppAndName('admin', 'safety_enable');
-      enableSafety = enableSafety ? enableSafety.value : true;
-      const captchaSetting = yield base._getSettingByAppAndName('auth', 'enable_login_captcha');
-      let enableLoginCaptcha = true;
-      if (captchaSetting) {
-        enableLoginCaptcha = captchaSetting.value;
-      }
-      if (enableLoginCaptcha) {
+      const enableSafety = yield base._getSetBool('global', 'enable_safety');
+      const enableCaptcha = yield base._getSetBool('auth', 'enable_login_captcha');
+      if (enableCaptcha) {
         let ctBody = req.body.captcha;
         let ctSession = req.session.captcha;
         if (!ctBody || !ctSession || String(ctBody).toLowerCase() !== String(ctSession).toLowerCase()) {
@@ -59,12 +53,11 @@ Auth.prototype = {
       //many failures
       let {username, password, domain = config('domain') || 'Default'} = req.body;
       if (enableSafety) {
-        let failedNumber = yield that.memClient.getAsync('loginFailedUsername' + username);
-        failedNumber = failedNumber[0] && failedNumber[0].toString();
-        failedNumber = parseInt(failedNumber, 10);
-        if (failedNumber > 4) {
+        let obj = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
+        if (obj && obj.value > 4) {
           return Promise.reject({
             code: 403,
+            remain: obj.createdAt + obj.expire * 1000 - new Date().getTime(),
             type: 'manyFailures',
             message: req.i18n.__('api.register.tooManyFailures')
           });
@@ -100,9 +93,8 @@ Auth.prototype = {
           limit: 1,
           order: [['createdAt', 'DESC']]
         });
-        let expireDay = yield base._getSettingByAppAndName('auth', 'password_expires');
-        expireDay = expireDay ? (expireDay.value || 30) : 30;
-        let newestPass = passwords[0];
+        const expireDay = yield base._getSetNumber('auth', 'password_expires', 30);
+        const newestPass = passwords[0];
         if (newestPass && new Date() - newestPass.createdAt > expireDay * 24 * 60 * 60 * 1000) {
           return Promise.reject({
             code: 403,
@@ -214,22 +206,34 @@ Auth.prototype = {
         }
       }
     }).catch(e => {
-      if (e.status === 401) {
-        that.memClient.increment(
-          'loginFailedUsername' + req.body.username, 1,
-          {expires: FORBIDDEN_EXPIRES, initial: 1}
-        );
-        e = {
-          code: 401,
-          message: req.i18n.__('api.register.passwordError')
-        };
-      }
-      //log
-      loginModel.create({
-        type: 'login', ip: req.ip, username: req.body.username,
-        success: false, message: e.message
+      co(function* () {
+        if (e.status === 401) {
+          const username = req.body.username;
+          const lockMin = yield base._getSetNumber('auth', 'lock_minutes', 1);
+
+          let lastValue = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
+          if (!lastValue || lastValue.value <= 5) {
+            let count = lastValue ? lastValue.value : 0;
+            yield base.mem.setKeyValueAsync({
+              key: 'loginFailed' + req.body.username,
+              value: count + 1,
+              expire: lockMin * 60,
+              memClient: that.memClient
+            });
+          }
+
+          e = {
+            code: 401,
+            message: req.i18n.__('api.register.passwordError')
+          };
+        }
+        //log
+        loginModel.create({
+          type: 'login', ip: req.ip, username: req.body.username,
+          success: false, message: e.message
+        });
+        res.status(e.status || e.code).send({error: e});
       });
-      res.status(e.status || e.code).send({error: e});
     });
   },
   switchProject: function (req, res, next) {

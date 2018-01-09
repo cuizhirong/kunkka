@@ -134,8 +134,8 @@ module.exports = {
       type: 'text',
       description: '计费页面-样式定制'
     }, {
-      app: 'admin',
-      name: 'safety_enable',
+      app: 'global',
+      name: 'enable_safety',
       value: 'true',
       type: 'boolean',
       description: '等保安全功能开关'
