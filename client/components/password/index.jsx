@@ -6,8 +6,8 @@ const InputPassword = require('client/components/modal_common/subs/input_pwd/ind
 const converter = require('./converter');
 
 const config = require('./config.json');
-const ajax = require('client/libs/ajax');
 const fetch = require('client/libs/fetch');
+const AES = require('crypto-js/aes');
 
 class Model extends React.Component {
 
@@ -25,9 +25,19 @@ class Model extends React.Component {
       errorMsg: ''
     };
 
+    let needCaptcha = false;
+    if(HALO.user && HALO.user.roles !== undefined) {
+      needCaptcha = HALO.user.roles.some((role) => {
+        return role === 'admin';
+      });
+    }
+
+    needCaptcha = needCaptcha && HALO.settings.enable_safety;
+
     this.store = {
       timer: null,
-      count: 60
+      count: 60,
+      needCaptcha: needCaptcha
     };
 
     ['toggle', 'onAction', 'modify', 'back'].forEach((m) => {
@@ -66,7 +76,8 @@ class Model extends React.Component {
 
   modify() {
     let newPwd = this.refs.new_pwd.state.value,
-      confirmPwd = this.refs.confirm_pwd.state.value;
+      confirmPwd = this.refs.confirm_pwd.state.value,
+      originalPwd = this.refs.original_pwd.state.value;
     const __ = this.props.__;
 
     ['original_pwd', 'new_pwd', 'confirm_pwd'].forEach(m => {
@@ -82,21 +93,17 @@ class Model extends React.Component {
       captchaErrorMsg: ''
     });
 
-    let isAdminRole = false;
-    if(HALO.user && Array.isArray(HALO.user.roles)) {
-      isAdminRole = HALO.user.roles.some((role) => {
-        return role === 'admin';
+    if (newPwd !== confirmPwd || !/^\w{8,20}$/.test(newPwd) || !/\d+/.test(newPwd) || !/[a-z]+/.test(newPwd) || !/[A-Z]+/.test(newPwd)) {
+      this.refs.new_pwd.setState({
+        error: true
       });
-    }
-
-    if (newPwd !== confirmPwd) {
       this.refs.confirm_pwd.setState({
         error: true
       });
       return;
     }
 
-    if(isAdminRole) {
+    if(this.store.needCaptcha) {
       const captcha = this.refs.captcha.value.trim();
       if(!/^\d{6}$/.test(captcha)) {
         this.setState({
@@ -107,35 +114,20 @@ class Model extends React.Component {
       }
     }
 
-    let data = {
-      original_password: this.refs.original_pwd.state.value,
-      password: newPwd
-    };
+    this.getEncryptionKey().then((response) => {
+      // password encrypt
+      const originalCipherObject = AES.encrypt(originalPwd, response.uuid);
+      const newCipherObject = AES.encrypt(newPwd, response.uuid);
 
-    if(!isAdminRole) {
-      ajax.post({
-        url: '/proxy/keystone/v3/users/' + HALO.user.userId + '/password',
-        dataType: 'json',
-        contentType: 'application/json',
-        headers: {
-          REGION: HALO.current_region
-        },
-        data: {
-          user: data
-        }
-      }).then(res => {
-        window.location = '/auth/logout';
-      }).catch(error => {
-        this.refs.original_pwd.setState({
-          error: true
-        });
-        this.setState({
-          showError: true,
-          errorMsg: __.modify_fail
-        });
-      });
-    } else {
-      data.captcha = this.refs.captcha.value.trim();
+      let data = {
+        original_password: originalCipherObject.toString(),
+        password: newCipherObject.toString()
+      };
+
+      if (this.store.needCaptcha) {
+        data.captcha = this.refs.captcha.value.trim();
+      }
+
       fetch.post({
         url: '/api/password/change',
         data: data
@@ -145,7 +137,7 @@ class Model extends React.Component {
         let errorMsg;
         try {
           errorMsg = JSON.parse(error.responseText).message;
-        } catch(e) {
+        } catch (e) {
           errorMsg = __.unknown_error;
         }
 
@@ -154,7 +146,13 @@ class Model extends React.Component {
           errorMsg: errorMsg
         });
       });
-    }
+    }).catch((err) => {
+      const errorMsg = __.unknown_error;
+      this.setState({
+        showError: true,
+        errorMsg: errorMsg
+      });
+    });
   }
 
   startTimer() {
@@ -164,6 +162,7 @@ class Model extends React.Component {
       if(this.store.count === 0) {
         clearInterval(this.store.timer);
         this.store.timer = null;
+        this.store.count = 60;
         this.setState({
           enable_send: true,
           btnText: __.get_captcha
@@ -206,6 +205,14 @@ class Model extends React.Component {
     });
   }
 
+
+  getEncryptionKey() {
+    const random = Date.now().toString().slice(-6);
+    return fetch.get({
+      url: '/api/password/uuid?' + random
+    });
+  }
+
   renderCaptcha() {
     const __ = this.props.__;
     const state = this.state;
@@ -231,13 +238,6 @@ class Model extends React.Component {
       __ = this.props.__,
       state = this.state;
 
-    let isAdminRole = false;
-    if(HALO.user && HALO.user.roles !== undefined) {
-      isAdminRole = HALO.user.roles.some((role) => {
-        return role === 'admin';
-      });
-    }
-
     return (
       <div className="halo-module-password" style={this.props.style}>
         {tabs ?
@@ -257,11 +257,12 @@ class Model extends React.Component {
           <div className={'toggle-content' + (state.toggle ? ' unfold' : ' fold')}>
             <div className="modal-bd halo-com-modal-common">
               {
-                inputs.map(m => {
-                  return <InputPassword key={m.field} ref={m.field} label={__[m.field]} __={__} onAction={this.onAction}/>;
+                inputs.map((m, i) => {
+                  return <InputPassword key={m.field} ref={m.field} label={__[m.field]} __={__} onAction={this.onAction}
+                  tip_info={ i === 1 ? 'pwd_tip' : false } />;
                 })
               }
-              { isAdminRole ? this.renderCaptcha() : null }
+              { this.store.needCaptcha ? this.renderCaptcha() : null }
               <div className="row"><Button value={__.modify} onClick={this.modify}/></div>
               <div className={'row pwd_fail' + (state.showError ? '' : ' hide')}>
                 <i className="glyphicon icon-status-warning" />

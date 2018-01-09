@@ -4,6 +4,7 @@ let Input = require('./components/input/index.jsx');
 let Phone = require('./components/phone/index.jsx');
 let notification = require('client/uskin/index').Notification;
 let getErrorMessage = require('./utils/error_message.js');
+let AES = require('crypto-js/aes');
 
 class Model extends React.Component {
 
@@ -56,32 +57,46 @@ class Model extends React.Component {
       company: refs.company.state.value,
       email: refs.email.state.value,
       phone: refs.phone.state.value,
-      code: refs.phone.state.code,
-      password: refs.password.state.value
+      code: refs.phone.state.code
     };
+
     that.setState({
       isSubmitting: true
     });
-    request.registerAccount(data).then((res) => {
-      window.location = '/auth/register/success?email=' + data.email;
-    }).catch((err) => {
-      let errorMsg = getErrorMessage(err, true);
+
+    // 加密
+    request.getEncryptionKey().then((encryptionKey) => {
+      const password = refs.password.state.value;
+      const cipherObject = AES.encrypt(password, encryptionKey.uuid);
+      const cipherPwd = cipherObject.toString();
+      data.password = cipherPwd;
+
+      request.registerAccount(data).then((res) => {
+        window.location = '/auth/register/success?email=' + data.email;
+      }).catch((err) => {
+        let errorMsg = getErrorMessage(err, true);
+        that.setState({
+          isSubmitting: false
+        });
+        if(errorMsg.type === 'SystemError') {
+          this.errorReport(errorMsg.message);
+        } else {
+          errorMsg.location.forEach((item) => {
+            refs[item].setState({
+              error: true,
+              loading: false,
+              pass: false,
+              showTip: true,
+              tipContent: errorMsg.message
+            });
+          });
+        }
+      });
+    }).catch(() => {
+      that.errorReport(that.props.__.unknown_error);
       that.setState({
         isSubmitting: false
       });
-      if(errorMsg.type === 'SystemError') {
-        this.errorReport(errorMsg.message);
-      } else {
-        errorMsg.location.forEach((item) => {
-          refs[item].setState({
-            error: true,
-            loading: false,
-            pass: false,
-            showTip: true,
-            tipContent: errorMsg.message
-          });
-        });
-      }
     });
   }
 

@@ -1,5 +1,6 @@
 const React = require('react');
 const request = require('./request.js');
+const AES = require('crypto-js/aes');
 
 class Model extends React.Component {
 
@@ -53,6 +54,7 @@ class Model extends React.Component {
 
     that.setState({
       loginError: false,
+      errorTip: '',
       usernameEmptyError: false,
       passwordEmptyError: false,
       captchaEmptyError: false,
@@ -85,59 +87,77 @@ class Model extends React.Component {
       isSubmitting: true
     });
 
-    request.login(data).then(function(res) {
-      window.location = window.location.pathname;
-    }, function(err) {
-      let error = JSON.parse(err.responseText).error;
-      let code = error.code;
-      let errorType = error.type;
-      if(code === 400) {
-        if(errorType === 'captchaError') {
-          that.setState({
-            errorTip: __.captchaError
-          });
-        } else {
-          that.setState({
-            errorTip: __.unknown_error
-          });
+    // 密码加密
+    request.getEncryptionKey().then((response) => {
+      const cipherObject = AES.encrypt(data.password, response.uuid);
+      data.password = cipherObject.toString();
+
+      request.login(data).then(function(res) {
+        window.location = window.location.pathname;
+      }, function(err) {
+        let error;
+        try {
+          error = JSON.parse(err.responseText).error;
+        } catch(parseError) {
+          error = {};
         }
-      } else if(code === 403) {
-        switch (errorType) {
-          case 'unEnabled':
+
+        let code = error.code;
+        let errorType = error.type;
+        if(code === 400) {
+          if(errorType === 'captchaError') {
             that.setState({
-              username: username,
-              notActivate: true
+              errorTip: __.captchaError
             });
-            break;
-          case 'manyFailures':
-            that.setState({
-              errorTip: __.many_failures
-            });
-            break;
-          case 'passwordExpired':
-            that.setState({
-              errorTip: __.passwd_expired,
-              mustChangePwd: true
-            });
-            break;
-          default:
+          } else {
             that.setState({
               errorTip: __.unknown_error
             });
-            break;
+          }
+        } else if(code === 403) {
+          switch (errorType) {
+            case 'unEnabled':
+              that.setState({
+                username: username,
+                notActivate: true
+              });
+              break;
+            case 'manyFailures':
+              let timeLeft = Math.ceil(error.remain / 60 / 1000);
+              that.setState({
+                errorTip: __.many_failures.replace(/\{0\}/, timeLeft)
+              });
+              break;
+            case 'passwordExpired':
+              that.setState({
+                mustChangePwd: true
+              });
+              break;
+            default:
+              that.setState({
+                errorTip: __.unknown_error
+              });
+              break;
+          }
+        } else {
+          that.setState({
+            errorTip: __.error_tip
+          });
         }
-      } else {
-        that.setState({
-          errorTip: __.error_tip
-        });
-      }
 
+        that.setState({
+          loginError: true,
+          isSubmitting: false
+        });
+        // 验证码刷新
+        that.refs.captcha.src = '/api/captcha?' + Math.random();
+      });
+    }).catch(() => {
       that.setState({
+        errorTip: __.unknown_error,
         loginError: true,
         isSubmitting: false
       });
-      // 验证码刷新
-      that.refs.captcha.src = '/api/captcha?' + Math.random();
     });
   }
 

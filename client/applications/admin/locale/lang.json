@@ -1,5 +1,6 @@
 {
   "en": {
+    "action-log": "Action Log",
     "active": "Active",
     "activate": "Activate ",
     "activated": "Activated",
@@ -129,6 +130,7 @@
   },
   "zh-CN": {
     "account-application": "账号申请",
+    "action-log": "操作日志",
     "active": "运行中",
     "activate": "激活",
     "activated": "已激活",
