@@ -7,7 +7,6 @@ function View(app, clientApps, currentView, viewModels) {
   this.reactDOMServer = require('react-dom/server');
   this.glob = require('glob');
   this.co = require('co');
-  this.uuid  = require('node-uuid');
   this.viewModel = require(`client/applications/${currentView}/model.jsx`);
   this.viewModelFactory = this.react.createFactory(this.viewModel);
   this.config = require('config');
@@ -155,7 +154,6 @@ View.prototype = {
     };
   },
   renderTemplate: function(setting, HALO, locale, req, res, next) {
-    let dataId = this.uuid();
     let __ = req.i18n.__.bind(req.i18n);
     HALO.application.application_list = HALO.application.application_list.map(a => {
       return {[a]: __(`shared.${a}.application_name`)};
@@ -164,7 +162,6 @@ View.prototype = {
     global.HALO.configs.renderer = 'server';
     global.HALO.configs.init = false;
     let templateObj = this.getTemplateObj(HALO, locale, setting, __);
-    templateObj.dataId = req.session.dataId = dataId;
     res.render(this.name, templateObj);
   }
 };

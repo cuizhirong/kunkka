@@ -1,6 +1,6 @@
 'use strict';
 const co = require('co');
-
+const uuid = require('node-uuid');
 const base = require('../base');
 const drivers = require('drivers');
 const config = require('config');
@@ -44,7 +44,7 @@ Password.prototype = {
       let phone = req.body.phone;
       let code = parseInt(req.body.captcha, 10);
       let password = req.body.pwd;
-      password = base.crypto.decrypt(password, req.session.dataId);
+      password = base.crypto.decrypt(password, req.session.passwordId);
       if (!(/^1[34578]\d{9}$/.test(phone))) {
         return next({msg: 'PhoneError', customRes: true, status: 400});
       }
@@ -84,9 +84,9 @@ Password.prototype = {
     co(function* () {
       const userId = req.session.user.userId;
       let password = req.body.password;
-      password = base.crypto.decrypt(password, req.session.dataId);
+      password = base.crypto.decrypt(password, req.session.passwordId);
       let originalPassword = req.body.original_password;
-      originalPassword = base.crypto.decrypt(originalPassword, req.session.dataId);
+      originalPassword = base.crypto.decrypt(originalPassword, req.session.passwordId);
 
       let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       if (enableSafety) {
@@ -129,7 +129,10 @@ Password.prototype = {
         __: req.i18n.__.bind(req.i18n), memClient: that.memClient
       }));
     });
-
+  },
+  getUUID: function (req, res, next) {
+    let passwordId = req.session.passwordId = uuid();
+    res.send({uuid: passwordId});
   },
 
   initRoutes: function () {
@@ -168,6 +171,7 @@ Password.prototype = {
       this.sendCaptchaNoPhone.bind(this),
       base.middleware.customResApi
     );
+    this.app.get('/api/password/uuid', this.getUUID);
   }
 };
 
