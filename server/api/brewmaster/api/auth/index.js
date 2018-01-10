@@ -52,6 +52,7 @@ Auth.prototype = {
 
       //many failures
       let {username, password, domain = config('domain') || 'Default'} = req.body;
+      password = base.crypto.decrypt(password, req.session.dataId);
       if (enableSafety) {
         let obj = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
         if (obj && obj.value > 4) {

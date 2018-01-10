@@ -14,7 +14,7 @@ const listUsersAsync = drivers.keystone.user.listUsersAsync;
 
 const passwordModel = require('../../models').user_password;
 const basic = require('./basic');
-const password = require('./password');
+const crypto = require('./crypto');
 const mem = require('./mem');
 
 
@@ -145,7 +145,7 @@ const checkPasswordAvailable = function* (userId, reqPass) {
   let isAvailable = true;
 
   for (let i = 0; i < passwords.length; i++) {
-    let compare = yield password.compare(reqPass, passwords[i].password);
+    let compare = yield crypto.compare(reqPass, passwords[i].crypto);
     if (compare) {
       isAvailable = false;
       break;

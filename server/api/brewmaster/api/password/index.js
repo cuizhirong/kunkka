@@ -44,6 +44,7 @@ Password.prototype = {
       let phone = req.body.phone;
       let code = parseInt(req.body.captcha, 10);
       let password = req.body.pwd;
+      password = base.crypto.decrypt(password, req.session.dataId);
       if (!(/^1[34578]\d{9}$/.test(phone))) {
         return next({msg: 'PhoneError', customRes: true, status: 400});
       }
@@ -67,7 +68,7 @@ Password.prototype = {
       }
 
       //CREATE PASSWORD TO DATABASE
-      const passworHash = yield base.password.hash(password);
+      const passworHash = yield base.crypto.hash(password);
       yield [
         passwordModel.create({userId: user.id, password: passworHash}),
         updateUserAsync(req.admin.token, keystoneRemote, user.id, {user: {password}}),
@@ -82,8 +83,10 @@ Password.prototype = {
     const that = this;
     co(function* () {
       const userId = req.session.user.userId;
-      const password = req.body.password;
-      const originalPassword = req.body.original_password;
+      let password = req.body.password;
+      password = base.crypto.decrypt(password, req.session.dataId);
+      let originalPassword = req.body.original_password;
+      originalPassword = base.crypto.decrypt(originalPassword, req.session.dataId);
 
       let enableSafety = yield base._getSetBool('admin', 'enable_safety');
       if (enableSafety) {
@@ -106,7 +109,7 @@ Password.prototype = {
       );
 
       //CREATE PASSWORD TO DATABASE
-      const passworHash = yield base.password.hash(password);
+      const passworHash = yield base.crypto.hash(password);
       yield passwordModel.create({userId, password: passworHash});
       res.end();
     }).catch(next);

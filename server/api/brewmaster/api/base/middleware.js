@@ -4,6 +4,7 @@ const co = require('co');
 const adminLoginFunc = require('api/slardar/common/adminLogin');
 const func = require('./func');
 const basic = require('./basic');
+const uuid = require('node-uuid');
 
 const customResApi = function (err, req, res, next) {
   let __ = req.i18n.__.bind(req.i18n);
@@ -18,15 +19,16 @@ const customResApi = function (err, req, res, next) {
 };
 
 const customResPage = function (err, req, res, next) {
-  console.log(err);
   const __ = req.i18n.__.bind(req.i18n);
   co(function* () {
     if (err.customRes && err.msg) {
       err.message = __('api.register.' + err.msg || err.message);
     }
     const obj = yield func.getTemplateObjAsync();
+    let dataId = req.session.dataId = uuid();
     Object.assign(
       obj,
+      {dataId},
       {subtitle: '', message: err.message || __('api.register.SystemError'), locale: req.i18n.locale},
       err.data
     );

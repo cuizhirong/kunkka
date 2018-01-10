@@ -39,7 +39,8 @@ User.prototype = {
       if (lack.length) {
         return next({status: 400, customRes: true, location: lack, msg: 'MissParams'});
       }
-      const {email, name, password, phone, code, full_name, company} = req.body;
+      let {email, name, password, phone, code, full_name, company} = req.body;
+      password = base.crypto.decrypt(password, req.session.dataId);
 
       const domainRes = yield listDomainsAsync(adminToken, keystoneRemote, {name: domainName, enabled: true});
       const domains = domainRes.body.domains;
@@ -65,7 +66,7 @@ User.prototype = {
         area_code: config('phone_area_code') || '86', enabled: false
       });
       //CREATE PASSWORD TO DATABASE
-      const passworHash = yield base.password.hash(password);
+      const passworHash = yield base.crypto.hash(password);
       yield passwordModel.create({userId: user.id, password: passworHash});
       next({customRes: true, status: 200, msg: 'registerSuccess'});
     }).catch(next);
