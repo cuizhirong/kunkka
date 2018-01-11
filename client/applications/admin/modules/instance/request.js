@@ -117,6 +117,13 @@ module.exports = {
       data: data
     });
   },
+  batchMigrate: function(instances, hostId) {
+    const reqs = [];
+    instances.forEach((instance) => {
+      reqs.push(this.migrate(instance.id, hostId, instance.isCool));
+    });
+    return RSVP.all(reqs);
+  },
   poweron: function(item) {
     let data = {};
     data['os-start'] = null;
@@ -233,6 +240,11 @@ module.exports = {
         user: res.user.user,
         project: res.project.project
       };
+    });
+  },
+  getProjectById: function(pId) {
+    return fetch.get({
+      url: '/proxy/keystone/v3/projects/' + pId
     });
   },
   exportCSV(fields) {

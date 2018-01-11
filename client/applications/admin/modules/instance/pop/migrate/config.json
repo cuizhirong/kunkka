@@ -1,22 +1,19 @@
 {
   "title": ["migrate"],
   "fields": [{
-    "type": "icon_label",
-    "field": "instance",
-    "icon_type": "instance"
-  },{
-    "type": "icon_label",
-    "field": "project_id"
-  },{
-    "type": "icon_label",
-    "field": "user_id"
+    "type": "adapter",
+    "field": "instance"
   }, {
     "type": "select",
     "data": [],
     "field": "migrate_to"
+  }, {
+    "type": "tip",
+    "tip_type": "warning",
+    "field": "cant_migrate_tip"
   }],
   "btn": {
     "value": "confirm",
-    "disabled": false
+    "disabled": true
   }
 }
