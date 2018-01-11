@@ -38,7 +38,8 @@ const moduleRoles = {
   'orchestration-services': ['admin_system'],
   'metadata-definition': ['admin_system'],
   'feature-mgmt': ['admin_safety'],
-  'module-mgmt': ['admin_safety']
+  'module-mgmt': ['admin_safety'],
+  'action-log': ['admin_audit']
 };
 
 function main(app, clientApps, currentView, viewPlugins) {

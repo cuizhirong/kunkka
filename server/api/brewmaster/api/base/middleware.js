@@ -29,7 +29,7 @@ const customResPage = function (err, req, res, next) {
       {subtitle: '', message: err.message || __('api.register.SystemError'), locale: req.i18n.locale},
       err.data
     );
-    res.status(err.code || 200).render(err.view || 'single', obj);
+    res.status(err.code || err.status || 200).render(err.view || 'single', obj);
   }).catch(() => {
     const obj = {
       single_logo_url: '/static/assets/nav_logo.png',

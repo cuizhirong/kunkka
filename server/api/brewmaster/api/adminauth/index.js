@@ -87,8 +87,7 @@ Password.prototype = {
         return;
       }
       req.session.user.authAdmin = true;
-
-      res.redirect(req.query.cb || '/admin');
+      res.end();
     }).catch(next);
   },
 
@@ -104,9 +103,9 @@ Password.prototype = {
       base.middleware.customResApi
     );
     this.app.post(
-      '/auth/admin-reauth',
+      '/api/auth/admin-reauth',
       this.reauth.bind(this),
-      base.middleware.customResPage
+      base.middleware.customResApi
     );
   }
 };

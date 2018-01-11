@@ -282,7 +282,7 @@
 
         loginBtnElem.disabled = true;
         var request = createXMLHTTPRequest();
-        req.open("POST", "/auth/admin-reauth", true);
+        req.open("POST", "/api/auth/admin-reauth", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(JSON.stringify({
           captcha: captcha
@@ -423,7 +423,7 @@
 
         loginBtnElem.disabled = true;
         var request = createXMLHTTPRequest();
-        request.open("POST", "/auth/admin-reauth", true);
+        request.open("POST", "/api/auth/admin-reauth", true);
         request.setRequestHeader("Content-Type", "application/json");
         request.send(JSON.stringify({
           captcha: captcha
