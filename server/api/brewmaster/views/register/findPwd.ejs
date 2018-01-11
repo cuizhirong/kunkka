@@ -21,8 +21,9 @@
     .wrapper > .content > .content-wrapper > form > div > input { border: none; background: rgba(255, 255, 255, 0.1); color: #92959a; width: 480px; height: 28px; font-size: 14px; }
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > input { display: inline-block; width: 366px; }
     .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .get_captcha { display: inline-block; margin-left: 10px; width: 100px; height: 34px; line-height: 34px; background-color: #42b9e5; border-radius: 2px; color: #fff; font-size: 14px; text-align: center; cursor: pointer; }
-    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #bbbfc5; }
+    .wrapper > .content > .content-wrapper > form > div:nth-child(3) > .disabled { background-color: #d5dddf; color: #939ba3; }
     .wrapper > .content > .content-wrapper > form > input { margin-top: 14px; width: 480px; height: 28px; font-size: 14px; border: none; background-color: #42b9e5; color: #ffffff; }
+    .wrapper > .content > .content-wrapper > form > #usubmit[disabled] { color: #939ba3; background-color: #d5dddf; } 
     .wrapper > .content > .content-wrapper > a {display:block;margin-top: 6px;float: right;}
     .phone_tip,
     .captcha_tip,
@@ -32,7 +33,8 @@
     .icon_phone { background-position: -36px -6px; }
     .icon_captcha { right: 124px !important; background-position: -62px -6px; }
     .icon_pwd { background-position: -90px -6px; }
-    .wrapper .content .content-wrapper form div.error-tip { margin-top: 8px; color: red; font-size: 12px; height: 20px;}
+    .wrapper .content .content-wrapper form div.msg-tip { margin-top: 8px; color: #3a9c7b; font-size: 12px; height: 20px;}
+    .wrapper .content .content-wrapper form div.msg-tip.error { color: red; }
     .wrapper > .footer { flex: 2; }
     .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
   </style>
@@ -69,8 +71,8 @@
           <div class="brewmaster_icon icon_pwd"></div>
         </div>
         <span class="confirm_pwd_tip"></span>
-        <div class="error-tip" id="error-tip"></div>
-        <input id="usubmit" name="usubmit" type="button" value="submit"/>
+        <div class="msg-tip" id="msg-tip"></div>
+        <input id="usubmit" name="usubmit" type="submit" value="submit"/>
       </form>
       <a href="/">Login</a>
     </div>
@@ -79,6 +81,7 @@
     <p><%= company %></p>
   </div>
 </div>
+<script src="/static/dist/crypto-js/crypto-js.min.js"></script>
 <script>
   var phone = document.getElementById('phone'),
           captcha = document.getElementById('captcha'),
@@ -90,14 +93,17 @@
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
           pwd_tip = document.getElementsByClassName('pwd_tip')[0],
           confirm_pwd_tip = document.getElementsByClassName('confirm_pwd_tip')[0],
-          error_tip = document.getElementById('error-tip');
+          msg_tip = document.getElementById('msg-tip');
           uform = document.getElementById('uform'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
           enable_pwd = false,
           enable_confirm_pwd = false,
-          timer = null;
+          timer = null,
+          countdown = 4,
+          countdownTimer = null,
+          encryptionKey = null;
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -112,13 +118,16 @@
     return xmlHttpRequest;
   }
   function sendCaptcha() {
-    var count = 6;
+    var count = 60;
     if (enable_getcaptcha) {
       if (/^\d{11}$/.test(phone.value)) {
         phone_tip.style.display = "none";
         var phoneData = JSON.stringify({
           'phone': phone.value
         });
+
+        get_captcha.className += ' disabled';
+
         var req = createXMLHTTPRequest();
         req.open("POST", "/api/password/reset/phone-captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
@@ -127,8 +136,9 @@
           if (req.readyState == 4) {
             if (req.status == 200) {
               enable_getcaptcha = false;
-              get_captcha.className += ' disabled';
+              captcha.focus();
               get_captcha.innerHTML = 'resend(' + count + ')s';
+              
               timer = setInterval(function () {
                 if (count > 0) {
                   get_captcha.innerHTML = 'resend(' + count-- + ')s';
@@ -140,7 +150,14 @@
                 }
               }, 1000);
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              try {
+                phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              } catch(error) {
+                phone_tip.innerHTML = 'Unknown error';
+              }
+              enable_getcaptcha = true;
+              get_captcha.className = 'get_captcha';
+              get_captcha.innerHTML = 'get captcha';
               phone_tip.style.display = 'block';
             }
           }
@@ -153,6 +170,7 @@
   }
   function verifySubmit(e) {
     e.preventDefault();
+    msg_tip.innerHTML = '';
     //phone
     if (/^1[3,4,5,6,7,8]\d{9}$/.test(phone.value)) {
       phone_tip.style.display = 'none';
@@ -190,21 +208,74 @@
       enable_confirm_pwd = false;
     }
     if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
-      var data = {
-        phone: phone.value,
-        captcha: captcha.value,
-        pwd: pwd.value
+      usubmit.disabled = true;
+      getEncryptionKey();
+    }
+  }
+
+  function formSubmit() {
+    var cipherObject = CryptoJS.AES.encrypt(pwd.value, encryptionKey);
+    var cipherText = cipherObject.toString();
+    var data = {
+      phone: phone.value,
+      captcha: captcha.value,
+      pwd: cipherText
+    }
+    var req = createXMLHTTPRequest();
+    req.open("POST", "/api/password/reset", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(JSON.stringify(data));
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          msg_tip.className = 'msg-tip';
+          countdownTimer = setInterval(function () {
+            if (countdown === 0) {
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              window.location = '/auth/login';
+            } else {
+              countdown--;
+              msg_tip.innerHTML = 'Password change successfully, '+ countdown + ' seconds later jump to the login page';
+            }
+          }, 1000);
+        } else {
+          msg_tip.className = 'msg-tip error';
+          usubmit.disabled = false;
+          try {
+            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+          } catch (error) {
+            msg_tip.innerHTML = "Unknown error"
+          }
+        }
       }
-      var req = createXMLHTTPRequest();
-      req.open("POST", "/api/password/reset", true);
-      req.setRequestHeader("Content-Type", "application/json");
-      req.send(JSON.stringify(data));
-      req.onreadystatechange = function () {
-        if (req.readyState == 4) {
-          if (req.status == 200) {
-            window.location = '/auth/login';
-          } else {
-            error_tip.innerHTML = JSON.parse(req.responseText).message;
+    }
+  }
+
+  function getEncryptionKey() {
+    var random = Date.now().toString().slice(-6);
+    var req = createXMLHTTPRequest();
+    req.open("GET", "/api/password/uuid?" + random, true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send();
+    req.onreadystatechange = function() {
+      if(req.readyState === 4) {
+        if(req.status === 200) {
+          try {
+            encryptionKey = JSON.parse(req.responseText).uuid;
+            formSubmit();
+          } catch(e) {
+            msg_tip.className = 'msg-tip error';
+            usubmit.disabled = false;
+            msg_tip.innerHTML = "Unknown error, please try again"
+          }
+        } else {
+          msg_tip.className = 'msg-tip error';
+          usubmit.disabled = false;
+          try {
+            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+          } catch (error) {
+            msg_tip.innerHTML = "Unknown error"
           }
         }
       }
@@ -244,8 +315,8 @@
           <div class="brewmaster_icon icon_pwd"></div>
         </div>
         <span class="confirm_pwd_tip"></span>
-        <div class="error-tip" id="error-tip"></div>
-        <input id="usubmit" name="usubmit" type="button" value="提交"/>
+        <div class="msg-tip" id="msg-tip"></div>
+        <input id="usubmit" name="usubmit" type="submit" value="提交"/>
       </form>
       <a href="/">返回登录</a>
     </div>
@@ -254,6 +325,7 @@
     <p><%= company %></p>
   </div>
 </div>
+<script src="/static/dist/crypto-js/crypto-js.min.js"></script>
 <script>
   var phone = document.getElementById('phone'),
           captcha = document.getElementById('captcha'),
@@ -265,14 +337,17 @@
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
           pwd_tip = document.getElementsByClassName('pwd_tip')[0],
           confirm_pwd_tip = document.getElementsByClassName('confirm_pwd_tip')[0],
-          error_tip = document.getElementById('error-tip');
+          msg_tip = document.getElementById('msg-tip');
           uform = document.getElementById('uform'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
           enable_pwd = false,
           enable_confirm_pwd = false,
-          timer = null;
+          timer = null,
+          countdown = 4,
+          countdownTimer = null,   // 跳转定时器
+          encryptionKey = null;    // 密钥
   //ajax request
   function createXMLHTTPRequest() {
     var xmlHttpRequest;
@@ -286,6 +361,7 @@
     }
     return xmlHttpRequest;
   }
+
   function sendCaptcha() {
     var count = 60;
     if (enable_getcaptcha) {
@@ -294,6 +370,9 @@
         var phoneData = JSON.stringify({
           'phone': phone.value
         });
+
+        get_captcha.className += ' disabled';
+
         var req = createXMLHTTPRequest();
         req.open("POST", "/api/password/reset/phone-captcha", true);
         req.setRequestHeader("Content-Type", "application/json");
@@ -302,8 +381,9 @@
           if (req.readyState == 4) {
             if (req.status == 200) {
               enable_getcaptcha = false;
-              get_captcha.className += ' disabled';
+              captcha.focus();
               get_captcha.innerHTML = '重新发送(' + count + ')秒';
+
               timer = setInterval(function () {
                 if (count > 0) {
                   get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
@@ -315,7 +395,14 @@
                 }
               }, 1000);
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              try {
+                phone_tip.innerHTML = JSON.parse(req.responseText).message;
+              } catch(error) {
+                phone_tip.innerHTML = '未知错误';
+              }
+              enable_getcaptcha = true;
+              get_captcha.className = 'get_captcha';
+              get_captcha.innerHTML = '发送验证码';
               phone_tip.style.display = 'block';
             }
           }
@@ -326,8 +413,11 @@
       }
     }
   }
+
+  // 输入验证
   function verifySubmit(e) {
     e.preventDefault();
+    msg_tip.innerHTML = '';
     //phone
     if (/^1[3,4,5,6,7,8]\d{9}$/.test(phone.value)) {
       phone_tip.style.display = 'none';
@@ -365,26 +455,82 @@
       enable_confirm_pwd = false;
     }
     if (enable_phone && enable_captcha && enable_pwd && enable_confirm_pwd) {
-      var data = {
-        phone: phone.value,
-        captcha: captcha.value,
-        pwd: pwd.value
-      }
-      var req = createXMLHTTPRequest();
-      req.open("POST", "/api/password/reset", true);
-      req.setRequestHeader("Content-Type", "application/json");
-      req.send(JSON.stringify(data));
-      req.onreadystatechange = function () {
-        if (req.readyState == 4) {
-          if (req.status == 200) {
-            window.location = '/auth/login';
-          } else {
-            error_tip.innerHTML = JSON.parse(req.responseText).message;
+      usubmit.disabled = true;
+      getEncryptionKey();
+    }
+  }
+
+  // 表单提交
+  function formSubmit() {
+    var cipherObject = CryptoJS.AES.encrypt(pwd.value, encryptionKey);
+    var cipherText = cipherObject.toString();
+    var data = {
+      phone: phone.value,
+      captcha: captcha.value,
+      pwd: cipherText
+    }
+    var req = createXMLHTTPRequest();
+    req.open("POST", "/api/password/reset", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(JSON.stringify(data));
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          msg_tip.className = 'msg-tip';
+          countdownTimer = setInterval(function () {
+            if (countdown === 0) {
+              clearInterval(countdownTimer);
+              countdownTimer = null;
+              window.location = '/auth/login';
+            } else {
+              countdown--;
+              msg_tip.innerHTML = '密码修改成功，' + countdown + '秒后跳转到登录页面';
+            }
+          }, 1000);
+        } else {
+          msg_tip.className = 'msg-tip error';
+          usubmit.disabled = false;
+          try {
+            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+          } catch (error) {
+            msg_tip.innerHTML = "未知错误"
           }
         }
       }
     }
   }
+
+  // 提交前获取密钥
+  function getEncryptionKey() {
+    var random = Date.now().toString().slice(-6);
+    var req = createXMLHTTPRequest();
+    req.open("GET", "/api/password/uuid?" + random, true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send();
+    req.onreadystatechange = function() {
+      if(req.readyState === 4) {
+        if(req.status === 200) {
+          try {
+            encryptionKey = JSON.parse(req.responseText).uuid;
+            formSubmit();
+          } catch(e) {
+            msg_tip.className = 'msg-tip error';
+            usubmit.disabled = false;
+            msg_tip.innerHTML = "未知错误，请重新尝试"
+          }
+        } else {
+          msg_tip.className = 'msg-tip error';
+          usubmit.disabled = false;
+          try {
+            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+          } catch (error) {
+            msg_tip.innerHTML = "未知错误"
+          }
+        }
+      }
+    }
+  }
+
   get_captcha.onclick = sendCaptcha;
   usubmit.onclick = verifySubmit;
 </script>

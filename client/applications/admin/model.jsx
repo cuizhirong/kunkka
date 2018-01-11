@@ -90,6 +90,8 @@ class Model extends React.Component {
         return 'snapshot';
       case 'module-mgmt':
         return 'applications';
+      case 'action-log':
+        return 'log';
       default:
         return name;
     }

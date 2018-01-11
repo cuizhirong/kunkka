@@ -55,7 +55,8 @@
       "block-storage-services",
       "network-agents",
       "orchestration-services",
-      "metadata-definition"
+      "metadata-definition",
+      "action-log"
     ]
   }, {
     "title": "setting-mgmt",

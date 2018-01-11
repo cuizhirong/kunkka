@@ -60,6 +60,10 @@
       height: 50px;
     }
 
+    .content h4 {
+      color: #42b9e5;
+      margin-bottom: 20px;
+    }
     .content .input-wrapper {
       position: relative;
       margin-top: 80px;
@@ -169,10 +173,11 @@
           <img src="<%= single_logo_url %>"/>
         </div>
         <div class="input-wrapper">
+          <h4>Complete two-factor authentication</h4>
           <form id="subForm">
             <div class="captcha-row">
-              <input type="text" name="captcha" id="captcha" placeholder="Captcha">
-              <button class="get-captcha" id="getBtn" disabled>Sending after 60 seconds</button>
+              <input type="text" name="captcha" id="captcha" placeholder="Captcha" autofocus="true">
+              <button class="get-captcha" id="getBtn" type="button" disabled>Sending after 60 seconds</button>
             </div>
             <div class="error-msg" id="errorMsg"></div>
             <input type="submit" class="login-btn" id="loginBtn" value="Login" />
@@ -218,9 +223,17 @@
         request.onreadystatechange = function () {
           if (request.readyState == 4) {
             if (request.status == 200) {
+              captchaElem.focus();
               beginTimer();
             } else {
-              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              getBtnElem.disabled = false;
+              getBtnElem.innerHTML = 'Get captcha';
+              canGetCaptcha = true;
+              try {
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              } catch(error) {
+                errorMsgElem.innerHTML = 'Unknown error';
+              }
             }
           }
         }
@@ -282,7 +295,11 @@
               window.location = '/admin';
             } else {
               loginBtnElem.disabled = false;
-              errorMsgElem.innerHTML = JSON.parse(req.responseText).message;
+              try {
+                errorMsgElem.innerHTML = JSON.parse(req.responseText).message;
+              } catch(error) {
+                errorMsgElem.innerHTML = 'Unknown error'
+              }
             }
           }
         }
@@ -297,15 +314,15 @@
         <div class="img-wrapper">
           <img src="<%= single_logo_url %>"/>
         </div>
-      
         <div class="input-wrapper">
+          <h4>完成双因素认证</h4>
           <form id="subForm">
             <div class="captcha-row">
-              <input type="text" name="captcha" id="captcha" placeholder="短信验证码">
-              <button class="get-captcha" id="getBtn" disabled>60秒后重新发送</button>
+              <input type="text" name="captcha" id="captcha" placeholder="短信验证码" autofocus="true">
+              <button class="get-captcha" id="getBtn" type="button" disabled>60秒后重新发送</button>
             </div>
             <div class="error-msg" id="errorMsg"></div>
-            <input type="submit" class="login-btn" id="loginBtn" value="登录" />      
+            <input type="submit" class="login-btn" id="loginBtn" value="登录" />
           </form>
         </div>
       </div>
@@ -347,9 +364,17 @@
         request.onreadystatechange = function () {
           if (request.readyState == 4) {
             if (request.status == 200) {
+              captchaElem.focus();
               beginTimer();
             } else {
-              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              getBtnElem.disabled = false;
+              getBtnElem.innerHTML = '获取短信验证码';
+              canGetCaptcha = true;
+              try {
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              } catch(error) {
+                errorMsgElem.innerHTML = '未知错误';
+              }
             }
           }
         }
@@ -411,7 +436,11 @@
               window.location = '/admin';
             } else {
               loginBtnElem.disabled = false;
-              errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              try {
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+              } catch(error) {
+                errorMsgElem.innerHTML = '未知错误';
+              }
             }
           }
         }
