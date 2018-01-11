@@ -136,7 +136,7 @@ module.exports = {
     }, {
       app: 'global',
       name: 'enable_safety',
-      value: 'true',
+      value: 'false',
       type: 'boolean',
       description: '等保安全功能开关'
     }
