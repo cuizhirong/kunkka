@@ -47,6 +47,9 @@
       "dataIndex": "fixed_ip_address",
       "key": "ip_address"
     }, {
+      "title": ["bandwidth"],
+      "key": "bandwidth"
+    }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
