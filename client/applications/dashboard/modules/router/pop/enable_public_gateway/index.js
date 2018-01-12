@@ -47,7 +47,7 @@ function pop(obj, parent, callback, resize) {
       }
       // 调整带宽限速
       if(resize && obj) {
-        let rateLimit = obj.rate_limit ? Number(obj.rate_limit / (1024 * 8)) : 1;
+        let rateLimit = obj.rate_limit ? Number(obj.rate_limit / 1024) : 1;
         refs.bandwidth.setState({
           value: rateLimit,
           inputValue: rateLimit
@@ -84,7 +84,7 @@ function pop(obj, parent, callback, resize) {
       };
       let limit = {
         gwratelimit: {
-          rate: Number(refs.bandwidth.state.value) * 1024 * 8
+          rate: Number(refs.bandwidth.state.value) * 1024
         }
       };
       if(resize) {

@@ -81,7 +81,7 @@ function pop(parent, callback) {
         }
 
         if (enableBandwidth) {
-          let bandwidth = Number(refs.bandwidth.state.value) * 1024 * 8;
+          let bandwidth = Number(refs.bandwidth.state.value) * 1024;
           limit.fipratelimit.rate = bandwidth;
         }
 

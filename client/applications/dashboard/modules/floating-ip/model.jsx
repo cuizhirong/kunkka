@@ -150,11 +150,11 @@ class Model extends React.Component {
           break;
         case 'bandwidth':
           column.render = (col, item, i) => {
-            let rateLimit = Number(item.rate_limit / (1024 * 8));
+            let rateLimit = Number(item.rate_limit / 1024);
             if(rateLimit === 0) {
               return '';
             }
-            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' MBps');
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
           };
           break;
         case 'status':
@@ -386,7 +386,7 @@ class Model extends React.Component {
     let rateLimit = Number(item.rate_limit);
     let bandwidth;
     if(rateLimit !== 0) {
-      bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / (1024 * 8) + ' MBps');
+      bandwidth = isNaN(rateLimit) ? __.unlimited : (rateLimit / 1024 + ' Mbps');
     } else {
       bandwidth = '-';
     }
