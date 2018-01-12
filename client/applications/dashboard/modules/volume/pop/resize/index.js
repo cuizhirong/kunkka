@@ -2,6 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
+const DEFAULT_PRICE = '0.0000';
 
 function pop(obj, parent, callback) {
   let slider = config.fields[0];
@@ -55,15 +56,16 @@ function pop(obj, parent, callback) {
           }
         }
 
+        let error = max <= obj.size ? true : false;
         let setStates = (res, enableCharge, isError) => {
           refs.capacity_size.setState({
             max: max,
             value: obj.size,
-            disabled: false
+            disabled: isError
           });
 
           refs.btn.setState({
-            disabled: false
+            disabled: isError
           });
 
           if (enableCharge && !isError) {
@@ -72,12 +74,19 @@ function pop(obj, parent, callback) {
               hide: false
             });
           }
+
         };
 
+
         if (HALO.settings.enable_charge) {
-          setStates((Math.max.call(null, HALO.prices.volume[obj.volume_type]) * obj.size).toFixed(4), true, false);
+          let price;
+          if(HALO.prices && HALO.prices.volume[obj.volume_type] !== undefined) {
+            price = HALO.prices.volume[obj.volume_type] * obj.size;
+          }
+          price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
+          setStates(price, true, error);
         } else {
-          setStates('', false);
+          setStates('', false, error);
         }
       });
     },
@@ -107,8 +116,12 @@ function pop(obj, parent, callback) {
             let inputEvnet = state.eventType === 'change' && !state.error;
 
             if (sliderEvent || inputEvnet) {
+              let unitPrice = (HALO.prices && HALO.prices.volume[obj.volume_type] !== undefined) ? HALO.prices.volume[obj.volume_type] : DEFAULT_PRICE;
+              let price = unitPrice * state.value;
+              price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
+
               refs.charge.setState({
-                value: (Math.max.call(null, HALO.prices.volume[obj.volume_type]) * state.value).toFixed(4)
+                value: price
               });
             }
           }
