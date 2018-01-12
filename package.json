@@ -44,6 +44,7 @@
     "body-parser": "~1.14.1",
     "bufferutil": "^1.2.1",
     "ccap": "^0.6.10",
+    "cfork": "^1.7.1",
     "clipboard-plus": "^1.0.0",
     "co": "^4.6.0",
     "connect-memjs": "^0.2.1",
