@@ -54,6 +54,7 @@
     "usageReauth": "您正在二次验证，",
     "usageResetPassword": "您正在重置密码，",
     "usageRegister": "您正在注册，",
+    "usageBind": "您正在绑定手机，",
     "tooManyFailures": "失败次数太多，请稍后再试。",
     "cannotUseHistoricalPassword": "不能设置为最近3次使用的密码",
     "passwordExpired": "密码已过期，请重置密码后登录"
@@ -112,6 +113,7 @@
     "usageReauth": "For 2-Step Verifing, ",
     "usageResetPassword": "For resetting password, ",
     "usageRegister": "For register, ",
+    "usageBind": "For bind your phone, ",
     "tooManyFailures": "Please try again later for too many failures.",
     "cannotUseHistoricalPassword": "Can not set to the password which is used in the last 3 passwords",
     "passwordExpired": "Your password had expired, so reset it before login."

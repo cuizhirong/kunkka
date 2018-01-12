@@ -174,14 +174,6 @@ User.prototype = {
   verifyPhone: function (req, res, next) {
     const that = this;
     co(function *() {
-      let cs = req.session.captcha;
-      let cb = req.body.captcha;
-      req.session.captcha = '';
-      if (!cb || !cs || cb.toString().toLowerCase() !== cs.toString().toLowerCase()){
-        return next({
-          customRes: true, status: 400, msg: 'CaptchaError'
-        });
-      }
       const phone = parseInt(req.body.phone, 10);
       if (!(/^1[34578]\d{9}$/.test(phone))) {
         return next({customRes: true, status: 400, msg: 'PhoneError'});
@@ -373,9 +365,15 @@ User.prototype = {
     this.app.get('/auth/register/resend-email', this.regSuccess.bind(this));
     this.app.use('/auth/register/*', base.middleware.customResPage);
 
-    this.app.post('/api/register', base.middleware.checkEnableRegister, base.middleware.adminLogin, this.reg.bind(this), base.middleware.customResApi);
+    this.app.post(
+      '/api/register',
+      base.middleware.checkEnableRegister,
+      base.middleware.adminLogin,
+      this.reg.bind(this),
+      base.middleware.customResApi
+    );
     this.app.post('/api/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
-    this.app.post('/api/register/phone', this.verifyPhone.bind(this));
+    this.app.post('/api/register/phone', base.middleware.checkCaptcha, this.verifyPhone.bind(this));
     this.app.post('/api/register/change-email/phone', this.getPhoneCaptchaForChangeEmail.bind(this));
     this.app.post('/api/register/unique-name', this.uniqueName.bind(this));
     this.app.post('/api/register/unique-email', this.uniqueEmail.bind(this));

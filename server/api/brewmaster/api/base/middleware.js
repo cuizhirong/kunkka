@@ -103,11 +103,26 @@ const checkAdmin = (req, res, next) => {
     res.send({message: req.i18n.__('api.register.adminAccessNeeded')});
   }
 };
+const checkCaptcha = function (req, res, next) {
+  co(function* () {
+    let cs = req.session.captcha;
+    let cb = req.body.captcha;
+    req.session.captcha = '';
+    if (!cb || !cs || cb.toString().toLowerCase() !== cs.toString().toLowerCase()){
+      next({
+        customRes: true, status: 400, msg: 'CaptchaError'
+      });
+    } else {
+      next();
+    }
+  });
+};
 module.exports = {
   checkAdmin,
   checkEnableRegister,
   checkLogin,
   adminLogin,
   customResApi,
-  customResPage
+  customResPage,
+  checkCaptcha
 };
