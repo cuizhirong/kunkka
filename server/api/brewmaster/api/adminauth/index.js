@@ -1,8 +1,6 @@
 'use strict';
 const co = require('co');
-
 const base = require('../base');
-const userModel = require('../../models').user;
 
 function Password(app) {
   this.app = app;
@@ -23,9 +21,8 @@ Password.prototype = {
         res.redirect(req.query.cb || '/admin');
         return;
       }
-      //findUser
-      let userDB = yield userModel.findOne({where: {id: req.session.user.userId}});
-      if (!userDB || !userDB.phone) {
+      let phone = req.session.user.phone;
+      if (!phone) {
         next({customRes: true, status: 400, msg: 'dontHavePhone', view: 'single'});
         return;
       }
@@ -33,11 +30,10 @@ Password.prototype = {
       //send sms
       let result = yield base.func.phoneCaptchaMemAsync({
         __, usage: 'usageReauth',
-        phone: userDB.phone, memClient: that.memClient
+        phone, memClient: that.memClient
       });
       //render
       if (result.msg === 'SendSmsSuccess' || result.msg === 'Frequently') {
-        req.session.user.phone = userDB.phone;
         next({customRes: true, status: 200, view: 'admin-reauth'});
       } else {
         next({customRes: true, status: 500, msg: 'smsSendError', view: 'single'});
@@ -54,21 +50,18 @@ Password.prototype = {
         next({status: 400, customRes: true, msg: 'badRequest'});
         return;
       }
-      //findUser
-      let userDB = yield userModel.findOne({where: {id: req.session.user.userId}});
-      if (!userDB || !userDB.phone) {
+      let phone = req.session.user.phone;
+      if (!phone) {
         next({customRes: true, status: 400, msg: 'dontHavePhone'});
         return;
       }
-
       //send sms
       let result = yield base.func.phoneCaptchaMemAsync({
         __, usage: 'usageReauth',
-        phone: userDB.phone, memClient: that.memClient
+        phone, memClient: that.memClient
       });
       //render
       if (result.msg === 'SendSmsSuccess' || result.msg === 'Frequently') {
-        req.session.user.phone = userDB.phone;
         next({customRes: true, status: 200, msg: 'success'});
       } else {
         next({customRes: true, status: 500, msg: 'smsSendError'});

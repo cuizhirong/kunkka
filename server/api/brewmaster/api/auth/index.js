@@ -173,10 +173,11 @@ Auth.prototype = {
         }
         return role.name;
       });
+      let userDB = yield userModel.findOne({where:{id: userToDatabase.id}});
       req.session.user = {
         domainName: domain, domainId, regionId,
         projectId, projects, isAdmin, roles,
-        userId, username, token: scopeToken
+        userId, username, token: scopeToken, phone: userDB && userDB.phone
       };
       req.session.endpoint = setRemote(payload.token.catalog);
       //log
@@ -199,12 +200,9 @@ Auth.prototype = {
       }
 
       //createUser in database
-      if (userToDatabase.id) {
-        let userDB = yield userModel.findOne({where:{id: userToDatabase.id}});
-        if (!userDB) {
-          yield userModel.destroy({where: {name: userToDatabase.name}});
-          userModel.create(userToDatabase);
-        }
+      if (!userDB) {
+        yield userModel.destroy({where: {name: userToDatabase.name}});
+        userModel.create(userToDatabase);
       }
     }).catch(e => {
       co(function* () {

@@ -126,7 +126,8 @@ View.prototype = {
         projects: user.projects,
         userId: user.userId,
         username: user.username,
-        roles: user.roles
+        roles: user.roles,
+        phone: user.phone
       },
       region_list: this.regions[locale],
       current_region: user.regionId ? user.regionId : this.regions[locale][0].id,
