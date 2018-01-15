@@ -4,6 +4,7 @@ const React = require('react');
 const {Tab, Button} = require('client/uskin/index');
 const InputPassword = require('client/components/modal_common/subs/input_pwd/index');
 const converter = require('./converter');
+const PersonalInfo = require('./personal_Info');
 
 const config = require('./config.json');
 const fetch = require('client/libs/fetch');
@@ -249,6 +250,7 @@ class Model extends React.Component {
           </div>
           : null
         }
+        <PersonalInfo __={this.props.__} HALO={HALO} />
         <div className="toggle">
           <div className="toggle-title" onClick={this.toggle}>
             {__.modify_pwd}

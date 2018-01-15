@@ -40,7 +40,17 @@
     "modify_pwd": "Modify Password",
     "personal_settings": "Settings",
     "back": "Back",
-    "confirm_pwd": "Confirm Password"
+    "confirm_pwd": "Confirm Password",
+    "bind_phone_number": "Bind phone number",
+    "current_project_id": "Current project ID",
+    "current_project_name": "Current project name",
+    "did_not_bound_phone": "You have not bound the phone number, enter the phone number and captcha to complete the binding operation",
+    "get_sms_captcha": "Get SMS captcha",
+    "personal_info": "Personal Information",
+    "phone_numer": "Phone number",
+    "user_id": "User ID",
+    "wrong_captcha_format": "Captcha format error, please check your input",
+    "wrong_phone_number": "Phone number format is wrong, please check your input"
   },
   "zh-CN": {
     "account_bill": "账户消费",
@@ -49,7 +59,7 @@
     "captcha_error": "验证码错误，请检查您的输入。",
     "get_captcha": "获取验证码",
     "resend_captcha": "{0}秒后重新获取",
-    "sending": "发送中。。。",
+    "sending": "发送中...",
     "sms_captcha": "短信验证码",
     "unknown_error": "未知错误",
     "charge-record": "充值记录",
@@ -83,6 +93,16 @@
     "modify_pwd": "修改密码",
     "personal_settings": "个人设置",
     "back": "返回",
-    "confirm_pwd": "确认密码"
+    "confirm_pwd": "确认密码",
+    "bind_phone_number": "绑定手机号",
+    "current_project_id": "当前项目ID",
+    "current_project_name": "当前项目名称",
+    "did_not_bound_phone": "您尚未绑定手机号，输入手机号和验证码可完成绑定操作",
+    "get_sms_captcha": "获取短信验证码",
+    "personal_info": "个人信息",
+    "phone_number": "手机号",
+    "user_id": "用户 ID",
+    "wrong_captcha_format": "验证码格式错误，请检查您的输入",
+    "wrong_phone_number": "手机号格式有误，请检查您的输入"
   }
 }

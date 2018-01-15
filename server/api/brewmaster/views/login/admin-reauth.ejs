@@ -257,6 +257,7 @@
           if(count === 0) {
             clearInterval(timer);
             timer = null;
+            count = 60;
             canGetCaptcha = true;
             getBtnElem.disabled = false;
             getBtnElem.innerHTML = 'Get captcha';
@@ -398,6 +399,7 @@
           if(count === 0) {
             clearInterval(timer);
             timer = null;
+            count = 60;
             canGetCaptcha = true;
             getBtnElem.disabled = false;
             getBtnElem.innerHTML = '获取短信验证码';
