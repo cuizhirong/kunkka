@@ -137,17 +137,18 @@ module.exports = {
       return res.roles;
     });
   },
-  getRolesAndProjects: function(userId) {
-    let requests = [
-      fetch.get({
-        url: '/proxy/keystone/v3/roles'
-      }),
-      fetch.get({
-        url: '/proxy/keystone/v3/users/' + userId + '/projects'
-      })
-    ];
+  getRelatedInfo: function(domainId) {
+    let deferredList = [];
+    let defaultid = HALO.settings.enable_ldap ? '?domain_id=default' : '';
+    let urlParam = domainId !== 'default' ? '?domain_id=' + domainId : defaultid;
 
-    return RSVP.all(requests).then((res) => {
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/roles'
+    }));
+    deferredList.push(fetch.get({
+      url: '/proxy/keystone/v3/projects' + urlParam
+    }));
+    return RSVP.all(deferredList).then((res) => {
       return {
         roles: res[0].roles,
         projects: res[1].projects

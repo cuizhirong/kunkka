@@ -82,7 +82,7 @@ function pop(obj, parent, callback) {
           const cfmPasswd = refs.confirm_password.state.value;
 
           if(passwd !== cfmPasswd || !/^\w{8,20}$/.test(passwd) || !/\d+/.test(passwd) || !/[a-z]+/.test(passwd) || !/[A-Z]+/.test(passwd)) {
-            cb(false, __.passwd_not_meet_requirement);
+            cb(false, __.passwd_not_meet_requirement, true);
             return;
           }
 
@@ -136,6 +136,11 @@ function pop(obj, parent, callback) {
           } else {
             let _rePsw = refs.confirm_password.state.value;
             let _valid = _name && pwd && (pwd === _rePsw);
+
+            _rePsw && refs.confirm_password.setState({
+              error: pwd !== _rePsw
+            });
+
             refs.btn.setState({
               disabled: !_valid
             });
@@ -152,6 +157,11 @@ function pop(obj, parent, callback) {
             let psw = refs.password.state.value;
             let rePsw = refs.confirm_password.state.value;
             let valid = name && psw && (psw === rePsw);
+            if(field === 'confirm_password') {
+              refs.confirm_password.setState({
+                error: !(psw === rePsw)
+              });
+            }
             refs.btn.setState({
               disabled: !valid
             });
