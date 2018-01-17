@@ -44,7 +44,7 @@ module.exports = {
     const random = Date.now().toString().slice(-6);
     return ajax.get({
       url: '/api/password/uuid?' + random,
-      dataType: 'application/json'
+      dataType: 'json'
     });
   }
 };
