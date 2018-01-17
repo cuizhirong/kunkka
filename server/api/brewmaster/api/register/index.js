@@ -374,7 +374,7 @@ User.prototype = {
     );
     this.app.post('/api/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
     this.app.post('/api/register/phone', base.middleware.checkCaptcha, this.verifyPhone.bind(this));
-    this.app.post('/api/register/change-email/phone', this.getPhoneCaptchaForChangeEmail.bind(this));
+    this.app.post('/api/register/change-email/phone', base.middleware.checkCaptcha, this.getPhoneCaptchaForChangeEmail.bind(this));
     this.app.post('/api/register/unique-name', this.uniqueName.bind(this));
     this.app.post('/api/register/unique-email', this.uniqueEmail.bind(this));
     this.app.use('/api/register/*', base.middleware.customResApi);

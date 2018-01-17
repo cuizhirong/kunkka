@@ -143,6 +143,7 @@ Password.prototype = {
     );
     this.app.post(
       '/api/password/reset/phone-captcha',
+      base.middleware.checkCaptcha,
       base.middleware.adminLogin,
       this.sendCaptcha.bind(this),
       base.middleware.customResApi
