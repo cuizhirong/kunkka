@@ -145,7 +145,7 @@ const checkPasswordAvailable = function* (userId, reqPass) {
   let isAvailable = true;
 
   for (let i = 0; i < passwords.length; i++) {
-    let compare = yield crypto.compare(reqPass, passwords[i].crypto);
+    let compare = yield crypto.compare(reqPass, passwords[i].password);
     if (compare) {
       isAvailable = false;
       break;
