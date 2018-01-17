@@ -33,13 +33,11 @@ class ModalBase extends React.Component {
   }
 
   componentWillMount() {
-    request.listBucketObjects({
+    request.getBucketHeaderType({
       Bucket: this.props.obj.name
     }).then(rawItem => {
-      rawItem[0] && rawItem[0].headerType === '.r:*' ? this.setState({
-        accessType: 'public'
-      }) : this.setState({
-        accessType: 'private'
+      this.setState({
+        accessType: rawItem.headerType === '.r:*' ? 'publich' : 'private'
       });
       this.setState({
         delayed: false
@@ -62,30 +60,21 @@ class ModalBase extends React.Component {
   onConfirm() {
     let params = {};
     let that = this;
-    request.listBuckets().then(buckets => {
-      if (this.state.accessType === 'public') {
-        params = {
-          Bucket: this.props.obj.name,
-          type: 'public'
-        };
-      } else {
-        params = {
-          Bucket: this.props.obj.name,
-          type: 'private'
-        };
-      }
+    params = {
+      Bucket: this.props.obj.name,
+      type: this.state.accessType === 'public' ? 'public' : 'private'
+    };
 
-      request.modifyBucket(params).then((res) => {
-        that.setState({
-          visible: false
-        });
-        that.props.callback && that.props.callback();
-      }).catch((err) => {
-        let errorTip = getErrorMessage(err);
-        this.setState({
-          showError: true,
-          error: errorTip
-        });
+    request.modifyBucket(params).then((res) => {
+      that.setState({
+        visible: false
+      });
+      that.props.callback && that.props.callback();
+    }).catch((err) => {
+      let errorTip = getErrorMessage(err);
+      this.setState({
+        showError: true,
+        error: errorTip
       });
     });
     this.refs.btn.setState({
@@ -99,7 +88,7 @@ class ModalBase extends React.Component {
 
     return (
        <Modal ref="modal" {...props} title={__.edit + __.bucket} visible={state.visible} width={540}>
-        <div className="modal-bd halo-com-modal-create-bucket">
+        <div className="modal-bd halo-com-modal-modify-bucket">
           <div className="file-name">
             <p>{__.container_name}<span>{props.obj.name}</span></p>
           </div>
@@ -130,7 +119,7 @@ class ModalBase extends React.Component {
             </div>
           </div>
         </div>
-        <div className="modal-ft halo-com-modal-create-bucket">
+        <div className="modal-ft halo-com-modal-mofify-bucket">
           <Button ref="btn" value={__.edit} disabled={state.disabled} onClick={this.onConfirm} />
           <Button value={__.cancel} onClick={this.onCancel} type="cancel" />
         </div>
