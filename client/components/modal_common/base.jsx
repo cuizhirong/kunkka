@@ -12,6 +12,7 @@ const TextArea = require('./subs/textarea/index');
 const Select = require('./subs/select/index');
 const SelectGroup = require('./subs/select_group/index');
 const SelectSingle = require('./subs/select_single/index');
+const SelectTime = require('./subs/select_time/index');
 const Tab = require('./subs/tab/index');
 const GroupSelect = require('./subs/group_select/index');
 const RadioInput = require('./subs/radio_input/index');
@@ -65,6 +66,7 @@ class ModalBase extends React.Component {
         'select': Select,
         'select_group': SelectGroup,
         'select_single': SelectSingle,
+        'select_time': SelectTime,
         'group_select': GroupSelect,
         'radio_input': RadioInput,
         'slider': Slider,
