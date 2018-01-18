@@ -26,7 +26,8 @@
     "signup": "Sign Up",
     "name_placeholder": "please enter account",
     "name_tip": "Please enter username limit 20, only English, underline, underscore and plus sign",
-    "name_exist_tip": "This account already exists"
+    "name_exist_tip": "This account already exists",
+    "unknown_error": "Unknown error"
   },
   "zh-CN": {
     "cancel": "取消",
@@ -55,6 +56,7 @@
     "signup": "注册",
     "name_placeholder": "请输入用户名",
     "name_tip": "请输入20个字符以内的用户名，仅限英文、下划线、中划线和加号",
-    "name_exist_tip": "该用户名已注册"
+    "name_exist_tip": "该用户名已注册",
+    "unknown_error": "未知错误"
   }
 }
