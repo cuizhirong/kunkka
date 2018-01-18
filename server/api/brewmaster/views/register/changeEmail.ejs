@@ -209,7 +209,7 @@
           }, 1000);
         } else {
           try {
-            phone_tip.innerHTML = JSON.parse(req.responseText).message;
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || 'Unknown error';
           } catch(err) {
             phone_tip.innerHTML = 'Unknown error';
           }
@@ -438,7 +438,7 @@
           }, 1000);
         } else {
           try {
-            phone_tip.innerHTML = JSON.parse(req.responseText).message;
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || '未知错误';
           } catch(e) {
             phone_tip.innerHTML = '未知错误';
           }

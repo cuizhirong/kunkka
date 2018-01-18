@@ -230,7 +230,7 @@
               getBtnElem.innerHTML = 'Get captcha';
               canGetCaptcha = true;
               try {
-                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message || 'Unknown error';
               } catch(error) {
                 errorMsgElem.innerHTML = 'Unknown error';
               }
@@ -297,7 +297,7 @@
             } else {
               loginBtnElem.disabled = false;
               try {
-                errorMsgElem.innerHTML = JSON.parse(req.responseText).message;
+                errorMsgElem.innerHTML = JSON.parse(req.responseText).message || 'Unknown error';
               } catch(error) {
                 errorMsgElem.innerHTML = 'Unknown error'
               }
@@ -372,7 +372,7 @@
               getBtnElem.innerHTML = '获取短信验证码';
               canGetCaptcha = true;
               try {
-                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message || '未知错误';
               } catch(error) {
                 errorMsgElem.innerHTML = '未知错误';
               }
@@ -439,7 +439,7 @@
             } else {
               loginBtnElem.disabled = false;
               try {
-                errorMsgElem.innerHTML = JSON.parse(request.responseText).message;
+                errorMsgElem.innerHTML = JSON.parse(request.responseText).message || '未知错误';
               } catch(error) {
                 errorMsgElem.innerHTML = '未知错误';
               }

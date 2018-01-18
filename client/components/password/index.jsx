@@ -137,7 +137,7 @@ class Model extends React.Component {
       }).catch((error) => {
         let errorMsg;
         try {
-          errorMsg = JSON.parse(error.responseText).message;
+          errorMsg = JSON.parse(error.responseText).message || __.unknown_error;
         } catch (e) {
           errorMsg = __.unknown_error;
         }
@@ -193,7 +193,7 @@ class Model extends React.Component {
     }).catch((err) => {
       let errorMsg;
       try {
-        errorMsg = JSON.parse(err.responseText).message;
+        errorMsg = JSON.parse(err.responseText).message || __.unknown_error;
       } catch(e) {
         errorMsg = __.unknown_error;
       }
