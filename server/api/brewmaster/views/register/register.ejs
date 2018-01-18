@@ -10,6 +10,58 @@
   <link href="/static/dist/<%= loginCssFile %>" rel="stylesheet">
   <style type="text/css"><%- viewCss %></style>
   <script>
+    (function () {
+        function isInBrowserList() {
+
+          var userAgent = navigator.userAgent.toLowerCase();
+          var version;
+
+          // Firefox 1.0+
+          var isFirefox = typeof InstallTrigger !== 'undefined';
+
+          // Safari 3.0+ "[object HTMLElementConstructor]" 
+          var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+
+          // Internet Explorer 6-11
+          var isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+          // Edge 20+
+          var isEdge = !isIE && !!window.StyleMedia;
+
+          // Chrome 1+
+          var isChrome = !!window.chrome && !!window.chrome.webstore;
+
+          if (isEdge) {
+            return true;
+          }
+          if (isFirefox) {
+            return judgeVersion(userAgent, /firefox\/\d+/, 35);
+          }
+          if (isChrome) {
+            return judgeVersion(userAgent, /chrome\/\d+/, 45);
+          }
+          if (isSafari) {
+            return judgeVersion(userAgent, /version\/\d+/, 7);
+          }
+          return false;
+        }
+
+        function getVersion(ua, regx) {
+          var tem = ua.match(regx);
+          return Number(tem[0].match(/\d+/)[0]);
+        }
+
+        function judgeVersion(ua, regx, ver) {
+          var version = getVersion(ua, regx);
+          if (version > ver) {
+            return true;
+          }
+        }
+
+        if (!isInBrowserList()) {
+          window.location = '/browser-invalid';
+        }
+      }());
     window.HALO = {configs: {lang: "<%= locale %>"}, settings: <%- JSON.stringify(settings) %>};
   </script>
 </head>

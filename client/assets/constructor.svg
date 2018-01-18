@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>创建 copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 1.66533657e-15 0 12 12 12 12 0"></polygon>
+    </defs>
+    <g id="浏览器版本过低" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-860.000000, -479.000000)">
+        <g id="Group-10" transform="translate(319.000000, 313.000000)">
+            <g id="Group-6" transform="translate(463.000000, 0.000000)">
+                <g id="Group-Copy-3" transform="translate(0.000000, 156.000000)">
+                    <g id="创建-copy" transform="translate(78.000000, 10.000000)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <g id="Clip-2"></g>
+                        <path d="M9.56601265,12 L2.43302055,12 C1.0919984,12 0,10.9090416 0,9.56697945 L0,2.43302055 C0,1.0919984 1.0919984,0 2.43302055,0 L9.56601265,0 C10.9080016,0 12,1.0919984 12,2.43302055 L12,9.56697945 C12,10.9090416 10.9080016,12 9.56601265,12 Z M2.63621369,1 C1.73371709,1 1,1.73449488 1,2.63682695 L1,9.36317305 C1,10.2655051 1.73371709,11 2.63621369,11 L9.36287458,11 C10.2653712,11 11,10.2655051 11,9.36317305 L11,2.63682695 C11,1.73449488 10.2653712,1 9.36287458,1 L2.63621369,1 Z" id="Fill-1" fill="#FFFFFF" mask="url(#mask-2)"></path>
+                        <polyline id="Path-2" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" mask="url(#mask-2)" points="4 3 8.52487444 5.98916161 4 8.97832322"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
