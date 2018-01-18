@@ -7,6 +7,8 @@ const listImageRecursive = require('../listImageRecursive');
 const handleNetwork = require('./handleNetwork');
 const objects = require('./objectList');
 
+const otherServiceUser = ['heat_stack_domain_admin'];
+
 const prefix = '/proxy-search';
 
 let objServer;
@@ -48,9 +50,15 @@ const paginate = (page, limit, list, path, query) => {
   return result;
 };
 
-const isCurrentUserType = (username, type, endpoint) =>
-  (endpoint[username] && type === 'service')
-  || (!endpoint[username] && type === 'person');
+const isCurrentUserType = (username, type, endpoint) => {
+  if (type === 'service') {
+    return (endpoint[username] || otherServiceUser.indexOf(username) > -1);
+  } else if (type === 'person') {
+    return !endpoint[username] && otherServiceUser.indexOf(username) === -1;
+  } else {
+    return false;
+  }
+};
 
 const detailRegExp = /s\/detail$/;
 /**
