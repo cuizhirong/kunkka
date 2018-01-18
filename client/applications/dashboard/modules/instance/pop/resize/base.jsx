@@ -24,8 +24,7 @@ class ModalBase extends React.Component {
       disk: null
     };
 
-    ['setFlavor', 'onConfirm', 'onCancel',
-    'onChangeCpu', 'onChangeRam', 'onChangeDisk'].forEach((func) => {
+    ['setFlavor', 'onConfirm', 'onCancel'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
   }
@@ -127,51 +126,6 @@ class ModalBase extends React.Component {
     return f.vcpus === flavor.vcpus && f.ram === flavor.ram && f.disk === flavor.disk;
   }
 
-  onChangeCpu(cpu) {
-    let flavors = this.state._flavors;
-    let ramOpt = this.findRam(flavors, cpu);
-    let diskOpt = this.findDisk(flavors, cpu, ramOpt.ram);
-    let flavor = this.findFlavor(flavors, cpu, ramOpt.ram, diskOpt.disk);
-
-    this.setState({
-      cpu: cpu,
-      _rams: ramOpt.rams,
-      ram: ramOpt.ram,
-      _disks: diskOpt.disks,
-      disk: diskOpt.disk,
-      flavor: flavor,
-      disabled: this.isSameFlavor(flavor)
-    });
-  }
-
-  onChangeRam(ram) {
-    let flavors = this.state._flavors;
-    let cpu = this.state.cpu;
-    let diskOpt = this.findDisk(flavors, cpu, ram);
-    let flavor = this.findFlavor(flavors, cpu, ram, diskOpt.disk);
-
-    this.setState({
-      ram: ram,
-      _disks: diskOpt.disks,
-      disk: diskOpt.disk,
-      flavor: flavor,
-      disabled: this.isSameFlavor(flavor)
-    });
-  }
-
-  onChangeDisk(disk) {
-    let flavors = this.state._flavors;
-    let cpu = this.state.cpu;
-    let ram = this.state.ram;
-    let flavor = this.findFlavor(flavors, cpu, ram, disk);
-
-    this.setState({
-      disk: disk,
-      flavor: flavor,
-      disabled: this.isSameFlavor(flavor)
-    });
-  }
-
   onConfirm() {
     let state = this.state;
 
@@ -208,41 +162,24 @@ class ModalBase extends React.Component {
     });
   }
 
+  onTable(key, e) {
+    this.state._flavors.some(flavor => {
+      if (flavor.id === key && this.state.flavor.id !== key) {
+        this.setState({
+          flavor: flavor,
+          disabled: this.props.obj.flavor.id === flavor.id
+        });
+        return true;
+      }
+      return false;
+    });
+  }
+
   render() {
     let props = this.props,
       state = this.state;
 
     let title = __.resize;
-
-    let data = [{
-      key: 'cpu',
-      title: __.cpu + __.type,
-      data: state._cpus,
-      selected: state.cpu,
-      render: (val) => {
-        return val + ' vCPU';
-      },
-      onChange: this.onChangeCpu
-    }, {
-      key: 'ram',
-      title: __.memory + __.size,
-      data: state._rams,
-      selected: state.ram,
-      render: (val) => {
-        let res = unitConverter(Number(val), 'MB');
-        return res.num + ' ' + res.unit;
-      },
-      onChange: this.onChangeRam
-    }, {
-      key: 'disk',
-      title: __.volume + __.size,
-      data: state._disks,
-      selected: state.disk,
-      render: (val) => {
-        return val + ' GB';
-      },
-      onChange: this.onChangeDisk
-    }];
 
     let flavor = state.flavor;
     let flavorDetail;
@@ -267,6 +204,56 @@ class ModalBase extends React.Component {
         monthlyPrice = (Number(price) * 24 * 30).toFixed(4);
       }
     }
+
+    let flavorData = [];
+    let flavors = state._flavors;
+
+    flavors.forEach(fl => {
+      flavorData.push({
+        id: fl.id,
+        name: fl.name,
+        vcpu: fl.vcpus,
+        ram: fl.ram,
+        disk: fl.disk
+      });
+    });
+
+    let sortFg = (a, b) => {
+      if (a.vcpu !== b.vcpu) {
+        return a.vcpu - b.vcpu;
+      } else if (a.ram !== b.ram) {
+        return a.ram - b.ram;
+      } else if (a.disk !== b.disk) {
+        return a.disk - b.disk;
+      } else {
+        return a.name > b.name;
+      }
+    };
+
+    flavorData.sort(sortFg);
+
+    flavorData.forEach(d => {
+      d.ram = unitConverter(d.ram, 'MB').num + unitConverter(d.ram, 'MB').unit;
+      d.disk = d.disk + 'GB';
+    });
+
+    let column = [{
+      title: __.name,
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: __.cpu,
+      dataIndex: 'vcpu',
+      key: 'vcpu'
+    }, {
+      title: __.memory,
+      dataIndex: 'ram',
+      key: 'ram'
+    }, {
+      title: __.disk,
+      dataIndex: 'disk',
+      key: 'disk'
+    }];
 
     return (
       <Modal ref="modal" {...props} title={title} visible={state.visible} width={726}>
@@ -293,26 +280,53 @@ class ModalBase extends React.Component {
           <div className="row row-dropdown">
             <div className="modal-label" />
             <div className="modal-data">
-              <div ref="drop_flavor" className="dropdown-box">
-                {
-                  data.map((ele) =>
-                    <div className="dropdown-item" key={ele.key}>
-                      <div className="dropdown-item-title">{ele.title}</div>
-                      <div className="dropdown-item-data">
-                        <ul>
-                          {
-                            ele.data.map((value) =>
-                              <li key={value} className={ele.selected === value ? 'selected' : null}
-                                onClick={ele.selected === value ? null : (ele.onChange).bind(this, value)}>
-                                {ele.render(value)}
-                              </li>
-                            )
-                          }
-                        </ul>
+              <div ref="drop_flavor" id="flavor" className={'dropdown-box flavor'}>
+                <div className="dropdown-item">
+                  <div className="dropdown-item-data">
+                    <div className="table-header">
+                      <div className="checkbox">
+                        <input type="checkbox"/>
                       </div>
+                      {
+                        column.map((col, index) => {
+                          return (
+                            <div key={col.key}>
+                              <span className="title">
+                                {col.title}
+                              </span>
+                            </div>
+                          );
+                        })
+                      }
                     </div>
-                  )
-                }
+                    {
+                      flavorData.map((item, index) => {
+                        let key = item.id;
+                        let checked = flavor.id === key;
+
+                        return (
+                          <div key={key} className={'table-body' + (checked ? ' selected' : '')} onClick={this.onTable.bind(this, key)}>
+                            <div className="checkbox">
+                              <input value={key}
+                                type="checkbox"
+                                onChange={() => {}}
+                                checked={checked} />
+                            </div>
+                            {
+                              column.map((col, colIndex) => {
+                                return (
+                                  <div key={col.key}>
+                                    {item[col.dataIndex]}
+                                  </div>
+                                );
+                              })
+                            }
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                </div>
               </div>
             </div>
           </div>
