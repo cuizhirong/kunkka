@@ -40,6 +40,10 @@ User.prototype = {
         return next({status: 400, customRes: true, location: lack, msg: 'MissParams'});
       }
       let {email, name, password, phone, code, full_name, company} = req.body;
+      let nameRegExp = /^[a-zA-Z0-9_+-]{1,20}$/;
+      if(!(nameRegExp.test(name))) {
+        return next({status: 400, customRes: true, msg: 'NameInvalid'});
+      }
       password = base.crypto.decrypt(password, req.session.passwordId);
 
       const domainRes = yield listDomainsAsync(adminToken, keystoneRemote, {name: domainName, enabled: true});

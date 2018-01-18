@@ -1,6 +1,7 @@
 {
   "zh-CN": {
     "Name": "用户名",
+    "NameInvalid": "用户名不合法。20个字符以内，仅限英文、下划线、中划线和加号",
     "Email": "邮箱",
     "Phone": "手机",
     "Used": "已被占用",
@@ -61,6 +62,7 @@
   },
   "en": {
     "Name": "The Username",
+    "NameInvalid": "Username is invalid.limit 20, only English, underline, underscore and plus sign",
     "Email": "The email",
     "Phone": "The Phone",
     "Used": "had been used",
