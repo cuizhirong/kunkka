@@ -36,9 +36,14 @@ Auth.prototype = {
   authentication: function (req, res, next) {
     const that = this;
     co(function *() {
+      let {username, password, domain = config('domain') || 'Default'} = req.body;
+
+      let loginFailed = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
+      let loginFailedCount = loginFailed ? loginFailed.value : 0;
+
       const enableSafety = yield base._getSetBool('global', 'enable_safety');
       const enableCaptcha = yield base._getSetBool('auth', 'enable_login_captcha');
-      if (enableCaptcha) {
+      if (enableCaptcha && loginFailedCount > 1) {
         let ctBody = req.body.captcha;
         let ctSession = req.session.captcha;
         if (!ctBody || !ctSession || String(ctBody).toLowerCase() !== String(ctSession).toLowerCase()) {
@@ -49,23 +54,17 @@ Auth.prototype = {
           });
         }
       }
-
-      //many failures
-      let {username, password, domain = config('domain') || 'Default'} = req.body;
-      password = base.crypto.decrypt(password, req.session.passwordId);
-      if (enableSafety) {
-        let obj = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
-        if (obj && obj.value > 4) {
-          return Promise.reject({
-            code: 403,
-            remain: obj.createdAt + obj.expire * 1000 - new Date().getTime(),
-            type: 'manyFailures',
-            message: req.i18n.__('api.register.tooManyFailures')
-          });
-        }
+      if (enableSafety && loginFailedCount > 4) {
+        return Promise.reject({
+          code: 403,
+          remain: loginFailed.createdAt + loginFailed.expire * 1000 - new Date().getTime(),
+          type: 'manyFailures',
+          message: req.i18n.__('api.register.tooManyFailures')
+        });
       }
-      let adminToken = yield adminLogin();
 
+      password = base.crypto.decrypt(password, req.session.passwordId);
+      let adminToken = yield adminLogin();
       let unScopedRes;
       let userToDatabase = {};
       try {
