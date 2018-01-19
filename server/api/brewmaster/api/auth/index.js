@@ -277,8 +277,8 @@ Auth.prototype = {
   },
   initRoutes: function () {
     this.app.post('/auth/login', this.authentication.bind(this));
-    this.app.put('/auth/switch_region', this.switchRegion.bind(this));
-    this.app.put('/auth/switch_project', this.switchProject.bind(this));
+    this.app.put('/auth/switch_region', base.middleware.checkLogin, this.switchRegion.bind(this));
+    this.app.put('/auth/switch_project', base.middleware.checkLogin, this.switchProject.bind(this));
     this.app.get('/auth/logout', this.logout.bind(this));
   }
 };
