@@ -100,7 +100,7 @@ class PersonalInfo extends React.Component {
     }).catch((err) => {
       let errorMsg = '';
       try {
-        errorMsg = JSON.parse(err.responseText).message;
+        errorMsg = JSON.parse(err.responseText).message || __.unknown_error;
       } catch(e) {
         errorMsg = __.unknown_error;
       }
@@ -155,7 +155,7 @@ class PersonalInfo extends React.Component {
     }).catch((err) => {
       let errorMsg = '';
       try {
-        errorMsg = JSON.parse(err.responseText).message;
+        errorMsg = JSON.parse(err.responseText).message || __.unknown_error;
       } catch(e) {
         errorMsg = __.unknown_error;
       }
@@ -222,7 +222,7 @@ class PersonalInfo extends React.Component {
           <div className="content phone-content">
             { hasPhone ? state.phoneNumber :
               <div>
-                <input type="text" className={state.phoneError ? 'error' : ''} value={state.phoneNumber} autoComplete="false" onChange={this.onChange} />
+                <input type="text" className={state.phoneError ? 'error' : ''} value={state.phoneNumber} autoComplete="nope" onChange={this.onChange} />
                 <div className="not-bound-tip">{ __.did_not_bound_phone }</div>
               </div>
             }
@@ -232,7 +232,7 @@ class PersonalInfo extends React.Component {
           <div key="6">
             <div className="title">{__.sms_captcha}</div>
             <div className="content">
-              <input type="text" className={ state.captchaError ? 'error' : '' } onChange={ this.onCaptchaChange }/>
+              <input type="text" className={ state.captchaError ? 'error' : '' } onChange={ this.onCaptchaChange } autoComplete="nope" />
               <Button value={ state.btnText } onClick={ this.getCaptcha } disabled={ !state.enableSend }/>
               <div className={ 'error-msg-tip' + (state.showError ? '' : ' hide') }>{ state.errorMsg }</div>
             </div>

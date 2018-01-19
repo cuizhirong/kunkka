@@ -249,7 +249,7 @@
           }, 1000);
         } else {
           try {
-            phone_tip.innerHTML = JSON.parse(req.responseText).message;
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || 'Unknown error';
           } catch (error) {
             phone_tip.innerHTML = 'Unknown error';
           }
@@ -372,7 +372,7 @@
           msg_tip.className = 'msg-tip error';
           usubmit.disabled = false;
           try {
-            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+            msg_tip.innerHTML = JSON.parse(req.responseText).message || 'Unknown error';
           } catch (error) {
             msg_tip.innerHTML = "Unknown error"
           }
@@ -402,7 +402,7 @@
           msg_tip.className = 'msg-tip error';
           usubmit.disabled = false;
           try {
-            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+            msg_tip.innerHTML = JSON.parse(req.responseText).message || "Unknown error";
           } catch (error) {
             msg_tip.innerHTML = "Unknown error"
           }
@@ -572,7 +572,7 @@
           }, 1000);
         } else {
           try {
-            phone_tip.innerHTML = JSON.parse(req.responseText).message;
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || '未知错误';
           } catch (error) {
             phone_tip.innerHTML = '未知错误';
           }
@@ -685,7 +685,7 @@
           msg_tip.className = 'msg-tip error';
           usubmit.disabled = false;
           try {
-            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+            msg_tip.innerHTML = JSON.parse(req.responseText).message || '未知错误';
           } catch (error) {
             msg_tip.innerHTML = "未知错误"
           }
@@ -716,7 +716,7 @@
           msg_tip.className = 'msg-tip error';
           usubmit.disabled = false;
           try {
-            msg_tip.innerHTML = JSON.parse(req.responseText).message;
+            msg_tip.innerHTML = JSON.parse(req.responseText).message || '未知错误';
           } catch (error) {
             msg_tip.innerHTML = "未知错误"
           }
