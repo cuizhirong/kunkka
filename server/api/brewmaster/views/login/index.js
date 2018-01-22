@@ -1,10 +1,12 @@
 'use strict';
-
+const co = require('co');
 const View = require('views/base');
 const drivers = require('drivers');
+const listDomainsAsync = drivers.keystone.domain.listDomainsAsync;
 const adminLogin = require('api/slardar/common/adminLogin');
 const config = require('config');
 const keystoneRemote = config('keystone');
+const base = require('../../api/base');
 
 function main(app, clientApps, currentView, viewPlugins) {
   let views = app.get('views');
@@ -14,37 +16,30 @@ function main(app, clientApps, currentView, viewPlugins) {
 
   // rewrite render qualification
   view.renderChecker = function (setting, req, res, next) {
-    let locale = this.upperCaseLocale(req.i18n.getLocale());
-    let user = (req.session && req.session.user) ? req.session.user : {};
-    let HALO = this.getHALO(locale, setting, user);
-    if (this.plugins) {
-      this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
-    }
-    if (!req.session || !req.session.user) {
+    const that = this;
+    co(function* () {
+      let locale = that.upperCaseLocale(req.i18n.getLocale());
+      let user = (req.session && req.session.user) ? req.session.user : {};
+      let HALO = that.getHALO(locale, setting, user);
+      if (that.plugins) {
+        that.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
+      }
+      if (req.session && req.session.user) {
+        res.redirect('/' + HALO.application.application_list[0]);
+        return;
+      }
 
-      adminLogin((errLogin, result) => {
-        if (errLogin) {
-          next(errLogin);
-        } else {
-          drivers.keystone.domain.listDomains(
-            result.token,
-            keystoneRemote,
-            {},
-            (errDomain, resDomains) => {
-              if (errDomain) {
-                next(errDomain);
-              } else {
-                setting.domains = resDomains.body.domains.map(domain => domain.name);
-                this.renderTemplate(setting, HALO, locale, req, res, next);
-              }
-            }
-          );
-        }
-      });
+      let enableCaptcha = yield base.func.getLoginCaptcha(req.session);
+      if (!enableCaptcha) {
+        setting.enable_login_captcha = false;
+      }
 
-    } else if (req.session && req.session.user) {
-      res.redirect('/' + HALO.application.application_list[0]);
-    }
+      let result = yield adminLogin();
+      let resDomains = yield listDomainsAsync(result.token, keystoneRemote, {});
+      setting.domains = resDomains.body.domains.map(domain => domain.name);
+      that.renderTemplate(setting, HALO, locale, req, res, next);
+
+    }).catch(next);
   };
   view.getTemplateObj = function (HALO, locale, setting, __) {
     return {
@@ -68,8 +63,7 @@ function main(app, clientApps, currentView, viewPlugins) {
     };
   };
   view.initRoute = function () {
-    this.app.get(/^\/$/, this.renderHandler.bind(this));
-    this.app.get(['/auth/login', '/login'], this.renderHandler.bind(this));
+    this.app.get(['/', '/auth/login', '/login'], this.renderHandler.bind(this));
     this.app.get('/auth', (req, res) => {
       res.redirect('/auth/login');
     });
@@ -82,7 +76,4 @@ function haloProcessor(user, HALO) {
 
 }
 
-module.exports = {
-  main: main,
-  haloProcessor: haloProcessor
-};
+module.exports = {main, haloProcessor};
