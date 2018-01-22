@@ -155,40 +155,26 @@ const checkPasswordAvailable = function* (userId, reqPass) {
 };
 
 const setLoginCaptcha = function* (session) {
-  let failedAccount = session.failedAccount;
+  let failedCount = session.failedCount;
   let initObj = {count: 0};
-  if (!failedAccount) {
-    failedAccount = initObj;
-  } else {
-    try{
-      failedAccount = JSON.parse(failedAccount);
-    } catch (e) {
-      failedAccount = initObj;
-    }
+  if (!failedCount) {
+    failedCount = initObj;
   }
-  failedAccount.count++;
-  failedAccount.time = new Date().getTime();
-  session.failedAccount = JSON.stringify(failedAccount);
+  failedCount.count++;
+  failedCount.time = new Date().getTime();
+  session.failedCount = failedCount;
 };
 const getLoginCaptcha = function* (session) {
   let enableCaptcha = yield basic._getSetBool('auth', 'enable_login_captcha');
   if (!enableCaptcha) {
     return false;
   }
-  let failedAccount = session.failedAccount;
-  if (failedAccount) {
-    try {
-      failedAccount = JSON.parse(failedAccount);
-      let {time, count = 0} = failedAccount;
-      enableCaptcha = count > 1 && time > new Date().getTime() - 30 * 60 * 1000;
-    } catch(e){
-      failedAccount = null;
-    }
-  }
-  if (!failedAccount) {
+  let failedCount = session.failedCount;
+  if (!failedCount) {
     return false;
   } else {
-    return enableCaptcha;
+    let {time, count = 0} = failedCount;
+    return count > 1 && time > new Date().getTime() - 30 * 60 * 1000;
   }
 };
 module.exports = {
