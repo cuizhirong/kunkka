@@ -63,11 +63,23 @@ class Phone extends React.Component {
       }, 1000);
     }).catch((err) => {
       let code = err.status;
+      let pass = false;
+      let msg;
+      try {
+        msg = JSON.parse(err.responseText).msg || '';
+      } catch(e) {
+        msg = '';
+      }
+      // 如果是图形验证码错误，按钮应该仍然可点击
+      if(/captcha/i.test(msg)) {
+        pass = true;
+      }
+
       this.setState({
         sysError: code >= 500 ? true : false,
         wait: false,
         error: true,
-        pass: false,
+        pass: pass,
         textValue: __.getCode,
         tipContent: getErrorMessage(err)
       });

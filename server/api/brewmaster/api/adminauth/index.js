@@ -92,11 +92,13 @@ Password.prototype = {
     );
     this.app.post(
       '/api/auth/admin-reauth/phone-captcha',
+      base.middleware.checkLogin,
       this.sendCaptcha.bind(this),
       base.middleware.customResApi
     );
     this.app.post(
       '/api/auth/admin-reauth',
+      base.middleware.checkLogin,
       this.reauth.bind(this),
       base.middleware.customResApi
     );

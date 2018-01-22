@@ -9,6 +9,7 @@ class Model extends React.Component {
 
     this.state = {
       username: '',
+      errorCounter: 0,
       errorTip: '',
       notActivate: false,
       loginError: false,
@@ -44,7 +45,7 @@ class Model extends React.Component {
         password: password
       };
 
-    if(captcha || typeof captcha === 'undefined') {
+    if(captcha || typeof captcha === 'undefined' || state.errorCounter >= 2) {
       data.captcha = refs.code.value;
     }
 
@@ -141,6 +142,7 @@ class Model extends React.Component {
           }
         } else {
           that.setState({
+            errorCounter: ++state.errorCounter,
             errorTip: __.error_tip
           });
         }
@@ -233,7 +235,7 @@ class Model extends React.Component {
               </div> : null
           }
           {
-            HALO.settings.enable_login_captcha || typeof HALO.settings.enable_login_captcha === 'undefined' ? <div className="code-wrapper">
+            HALO.settings.enable_login_captcha || typeof HALO.settings.enable_login_captcha === 'undefined' || state.errorCounter >= 2 ? <div className="code-wrapper">
               <input type="text" ref="code" name="code" className={state.captchaEmptyError ? 'error' : ''} placeholder={__.code_placeholder} />
               <div className="img-wrapper">
                 <img ref="captcha" onClick={this.onClick} title={__.changeCode} src="/api/captcha" />

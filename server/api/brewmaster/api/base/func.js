@@ -153,6 +153,30 @@ const checkPasswordAvailable = function* (userId, reqPass) {
   }
   return isAvailable;
 };
+
+const setLoginCaptcha = function* (session) {
+  let failedCount = session.failedCount;
+  let initObj = {count: 0};
+  if (!failedCount) {
+    failedCount = initObj;
+  }
+  failedCount.count++;
+  failedCount.time = new Date().getTime();
+  session.failedCount = failedCount;
+};
+const getLoginCaptcha = function* (session) {
+  let enableCaptcha = yield basic._getSetBool('auth', 'enable_login_captcha');
+  if (!enableCaptcha) {
+    return false;
+  }
+  let failedCount = session.failedCount;
+  if (!failedCount) {
+    return false;
+  } else {
+    let {time, count = 0} = failedCount;
+    return count > 1 && time > new Date().getTime() - 30 * 60 * 1000;
+  }
+};
 module.exports = {
   verifyUserByNameAsync,
   verifyUserByIdAsync,
@@ -163,5 +187,8 @@ module.exports = {
 
   checkFrequentlyAsync,
   checkPasswordAvailable,
-  getTemplateObjAsync
+  getTemplateObjAsync,
+
+  setLoginCaptcha,
+  getLoginCaptcha
 };

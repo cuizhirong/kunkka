@@ -60,7 +60,7 @@ const adminLogin = function (req, res, next) {
 
 const checkLogin = function (req, res, next) {
   if (!req.session || !req.session.user) {
-    res.status(403).json({error: 'Permission Denied'});
+    res.status(401).json({error: 'Permission Denied'});
   } else {
     next();
   }

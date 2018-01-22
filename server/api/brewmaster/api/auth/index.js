@@ -11,6 +11,7 @@ const loginModel = require('../../models').loginlog;
 const passwordModel = require('../../models').user_password;
 const adminLogin = require('api/slardar/common/adminLogin');
 const setRemote = require('api/slardar/common/setRemote');
+const defaultDomain = config('domain') || 'Default';
 
 const base = require('../base');
 
@@ -36,14 +37,10 @@ Auth.prototype = {
   authentication: function (req, res, next) {
     const that = this;
     co(function *() {
-      let {username, password, domain = config('domain') || 'Default'} = req.body;
+      let {username, password, domain = defaultDomain} = req.body;
 
-      let loginFailed = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
-      let loginFailedCount = loginFailed ? loginFailed.value : 0;
-
-      const enableSafety = yield base._getSetBool('global', 'enable_safety');
-      const enableCaptcha = yield base._getSetBool('auth', 'enable_login_captcha');
-      if (enableCaptcha && loginFailedCount > 1) {
+      const enableCaptcha = yield base.func.getLoginCaptcha(req.session);
+      if (enableCaptcha) {
         let ctBody = req.body.captcha;
         let ctSession = req.session.captcha;
         if (!ctBody || !ctSession || String(ctBody).toLowerCase() !== String(ctSession).toLowerCase()) {
@@ -54,6 +51,10 @@ Auth.prototype = {
           });
         }
       }
+
+      const enableSafety = yield base._getSetBool('global', 'enable_safety');
+      let loginFailed = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
+      let loginFailedCount = loginFailed ? loginFailed.value : 0;
       if (enableSafety && loginFailedCount > 4) {
         return Promise.reject({
           code: 403,
@@ -208,29 +209,28 @@ Auth.prototype = {
         if (e.status === 401) {
           const username = req.body.username;
           const lockMin = yield base._getSetNumber('auth', 'lock_minutes', 1);
-
           let lastValue = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
           if (!lastValue || lastValue.value <= 5) {
             let count = lastValue ? lastValue.value : 0;
             yield base.mem.setKeyValueAsync({
-              key: 'loginFailed' + req.body.username,
+              key: 'loginFailed' + username,
               value: count + 1,
               expire: lockMin * 60,
               memClient: that.memClient
             });
           }
-
           e = {
             code: 401,
             message: req.i18n.__('api.register.passwordError')
           };
         }
+        yield base.func.setLoginCaptcha(req.session);
         //log
         loginModel.create({
           type: 'login', ip: req.ip, username: req.body.username,
           success: false, message: e.message
         });
-        res.status(e.status || e.code).send({error: e});
+        res.status(e.status || e.code || 500).send({error: e});
       });
     });
   },
@@ -277,8 +277,8 @@ Auth.prototype = {
   },
   initRoutes: function () {
     this.app.post('/auth/login', this.authentication.bind(this));
-    this.app.put('/auth/switch_region', this.switchRegion.bind(this));
-    this.app.put('/auth/switch_project', this.switchProject.bind(this));
+    this.app.put('/auth/switch_region', base.middleware.checkLogin, this.switchRegion.bind(this));
+    this.app.put('/auth/switch_project', base.middleware.checkLogin, this.switchProject.bind(this));
     this.app.get('/auth/logout', this.logout.bind(this));
   }
 };
