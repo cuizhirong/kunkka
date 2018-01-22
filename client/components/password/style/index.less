@@ -2,6 +2,27 @@
 
 @error-color: @color_delete;
 @toggle-bg-color: @color_grey;
+.pwd {
+  overflow: auto;
+}
+
+.modal .modal-bd.halo-com-modal-personal-info-captcha {
+  text-align: center;
+  padding-bottom: 10px;
+  img {
+    width: 200px;
+    margin-bottom: 15px;
+  }
+  .format-wrong-tip {
+    line-height: 30px;
+    height: 30px;
+    color: @error-color;
+  }
+  + .modal-ft .btn-create {
+    margin-right: 15px;
+  }
+}
+
 .halo-module-password {
   flex: 1;
   display: flex;
@@ -58,15 +79,81 @@
         input {
           width: 280px;
         }
+        .short-tip-row {
+          margin-top: 10px;
+        }
       }
       .row {
-        margin: 10px 0 0 112px;
+        margin: 20px 0 0 112px;
       }
       .pwd_fail {
         color: @error-color;
         span {
+          line-height: 16px;
+          vertical-align: -2px;
           padding-left: 4px;
         }
+      }
+
+      .captcha-row {
+        width: 390px;
+        margin-top: 18px;
+        padding-left: 0;
+        > span {
+          display: inline-block;
+          width: 100px;
+          flex-shrink: 0;
+          margin-right: 12px;
+          text-align: right;
+        }
+        input {
+          width: 100px;
+        }
+        .btn {
+          margin-left: 16px;
+          width: 140px;
+        }
+        + .error-tip {
+          height: 18px;
+          margin: 5px 0 0 112px;
+          padding-left: 0;
+          color: @error-color;
+        }
+        input.error {
+          border-color: @color_delete;
+        }
+      }
+    }
+
+    .personal-info-content-wrapper > div{
+      line-height: 40px;
+      display: flex;
+      .title {
+        width: 100px;
+        margin-right: 12px;
+        text-align: right;
+      }
+      .content {
+        flex: 1;
+        .error-msg-tip {
+          line-height: 26px;
+          color: @error-color;
+        }
+        .btn {
+          margin-left: 15px;
+        }
+      }
+      .phone-content > div{
+        display: flex;
+        .not-bound-tip {
+          line-height: 30px;
+          margin-left: 15px;
+        }
+      }
+
+      &.bind-btn-wrapper {
+        margin-top: 10px;
+        margin-left: 112px;
       }
     }
   }

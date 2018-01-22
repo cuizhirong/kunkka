@@ -3,6 +3,7 @@
 const co = require('co');
 
 const userModel = require('../../models').user;
+const passwordModel = require('../../models').user_password;
 const drivers = require('drivers');
 const base = require('../base');
 const config = require('config');
@@ -38,7 +39,12 @@ User.prototype = {
       if (lack.length) {
         return next({status: 400, customRes: true, location: lack, msg: 'MissParams'});
       }
-      const {email, name, password, phone, code, full_name, company} = req.body;
+      let {email, name, password, phone, code, full_name, company} = req.body;
+      let nameRegExp = /^[a-zA-Z0-9_+-]{1,20}$/;
+      if(!(nameRegExp.test(name))) {
+        return next({status: 400, customRes: true, msg: 'NameInvalid'});
+      }
+      password = base.crypto.decrypt(password, req.session.passwordId);
 
       const domainRes = yield listDomainsAsync(adminToken, keystoneRemote, {name: domainName, enabled: true});
       const domains = domainRes.body.domains;
@@ -48,7 +54,7 @@ User.prototype = {
       }
       const domainId = domains[0].id;
 
-      let isCurrent = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCurrent = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCurrent) {
         return next({status: 400, customRes: true, location: ['code'], msg: 'CodeError'});
       }
@@ -63,6 +69,9 @@ User.prototype = {
         email, phone, name, full_name, company, origin: 'register', status: 'verify-email',
         area_code: config('phone_area_code') || '86', enabled: false
       });
+      //CREATE PASSWORD TO DATABASE
+      const passworHash = yield base.crypto.hash(password);
+      yield passwordModel.create({userId: user.id, password: passworHash});
       next({customRes: true, status: 200, msg: 'registerSuccess'});
     }).catch(next);
   },
@@ -82,7 +91,7 @@ User.prototype = {
         return next({customRes: true, status: 400, msg: 'Enabled'});
       }
 
-      let isCorrect = yield base.func.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
       if (!isCorrect) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
@@ -169,24 +178,18 @@ User.prototype = {
   verifyPhone: function (req, res, next) {
     const that = this;
     co(function *() {
-      let cs = req.session.captcha;
-      let cb = req.body.captcha;
-      req.session.captcha = '';
-      if (cb && cs && cb.toString().toLowerCase() === cs.toString().toLowerCase()) {
-        const phone = parseInt(req.body.phone, 10);
-        if (!(/^1[34578]\d{9}$/.test(phone))) {
-          return next({customRes: true, status: 400, msg: 'PhoneError'});
-        }
-        const user = yield base.func.verifyUserAsync(req.admin.token, {phone});
-        if (user) {
-          next({customRes: true, status: 400, msg: 'Used'});
-        } else {
-          base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
-        }
+      const phone = parseInt(req.body.phone, 10);
+      if (!(/^1[34578]\d{9}$/.test(phone))) {
+        return next({customRes: true, status: 400, msg: 'PhoneError'});
+      }
+      const user = yield base.func.verifyUserAsync(req.admin.token, {phone});
+      if (user) {
+        next({customRes: true, status: 400, msg: 'Used'});
       } else {
-        return next({
-          customRes: true, status: 400, msg: 'CaptchaError'
-        });
+        next(yield base.func.phoneCaptchaMemAsync({
+          phone, usage: 'usageRegister',
+          __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+        }));
       }
     }).catch(next);
   },
@@ -270,7 +273,7 @@ User.prototype = {
         return next({status: 200, customRes: true, msg: 'verifyEmailSuccess'});
       }
 
-      const isCorrect = yield base.func.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
+      const isCorrect = yield base.mem.verifyKeyValueAsync(userId, tokenUrl, that.memClient);
       if (!isCorrect) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
@@ -318,8 +321,10 @@ User.prototype = {
       } else if (user.enabled) {
         return next({customRes: true, msg: 'Enabled'});
       }
-
-      base.func.phoneCaptchaMemAsync(phone, that.memClient, req, res, next);
+      next(yield base.func.phoneCaptchaMemAsync({
+        phone, usage: '',
+        __: req.i18n.__.bind(req.i18n), memClient: that.memClient
+      }));
     }).catch(next);
   },
   changeEmailSubmit: function (req, res, next) {
@@ -335,7 +340,7 @@ User.prototype = {
       } else if (user.enabled) {
         return next({customRes: true, msg: 'Enabled'});
       }
-      let isCorrect = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      let isCorrect = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!isCorrect) {
         return next({status: 400, customRes: true, msg: 'CodeError'});
       }
@@ -364,10 +369,16 @@ User.prototype = {
     this.app.get('/auth/register/resend-email', this.regSuccess.bind(this));
     this.app.use('/auth/register/*', base.middleware.customResPage);
 
-    this.app.post('/api/register', base.middleware.checkEnableRegister, base.middleware.adminLogin, this.reg.bind(this), base.middleware.customResApi);
+    this.app.post(
+      '/api/register',
+      base.middleware.checkEnableRegister,
+      base.middleware.adminLogin,
+      this.reg.bind(this),
+      base.middleware.customResApi
+    );
     this.app.post('/api/register/*', base.middleware.checkEnableRegister, base.middleware.adminLogin);
-    this.app.post('/api/register/phone', this.verifyPhone.bind(this));
-    this.app.post('/api/register/change-email/phone', this.getPhoneCaptchaForChangeEmail.bind(this));
+    this.app.post('/api/register/phone', base.middleware.checkCaptcha, this.verifyPhone.bind(this));
+    this.app.post('/api/register/change-email/phone', base.middleware.checkCaptcha, this.getPhoneCaptchaForChangeEmail.bind(this));
     this.app.post('/api/register/unique-name', this.uniqueName.bind(this));
     this.app.post('/api/register/unique-email', this.uniqueEmail.bind(this));
     this.app.use('/api/register/*', base.middleware.customResApi);

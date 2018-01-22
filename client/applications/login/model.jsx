@@ -1,5 +1,6 @@
 const React = require('react');
 const request = require('./request.js');
+const AES = require('crypto-js/aes');
 
 class Model extends React.Component {
 
@@ -11,6 +12,7 @@ class Model extends React.Component {
       errorTip: '',
       notActivate: false,
       loginError: false,
+      mustChangePwd: false,
       usernameEmptyError: false,
       passwordEmptyError: false,
       captchaEmptyError: false,
@@ -52,9 +54,12 @@ class Model extends React.Component {
 
     that.setState({
       loginError: false,
+      errorTip: '',
       usernameEmptyError: false,
       passwordEmptyError: false,
-      captchaEmptyError: false
+      captchaEmptyError: false,
+      notActivate: false,
+      mustChangePwd: false
     });
 
     let isEmpty = !username || !password || captcha ? (!refs.code.value) : false;
@@ -82,30 +87,77 @@ class Model extends React.Component {
       isSubmitting: true
     });
 
-    request.login(data).then(function(res) {
-      window.location = window.location.pathname;
-    }, function(err) {
-      let code = JSON.parse(err.responseText).error.code;
-      if(code === 400) {
+    // 密码加密
+    request.getEncryptionKey().then((response) => {
+      const cipherObject = AES.encrypt(data.password, response.uuid);
+      data.password = cipherObject.toString();
+
+      request.login(data).then(function(res) {
+        window.location = window.location.pathname;
+      }, function(err) {
+        let error;
+        try {
+          error = JSON.parse(err.responseText).error;
+        } catch(parseError) {
+          error = {};
+        }
+
+        let code = error.code;
+        let errorType = error.type;
+        if(code === 400) {
+          if(errorType === 'captchaError') {
+            that.setState({
+              errorTip: __.captchaError
+            });
+          } else {
+            that.setState({
+              errorTip: __.unknown_error
+            });
+          }
+        } else if(code === 403) {
+          switch (errorType) {
+            case 'unEnabled':
+              that.setState({
+                username: username,
+                notActivate: true
+              });
+              break;
+            case 'manyFailures':
+              let timeLeft = Math.ceil(error.remain / 60 / 1000);
+              that.setState({
+                errorTip: __.many_failures.replace(/\{0\}/, timeLeft)
+              });
+              break;
+            case 'passwordExpired':
+              that.setState({
+                mustChangePwd: true
+              });
+              break;
+            default:
+              that.setState({
+                errorTip: __.unknown_error
+              });
+              break;
+          }
+        } else {
+          that.setState({
+            errorTip: __.error_tip
+          });
+        }
+
         that.setState({
-          errorTip: __.captchaError
+          loginError: true,
+          isSubmitting: false
         });
-      } else if(code === 403) {
-        that.setState({
-          username: username
-        });
-      } else {
-        that.setState({
-          errorTip: __.error_tip
-        });
-      }
+        // 验证码刷新
+        that.refs.captcha.src = '/api/captcha?' + Math.random();
+      });
+    }).catch(() => {
       that.setState({
+        errorTip: __.unknown_error,
         loginError: true,
-        notActivate: code === 403 ? true : false,
         isSubmitting: false
       });
-      // 验证码刷新
-      that.refs.captcha.src = '/api/captcha?' + Math.random();
     });
   }
 
@@ -132,6 +184,25 @@ class Model extends React.Component {
   onClick(e) {
     e.preventDefault();
     this.refs.captcha.src = '/api/captcha?' + Math.random();
+  }
+
+
+  renderErrorTip() {
+    const state = this.state;
+    const __ = this.props.__;
+    if(state.notActivate) {
+      return (
+        <span>{__.notActivate_tip}<a href={'/auth/register/success?name=' + state.username}>{__.activate}</a></span>
+      );
+    } else if(state.mustChangePwd) {
+      return (
+        <span>{__.passwd_expired}<a href={'/auth/password'}>{__.change_passwd}</a></span>
+      );
+    } else {
+      return (
+        <span>{state.errorTip}</span>
+      );
+    }
   }
 
   render() {
@@ -171,10 +242,8 @@ class Model extends React.Component {
           }
           <div className="tip-wrapper">
             <div className={'input-error' + (state.loginError ? '' : ' hide')}>
-            {
-              !state.notActivate ? <div><i className="glyphicon icon-status-warning"></i><span>{state.errorTip}</span>
-               </div> : <div><i className="glyphicon icon-status-warning"></i><span>{__.notActivate_tip}<a href={'/auth/register/success?name=' + state.username}>{__.activate}</a></span></div>
-            }
+              <i className="glyphicon icon-status-warning"></i>
+              { this.renderErrorTip() }
             </div>
           </div>
           <input type="submit" className={state.isSubmitting ? 'disabled' : ''} value={__.login} />

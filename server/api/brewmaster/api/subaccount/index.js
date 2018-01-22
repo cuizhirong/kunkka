@@ -193,7 +193,7 @@ Sub.prototype = {
       } else if (user.enabled) {
         return next({customRes: true, status: 400, msg: 'Enabled'});
       }
-      const tokenOK = yield base.func.verifyKeyValueAsync(id, token, that.memClient);
+      const tokenOK = yield base.mem.verifyKeyValueAsync(id, token, that.memClient);
       if (!tokenOK) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
@@ -211,11 +211,11 @@ Sub.prototype = {
     let password = req.body.pwd;
 
     co(function *() {
-      const tokenVerify = yield base.func.verifyKeyValueAsync(id, token, that.memClient);
+      const tokenVerify = yield base.mem.verifyKeyValueAsync(id, token, that.memClient);
       if (!tokenVerify) {
         return next({status: 400, customRes: true, msg: 'TokenError'});
       }
-      const codeVerify = yield base.func.verifyKeyValueAsync(phone, code, that.memClient);
+      const codeVerify = yield base.mem.verifyKeyValueAsync(phone, code, that.memClient);
       if (!codeVerify) {
         return Promise.reject({status: 400, customRes: true, msg: 'CodeError'});
       }

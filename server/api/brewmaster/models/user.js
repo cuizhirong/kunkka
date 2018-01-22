@@ -66,7 +66,6 @@ module.exports = function (mysql, DataTypes) {
       allowNull: true
     }
   }, {
-
     paranoid: false,
     charset: 'utf8'
   });

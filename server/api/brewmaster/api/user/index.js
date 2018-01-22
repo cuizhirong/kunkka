@@ -1,7 +1,7 @@
 'use strict';
 const co = require('co');
 
-const base = require('../base.js');
+const base = require('../base');
 const paginate = require('helpers/paginate.js');
 const drivers = require('drivers');
 const DKS = drivers.keystone;

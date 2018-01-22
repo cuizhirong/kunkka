@@ -66,9 +66,9 @@ View.prototype = {
   renderHandler: function(req, res, next) {
     let that = this;
     this.co(function* () {
-      let yeildArray = [];
-      that.settingConfig.forEach(c => yeildArray.push(that.tusk.getSettingsByApp(c)));
-      let result = yield yeildArray;
+      let yieldArray = [];
+      that.settingConfig.forEach(c => yieldArray.push(that.tusk.getSettingsByApp(c)));
+      let result = yield yieldArray;
       let setting = that.getSetting(result, that.settingConfig);
       that.renderChecker(setting, req, res, next);
     }).catch(e => {
@@ -76,29 +76,38 @@ View.prototype = {
     });
   },
   renderChecker: function (setting, req, res, next) {
-    if (req.session && req.session.user) {
-      let locale = this.upperCaseLocale(req.i18n.getLocale());
-      let user = (req.session && req.session.user) ? req.session.user : {};
-      let HALO = this.getHALO(locale, setting, user);
-      if (req.session.endpoint.kiki) {
-        HALO.configs.kiki_url = req.session.endpoint.kiki[user.regionId];
-      }
-      if (req.session.endpoint.swift) {
-        let swift = req.session.endpoint.swift;
-        HALO.configs.swift_url = swift[user.regionId];
-        HALO.configs.swift_port = swift[user.regionId + '_PUBLICPORT'];
-      }
-      if (this.plugins) {
-        this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(user, HALO) : null);
-      }
-      if (HALO.application.application_list.indexOf(this.name) === -1) {
-        res.redirect('/' + HALO.application.application_list[0]);
-      } else {
-        this.renderTemplate(setting, HALO, locale, req, res, next);
-      }
-    } else {
-      res.redirect('/');
+    const session = req.session;
+    let ssUser = session && session.user;
+
+    if (!ssUser) {
+      res.redirect('/auth/login?cb=' + encodeURI(req.originalUrl));
+      return;
     }
+
+    let locale = this.upperCaseLocale(req.i18n.getLocale());
+    let HALO = this.getHALO(locale, setting, ssUser);
+    if (HALO.application.application_list.indexOf(this.name) === -1) {
+      res.redirect('/' + HALO.application.application_list[0]);
+      return;
+    }
+
+    if (this.name === 'admin' && setting.enable_safety && !ssUser.authAdmin) {
+      res.redirect('/auth/admin-reauth?cb=' + encodeURI(req.originalUrl));
+      return;
+    }
+
+    if (session.endpoint.kiki) {
+      HALO.configs.kiki_url = session.endpoint.kiki[ssUser.regionId];
+    }
+    if (req.session.endpoint.swift) {
+      let swift = req.session.endpoint.swift;
+      HALO.configs.swift_url = swift[ssUser.regionId];
+      HALO.configs.swift_port = swift[ssUser.regionId + '_PUBLICPORT'];
+    }
+    if (this.plugins) {
+      this.plugins.forEach(p => p.model.haloProcessor ? p.model.haloProcessor(ssUser, HALO) : null);
+    }
+    this.renderTemplate(setting, HALO, locale, req, res, next);
   },
   getHALO: function(locale, setting, user) {
     return {
@@ -117,7 +126,8 @@ View.prototype = {
         projects: user.projects,
         userId: user.userId,
         username: user.username,
-        roles: user.roles
+        roles: user.roles,
+        phone: user.phone
       },
       region_list: this.regions[locale],
       current_region: user.regionId ? user.regionId : this.regions[locale][0].id,

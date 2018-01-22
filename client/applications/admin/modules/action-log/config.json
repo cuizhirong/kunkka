@@ -1,0 +1,38 @@
+{
+  "tabs": [{
+    "name": ["action-log"],
+    "key": "action-log",
+    "default": true
+  }],
+  "btns": [ {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "table": {
+    "dataKey": "id",
+    "loading": true,
+    "limit": 10,
+    "column": [{
+      "title": ["type_of_operation"],
+      "key": "type"
+    }, {
+      "title": ["operator"],
+      "dataIndex": "username",
+      "key": "username"
+    }, {
+      "title": ["ip_address"],
+      "key": "ip_address",
+      "dataIndex": "ip"
+      }, {
+      "title": ["operation_result"],
+      "key": "result"
+    }, {
+      "title": ["error", "message"],
+      "key": "message"
+    }, {
+      "title": ["operating_time"],
+      "key": "time"
+    }],
+    "data": []
+  }
+}

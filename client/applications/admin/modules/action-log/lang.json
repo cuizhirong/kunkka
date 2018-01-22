@@ -1,0 +1,24 @@
+{
+  "en": {
+    "action_fail": "Fail",
+    "action_login": "Login",
+    "action_logout": "Logout",
+    "action_success": "Success",
+    "type_of_operation": "Type of operation",
+    "operation_result": "Operation result",
+    "operator": "Operator",
+    "ip_address": "IP address",
+    "operating_time": "Operating time"
+  },
+  "zh-CN": {
+    "action_fail": "失败",
+    "action_login": "登录",
+    "action_logout": "退出",
+    "action_success": "成功",
+    "type_of_operation": "操作类型",
+    "operation_result": "操作结果",
+    "operator": "操作账号",
+    "ip_address": "IP 地址",
+    "operating_time": "操作时间"
+  }
+}

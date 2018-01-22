@@ -69,7 +69,10 @@ function main(app, clientApps, currentView, viewPlugins) {
   };
   view.initRoute = function () {
     this.app.get(/^\/$/, this.renderHandler.bind(this));
-    this.app.get('/login', this.renderHandler.bind(this));
+    this.app.get(['/auth/login', '/login'], this.renderHandler.bind(this));
+    this.app.get('/auth', (req, res) => {
+      res.redirect('/auth/login');
+    });
   };
 
   view.init();

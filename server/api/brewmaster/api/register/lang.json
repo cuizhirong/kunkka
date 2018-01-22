@@ -1,6 +1,7 @@
 {
   "zh-CN": {
     "Name": "用户名",
+    "NameInvalid": "用户名不合法。20个字符以内，仅限英文、下划线、中划线和加号",
     "Email": "邮箱",
     "Phone": "手机",
     "Used": "已被占用",
@@ -8,6 +9,7 @@
     "Available": "可用",
     "UserNotExist": "用户不存在",
     "UserNotHaveEmail": "用户没有绑定邮箱",
+    "passwordError": "用户名或密码错误",
     "LinkError": "链接错误或已失效",
     "CodeError": "验证码错误或已失效",
     "TokenError": "token错误或者已过期",
@@ -48,10 +50,19 @@
     "quotaPassed": "您的配额申请已经通过",
     "quotaRefused": "您的配额申请已被拒绝",
     "verifyEmail": "验证邮箱",
-    "verifyEmailSuccess": "验证邮箱成功，请等待管理员处理您的账号。"
+    "verifyEmailSuccess": "验证邮箱成功，请等待管理员处理您的账号。",
+    "dontHavePhone": "您没有登记手机号",
+    "usageReauth": "您正在二次验证，",
+    "usageResetPassword": "您正在重置密码，",
+    "usageRegister": "您正在注册，",
+    "usageBind": "您正在绑定手机，",
+    "tooManyFailures": "失败次数太多，请稍后再试。",
+    "cannotUseHistoricalPassword": "不能设置为最近3次使用的密码",
+    "passwordExpired": "密码已过期，请重置密码后登录"
   },
   "en": {
     "Name": "The Username",
+    "NameInvalid": "Username is invalid.limit 20, only English, underline, underscore and plus sign",
     "Email": "The email",
     "Phone": "The Phone",
     "Used": "had been used",
@@ -59,6 +70,7 @@
     "Available": " is available",
     "UserNotExist": "User is not exist",
     "UserNotHaveEmail": "User doesn't have a email bound",
+    "passwordError": "ERROR Incorrect username or password",
     "LinkError": "The link is error or expired",
     "CodeError": "The captcha is error or expired",
     "TokenError": "The token is error or expired",
@@ -98,6 +110,14 @@
     "quotaPassed": "Your quota application had passed",
     "quotaRefused": "Your quota application had been denied",
     "verifyEmail": "verify email",
-    "verifyEmailSuccess": "Verify Email Success! Please wait for the administrator to process your account."
+    "verifyEmailSuccess": "Verify Email Success! Please wait for the administrator to process your account.",
+    "dontHavePhone": "You do not have a phone number",
+    "usageReauth": "For 2-Step Verifing, ",
+    "usageResetPassword": "For resetting password, ",
+    "usageRegister": "For register, ",
+    "usageBind": "For bind your phone, ",
+    "tooManyFailures": "Please try again later for too many failures.",
+    "cannotUseHistoricalPassword": "Can not set to the password which is used in the last 3 passwords",
+    "passwordExpired": "Your password had expired, so reset it before login."
   }
 }

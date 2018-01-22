@@ -31,6 +31,16 @@ module.exports = function(grunt) {
       }
     },
 
+    uglify: {
+      cryptoJS: {
+        options: {
+          mangle: true
+        },
+        src: 'node_modules/crypto-js/crypto-js.js',
+        dest: 'client/dist/crypto-js/crypto-js.min.js'
+      }
+    },
+
     webpack: {
       options: webpackConfig,
       build: {}
@@ -85,7 +95,7 @@ module.exports = function(grunt) {
   grunt.registerTask('js', ['webpack:build']);
 
   // Cope with the rest stuffs
-  grunt.registerTask('rest', ['cssnano', 'usebanner', 'copy']);
+  grunt.registerTask('rest', ['cssnano', 'usebanner', 'copy', 'uglify']);
 
   // Default task.
   // grunt.registerTask('build', ['clean', 'js', 'cssnano', 'usebanner', 'copy']);

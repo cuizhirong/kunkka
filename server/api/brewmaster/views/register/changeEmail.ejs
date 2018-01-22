@@ -8,7 +8,7 @@
   <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon"/>
   <link href="/static/dist/uskin/<%= uskinFile %>" rel="stylesheet">
   <style>
-    body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
+    body { width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0; padding: 0; background-color: #0d1b30; -webkit-tap-highlight-color: transparent; }
     .wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
     .wrapper > .header { flex: 1; }
     .wrapper > .content { margin: 0 auto; width: 500px; height: auto; }
@@ -33,6 +33,46 @@
     .icon_email { background-position: -10px -6px; }
     .wrapper > .footer { flex: 2; }
     .wrapper > .footer > p { position: absolute; width: 100%; text-align: center; color: #fff; bottom: 10px; }
+    .mask {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.4);
+      display: none;
+    }
+    .mask .modal {
+      width: 400px;
+    }
+    .mask .modal .modal-hd {
+      line-height: 46px;
+      font-size: 18px;
+      font-weight: 400;
+    }
+    .mask .modal .input-row {
+      margin: 20px 0 10px 30px;
+      height: 70px;
+      line-height: 70px;
+      vertical-align: middle;
+    }
+    .mask .modal .input-row input {
+      vertical-align: middle;
+      width: 120px;
+    }
+    .mask .modal .input-row img {
+      width: 180px;
+      vertical-align: middle;
+      height: 60px;
+      margin-left: 15px;
+    }
+    .mask .modal .captcha-error-tip {
+      display: none;
+      height: 22px;
+      line-height: 22px;
+      color: red;
+      margin: 10px 0 0 30px;
+    }
   </style>
 </head>
 <body>
@@ -63,13 +103,29 @@
           <div class="brewmaster_icon icon_email"></div>
         </div>
         <span class="email_tip"></span>
-        <input id="usubmit" name="usubmit" type="button" value="Submit"/>
+        <input id="usubmit" name="usubmit" type="submit" value="Submit"/>
       </form>
       <a href="/">Login</a>
     </div>
   </div>
   <div class="footer">
     <p><%= company %></p>
+  </div>
+</div>
+<div class="mask" id="mask">
+  <div class="modal" id="modal">
+    <div class="modal-content-wrapper">
+      <div class="modal-hd">Please enter the image captcha</div>
+      <div class="input-row">
+        <input type="text" name="pic-captcha" id="pic-captcha" placeholder="Captcha">
+        <img src="/api/captcha?123456" alt="" class="image-captcha" id="image-captcha">
+      </div>
+      <div class="captcha-error-tip" id="captcha-error-tip">Captcha format is incorrect, please check your input</div>
+      <div class="modal-ft">
+        <button id="submit-pic-captcha" class="submit-pic-captcha btn">Confirm</button>
+        <button id="modal-cancel" class="modal-cancel btn btn-cancel">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 <script>
@@ -82,64 +138,100 @@
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
           email_tip = document.getElementsByClassName('email_tip')[0],
           uform = document.getElementById('uform'),
+          mask = document.getElementById('mask'),
+          modal = document.getElementById('modal'),
+          picSubBtn = document.getElementById('submit-pic-captcha'),
+          picCaptcha = document.getElementById('pic-captcha'),
+          captchaImage = document.getElementById('image-captcha'),
+          captchaErrorTip = document.getElementById('captcha-error-tip'),
+          modalCancelBtn = document.getElementById('modal-cancel'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
           enable_email = false,
           timer = null;
-  //ajax request
-  function createXMLHTTPRequest() {
-    var xmlHttpRequest;
-    if (window.XMLHttpRequest) {
-      xmlHttpRequest = new XMLHttpRequest();
-      if (xmlHttpRequest.overrideMimeType) {
-        xmlHttpRequest.overrideMimeType("text/xml");
-      }
-    } else if (window.ActiveXObject) {
-      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+
+  get_captcha.onclick = showModal;
+  picSubBtn.onclick = sendCaptcha;
+  usubmit.onclick = verifySubmit;
+  captchaImage.onclick = updateCaptcha;
+  mask.onclick = hideMask;
+  modalCancelBtn.onclick = hideMask;
+  picCaptcha.onkeydown = function(evt) {
+    if(evt.key === 'Enter') {
+      sendCaptcha();
     }
-    return xmlHttpRequest;
   }
+
+  modal.onclick = function(evt) {
+    evt.stopPropagation();
+  };
+
+  resetModal();
+
   function sendCaptcha() {
     var count = 60;
-    if (enable_getcaptcha) {
-      if (/^\d{11}$/.test(phone.value)) {
-        phone_tip.style.display = "none";
-        var phoneData = JSON.stringify({
-          'phone': phone.value
-        });
-        var req = createXMLHTTPRequest();
-        req.open("POST", "/api/register/change-email/phone", true);
-        req.setRequestHeader("Content-Type", "application/json");
-        req.send(phoneData);
-        req.onreadystatechange = function () {
-          if (req.readyState == 4) {
-            if (req.status == 200) {
-              enable_getcaptcha = false;
-              get_captcha.className += ' disabled';
-              get_captcha.innerHTML = 'Resend(' + count + ')s';
-              timer = setInterval(function () {
-                if (count > 0) {
-                  get_captcha.innerHTML = 'Resend(' + count-- + ')s';
-                } else {
-                  clearInterval(timer);
-                  enable_getcaptcha = true;
-                  get_captcha.className = 'get_captcha';
-                  get_captcha.innerHTML = 'Get captcha';
-                }
-              }, 1000);
+
+    var picCaptchaLegal = checkPicCaptcha();
+    if (!picCaptchaLegal) {
+      captchaErrorTip.style.display = 'block';
+      return;
+    }
+
+    picSubBtn.disabled = true;
+    var phoneData = JSON.stringify({
+      'phone': phone.value,
+      'captcha': picCaptcha.value
+    });
+
+    var req = createXMLHTTPRequest();
+    req.open("POST", "/api/register/change-email/phone", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(phoneData);
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        hideMask();
+
+        if (req.status == 200) {
+          captcha.focus();
+          enable_getcaptcha = false;
+          get_captcha.className += ' disabled';
+          get_captcha.innerHTML = 'Resend(' + count + ')s';
+          timer = setInterval(function () {
+            if (count > 0) {
+              get_captcha.innerHTML = 'Resend(' + count-- + ')s';
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
-              phone_tip.style.display = 'block';
+              clearInterval(timer);
+              enable_getcaptcha = true;
+              get_captcha.className = 'get_captcha';
+              get_captcha.innerHTML = 'Get captcha';
             }
+          }, 1000);
+        } else {
+          try {
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || 'Unknown error';
+          } catch(err) {
+            phone_tip.innerHTML = 'Unknown error';
           }
+          phone_tip.style.display = 'block';
         }
+      }
+    }
+  }
+
+  function showModal() {
+    if(enable_getcaptcha) {
+      if(/^\d{11}$/.test(phone.value)) {
+        phone_tip.style.display = "none";
+        mask.style.display = 'block';
+        picCaptcha.focus();
       } else {
         phone_tip.innerHTML = 'please confirm the format of the phone';
         phone_tip.style.display = 'block';
       }
     }
   }
+
   function verifySubmit(e) {
     e.preventDefault();
     //phone
@@ -173,8 +265,48 @@
       uform.submit();
     }
   }
-  get_captcha.onclick = sendCaptcha;
-  usubmit.onclick = verifySubmit;
+
+  function hideMask() {
+    mask.style.display = 'none';
+    resetModal();
+  }
+
+  function resetModal() {
+    var random = Date.now().toString().slice(-6);
+    picCaptcha.value = '';
+    picSubBtn.disabled = false;
+    captchaImage.src = '/api/captcha?' + random;
+    captchaErrorTip.style.display = 'none';
+  }
+
+  //ajax request
+  function createXMLHTTPRequest() {
+    var xmlHttpRequest;
+    if (window.XMLHttpRequest) {
+      xmlHttpRequest = new XMLHttpRequest();
+      if (xmlHttpRequest.overrideMimeType) {
+        xmlHttpRequest.overrideMimeType("text/xml");
+      }
+    } else if (window.ActiveXObject) {
+      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    return xmlHttpRequest;
+  }
+
+  function updateCaptcha() {
+    var random = Date.now().toString().slice(-6);
+    captchaImage.src = '/api/captcha?' + random;
+  }
+
+  function checkPicCaptcha() {
+    var reg = /^\w{6,}$/;
+    var picCaptchaValue = picCaptcha.value;
+    if(reg.test(picCaptchaValue)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 </script>
 <% } else { %>
 <div class="wrapper">
@@ -202,13 +334,29 @@
           <div class="brewmaster_icon icon_email"></div>
         </div>
         <span class="email_tip"></span>
-        <input id="usubmit" name="usubmit" type="button" value="提交"/>
+        <input id="usubmit" name="usubmit" type="submit" value="提交"/>
       </form>
       <a href="/">返回登录</a>
     </div>
   </div>
   <div class="footer">
     <p><%= company %></p>
+  </div>
+</div>
+<div class="mask" id="mask">
+  <div class="modal" id="modal">
+    <div class="modal-content-wrapper">
+      <div class="modal-hd">请输入图形验证码</div>
+      <div class="input-row">
+        <input type="text" name="pic-captcha" id="pic-captcha" placeholder="图形验证码">
+        <img src="/api/captcha?123456" alt="" class="image-captcha" id="image-captcha">
+      </div>
+      <div class="captcha-error-tip" id="captcha-error-tip">验证码格式不正确，请检查您的输入</div>
+      <div class="modal-ft">
+        <button id="submit-pic-captcha" class="submit-pic-captcha btn">确定</button>
+        <button id="modal-cancel" class="modal-cancel btn btn-cancel">取消</button>
+      </div>
+    </div>
   </div>
 </div>
 <script>
@@ -221,64 +369,99 @@
           captcha_tip = document.getElementsByClassName('captcha_tip')[0],
           email_tip = document.getElementsByClassName('email_tip')[0],
           uform = document.getElementById('uform'),
+          mask = document.getElementById('mask'),
+          modal = document.getElementById('modal'),
+          picSubBtn = document.getElementById('submit-pic-captcha'),
+          picCaptcha = document.getElementById('pic-captcha'),
+          captchaImage = document.getElementById('image-captcha'),
+          captchaErrorTip = document.getElementById('captcha-error-tip'),
+          modalCancelBtn = document.getElementById('modal-cancel'),
           enable_getcaptcha = true,
           enable_phone = false,
           enable_captcha = false,
           enable_email = false,
           timer = null;
-  //ajax request
-  function createXMLHTTPRequest() {
-    var xmlHttpRequest;
-    if (window.XMLHttpRequest) {
-      xmlHttpRequest = new XMLHttpRequest();
-      if (xmlHttpRequest.overrideMimeType) {
-        xmlHttpRequest.overrideMimeType("text/xml");
-      }
-    } else if (window.ActiveXObject) {
-      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+
+  get_captcha.onclick = showModal;
+  picSubBtn.onclick = sendCaptcha;
+  usubmit.onclick = verifySubmit;
+  captchaImage.onclick = updateCaptcha;
+  mask.onclick = hideMask;
+  modalCancelBtn.onclick = hideMask;
+  picCaptcha.onkeydown = function(evt) {
+    if(evt.key === 'Enter') {
+      sendCaptcha();
     }
-    return xmlHttpRequest;
   }
+  modal.onclick = function(evt) {
+    evt.stopPropagation();
+  };
+
+  resetModal();
+
+  // 发送短信验证码
   function sendCaptcha() {
     var count = 60;
-    if (enable_getcaptcha) {
-      if (/^\d{11}$/.test(phone.value)) {
-        phone_tip.style.display = "none";
-        var phoneData = JSON.stringify({
-          'phone': phone.value
-        });
-        var req = createXMLHTTPRequest();
-        req.open("POST", "/api/register/change-email/phone", true);
-        req.setRequestHeader("Content-Type", "application/json");
-        req.send(phoneData);
-        req.onreadystatechange = function () {
-          if (req.readyState == 4) {
-            if (req.status == 200) {
-              enable_getcaptcha = false;
-              get_captcha.className += ' disabled';
-              get_captcha.innerHTML = '重新发送(' + count + ')秒';
-              timer = setInterval(function () {
-                if (count > 0) {
-                  get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
-                } else {
-                  clearInterval(timer);
-                  enable_getcaptcha = true;
-                  get_captcha.className = 'get_captcha';
-                  get_captcha.innerHTML = '发送验证码';
-                }
-              }, 1000);
+    var picCaptchaLegal = checkPicCaptcha();
+    if (!picCaptchaLegal) {
+      captchaErrorTip.style.display = 'block';
+      return;
+    }
+      
+    picSubBtn.disabled = true;
+    var phoneData = JSON.stringify({
+      'phone': phone.value,
+      'captcha': picCaptcha.value
+    });
+
+    var req = createXMLHTTPRequest();
+    req.open("POST", "/api/register/change-email/phone", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(phoneData);
+    req.onreadystatechange = function () {
+      if (req.readyState == 4) {
+        hideMask();
+        if (req.status == 200) {
+          captcha.focus();
+          enable_getcaptcha = false;
+          get_captcha.className += ' disabled';
+          get_captcha.innerHTML = '重新发送(' + count + ')秒';
+          timer = setInterval(function () {
+            if (count > 0) {
+              get_captcha.innerHTML = '重新发送(' + count-- + ')秒';
             } else {
-              phone_tip.innerHTML = JSON.parse(req.responseText).message;
-              phone_tip.style.display = 'block';
+              clearInterval(timer);
+              enable_getcaptcha = true;
+              get_captcha.className = 'get_captcha';
+              get_captcha.innerHTML = '发送验证码';
             }
+          }, 1000);
+        } else {
+          try {
+            phone_tip.innerHTML = JSON.parse(req.responseText).message || '未知错误';
+          } catch(e) {
+            phone_tip.innerHTML = '未知错误';
           }
+          phone_tip.style.display = 'block';
         }
+      }
+    }
+  }
+
+  function showModal() {
+    if(enable_getcaptcha) {
+      if(/^\d{11}$/.test(phone.value)) {
+        phone_tip.style.display = "none";
+        mask.style.display = 'block';
+        picCaptcha.focus();
       } else {
         phone_tip.innerHTML = '请输入正确的格式';
         phone_tip.style.display = 'block';
       }
     }
   }
+
+  // 表单提交
   function verifySubmit(e) {
     e.preventDefault();
     //phone
@@ -312,8 +495,47 @@
       uform.submit();
     }
   }
-  get_captcha.onclick = sendCaptcha;
-  usubmit.onclick = verifySubmit;
+
+  function hideMask() {
+    mask.style.display = 'none';
+    resetModal();
+  }
+
+  function updateCaptcha() {
+    var random = Date.now().toString().slice(-6);
+    captchaImage.src = '/api/captcha?' + random;
+  }
+  //ajax request
+  function createXMLHTTPRequest() {
+    var xmlHttpRequest;
+    if (window.XMLHttpRequest) {
+      xmlHttpRequest = new XMLHttpRequest();
+      if (xmlHttpRequest.overrideMimeType) {
+        xmlHttpRequest.overrideMimeType("text/xml");
+      }
+    } else if (window.ActiveXObject) {
+      xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    return xmlHttpRequest;
+  }
+
+  function resetModal() {
+    var random = Date.now().toString().slice(-6);
+    picCaptcha.value = '';
+    picSubBtn.disabled = false;
+    captchaImage.src = '/api/captcha?' + random;
+    captchaErrorTip.style.display = 'none';
+  }
+
+  function checkPicCaptcha() {
+    var reg = /^\w{6,}$/;
+    var picCaptchaValue = picCaptcha.value;
+    if(reg.test(picCaptchaValue)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 </script>
 <% } %>
 
