@@ -21,6 +21,10 @@ module.exports = (str) => {
       type.icon = 'light';
       type.status = 'available';
       break;
+    case 'deactivated':
+      type.icon = 'paused';
+      type.status = 'paused';
+      break;
     case 'disabled':
       type.icon = 'deleted';
       type.status = 'paused';

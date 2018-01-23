@@ -1,29 +1,30 @@
 require('./style/index.less');
 
+//react components
 const React = require('react');
 const Main = require('client/components/main_paged/index');
+
+//detail components
 const BasicProps = require('client/components/basic_props/index');
+
+//pop modal
 const deleteModal = require('client/components/modal_delete/index');
-const RelatedInstance = require('./detail/related_instance');
+const RelatedInstance = require('../image/detail/related_instance');
+const modifyImage = require('../image/pop/create/index');
+const batchReactivate = require('./pop/reactivate/index');
 
-const image = require('./pop/create/index');
-
-const request = require('./request');
 const config = require('./config.json');
-const moment = require('client/libs/moment');
 const __ = require('locale/client/admin.lang.json');
+const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');
-const getTime = require('client/utils/time_unification');
 const unitConverter = require('client/utils/unit_converter');
-const csv = require('./pop/csv/index');
+const getTime = require('client/utils/time_unification');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
-
-    moment.locale(HALO.configs.lang);
 
     this.state = {
       config: config,
@@ -31,22 +32,22 @@ class Model extends React.Component {
       hasLoadedCatalog: false
     };
 
-    ['onInitialize', 'onAction'].forEach((m) => {
-      this[m] = this[m].bind(this);
-    });
-
     this.stores = {
       urls: []
     };
+
+    ['onInitialize', 'onAction'].forEach((m) => {
+      this[m] = this[m].bind(this);
+    });
   }
 
   componentWillMount() {
-    let column = this.state.config.table.column;
-    this.tableColRender(column);
+    let columns = this.state.config.table.column;
+    this.tableColRender(columns);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+    if (this.props.style.display === 'none' && !nextState.config.table.loading) {
       return false;
     }
     return true;
@@ -65,6 +66,32 @@ class Model extends React.Component {
         metadataCatalog: res,
         hasLoadedCatalog: true
       });
+    });
+  }
+
+  tableColRender(column) {
+    column.map((col) => {
+      switch (col.key) {
+        case 'name':
+          col.formatter = (rcol, ritem, rindex) => {
+            return this.getImageLabel(ritem);
+          };
+          break;
+        case 'size':
+          col.render = (rcol, ritem, rindex) => {
+            let size = unitConverter(ritem.size);
+            size.num = typeof size.num === 'number' ? size.num : 0;
+            return size.num + ' ' + size.unit;
+          };
+          break;
+        case 'type':
+          col.render = (rcol, ritem, rindex) => {
+            return __.image;
+          };
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -87,33 +114,6 @@ class Model extends React.Component {
     );
   }
 
-  tableColRender(columns) {
-    columns.map((column) => {
-      switch (column.key) {
-        case 'name':
-          column.formatter = (col, item, i) => {
-            return this.getImageLabel(item);
-          };
-          break;
-        case 'size':
-          column.render = (col, item, i) => {
-            let size = unitConverter(item.size);
-            size.num = typeof size.num === 'number' ? size.num : 0;
-            return size.num + ' ' + size.unit;
-          };
-          break;
-        case 'image_type':
-          column.render = (col, item, i) => {
-            return __.image;
-          };
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-//initialize table data
   onInitialize(params) {
     this.loadingTable();
     if (params && params[2]) {
@@ -123,13 +123,12 @@ class Model extends React.Component {
     }
   }
 
-//request: get single data by ID
   getSingle(id) {
     this.clearState();
 
     let table = this.state.config.table;
     request.getSingle(id).then((res) => {
-      table.data = res.list.filter(item => item.visibility === 'public');
+      table.data = res.list.filter(image => image.status === 'deactivated');
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
         let pathList = router.getPathList();
@@ -143,15 +142,15 @@ class Model extends React.Component {
     });
   }
 
-//request: get list
   getList() {
     this.clearState();
-
-    let table = this.state.config.table;
     let pageLimit = localStorage.getItem('page_limit');
+    let _config = this.state.config;
+    let table = _config.table;
 
     request.getList(pageLimit).then((res) => {
       table.data = res.list;
+
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
       this.getMetadataCatalog();
@@ -162,7 +161,6 @@ class Model extends React.Component {
     });
   }
 
-//request: get next list
   getNextList(url, refreshDetail) {
     let table = this.state.config.table;
     request.getNextList(url).then((res) => {
@@ -182,7 +180,6 @@ class Model extends React.Component {
     });
   }
 
-//rerender: update table data
   updateTableData(table, currentUrl, refreshDetail, callback) {
     let newConfig = this.state.config;
     newConfig.table = table;
@@ -203,7 +200,6 @@ class Model extends React.Component {
     });
   }
 
-//set pagination
   setPagination(table, res) {
     let pagination = {},
       next = res.links.next ? res.links.next : null;
@@ -230,7 +226,335 @@ class Model extends React.Component {
     this.getNextList(url, refreshDetail);
   }
 
-//refresh: according to the given data rules
+  onAction(field, actionType, refs, data) {
+    switch (field) {
+      case 'btnList':
+        this.onClickBtnList(data.key, refs, data);
+        break;
+      case 'filter':
+        this.onFilterSearch(actionType, refs, data);
+        break;
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'detail':
+        this.onClickDetailTabs(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
+        break;
+      default:
+        break;
+    }
+  }
+
+  onFilterSearch(actionType, refs, data) {
+    if (actionType === 'search') {
+      this.loadingTable();
+
+      let idData = data.filter_id,
+        nameData = data.filter_type;
+
+      if (idData) {
+        this.getSingle(idData.id);
+      } else if (nameData){
+        this.clearState();
+
+        let pageLimit = localStorage.getItem('page_limit');
+        request.filter(nameData, pageLimit).then((res) => {
+          let table = this.state.config.table;
+          table.data = res.list;
+          this.setPagination(table, res);
+          this.updateTableData(table, res._url);
+          this.getMetadataCatalog();
+        });
+      } else {
+        let r = {};
+        r.initialList = true;
+        r.loadingTable = true;
+        r.clearState = true;
+
+        this.refresh(r);
+      }
+    }
+  }
+
+  onClickBtnList(key, refs, data) {
+    let rows = data.rows;
+    let that = this;
+    const currPjtId = HALO.user.projectId;
+
+    switch (key) {
+      case 'reactivate':
+        batchReactivate({ images: rows }, () => {
+          that.refresh({
+            refreshList: true,
+            refreshDetail: true
+          });
+        });
+        break;
+      case 'modify_image':
+        this.state.config.tabs.forEach(tab => {
+          tab.default &&
+          modifyImage({item: rows[0], type: tab.key, metadataCatalog: that.state.metadataCatalog, pId: currPjtId}, null, () => {
+            this.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
+          });
+        });
+        break;
+      case 'delete':
+        deleteModal({
+          __: __,
+          action: 'delete',
+          type: 'image',
+          data: rows,
+          onDelete: function(_data, cb) {
+            request.deleteImage(rows[0].id).then((res) => {
+              cb(true);
+              that.refresh({
+                refreshList: true,
+                refreshDetail: true,
+                loadingTable: true
+              });
+            });
+          }
+        });
+        break;
+      case 'refresh':
+        this.refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTable(actionType, refs, data) {
+    switch (actionType) {
+      case 'check':
+        this.onClickTableCheckbox(refs, data);
+        break;
+      case 'pagination':
+        let url,
+          history = this.stores.urls;
+
+        if (data.direction === 'prev') {
+          history.pop();
+          if (history.length > 0) {
+            url = history.pop();
+          }
+        } else if (data.direction === 'next') {
+          url = data.url;
+        } else {//default
+          url = this.stores.urls[0];
+          this.clearState();
+        }
+
+        this.loadingTable();
+        this.getNextListData(url);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onClickTableCheckbox(refs, data) {
+    let {rows} = data,
+      btnList = refs.btnList,
+      btns = btnList.state.btns;
+
+    btnList.setState({
+      btns: this.btnListRender(rows, btns)
+    });
+  }
+
+  btnListRender(rows, btns) {
+    let hasLoadedCatalog = this.state.hasLoadedCatalog;
+
+    for (let key in btns) {
+      switch (key) {
+        case 'reactivate':
+          btns[key].disabled = rows.length > 0 ? false : true;
+          break;
+        case 'modify_image':
+          btns[key].disabled = (rows.length === 1 ? false : true) || !hasLoadedCatalog;
+          break;
+        case 'delete':
+          btns[key].disabled = (rows.length === 1 && !rows[0].protected) ? false : true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return btns;
+  }
+
+  onClickDetailTabs(tabKey, refs, data) {
+    let {
+      rows
+    } = data;
+    let detail = refs.detail;
+    let contents = detail.state.contents;
+    let syncUpdate = true;
+
+    let isAvailableView = (_rows) => {
+      if (_rows.length > 1) {
+        contents[tabKey] = (
+          <div className="no-data-desc">
+            <p>{__.view_is_unavailable}</p>
+          </div>
+        );
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    switch (tabKey) {
+      case 'description':
+        if (isAvailableView(rows)) {
+          let basicPropsItem = this.getBasicPropsItems(rows[0]);
+          contents[tabKey] = (
+            <div>
+              <BasicProps
+                title={__.basic + __.properties}
+                defaultUnfold={true}
+                items={basicPropsItem ? basicPropsItem : []} />
+            </div>
+          );
+        }
+        break;
+      case 'instance':
+        let that = this, limit = 20, current = data.current || 1;
+        syncUpdate = false;
+        request.getInstances(rows[0].id).then(instances => {
+          let pagination = {
+            current: current,
+            total: Math.ceil(instances.length / limit),
+            total_num: instances.length
+          };
+          let instanceConfig = this.getInstanceConfig(instances.slice((current - 1) * limit, current * limit), pagination);
+          contents[tabKey] = (
+            <RelatedInstance
+              tableConfig={instanceConfig}
+              onDetailAction={(actionType, _refs, _data) => {
+                that.onClickDetailTabs('instance', refs, {
+                  rows: rows,
+                  current: _data.page
+                });
+              }}/>
+          );
+
+          detail.setState({
+            contents: contents,
+            loading: false
+          });
+        });
+        break;
+      default:
+        break;
+    }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    } else {
+      detail.setState({
+        loading: true
+      });
+    }
+  }
+
+  getInstanceConfig(item, pagination) {
+    let dataContent = [];
+    for (let key in item) {
+      let element = item[key];
+      let dataObj = {
+        name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
+        id: element.id,
+        status: getStatusIcon(element.status),
+        created: getTime(element.created, false)
+      };
+      dataContent.push(dataObj);
+    }
+    let tableConfig = {
+      column: [{
+        title: __.name,
+        key: 'name',
+        dataIndex: 'name'
+      }, {
+        title: __.id,
+        key: 'id',
+        dataIndex: 'id'
+      }, {
+        title: __.status,
+        key: 'status',
+        dataIndex: 'status'
+      }, {
+        title: __.create + __.time,
+        key: 'created',
+        dataIndex: 'created'
+      }],
+      data: dataContent,
+      dataKey: 'id',
+      hover: true,
+      pagination: pagination
+    };
+
+    return tableConfig;
+  }
+
+  getBasicPropsItems(item) {
+    let name = this.getImageLabel(item);
+    let size = unitConverter(item.size);
+
+    let items = [{
+      title: __.name,
+      content: name
+    }, {
+      title: __.id,
+      content: item.id
+    }, {
+      title: __.size,
+      content: size.num + ' ' + size.unit
+    }, {
+      title: __.type,
+      content: item.image_type === 'snapshot' ? __.instance_snapshot : __.image
+    }, {
+      title: __.checksum,
+      content: item.checksum ? item.checksum : '-'
+    }, {
+      title: __.status,
+      content: getStatusIcon(item.status)
+    }, {
+      title: __.create + __.time,
+      type: 'time',
+      content: item.created_at
+    }, {
+      title: __.update + __.time,
+      type: 'time',
+      content: item.updated_at
+    }];
+
+    if (HALO.settings.enable_approval && item.visibility === 'private') {
+      items.push({
+        title: __.owner,
+        content: item.meta_owner ? item.meta_owner : '-'
+      });
+    }
+
+    return items;
+  }
+
   refresh(data, params) {
     if (!data) {
       data = {};
@@ -294,368 +618,22 @@ class Model extends React.Component {
     }
   }
 
-  onAction(field, actionType, refs, data) {
-    switch (field) {
-      case 'btnList':
-        this.onClickBtnList(data.key, refs, data);
-        break;
-      case 'filter':
-        this.onFilterSearch(actionType, refs, data);
-        break;
-      case 'table':
-        this.onClickTable(actionType, refs, data);
-        break;
-      case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
-        break;
-      case 'page_limit':
-        this.onInitialize();
-        break;
-      default:
-        break;
-    }
-  }
-
-  onClickTable(actionType, refs, data) {
-    switch (actionType) {
-      case 'check':
-        this.onClickTableCheckbox(refs, data);
-        break;
-      case 'pagination':
-        let url,
-          history = this.stores.urls;
-
-        if (data.direction === 'prev'){
-          history.pop();
-          if (history.length > 0) {
-            url = history.pop();
-          }
-        } else if (data.direction === 'next') {
-          url = data.url;
-        } else {//default
-          url = this.stores.urls[0];
-          this.clearState();
-        }
-
-        this.loadingTable();
-        this.getNextListData(url);
-        break;
-      case 'filtrate':
-        delete data.rows;
-        this.clearState();
-        let table = this.state.config.table;
-
-        request.getFilterList(data).then((res) => {
-          table.data = res.list;
-          this.setPagination(table, res);
-          this.updateTableData(table, res._url);
-          this.getMetadataCatalog();
-        }).catch((res) => {
-          table.data = [];
-          table.pagination = null;
-          this.updateTableData(table, String(res.responseURL));
-        });
-        this.loadingTable();
-        break;
-      default:
-        break;
-    }
-  }
-
-  onClickBtnList(key, refs, data) {
-    let {rows} = data;
-    let that = this;
-    const currPjtId = HALO.user.projectId;
-    switch(key) {
-      case 'create':
-        image({type: 'public',
-        metadataCatalog: that.state.metadataCatalog}, null, (res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
-      case 'edit_image':
-        image({item: rows[0], type: 'public', metadataCatalog: that.state.metadataCatalog, pId: currPjtId}, null, (res) => {
-          this.refresh({
-            refreshList: true,
-            refreshDetail: true
-          });
-        });
-        break;
-      case 'export_csv':
-        request.getFieldsList().then((res) => {
-          csv(res);
-        });
-        break;
-      case 'delete':
-        deleteModal({
-          __: __,
-          action: 'delete',
-          type: 'image',
-          data: rows,
-          onDelete: function(_data, cb) {
-            request.delete(rows[0].id).then((res) => {
-              cb(true);
-              that.refresh({
-                refreshList: true,
-                refreshDetail: true,
-                loadingTable: true
-              });
-            });
-          }
-        });
-        break;
-      case 'refresh':
-        this.refresh({
-          refreshList: true,
-          refreshDetail: true,
-          loadingTable: true,
-          loadingDetail: true
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
-      this.loadingTable();
-
-      let idData = data.filter_id,
-        nameData = data.filter_type;
-
-      if (idData) {
-        this.getSingle(idData.id);
-      } else if (nameData){
-        this.clearState();
-
-        let pageLimit = localStorage.getItem('page_limit');
-        request.filter(nameData, pageLimit).then((res) => {
-          let table = this.state.config.table;
-          table.data = res.list;
-          this.setPagination(table, res);
-          this.updateTableData(table, res._url);
-          this.getMetadataCatalog();
-        });
-      } else {
-        let r = {};
-        r.initialList = true;
-        r.loadingTable = true;
-        r.clearState = true;
-
-        this.refresh(r);
-      }
-    }
-  }
-
-  onClickTableCheckbox(refs, data) {
-    let {rows} = data,
-      btnList = refs.btnList,
-      btns = btnList.state.btns;
-
-    btnList.setState({
-      btns: this.btnListRender(rows, btns)
-    });
-  }
-
-  btnListRender(rows, btns) {
-    let sole = rows.length === 1 ? rows[0] : null;
-    let hasLoadedCatalog = this.state.hasLoadedCatalog;
-
-    for(let key in btns) {
-      switch (key) {
-        case 'create':
-          btns[key].disabled = !hasLoadedCatalog;
-          break;
-        case 'edit_name':
-        case 'edit_image':
-          btns[key].disabled = (sole ? false : true) || !hasLoadedCatalog;
-          break;
-        case 'export_csv':
-          btns[key].disabled = false;
-          break;
-        case 'delete':
-          btns[key].disabled = (sole && !sole.protected) ? false : true;
-          break;
-        default:
-          break;
-      }
-    }
-
-    return btns;
-  }
-
-  onClickDetailTabs(tabKey, refs, data) {
-    let {rows} = data;
-    let detail = refs.detail;
-    let contents = detail.state.contents;
-    let syncUpdate = true;
-
-    switch(tabKey) {
-      case 'description':
-        if (rows.length === 1) {
-          let basicPropsItem = this.getBasicPropsItems(rows[0]);
-
-          contents[tabKey] = (
-            <div>
-              <BasicProps
-                title={__.basic + __.properties}
-                defaultUnfold={true}
-                tabKey={'description'}
-                items={basicPropsItem}
-                rawItem={rows[0]}
-                onAction={this.onDetailAction.bind(this)}
-                dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-            </div>
-          );
-        }
-        break;
-      case 'instance':
-        let that = this, limit = 20, current = data.current || 1;
-        syncUpdate = false;
-        request.getInstances(rows[0].id).then(instances => {
-          let pagination = {
-            current: current,
-            total: Math.ceil(instances.length / limit),
-            total_num: instances.length
-          };
-          let instanceConfig = this.getInstanceConfig(instances.slice((current - 1) * limit, current * limit), pagination);
-          contents[tabKey] = (
-            <RelatedInstance
-              tableConfig={instanceConfig}
-              onDetailAction={(actionType, _refs, _data) => {
-                that.onClickDetailTabs('instance', refs, {
-                  rows: rows,
-                  current: _data.page
-                });
-              }}/>
-          );
-          detail.setState({
-            contents: contents,
-            loading: false
-          });
-        });
-        break;
-      default:
-        break;
-    }
-
-    if (syncUpdate) {
-      detail.setState({
-        contents: contents,
-        loading: false
-      });
-    } else {
-      detail.setState({
-        loading: true
-      });
-    }
-  }
-
-  getInstanceConfig(item, pagination) {
-    let dataContent = [];
-    for (let key in item) {
-      let element = item[key];
-      let dataObj = {
-        name: <a data-type="router" href={'/admin/instance/' + element.id}>{element.name}</a>,
-        id: element.id,
-        status: getStatusIcon(element.status),
-        created: getTime(element.created, false)
-      };
-      dataContent.push(dataObj);
-    }
-    let tableConfig = {
-      column: [{
-        title: __.name,
-        key: 'name',
-        dataIndex: 'name'
-      }, {
-        title: __.id,
-        key: 'id',
-        dataIndex: 'id'
-      }, {
-        title: __.status,
-        key: 'status',
-        dataIndex: 'status'
-      }, {
-        title: __.create + __.time,
-        key: 'created',
-        dataIndex: 'created'
-      }],
-      data: dataContent,
-      dataKey: 'id',
-      hover: true,
-      pagination: pagination
-    };
-
-    return tableConfig;
-  }
-
-  getBasicPropsItems(item) {
-    let size = unitConverter(item.size);
-    let items = [{
-      title: __.name,
-      content: this.getImageLabel(item)
-    }, {
-      title: __.id,
-      content: item.id
-    }, {
-      title: __.size,
-      content: size.num + ' ' + size.unit
-    }, {
-      title: __.type,
-      content: __.image
-    }, {
-      title: __.status,
-      content: getStatusIcon(item.status)
-    }, {
-      title: __.protected,
-      content: item.protected && item.protected === true ? __.yes : __.no
-    }, {
-      title: __.created + __.time,
-      type: 'time',
-      content: item.created_at
-    }];
-
-    return items;
-  }
-
-  onDetailAction(tabKey, actionType, data) {
-    switch(tabKey) {
-      case 'description':
-        this.onDescriptionAction(actionType, data);
-        break;
-      default:
-        break;
-    }
-  }
-
-  onDescriptionAction(actionType, data) {
-    switch(actionType) {
-      default:
-        break;
-    }
-  }
-
   render() {
     return (
-      <div className="halo-module-image" style={this.props.style}>
+      <div className="halo-module-deactivated-image" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}
           onInitialize={this.onInitialize}
           onAction={this.onAction}
-          __={__}
           config={this.state.config}
           params={this.props.params}
           getStatusIcon={getStatusIcon}
-        />
+          __={__} />
       </div>
     );
   }
+
 }
 
 module.exports = Model;

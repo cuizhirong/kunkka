@@ -1,29 +1,24 @@
 {
   "tabs": [{
     "name": ["public_image"],
-    "key": "image",
-    "default": true
+    "key": "image"
   }, {
     "name": ["private_image"],
     "key": "private-image"
   }, {
     "name": ["deactivated-image"],
-    "key": "deactivated-image"
+    "key": "deactivated-image",
+    "default": true
   }],
   "btns": [{
-    "value": ["create", "image"],
-    "key": "create",
-    "icon": "create",
-    "type": "create"
-  }, {
-    "value": ["edit", "image"],
-    "key": "edit_image",
-    "icon": "edit",
+    "value": ["reactivate"],
+    "key": "reactivate",
+    "icon": "enable",
     "disabled": true
   }, {
-    "value": ["export", "csv"],
-    "key": "export_csv",
-    "icon": "download",
+    "value": ["edit", "image"],
+    "key": "modify_image",
+    "icon": "edit",
     "disabled": true
   }, {
     "value": ["delete"],
@@ -33,8 +28,7 @@
     "disabled": true
   }, {
     "key": "refresh",
-    "icon": "refresh",
-    "disabled": true
+    "icon": "refresh"
   }],
   "filter": [{
     "group_key": "filter_id",
@@ -64,21 +58,17 @@
       "sort": true
     }, {
       "title": ["size"],
+      "dataIndex": "size",
       "key": "size"
     }, {
       "title": ["type"],
-      "key": "image_type",
+      "key": "type",
       "dataIndex": "image_type"
     }, {
       "title": ["status"],
       "dataIndex": "status",
       "type": "status",
-      "key": "status",
-      "filter": [{
-        "name": ["active"],
-        "key": "active",
-        "filterBy": "active"
-      }]
+      "key": "status"
     }, {
       "title": ["create", "time"],
       "dataIndex": "created_at",

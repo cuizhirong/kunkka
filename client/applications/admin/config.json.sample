@@ -18,6 +18,7 @@
       "flavor",
       "image",
       "private-image",
+      "deactivated-image",
       "snapshot-type"
     ]
   }, {
@@ -83,6 +84,9 @@
     "key": "private-image",
     "link": "image"
   }, {
+    "key": "deactivated-image",
+    "link:: "image"
+  },{
     "key": "subnet",
     "link": "network"
   }, {

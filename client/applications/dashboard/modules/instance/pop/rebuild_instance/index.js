@@ -4,6 +4,15 @@ const __ = require('locale/client/dashboard.lang.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
+function getOriginalIndex(imageId, images) {
+  let index = images.findIndex((image) => {
+    return image.id === imageId;
+  });
+
+  index = index !== -1 ? index : 0;
+  return index;
+}
+
 function pop(obj, parent, callback) {
   function getImageGroup(imageArray) {
     let imageGroup = [];
@@ -26,9 +35,13 @@ function pop(obj, parent, callback) {
           let imageGroup = getImageGroup(data);
 
           if (imageGroup.length > 0) {
+            let originalImageId = obj.image && obj.image.id;
+            // 默认选择原始的镜像，否则就是列表第一个镜像
+            let originalImageIndex = getOriginalIndex(originalImageId, imageGroup);
+
             refs.image.setState({
               data: imageGroup,
-              value: imageGroup[0].data[0].id
+              value: imageGroup[originalImageIndex].data[0].id
             });
 
             refs.btn.setState({
