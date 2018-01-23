@@ -54,7 +54,7 @@ module.exports = {
 
       });
 
-      return data.alarm;
+      return data.alarm.filter(ele => ele.project_id === HALO.user.projectId);
     });
   },
   getResources: function() {
