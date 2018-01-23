@@ -197,6 +197,23 @@ class Modal extends React.Component {
     onChangeState(field, value);
   }
 
+  getMintue(time) {
+    switch(time) {
+      case '60':
+        return '1 min';
+      case '300':
+        return '5 min';
+      case '600':
+        return '10 min';
+      case '3600':
+        return '1 hour';
+      case '10800':
+        return '3 hour';
+      default:
+        return time + 's';
+    }
+  }
+
   render() {
     const state = this.props.state;
     let { metricType } = state;
@@ -247,10 +264,9 @@ class Modal extends React.Component {
               <div className="modal-data">
                 <select value={state.granularity} onChange={this.onChange.bind(this, 'granularity')}>
                   {/*<option value="60">1 min</option>*/}
-                  <option value="300">5 min</option>
-                  <option value="900">15 min</option>
-                  <option value="1800">30 min</option>
-                  <option value="6000">1 h</option>
+                  {Object.keys(HALO.configs.telemerty).map(key =>
+                    <option key={key} value={HALO.configs.telemerty[key]}>{this.getMintue(HALO.configs.telemerty[key])}</option>
+                  )}
                 </select>
               </div>
             </div>

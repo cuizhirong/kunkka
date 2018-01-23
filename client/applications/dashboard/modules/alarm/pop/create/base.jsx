@@ -136,8 +136,12 @@ class ModalBase extends React.Component {
     this.onChangeState('page', this.state.page + 1);
   }
 
+  isNumber(num) {
+    return !isNaN(parseFloat(num)) && isFinite(num);
+  }
+
   onChangeState(field, value) {
-    let state = {};
+    let state = {}, granularity;
     state[field] = value;
 
     this.setState(state, () => {
@@ -146,32 +150,43 @@ class ModalBase extends React.Component {
       switch (field) {
         case 'measureGranularity':
         case 'resource':
+        case 'granularity':
           if (st.resource && st.measureGranularity) {
+            switch(field) {
+              case 'granularity':
+                granularity = value;
+                break;
+              case 'resource':
+              case 'measureGranularity':
+              default:
+                granularity = st.granularity;
+            }
+
             let resourceType = this.state.resourceType;
 
             if (resourceType === 'instance') {
               let resourceID = st.resource.id;
               let startTime = this.getStartTime(st.granularityKey);
 
-              request.getResourceMeasures(resourceID, st.metricType, st.measureGranularity, startTime).then((data) => {
+              request.getResourceMeasures(resourceID, st.metricType, granularity, startTime).then((data) => {
                 measureData = data;
-                this.updateGraph(data, st.granularityKey);
+                this.updateGraph(data, granularity);
               }).catch((err) => {
-                this.updateGraph([], st.granularityKey);
+                this.updateGraph([], granularity);
               });
 
-            } if (resourceType === 'volume') {
+            } else if (resourceType === 'volume') {
               let update = (volResource) => {
                 let volResourceId = volResource.metrics[st.metricType];
                 if (volResourceId) {
                   let startTime = this.getStartTime(st.granularityKey);
-                  request.getVolumeMeasures(volResourceId, st.measureGranularity, startTime).then((data) => {
-                    this.updateGraph(data, st.granularityKey);
+                  request.getVolumeMeasures(volResourceId, granularity, startTime).then((data) => {
+                    this.updateGraph(data, granularity);
                   }).catch((err) => {
-                    this.updateGraph([], st.granularityKey);
+                    this.updateGraph([], granularity);
                   });
                 } else {
-                  this.updateGraph([], st.granularityKey);
+                  this.updateGraph([], granularity);
                 }
               };
 
@@ -185,8 +200,12 @@ class ModalBase extends React.Component {
                 update(map[volumeId][0]);
               } else {
                 request.getVolumeResourceId(originalId).then((resources) => {
-                  map[volumeId] = resources;
-                  update(map[volumeId][0]);
+                  if (resources.length > 0) {
+                    map[volumeId] = resources;
+                    update(map[volumeId][0]);
+                  } else {
+                    this.updateGraph([], granularity);
+                  }
                 });
               }
             } else if (resourceType === 'instance_network_interface') {
@@ -198,10 +217,10 @@ class ModalBase extends React.Component {
                 if (portMeasure) {
                   let startTime = this.getStartTime(st.granularityKey);
 
-                  request.getResourceMeasures(portMeasure.id, st.metricType, st.measureGranularity, startTime).then((data) => {
-                    this.updateGraph(data, st.granularityKey);
+                  request.getResourceMeasures(portMeasure.id, st.metricType, granularity, startTime).then((data) => {
+                    this.updateGraph(data, granularity);
                   }).catch((err) => {
-                    this.updateGraph([], st.granularityKey);
+                    this.updateGraph([], granularity);
                   });
 
                   if (!resource._measureId) {
@@ -210,6 +229,8 @@ class ModalBase extends React.Component {
                       resource: resource
                     });
                   }
+                } else {
+                  this.updateGraph([], granularity);
                 }
               };
 
