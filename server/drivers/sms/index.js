@@ -1,8 +1,7 @@
 'use strict';
 
-const email = require('./email');
 const sms = require('./sms');
 
-const driver = {email, sms};
+const driver = {sms};
 
 module.exports = driver;

@@ -4,8 +4,7 @@ const fs = require('fs');
 const co = require('co');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
-const Base = require('../base.js');
-const driver = new Base();
+const driver = {};
 const config = require('config');
 const smtpConfig = config('smtp');
 const getSettingsByApp = require('api/tusk/dao').getSettingsByApp;
@@ -65,8 +64,10 @@ driver.sendEmailByTemplateAsync = function (to, subject, data, templateName) {
       setting.name === 'home_url' && (corData.homeUrl = setting.value);
     });
     let content = ejs.render(templates[templateName || 'default'], Object.assign(corData, data));
-    return yield transporter.sendEmailAsync({to, subject, html: content, from: smtpConfig.auth.user});
-
+    return yield transporter.sendEmailAsync({
+      to, subject: subject + '-' + corData.corporationName,
+      html: content, from: smtpConfig.auth.user
+    });
   });
 };
 module.exports = driver;
