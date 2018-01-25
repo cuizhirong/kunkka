@@ -34,35 +34,41 @@ transporter.sendEmailAsync = (data) => {
 };
 
 /*** Promise ***/
+
+driver.getCorporationInfo = function* () {
+  let settings = yield getSettingsByApp('auth');
+  let corData = {
+    corporationName: '',
+    emailLogoUrl: '',
+    homeUrl: ''
+  };
+  settings.some(setting => {
+    switch (setting.name) {
+      case 'corporation_name':
+        corData.corporationName = setting.value;
+        break;
+      case 'email_logo_url':
+        corData.emailLogoUrl = setting.value;
+        break;
+      case 'home_url':
+        corData.homeUrl = setting.value;
+        break;
+      default:
+        break;
+    }
+    setting.name === 'corporation_name' && (corData.corporationName = setting.value);
+    setting.name === 'email_logo_url' && (corData.emailLogoUrl = setting.value);
+    setting.name === 'home_url' && (corData.homeUrl = setting.value);
+  });
+  return corData;
+};
+
 driver.sendEmailByTemplateAsync = function (to, subject, data, templateName) {
   return co(function* () {
     if (templateName && templates[templateName] === undefined) {
       throw new Error('模板不存在');
     }
-    let corData = {
-      corporationName: '',
-      emailLogoUrl: '',
-      homeUrl: ''
-    };
-    let settings = yield getSettingsByApp('auth');
-    settings.some(setting => {
-      switch (setting.name) {
-        case 'corporation_name':
-          corData.corporationName = setting.value;
-          break;
-        case 'email_logo_url':
-          corData.emailLogoUrl = setting.value;
-          break;
-        case 'home_url':
-          corData.homeUrl = setting.value;
-          break;
-        default:
-          break;
-      }
-      setting.name === 'corporation_name' && (corData.corporationName = setting.value);
-      setting.name === 'email_logo_url' && (corData.emailLogoUrl = setting.value);
-      setting.name === 'home_url' && (corData.homeUrl = setting.value);
-    });
+    let corData = yield driver.getCorporationInfo();
     let content = ejs.render(templates[templateName || 'default'], Object.assign(corData, data));
     return yield transporter.sendEmailAsync({
       to, subject: subject + '-' + corData.corporationName,
