@@ -17,7 +17,7 @@ const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProject
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
 const Quota = require('api/slardar/api/nova/quota');
-const sendEmailByTemplateAsync = drivers.email.sendEmailByTemplateAsync;
+const sendEmail = drivers.email.sendEmailByTemplateAsync;
 
 function Approve (app){
   this.app = app;
@@ -142,22 +142,11 @@ Approve.prototype = {
       yield user.update({status});
 
       res.send({user});
-      sendEmailByTemplateAsync(
-        user.email,
-        req.i18n.__(`api.register.${status === 'pass' ? 'regPassed' : 'regRefused'}`),
-        {
-          content: `
-          <p>用户名：${user.name}</p>
-          <p>姓名：${user.full_name}</p>
-          <p>电话：${user.phone}</p>
-          <p>邮箱：${user.email}</p>
-          <p>公司：${user.company}</p>
-          <p>${req.i18n.__('api.register.' + (status === 'pass' ? 'regPassed' : 'regRefused'))}</p>
-
-          <p>${req.body.message ? '理由：' + req.body.message : ''}</p>
-          `
-        }
-      );
+      const content = Object.assign({}, JSON.parse(JSON.stringify(user)));
+      const subject = req.i18n.__('api.register.' + (status === 'pass' ? 'regPassed' : 'regRefused'));
+      content.resultMessage = subject + (req.body.message ? '<br/>理由：' + req.body.message : '');
+      content.result = status === 'pass' ? '注册成功' : '注册失败';
+      sendEmail(user.email, subject, content, 'reg-result');
     }).catch(next);
   },
   createApproveQuota: (req, res, next) => {
@@ -184,7 +173,7 @@ Approve.prototype = {
       res.send('ok');
       let userDB = yield userModel.findOne({where: {id: userId}});
       if (userDB) {
-        sendEmailByTemplateAsync(
+        sendEmail(
           adminEmail, `${projectName}有新的配额申请`,
           {
             content: `
@@ -229,7 +218,7 @@ Approve.prototype = {
         if (status !== 'pass' && req.body.message) {
           content += `<p>理由：${req.body.message}</p>`;
         }
-        sendEmailByTemplateAsync(quota.user.email, subject, {content: content});
+        sendEmail(quota.user.email, subject, {content: content});
       }
     }).catch(next);
   },

@@ -19,7 +19,7 @@ const listRolesAsync = drivers.keystone.role.listRolesAsync;
 const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
 const assignRoleToUserOnProjectInSubtreeAsync = drivers.keystone.inherit.assignRoleToUserOnProjectInSubtreeAsync;
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
-const sendEmailByTemplateAsync = drivers.email.sendEmailByTemplateAsync;
+const sendEmail = drivers.email.sendEmailByTemplateAsync;
 
 function User(app) {
   this.app = app;
@@ -117,7 +117,6 @@ User.prototype = {
           return next(err);
         }
       }
-
       //GET ROLE project_owner
       let roles = yield listRolesAsync(req.admin.token, keystoneRemote, {});
       roles = roles.body.roles;
@@ -133,7 +132,7 @@ User.prototype = {
       });
 
       if (!roleId.project_owner) {
-        yield sendEmailByTemplateAsync(
+        yield sendEmail(
           adminEmail, '注册用户激活失败，请检查角色project_owner',
           {content: roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}
         );
@@ -162,7 +161,6 @@ User.prototype = {
           {user: {enabled: true, default_project_id: projectId}}
         )
       ];
-
       yield [
         userModel.update(
           {enabled: true, default_project_id: projectId},
@@ -234,26 +232,11 @@ User.prototype = {
       }
 
       const email = user.email;
-      try{
-        const token = yield base.func.emailTokenMemAsync(user, that.memClient);
-        const href = `${req.protocol}://${req.hostname}/auth/register/${req.enableRegisterApprove ? 'verify-email' : 'enable'}?user=${user.id}&token=${token}`;
-        let subject = __(`api.register.${req.enableRegisterApprove ? 'verifyEmail' : 'UserEnable'}`);
-        yield sendEmailByTemplateAsync(
-          email,
-          subject,
-          {
-            content: `
-            <p><a href="${href}">${subject}</a></p>
-            <p>${__('api.register.LinkFailedCopyTheHref')}</p>
-            <p>${href}</p>
-            `
-          }
-        );
-      } catch(e){
-        console.log(e);
-      }
+      const token = yield base.func.emailTokenMemAsync(user, that.memClient);
+      const href = `${req.protocol}://${req.hostname}/auth/register/${req.enableRegisterApprove ? 'verify-email' : 'enable'}?user=${user.id}&token=${token}`;
+      let subject = __(`api.register.verifyEmail`);
+      sendEmail(email, subject, {href}, 'verify-email');
       next({view: 'sendEmail', customRes: true, data: {email}});
-
     }).catch(next);
   },
   verifyEmail: function (req, res, next) {
@@ -280,7 +263,7 @@ User.prototype = {
       yield [
         userModel.update({status: 'pending'}, {where: {id: user.id}}),
         that.memClient.deleteAsync(user.id),
-        sendEmailByTemplateAsync(
+        sendEmail(
           adminEmail, '有新用户注册申请，请审批',
           {
             content: `
