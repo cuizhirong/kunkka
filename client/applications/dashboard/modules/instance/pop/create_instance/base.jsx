@@ -52,7 +52,7 @@ class ModalBase extends React.Component {
       bootableVolumes: [],
       bootableVolume: null,
       flavorUnfold: false,
-      flavors: [],
+      availableFlavors: [],
       flavor: null,
       cpus: [],
       cpu: null,
@@ -83,6 +83,11 @@ class ModalBase extends React.Component {
       disabledNumber: false,
       error: '',
       showError: false
+    };
+
+    // 保存所有的 flavors
+    this.store = {
+      flavors: []
     };
 
     ['initialize', 'onPaging', 'onChangeName',
@@ -150,8 +155,7 @@ class ModalBase extends React.Component {
       username = meta.os_username;
     }
 
-    let flavors = res.flavor;
-    this._flavors = flavors;
+    this.store.flavors = res.flavor;
 
     let image = selectDefault(images);
     let snapshot = selectDefault(snapshots);
@@ -190,7 +194,6 @@ class ModalBase extends React.Component {
       snapshot: snapshot,
       bootableVolumes: bootableVolumes,
       bootableVolume: bootableVolume,
-      flavors: flavors,
       networks: networks,
       network: selectDefault(networks),
       securityGroups: sg,
@@ -251,6 +254,41 @@ class ModalBase extends React.Component {
       disks: disks,
       disk: disk
     };
+  }
+
+  /**
+   * 根据镜像的 expected_size, min_disk 及 size 大小过滤掉磁盘
+   * 空间不够的配置项
+   * @param {Array} flavors 所有配置项
+   * @param {Object} image 当前选中的镜像
+   * @return {Array} 过滤后的配置数组
+   */
+  getAvailableFlavors(flavors, image) {
+    let minSize = 0;
+    let expectedSize = 0;
+    let minDisk = 0;
+    let imageSize = 0;
+    let availableFlavors = [];
+    if(image.expected_size) {
+      expectedSize = isNaN(Number(image.expected_size)) ? 0 : Number(image.expected_size);
+    }
+
+    if(image.min_disk) {
+      minDisk = isNaN(Number(image.min_disk)) ? 0 : Number(image.min_disk);
+    }
+
+    if(image.size) {
+      let sizeByBytes = isNaN(Number(image.size)) ? 0 : Number(image.size);
+      imageSize = Math.ceil(sizeByBytes / 1024 / 1024 / 1024);
+    }
+
+    minSize = Math.max.call(null, expectedSize, minDisk, imageSize);
+
+    availableFlavors = flavors.filter((flavor) => {
+      return flavor.disk >= minSize;
+    });
+
+    return availableFlavors;
   }
 
   findFlavor(flavors, cpu, ram, disk) {
@@ -326,6 +364,7 @@ class ModalBase extends React.Component {
 
   setFlavor(objImage, type, value) {
     let state = this.state;
+    let flavors = this.store.flavors;
     let cpus = state.cpus;
     let cpu = type === 'cpu' ? value : state.cpu;
     let rams = state.memories;
@@ -335,42 +374,33 @@ class ModalBase extends React.Component {
 
     if (objImage) {
       let flavor;
-      let expectedSize = 0;
-      if (objImage.expected_size || objImage.min_disk) {
-        if (objImage.expected_size) {
-          expectedSize = Number(objImage.expected_size);
-        }
-        if (objImage.min_disk) {
-          let minDisk = Number(objImage.min_disk);
-          expectedSize = minDisk > expectedSize ? minDisk : expectedSize;
-        }
-      }
-      let flavors = this._flavors.filter((ele) => ele.disk >= expectedSize);
+      let availableFlavors = this.getAvailableFlavors(flavors, objImage);
 
       let inArray = function(item, arr) {
         return arr.some((ele) => ele === item);
       };
 
       if (inArray(type, ['all'])) {
-        let cpuOpt = this.findCpu(flavors);
+        let cpuOpt = this.findCpu(availableFlavors);
         cpus = cpuOpt.cpus;
         cpu = cpuOpt.cpu;
       }
       if (inArray(type, ['all', 'cpu'])) {
-        let ramOpt = this.findRam(flavors, cpu);
+        let ramOpt = this.findRam(availableFlavors, cpu);
         rams = ramOpt.rams;
         ram = ramOpt.ram;
       }
       if (inArray(type, ['all', 'cpu', 'ram'])) {
-        let diskOpt = this.findDisk(flavors, cpu, ram);
+        let diskOpt = this.findDisk(availableFlavors, cpu, ram);
         disks = diskOpt.disks;
         disk = diskOpt.disk;
       }
       if (inArray(type, ['all', 'cpu', 'ram', 'disk'])) {
-        flavor = this.findFlavor(flavors, cpu, ram, disk);
+        flavor = this.findFlavor(availableFlavors, cpu, ram, disk);
       }
 
       this.setState({
+        availableFlavors: availableFlavors,
         flavor: flavor,
         cpus: cpus,
         cpu: cpu,
@@ -609,18 +639,18 @@ class ModalBase extends React.Component {
     });
   }
 
-  findDefaultFlavor(flavors, cpu, ram, disk) {
-    let defaultFlavor;
-    flavors.some((ele) => {
-      if (ele.vcpus === cpu && ele.ram === ram && ele.disk === disk) {
-        defaultFlavor = ele;
-        return true;
-      }
-      return false;
-    });
+  // findDefaultFlavor(flavors, cpu, ram, disk) {
+  //   let defaultFlavor;
+  //   flavors.some((ele) => {
+  //     if (ele.vcpus === cpu && ele.ram === ram && ele.disk === disk) {
+  //       defaultFlavor = ele;
+  //       return true;
+  //     }
+  //     return false;
+  //   });
 
-    return defaultFlavor;
-  }
+  //   return defaultFlavor;
+  // }
 
   findSelectedImage() {
     let state = this.state;
@@ -940,7 +970,7 @@ class ModalBase extends React.Component {
   onChangeFlavor(e) {
     let selected = e.target.value;
 
-    let flavors = this.state.flavors;
+    let flavors = this.state.availableFlavors;
 
     let item;
     flavors.some(ele => {
@@ -957,7 +987,7 @@ class ModalBase extends React.Component {
   }
 
   onTable(key, e) {
-    this.state.flavors.some(flavor => {
+    this.state.availableFlavors.some(flavor => {
       if (flavor.id === key && this.state.flavor.id !== key) {
         this.setState({
           flavor: flavor
@@ -971,7 +1001,7 @@ class ModalBase extends React.Component {
 
   renderFlavors(props, state) {
     let flavor = state.flavor;
-    let flavors = state.flavors;
+    let flavors = state.availableFlavors;
     let data = [];
 
     flavors.forEach(fl => {
