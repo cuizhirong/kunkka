@@ -57,7 +57,9 @@ module.exports = (app) => {
     const url = swiftHost + req.url.slice(12);
     const options = Url.parse(url);
     Object.assign(options, {method: 'get', headers, rejectUnauthorized: false});
-
+    if (!request[options.protocol]) {
+      return res.status(500).end();
+    }
     request[options.protocol].request(options, resGet => {
       if (resGet.statusCode === 200) {
         res.status(400).send({
@@ -81,35 +83,5 @@ module.exports = (app) => {
     }).on('error', errGet => {
       res.status(500).send(errGet);
     }).end();
-  });
-
-  app.use('/proxy-swift/', (req, res, next) => {
-    const swiftHost = req.swiftHost;
-
-    let url = swiftHost + req.url;
-    let headers = _.omit(req.headers, ['cookie']);
-    headers['X-Auth-Token'] = req.session.user.token;
-
-    let options = Url.parse(url);
-    options.rejectUnauthorized = false;
-    options.method = req.method;
-    options.headers = headers;
-
-    if (!request[options.protocol]) {
-      return res.status(500).end();
-    }
-
-    const swiftReq = request[options.protocol].request(options, (response) => {
-      res.set(response.headers);
-      res.status(response.statusCode);
-      response.pipe(res);
-      response.on('end', () => {
-        res.end();
-      });
-    });
-    req.pipe(swiftReq);
-    swiftReq.on('error', (e) => {
-      res.status(500).send(e);
-    });
   });
 };

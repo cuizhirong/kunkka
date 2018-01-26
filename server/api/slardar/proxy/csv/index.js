@@ -44,7 +44,14 @@ const extraRequests = {
     );
   }
 };
-
+/**
+ * /proxy/csv-field/os-hypervisors
+ * /proxy/csv-field/floatingips
+ * /proxy/csv-field/images
+ * /proxy/csv-field/servers
+ * /proxy/csv-field/volumes
+ * /proxy/csv-field/snapshots
+ */
 module.exports.fields = (req, res, next) => {
   let fields, path = req.path.slice(17);
   const __ = req.i18n.__.bind(req.i18n);
@@ -61,6 +68,15 @@ module.exports.fields = (req, res, next) => {
     });
   }
 };
+
+/**
+ * /proxy/csv/cinder/v2/{}/snapshots/detail
+ * /proxy/csv/cinder/v2/{}/volumes/detail
+ * /proxy/csv/nova/v2.1/{}/servers/detail
+ * /proxy/csv/nova/v2.1/{}/os-hypervisors/detail
+ * /proxy/csv/neutron/v2.0/floatingips
+ * /proxy/csv/glance/v2/images
+ */
 
 /**
  * all_tenants=1
