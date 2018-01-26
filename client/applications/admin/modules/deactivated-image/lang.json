@@ -1,0 +1,10 @@
+{
+  "en": {
+    "reactivate": "Reactivate",
+    "confirm_reactivate": "Are you sure you want to reactivate the following images?"
+  },
+  "zh-CN": {
+    "reactivate": "重新激活",
+    "confirm_reactivate": "您确定要重新激活以下镜像吗？"
+  }
+}

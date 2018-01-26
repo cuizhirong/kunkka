@@ -128,6 +128,7 @@ class Model extends React.Component {
     request.getList(forceUpdate).then((res) => {
       let _config = this.state.config;
       let data = res.filter(ele => !ele.image_type || ele.image_type !== 'snapshot');
+      data = data.filter((ele) => ele.status !== 'deactivated');
       let table = _config.table;
       table.data = data;
       table.loading = false;

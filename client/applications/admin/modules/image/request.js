@@ -83,7 +83,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/glance/v2/images?visibility=public&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
@@ -120,8 +120,8 @@ module.exports = {
     let url = '/proxy/csv/glance/v2/images' + getParams(fields);
     return download(url);
   },
-  getInstances: function() {
-    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1';
+  getInstances: function(imageId) {
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/detail?all_tenants=1&image=' + imageId;
     return fetch.get({
       url: url
     }).then(res => {
