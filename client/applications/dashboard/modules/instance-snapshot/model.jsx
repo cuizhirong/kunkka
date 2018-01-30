@@ -18,7 +18,7 @@ class Model extends ImageModel {
 
       let table = config.table;
       let data = res.filter((ele) => {
-        return ele.image_type === 'snapshot';
+        return ele.image_type === 'snapshot' && (ele.owner === HALO.user.projectId || ele.owner_id === HALO.user.projectId);
       });
       table.data = data;
       table.loading = false;
