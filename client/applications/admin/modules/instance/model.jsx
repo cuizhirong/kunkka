@@ -580,7 +580,7 @@ class Model extends React.Component {
     switch (key) {
       case 'migrate':
         migratePop({
-          row: rows[0],
+          rows: rows,
           hostTypes: this.stores.hostTypes
         }, null, function(res) {
           refresh();
@@ -667,13 +667,16 @@ class Model extends React.Component {
   btnListRender(rows, btns) {
     let single = rows.length === 1 ? rows[0] : null;
     btns.export_csv.disabled = false;
+    let cantMigrate = rows.some((item) => {
+      return item.status.toLowerCase() === 'error' || item.status.toLowerCase() === 'error_deleting';
+    }) || rows.length === 0;
 
     for (let key in btns) {
       if(single) {
         let itemStatus = single.status.toLowerCase();
         switch (key) {
           case 'migrate':
-            btns[key].disabled = (itemStatus !== 'error' && itemStatus !== 'error_deleting') ? false : true;
+            btns[key].disabled = cantMigrate;
             break;
           case 'power_on':
             btns[key].disabled = itemStatus === 'shutoff' ? false : true;
@@ -696,7 +699,11 @@ class Model extends React.Component {
         }
       } else {
         if (key !== 'refresh' && key !== 'export_csv') {
-          btns[key].disabled = true;
+          if(key === 'migrate' && !cantMigrate) {
+            btns[key].disabled = false;
+          } else {
+            btns[key].disabled = true;
+          }
         }
       }
 
