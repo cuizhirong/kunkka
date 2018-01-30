@@ -31,7 +31,8 @@ class Model extends React.Component {
     });
 
     this.stores = {
-      urls: []
+      urls: [],
+      enableRatelimit: HALO.settings.enable_floatingip_bandwidth ? true : false
     };
   }
 
@@ -73,6 +74,12 @@ class Model extends React.Component {
   tableColRender(columns) {
     columns.map((column) => {
       switch(column.key) {
+        case 'bandwidth':
+          column.render = (col, item) => {
+            let rateLimit = Number(item.fipratelimit / 1024);
+            return isNaN(rateLimit) ? __.unlimited : (rateLimit + ' Mbps');
+          };
+          break;
         default:
           break;
       }
@@ -94,9 +101,9 @@ class Model extends React.Component {
 
   getSingle(id) {
     this.clearState();
-
     let table = this.state.config.table;
-    request.getFloatingIPByID(id).then((res) => {
+
+    request.getFloatingIPByID(id, this.stores.enableRatelimit).then((res) => {
       if (res.floatingip) {
         table.data = [res.floatingip];
       } else {
@@ -113,10 +120,10 @@ class Model extends React.Component {
 
   getList() {
     this.clearState();
-
     let table = this.state.config.table;
     let pageLimit = localStorage.getItem('page_limit');
-    request.getList(pageLimit).then((res) => {
+
+    request.getList(pageLimit, this.stores.enableRatelimit).then((res) => {
       table.data = res.floatingips;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
@@ -129,7 +136,7 @@ class Model extends React.Component {
 
   getNextListData(url, refreshDetail) {
     let table = this.state.config.table;
-    request.getNextList(url).then((res) => {
+    request.getNextList(url, this.stores.enableRatelimit).then((res) => {
       if(res.floatingip) {
         table.data = [res.floatingip];
       } else if(res.floatingips) {
@@ -156,7 +163,6 @@ class Model extends React.Component {
       config: newConfig
     }, () => {
       this.stores.urls.push(currentUrl.split('/v2.0/')[1]);
-
       let detail = this.refs.dashboard.refs.detail,
         params = this.props.params;
       if(detail && refreshDetail && params.length > 2) {
@@ -333,6 +339,9 @@ class Model extends React.Component {
       content: item.fixed_ip_address ?
         item.fixed_ip_address : '-'
     }, {
+      title: __.bandwidth,
+      content: isNaN((item.fipratelimit / 1024)) ? __.unlimited : (item.fipratelimit / 1024 + ' Mbps')
+    }, {
       title: __.related + __.instance,
       content: item.server_id ?
         <span>
@@ -407,7 +416,7 @@ class Model extends React.Component {
         this.clearState();
 
         let table = this.state.config.table;
-        request.getFilterList(data).then((res) => {
+        request.getFilterList(data, this.stores.enableRatelimit).then((res) => {
           table.data = res.floatingips;
           this.setPagination(table, res);
           this.updateTableData(table, res._url);
