@@ -83,7 +83,7 @@ class Input extends React.Component {
         {
           props.tip && state.tipContent ?
             <div className="tip-bottom">
-              <Tooltip content={state.tipContent} width={changeWidth()} type={state.error ? 'error' : ''} shape="top-left" hide={!state.showTip || state.pass} />
+              <Tooltip content={state.tipContent} width={changeWidth()} type={'error'} shape="top-left" hide={!state.showTip || state.pass} />
             </div>
           : null
         }
