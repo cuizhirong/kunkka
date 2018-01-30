@@ -1,0 +1,121 @@
+@import "../../../../../style/theme.less";
+@dynamic_time_color: #616F7E;
+@input_border_color: #f1f1f2;
+@input_border_hover_color: #00afc8;
+@obj-tip-error-color: #fff5f5;
+@obj-tip-error-border-color: #e05c69;
+#modal-container {
+  .halo-com-modal-templory-url {
+    .calendar-wrapper {
+      padding-bottom: 16px;
+      .date {
+        padding-right: 10px;
+        display: inline-block;
+        .calendar-box {
+          padding-left: 10px;
+        }
+      }
+      .hours {
+        padding-left: 20px;
+        display: inline-block;
+        .expire-dropdown-btn {
+          display: inline-block;
+          width: 160px;
+          border: 1px solid @input_border_color;
+          margin-left: 10px;
+          border-radius: 2px;
+          input {
+            padding: 4px 0 4px 10px;
+            border: none;
+
+          }
+          i {
+            font-size: 14px;
+            padding-top: 8px;
+            float: right;
+            padding-right: 10px;
+            color: @input_border_color;
+            &:hover {
+              cursor: pointer;
+            }
+          }
+          &:hover {
+            border: 1px solid @input_border_hover_color;
+          }
+        }
+      }
+    }
+    .translate-date {
+      height: 20px;
+      .can-save {
+        padding-right: 10px;
+      }
+      .dynamic-time {
+        color: @dynamic_time_color;
+      }
+    }
+    .secret_key {
+      padding-bottom: 16px;
+      input {
+        width: 365px;
+        margin-left: 10px;
+      }
+    }
+    .obj-tip-error {
+      margin: 15px 0;
+      padding: 18px 20px;
+      line-height: 18px;
+      border-radius: 2px;
+      position: relative;
+      background-color: @obj-tip-error-color;
+      border: 1px solid @obj-tip-error-border-color;
+      .obj-tip-icon {
+        display: inline-block;
+        vertical-align: top;
+        strong {
+          margin-right: 5px;
+          font-size: 14px;
+          line-height: 14px;
+          color: @obj-tip-error-border-color;
+          i {
+            margin-right: 6px;
+          }
+        }
+      }
+      .obj-tip-content {
+        display: inline-block;
+      }
+    }
+  }
+}
+.defined-dropdown {
+  width: 160px;
+  background-color: #fff;
+  border: none;
+  max-height: 212px;
+  color: #26303D;
+  overflow-y: auto;
+  margin-top: -1px;
+  z-index: 999;
+  border: 1px solid #E3E4E5;
+  box-shadow: 0 2px 4px 0 rgba(234,234,234,0.50);
+  border-radius: 2px;
+  border-top: none;
+  .dropdown-item {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    height: 30px;
+    padding: 0 15px;
+    background-color: #fff;
+    z-index: 22;
+    border: none;
+    color: #26303D;
+    &:hover {
+      cursor: pointer;
+      background-color: #F6F6F6;
+    }
+  }
+}
+

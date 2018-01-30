@@ -2,6 +2,8 @@ const React = require('react');
 const {Modal, Button} = require('client/uskin/index');
 const __ = require('locale/client/dashboard.lang.json');
 const unitConverter = require('client/utils/unit_converter');
+const request = require('../../request');
+const browserMD5 = require('browser-md5-file');
 
 class ModalBase extends React.Component {
   constructor(props) {
@@ -25,7 +27,8 @@ class ModalBase extends React.Component {
       currentFile: props.obj && props.obj.name,
       uploadData: {},
       showError: false,
-      nameConflict: __.name_conflict
+      nameConflict: __.name_conflict,
+      errorAddress: false
     };
 
     ['onConfirm', 'renderTabs', 'onCancel', 'requestData', 'closePop'].forEach(f => {
@@ -175,7 +178,9 @@ class ModalBase extends React.Component {
 
   getAddress(e) {
     this.setState({
-      catalogueAddress: e.target.value
+      catalogueAddress: e.target.value,
+      disabled: false,
+      errorAddress: false
     });
   }
 
@@ -185,24 +190,55 @@ class ModalBase extends React.Component {
       state = this.state;
     breadcrumb = props.breadcrumb.join('/');
     let obj = this.props.obj;
+    let addressIndex = state.catalogueAddress.indexOf('/');
+    let address = state.catalogueAddress.slice(0, addressIndex);
     if(this.props.obj) {
       this.requestData('/proxy-swift/' + breadcrumb + '/' + obj.name + '?replace=1', this.state.files[0]).then(() => {
         this.closePop();
       });
     } else {
-      let urlfolder = state.catalogueType === 'current' ? breadcrumb : state.catalogueAddress;
       let that = this;
       let files = that.state.files;
-
-      Promise.all(files.map((file, index) => that.requestData('/proxy-swift/' + urlfolder + '/' + file.name, file))).then(() => {
-        that.closePop();
-      }).catch((err) => {
-        that.setState({
-          showError: true,
-          nameConflict: JSON.parse(err.responseText).message,
-          visible: true
+      if(state.catalogueType !== 'current') {
+        //指定目录
+        request.listBuckets().then(res => {
+          res.forEach(item => {
+            if(item.name === address) {
+              that.setState({
+                errorAddress: false,
+                disabled: true
+              });
+              Promise.all(files.map((file, index) => that.requestData('/proxy-swift/' + state.catalogueAddress + '/' + file.name, file))).then(() => {
+                that.closePop();
+              }).catch((err) => {
+                that.setState({
+                  showError: true,
+                  nameConflict: JSON.parse(err.responseText).message,
+                  visible: true
+                });
+              });
+            } else {
+              that.setState({
+                errorAddress: true,
+                disabled: true
+              });
+            }
+          });
         });
-      });
+      } else {
+        //当前目录
+        Promise.all(files.map((file, index) => {
+          that.requestData('/proxy-swift/' + breadcrumb + '/' + file.name, file).then(() => {
+            that.closePop();
+          }).catch((err) => {
+            that.setState({
+              showError: true,
+              nameConflict: JSON.parse(err.responseText).message,
+              visible: true
+            });
+          });
+        }));
+      }
     }
   }
 
@@ -217,57 +253,60 @@ class ModalBase extends React.Component {
     let that = this;
     let ot;
     return new Promise(function(resolve, reject) {
-      let xhr = new XMLHttpRequest();
-      let oloaded;
-      xhr.open('PUT', url, true);
-      that.setState({
-        disabled: true
-      });
-      xhr.upload.onprogress = function progressFunction(evt) {
-        let uploadProgress = document.getElementById('uploadProgress' + file.id);
-        let progressBar = document.getElementById('progressBar' + file.id);
-        let percentageDiv = document.getElementById('percentage' + file.id);
-        uploadProgress.style.display = 'flex';
-        uploadProgress.style['margin-bottom'] = '8px';
-        if (evt.lengthComputable) {
-          progressBar.max = evt.total;
-          progressBar.value = evt.loaded;
-          percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
-        }
-        let time = document.getElementById('time' + file.id);
-        let nt = new Date().getTime();
-        let pertime = (nt - ot) / 1000;
-        ot = new Date().getTime() - 1;
+      browserMD5(file, function(err, md5hash) {
+        let xhr = new XMLHttpRequest();
+        let oloaded;
+        xhr.open('PUT', url, true);
+        xhr.setRequestHeader('ETag', md5hash);
+        xhr.upload.onprogress = function progressFunction(evt) {
+          let uploadProgress = document.getElementById('uploadProgress' + file.id);
+          let progressBar = document.getElementById('progressBar' + file.id);
+          let percentageDiv = document.getElementById('percentage' + file.id);
+          uploadProgress.style.display = 'flex';
+          uploadProgress.style['margin-bottom'] = '8px';
+          if (evt.lengthComputable) {
+            progressBar.max = evt.total;
+            progressBar.value = evt.loaded;
+            percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + '%';
+          }
+          let time = document.getElementById('time' + file.id);
+          let nt = new Date().getTime();
+          let pertime = (nt - ot) / 1000;
+          ot = new Date().getTime() - 1;
 
-        let perload = evt.loaded - oloaded;
-        oloaded = evt.loaded;
-        //上传速度计算
-        let speed = perload / pertime;
-        let bspeed = speed;
-        let units = 'b/s';//单位名称
-        if(speed / 1024 > 1){
-          speed = speed / 1024;
-          units = 'kb/s';
-        }
-        if(speed / 1024 > 1){
-          speed = speed / 1024;
-          units = 'Mb/s';
-        }
-        speed = speed.toFixed(1);
-        let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
-        time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
-        if (bspeed === 0) {
-          time.innerHTML = __.upload_canael;
-        }
-      };
-      xhr.onload = function uploadComplete(evt) {
-        if(xhr.readyState === 4 && xhr.status === 201 && that.state.files.length < 6) {
-          resolve(xhr.responseText);
-        } else {
-          reject(xhr);
-        }
-      };
-      xhr.send(file);
+          let perload = evt.loaded - oloaded;
+          oloaded = evt.loaded;
+          //上传速度计算
+          let speed = perload / pertime;
+          let bspeed = speed;
+          let units = 'b/s';//单位名称
+          if(speed / 1024 > 1){
+            speed = speed / 1024;
+            units = 'kb/s';
+          }
+          if(speed / 1024 > 1){
+            speed = speed / 1024;
+            units = 'Mb/s';
+          }
+          speed = speed.toFixed(1);
+          let resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+          time.innerHTML = __.speed + speed + units + __.resttime + resttime + 's';
+          if (bspeed === 0) {
+            time.innerHTML = __.upload_canael;
+          }
+        };
+        that.setState({
+          disabled: true
+        });
+        xhr.onload = function uploadComplete(evt) {
+          if(xhr.readyState === 4 && xhr.status === 201 && that.state.files.length < 6) {
+            resolve(xhr.responseText);
+          } else {
+            reject(xhr);
+          }
+        };
+        xhr.send(file);
+      });
     });
   }
 
@@ -288,6 +327,7 @@ class ModalBase extends React.Component {
           <div className={'catalogue-type' + (props.obj !== null ? ' hide' : '') }><p>{__.catalogue_address}</p>
             <div className={state.catalogueType === 'current' ? '' : 'hide'}>{breadcrumb}</div>
             <input ref="catalogueType" className={state.catalogueType === 'current' ? 'hide' : ''} type="text" onChange={this.getAddress.bind(this)}/>
+            <div className={'address-error' + (state.catalogueType === 'current' ? ' hide' : '')}>{__.address_error}</div>
           </div>
           <div className={'file-name' + (props.obj !== null ? '' : ' hide') }><p>{__.file_name}<span>{state.currentFile}</span></p></div>
           <p className="select-file">{__.select_file}</p>
@@ -321,6 +361,16 @@ class ModalBase extends React.Component {
               );
             }) : null}
           </ul>
+          {state.errorAddress ? <div className="tip obj-tip-error">
+            <div className="obj-tip-icon">
+              <strong>
+                <i className="glyphicon icon-status-warning" />
+              </strong>
+            </div>
+            <div className="obj-tip-content" style={{width: 320 + 'px'}}>
+              {__.error_address_tip}
+            </div>
+          </div> : null}
           <div className={'tip obj-tip-warning' + (props.obj !== null ? ' hide' : '') }>
             <div className="obj-tip-icon">
               <strong>

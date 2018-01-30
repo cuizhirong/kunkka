@@ -1,5 +1,5 @@
 const React = require('react');
-const {Modal, Button} = require('client/uskin/index');
+const {Modal, Button, Table} = require('client/uskin/index');
 const request = require('../../request');
 const __ = require('locale/client/dashboard.lang.json');
 const getErrorMessage = require('../../../../utils/error_message');
@@ -8,46 +8,102 @@ class ModalBase extends React.Component {
   constructor(props) {
     super(props);
 
-    let accessTypes = [{
-      value: __.private,
-      key: 'private'
-    }, {
-      value: __.public,
-      key: 'public'
-    }];
-
     this.state = {
-      disabled: false,
+      disabled: true,
       visible: true,
-      accessTypes: accessTypes,
-      accessType: accessTypes[0].key,
       nameValue: '',
       error: '',
       showError: false,
-      delayed: true
+      metaData: [],
+      addMetaData: [],
+      removeMetaData: []
     };
 
-    ['onConfirm', 'onCancel'].forEach(f => {
+    ['onConfirm', 'onCancel', 'onAddUserToTable', 'renderModifyMetaData'].forEach(f => {
       this[f] = this[f].bind(this);
     });
   }
 
   componentWillMount() {
-    request.getBucketHeaderType({
-      Bucket: this.props.obj.name
-    }).then(rawItem => {
+    let singleData = {}, id;
+    let addMetaData = this.state.addMetaData;
+    let metaData = this.state.metaData;
+    request.containerHeaders({
+      name: this.props.obj.name
+    }).then((item) => {
+      for(let key in item) {
+        let metaKey = key.substr('x-container-meta-'.length, key.length);
+        id = metaKey + Math.random();
+        singleData = {
+          key: metaKey,
+          id: id,
+          value: item[key],
+          op: <i onClick={this.removeUserData.bind(this, metaKey)} className="glyphicon icon-remove remove-user-from-project"></i>
+        };
+
+        let metaValue = item[key];
+        metaData.push(singleData);
+        addMetaData.push({metaKey, metaValue});
+      }
       this.setState({
-        accessType: rawItem.headerType === '.r:*' ? 'publich' : 'private'
-      });
-      this.setState({
-        delayed: false
+        metaData: metaData,
+        addMetaData: addMetaData
       });
     });
   }
 
-  onChangeAccessTypes(key, e) {
+  onAddUserToTable() {
+    let metaData = this.state.metaData;
+    let addMetaData = this.state.addMetaData;
+    let metaKey = this.refs.metaKey.value;
+    let metaValue = this.refs.metaValue.value;
+    let singleData = {}, id;
+    if (metaKey) {
+      id = metaKey + Math.random();
+      singleData = {
+        key: metaKey,
+        id: id,
+        value: metaValue,
+        op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+      };
+      addMetaData.push({metaKey, metaValue});
+      metaData.push(singleData);
+      this.refs.btn.setState({
+        disabled: false
+      });
+      this.setState({
+        metaData: metaData,
+        addMetaData: addMetaData
+      }, () => {
+        this.refs.metaKey.value = '';
+        this.refs.metaValue.value = '';
+      });
+    }
+  }
+
+  removeUserData(id) {
+    let metaData = this.state.metaData;
+    let addMetaData = this.state.addMetaData;
+    let removeMetaData = this.state.removeMetaData;
+    metaData.forEach((data, index) => {
+      if (data.key === id) {
+        metaData.splice(index, 1);
+        removeMetaData.push(data.key);
+      }
+    });
+    addMetaData.forEach((item, index) => {
+      if(item.metaKey === id) {
+        addMetaData.splice(index, 1);
+      }
+    });
+
     this.setState({
-      accessType: key
+      metaData: metaData,
+      addMetaData: addMetaData,
+      removeMetaData: removeMetaData
+    });
+    this.refs.btn.setState({
+      disabled: false
     });
   }
 
@@ -58,23 +114,36 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    let params = {};
     let that = this;
-    params = {
-      Bucket: this.props.obj.name,
-      type: this.state.accessType === 'public' ? 'public' : 'private'
+    let metaArr = [];
+    let deleteMetaArr = [];
+    let params = {
+      Bucket: this.props.obj.name
     };
+    this.state.metaData.forEach(item => {
+      let metaKeys = 'X-Container-Meta-' + item.key;
+      params[metaKeys] = item.value;
+      metaArr.push(metaKeys);
+    });
 
-    request.modifyBucket(params).then((res) => {
-      that.setState({
-        visible: false
-      });
-      that.props.callback && that.props.callback();
-    }).catch((err) => {
-      let errorTip = getErrorMessage(err);
-      this.setState({
-        showError: true,
-        error: errorTip
+    this.state.removeMetaData.forEach(i => {
+      let deleteMetaKeys = 'X-Remove-Container-Meta-' + i;
+      params[deleteMetaKeys] = i.value;
+      deleteMetaArr.push(deleteMetaKeys);
+    });
+
+    request.modifyBucket(params, deleteMetaArr).then((res) => {
+      request.modifyBucket(params, metaArr).then((_res) => {
+        that.setState({
+          visible: false
+        });
+        that.props.callback && that.props.callback();
+      }).catch((err) => {
+        let errorTip = getErrorMessage(err);
+        this.setState({
+          showError: true,
+          error: errorTip
+        });
       });
     });
     this.refs.btn.setState({
@@ -82,45 +151,46 @@ class ModalBase extends React.Component {
     });
   }
 
+  renderModifyMetaData(key) {
+    let state = this.state;
+    let columns = [{
+      title: __.key,
+      key: 'key',
+      dataIndex: 'key'
+    }, {
+      title: __.value,
+      key: 'value',
+      dataIndex: 'value'
+    }, {
+      title: __.operation,
+      key: 'op',
+      dataIndex: 'op'
+    }];
+
+    return <div className="meta-data">
+      <div className="meta-header">
+        <input ref="metaKey" className="key-input" placeholder={__.key} type="text" />
+        <input ref="metaValue" className="key-input" placeholder={__.value} type="text" />
+        <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
+      </div>
+      <div className="meta-content">
+        <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
+      </div>
+    </div>;
+  }
+
   render() {
     let props = this.props,
       state = this.state;
-
     return (
-       <Modal ref="modal" {...props} title={__.edit + __.bucket} visible={state.visible} width={540}>
+       <Modal ref="modal" {...props} title={__.modify + __.meta_data} visible={state.visible} width={540}>
         <div className="modal-bd halo-com-modal-modify-bucket">
-          <div className="file-name">
-            <p>{__.container_name}<span>{props.obj.name}</span></p>
-          </div>
-          {state.delayed ? null : <div ref="type" className="object-row row-tab row-tab-single" key="types">
-            <div className="object-modal-label">
-              {__.container_access}
-            </div>
-            <div className="object-modal-data">
-              {
-                state.accessTypes.map((ele) =>
-                  <a key={ele.key}
-                    className={ele.key === state.accessType ? 'selected' : ''}
-                    onClick={ele.key === state.accessType ? null : this.onChangeAccessTypes.bind(this, ele.key)}>
-                    {ele.value}
-                  </a>
-                )
-              }
-            </div>
-          </div>}
-          <div className="tip obj-tip-warning">
-            <div className="obj-tip-icon">
-              <strong>
-                <i className="glyphicon icon-status-warning" />
-              </strong>
-            </div>
-            <div className="obj-tip-content" style={{width: 370 + 'px'}}>
-              {__.container_tip}
-            </div>
+          <div className="modal-content">
+            {this.renderModifyMetaData(state.displayKey)}
           </div>
         </div>
-        <div className="modal-ft halo-com-modal-mofify-bucket">
-          <Button ref="btn" value={__.edit} disabled={state.disabled} onClick={this.onConfirm} />
+        <div className="modal-ft halo-com-modal-create-bucket">
+          <Button ref="btn" value={__.modify} disabled={state.disabled} onClick={this.onConfirm} />
           <Button value={__.cancel} onClick={this.onCancel} type="cancel" />
         </div>
       </Modal>

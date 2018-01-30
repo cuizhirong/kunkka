@@ -118,6 +118,7 @@
     flex: 1;
     overflow: hidden;
     position:relative;
+    overflow-y: auto;
     .table-with-no-data {
       flex: 1;
       p {
@@ -129,7 +130,6 @@
       flex: 1;
       overflow: hidden;
       margin-bottom: 20px;
-      height: 100%;
       i.glyphicon {
         margin-right: 4px;
         font-size: 16px;
@@ -153,6 +153,21 @@
     }
     .table-mini {
       margin-bottom: 0;
+    }
+    .pagination-box {
+      display: flex;
+      justify-content: flex-end;
+      flex: 1;
+      height: 30px;
+      max-height: 30px;
+      min-height: 30px;
+      margin-bottom: 20px;
+      select {
+        width: 30px;
+        height: 14px;
+        margin-left: 8px;
+        margin-right: 4px;
+      }
     }
   }
 }

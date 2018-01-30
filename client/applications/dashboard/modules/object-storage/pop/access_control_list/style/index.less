@@ -1,0 +1,206 @@
+@import "../../../../../style/theme.less";
+@strong_color: @color_delete;
+@name_error_color: #626f7e;
+@obj-tip-warning-color: #fff7ec;
+@obj-tip-error-color: #fff5f5;
+@obj-tip-warning-border-color: #f2994b;
+@obj-tip-error-border-color: #e05c69;
+@rectangular-tip-color: #616F7E;
+@help-hover-color: #01AFC9;
+@white-color: #FFFFFF;
+@every-bg-color: #FCFCFC;
+
+
+.modal-bd.halo-com-modal-access_control_list {
+  min-height: 350px;
+  padding: 5px 40px 15px 40px;
+  box-sizing: border-box;
+  .modal-content {
+    .public-access {
+      .everyone {
+        height: 24px;
+        line-height: 24px;
+        margin-bottom: 0;
+        padding-left: 15px;
+        color: @name_error_color
+      }
+      .everyone-read, .everyone-write {
+        display: inline-block;
+        width: 194px;
+        height: 50px;
+        background: @every-bg-color;
+        border-radius: 2px;
+        position: relative;
+        input {
+          margin: 17px 10px 17px 20px;
+        }
+        span {
+          position: absolute;
+          top: 17px;
+          color: @name_error_color;
+        }
+        .glyphicon {
+          position: absolute;
+          top: 20px;
+          left: 162px;
+          cursor: pointer;
+          color: @name_error_color;
+          p {
+            display: none;
+          }
+          &:hover {
+            color: @help-hover-color;
+            p {
+              display: block;
+              position: absolute;
+              top: -86px;
+              left: -54px;
+              width: 106px;
+              height: 63px;
+              background: @white-color;
+              color: @rectangular-tip-color;
+              box-shadow: 0 0 8px 2px rgba(234,234,234,0.50);
+              border-radius: 2px;
+              padding: 10px;
+              box-sizing: border-box;
+              line-height: 16px;
+              .rectangular {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                background: @white-color;
+                position: absolute;
+                left: 53px;
+                top: 53px;
+                transform:rotate(45deg);
+              }
+            }
+          }
+        }
+      }
+      .everyone-read {
+        margin-right: 72px;
+      }
+      .obj-tip-warning {
+        padding: 18px 20px;
+        line-height: 18px;
+        border-radius: 2px;
+        position: relative;
+        background-color: @obj-tip-warning-color;
+        border: 1px solid @obj-tip-warning-border-color;
+        margin-top: 8px;
+        .obj-tip-icon {
+          display: inline-block;
+          vertical-align: top;
+          strong {
+            margin-right: 5px;
+            font-size: 14px;
+            line-height: 14px;
+            color: @obj-tip-warning-border-color;
+            i {
+              margin-right: 6px;
+            }
+          }
+        }
+        &.hide {
+          display: none;
+        }
+        .obj-tip-content {
+          display: inline-block;
+        }
+      }
+    }
+    .other-account {
+      height: auto;
+      &.hide {
+        display: none;
+      }
+      .other-account-header {
+        width: 100%;
+        height: 32px;
+        margin-top: 10px;
+        display: flex;
+        .projectId-input {
+          width: 170px;
+          margin-right: 20px;
+        }
+        .permission {
+          width: 74px;
+          height: 32px;
+          line-height: 32px;
+          margin: 0;
+          margin-right: 10px;
+          position: relative;
+          input {
+            position: relative;
+            top: 4px;
+          }
+          span {
+            padding-left: 4px;
+            color: @name_error_color;
+          }
+          .glyphicon {
+            position: absolute;
+            left: 60px;
+            top: 10px;
+            cursor: pointer;
+            color: @name_error_color;
+            p {
+              display: none;
+            }
+            &:hover {
+              color: @help-hover-color;
+              p {
+                display: block;
+                position: absolute;
+                top: -76px;
+                left: -58px;
+                width: 106px;
+                height: 63px;
+                background: @white-color;
+                color: @rectangular-tip-color;
+                box-shadow: 0 0 8px 2px rgba(234,234,234,0.50);
+                border-radius: 2px;
+                padding: 10px;
+                box-sizing: border-box;
+                line-height: 16px;
+                .rectangular {
+                  display: inline-block;
+                  width: 15px;
+                  height: 15px;
+                  background: @white-color;
+                  position: absolute;
+                  left: 53px;
+                  top: 53px;
+                  transform:rotate(45deg);
+                }
+              }
+            }
+          }
+        }
+      }
+      .other-account-content {
+        margin-top: 10px;
+        width: 100%;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .table {
+          .table-body {
+            .row {
+              .remove-user-from-project {
+                font-size: 16px;
+                font-weight: bold;
+                color: @strong_color;
+                cursor: pointer;
+                &:hover {
+                  color: darken(@strong_color, 10%);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

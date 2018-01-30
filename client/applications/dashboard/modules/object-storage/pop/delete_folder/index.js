@@ -7,13 +7,13 @@ const getStatusIcon = require('../../../../utils/status_icon');
 function pop(obj, objj, parent, callback) {
   let deleteName = obj[0].name.split('/');
   let deleteShow = deleteName[deleteName.length - 2];
-  let folderLength = obj.length > 1;
+  let folderLength = obj.length > 0;
   config.fields[1].hide = !folderLength;
   config.btn.disabled = folderLength;
   config.fields[0].data = [obj[0]];
   config.fields[0].data[0].name = deleteShow;
   config.fields[0].getStatusIcon = getStatusIcon;
-  config.fields[0].number = obj.length;
+  config.fields[0].number = obj.length === 1 ? 0 : obj.length;
   let props = {
     __: __,
     parent: parent,
