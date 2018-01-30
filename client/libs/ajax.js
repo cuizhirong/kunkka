@@ -15,7 +15,7 @@ let c = {
     json: 'application/json, text/javascript',
     text: 'text/plain'
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'COPY']
 };
 
 module.exports = (function(m) {

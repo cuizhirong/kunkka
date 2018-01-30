@@ -1,0 +1,112 @@
+@import "../../../style/theme.less";
+@strong_color: @color_delete;
+@obj-tip-error-color: #fff5f5;
+@obj-tip-error-border-color: #e05c69;
+.meta-data {
+  height: 350px;
+  overflow: hidden;
+  &.hide {
+    display: none;
+  }
+  .meta-header {
+    width: 100%;
+    height: 32px;
+    margin-top: 10px;
+    display: flex;
+    .dropdown-btn {
+      width: 186px;
+      box-sizing: border-box;
+      border: 1px solid #e3e4e5;
+      border-radius: 2px;
+      input {
+        padding: 4px 15px;
+        border: none;
+      }
+      i {
+        font-size: 14px;
+        padding-top: 8px;
+        float: right;
+        padding-right: 10px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .defined-dropdown, .metadata-dropdown {
+        background-color: #fff;
+        border: 1px solid #e3e4e5;
+        border-top: none;
+        max-height: 300px;
+        color: #26303D;
+        overflow-y: auto;
+        margin-left: -1px;
+        .dropdown-item {
+          width: 100%;
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          height: 30px;
+          padding: 0 15px;
+          background-color: #fff;
+          z-index: 22;
+          border: none;
+          color: #26303D;
+          &:hover {
+            cursor: pointer;
+            background-color: #F6F6F6;
+          }
+        }
+      }
+      .key-input {
+        width: 170px;
+        margin-right: 10px;
+      }
+    }
+  }
+  .meta-content {
+    margin-top: 10px;
+    width: 100%;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .table {
+      .table-body {
+        .row {
+          .remove-user-from-project {
+            font-size: 16px;
+            font-weight: bold;
+            color: @strong_color;
+            cursor: pointer;
+            &:hover {
+              color: darken(@strong_color, 10%);
+            }
+          }
+        }
+      }
+    }
+  }
+  .obj-tip-error {
+    margin: 15px 0;
+    padding: 18px 20px;
+    line-height: 18px;
+    border-radius: 2px;
+    position: relative;
+    background-color: @obj-tip-error-color;
+    border: 1px solid @obj-tip-error-border-color;
+    .obj-tip-icon {
+      display: inline-block;
+      vertical-align: top;
+      strong {
+        margin-right: 5px;
+        font-size: 14px;
+        line-height: 14px;
+        color: @obj-tip-error-border-color;
+        i {
+          margin-right: 6px;
+        }
+      }
+    }
+    .obj-tip-content {
+      display: inline-block;
+    }
+  }
+}

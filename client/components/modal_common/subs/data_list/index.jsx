@@ -45,7 +45,7 @@ class DataList extends React.Component {
                 : null
               }
               {
-                props.hasNumber && props.number > 0 ?
+                props.hasNumber && props.number >= 0 ?
                   <span className="item-number">
                     {' ( ' + __.folder_number_tip}
                     <strong>{props.number}</strong>

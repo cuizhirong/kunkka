@@ -15,6 +15,12 @@ const objDesc = require('./pop/obj_desc/index.jsx');
 const DropdownButton = require('./pop/dropdown_button/index.jsx');
 const Button = require('./pop/delete_button/index.jsx');
 const deleteFolder = require('./pop/delete_folder/index');
+const copyObj = require('./pop/copy_obj/index');
+const modifyMetaData = require('./pop/modify_metadata/index');
+const expiresTime = require('./pop/expires_time/index');
+const temporaryUrl = require('./pop/temporary_url/index');
+const accessControlList = require('./pop/access_control_list/index');
+
 
 const config = require('./config.json');
 const bucketConfig = require('./bucket_config.json');
@@ -61,11 +67,13 @@ class Model extends React.Component {
       containerCount: '',
       bytesUsed: '',
       accessTypes: accessTypes,
-      accessType: accessTypes[0].key
+      accessType: accessTypes[0].key,
+      copyurl: []
     };
 
     this.stores = {
-      rows: []
+      rows: [],
+      name: []
     };
 
     ['onInitialize', 'onAction', 'sortByName', 'onClickBucket', 'onClickBreadcrumb', 'getDifficon', 'getDiffColor', 'copyArr', 'updateBuckets'].forEach((m) => {
@@ -282,7 +290,6 @@ class Model extends React.Component {
     let definedbtns = btnConfig.btns;
     let deletebtn = btnConfig.btn;
     this.sortByName();
-
     let renderName = function(col, item, i) {
       switch(item.type) {
         case 'bucket':
@@ -304,6 +311,18 @@ class Model extends React.Component {
       }
     };
 
+    let renderExpireTime = (col, item, i) => {
+      if(item.type === 'object') {
+        switch(item.residueDay) {
+          case 0:
+            return (<div><i className="glyphicon icon-status-warning" style={{color: '#F76260', 'fontSize': 14 + 'px'}} />{item.expire_time}</div>);
+          case 1:
+            return (<div><i className="glyphicon icon-status-warning" style={{color: '#FEC161', 'fontSize': 14 + 'px'}} />{item.expire_time}</div>);
+          default:
+            return item.expire_time;
+        }
+      }
+    };
     columns.map((column) => {
       switch (column.key) {
         case 'name':
@@ -340,6 +359,9 @@ class Model extends React.Component {
             return item.modify_time ? opertionTime : '-';
           };
           break;
+        case 'expire_time':
+          column.render = renderExpireTime.bind(this);
+          break;
         case 'operation':
           column.render = (col, item, i) => {
             return (item.type === 'folder' ? <div className="delete-folder-btn">
@@ -367,11 +389,10 @@ class Model extends React.Component {
         case 'link':
           column.render = (col, item, i) => {
             let linkHref, jointLink;
-            item.type === 'folder' ? jointLink = this.state.breadcrumb.join('/') + '/' + item.name + '/' : jointLink = this.state.breadcrumb.join('/') + '/' + item.name;
+            jointLink = this.state.breadcrumb.join('/') + '/' + item.name;
             linkHref = window.location.protocol + '//' + window.location.hostname + ':' + HALO.configs.swift_port + '/' + jointLink;
-            return (item.headerType === '.r:*' ? <div className="storage-link" onClick={this.oncopylink.bind(this, linkHref)}>{__.copy + __.link}
-            </div> : '-'
-            );
+            return (item.type !== 'folder' && item.headerType.indexOf('.r:*') > -1 ? <div className="storage-link" onClick={this.oncopylink.bind(this, linkHref)}>{__.copy + __.link}
+              </div> : '-');
           };
           break;
         default:
@@ -403,7 +424,6 @@ class Model extends React.Component {
   getTableData(detailRefresh) {
     let state = this.state,
       table = state.config.table;
-
     switch(this.state.config.breadcrumb.length) {
       case 1:
         request.listBuckets().then(res => {
@@ -434,7 +454,7 @@ class Model extends React.Component {
 
           table.data = newRes;
           state.config.btns[0].disabled = false;
-          state.config.btns[3].disabled = false;
+          state.config.btns[4].disabled = false;
           table.loading = false;
           this.setState({
             config: this.state.config
@@ -584,6 +604,7 @@ class Model extends React.Component {
   }
 
   updateBuckets() {
+    let dataObj = {};
     request.listBucketObjects({
       Bucket: this.state.config.breadcrumb[1].name
     }).then(rawItem => {
@@ -602,10 +623,9 @@ class Model extends React.Component {
         hash[next.name] ? '' : hash[next.name] = true && i.push(next);
         return i;
       }, []);
-
       let dataContent = [];
       for(let key in arr) {
-        let dataObj = {
+        dataObj = {
           name: arr[key].name,
           type: arr[key].type,
           bytes: arr[key].bytes ? arr[key].bytes : '',
@@ -614,12 +634,27 @@ class Model extends React.Component {
         };
         dataContent.push(dataObj);
       }
-
-      this.setState({
-        rawItem: rawItem,
-        dataContent: dataContent
+      dataContent.forEach(item => {
+        if(item.name.indexOf('/') === -1 && item.type === 'object') {
+          request.objectexpireTime(item, this.state.config.breadcrumb[1].name).then((_res) => {
+            if(_res !== null) {
+              let expire = _res * 1000;
+              let now = Date.now();
+              let resultTime = (expire - now) / 1000;
+              let residueDay = Math.floor(resultTime / (24 * 60 * 60)) || '-';
+              let residueHour = Math.floor(resultTime % (24 * 60 * 60) / (60 * 60));
+              item.expire_time = residueDay + __.day + residueHour + __.times;
+              item.residueDay = residueDay;
+              this.setState({
+                dataContent: dataContent
+              });
+            }
+          });
+        }
       });
-
+      this.setState({
+        rawItem: rawItem
+      });
       let table = this.state.config.table;
       table.data = dataContent;
       table.loading = false;
@@ -717,6 +752,32 @@ class Model extends React.Component {
       dataContent.push(dataObj);
     }
 
+    let joinFolder = b.join('/');
+
+    dataContent.forEach(ele => {
+      if(ele.name.indexOf('/') === -1 && ele.type === 'object') {
+        request.objectexpireTime(ele, joinFolder).then((_res) => {
+          if(_res !== null) {
+            let expire = _res * 1000;
+            let now = Date.now();
+            let resultTime = (expire - now) / 1000;
+            let residueDay = Math.floor(resultTime / (24 * 60 * 60));
+            let residueHour = Math.floor(resultTime % (24 * 60 * 60) / (60 * 60));
+            ele.expire_time = residueDay + __.day + residueHour + __.times;
+            ele.residueDay = residueDay;
+
+            let table = this.state.config.table;
+            table.data = dataContent;
+            table.loading = false;
+            this.setState({
+              config: this.state.config,
+              breadcrumb: b,
+              dataContent: dataContent
+            });
+          }
+        });
+      }
+    });
     let table = this.state.config.table;
     table.data = dataContent;
     table.loading = false;
@@ -735,6 +796,7 @@ class Model extends React.Component {
     switch (key) {
       case 'crt_bucket':
         createBucket(null, null, () => {
+          that.updatecontainer(breadcrumb);
           that.refresh({
             detailRefresh: true,
             clearState: true,
@@ -777,6 +839,88 @@ class Model extends React.Component {
         break;
       case 'edit':
         uploadObj(rows[0], null, breadcrumb, () => {
+          this.updatecontainer(breadcrumb);
+          that.refresh({
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
+        });
+        break;
+      case 'expires_time':
+        let expiteBread = breadcrumb.join('/');
+        expiresTime(rows[0], null, expiteBread, () => {
+          that.updatecontainer(breadcrumb);
+          that.refresh({
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
+        });
+        break;
+      case 'temporary_url':
+        let temporaryBread = breadcrumb.join('/');
+        temporaryUrl(rows[0], null, temporaryBread, () => {
+          that.updatecontainer(breadcrumb);
+          that.refresh({
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
+        });
+        break;
+      case 'access_control_list':
+        accessControlList(rows[0], null, () => {
+          that.updatecontainer(breadcrumb);
+          that.refresh({
+            detailRefresh: true,
+            clearState: true,
+            tableLoading: true
+          }, true);
+        });
+        break;
+      case 'copy':
+        let newUrls = [];
+        let copyName = [];
+        let copybread = breadcrumb.join('/');
+        rows.forEach(item => {
+          newUrls.push(copybread + '/' + item.name);
+          copyName.push(item.name);
+        });
+        this.stores.name = copyName;
+        this.setState({
+          copyurl: newUrls
+        }, () => {
+          copyObj();
+          let btnList = this.refs.btnList,
+            btns = this.state.config.btns;
+          let objbtns = {};
+          btns.forEach(item => {
+            objbtns[item.key] = item;
+          });
+          btnList.setState({
+            btns: this.btnListRender(rows, objbtns)
+          });
+        });
+        break;
+      case 'paste':
+        let bread = breadcrumb.join('/');
+        for(let i = 0; i < this.state.copyurl.length; i++) {
+          request.pasteObject(rows[i], bread, this.state.copyurl[i], this.stores.name[i]).then(() => {
+            this.updatecontainer(breadcrumb);
+            that.refresh({
+              detailRefresh: true,
+              clearState: true,
+              tableLoading: true
+            });
+          }).catch(err => {
+
+          });
+        }
+        break;
+      case 'modify_metadata':
+        let breadMetadata = breadcrumb.join('/');
+        modifyMetaData(rows[0], null, breadMetadata, () => {
           this.updatecontainer(breadcrumb);
           that.refresh({
             detailRefresh: true,
@@ -882,7 +1026,15 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    let state = this.state;
+    let copyStatus;
+    copyStatus = rows.some((ele, i) => {
+      return ele.type === 'folder' ? true : false;
+    });
+    if(!rows.length > 0) {
+      copyStatus = true;
+    }
+
+    let pasteStatus = this.state.copyurl.length > 0 ? false : true;
     for (let key in btns) {
       switch (key) {
         case 'delete_bucket':
@@ -891,8 +1043,8 @@ class Model extends React.Component {
         case 'modify_bucket':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        case 'empty_bucket':
-          btns[key].disabled = (rows.length === state.config.table.data.length) ? false : true;
+        case 'access_control_list':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'more':
           btns[key].dropdown && btns[key].dropdown.items[0].items.forEach(i => {
@@ -902,6 +1054,21 @@ class Model extends React.Component {
                 break;
               case 'edit':
                 i.disabled = (rows.length === 1 && rows[0].type !== 'folder') ? false : true;
+                break;
+              case 'copy':
+                i.disabled = copyStatus;
+                break;
+              case 'paste':
+                i.disabled = pasteStatus;
+                break;
+              case 'modify_metadata':
+                i.disabled = (rows.length === 1 && rows[0].type !== 'folder') ? false : true;
+                break;
+              case 'expires_time':
+                i.disabled = (rows.length === 1 && rows[0].type !== 'folder') ? false : true;
+                break;
+              case 'temporary_url':
+                i.disabled = (rows.length === 1 && rows[0].type !== 'folder' && rows[0].headerType !== '.r:*') ? false : true;
                 break;
               case 'attribute':
                 i.disabled = (rows.length === 1 && rows[0].type !== 'folder') ? false : true;
@@ -964,6 +1131,8 @@ class Model extends React.Component {
         this.clearState();
       }
     }
+    let temporaryBread = this.state.breadcrumb.join('/');
+    this.updatecontainer(temporaryBread);
 
     this.getTableData(forceUpdate, data ? data.detailRefresh : false);
   }
@@ -1087,6 +1256,7 @@ class Model extends React.Component {
     }
     let v = state.conDetail.bytes && unitConverter(state.conDetail.bytes);
     let alarmBytes = state.bytesUsed && unitConverter(state.bytesUsed);
+
     return (
      <div className="halo-module-object-storage" style={this.props.style}>
         <div className="breadcrumb-list">

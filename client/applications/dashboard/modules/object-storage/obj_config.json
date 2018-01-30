@@ -30,6 +30,26 @@
           "key": "attribute",
           "disabled": true
         }, {
+          "title": ["copy"],
+          "key": "copy",
+          "disabled": true
+        }, {
+          "title": ["paste"],
+          "key": "paste",
+          "disabled": true
+        }, {
+          "title": ["modify","metadata"],
+          "key": "modify_metadata",
+          "disabled": true
+        }, {
+          "title": ["expires","time"],
+          "key": "expires_time",
+          "disabled": true
+        }, {
+          "title": ["temporary_url"],
+          "key": "temporary_url",
+          "disabled": true
+        }, {
           "title": ["delete"],
           "key": "delete_folder",
           "danger": true,
@@ -62,7 +82,11 @@
       "title": ["update_time"],
       "dataIndex": "update_time",
       "key": "update_time"
-    },  {
+    }, {
+      "title": ["expires","time"],
+      "dataIndex": "expire_time",
+      "key": "expire_time"
+    }, {
       "title": ["operation"],
       "dataIndex": "operation",
       "key": "operation"

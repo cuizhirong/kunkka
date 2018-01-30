@@ -11,11 +11,16 @@
     "icon": "create",
     "disabled": true
   }, {
-    "value": ["modify", "bucket"],
+    "value": ["modify", "metadata"],
     "key": "modify_bucket",
     "icon": "edit",
     "disabled": true
   }, {
+    "value": ["access_control_list"],
+    "key": "access_control_list",
+    "icon": "edit",
+    "disabled": true
+  },  {
     "value": ["delete"],
     "key": "delete_bucket",
     "type": "delete",
@@ -35,6 +40,7 @@
     "checkbox": true,
     "dataKey": "name",
     "loading": true,
+    "limit": 10,
     "column": [{
       "title": ["name"],
       "dataIndex": "name",
