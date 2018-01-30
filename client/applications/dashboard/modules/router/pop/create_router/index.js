@@ -76,7 +76,7 @@ function pop(parent, callback) {
       }
 
       if (refs.enable_public_gateway.state.checked && enableBandwidth) {
-        let bandwidth = Number(refs.bandwidth.state.value) * 1024 * 8;
+        let bandwidth = Number(refs.bandwidth.state.value) * 1024;
         limit.gwratelimit.rate = bandwidth;
       }
 

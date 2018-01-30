@@ -12,8 +12,8 @@ function pop(obj, parent, callback) {
     config.fields[0].max = defaultBandwidth;
   }
 
-  let currentBandwidth = obj.rate_limit / (1024 * 8);
-  if (currentBandwidth < 1) {
+  let currentBandwidth = obj.rate_limit / 1024;
+  if (currentBandwidth < 1 || isNaN(currentBandwidth)) {
     currentBandwidth = 1;
   }
   config.fields[0].value = currentBandwidth;
@@ -39,16 +39,15 @@ function pop(obj, parent, callback) {
       if (enableCharge) {
         let bandwidth = currentBandwidth;
         refs.charge.setState({
-          value: Math.max.apply(null, HALO.prices.other[NAME]) * bandwidth
+          value: HALO.prices ? (Math.max.apply(null, HALO.prices.other[NAME]) * bandwidth).toFixed(4) : 0
         });
-
         refs.btn.setState({
           disabled: false
         });
       }
     },
     onConfirm: function(refs, cb) {
-      let bw = Number(refs.bandwidth.state.value) * 1024 * 8;
+      let bw = Number(refs.bandwidth.state.value) * 1024;
       let data = {
         fipratelimit: {
           rate: bw
@@ -71,7 +70,7 @@ function pop(obj, parent, callback) {
 
             if (sliderEvent || inputEvnet) {
               refs.charge.setState({
-                value: Math.max.apply(null, HALO.prices.other[NAME]) * state.value
+                value: HALO.prices ? (Math.max.apply(null, HALO.prices.other[NAME]) * state.value).toFixed(4) : 0
               });
             }
           }
