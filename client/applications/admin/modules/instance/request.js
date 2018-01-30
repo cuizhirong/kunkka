@@ -45,6 +45,15 @@ module.exports = {
       return res;
     });
   },
+  getVolumeByIDs: function(volumeIDs) {
+    let deferredList = [];
+    volumeIDs.forEach((volumeID) => {
+      deferredList.push(fetch.get({
+        url: '/proxy-search/cinder/v2/' + HALO.user.projectId + '/volumes/detail?all_tenants=1&id=' + volumeID
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
   getFilterList: function(data, pageLimit) {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
@@ -275,5 +284,28 @@ module.exports = {
     return fetch.get({
       url: '/proxy/nova/v2.1/servers/' + id + '/os-instance-actions'
     });
+  },
+  getDiskMeasures: function(ids, granularity, start) {
+    let deferredList = [];
+    ids.forEach((id) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  getDiskResourceId: function(ids, granularity) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/gnocchi/v1/search/resource/instance_disk',
+        data: {
+          '=': {
+            original_resource_id: id
+          }
+        }
+      }));
+    });
+    return RSVP.all(deferredList);
   }
 };

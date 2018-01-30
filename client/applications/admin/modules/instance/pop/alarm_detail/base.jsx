@@ -148,7 +148,7 @@ class ModalBase extends React.Component {
             }, true)}>
             <i className="glyphicon icon-arrow-left" />
           </div>
-          <div className={page === rawItem.data.length ? 'right hidden' : 'right'}
+          <div className={page === arr.length ? 'right hidden' : 'right'}
             onClick={this.onRight.bind(this, page + 1, {
               data: arr,
               item: rawItem.item,
@@ -194,38 +194,130 @@ class ModalBase extends React.Component {
     if (rawItem.granularity) {
       updateContents([]);
     }
-    if (!refresh) {
-      updateContents(rawItem.data);
-    } else {
-      let resourceId = rawItem.item.id,
-        instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
+
+    let filter = this.props.obj.item.that.state.filter, rawData = [],
+      instanceMetricType = [], portMetricType = [], diskMetricType = [];
+    let filterMetric = utils.getFilterMetric(filter).filter;
+    switch(filter) {
+      case 'network_flow':
+        instanceMetricType = [];
+        diskMetricType = [];
+        portMetricType = filterMetric;
+        break;
+      case 'device':
+        instanceMetricType = ['disk.read.bytes.rate', 'disk.write.bytes.rate'];
+        portMetricType = [];
+        diskMetricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+        break;
+      case 'cpu_memory':
+        instanceMetricType = filterMetric;
+        portMetricType = [];
+        diskMetricType = [];
+        break;
+      default:
+        instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'];
         portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'];
+        diskMetricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'];
+    }
+    rawItem.data.forEach(item => {
+      if (filterMetric.indexOf(item.metricType) !== -1) {
+        rawData.push(item);
+      }
+    });
+
+    if (!refresh) {
+      updateContents(rawData);
+    } else {
+      let resourceId = rawItem.item.id;
+      let ids = [], diskInsData = [];
       request.getResourceMeasures(resourceId, instanceMetricType, granularity, utils.getTime(time)).then((res) => {
         let arr = res.map((r, index) => ({
           title: utils.getMetricName(instanceMetricType[index]),
+          metricType: instanceMetricType[index],
           unit: utils.getUnit('instance', instanceMetricType[index], r),
-          color: utils.getColor(instanceMetricType[index]),
+          color: utils.getTriangleColor(instanceMetricType[index]),
+          triangleColor: utils.getTriangleColor(instanceMetricType[index]),
           xAxis: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index]),
           yAxisData: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index], 'instance')
         }));
-        request.getNetworkResourceId(resourceId).then(_data => {
-          request.getPort(_data).then(datas => {
-            request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
-              let portData = resourceData.map((_rd, index) => ({
-                title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
-                unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
-                color: utils.getPortColor(portMetricType[index % 2]),
-                yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
-                xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
-              }));
-              updateContents(arr.concat(portData));
+        diskInsData = arr;
+        this.getDiskData(rawItem.item['os-extended-volumes:volumes_attached']).then(volDevice => {
+          request.getDiskResourceId(volDevice.ids, granularity).then(diskRes => {
+            diskMetricType.forEach(type => {
+              diskRes.forEach(_disk => {
+                _disk[0] && ids.push(_disk[0].metrics[type]);
+              });
             });
+            if (diskRes.length !== 0) {
+              request.getDiskMeasures(ids, granularity, utils.getTime(time)).then((_r) => {
+                let arrDisk = _r.map((r, index) => ({
+                  title: utils.getMetricName(diskMetricType[index % 4], volDevice.volume[parseInt(index / 4, 10)]),
+                  metricType: diskMetricType[index % 4],
+                  color: utils.getTriangleColor(diskMetricType[index % 4]),
+                  triangleColor: utils.getTriangleColor(diskMetricType[index % 4]),
+                  unit: utils.getUnit('volume', diskMetricType[index % 4], r),
+                  yAxisData: utils.getChartData(r, granularity, utils.getTime(time), diskMetricType[index % 4], 'volume'),
+                  xAxis: utils.getChartData(r, granularity, utils.getTime(time), diskMetricType[index % 4])
+                }));
+                diskInsData = arr.concat(arrDisk);
+                request.getNetworkResourceId(resourceId).then(_data => {
+                  request.getPort(_data).then(datas => {
+                    request.getNetworkResource(granularity, utils.getTime(time), rawItem.item, datas.datas).then(resourceData => {
+                      let portData = resourceData.map((_rd, index) => ({
+                        title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
+                        unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                        color: utils.getTriangleColor(portMetricType[index % 2]),
+                        metricType: portMetricType[index % 2],
+                        triangleColor: utils.getTriangleColor(portMetricType[index % 2]),
+                        yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
+                        xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
+                      }));
+                      updateContents(diskInsData.concat(portData));
+                    });
+                  });
+                });
+              });
+            } else {
+              request.getNetworkResourceId(resourceId).then(_data => {
+                request.getPort(_data).then(datas => {
+                  request.getNetworkResource(granularity, utils.getTime(time), rawItem.item, datas.datas).then(resourceData => {
+                    let portData = resourceData.map((_rd, index) => ({
+                      title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
+                      unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                      color: utils.getTriangleColor(portMetricType[index % 2]),
+                      metricType: portMetricType[index % 2],
+                      triangleColor: utils.getTriangleColor(portMetricType[index % 2]),
+                      yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
+                      xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
+                    }));
+                    updateContents(diskInsData.concat(portData));
+                  });
+                });
+              });
+            }
           });
         });
       }).catch(error => {
         updateContents([{}]);
       });
     }
+  }
+
+  getDiskData(volume) {
+    let volDevice, volDeviceId = [], volIds = [], volDevices = [];
+    volume && volume.forEach(vol => {
+      volIds.push(vol.id);
+    });
+
+    return request.getVolumeByIDs(volIds).then(volRes => {
+      volRes.forEach(vols => {
+        volDevice = vols.list[0].attachments[0].device.split('/');
+        volDeviceId.push(vols.list[0].attachments[0].server_id + '-' + volDevice[volDevice.length - 1]);
+        volDevices.push(vols.list[0]);
+      });
+
+      return {ids: volDeviceId, volume: volDevices};
+    });
   }
 
   render() {

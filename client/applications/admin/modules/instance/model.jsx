@@ -5,6 +5,7 @@ const Main = require('client/components/main_paged/index');
 const BasicProps = require('client/components/basic_props/index');
 const LineChart = require('client/components/line_chart/index');
 const DetailMinitable = require('client/components/detail_minitable/index');
+const FilterModal = require('client/components/filter/index');
 
 const deleteModal = require('client/components/modal_delete/index');
 const dissociateFIP = require('./pop/dissociate_fip/index');
@@ -20,6 +21,7 @@ const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');
 const csv = require('./pop/csv/index');
 const getTime = require('client/utils/time_unification');
+const dataUtils = require('./data_utils');
 
 class Model extends React.Component {
 
@@ -39,7 +41,8 @@ class Model extends React.Component {
 
     this.updateConfig();
     this.state = {
-      config: config
+      config: config,
+      filter: ''
     };
 
     ['onInitialize', 'onAction', 'tableColRender', 'getFloatingIp', 'getFixedIp'].forEach((m) => {
@@ -107,7 +110,10 @@ class Model extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     //do not trigger render when component stays invisible
+
     if (nextProps.style.display === 'none' && this.props.style.display === 'none') {
+      return false;
+    } else if (nextState.filter) {
       return false;
     }
     return true;
@@ -716,6 +722,7 @@ class Model extends React.Component {
     let {rows} = data;
     let detail = refs.detail;
     let contents = detail.state.contents;
+    let syncUpdate = true;
 
     let isAvailableView = (_rows) => {
       if (_rows.length > 1) {
@@ -777,6 +784,7 @@ class Model extends React.Component {
         break;
       case 'monitor':
         if (isAvailableView(rows)) {
+          syncUpdate = false;
           let that = this;
 
           let updateDetailMonitor = function(newContents, loading) {
@@ -791,6 +799,7 @@ class Model extends React.Component {
             telemerty = HALO.configs.telemerty,
             instanceMetricType = ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate'],
             portMetricType = ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'],
+            diskMetricType = ['disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'],
             hour = telemerty.hour,
             day = telemerty.day,
             week = telemerty.week,
@@ -845,6 +854,8 @@ class Model extends React.Component {
               granularity: granularity,
               time: time
             };
+
+            let filterData = dataUtils.getFilterData();
             contents[tabKey] = (
               <LineChart
                 __={__}
@@ -864,9 +875,15 @@ class Model extends React.Component {
                 clickParent={(page) => {
                   that.onDetailAction('description', 'chart_zoom', {
                     chartDetail: chartDetail,
-                    page: page
+                    page: page,
+                    that: this
                   });
-                }} />
+                }} >
+                <FilterModal __={__}
+                  data={filterData}
+                  value={filterData[0].name}
+                  onFilter={this.onFilter.bind(this)}/>
+              </LineChart>
             );
 
             updateDetailMonitor(contents);
@@ -874,26 +891,74 @@ class Model extends React.Component {
           if (data.granularity) {
             updateContents([]);
           }
+
+          let ids = [], diskInsData = [];
+
           request.getResourceMeasures(resourceId, instanceMetricType, granularity, utils.getTime(time)).then((res) => {
             let arr = res.map((r, index) => ({
               title: utils.getMetricName(instanceMetricType[index]),
               unit: utils.getUnit('instance', instanceMetricType[index], r),
-              color: utils.getColor(instanceMetricType[index]),
+              metricType: instanceMetricType[index],
+              color: utils.getTriangleColor(instanceMetricType[index]),
+              triangleColor: utils.getTriangleColor(instanceMetricType[index]),
               xAxis: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index]),
               yAxisData: utils.getChartData(r, granularity, utils.getTime(time), instanceMetricType[index], 'instance')
             }));
-            request.getNetworkResourceId(resourceId).then(_data => {
-              request.getPort(_data).then(datas => {
-                request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
-                  let portData = resourceData.map((_rd, index) => ({
-                    title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
-                    unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
-                    color: utils.getPortColor(portMetricType[index % 2]),
-                    yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
-                    xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
-                  }));
-                  updateContents(arr.concat(portData));
+            diskInsData = arr;
+            this.getDiskData(rows[0]['os-extended-volumes:volumes_attached']).then(volDevice => {
+              request.getDiskResourceId(volDevice.ids, granularity).then(diskRes => {
+                diskMetricType.forEach(type => {
+                  diskRes.forEach(_disk => {
+                    _disk[0] && ids.push(_disk[0].metrics[type]);
+                  });
                 });
+                if (diskRes.length !== 0) {
+                  request.getDiskMeasures(ids, granularity, utils.getTime(time)).then((_r) => {
+                    let arrDisk = _r.map((r, index) => ({
+                      title: utils.getMetricName(diskMetricType[index % 4], volDevice.volume[parseInt(index / 4, 10)]),
+                      metricType: diskMetricType[index % 4],
+                      color: utils.getTriangleColor(diskMetricType[index % 4]),
+                      triangleColor: utils.getTriangleColor(diskMetricType[index % 4]),
+                      unit: utils.getUnit('volume', diskMetricType[index % 4], r),
+                      yAxisData: utils.getChartData(r, granularity, utils.getTime(time), diskMetricType[index % 4], 'volume'),
+                      xAxis: utils.getChartData(r, granularity, utils.getTime(time), diskMetricType[index % 4])
+                    }));
+                    diskInsData = arr.concat(arrDisk);
+                    request.getNetworkResourceId(resourceId).then(_data => {
+                      request.getPort(_data).then(datas => {
+                        request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
+                          let portData = resourceData.map((_rd, index) => ({
+                            title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
+                            unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                            color: utils.getTriangleColor(portMetricType[index % 2]),
+                            metricType: portMetricType[index % 2],
+                            triangleColor: utils.getTriangleColor(portMetricType[index % 2]),
+                            yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
+                            xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
+                          }));
+                          updateContents(diskInsData.concat(portData));
+                        });
+                      });
+                    });
+                  });
+                } else {
+                  request.getNetworkResourceId(resourceId).then(_data => {
+                    request.getPort(_data).then(datas => {
+                      request.getNetworkResource(granularity, utils.getTime(time), rows[0], datas.datas).then(resourceData => {
+                        let portData = resourceData.map((_rd, index) => ({
+                          title: utils.getMetricName(portMetricType[index % 2], datas.ips[parseInt(index / 2, 10)]),
+                          unit: utils.getUnit('instance', portMetricType[parseInt(index / 2, 10)], _rd),
+                          color: utils.getTriangleColor(portMetricType[index % 2]),
+                          metricType: portMetricType[index % 2],
+                          triangleColor: utils.getTriangleColor(portMetricType[index % 2]),
+                          yAxisData: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2], 'instance'),
+                          xAxis: utils.getChartData(_rd, granularity, utils.getTime(time), portMetricType[index % 2])
+                        }));
+                        updateContents(diskInsData.concat(portData));
+                      });
+                    });
+                  });
+                }
               });
             });
           }).catch(error => {
@@ -925,6 +990,52 @@ class Model extends React.Component {
       default:
         break;
     }
+
+    if (syncUpdate) {
+      detail.setState({
+        contents: contents,
+        loading: false
+      });
+    }
+  }
+
+  getDiskData(volume) {
+    let volDevice, volDeviceId = [], volIds = [], volDevices = [];
+    volume && volume.forEach(vol => {
+      volIds.push(vol.id);
+    });
+
+    return request.getVolumeByIDs(volIds).then(volRes => {
+      volRes.forEach(vols => {
+        volDevice = vols.list[0].attachments[0].device.split('/');
+        volDeviceId.push(vols.list[0].attachments[0].server_id + '-' + volDevice[volDevice.length - 1]);
+        volDevices.push(vols.list[0]);
+      });
+
+      return {ids: volDeviceId, volume: volDevices};
+    });
+  }
+
+  onFilter(ele) {
+    let filter = utils.getFilterMetric(ele.name).filter,
+      rawItem = utils.getFilterMetric(ele.name).rawItem, className;
+    filter.forEach(i => {
+      className = document.getElementsByClassName(i);
+      for (let t = 0; t < className.length; t ++) {
+        className[t].style.display = 'block';
+      }
+    });
+
+    rawItem.forEach(item => {
+      className = document.getElementsByClassName(item);
+      for (let j = 0; j < className.length; j ++) {
+        className[j].style.display = 'none';
+      }
+    });
+
+    this.setState({
+      filter: ele.name
+    });
   }
 
   getActionLogs(item) {

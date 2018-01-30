@@ -259,6 +259,15 @@ module.exports = {
       url: url
     });
   },
+  getDiskMeasures: function(ids, granularity, start) {
+    let deferredList = [];
+    ids.forEach((id) => {
+      deferredList.push(fetch.get({
+        url: '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
   getNetworkResourceId: function(id) {
     let url = '/proxy/gnocchi/v1/search/resource/instance_network_interface',
       data = {
@@ -270,6 +279,20 @@ module.exports = {
       url: url,
       data: data
     });
+  },
+  getDiskResourceId: function(ids, granularity) {
+    let deferredList = [];
+    ids.forEach(id => {
+      deferredList.push(fetch.post({
+        url: '/proxy/gnocchi/v1/search/resource/instance_disk',
+        data: {
+          '=': {
+            original_resource_id: id
+          }
+        }
+      }));
+    });
+    return RSVP.all(deferredList);
   },
   getNetworkResource: function(granularity, start, _data, resourceData) {
     const addresses = _data.addresses;

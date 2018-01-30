@@ -22,6 +22,39 @@ module.exports = {
     return max;
   },
 
+  getTriangleColor: function(metricType) {
+    switch(metricType) {
+      case 'cpu_util':
+      case 'memory.usage':
+        return '#FEC42E';
+      case 'disk.read.bytes.rate':
+      case 'disk.write.bytes.rate':
+      case 'disk.device.read.bytes.rate':
+      case 'disk.device.write.bytes.rate':
+      case 'disk.device.read.requests.rate':
+      case 'disk.device.write.requests.rate':
+        return '#56CDA7';
+      case 'network.incoming.bytes.rate':
+      case 'network.outgoing.bytes.rate':
+        return '#4C83FB';
+      default:
+        return '#FEC42E';
+    }
+  },
+
+  getFilterMetric: function(filterItem) {
+    switch(filterItem) {
+      case 'cpu_memory':
+        return {filter: ['cpu_util', 'memory.usage'], rawItem: ['disk.read.bytes.rate', 'disk.write.bytes.rate', 'disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate', 'network.incoming.bytes.rate', 'network.outgoing.bytes.rate']};
+      case 'device':
+        return {filter: ['disk.read.bytes.rate', 'disk.write.bytes.rate', 'disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate'], rawItem: ['cpu_util', 'memory.usage', 'network.incoming.bytes.rate', 'network.outgoing.bytes.rate']};
+      case 'network_flow':
+        return {filter: ['network.incoming.bytes.rate', 'network.outgoing.bytes.rate'], rawItem: ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate', 'disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate']};
+      default:
+        return {rawItem: [], filter: ['cpu_util', 'memory.usage', 'disk.read.bytes.rate', 'disk.write.bytes.rate', 'disk.device.read.bytes.rate', 'disk.device.write.bytes.rate', 'disk.device.read.requests.rate', 'disk.device.write.requests.rate', 'network.incoming.bytes.rate', 'network.outgoing.bytes.rate']};
+    }
+  },
+
   getISOTime: function(number) {
     let date = new Date();
     date.setDate(date.getDate() + number);
@@ -45,19 +78,19 @@ module.exports = {
     }
   },
 
-  getMetricName: function(metric, ip) {
+  getMetricName: function(metric, ipName) {
     if (metric) {
       switch (metric) {
         case 'cpu_util':
           return __.cpu_utilization;
         case 'disk.device.read.bytes.rate':
-          return __.disk_device_read_rate;
+          return ipName ? (ipName.name || '(' + ipName.id.substring(0, 8) + ')') + ' - ' + __.disk_device_read_rate : __.disk_device_read_rate;
         case 'disk.device.write.bytes.rate':
-          return __.disk_device_write_rate;
+          return ipName ? (ipName.name || '(' + ipName.id.substring(0, 8) + ')') + ' - ' + __.disk_device_write_rate : __.disk_device_write_rate;
         case 'disk.device.read.requests.rate':
-          return __.disk_device_read_requests_rate;
+          return ipName ? (ipName.name || '(' + ipName.id.substring(0, 8) + ')') + ' - ' + __.disk_device_read_requests_rate : __.disk_device_read_requests_rate;
         case 'disk.device.write.requests.rate':
-          return __.disk_device_write_requests_rate;
+          return ipName ? (ipName.name || '(' + ipName.id.substring(0, 8) + ')') + ' - ' + __.disk_device_write_requests_rate : __.disk_device_write_requests_rate;
         case 'disk.read.bytes.rate':
           return __.disk_read_rate;
         case 'disk.write.bytes.rate':
@@ -65,9 +98,9 @@ module.exports = {
         case 'memory.usage':
           return __.memory_usage;
         case 'network.incoming.bytes.rate':
-          return ip ? ip + ' ' + __.network_incoming_bytes_rate : __.network_incoming_bytes_rate;
+          return ipName ? ipName + ' ' + __.network_incoming_bytes_rate : __.network_incoming_bytes_rate;
         case 'network.outgoing.bytes.rate':
-          return ip ? ip + ' ' + __.network_outgoing_bytes_rate : __.network_outgoing_bytes_rate;
+          return ipName ? ipName + ' ' + __.network_outgoing_bytes_rate : __.network_outgoing_bytes_rate;
         default:
           return metric;
       }
