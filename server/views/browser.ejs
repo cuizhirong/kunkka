@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>请升级浏览器</title>
+  <style>
+    .upgradeBrowser {
+    width: 100%;
+  }
+  .upgradeBrowser .uTitle {
+    color: #252F3D;
+    font-size: 28px;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 30px;
+  }
+  .upgradeBrowser .uIntroduce {
+    font-size: 14px;
+    color: #616F7E;
+    line-height: 28px;
+    margin-top: 30px;
+    text-align: center;
+    width: 500px;
+    height: 56px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .upgradeBrowser ul {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 0;
+    padding: 0;
+  }
+  .upgradeBrowser ul li {
+    display: inline-block;
+  }
+  .upgradeBrowser ul li div {
+    width: 80px;
+    height: 80px;
+    background-repeat: no-repeat;
+    background: center center;
+    background-size: contain;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .upgradeBrowser ul li .uBrowser,
+  .upgradeBrowser ul li .uVersion {
+    font-size: 14px;
+    color: #616F7E;
+    line-height: 28px;
+  }
+  .upgradeBrowser ul li a {
+    display: block;
+    width: 100px;
+    height: 32px;
+    background: #01AFC9;
+    border-radius: 2px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0;
+  }
+  .upgradeBrowser ul li a .uButton {
+    font-size: 12px;
+    color: #FFFFFF;
+    line-height: 32px;
+  }
+  .upgradeBrowser ul li a .uArrow {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background: center center;
+    background-size: contain;
+    background-image: url(/static/assets/constructor.svg);
+    margin-left: 8px;
+    width: 10px;
+    height: 10px;
+  }
+  .upgradeBrowser ul li + li {
+    margin-left: 50px;
+  }
+  .upgradeBrowser ul li:nth-of-type(1) div {
+    background-image: url(/static/assets/chrome.png);
+  }
+  .upgradeBrowser ul li:nth-of-type(2) div {
+    background-image: url(/static/assets/firefox.png);
+  }
+  .upgradeBrowser ul li:nth-of-type(3) div {
+    background-image: url(/static/assets/edge.png);
+  }
+  .upgradeBrowser ul li:nth-of-type(4) div {
+    background-image: url(/static/assets/safari.png);
+  }
+
+  </style>
+</head>
+<body>
+  <div class="upgradeBrowser">
+    <p class="uTitle">改善您的体验</p>
+    <p class="uIntroduce">您的浏览器版本过低，可能导致网站不能正常访问，为了能正常使用网站功能，
+        请下载以下其中一种伟大的浏览器，就可以正常访问啦！</p>
+    <ul>
+      <li><div></div><p class="uBrowser">Google Chrome</p><p class="uVersion">版本 45+</p><a href="https://www.google.cn/intl/zh-CN/chrome/browser/desktop/"><span class="uButton">升级浏览器</span><span class="uArrow"></span></a></li>
+      <li><div></div><p class="uBrowser">Mozilla Firefox</p><p class="uVersion">版本 35+</p><a href="https://www.mozilla.org/zh-CN/firefox/new/"><span class="uButton">升级浏览器</span><span class="uArrow"></span></a></li>
+      <li><div></div><p class="uBrowser">Internet Explore</p><p class="uVersion">版本 edge</p><a href="https://www.microsoft.com/zh-cn/windows/microsoft-edge"><span class="uButton">升级浏览器</span><span class="uArrow"></span></a></li>
+      <li><div></div><p class="uBrowser">Safari</p><p class="uVersion">版本 7+</p><a href="https://www.apple.com/cn/safari/"><span class="uButton">升级浏览器</span><span class="uArrow"></span></a></li>
+    </ul>
+  </div>
+</body>
+</html>
