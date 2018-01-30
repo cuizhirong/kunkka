@@ -34,53 +34,69 @@
       }
     }
   }
-  .chart {
+  .chart_parent {
     position: relative;
+    overflow: hidden;
     float: left;
     width: 32.6%;
-    padding: 10px;
-    height: 200px;
-    margin-bottom: 8px;
-    margin-right: 1%;
-    border: 1px solid @chart_border_color;
-    border-radius: 2px;
-    box-sizing: border-box;
-    cursor: pointer;
-    div {
-      canvas {
-        cursor: pointer;
+    &.hide {
+      display: none;
+    }
+    .triangle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-right: 20px solid transparent;
+      z-index: 9999;
+    }
+    .chart {
+      position: relative;
+      padding: 10px;
+      height: 200px;
+      margin-bottom: 8px;
+      margin-right: 1%;
+      border: 1px solid @chart_border_color;
+      border-radius: 2px;
+      box-sizing: border-box;
+      cursor: pointer;
+      div {
+        canvas {
+          cursor: pointer;
+        }
+      }
+      .legendWp {
+        position: absolute;
+        width: 40%;
+        top: 50%;
+        left: 40%;
+        color: @color_font;
+      }
+      .no-monitor-data {
+        display: block;
+        vertical-align: middle;
+        text-align: center;
+        line-height: 300px;
+      }
+      &:nth-of-type(3n) {
+        margin-right: 0;
+      }
+      &:hover {
+        box-shadow: 0 0 8px 2px #EAEAEA;
       }
     }
-    .legendWp {
-      position: absolute;
-      width: 40%;
-      top: 50%;
-      left: 40%;
-      color: @color_font;
+    .detail-loading {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-y: visible;
     }
-    .no-monitor-data {
-      display: block;
-      vertical-align: middle;
-      text-align: center;
-      line-height: 300px;
+    .port-name {
+      margin-left: 22px;
+      font-size: 20px;
+      font-weight: bold;
+      color: @color_port_name;
     }
-    &:nth-of-type(3n) {
-      margin-right: 0;
-    }
-    &:hover {
-      box-shadow: 0 0 8px 2px #EAEAEA;
-    }
-  }
-  .detail-loading {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow-y: visible;
-  }
-  .port-name {
-    margin-left: 22px;
-    font-size: 20px;
-    font-weight: bold;
-    color: @color_port_name;
   }
 }

@@ -194,12 +194,23 @@ class ChartLine extends React.Component {
     return option;
   }
 
+  getPreviousElementSibling(target, num) {
+    if (target.previousElementSibling) {
+      if (target.previousElementSibling.style.display === 'none') {
+        ++ num;
+      }
+      return this.getPreviousElementSibling(target.previousElementSibling, num);
+    } else {
+      return num;
+    }
+  }
 
   chartZoom(e){
-    let ev = e || window.event, page,
+    let ev = e || window.event, page, noneNum,
       target = ev.target || ev.srcElement;
     if (target.nodeName.toLocaleLowerCase() === 'canvas') {
-      page = parseInt(target.parentNode.parentNode.id.split(this.state.className)[1], 10);
+      noneNum = this.getPreviousElementSibling(target.parentNode.parentNode.parentNode, 0);
+      page = parseInt(target.parentNode.parentNode.id.split(this.state.className)[1], 10) - noneNum;
     }
 
     this.props.clickParent && this.props.clickParent(page + 1);
@@ -214,7 +225,7 @@ class ChartLine extends React.Component {
       chartData = this.state.data;
 
     return (
-      <div className="halo-com-line-chart">
+      <div className="halo-com-line-chart" ref="line-chart">
         <div>
           <div className="tabs_sm">
             {this.props.children}
@@ -223,7 +234,9 @@ class ChartLine extends React.Component {
           <div id="parent" style={this.props.style} onClick={this.chartZoom.bind(this)}>
             {chartData.map((charts, i) => {
               return (
-                <div id={this.state.className + i} key={i} className="chart">
+                <div key={i} className={'chart_parent ' + charts.metricType}>
+                  <div className="triangle" style={charts.triangleColor ? {borderTop: '20px solid ' + charts.triangleColor} : null}></div>
+                  <div id={this.state.className + i} className="chart"></div>
                 </div>
               );
             })}
