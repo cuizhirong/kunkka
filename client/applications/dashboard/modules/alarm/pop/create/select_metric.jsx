@@ -83,6 +83,35 @@ class Modal extends React.Component {
     }
 
     data.forEach((ele) => {
+      yAxis.push(fixMeasure(ele[2]));
+      let date = new Date(ele[0]);
+      xAxis.push(helper.getDateStr(date, granularity));
+    });
+
+    let prev;
+    if (data.length > 0) {
+      prev = new Date(data[0][0]);
+    } else {
+      prev = new Date();
+    }
+
+    const DOTS_TIME = this.getTime(granularity);
+    const DOTS_NUM = this.getDotsNumber(granularity, prev);
+
+    if (data.length < DOTS_NUM) {
+      let length = DOTS_NUM - data.length;
+
+      while (length > 0 && DOTS_TIME < prev.getTime()) {
+        prev = this.getNextPeriodDate(prev, granularity);
+        xAxis.unshift(helper.getDateStr(prev, granularity));
+        yAxis.unshift(0);
+        length--;
+      }
+    }
+
+    this.updateChart({ unit, title, xAxis, yAxis, name: utils.getMetricName(state.metricType) });
+
+    /*data.forEach((ele) => {
       switch (state.metricType) {
         // case 'cpu_util':
           // yAxis.push(fixMeasure(ele[2] * 100));
@@ -116,7 +145,7 @@ class Modal extends React.Component {
       }
     }
 
-    this.updateChart({ unit, title, xAxis, yAxis, name: utils.getMetricName(state.metricType) });
+    this.updateChart({ unit, title, xAxis, yAxis, name: utils.getMetricName(state.metricType) });*/
   }
 
   getTime(granularity) {
