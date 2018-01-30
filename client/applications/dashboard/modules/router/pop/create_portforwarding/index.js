@@ -49,7 +49,7 @@ function pop(router, callback) {
           subnets.some((sub) => {
             if (subnet.id === sub.id) {
               sub.ports.some((port) => {
-                if (port.device_owner === 'compute:None') {
+                if (port.device_owner === 'compute:None' || port.device_owner === 'compute:nova') {
                   ports.push(port);
                 }
               });
