@@ -114,7 +114,7 @@ class Modal extends React.Component {
       case month:
         return (60 * 60 * 24 * 30) / month;
       case year:
-        return (60 * 60 * 24 * 365) / year;
+        return (60 * 60 * 24 * 365) / (year * 2);
       default:
         return 0;
     }
@@ -131,7 +131,7 @@ class Modal extends React.Component {
       case month:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1, prev.getMinutes());
       case year:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 3);
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }

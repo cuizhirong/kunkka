@@ -118,7 +118,7 @@ module.exports = {
       case month:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 1, prev.getMinutes());
       case year:
-        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 3);
+        return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
       default:
         return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), prev.getHours() - 6);
     }
@@ -219,7 +219,7 @@ module.exports = {
       case month:
         return (60 * 60 * 24 * 30) / month;
       case year:
-        return (60 * 60 * 24 * 365) / year;
+        return (60 * 60 * 24 * 365) / (year * 2);
       default:
         return 0;
     }
@@ -259,28 +259,35 @@ module.exports = {
   getColor: function(metric) {
     if(metric) {
       switch(metric) {
-        case 'cpu.util':
-        case 'disk.device.read.bytes.rate':
-          return '#E0DE5D';
-        case 'disk.read.bytes.rate':
-        case 'disk.device.write.bytes.rate':
-          return '#47C1A6';
+        case 'cpu_util':
         case 'disk.write.bytes.rate':
-        case 'disk.device.read.requests.rate':
-          return '#0A98E4';
-        case 'memory.usage':
+        case 'disk.device.read.bytes.rate':
         case 'disk.device.write.requests.rate':
           return '#EFB16A';
-        case 'network.incoming.bytes.rate':
+        case 'memory.usage':
+        case 'disk.device.write.bytes.rate':
+          return '#47C1A6';
+        case 'disk.read.bytes.rate':
+        case 'disk.device.read.requests.rate':
           return '#6390EC';
-        case 'network.outgoing.bytes.rate':
-          return '#8787E5';
-        case 'disk.usage':
-          return '#87CEFA';
         default:
           return '#8787E5';
       }
     }
     return '';
+  },
+
+  getPortColor: function(index) {
+    if (index === 0) {
+      return '#47C1A6';
+    } else if (index === 1) {
+      return '#6390EC';
+    } else if (index > 1 && (index - 1) % 3 === 1) {
+      return '#EFB16A';
+    } else if (index > 1 && (index - 1) % 3 === 2) {
+      return '#47C1A6';
+    } else if (index > 1 && (index - 1) % 3 === 0) {
+      return '#6390EC';
+    }
   }
 };

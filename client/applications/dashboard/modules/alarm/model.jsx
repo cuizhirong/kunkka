@@ -365,7 +365,7 @@ class Model extends Main {
               request.getPortById(rule._port_id).then(port => {
                 graphs = [measures].map((arr) => ({
                   title: utils.getMetricName(rule.metric, port.port.fixed_ips[0].ip_address),
-                  color: utils.getColor(rule.metric),
+                  color: '#EFB16A',
                   unit: utils.getUnit(rule.resource_type, rule.metric, arr),
                   yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric, rule.resource_type),
                   xAxis: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric)
@@ -375,7 +375,7 @@ class Model extends Main {
             } else {
               graphs = [measures].map((arr) => ({
                 title: utils.getMetricName(rule.metric),
-                color: utils.getColor(rule.metric),
+                color: '#EFB16A',
                 unit: utils.getUnit(rule.resource_type, rule.metric, arr),
                 yAxisData: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric, rule.resource_type),
                 xAxis: utils.getChartData(arr, key, timeUtils.getTime(time), rule.metric)
