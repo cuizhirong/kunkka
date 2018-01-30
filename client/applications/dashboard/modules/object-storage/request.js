@@ -42,6 +42,15 @@ module.exports = {
       return data.body;
     });
   },
+  getBucketHeaderType: function(params) {
+    return fetch.get({
+      url: '/proxy-swift/' + params.Bucket + '?format=json',
+      needHeader: true
+    }).then(function(data) {
+      data.headerType = data.that.getResponseHeader('x-container-read');
+      return data;
+    });
+  },
   downloadItem: function(item, breadcrumb) {
     let bread = breadcrumb.join('/');
     let url = '/proxy-swift/' + bread + '/' + item.name;
