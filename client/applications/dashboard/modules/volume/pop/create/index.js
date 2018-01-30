@@ -152,9 +152,6 @@ function pop(obj, parent, callback) {
           let volumeType = volumeTypes[0];
 
           if (volumeTypes.length !== 0) {
-            let cap = typeCapacity[volumeType];
-            let isError = cap.max < cap.min || cap.max <= 0;
-
             let setTypes = () => {
               if (obj) {
                 volumeType = obj.volume.volume_type || null;
@@ -174,22 +171,12 @@ function pop(obj, parent, callback) {
               }
             };
 
+            setTypes();
+
             if (ENABLE_CHARGE) {
-              if (!isError) {
-                setTypes();
-                refs.charge.setState({
-                  value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[volumeType]) * cap.min).toFixed(4) : 0,
-                  hide: false
-                });
-              } else {
-                setTypes();
-                refs.charge.setState({
-                  value: DEFAULT_PRICE,
-                  hide: false
-                });
-              }
-            } else {
-              setTypes();
+              refs.charge.setState({
+                hide: false
+              });
             }
           } else {
             refs.warning.setState({
@@ -233,13 +220,13 @@ function pop(obj, parent, callback) {
 
       switch (field) {
         case 'capacity_size': {
+
           let cap = refs.capacity_size.state;
           let isError = cap.max < cap.min || cap.max <= 0;
           let isInputError = state.error;
           let value = state.min >= state.max ? state.min : refs.capacity_size.state.value;
           let inputValue = state.min >= state.max ? state.min : refs.capacity_size.state.inputValue;
           let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value);
-
 
           refs.capacity_size.setState({
             value: value,
@@ -257,13 +244,15 @@ function pop(obj, parent, callback) {
           });
 
           if (ENABLE_CHARGE) {
-            let sliderEvent = state.eventType === 'mouseup';
-            let inputEvnet = state.eventType === 'change' && !state.error;
-
             if (!isError) {
-              if (sliderEvent || inputEvnet) {
+              // 和别的计费条保持一致，mousemove 过程中不修改价格
+              if (!state.error && state.eventType !== 'mousemove') {
+                let unitPrice = (HALO.prices && HALO.prices.volume[volType] !== undefined) ? HALO.prices.volume[volType] : DEFAULT_PRICE;
+                let price = unitPrice * value;
+                price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
+
                 refs.charge.setState({
-                  value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[refs.type.state.value]) * value).toFixed(4) : 0
+                  value: price
                 });
               }
             } else {
@@ -276,18 +265,27 @@ function pop(obj, parent, callback) {
         }
         case 'type': {
           //set slider data
+
           let cap = typeCapacity[volType],
             min, max, isError;
           let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value)[0];
-          if (cap) {
+          let image = refs.image.state.data.filter(_data => _data.id === refs.image.state.value)[0];
+          let source = refs.volume_source.state.value;
+
+          if(image && source === 'image') {
+            min = Math.ceil(image.size / UNITNUMBER);
+            max = cap.max;
+            isError = max < min || max <= 0;
+          } else if(volume && source === 'volume') {
+            min = obj ? obj.size : volume.size;
+            max = cap.max;
+            isError = max < min || max <= 0;
+          } else if(cap) {
             min = obj ? obj.size : cap.min;
             max = cap.max;
             isError = cap.max < cap.min || cap.max <= 0;
-          } else if (volume) {
-            min = obj ? obj.size : volume.size;
-            max = allCapacity.total - allCapacity.used;
-            isError = max < min || max <= 0;
           }
+
 
           volType && refs.capacity_size.setState({
             min: min || 1,
@@ -298,11 +296,15 @@ function pop(obj, parent, callback) {
             error: false,
             hide: false
           });
+
           //set charge
           if (ENABLE_CHARGE) {
-            if (!isError && state.value) {
+            if (!isError) {
+              let unitPrice = (HALO.prices && HALO.prices.volume[volType] !== undefined) ? HALO.prices.volume[volType] : DEFAULT_PRICE;
+              let price = unitPrice * min;
+              price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
               refs.charge.setState({
-                value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[state.value]) * min).toFixed(4) : 0
+                value: price
               });
             } else {
               refs.charge.setState({

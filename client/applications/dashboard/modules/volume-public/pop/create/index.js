@@ -103,9 +103,6 @@ function pop(obj, parent, callback) {
         let volumeType = volumeTypes[0];
 
         if (volumeTypes.length !== 0) {
-          let cap = typeCapacity[volumeType];
-          let isError = cap.max < cap.min || cap.max <= 0;
-
           let setTypes = () => {
             if (obj) {
               volumeType = obj.volume.volume_type || null;
@@ -125,22 +122,11 @@ function pop(obj, parent, callback) {
             }
           };
 
+          setTypes();
           if (ENABLE_CHARGE) {
-            if (!isError) {
-              setTypes();
-              refs.charge.setState({
-                value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[volumeType]) * cap.min).toFixed(4) : 0,
-                hide: false
-              });
-            } else {
-              setTypes();
-              refs.charge.setState({
-                value: DEFAULT_PRICE,
-                hide: false
-              });
-            }
-          } else {
-            setTypes();
+            refs.charge.setState({
+              hide: false
+            });
           }
         } else {
           refs.warning.setState({
@@ -167,6 +153,7 @@ function pop(obj, parent, callback) {
       });
     },
     onAction: function(field, state, refs) {
+
       let volType = refs.type.refs.volume_type ? refs.type.refs.volume_type.state.value : refs.type.state.data;
 
       switch (field) {
@@ -198,8 +185,12 @@ function pop(obj, parent, callback) {
 
             if (!isError) {
               if (sliderEvent || inputEvnet) {
+                let unitPrice = (HALO.prices && HALO.prices.volume[volType] !== undefined) ? HALO.prices.volume[volType] : DEFAULT_PRICE;
+                let price = unitPrice * value;
+                price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
+
                 refs.charge.setState({
-                  value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[refs.type.state.value]) * value).toFixed(4) : 0
+                  value: price
                 });
               }
             } else {
@@ -212,6 +203,7 @@ function pop(obj, parent, callback) {
         }
         case 'type': {
           //set slider data
+
           let cap = typeCapacity[volType],
             min, max, isError;
           if (cap) {
@@ -233,8 +225,12 @@ function pop(obj, parent, callback) {
           //set charge
           if (ENABLE_CHARGE) {
             if (!isError) {
+              let unitPrice = (HALO.prices && HALO.prices.volume[volType] !== undefined) ? HALO.prices.volume[volType] : DEFAULT_PRICE;
+              let price = unitPrice * min;
+              price = isNaN(price) ? DEFAULT_PRICE : price.toFixed(4);
+
               refs.charge.setState({
-                value: HALO.prices ? (Math.max.call(null, HALO.prices.volume[state.value]) * min).toFixed(4) : 0
+                value: price
               });
             } else {
               refs.charge.setState({
