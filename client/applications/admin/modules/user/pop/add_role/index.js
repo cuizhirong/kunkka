@@ -5,18 +5,19 @@ const __ = require('locale/client/admin.lang.json');
 const renderer = require('./project_field');
 const getErrorMessage = require('client/applications/admin/utils/error_message');
 
-function validateProject(type, value, projects) {
-  let valid = projects.find((project) => {
+function checkPrjInDomain(type, value, projects) {
+  let inDomain = false;
+  let currProject = projects.find((project) => {
     return project[type] === value;
   });
 
-  if(valid !== undefined) {
-    valid = true;
+  if(currProject !== undefined) {
+    inDomain = true;
   } else {
-    valid = false;
+    inDomain = false;
   }
 
-  return valid;
+  return inDomain;
 }
 
 function getProjectId(projectName, projects) {
@@ -39,7 +40,7 @@ function pop(type, obj, parent, callback) {
     config.fields[2].hide = false;
   }
 
-  let currUserProject = [];
+  let currPrjsInDomain = [];
 
   let props = {
     __: __,
@@ -73,7 +74,7 @@ function pop(type, obj, parent, callback) {
           roleError();
         });
       } else {
-        request.getRolesAndProjects(obj.id).then((res) => {
+        request.getRelatedInfo(obj.domain_id).then((res) => {
           if (res.roles.length > 0) {
             refs.role.setState({
               data: res.roles,
@@ -84,7 +85,8 @@ function pop(type, obj, parent, callback) {
               disabled: false
             });
 
-            currUserProject = res.projects;
+            // 用户所属域中的所有项目
+            currPrjsInDomain = res.projects;
 
             refs.project.setState({
               renderer: renderer,
@@ -135,17 +137,17 @@ function pop(type, obj, parent, callback) {
         const rendererData = refs.project.state.rendererData;
         const fieldType = rendererData.field;
         const fieldValue = rendererData.value.trim();
-        let projectIsValid = validateProject(fieldType, fieldValue, currUserProject);
+        let projectInDomain = checkPrjInDomain(fieldType, fieldValue, currPrjsInDomain);
 
-        if(!projectIsValid) {
-          cb(false, __.user_is_not_in_project);
+        if(!projectInDomain) {
+          cb(false, __.wrong_project_input);
           return;
         }
 
         if(fieldType === 'id') {
           id = fieldValue;
         } else {
-          id = getProjectId(fieldValue, currUserProject);
+          id = getProjectId(fieldValue, currPrjsInDomain);
         }
       } else {
         id = refs[type].state.value;

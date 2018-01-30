@@ -46,6 +46,11 @@ function pop(obj, parent, callback) {
           });
           let _rePsw = refs.confirm_password.state.value;
           let _valid = pwd && (pwd === _rePsw);
+
+          _rePsw && refs.confirm_password.setState({
+            error: pwd !== _rePsw
+          });
+
           refs.btn.setState({
             disabled: !_valid
           });
@@ -54,6 +59,9 @@ function pop(obj, parent, callback) {
           let psw = refs.password.state.value;
           let rePsw = refs.confirm_password.state.value;
           let valid = psw && (psw === rePsw);
+          refs.confirm_password.setState({
+            error: !valid
+          });
           refs.btn.setState({
             disabled: !valid
           });

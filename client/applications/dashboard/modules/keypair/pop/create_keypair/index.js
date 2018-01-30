@@ -13,6 +13,15 @@ function pop(parent, callback) {
     onConfirm: function(refs, cb) {
       let data;
       let name = refs.name.state.value;
+
+      if(!/^[a-zA-Z0-9_]+$/.test(name)) {
+        refs.name.setState({
+          error: true
+        });
+        cb(false);
+        return;
+      }
+
       if (refs.type.state.value === 'create_keypair') {
         data = {
           name: name
@@ -47,6 +56,13 @@ function pop(parent, callback) {
         case 'type':
           refs.public_key.setState({
             hide: state.value === 'create_keypair'
+          });
+          break;
+        case 'name':
+          let name = state.value;
+          let error = !/^[a-zA-Z0-9_]+$/.test(name);
+          refs.name.setState({
+            error: error
           });
           break;
         default:

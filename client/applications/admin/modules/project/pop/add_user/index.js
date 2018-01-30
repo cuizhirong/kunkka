@@ -5,13 +5,13 @@ const __ = require('locale/client/admin.lang.json');
 const renderer = require('./user_field');
 const getErrorMessage = require('../../../../utils/error_message');
 
-function checkUserInDomains(type, data, users, domainId) {
+function checkUserInDomains(type, data, users) {
   let inDomain;
   let currUser = users.find((user) => {
     return user[type] === data;
   });
 
-  if(currUser !== undefined && currUser.domain_id === domainId) {
+  if(currUser !== undefined) {
     inDomain = true;
   } else {
     inDomain = false;
@@ -36,7 +36,7 @@ function pop(obj, parent, callback) {
     parent: parent,
     config: config,
     onInitialize: function(refs) {
-      request.getAllUsers().then((res) => {
+      request.getAllUsers(obj.domain_id).then((res) => {
         let users = res[0].users,
           roles = res[1].roles;
         currDomainUsers = users;
@@ -87,7 +87,7 @@ function pop(obj, parent, callback) {
       const rendererData = refs.user_field.state.rendererData;
       const fieldType = rendererData.field;
       const fieldValue = rendererData.value.trim();
-      const userInDomain = checkUserInDomains(fieldType, fieldValue, currDomainUsers, obj.domain_id);
+      const userInDomain = checkUserInDomains(fieldType, fieldValue, currDomainUsers);
       let userId;
 
       if(!userInDomain) {
