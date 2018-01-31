@@ -85,7 +85,7 @@
     "link": "image"
   }, {
     "key": "deactivated-image",
-    "link:: "image"
+    "link": "image"
   },{
     "key": "subnet",
     "link": "network"
