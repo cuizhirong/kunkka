@@ -92,6 +92,9 @@
 
     .row {
       display: flex;
+      .hide {
+        display: none;
+      }
       &:not(:first-child) {
         margin-top: 20px;
       }
@@ -113,6 +116,27 @@
 
       .modal-data {
         flex: 1;
+        .show_more {
+          margin-top: 10px;
+          .modal-row {
+            &.checkbox-row {
+              height: 18px;
+              >input[type="checkbox"] {
+                margin-right: 7px;
+                height: 18px;
+                line-height: 18px;
+                margin-top: 3px;
+                vertical-align: middle;
+              }
+            }
+          }
+        }
+        .ip_input {
+          width: 534px;
+          &.error {
+            border-color: @psw_input_danger_border_color;
+          }
+        }
       }
 
       &.row-input {

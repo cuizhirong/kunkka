@@ -4,12 +4,14 @@ const {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index')
 const __ = require('locale/client/dashboard.lang.json');
 const createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
 const createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
+const Checkbox = require('client/components/modal_common/subs/checkbox/index');
 const request = require('../../../instance/request');
 const unitConverter = require('client/utils/unit_converter');
 const getErrorMessage = require('../../../../utils/error_message');
 const getOsCommonName = require('client/utils/get_os_common_name');
 
 const TITLE = __.create + __.instance;
+const testAddr = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))/;
 
 let tooltipHolder;
 
@@ -83,7 +85,9 @@ class ModalBase extends React.Component {
       number: 1,
       disabledNumber: false,
       error: '',
-      showError: false
+      showError: false,
+      hideIp: true,
+      ipValue: ''
     };
 
     // 保存所有的 flavors
@@ -745,6 +749,8 @@ class ModalBase extends React.Component {
         };
       }
 
+      if(!state.hideIp && data.networks[0]) data.networks[0].fixed_ip = state.ipValue;
+
       if (state.number > 1) {
         data.return_reservation_id = true;
       }
@@ -1223,15 +1229,20 @@ class ModalBase extends React.Component {
         <div className="modal-data">
           {
             selected ?
-              <select value={selected.id} onChange={this.onChangeNetwork}>
-                {
-                  state.networks.map((ele) =>
-                    <option key={ele.id} value={ele.id}>
-                      {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
-                    </option>
-                  )
-                }
-              </select>
+              <div>
+                <select value={selected.id} onChange={this.onChangeNetwork}>
+                  {
+                    state.networks.map((ele) =>
+                      <option key={ele.id} value={ele.id}>
+                        {ele.name ? ele.name : '(' + ele.id.substr(0, 8) + ')'}
+                      </option>
+                    )
+                  }
+                </select>
+                <div className="show_more">
+                  <Checkbox label={__.show_more} onAction={this.onAction.bind(this)}/>
+                </div>
+              </div>
             : <div className="empty-text-label" onClick={this.createNetwork}>
                 {__.no_network + ' '}
                 <a>{__.create + __.network}</a>
@@ -1240,6 +1251,40 @@ class ModalBase extends React.Component {
         </div>
       </div>
     );
+  }
+
+  renderIp(props, state) {
+    let isIpValue = true;
+    if (!state.hideIp && !state.ipValue) {
+      isIpValue = true;
+    } else {
+      isIpValue = !state.hideIp && testAddr.test(state.ipValue);
+    }
+
+    return (
+      <div className={state.hideIp ? 'row row-select hide' : 'row row-select'}>
+        <div className="modal-label">
+          {__.address_ip}
+        </div>
+        <div className="modal-data">
+          <input className={isIpValue ? 'ip_input' : 'ip_input error'} onChange={this.onChangeIpValue.bind(this)} value={state.ipValue}/>
+        </div>
+      </div>
+    );
+  }
+
+  onChangeIpValue(e) {
+    this.setState({
+      ipValue: e.target.value,
+      disabled: !testAddr.test(e.target.value)
+    });
+  }
+
+  onAction(field, state) {
+    this.setState({
+      hideIp: !state.checked,
+      disabled: state.checked && !testAddr.test(this.state.ipValue)
+    });
   }
 
   renderSecurityGroup(props, state) {
@@ -1520,6 +1565,7 @@ class ModalBase extends React.Component {
           <div className={'page' + slideClass}>
             {this.renderFlavors(props, state)}
             {this.renderNetworks(props, state)}
+            {this.renderIp(props, state)}
             {this.renderSecurityGroup(props, state)}
             {this.renderCredentials(props, state)}
             {this.renderCreateNum(props, state)}
