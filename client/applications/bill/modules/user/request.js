@@ -1,45 +1,21 @@
 const fetch = require('../../cores/fetch');
 
-function requestParams(obj) {
-  let str = '';
-  for(let key in obj) {
-    str += ('&' + key + '=' + obj[key]);
-  }
-
-  return str;
-}
-
 module.exports = {
-  getList: function(pageLimit) {
-    if(isNaN(Number(pageLimit))) {
-      pageLimit = 10;
-    }
-
+  getList: function() {
+    const pageLimit = localStorage.getItem('page_limit') || 10;
     return this.getDomains().then((domains) => {
-      let domainID = 'default';
-      if (HALO.configs.domain) {
-        let domainName = HALO.configs.domain.toLowerCase();
-        let domainIndex = domains.findIndex((ele) => ele.name.toLowerCase() === domainName);
+      let currentDomain = HALO.configs.domain.toLowerCase();
+      let defaultid = HALO.settings.enable_ldap ? '&domain_id=default' : '';
+      let domainID = domains.find((ele) => ele.name.toLowerCase() === currentDomain).id;
+      let urlParam = domainID !== 'default' ? '&domain_id=' + domainID : defaultid;
 
-        if (domainIndex > -1) {
-          domainID = domains[domainIndex].id;
-
-          domains.unshift(domains[domainIndex]);
-          domains.splice(domainIndex + 1, 1);
-        }
-      }
-
-      let url = '/api/v1/users?limit=' + pageLimit;
-      if (HALO.settings.enable_ldap) {
-        url += '&domain_id=' + domainID;
-      }
-
+      let url = '/proxy-search/keystone/v3/users?user_type=person&limit=' + pageLimit + urlParam;
       return fetch.get({
         url: url
       }).then((users) => {
         users._url = url;
         return this.getCharge().then((charges) => {
-          users.users.map((user) => {
+          users.list.map((user) => {
             charges.accounts.map((account) => {
               if (account.user_id === user.id) {
                 user.balance = account.balance;
@@ -47,59 +23,11 @@ module.exports = {
               }
               return false;
             });
-            return [users, domains];
+            return users;
           });
-          return [users, domains];
+          return users;
         });
       });
-    });
-  },
-  getFilteredList: function(data, pageLimit) {
-    if(isNaN(Number(pageLimit))) {
-      pageLimit = 10;
-    }
-
-    let url = '/api/v1/users?limit=' + pageLimit + requestParams(data);
-    return fetch.get({
-      url: url
-    }).then((res) => {
-      res._url = url;
-      return this.getCharge().then((charges) => {
-        res.users.map((user) => {
-          charges.accounts.map((account) => {
-            if (account.user_id === user.id) {
-              user.balance = account.balance;
-              return true;
-            }
-            return false;
-          });
-          return res;
-        });
-        return res;
-      });
-    });
-  },
-  getNextList: function(nextUrl) {
-    return fetch.get({
-      url: nextUrl
-    }).then((res) => {
-      res._url = nextUrl;
-      return this.getCharge().then((charges) => {
-        res.users.map((user) => {
-          charges.accounts.map((account) => {
-            if (account.user_id === user.id) {
-              user.balance = account.balance;
-              return true;
-            }
-            return false;
-          });
-          return res;
-        });
-        return res;
-      });
-    }).catch((res) => {
-      res._url = nextUrl;
-      return res;
     });
   },
   getDomains: function() {
@@ -118,20 +46,88 @@ module.exports = {
       return domains;
     });
   },
+  getCharge: function() {
+    const url = '/proxy/shadowfiend/v1/accounts';
+    return fetch.get({
+      url: url
+    });
+  },
+  getNextList: function(nextUrl) {
+    return fetch.get({
+      url: nextUrl
+    }).then((res) => {
+      res._url = nextUrl;
+      return this.getCharge().then((charges) => {
+        res.list.map((user) => {
+          charges.accounts.map((account) => {
+            if (account.user_id === user.id) {
+              user.balance = account.balance;
+              return true;
+            }
+            return false;
+          });
+          return res;
+        });
+        return res;
+      });
+    }).catch((res) => {
+      res._url = nextUrl;
+      return res;
+    });
+  },
+  getListById: function(userID) {
+    let url = '/proxy-search/keystone/v3/users?user_type=person&id=' + userID;
+    return fetch.get({
+      url: url
+    }).then((res) => {
+      res._url = url;
+      return this.getCharge().then((charges) => {
+        res.list.map((user) => {
+          charges.accounts.map((account) => {
+            if (account.user_id === user.id) {
+              user.balance = account.balance;
+              return true;
+            }
+            return false;
+          });
+          return res;
+        });
+        return res;
+      });
+    }).catch((res) => {
+      res._url = url;
+      return res;
+    });
+  },
+  getListByName: function(name) {
+    // shadowfiend中只存了id，所以需要通过name去找id，然后再通过id去找账户
+    let url = '/proxy-search/keystone/v3/users?user_type=person&name=' + name;
+    return fetch.get({
+      url: url
+    }).then(res => {
+      res._url = url;
+      return this.getCharge().then((charges) => {
+        res.list.map((user) => {
+          charges.accounts.map((account) => {
+            if (account.user_id === user.id) {
+              user.balance = account.balance;
+              return true;
+            }
+            return false;
+          });
+          return res;
+        });
+        return res;
+      });
+    }).catch((res) => {
+      res._url = url;
+      return res;
+    });
+  },
   charge: function(id, data) {
     return fetch.put({
-      url: '/proxy/gringotts/v2/accounts/' + id,
+      url: '/proxy/shadowfiend/v1/accounts/' + id,
       data: data
-    });
-  },
-  getChargeById: function(id) {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/accounts/' + id
-    });
-  },
-  getCharge: function() {
-    return fetch.get({
-      url: '/proxy/gringotts/v2/accounts/'
     });
   }
 };

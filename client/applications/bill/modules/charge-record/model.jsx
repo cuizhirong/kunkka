@@ -1,13 +1,12 @@
 require('./style/index.less');
 
 const React = require('react');
-const Main = require('client/components/main/index');
-
+const Main = require('client/components/main_paged/index');
+const popExport = require('./pop/export/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
 const __ = require('locale/client/bill.lang.json');
-const {Pagination} = require('client/uskin/index');
 
 class Model extends React.Component {
   constructor(props) {
@@ -18,9 +17,11 @@ class Model extends React.Component {
       config: config
     };
 
-    ['onInitialize', 'onAction', 'onClickPagination'].forEach((m) => {
+    ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+    // pagination
+    this.offset = 0;
   }
 
   componentWillMount() {
@@ -48,9 +49,14 @@ class Model extends React.Component {
             return <span className="orange">{item.value}</span>;
           };
           break;
-        case 'charge-type':
+        case 'type':
           column.render = (col, item, i) => {
-            return __[item.type];
+            return __[item.type] ? __[item.type] : item.type;
+          };
+          break;
+        case 'come_from':
+          column.render = (col, item, i) => {
+            return __[item.come_from] ? __[item.come_from] : item.come_from;
           };
           break;
         default:
@@ -60,42 +66,29 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    let current = 1;
-    let limit = this.state.config.table.limit;
-    this.getList(current, limit);
+    this.clearOffset();
+    this.clearState();
+    this.loadingTable();
+    this.getList();
   }
 
-  getList(current, limit) {
-    if (current < 1) {
-      current = 1;
-    }
-
+  getList() {
     let _config = this.state.config,
       table = _config.table;
-    request.getList((current - 1) * limit, limit).then((res) => {
+    request.getList(this.offset).then((res) => {
       table.data = res.charges;
-      this.updateTableData(table, current, res.total_count, limit);
+      this.setPagination(table, res);
+      this.updateTableData(table);
     }).catch(res => {
       table.data = [];
       this.updateTableData(table, res._url);
     });
   }
 
-  updateTableData(table, current, totalNum, limit) {
+  updateTableData(table) {
     let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
-
-    if (totalNum > 0) {
-      let total = Math.ceil(totalNum / limit);
-      table.pagination = {
-        current: current,
-        total: total,
-        total_num: totalNum
-      };
-    } else {
-      table.pagination = null;
-    }
 
     this.setState({
       config: newConfig
@@ -107,30 +100,68 @@ class Model extends React.Component {
       case 'btnList':
         this.onClickBtnList(data.key, refs, data);
         break;
-      case 'pagination':
-        this.onNextPage(refs, data);
+      case 'table':
+        this.onClickTable(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;
     }
   }
 
-  onNextPage(refs, page) {
-    let limit = this.state.config.table.limit;
-    this.getList(page, limit);
+  onClickTable(actionType, refs, data) {
+    const pageLimit = localStorage.getItem('page_limit');
+    switch (actionType) {
+      case 'pagination':
+        if (data.direction === 'prev'){
+          this.offset -= Number(pageLimit);
+        } else if (data.direction === 'next') {
+          this.offset += Number(pageLimit);
+        } else {//default
+          this.offset = 0;
+        }
+
+        this.loadingTable();
+        this.getList();
+        break;
+      default:
+        break;
+    }
+  }
+
+  setPagination(table, res) {
+    let pageLimit = localStorage.getItem('page_limit');
+    let pagination = {};
+
+    pagination.nextUrl = res.total_count - this.offset > pageLimit ? 'yes' : null;
+
+    pagination.prevUrl = this.offset > 0 ? 'yes' : null;
+
+    table.pagination = pagination;
+
+    return table;
   }
 
   onClickBtnList(key, refs, data) {
     switch (key) {
+      case 'export':
+        popExport();
+        break;
       case 'refresh':
-        let current = 1;
-        let limit = this.state.config.table.limit;
-        this.loadingTable();
-        this.getList(current, limit);
+        this.refresh();
         break;
       default:
         break;
     }
+  }
+
+  refresh() {
+    this.clearOffset();
+    this.clearState();
+    this.loadingTable();
+    this.getList();
   }
 
   loadingTable() {
@@ -142,14 +173,18 @@ class Model extends React.Component {
     });
   }
 
-  onClickPagination(page, e) {
-    this.onAction('pagination', 'jump', this.refs, page);
+  clearState() {
+    let dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
+  }
+
+  clearOffset() {
+    this.offset = 0;
   }
 
   render() {
-    let _config = this.state.config,
-      table = _config.table,
-      pagi = table.pagination;
     return (
       <div className="halo-module-charge" style={this.props.style}>
         <Main
@@ -160,15 +195,6 @@ class Model extends React.Component {
           __={__}
           config={this.state.config}
           params={this.props.params} />
-        {
-          !table.loading && pagi ?
-            <div className="pagination-box">
-              <span className="page-guide">{__.pages + ': ' + pagi.current + '/' + pagi.total + ' '
-                + __.total + ': ' + pagi.total_num}</span>
-              <Pagination onClick={this.onClickPagination} current={pagi.current} total={pagi.total}/>
-            </div>
-          : null
-          }
       </div>
     );
   }

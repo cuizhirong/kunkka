@@ -165,9 +165,10 @@ class Model extends React.Component {
 
 
   setPagination(table, res) {
+    const pageLimit = localStorage.getItem('page_limit');
     let pagination = {};
-    pagination.nextUrl = res.total > this.offset + 10 ? this.offset + 10 : null;
-    if(res.total <= 10) {
+    pagination.nextUrl = res.total > (this.offset + +pageLimit) ? (this.offset + +pageLimit) : null;
+    if(res.total <= pageLimit) {
       pagination.nextUrl = null;
     }
     if (this.offset > 0) {
@@ -179,10 +180,11 @@ class Model extends React.Component {
   }
 
   onClickTable(actionType, refs, data) {
+    const pageLimit = localStorage.getItem('page_limit');
     switch (actionType) {
       case 'pagination':
         if (data.direction === 'prev'){
-          this.offset -= 10;
+          this.offset -= +pageLimit;
         } else if (data.direction === 'next') {
           this.offset = data.url;
         } else {

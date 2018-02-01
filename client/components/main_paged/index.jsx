@@ -13,6 +13,11 @@ const getTime = require('client/utils/time_unification');
 const tabFilter = require('client/libs/tab');
 
 const PAGE_LIMIT = [10, 20, 50, 100, 200];
+// 开发环境下，数据较少，添加1和3的分页，便于开发。
+if(process.env.NODE_ENV !== 'production') {
+  PAGE_LIMIT.unshift(3);
+  PAGE_LIMIT.unshift(1);
+}
 
 class Main extends React.Component {
   constructor(props) {
@@ -429,8 +434,8 @@ class Main extends React.Component {
 
     let _config = tabFilter(props.config),
       tabs = _config.tabs,
-      title = _config.tabs.filter((tab) => tab.default)[0].name,
-      btns = _config.btns,
+      title = _config.tabs ? _config.tabs.filter((tab) => tab.default)[0].name : __[_config.title],
+      btns = (_config.btns && _config.btns.length > 0) ? _config.btns : null,
       search = _config.search,
       filter = _config.filter,
       table = _config.table,
@@ -460,30 +465,32 @@ class Main extends React.Component {
           </div>
           : null
         }
-        <div className="operation-list">
-          <ButtonList
-            ref="btnList"
-            btns={btns}
-            onAction={this.onAction.bind(this)} />
-          {search ?
-            <InputSearch
-              ref="search"
-              type="light"
-              width={search.width}
-              placeholder={search.placeholder}
-              onKeyPress={this.keypressSearch.bind(this)}
-              onChange={this.changeSearchInput.bind(this)} />
-            : null
-          }
-          {filter ?
-            <FilterSearch
-              ref="filter_search"
-              btnDisabled={table.loading}
-              items={filter}
-              onConfirm={this.onConfirmFilter.bind(this)} />
-            : null
-          }
-        </div>
+        {
+          btns ? <div className="operation-list">
+            <ButtonList
+              ref="btnList"
+              btns={btns}
+              onAction={this.onAction.bind(this)} />
+            {search ?
+              <InputSearch
+                ref="search"
+                type="light"
+                width={search.width}
+                placeholder={search.placeholder}
+                onKeyPress={this.keypressSearch.bind(this)}
+                onChange={this.changeSearchInput.bind(this)} />
+              : null
+            }
+            {filter ?
+              <FilterSearch
+                ref="filter_search"
+                btnDisabled={table.loading}
+                items={filter}
+                onConfirm={this.onConfirmFilter.bind(this)} />
+              : null
+            }
+          </div> : null
+        }
         <div className="table-box">
           {!table.loading && !table.data.length ?
             <div className="table-with-no-data">

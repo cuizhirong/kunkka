@@ -41,6 +41,7 @@
 @psw_eye_selected_color: @color_grey_800;
 
 @key_value_table_remove_color: @color_delete;
+@division-color: @color_grey_600;
 
 .halo-com-modal-common {
   line-height: 18px;
@@ -369,6 +370,34 @@
       }
     }
 
+    &.select-time-row {
+      > div:last-child {
+        width: 100%;
+        display: flex;
+        .division {
+          width: 70px;
+          margin: 6px 10px 0 10px;
+          position: relative;
+          text-align: center;
+          color: @division-color;
+          &:before,
+          &:after {
+            content: "";
+            width: calc(~"50% - 16px");
+            border-bottom: 1px solid @division-color;
+            position: absolute;
+            top: 7px;
+          }
+          &:before {
+            left: 0;
+          }
+          &:after {
+            right: 0;
+          }
+        }
+      }
+    }
+
     &.tab-row {
       span {
         color: @empty_text_label_color;
@@ -404,7 +433,8 @@
     }
 
     &.select-row,
-    &.radio-input-row {
+    &.radio-input-row,
+    &.radio-text-row {
       height: 32px;
       >div:last-child {
         display: flex;

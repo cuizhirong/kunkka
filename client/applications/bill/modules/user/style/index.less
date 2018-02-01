@@ -1,6 +1,8 @@
 @import "../../../style/theme.less";
 
 @orange: @color_warning;
+@blue: @color_info;
+@grey: @color_grey_700;
 
 .halo-module-user {
   flex: 1;
@@ -15,6 +17,12 @@
             color: @orange;
             font-weight: bold;
           }
+        }
+        .icon-status-active {
+          color: @blue;
+        }
+        .icon-status-deleted {
+          color: @grey;
         }
       }
     }

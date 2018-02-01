@@ -26,7 +26,7 @@ function pop(obj, parent, callback) {
       });
 
       if (!hasVolume && ele.volume_type) {
-        volumeData[ele.volume_type].push(ele);
+        Object.prototype.toString.call(volumeData[ele.volume_type]) === '[object Array]' && volumeData[ele.volume_type].push(ele);
       }
     }
   });

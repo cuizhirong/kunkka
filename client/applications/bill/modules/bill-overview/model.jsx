@@ -28,6 +28,8 @@ let monthData, dayData;
 let appPie = {
   currentIndex: -1
 };
+// 用于判断是否所有数据都加载完成
+let loadingIndex = 0;
 
 class Model extends React.Component {
   constructor(props) {
@@ -41,12 +43,18 @@ class Model extends React.Component {
       loadingPieChart: true,
       startTime: null,
       endTime: null,
-      hoverIndex: -1
+      hoverIndex: -1,
+      loading: true,
+      balance: '...',
+      price_per_hour: '...',
+      remaining_day: '...'
     };
 
-    ['onInitialize', 'onSwitchProject', 'onSwitchRegion', 'onChangeStartTime', 'onChangeEndTime', 'onQuery'].forEach((m) => {
-      this[m] = this[m].bind(this);
-    });
+    ['onInitialize', 'onSwitchProject', 'onSwitchRegion',
+      'onChangeStartTime', 'onChangeEndTime', 'onQuery',
+      'refresh', 'checkLoading'].forEach((m) => {
+        this[m] = this[m].bind(this);
+      });
   }
 
   componentWillMount() {
@@ -82,11 +90,18 @@ class Model extends React.Component {
     return true;
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   if(nextProps.style.display !== 'none' && this.props.style.display === 'none') {
+  //   }
+  // }
+
   onInitialize() {
+    this.getBalance();
     this.getList();
     this.getTrend('month');
   }
 
+  // 数字动效
   countingNumber(ele, number) {
     new CountUp(ele, 0, number, 2, 1).start();
   }
@@ -112,7 +127,7 @@ class Model extends React.Component {
     lineChart.hideLoading();
     chartOption.lineChartOption.xAxis.data = xAxis;
     chartOption.lineChartOption.series = [{
-      name: 'none',
+      name: __.sum,
       type: 'line',
       smooth: true,
       data: data
@@ -120,6 +135,35 @@ class Model extends React.Component {
     lineChart.setOption(chartOption.lineChartOption);
   }
 
+  checkLoading() {
+    loadingIndex++;
+    if(loadingIndex >= 3) {
+      loadingIndex = 0;
+      this.setState({
+        loading: false
+      });
+    }
+  }
+
+  getBalance() {
+    request.getBalance().then(res => {
+      this.checkLoading();
+      let newState = {
+        balance: res.balance,
+        price_per_hour: res.price_per_hour
+      };
+      if(res.remaining_day === -1) {
+        newState.remaining_day = '充足';
+      } else if(res.remaining_day === -2) {
+        newState.remaining_day = '欠费';
+      } else {
+        newState.remaining_day = res.remaining_day + __.day;
+      }
+      this.setState(newState);
+    });
+  }
+
+  // 因为api较慢，所以先获取到所有的services，然后加载所有的service，加载一个显示一个
   getList(startTime, endTime) {
     if(startTime && endTime) {
       this.loadingChart(pieChart);
@@ -158,6 +202,7 @@ class Model extends React.Component {
                 });
                 this.countingNumber('sum-number', this.state.sum);
                 this.upDatePieChart();
+                this.checkLoading();
               });
             }
           });
@@ -166,6 +211,7 @@ class Model extends React.Component {
     });
   }
 
+  // 获取按天和按月显示的数据并且展示
   getTrend(time) {
     if(monthData && time === 'month') {
       this.upDateLineChart(monthData.xAxis, monthData.data);
@@ -187,10 +233,13 @@ class Model extends React.Component {
         this.setState({
           loadingLineChart: false
         });
+        this.checkLoading();
       });
     }
   }
 
+  // 处理按月显示的数据
+  // 如果数据不够12个，向前推，没有数据的月份补0
   processMonthData(res) {
     let resLength = res.length;
     let xAxisHolder = [];
@@ -203,7 +252,7 @@ class Model extends React.Component {
     });
     if(resLength < 12) {
       for(let i = 0; i < 12 - resLength; i++) {
-        xAxisHolder[i] = moment(resLength === 0 ? new Date() : res[0][0]).subtract(11 - resLength - i, 'months').format().slice(0, 10);
+        xAxisHolder[i] = moment(resLength === 0 ? new Date() : res[0][0]).subtract(12 - resLength - i, 'months').format().slice(0, 10);
         dataHolder[i] = 0;
       }
       xAxis = xAxisHolder.concat(xAxis);
@@ -216,6 +265,8 @@ class Model extends React.Component {
     return monthData;
   }
 
+  // 处理按天显示的数据
+  // 如果数据不够30个，向前推，没有数据的天数补0
   processDayData(res) {
     let resLength = res.length;
     let xAxisHolder = [];
@@ -241,6 +292,7 @@ class Model extends React.Component {
     return dayData;
   }
 
+  // hover状态下图表dispatch相应事件
   onHoverItem(i) {
     if(i === appPie.currentIndex || this.state.loadingPieChart) {
       return;
@@ -269,6 +321,7 @@ class Model extends React.Component {
     });
   }
 
+  // 从hover状态离开后图表dispatch相应事件
   onMoveOutItem() {
     if(this.state.loadingPieChart) {
       return;
@@ -289,6 +342,7 @@ class Model extends React.Component {
     appPie.currentIndex = -1;
   }
 
+  // 切换按月／按天展示
   onSwitchLineChart(time) {
     if(this.state.loadingLineChart) {
       return;
@@ -299,18 +353,21 @@ class Model extends React.Component {
     this.getTrend(time);
   }
 
+  // 切换region
   onSwitchRegion(e) {
     request.switchRegion(e.target.value).then(() => {
       window.location.reload();
     });
   }
 
+  // 切换项目
   onSwitchProject(e) {
     request.switchProject(e.target.value).then(() => {
       window.location.reload();
     });
   }
 
+  // 日历组件（开始事件）响应事件
   onChangeStartTime(time) {
     let date = new Date(time.year + '-' + time.month + '-' + time.date);
     this.setState({
@@ -318,6 +375,7 @@ class Model extends React.Component {
     });
   }
 
+  // 日历组件（结束事件）响应事件
   onChangeEndTime(time) {
     let date = new Date(time.year + '-' + time.month + '-' + time.date);
     this.setState({
@@ -325,12 +383,28 @@ class Model extends React.Component {
     });
   }
 
+  // 查询按钮响应事件
   onQuery() {
     let state = this.state;
     if(state.loadingPieChart || !state.startTime || !state.endTime) {
       return;
     }
     this.getList(state.startTime, state.endTime);
+  }
+
+  // 刷新
+  refresh() {
+    this.loadingChart(pieChart);
+    this.loadingChart(lineChart);
+    monthData = undefined;
+    dayData = undefined;
+    this.setState({
+      balance: '...',
+      price_per_hour: '...',
+      remaining_day: '...'
+    }, () => {
+      this.onInitialize();
+    });
   }
 
   render() {
@@ -351,6 +425,11 @@ class Model extends React.Component {
         <div className="tab-wrapper">
           <Tab items={tabs} />
         </div>
+        <div className="balance-wrapper">
+          <span className="wrapper"><span className="name">{__.account_balance}: </span><span className="value">{state.balance} 元</span></span>
+          <span className="wrapper"><span className="name">{__.price_per_hour}: </span><span className="value">{state.price_per_hour} 元</span></span>
+          <span className="wrapper"><span className="name">{__.remaining_day}: </span><span className="value">{state.remaining_day}</span></span>
+        </div>
         <div className="header">
           <select value={HALO.current_region} onChange={this.onSwitchRegion}>
             {
@@ -367,9 +446,10 @@ class Model extends React.Component {
             }
           </select>
           <div className="calendar-wrapper">
-            <span>{__.from}</span><Calendar onChange={this.onChangeStartTime} hasScreen={true} unfold={false} placeholder={__.start_time} />
-            <span>{__.to}</span><Calendar onChange={this.onChangeEndTime} hasScreen={true} unfold={false} placeholder={__.end_time} />
-            <Button value={__.query} btnKey="normal" onClick={this.onQuery} />
+            <span>{__.from}</span><Calendar onChange={this.onChangeStartTime} width={'102px'} hasScreen={true} unfold={false} placeholder={__.start_time} />
+            <span>{__.to}</span><Calendar onChange={this.onChangeEndTime} width={'102px'} hasScreen={true} unfold={false} placeholder={__.end_time} />
+            <Button value={__.query} btnKey="normal" disabled={state.loading} onClick={this.onQuery} />
+            <Button iconClass="refresh" btnKey="normal" disabled={state.loading} initial={true} onClick={this.refresh} />
           </div>
         </div>
         <div className="center">
@@ -399,7 +479,6 @@ class Model extends React.Component {
           </div>
         </div>
         <div className="footer">
-          <div className="title">{__.recent_consumption_record}</div>
           <div className="content">
             <div id="line-chart"></div>
             <div className="btn-wrapper">

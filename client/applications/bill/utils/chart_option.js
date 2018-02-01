@@ -12,14 +12,8 @@ let basePieOption = function(style) {
     tooltip: {
       trigger: 'item',
       formatter: params => {
-        return `${__[params.name]}占比${params.percent}%`;
+        return `${__[params.name]}占比 ${params.percent}%`;
       },
-      borderColor: '#00afc8',
-      borderWidth: 1,
-      textStyle: {
-        color: '#252f3d'
-      },
-      backgroundColor: '#f5fdfe',
       confine: true
     },
     legend: {
@@ -59,24 +53,25 @@ let chartOptions = {
   pieNormalOption: pieNormalOption,
   lineChartOption: {
     title: {
-      show: false
+      show: true,
+      text: __.recent_consumption_record,
+      textStyle: {
+        color: '#252F3D',
+        fontSize: 12
+      },
+      left: '20px',
+      subtext: __.subtext
     },
     tooltip: {
-      trigger: 'axis',
-      formatter: `{b}<br>${__.sum}: ¥{c}`,
-      borderColor: '#00afc8',
-      borderWidth: 1,
-      textStyle: {
-        color: '#252f3d'
-      },
-      backgroundColor: '#f5fdfe'
+      trigger: 'axis'
     },
     legend: {
       show: false
     },
     grid: {
       left: '80px',
-      right: '36px'
+      right: '36px',
+      bottom: '30px'
     },
     toolbox: {
       show: false
@@ -94,10 +89,32 @@ let chartOptions = {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: []
+      data: [],
+      axisLine: {
+        lineStyle: {
+          color: '#999999'
+        }
+      },
+      // grid中的分割线
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: '#ECF0F2'
+        }
+      }
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: '#999999'
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#ECF0F2'
+        }
+      }
     },
     series: []
   }

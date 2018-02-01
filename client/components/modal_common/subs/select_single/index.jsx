@@ -1,3 +1,15 @@
+/**
+ *  用法：
+ *
+ *  {
+ *    type: 'select_single',
+ *    is_long_label: false,
+ *    columnNum: 2,
+ *    data: [], // object or string
+ *    value: ''
+ *  }
+ */
+
 const React = require('react');
 
 const copyObj = function(obj) {

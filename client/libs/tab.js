@@ -15,7 +15,7 @@ module.exports = (configs) => {
         shows.push(m);
       }
     });
-    configs.tabs = configs.tabs.filter(t => ~shows.indexOf(t.key));
+    configs.tabs = configs.tabs ? configs.tabs.filter(t => ~shows.indexOf(t.key)) : configs.tabs;
   }
   return configs;
 };

@@ -5,6 +5,10 @@
     "default": true
   }],
   "btns": [{
+    "key": "export",
+    "value": ["export", "record"],
+    "icon": "download"
+  }, {
     "key": "refresh",
     "icon": "refresh"
   }],
@@ -19,11 +23,11 @@
     }, {
       "title": ["charge-type"],
       "dataIndex": "type",
-      "key": "charge-type"
+      "key": "type"
     }, {
       "title": ["channel"],
       "dataIndex": "come_from",
-      "key": "channel"
+      "key": "come_from"
     }, {
       "title": ["charge-time"],
       "dataIndex": "charge_time",

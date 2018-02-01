@@ -1,0 +1,35 @@
+{
+  "title": "global-billing-record",
+  "table": {
+    "dataKey": "id",
+    "limit": 10,
+    "hideLimit": true,
+    "loading": true,
+    "column": [{
+      "title": ["resource"],
+      "dataIndex": "resource",
+      "key": "resource",
+      "type": "captain"
+    }, {
+      "title": ["resource", "id"],
+      "dataIndex": "resource_id",
+      "key": "resource_id"
+    }, {
+      "title": ["amount"],
+      "dataIndex": "amount",
+      "key": "amount"
+    }, {
+      "title": ["started_at"],
+      "dataIndex": "started_at",
+      "key": "started_at"
+    }],
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["bill_detail"],
+        "key": "bill_detail",
+        "default": true
+      }]
+    }
+  }
+}

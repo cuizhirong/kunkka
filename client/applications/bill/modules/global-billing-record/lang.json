@@ -1,0 +1,26 @@
+{
+  "en": {
+    "all_types": "All Types",
+    "amount": "Amount",
+    "bill_detail": "Details",
+    "ended_at": "End Time",
+    "export_all_billing_records": "Export All Billing Records",
+    "export_specified_billing_records": "Export Specified Account, please enter user name.",
+    "started_at": "Create Time",
+    "resource": "Resource",
+    "search_by_id": "Project ID",
+    "search_by_name": "Project Name"
+  },
+  "zh-CN": {
+    "all_types": "全部类别",
+    "amount": "金额",
+    "bill_detail": "消费明细",
+    "ended_at": "结束时间",
+    "export_all_billing_records": "导出所有用户的消费记录",
+    "export_specified_billing_records": "导出指定用户的消费记录，请输入用户名.",
+    "started_at": "创建时间",
+    "resource": "资源",
+    "search_by_id": "项目ID",
+    "search_by_name": "项目名称"
+  }
+}

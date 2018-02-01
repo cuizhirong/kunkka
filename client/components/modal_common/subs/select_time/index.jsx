@@ -141,6 +141,8 @@ class SelectTime extends React.Component {
 
 SelectTime.defaultProps = {
   range: false,
+  value: '',
+  disabled: false,
   hide: false
 };
 

@@ -16,6 +16,7 @@ const SelectTime = require('./subs/select_time/index');
 const Tab = require('./subs/tab/index');
 const GroupSelect = require('./subs/group_select/index');
 const RadioInput = require('./subs/radio_input/index');
+const RadioText = require('./subs/radio_text/index');
 const Slider = require('./subs/slider/index');
 const Progress = require('./subs/progress/index');
 const ShortTip = require('./subs/short_tip/index');
@@ -69,6 +70,7 @@ class ModalBase extends React.Component {
         'select_time': SelectTime,
         'group_select': GroupSelect,
         'radio_input': RadioInput,
+        'radio_text': RadioText,
         'slider': Slider,
         'progress': Progress,
         'short_tip': ShortTip,

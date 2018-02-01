@@ -6,8 +6,13 @@
     "icon_type": "user",
     "text": ""
   }, {
+    "type": "select_single",
+    "field": "charge_type",
+    "columnNum": 2,
+    "data": []
+  }, {
     "type": "input",
-    "field": "charge",
+    "field": "charge_value",
     "required": true
   }, {
     "type": "tip",

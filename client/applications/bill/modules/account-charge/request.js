@@ -1,16 +1,10 @@
 const fetch = require('../../cores/fetch');
 
 module.exports = {
-  getList: function(id) {
-    let url = '/proxy/gringotts/v2/accounts/' + id;
+  getList: function() {
+    let url = '/proxy/shadowfiend/v1/accounts/' + HALO.user.userId;
     return fetch.get({
       url: url
-    }).then((res) => {
-      res._url = url;
-      return res;
-    }).catch((res) => {
-      res._url = url;
-      return res;
     });
   },
   payment: function(method, data) {

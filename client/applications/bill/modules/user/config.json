@@ -15,14 +15,18 @@
     "disabled": true
   }],
   "filter": [{
-    "group_key": "all_tenant",
+    "group_key": "name",
     "items": [{
       "type": "input",
       "key": "name",
       "placeholder": ["pls_enter", "user_name"]
-    }, {
-      "type": "select",
-      "key": "domain_id"
+    }]
+  }, {
+    "group_key": "id",
+    "items": [{
+      "type": "input",
+      "key": "id",
+      "placeholder": ["pls_enter", "user_id"]
     }]
   }],
   "table": {

@@ -6,8 +6,7 @@
   }],
   "btns": [{
     "key": "refresh",
-    "icon": "refresh",
-    "disabled": true
+    "icon": "refresh"
   }],
   "table": {
     "dataKey": "id",

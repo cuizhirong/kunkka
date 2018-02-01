@@ -36,9 +36,7 @@ class Model extends React.Component {
   }
 
   onInitialize() {
-    let userId = HALO.user.userId;
-
-    request.getList(userId).then((res) => {
+    request.getList().then((res) => {
       this.setState({
         balance: res.balance
       });
