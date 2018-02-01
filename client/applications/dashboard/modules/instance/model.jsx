@@ -51,6 +51,7 @@ const getTime = require('client/utils/time_unification');
 const utils = require('../alarm/utils');
 const timeUtils = require('../../utils/utils');
 const dataUtils = require('./data_utils');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 class Model extends React.Component {
 
@@ -163,7 +164,7 @@ class Model extends React.Component {
 
     if(item.image && item.image.id) {
       let image = item.image;
-      label = image.image_label ? image.image_label.toLowerCase() : '';
+      label = getOsCommonName(image);
 
       return (
         <div>
@@ -176,7 +177,7 @@ class Model extends React.Component {
       );
     } else if(item.volume[0] && item.volume[0].volume_image_metadata) {//bootable volume created server
       let imageData = item.volume[0].volume_image_metadata;
-      label = imageData.image_label ? imageData.image_label.toLowerCase() : '';
+      label = getOsCommonName(imageData);
 
       return (
         <div>

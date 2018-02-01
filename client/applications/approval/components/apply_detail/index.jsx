@@ -3,6 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const __ = require('locale/client/approval.lang.json');
 const unitConverter = require('client/utils/unit_converter');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 class ApplyDetail extends React.Component {
   constructor(props) {
@@ -89,7 +90,7 @@ class ApplyDetail extends React.Component {
             backgroundSize: '20px 20px'
           };
         }
-        let label = image.image_label ? image.image_label.toLowerCase() : '';
+        let label = getOsCommonName(image);
         return image.id ? <span>
           <i className={'glyphicon icon-image-default ' + label} style={style}/>
           <span>{image.name}</span>

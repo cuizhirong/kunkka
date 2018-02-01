@@ -6,6 +6,7 @@ const __ = require('locale/client/admin.lang.json');
 const request = require('../../request');
 
 const getErrorMessage = require('../../../../utils/error_message');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 class BatchReactivate extends React.Component {
   constructor(props) {
@@ -41,8 +42,8 @@ class BatchReactivate extends React.Component {
     });
   }
 
-  getImageIcon(iconLabel) {
-    let label = iconLabel && iconLabel.toLowerCase();
+  getImageIcon(image) {
+    let label = getOsCommonName(image);
     let style = null;
 
     let imgURL = HALO.settings.default_image_url;
@@ -73,7 +74,7 @@ class BatchReactivate extends React.Component {
                 props.obj.images.map((image) => {
                   return (
                     <li key={image.id}>
-                      { _this.getImageIcon(image.image_label) }
+                      { _this.getImageIcon(image) }
                       <span>
                         { image.name }
                       </span>

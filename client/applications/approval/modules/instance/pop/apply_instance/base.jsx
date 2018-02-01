@@ -7,6 +7,7 @@ const request = require('../../request');
 const unitConverter = require('client/utils/unit_converter');
 const getErrorMessage = require('../../../../utils/error_message');
 const utils = require('../../../../utils/utils');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 const TITLE = __.apply_ + __.instance;
 const halo = HALO.settings;
@@ -152,11 +153,7 @@ class ModalBase extends React.Component {
     images.sort(imageSort);
     snapshots.sort(imageSort);
     let selectedImage = selectDefault(images);
-    let username = 'root';
-    if (selectedImage.image_meta) {
-      let meta = JSON.parse(selectedImage.image_meta);
-      username = meta.os_username;
-    }
+    let username = this.getImageAdminUserName(selectedImage);
 
     let flavors = res.flavor;
     this._flavors = flavors;
@@ -203,7 +200,24 @@ class ModalBase extends React.Component {
       username: username,
       credential: credential
     });
+  }
 
+  // 根据当前所选镜像，提取出默认的admin 用户名
+  getImageAdminUserName(image) {
+    let username = 'root';
+    if (image) {
+      if (image.os_admin_user) {
+        username = image.os_admin_user;
+      } else if (image.image_meta) {
+        try {
+          username = JSON.parse(image.image_meta).os_username || 'root';
+        } catch (e) {
+          username = 'root';
+        }
+      }
+    }
+
+    return username;
   }
 
   findCpu(flavors, cpu) {
@@ -284,19 +298,14 @@ class ModalBase extends React.Component {
     let image = state.images.length > 0 ? state.images[0] : null;
     let snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
 
-    let username = 'root';
-    let obj = (key === 'snapshot') ? snapshot : image;
-    if (obj && obj.image_meta) {
-      let meta = JSON.parse(image.image_meta);
-      username = meta.os_username;
-    }
-
     let objImage;
     if (key === 'image') {
       objImage = image;
     } else if (key === 'snapshot') {
       objImage = snapshot;
     }
+
+    let username = this.getImageAdminUserName(objImage);
 
     this.setFlavor(objImage, 'all');
 
@@ -373,12 +382,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeImage(item, e) {
-    let username = 'root';
-    if (item.image_meta) {
-      let meta = JSON.parse(item.image_meta);
-      username = meta.os_username;
-    }
-
+    let username = this.getImageAdminUserName(item);
     this.setFlavor(item, 'all');
     this.setState({
       image: item,
@@ -391,11 +395,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    let username = 'root';
-    if (item.image_meta) {
-      let meta = JSON.parse(item.image_meta);
-      username = meta.os_username;
-    }
+    let username = this.getImageAdminUserName(item);
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -632,7 +632,7 @@ class ModalBase extends React.Component {
         }
       };
       if(showCredentials) {
-        if(state.image.image_label === 'Windows') {
+        if(getOsCommonName(state.image) === 'windows') {
           createItem.metadata = {
             admin_pass: state.pwd
           };
@@ -748,13 +748,15 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.images.map((ele) =>
-            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
+          state.images.map((ele) => {
+            return (
+              <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
               onClick={state.image.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
-              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
+              <i className={'icon-image-default ' + getOsCommonName(ele) }></i>
                 {ele.name}
             </a>
-          )
+            );
+          })
         }
         {
           state.ready && !state.image ?
@@ -775,13 +777,15 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.snapshots.map((ele) =>
-            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} className={state.snapshot.id === ele.id ? 'selected' : ''}
+          state.snapshots.map((ele) => {
+            return (
+              <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} className={state.snapshot.id === ele.id ? 'selected' : ''}
               onClick={state.snapshot.id === ele.id ? null : this.onChangeSnapshot.bind(this, ele)}>
-              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
+              <i className={'icon-image-default ' + getOsCommonName(ele)}></i>
                 {ele.name}
             </a>
-          )
+            );
+          })
         }
         {
           state.ready && !state.snapshot ?
