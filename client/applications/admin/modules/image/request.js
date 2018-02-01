@@ -100,6 +100,11 @@ module.exports = {
       data: data
     });
   },
+  deactivateImage: function(id) {
+    return fetch.post({
+      url: '/proxy/glance/v2/images/' + id + '/actions/deactivate'
+    });
+  },
   delete: function(id) {
     return fetch.delete({
       url: '/proxy/glance/v2/images/' + id

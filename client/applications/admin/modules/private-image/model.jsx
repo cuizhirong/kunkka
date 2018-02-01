@@ -12,6 +12,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const RelatedInstance = require('../image/detail/related_instance');
 const updateStatus = require('./pop/update_status/index');
 const createImage = require('../image/pop/create/index');
+const deactivate = require('../image/pop/deactivate/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/admin.lang.json');
@@ -305,6 +306,16 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'deactivate_image':
+        if(rows.length === 1) {
+          deactivate({ image: rows[0]}, (res) => {
+            this.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
+          });
+        }
+        break;
       case 'update_status':
         updateStatus(null, null, () => {
           this.refresh({
@@ -384,6 +395,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
+    let sole = rows.length === 1 ? rows[0] : null;
     let hasLoadedCatalog = this.state.hasLoadedCatalog;
 
     for (let key in btns) {
@@ -392,10 +404,13 @@ class Model extends React.Component {
           btns[key].disabled = !hasLoadedCatalog;
           break;
         case 'modify_image':
-          btns[key].disabled = (rows.length === 1 ? false : true) || !hasLoadedCatalog;
+          btns[key].disabled = (sole ? false : true) || !hasLoadedCatalog;
+          break;
+        case 'deactivate_image':
+          btns[key].disabled = (sole && (sole.status === 'active' || sole.status === 'deactivated')) ? false : true;
           break;
         case 'delete':
-          btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
+          btns[key].disabled = (sole && sole.owner === HALO.user.projectId && sole.visibility === 'private' && !sole.protected) ? false : true;
           break;
         default:
           break;
