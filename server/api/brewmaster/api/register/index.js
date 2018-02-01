@@ -13,11 +13,6 @@ const adminEmail = config('admin_email');
 
 const createUserAsync = drivers.keystone.user.createUserAsync;
 const listDomainsAsync = drivers.keystone.domain.listDomainsAsync;
-const createProjectAsync = drivers.keystone.project.createProjectAsync;
-const listProjectsAsync = drivers.keystone.project.listProjectsAsync;
-const listRolesAsync = drivers.keystone.role.listRolesAsync;
-const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
-const assignRoleToUserOnProjectInSubtreeAsync = drivers.keystone.inherit.assignRoleToUserOnProjectInSubtreeAsync;
 const updateUserAsync = drivers.keystone.user.updateUserAsync;
 const sendEmail = drivers.email.sendEmailByTemplateAsync;
 
@@ -95,75 +90,11 @@ User.prototype = {
       if (!isCorrect) {
         return next({customRes: true, status: 400, msg: 'LinkError'});
       }
+      let result = yield base.func.enableUser(user, req.admin.token);
 
-      //USERNAME_project
-      let projectId;
-      try {
-        let project = yield createProjectAsync(
-          req.admin.token,
-          keystoneRemote,
-          {project: {name: user.name + '_project'}}
-        );
-        projectId = project.body.project.id;
-      } catch (err) {
-        if (err.status === 409) {
-          let projects = yield listProjectsAsync(
-            req.admin.token,
-            keystoneRemote,
-            {name: user.name + '_project'}
-          );
-          projectId = projects.body.projects[0] && projects.body.projects[0].id;
-        } else {
-          return next(err);
-        }
-      }
-      //GET ROLE project_owner
-      let roles = yield listRolesAsync(req.admin.token, keystoneRemote, {});
-      roles = roles.body.roles;
-
-      const roleId = {
-        'project_owner': ''
-      };
-      roles.some(role => {
-        if (role.name === 'project_owner') {
-          roleId[role.name] = role.id;
-          return roleId.project_owner;
-        }
-      });
-
-      if (!roleId.project_owner) {
-        yield sendEmail(
-          adminEmail, '注册用户激活失败，请检查角色project_owner',
-          {content: roleId.project_owner || '<p>project_owner 角色不存在，需创建</p>'}
-        );
-        return next('SystemError');
-      }
-      //Assign Role & Update User
-      yield [
-        addRoleToUserOnProjectAsync(
-          projectId,
-          user.id,
-          roleId.project_owner,
-          req.admin.token,
-          keystoneRemote
-        ),
-        assignRoleToUserOnProjectInSubtreeAsync(
-          projectId,
-          user.id,
-          roleId.project_owner,
-          req.admin.token,
-          keystoneRemote
-        ),
-        updateUserAsync(
-          req.admin.token,
-          keystoneRemote,
-          user.id,
-          {user: {enabled: true, default_project_id: projectId}}
-        )
-      ];
       yield [
         userModel.update(
-          {enabled: true, default_project_id: projectId},
+          {enabled: true, default_project_id: result.projectId},
           {where: {id: user.id}}
         ),
         that.memClient.deleteAsync(user.id)
