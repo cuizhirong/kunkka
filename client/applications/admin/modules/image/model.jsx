@@ -7,6 +7,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const RelatedInstance = require('./detail/related_instance');
 
 const image = require('./pop/create/index');
+const deactivate = require('./pop/deactivate/index');
 
 const request = require('./request');
 const config = require('./config.json');
@@ -385,6 +386,16 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'deactivate_image':
+        if(rows.length === 1) {
+          deactivate({ image: rows[0]}, (res) => {
+            this.refresh({
+              refreshList: true,
+              refreshDetail: true
+            });
+          });
+        }
+        break;
       case 'export_csv':
         request.getFieldsList().then((res) => {
           csv(res);
@@ -474,6 +485,9 @@ class Model extends React.Component {
         case 'edit_name':
         case 'edit_image':
           btns[key].disabled = (sole ? false : true) || !hasLoadedCatalog;
+          break;
+        case 'deactivate_image':
+          btns[key].disabled = (sole && (sole.status === 'active' || sole.status === 'deactivated')) ? false : true;
           break;
         case 'export_csv':
           btns[key].disabled = false;

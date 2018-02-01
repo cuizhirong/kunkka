@@ -21,17 +21,22 @@
     "icon": "edit",
     "disabled": true
     }, {
+    "value": ["deactivate_image"],
+    "key": "deactivate_image",
+    "icon": "edit",
+    "disabled": true
+    }, {
     "value": ["update", "status"],
     "key": "update_status",
     "icon": "edit",
     "hide": true
-  }, {
+    }, {
     "value": ["delete"],
     "key": "delete",
     "icon": "delete",
     "type": "delete",
     "disabled": true
-  }, {
+    }, {
     "key": "refresh",
     "icon": "refresh"
   }],
