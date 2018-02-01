@@ -11,6 +11,11 @@ const SMS_CODE_EXPIRE = config('reg_sms_expire') || 60 * 10;
 
 const getUserAsync = drivers.keystone.user.getUserAsync;
 const listUsersAsync = drivers.keystone.user.listUsersAsync;
+const createProjectAsync = drivers.keystone.project.createProjectAsync;
+const listProjectsAsync = drivers.keystone.project.listProjectsAsync;
+const listRolesAsync = drivers.keystone.role.listRolesAsync;
+const addRoleToUserOnProjectAsync = drivers.keystone.role.addRoleToUserOnProjectAsync;
+const updateUserAsync = drivers.keystone.user.updateUserAsync;
 
 const passwordModel = require('../../models').user_password;
 const basic = require('./basic');
@@ -177,6 +182,93 @@ const getLoginCaptcha = function* (session) {
     return count > 1 && time > new Date().getTime() - 30 * 60 * 1000;
   }
 };
+const enableUser = function* (user, adminToken) {
+  //USERNAME_project
+  let projectId;
+  try {
+    let project = yield createProjectAsync(
+      adminToken,
+      keystoneRemote,
+      {project: {name: user.name + '_project'}}
+    );
+    projectId = project.body.project.id;
+  } catch (err) {
+    if (err.status === 409) {
+      let projects = yield listProjectsAsync(
+        adminToken,
+        keystoneRemote,
+        {name: user.name + '_project'}
+      );
+      projectId = projects.body.projects[0] && projects.body.projects[0].id;
+    } else {
+      throw new Error(err);
+    }
+  }
+
+  //GET ROLE Member, rating
+  let roles = yield listRolesAsync(adminToken, keystoneRemote, {});
+  roles = roles.body.roles;
+
+  const roleId = {
+    Member: '',
+    rating: '',
+    billing_owner: ''
+  };
+  roles.some(role => {
+    if (role.name === 'billing_owner' || role.name === 'Member' || role.name === 'rating') {
+      roleId[role.name] = role.id;
+      return roleId.Member && roleId.rating && role.billing_owner;
+    }
+  });
+  if (!roleId.Member || !roleId.rating || !roleId.billing_owner) {
+    throw new Error('Role "Member", "rating" or "billing_owner" NotExist');
+  }
+
+  const queryCloudkitty = yield listUsersAsync(adminToken, keystoneRemote, {name: 'cloudkitty'});
+  if (!queryCloudkitty.body.users.length) {
+    throw new Error('User "cloudkitty" NotExist');
+  }
+  //Assign Role & Update User
+  yield [
+    addRoleToUserOnProjectAsync(
+      projectId,
+      user.id,
+      roleId.Member,
+      adminToken,
+      keystoneRemote
+    ),
+    addRoleToUserOnProjectAsync(
+      projectId,
+      queryCloudkitty.body.users[0].id,
+      roleId.rating,
+      adminToken,
+      keystoneRemote
+    ),
+    // FIXIT subaccount needed
+    // assignRoleToUserOnProjectInSubtreeAsync(
+    //   projectId,
+    //   user.id,
+    //   roleId.project_owner,
+    //   adminToken,
+    //   keystoneRemote
+    // ),
+    addRoleToUserOnProjectAsync(
+      projectId,
+      user.id,
+      roleId.billing_owner,
+      adminToken,
+      keystoneRemote
+    )
+  ];
+  yield updateUserAsync(
+    adminToken,
+    keystoneRemote,
+    user.id,
+    {user: {enabled: true, default_project_id: projectId}}
+  );
+  return {projectId};
+};
+
 module.exports = {
   verifyUserByNameAsync,
   verifyUserByIdAsync,
@@ -190,5 +282,6 @@ module.exports = {
   getTemplateObjAsync,
 
   setLoginCaptcha,
-  getLoginCaptcha
+  getLoginCaptcha,
+  enableUser
 };

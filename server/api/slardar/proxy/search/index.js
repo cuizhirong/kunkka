@@ -149,36 +149,15 @@ module.exports = (req, res, next) => {
       } else {
         result = {list, links: {next: null, prev: null}};
       }
-    } else if (!search) {
-      data = yield request.get(target + getQueryString(pureQuery)).set('X-Auth-Token', token);
-      data = data.body;
-      if (obj.name === 'user' && pureQuery.user_type) {
-        data.users = data.users.filter(user => isCurrentUserType(user.name, pureQuery.user_type, endpoint));
-      }
-      if (!obj.hasPagination && limit) {
-        result = paginate(page, limit, data[obj.name + 's'], path, pureQuery);
-      } else {
-        result = {list: data[obj.name + 's'], links: {prev: null, next: null}};
-        if (obj.linkKey === null) {
-          Object.keys(data).forEach(key => {
-            if (key !== obj.name + 's' && data[key]) {
-              result.links[key] = `${prefix}/${obj.service}/${obj.version}${data[key].split('/' + obj.version)[1]}`;
-            }
-          });
-        } else if (data[obj.name + 's_links']) {
-          data[obj.name + 's_links'].forEach(l => {
-            result.links[l.rel] = `${prefix}/${obj.service}/${obj.version}${l.href.split('/' + obj.version)[1]}`;
-          });
-        }
-      }
-
     } else {
       data = yield request.get(target + getQueryString(pureQuery)).set('X-Auth-Token', token);
-      data = data.body;
+      let list = data.body[obj.name + 's'];
       if (obj.name === 'user' && pureQuery.user_type) {
-        data.users = data.users.filter(user => isCurrentUserType(user.name, pureQuery.user_type, endpoint));
+        list = list.filter(user => isCurrentUserType(user.name, pureQuery.user_type, endpoint));
       }
-      let list = data[obj.name + 's'].filter(d => re.test(d[obj.match || 'name']));
+      if (search) {
+        list = list.filter(item => re.test(item[obj.match || 'name']));
+      }
       if (limit) {
         result = paginate(page, limit, list, path, Object.assign({search}, pureQuery));
       } else {

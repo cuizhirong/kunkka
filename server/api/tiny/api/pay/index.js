@@ -111,11 +111,12 @@ Pay.prototype = {
               headers: {
                 'X-Auth-Token': loginRes.token
               },
-              url: loginRes.remote.gringotts[region] + '/v2/accounts/' + pay.user,
+              url: loginRes.remote.shadowfiend[region] + '/v1/accounts/' + pay.user,
               body: {
                 value: pay.amount,
                 type: pay.method,
-                come_form: pay.method
+                come_form: pay.method,
+                charge_time: new Date().toISOString()
               }
             }, function(_err, response, body) {
               if (_err) {
@@ -131,10 +132,7 @@ Pay.prototype = {
 
         });
       } else if (pay.transferred === true && pay.informed === true) {
-        res.json({
-          code: 'error',
-          msg: req.i18n.__('api.pay.TransactionHadBeenCompleted')
-        });
+        res.send('success');
       } else {
         next({
           code: 'error',
