@@ -263,10 +263,24 @@ class Model extends React.Component {
         }, true);
         break;
       case 'en_gw':
-        publicGateway(rows[0]);
+        publicGateway(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'dis_gw':
-        disableGateway(rows[0]);
+        disableGateway(rows[0], null, () => {
+          this.refresh({
+            tableLoading: true,
+            detailLoading: true,
+            clearState: true,
+            detailRefresh: true
+          }, true);
+        });
         break;
       case 'cnt_subnet':
         relatedSubnet(rows[0]);
