@@ -14,13 +14,21 @@ function errHandler(err) {
 let fetch = {};
 
 ['get', 'post', 'put', 'delete', 'patch', 'head', 'copy'].forEach((m) => {
+  let opt;
   fetch[m] = function(options) {
-    let opt = Object.assign({
-      dataType: 'json',
-      contentType: 'application/json',
-      headers: {}
-    }, options);
-
+    //copy方法不设置contentType，或者设置application/x-www-form-urlencoded
+    if(m === 'copy') {
+      opt = Object.assign({
+        dataType: 'json',
+        headers: {}
+      }, options);
+    } else {
+      opt = Object.assign({
+        dataType: 'json',
+        contentType: 'application/json',
+        headers: {}
+      }, options);
+    }
     if(!options.headers || !options.headers.REGION) {
       opt.headers.REGION = HALO.current_region;
     }

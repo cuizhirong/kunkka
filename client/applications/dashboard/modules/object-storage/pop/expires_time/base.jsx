@@ -49,7 +49,7 @@ class ModalBase extends React.Component {
       {'value': '24:00'}
     ];
 
-    ['onCancel', 'onConfirm', 'onChangeStartTime', 'onkeyDropdown', 'onSelectHour'].forEach((m) => {
+    ['onCancel', 'onConfirm', 'onChangeStartTime', 'onkeyDropdown', 'onSelectHour', 'onChangeHour'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -78,6 +78,12 @@ class ModalBase extends React.Component {
           disabled: true
         });
       }
+    });
+  }
+
+  onChangeHour(e) {
+    this.setState({
+      currentHour: e.target.value
     });
   }
 
@@ -219,7 +225,8 @@ class ModalBase extends React.Component {
             key={index}
             type = "text"
             value={element.value}
-            onClick={this.onSelectHour}/>) : null}
+            onClick={this.onSelectHour}
+            onChange={this.onChangeHour}/>) : null}
         </div>
       </div>
     );

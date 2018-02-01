@@ -907,6 +907,9 @@ class Model extends React.Component {
         let bread = breadcrumb.join('/');
         for(let i = 0; i < this.state.copyurl.length; i++) {
           request.pasteObject(rows[i], bread, this.state.copyurl[i], this.stores.name[i]).then(() => {
+            this.setState({
+              copyurl: []
+            });
             this.updatecontainer(breadcrumb);
             that.refresh({
               detailRefresh: true,
