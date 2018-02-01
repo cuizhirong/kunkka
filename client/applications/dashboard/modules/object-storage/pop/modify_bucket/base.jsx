@@ -64,7 +64,7 @@ class ModalBase extends React.Component {
         key: metaKey,
         id: id,
         value: metaValue,
-        op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+        op: <i onClick={this.removeUserData.bind(this, metaKey)} className="glyphicon icon-remove remove-user-from-project"></i>
       };
       addMetaData.push({metaKey, metaValue});
       metaData.push(singleData);
@@ -154,7 +154,7 @@ class ModalBase extends React.Component {
   renderModifyMetaData(key) {
     let state = this.state;
     let columns = [{
-      title: __.key,
+      title: __.keys,
       key: 'key',
       dataIndex: 'key'
     }, {
@@ -169,9 +169,9 @@ class ModalBase extends React.Component {
 
     return <div className="meta-data">
       <div className="meta-header">
-        <input ref="metaKey" className="key-input" placeholder={__.key} type="text" />
+        <input ref="metaKey" className="key-input" placeholder={__.keys} type="text" />
         <input ref="metaValue" className="key-input" placeholder={__.value} type="text" />
-        <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
+        <Button value={__.added} type="create" onClick={this.onAddUserToTable} />
       </div>
       <div className="meta-content">
         <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />

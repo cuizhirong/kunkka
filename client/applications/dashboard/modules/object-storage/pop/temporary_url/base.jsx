@@ -49,7 +49,7 @@ class ModalBase extends React.Component {
       {'value': '24:00'}
     ];
 
-    ['onCancel', 'onConfirm', 'onChangeStartTime', 'onkeyDropdown', 'onSelectHour', 'secretUrl'].forEach((m) => {
+    ['onCancel', 'onConfirm', 'onChangeStartTime', 'onkeyDropdown', 'onSelectHour', 'secretUrl', 'onChangeHour'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
   }
@@ -78,6 +78,12 @@ class ModalBase extends React.Component {
           disabled: true
         });
       }
+    });
+  }
+
+  onChangeHour(e) {
+    this.setState({
+      currentHour: e.target.value
     });
   }
 
@@ -203,7 +209,7 @@ class ModalBase extends React.Component {
     }
     return (
       <div>
-        <Modal ref="modal" {...props} title={__.apply + __.temporary_url} visible={state.visible} width={500}>
+        <Modal ref="modal" {...props} title={__.create + __.temporary_url} visible={state.visible} width={500}>
           <div className="modal-bd halo-com-modal-templory-url">
             <div className="calendar-wrapper">
               <div className="date"><span>{__.date}</span>
@@ -232,7 +238,7 @@ class ModalBase extends React.Component {
             </div> : null}
           </div>
           <div className="modal-ft halo-com-modal-templory-url">
-            <Button ref="btn" value={__.modify} disabled={state.disabled} onClick={this.onConfirm} />
+            <Button ref="btn" value={__.create} disabled={state.disabled} onClick={this.onConfirm} />
             <Button value={__.cancel} onClick={this.onCancel} type="cancel" />
           </div>
         </Modal>
@@ -241,6 +247,7 @@ class ModalBase extends React.Component {
             key={index}
             type = "text"
             value={element.value}
+            onChange={this.onChangeHour}
             onClick={this.onSelectHour}/>) : null}
         </div>
       </div>

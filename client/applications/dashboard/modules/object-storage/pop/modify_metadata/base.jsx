@@ -46,9 +46,6 @@ class ModalBase extends React.Component {
       'name': 'Website-Redirect-Location',
       'properties': []
     }, {
-      'name': 'x-amz-meta-',
-      'properties': []
-    }, {
       'name': 'Expires',
       'properties': []
     }];

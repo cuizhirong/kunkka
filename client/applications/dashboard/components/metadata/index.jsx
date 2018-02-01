@@ -23,7 +23,7 @@ class Metadata extends React.Component {
       valueSelect: false,
       showUniqueError: false
     };
-    ['onAddUserToTable', 'removeUserData', 'onkeyDropdown', 'onSelectKey', 'onvalueDropdown', 'onSelectValue', 'inputValue'].forEach(f => {
+    ['onAddUserToTable', 'removeUserData', 'onkeyDropdown', 'onSelectKey', 'onvalueDropdown', 'onSelectValue', 'inputValue', 'inputdefinedkey'].forEach(f => {
       this[f] = this[f].bind(this);
     });
   }
@@ -135,14 +135,20 @@ class Metadata extends React.Component {
       currentValue: e.target.value,
       showValue: false
     });
+  }
 
+  inputdefinedkey(e) {
+    this.setState({
+      currentKeyValue: e.target.value,
+      showKey: false
+    });
   }
 
   renderMetaData() {
     let state = this.state;
     let props = this.props;
     let columns = [{
-      title: __.key,
+      title: __.keys,
       key: 'key',
       dataIndex: 'key'
     }, {
@@ -163,7 +169,7 @@ class Metadata extends React.Component {
     return (<div className="meta-data">
       <div className="meta-header">
         <div className="dropdown-btn" onClick={this.onkeyDropdown}>
-          <input type="text" placeholder={__.key} value={state.currentKeyValue}/>
+          <input type="text" placeholder={__.keys} value={state.currentKeyValue} onChange={this.inputdefinedkey}/>
           <i className="glyphicon icon-arrow-down"></i>
           <div className="defined-dropdown" style={dropdownStyle} ref="container">
             {state.showKey ? items.map((element, index) => <input className="dropdown-item"
@@ -185,7 +191,7 @@ class Metadata extends React.Component {
           <input className="value-input" type="text" placeholder={__.value} value={state.currentValue} onChange={this.inputValue}/>
           }
         </div>
-        <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
+        <Button value={__.added} type="create" onClick={this.onAddUserToTable} />
       </div>
       <div className="meta-content">
         <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
