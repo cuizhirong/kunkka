@@ -6,6 +6,7 @@ const colorMap = require('./utils/color');
 const loader = require('./utils/loader');
 const shape = require('./utils/shape');
 const CanvasEvent = require('./utils/event');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 const resources = [
     '/static/assets/dashboard/icon-public-network.png',
@@ -122,12 +123,14 @@ class Topology {
     // process instance
     let tmpInstancePos = [];
     data.instance.forEach((instance, i) => {
+      let imageOsCommonName = getOsCommonName(instance.image);
+      let imageIcon = (imageOsCommonName === '') ? 'undefined' : imageOsCommonName;
       tmpInstancePos[i] = {
         name: instance.name,
         id: instance.id,
         status: instance.status,
         subnets: [],
-        image: (instance.image.image_label + '').toLowerCase(),
+        image: imageIcon,
         floating_ip: instance.floating_ip
       };
 

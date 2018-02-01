@@ -20,6 +20,7 @@ const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');
 const unitConverter = require('client/utils/unit_converter');
 const getTime = require('client/utils/time_unification');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 class Model extends React.Component {
 
@@ -96,7 +97,7 @@ class Model extends React.Component {
   }
 
   getImageLabel(item) {
-    let label = item.image_label && item.image_label.toLowerCase();
+    let label = getOsCommonName(item);
     let style = null;
 
     let imgURL = HALO.settings.default_image_url;

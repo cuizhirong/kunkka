@@ -15,6 +15,7 @@ const TabStep = require('./tab_step');
 const getStatusIcon = require('../../../../utils/status_icon');
 const VolumeTip = require('./volume_tip');
 const DetailModal = require('./modal_detail');
+const getOsCommonName = require('client/utils/get_os_common_name');
 
 const FLAVOR_ID = 'flavor-container';
 
@@ -115,12 +116,7 @@ class ModalBase extends React.Component {
     bootableVolumes.sort();
 
     let selectedImage = selectDefault(images);
-    let username = 'root';
-
-    if (selectedImage.image_meta) {
-      let meta = JSON.parse(selectedImage.image_meta);
-      username = meta.os_username;
-    }
+    let username = this.getImageAdminUserName(selectedImage);
 
     let flavors = res.flavor;
     this._flavors = flavors;
@@ -142,7 +138,8 @@ class ModalBase extends React.Component {
       }
     }
     this.setFlavor(currentImage, 'all');
-    let hideKeypair = currentImage && currentImage.image_label ? currentImage.image_label.toLowerCase() === 'windows' : false;
+    let osCommonName = getOsCommonName(currentImage);
+    let hideKeypair = (osCommonName === 'windows') ? true : false;
     let credential = hideKeypair ? 'psw' : 'keypair';
 
     let networks = res.network.filter((ele) => {
@@ -179,7 +176,24 @@ class ModalBase extends React.Component {
       credential: credential,
       deviceSize: image.min_disk || 1
     });
+  }
 
+  // 根据当前所选镜像，提取出默认的admin 用户名
+  getImageAdminUserName(image) {
+    let username = 'root';
+    if (image) {
+      if (image.os_admin_user) {
+        username = image.os_admin_user;
+      } else if (image.image_meta) {
+        try {
+          username = JSON.parse(image.image_meta).os_username || 'root';
+        } catch (e) {
+          username = 'root';
+        }
+      }
+    }
+
+    return username;
   }
 
   onPaging(page, fromto, e) {
@@ -249,10 +263,9 @@ class ModalBase extends React.Component {
     let snapshot = state.snapshots.length > 0 ? state.snapshots[0] : null;
     let bootableVolume = state.bootableVolumes.length > 0 ? state.bootableVolumes[0] : null;
     let volumeSnapshot = state.volumeSnapshots.length > 0 ? state.volumeSnapshots[0] : null;
-
-    let username = 'root';
     let objImage = null,
       deviceSize = 1;
+
     switch(key) {
       case 'image':
         objImage = image;
@@ -272,17 +285,11 @@ class ModalBase extends React.Component {
       default:
         break;
     }
-    if (objImage && objImage.image_meta) {
-      let meta = JSON.parse(objImage.image_meta);
-      username = meta.os_username;
-    }
 
-    let hideKeypair = false;
-    if (objImage && objImage.image_label) {
-      hideKeypair = objImage.image_label.toLowerCase() === 'windows';
-    }
+    let username = this.getImageAdminUserName(objImage);
+    let hideKeypair = (getOsCommonName(objImage) === 'windows') ? true : false;
+
     this.setFlavor(objImage, 'all');
-
     this.setState({
       imageType: key,
       image: image,
@@ -361,16 +368,8 @@ class ModalBase extends React.Component {
   }
 
   onChangeImage(item, e) {
-    let username = 'root';
-    if (item.image_meta) {
-      let meta = JSON.parse(item.image_meta);
-      username = meta.os_username;
-    }
-
-    let hideKeypair = false;
-    if (item.image_label) {
-      hideKeypair = item.image_label.toLowerCase() === 'windows';
-    }
+    let username = this.getImageAdminUserName(item);
+    let hideKeypair = (getOsCommonName(item) === 'windows') ? true : false;
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -386,16 +385,8 @@ class ModalBase extends React.Component {
   }
 
   onChangeSnapshot(item, e) {
-    let username = 'root';
-    if (item.image_meta) {
-      let meta = JSON.parse(item.image_meta);
-      username = meta.os_username;
-    }
-
-    let hideKeypair = false;
-    if (item.image_label) {
-      hideKeypair = item.image_label.toLowerCase() === 'windows';
-    }
+    let username = this.getImageAdminUserName(item);
+    let hideKeypair = (getOsCommonName(item) === 'windows') ? true : false;
 
     this.setFlavor(item, 'all');
     this.setState({
@@ -412,17 +403,8 @@ class ModalBase extends React.Component {
 
   onChangeBootableVolume(item, e) {
     let imageData = item.volume_image_metadata;
-    let username = '';
-    if(imageData && imageData.image_meta) {
-      let meta = JSON.parse(imageData.image_meta);
-      username = meta.os_username;
-    }
-
-    let hideKeypair = false;
-    if(imageData && imageData.image_label) {
-      let label = imageData.image_label.toLowerCase();
-      hideKeypair = label === 'windows';
-    }
+    let username = this.getImageAdminUserName(imageData);
+    let hideKeypair = (getOsCommonName(imageData) === 'windows') ? true : false;
 
     this.setFlavor(imageData, 'all');
     this.setState({
@@ -438,17 +420,8 @@ class ModalBase extends React.Component {
 
   onChangeVolumeSnapshot(item, e) {
     let imageData = item.volume.volume_image_metadata;
-    let username = 'root';
-    if (imageData && imageData.image_meta) {
-      let meta = JSON.parse(item.image_meta);
-      username = meta.os_username;
-    }
-
-    let hideKeypair = false;
-    if (imageData && imageData.image_label) {
-      let label = imageData.image_label.toLowerCase();
-      hideKeypair = label === 'windows';
-    }
+    let username = this.getImageAdminUserName(imageData);
+    let hideKeypair = (getOsCommonName(imageData) === 'windows') ? true : false;
 
     this.setFlavor(imageData, 'all');
 
@@ -745,7 +718,7 @@ class ModalBase extends React.Component {
       if (state.credential === 'keypair') {
         data.key_name = state.keypairName;
       } else {
-        if(selectedImage.image_label === 'Windows') {
+        if(getOsCommonName(selectedImage) === 'windows') {
           data.metadata = {
             admin_pass: state.pwd
           };
@@ -854,13 +827,15 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.images.map((ele) =>
-            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
+          state.images.map((ele) => {
+            return (
+              <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.image.id === ele.id ? 'selected' : ''}
               onClick={state.image.id === ele.id ? null : this.onChangeImage.bind(this, ele)}>
-              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())} style={style}></i>
+              <i className={'icon-image-default ' + getOsCommonName(ele)} style={style}></i>
                 {ele.name}
             </a>
-          )
+            );
+          })
         }
         {
           state.ready && !state.image ?
@@ -881,13 +856,15 @@ class ModalBase extends React.Component {
           : null
         }
         {
-          state.snapshots.map((ele) =>
-            <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.snapshot.id === ele.id ? 'selected' : ''}
+          state.snapshots.map((ele) => {
+            return (
+              <a onMouseOver={this.onMouseOverItem.bind(this, ele.name)} onMouseLeave={this.onMouseLeaveItem.bind(this)} key={ele.id} className={state.snapshot.id === ele.id ? 'selected' : ''}
               onClick={state.snapshot.id === ele.id ? null : this.onChangeSnapshot.bind(this, ele)}>
-              <i className={'icon-image-default ' + (ele.image_label && ele.image_label.toLowerCase())}></i>
+              <i className={'icon-image-default ' + getOsCommonName(ele)}></i>
                 {ele.name}
             </a>
-          )
+            );
+          })
         }
         {
           state.ready && !state.snapshot ?
