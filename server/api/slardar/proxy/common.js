@@ -16,9 +16,7 @@ module.exports = (req, res, next) => {
       message: req.i18n.__('api.swift.unavailable')
     });
   }
-  console.log(req.url);
   const host = req.session.endpoint[service][region];
-  console.log(host);
   const url = host + req.url;
   const headers = _.omit(req.headers, ['cookie']);
   headers['X-Auth-Token'] = req.session.user.token;
