@@ -208,7 +208,7 @@ class ModalBase extends React.Component {
   renderMetaData(key) {
     let state = this.state;
     let columns = [{
-      title: __.key,
+      title: __.keys,
       key: 'key',
       dataIndex: 'key'
     }, {
@@ -223,9 +223,9 @@ class ModalBase extends React.Component {
 
     return <div className={'meta-data' + (key === '1' ? '' : ' hide')}>
       <div className="meta-header">
-        <input ref="metaKey" className="key-input" placeholder={__.key} type="text" />
+        <input ref="metaKey" className="key-input" placeholder={__.keys} type="text" />
         <input ref="metaValue" className="key-input" placeholder={__.value} type="text" />
-        <Button value={__.add} type="create" onClick={this.onAddUserToTable} />
+        <Button value={__.added} type="create" onClick={this.onAddUserToTable} />
       </div>
       <div className="meta-content">
         <Table column={columns} dataKey={'id'} data={state.metaData} striped={true} hover={true} />
