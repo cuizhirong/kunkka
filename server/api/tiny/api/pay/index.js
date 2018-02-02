@@ -1,8 +1,9 @@
 'use strict';
 
+const co = require('co');
 const models = require('../../models');
 const PayModel = models.pay;
-const request = require('request');
+const request = require('superagent');
 const payment = {
   paypal: require('../payment/paypal'),
   alipay: require('../payment/alipay')
@@ -22,29 +23,34 @@ function Pay(app) {
 Pay.prototype = {
   //create payment
   pay: function(req, res, next) {
-    let user = req.session.user.userId;
-    let username = req.session.user.username;
-    let method = req.params.method;
-    let amount = req.query.amount;
-    let info = {
-      user: user,
-      username: username,
-      method: method,
-      amount: amount,
-      currency: currency.ISO4217
-    };
-    PayModel.create(info).then(function(pay) {
-      info.id = pay.id;
-      if (payment[method]) {
-        payment[method].create(info, req, res);
-      } else {
+    co(function* () {
+      if (!req.session || !req.session.user) {
+        res.status(401).end();
+        return;
+      }
+      let user = req.session.user.userId;
+      let username = req.session.user.username;
+      let method = req.params.method;
+      let amount = req.query.amount;
+
+      if (!payment[method]) {
         next({
           code: 'error',
           msg: req.i18n.__('api.pay.PaymentMethodError')
         });
+        return;
       }
+      let info = {
+        user: user,
+        username: username,
+        method: method,
+        amount: amount,
+        currency: currency.ISO4217
+      };
+      let pay = yield PayModel.create(info);
+      info.id = pay.id;
+      payment[method].create(info, req, res);
     }).catch(next);
-
   },
   callback: function(req, res, next) {
     let method = req.params.method;
@@ -80,57 +86,32 @@ Pay.prototype = {
   },
   //payment success and notify from alipay
   alipayNotify: function(req, res, next) {
-    let status = req.body.trade_status;
-    if (status === 'TRADE_FINISHED' || status === 'TRADE_SUCCESS') {
-      payment.alipay.execute(req, res, next).then(function() {
-        req.query.uuid = req.body.out_trade_no;
-        next();
-      });
-    } else {
-      next(req.body);
-    }
+    co(function* () {
+      let pay = yield payment.alipay.execute(req.body);
+      req.query.uuid = pay.id;
+      next();
+    }).catch(next);
   },
 
   //recharge for users
   inform: function(req, res, next) {
-    PayModel.findOne({
-      where: {
-        id: req.query.uuid
-      }
-    }).then(pay => {
+    co(function* () {
+      let pay = yield PayModel.findOne({where: {id: req.query.uuid}});
       if (pay.transferred === true && pay.informed === false) {
-
-        adminLogin(function(err, loginRes) {
-          let region = Object.keys(loginRes.remote.gringotts)[0];
-          if (err) {
-            next(err);
-          } else {
-            request({
-              method: 'PUT',
-              json: true,
-              headers: {
-                'X-Auth-Token': loginRes.token
-              },
-              url: loginRes.remote.shadowfiend[region] + '/v1/accounts/' + pay.user,
-              body: {
-                value: pay.amount,
-                type: pay.method,
-                come_form: pay.method,
-                charge_time: new Date().toISOString()
-              }
-            }, function(_err, response, body) {
-              if (_err) {
-                return next(_err);
-              }
-              pay.informed = true;
-              pay.save().then(function(result) {
-                res.send('success');
-              }).catch(next);
-            });
-
-          }
-
+        let region = req.params.regionId;
+        let loginRes = yield adminLogin();
+        yield request.put(loginRes.remote.shadowfiend[region] + '/v1/accounts/' + pay.user)
+        .set('X-Auth-Token', loginRes.token)
+        .send({
+          value: pay.amount,
+          type: pay.method,
+          come_from: pay.method,
+          charge_time: new Date().toISOString()
         });
+        pay.informed = true;
+        yield pay.save();
+        res.send('success');
+
       } else if (pay.transferred === true && pay.informed === true) {
         res.send('success');
       } else {
@@ -139,15 +120,12 @@ Pay.prototype = {
           msg: req.i18n.__('api.pay.RechargeFailed')
         });
       }
-
-    }).catch(err => {
-      next(err);
-    });
+    }).catch(next);
   },
 
   initRoutes: function() {
     this.app.get('/api/pay/:method', this.pay.bind(this));
-    this.app.post('/api/pay/alipay/notify', this.alipayNotify.bind(this), this.inform.bind(this));
+    this.app.post('/api/pay/alipay/notify/:regionId', this.alipayNotify.bind(this), this.inform.bind(this));
     this.app.get('/api/pay/paypal/:result', this.paypalExecute.bind(this), this.inform.bind(this));
   }
 

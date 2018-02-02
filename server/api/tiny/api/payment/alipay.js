@@ -38,7 +38,7 @@ module.exports = {
       out_trade_no: info.id,
       total_fee: info.amount,
       currency: info.currency,
-      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify',
+      notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify/' + req.session.user.regionId,
       subject: alipaySubject + info.username,
       body: alipayBody + info.amount + currencyConfig.unit
     };
@@ -53,23 +53,28 @@ module.exports = {
 
 
   //save database,
-  execute: function (req, res, next) {
-    let data = req.body;
+  execute: function* (reqBody) {
+    let status = reqBody.trade_status;
+    if (status === 'TRADE_FINISHED' || status === 'TRADE_SUCCESS') {
+      let preStr = _getPreStr(reqBody);
+      let mySign = _md5Sign(preStr);
 
-    let preStr = _getPreStr(req.body);
-    let mySign = _md5Sign(preStr);
+      if (mySign !== reqBody.sign) {
+        throw new Error('sign error');
+      }
+      let pay = yield PayModel.findOne({
+        where: {id: reqBody.out_trade_no}
+      });
 
-    if (mySign !== data.sign) {
-      return next('sign error');
+      if (!pay) {
+        throw new Error('Not Found');
+      }
+      pay.transferred = true;
+      yield pay.save();
+      return pay;
+    } else {
+      throw new Error('charge failed');
     }
 
-    return PayModel.findOne({
-      where: {id: req.body.out_trade_no}
-    }).then(pay=> {
-      pay.transferred = true;
-      return pay.save();
-    }).catch(err=> {
-      next(err);
-    });
   }
 };
