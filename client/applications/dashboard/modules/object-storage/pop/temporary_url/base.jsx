@@ -127,7 +127,7 @@ class ModalBase extends React.Component {
         this.setState({
           disabled: false,
           requestExpire: requestExpire,
-          hour: residueHour
+          hour: residueHour || 0
         });
       }
       let now = Date.now();
@@ -194,7 +194,8 @@ class ModalBase extends React.Component {
     this.style = {
       position: 'absolute',
       top: scrollTop,
-      left: scrollLeft
+      left: scrollLeft,
+      zIndex: 999
     };
   }
 
