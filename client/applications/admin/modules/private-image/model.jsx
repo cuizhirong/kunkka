@@ -130,7 +130,7 @@ class Model extends React.Component {
 
     let table = this.state.config.table;
     request.getSingle(id).then((res) => {
-      table.data = res.list.filter(image => image.visibility === 'private');
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url, true, () => {
         let pathList = router.getPathList();

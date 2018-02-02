@@ -152,9 +152,6 @@ class ModalBase extends React.Component {
     snapshots.sort(imageSort);
     bootableVolumes.sort();
 
-    let selectedImage = selectDefault(images);
-    let username = this.getImageAdminUserName(selectedImage);
-
     this.store.flavors = res.flavor;
 
     let image = selectDefault(images);
@@ -174,6 +171,7 @@ class ModalBase extends React.Component {
     }
     this.setFlavor(currentImage, 'all');
 
+    let username = this.getImageAdminUserName(currentImage);
     let osCommonName = getOsCommonName(currentImage);
     let hideKeypair = (osCommonName === 'windows') ? true : false;
     let credential = hideKeypair ? 'psw' : 'keypair';

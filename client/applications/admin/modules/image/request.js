@@ -25,13 +25,17 @@ function getParams(fields) {
   return ret;
 }
 
+// 其实只过滤掉了 deactivated 状态的镜像，但是 API 不支持否定查询
+const statusFilterStr = 'status=in:queued,saving,uploading,importing,' +
+  'active,killed,deleted,pending_delete';
+
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&limit=' + pageLimit;
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&' + statusFilterStr + '&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -51,7 +55,7 @@ module.exports = {
       }
       return ret;
     }
-    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&limit=' + pageLimit + getParameters(data);
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=public&' + statusFilterStr + '&limit=' + pageLimit + getParameters(data);
 
     return fetch.get({
       url: url
@@ -61,7 +65,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    let url = '/proxy-search/glance/v2/images?id=' + id;
+    let url = '/proxy-search/glance/v2/images?visibility=public&' + statusFilterStr + '&id=' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -83,7 +87,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?visibility=public&limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/glance/v2/images?visibility=public&' + statusFilterStr + '&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {

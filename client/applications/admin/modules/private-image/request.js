@@ -14,13 +14,16 @@ function requestParams(obj) {
   return str;
 }
 
+const statusFilterStr = 'status=in:queued,saving,uploading,importing,' +
+  'active,killed,deleted,pending_delete';
+
 module.exports = {
   getList: function(pageLimit) {
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=private&limit=' + pageLimit;
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=private&' + statusFilterStr + '&limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then(function(res) {
@@ -38,7 +41,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    let url = '/proxy-search/glance/v2/images?id=' + id;
+    let url = '/proxy-search/glance/v2/images?visibility=private&' + statusFilterStr + '&id=' + id;
     return fetch.get({
       url: url
     }).then((res) => {
@@ -51,7 +54,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=private&limit=' + pageLimit + requestParams(data);
+    let url = '/proxy-search/glance/v2/images?image_type=image&visibility=private&' + statusFilterStr + '&limit=' + pageLimit + requestParams(data);
     return fetch.get({
       url: url
     }).then((res) => {
