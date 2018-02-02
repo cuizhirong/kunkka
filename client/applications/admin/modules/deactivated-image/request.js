@@ -38,7 +38,7 @@ module.exports = {
     });
   },
   getSingle: function(id) {
-    let url = '/proxy-search/glance/v2/images?id=' + id;
+    let url = '/proxy-search/glance/v2/images?status=deactivated&id=' + id;
     return fetch.get({
       url: url
     }).then((res) => {

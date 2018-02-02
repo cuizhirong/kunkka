@@ -1,3 +1,4 @@
+require('./style/index.less');
 const React = require('react');
 const {Modal, Button, Tip} = require('client/uskin/index');
 const __ = require('locale/client/admin.lang.json');
@@ -63,12 +64,12 @@ class Deactivate extends React.Component {
     return (
       <Modal refs="modal" {...props} title={__.deactivate_image} visible={state.visible}>
         <div className="modal-bd halo-com-modal-deactivate-image">
-          <div className="content-wrapper" style={{ paddingLeft: '12px'}}>
+          <div className="content-wrapper">
             <div className="modal-content-title">
               { __.confirm_deactivate }
             </div>
             <div className="modal-content">
-              <div style={{marginTop: '20px'}}>
+              <div>
                 { _this.getImageIcon(props.obj.image) }
                 <span>{ props.obj.image.name }</span>
               </div>
