@@ -1,5 +1,7 @@
 'use strict';
 
+const qs = require('querystring');
+
 const Base = require('../base.js');
 const driver = new Base();
 
@@ -10,6 +12,27 @@ driver.listSnapshots = function (projectId, token, remote, callback, query) {
     callback,
     query
   );
+};
+// because api return max number of items in a single response
+// need recursive retrieve all items
+driver.listSnapshotsRecursive = function listSnapshotsRecursive(link, snapshots, obj, callback) {
+  const nextLinkHref = link[0].href;
+  const linkUrlQuery = nextLinkHref.split('?')[1];
+  const marker = qs.parse(linkUrlQuery).marker || '';
+  obj.query.marker = marker;
+  driver.listSnapshots(obj.projectId, obj.token, obj.remote, (err, payload) => {
+    if (err) {
+      callback(err);
+    } else {
+      const result = payload.body;
+      snapshots = snapshots.concat(result.snapshots);
+      if (result.snapshots_links) {
+        listSnapshotsRecursive(result.snapshots_links, snapshots, obj, callback);
+      } else {
+        callback(null, {snapshots});
+      }
+    }
+  }, obj.query);
 };
 driver.showSnapshotDetails = function (projectId, snapshotId, token, remote, callback, query) {
   return driver.getMethod(
