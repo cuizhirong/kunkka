@@ -56,10 +56,7 @@ function main(app, clientApps, currentView, viewPlugins) {
       company: setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
       title: setting.title ? setting.title : 'UnitedStack',
       viewCss: setting['view.css'] ? setting['view.css'] : '',
-      modelTmpl: this.reactDOMServer.renderToString(this.viewModelFactory({
-        __: __(`shared.${this.name}`),
-        HALO: HALO
-      }))
+      modelTmpl: ''
     };
   };
   view.initRoute = function () {

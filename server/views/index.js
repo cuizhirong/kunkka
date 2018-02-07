@@ -1,9 +1,9 @@
 'use strict';
 
-require('babel-core/register')({
-  ignore: ['node_modules', 'server', 'configs', 'views']
-});
-require('../helpers/less_register');
+// require('babel-core/register')({
+//   ignore: ['node_modules', 'server', 'configs', 'views']
+// });
+// require('../helpers/less_register');
 
 const path = require('path');
 const fs = require('fs');
