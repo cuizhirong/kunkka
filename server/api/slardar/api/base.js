@@ -31,9 +31,10 @@ function API (arrServiceObject) {
 }
 
 function getImageListRecursive (objVar, remote, link, images, callback) {
+  const _objVar = Object.assign({}, objVar);
   let marker = link.split('=')[1];
-  objVar.query.marker = marker;
-  driver.glance.image.listImages(objVar.token, remote, (err, payload) => {
+  _objVar.query.marker = marker;
+  driver.glance.image.listImages(_objVar.token, remote, (err, payload) => {
     if (err) {
       callback(err);
     } else {
@@ -41,14 +42,15 @@ function getImageListRecursive (objVar, remote, link, images, callback) {
       images = images.concat(result.images);
       if (result.next) {
         images = images.concat(result.images);
-        getImageListRecursive(objVar, remote, result.next, images, callback);
+        getImageListRecursive(_objVar, remote, result.next, images, callback);
       } else {
         callback(null, {images});
       }
     }
-  }, objVar.query);
+  }, _objVar.query);
 }
 
+// !!! be careful, don't modify objVar, it's shared by multiple function calls
 API.prototype = {
   // keystone:
   __unscopedAuth: function (objVar, callback) {
@@ -85,8 +87,19 @@ API.prototype = {
     driver.nova.host.listHosts(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
   __servers: function (objVar, callback) {
-    let remote = objVar.endpoint.nova[objVar.region];
-    driver.nova.server.listServers(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+    const _objVar = Object.assign({}, objVar);
+    _objVar.remote = objVar.endpoint.nova[objVar.region];
+    let servers = [];
+    driver.nova.server.listServers(_objVar.projectId, _objVar.token, _objVar.remote, (err, payload) => {
+      if (err) {
+        callback(err);
+      } else if (payload.body.servers_links) {
+        servers = servers.concat(payload.body.servers);
+        driver.nova.server.listServersRecursive(payload.body.servers_links, servers, _objVar, callback);
+      } else {
+        callback(null, payload.body);
+      }
+    }, _objVar.query);
   },
   __flavors: function (objVar, callback) {
     let remote = objVar.endpoint.nova[objVar.region];
@@ -111,16 +124,38 @@ API.prototype = {
 
   // cinder:
   __volumes: function (objVar, callback) {
-    let remote = objVar.endpoint.cinder[objVar.region];
-    driver.cinder.volume.listVolumes(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+    const _objVar = Object.assign({}, objVar);
+    _objVar.remote = objVar.endpoint.cinder[objVar.region];
+    let volumes = [];
+    driver.cinder.volume.listVolumes(_objVar.projectId, _objVar.token, _objVar.remote, (err, payload) => {
+      if (err) {
+        callback(err);
+      } else if (payload.body.volumes_links) {
+        volumes = volumes.concat(payload.body.volumes);
+        driver.cinder.volume.listVolumesRecursive(payload.body.volumes_links, volumes, _objVar, callback);
+      } else {
+        callback(null, payload.body);
+      }
+    }, _objVar.query);
   },
   __volumeTypes: function (objVar, callback) {
     let remote = objVar.endpoint.cinder[objVar.region];
     driver.cinder.volume.listVolumeTypes(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
   },
   __snapshots: function (objVar, callback) {
-    let remote = objVar.endpoint.cinder[objVar.region];
-    driver.cinder.snapshot.listSnapshots(objVar.projectId, objVar.token, remote, asyncHandler.bind(undefined, callback), objVar.query);
+    const _objVar = Object.assign({}, objVar);
+    _objVar.remote = objVar.endpoint.cinder[objVar.region];
+    let snapshots = [];
+    driver.cinder.snapshot.listSnapshots(_objVar.projectId, _objVar.token, _objVar.remote, (err, payload) => {
+      if (err) {
+        callback(err);
+      } else if (payload.body.snapshots_links) {
+        snapshots = snapshots.concat(payload.body.snapshots);
+        driver.cinder.snapshot.listSnapshotsRecursive(payload.body.snapshots_links, snapshots, _objVar, callback);
+      } else {
+        callback(null, payload.body);
+      }
+    }, _objVar.query);
   },
   __cinderQuota: function (objVar, callback) {
     let remote = objVar.endpoint.cinder[objVar.region];

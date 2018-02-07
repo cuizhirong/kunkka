@@ -1,7 +1,10 @@
 'use strict';
 
+const qs = require('querystring');
+
 const Base = require('../base.js');
 const driver = new Base();
+
 
 driver.listServers = function (projectId, token, remote, callback, query) { // get servers list.
   return driver.getMethod(
@@ -10,6 +13,27 @@ driver.listServers = function (projectId, token, remote, callback, query) { // g
     callback,
     query
   );
+};
+// because api return max number of items in a single response
+// need recursive retrieve all items
+driver.listServersRecursive = function (link, servers, obj, callback) { // get servers list.
+  const nextLinkHref = link[0].href;
+  const linkUrlQuery = nextLinkHref.split('?')[1];
+  const marker = qs.parse(linkUrlQuery).marker || '';
+  obj.query.marker = marker;
+  driver.listServers(obj.projectId, obj.token, obj.remote, (err, payload) => {
+    if (err) {
+      callback(err);
+    } else {
+      const result = payload.body;
+      servers = servers.concat(result.servers);
+      if (result.servers_links) {
+        driver.listServersRecursive(result.servers_links, servers, obj, callback);
+      } else {
+        callback(null, {servers});
+      }
+    }
+  }, obj.query);
 };
 driver.showServerDetails = function (projectId, serverId, token, remote, callback, query) { // get single server.
   return driver.getMethod(

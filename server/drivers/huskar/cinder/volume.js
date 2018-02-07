@@ -1,5 +1,7 @@
 'use strict';
 
+const qs = require('querystring');
+
 const Base = require('../base.js');
 const driver = new Base();
 
@@ -10,6 +12,27 @@ driver.listVolumes = function (projectId, token, remote, callback, query) {
     callback,
     query
   );
+};
+// because api return max number of items in a single response
+// need recursive retrieve all items
+driver.listVolumesRecursive = function listVolumesRecursive(link, volumes, obj, callback) {
+  const nextLinkHref = link[0].href;
+  const linkUrlQuery = nextLinkHref.split('?')[1];
+  const marker = qs.parse(linkUrlQuery).marker || '';
+  obj.query.marker = marker;
+  driver.listVolumes(obj.projectId, obj.token, obj.remote, (err, payload) => {
+    if (err) {
+      callback(err);
+    } else {
+      const result = payload.body;
+      volumes = volumes.concat(result.volumes);
+      if (result.volumes_links) {
+        listVolumesRecursive(result.volumes_links, volumes, obj, callback);
+      } else {
+        callback(null, {volumes});
+      }
+    }
+  }, obj.query);
 };
 driver.listVolumeTypes = function (projectId, token, remote, callback, query) {
   return driver.getMethod(
