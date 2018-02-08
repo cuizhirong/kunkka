@@ -5,7 +5,9 @@
     "channel": "Capital Channel",
     "charge-time": "Charge Time",
     "alipay": "Alipay",
-    "paypal": "Paypal"
+    "money": "Money",
+    "paypal": "Paypal",
+    "time_tip": "If the start and stop time is not selected, all records are exported by default."
   },
   "zh-CN": {
     "total_cny": "充值金额（元）",
@@ -13,6 +15,8 @@
     "channel": "资金渠道",
     "charge-time": "充值时间",
     "alipay": "支付宝",
-    "paypal": "Paypal"
+    "money": "充值",
+    "paypal": "Paypal",
+    "time_tip": "如果不选择起止时间，默认导出所有记录。"
   }
 }

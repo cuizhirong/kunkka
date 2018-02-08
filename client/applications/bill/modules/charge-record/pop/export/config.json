@@ -1,0 +1,23 @@
+{
+  "title": ["export"],
+  "fields": [{
+    "type": "tip",
+    "field": "time_tip",
+    "tip_type": "info"
+  }, {
+    "type": "select_time",
+    "field": "range_time",
+    "range": true
+  }, {
+    "type": "select_single",
+    "columnNum": 3,
+    "field": "format",
+    "required": true,
+    "data": ["csv", "xlsx", "xls"],
+    "value": "csv"
+  }],
+  "btn": {
+    "value": "export",
+    "disabled": false
+  }
+}

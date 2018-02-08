@@ -1481,7 +1481,7 @@ class ModalBase extends React.Component {
                   x <strong>{__.account.replace('{0}', +price)}</strong> / <span>{__.hour}</span> =
                 </span>
                 <span className="account-md">
-                  x <strong>{__.account.replace('{0}', +numPrice)}</strong> / <span>{__.hour}</span>
+                   <strong>{__.account.replace('{0}', +numPrice)}</strong> / <span>{__.hour}</span>
                 </span>
                 <span className="account-md account-gray">
                   {'( ' + __.account.replace('{0}', +monthlyPrice) + ' / ' + __.month + ' )'}

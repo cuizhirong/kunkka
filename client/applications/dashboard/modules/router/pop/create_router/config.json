@@ -27,6 +27,11 @@
     "field": "charge",
     "has_label": true,
     "hide": false
+  }, {
+    "type": "tip",
+    "field": "router_tip",
+    "tip_type": "info",
+    "hide": true
   }],
   "btn": {
     "value": "create",

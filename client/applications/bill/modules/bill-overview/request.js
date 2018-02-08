@@ -8,6 +8,12 @@ const GRANULARITY = {
 };
 
 module.exports = {
+  getBalance: () => {
+    let url = '/proxy/shadowfiend/v1/accounts/' + HALO.user.userId + '/estimate';
+    return fetch.get({
+      url: url
+    });
+  },
   getServices: () => {
     let url = '/proxy/cloudkitty/v1/rating/module_config/hashmap/services';
     return fetch.get({

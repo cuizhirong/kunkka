@@ -18,7 +18,7 @@ function download(url, type, name) {
     linkNode.click();
     document.body.removeChild(linkNode);
 
-    return 'download success!';
+    return `download success! url: ${url}`;
   } catch(e) {
     return '';
   }

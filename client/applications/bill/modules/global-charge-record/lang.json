@@ -1,0 +1,32 @@
+{
+  "en": {
+    "all_accounts": "All Accounts",
+    "export": "Export",
+    "export_all_accounts_charge": "Export All Accounts",
+    "export_specified_account_charge": "Export Specified Account, please enter user name.",
+    "format": "Format",
+    "pages": "Pages",
+    "please_select_time": "Please select time",
+    "range_time": "Range Time",
+    "record": "Record",
+    "target": "Target",
+    "total": "Total",
+    "specified_account": "Specified Account",
+    "system": "System"
+  },
+  "zh-CN": {
+    "all_accounts": "所有用户",
+    "export": "导出",
+    "export_all_accounts_charge": "导出所有用户的充值记录",
+    "export_specified_account_charge": "导出指定用户的充值记录，请输入用户名.",
+    "format": "导出格式",
+    "pages": "页数",
+    "please_select_time": "请选择时间",
+    "range_time": "起止时间",
+    "record": "记录",
+    "target": "用户",
+    "total": "总数",
+    "specified_account": "指定用户",
+    "system": "系统"
+  }
+}

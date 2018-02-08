@@ -1,0 +1,33 @@
+{
+  "title": ["export"],
+  "fields": [{
+    "type": "tip",
+    "field": "time_tip",
+    "tip_type": "info"
+  }, {
+    "type": "radio_text",
+    "field": "all_accounts",
+    "info": "export_all_accounts_charge",
+    "checkedField": "all_accounts"
+  }, {
+    "type": "radio_input",
+    "field": "specified_account",
+    "checkedField": "all_accounts",
+    "tip_info": "export_specified_account_charge"
+  }, {
+    "type": "select_time",
+    "field": "range_time",
+    "range": true
+  }, {
+    "type": "select_single",
+    "columnNum": 3,
+    "field": "format",
+    "required": true,
+    "data": ["csv", "xlsx", "xls"],
+    "value": "csv"
+  }],
+  "btn": {
+    "value": "export",
+    "disabled": false
+  }
+}

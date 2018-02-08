@@ -1,16 +1,22 @@
 {
   "tabs": [{
-    "name": ["global-record"],
-    "key": "global-record",
+    "name": ["global-charge-record"],
+    "key": "global-charge-record",
     "default": true
   }],
   "btns": [{
+    "value": ["export", "record"],
+    "key": "export",
+    "icon": "download"
+  }, {
     "key": "refresh",
-    "icon": "refresh"
+    "icon": "refresh",
+    "disabled": true
   }],
   "table": {
     "dataKey": "charge_id",
     "limit": 10,
+    "hideLimit": true,
     "loading": true,
     "column": [{
       "title": ["total_cny"],

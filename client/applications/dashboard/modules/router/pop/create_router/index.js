@@ -25,6 +25,13 @@ function pop(parent, callback) {
     bandwidthField.hide = true;
   }
 
+  if(enableCharge) {
+    config.fields[5].label = __.openAndCharge;
+    config.fields[5].hide = false;
+  } else {
+    config.fields[5].hide = true;
+  }
+
   let props = {
     __: __,
     parent: parent,

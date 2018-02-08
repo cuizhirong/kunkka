@@ -1,7 +1,8 @@
 require('./style/index.less');
 
 const React = require('react');
-const Main = require('client/components/main/index');
+const Main = require('client/components/main_paged/index');
+const popExport = require('./pop/export/index');
 
 const request = require('./request');
 const config = require('./config.json');
@@ -50,12 +51,12 @@ class Model extends React.Component {
           break;
         case 'charge-type':
           column.render = (col, item, i) => {
-            return __[item.type];
+            return __[item.type] ? __[item.type] : item.type;
           };
           break;
         case 'channel':
           column.render = (col, item, i) => {
-            return __[item.come_from];
+            return __[item.come_from] ? __[item.come_from] : item.come_from;
           };
           break;
         case 'target':
@@ -76,10 +77,10 @@ class Model extends React.Component {
   }
 
   getList(current, limit) {
-    if (current < 1) {
+    this.loadingTable();
+    if(current < 1) {
       current = 1;
     }
-
     let _config = this.state.config,
       table = _config.table;
     request.getList((current - 1) * limit, limit).then((res) => {
@@ -132,9 +133,13 @@ class Model extends React.Component {
 
   onClickBtnList(key, refs, data) {
     switch (key) {
+      case 'export':
+        popExport();
+        break;
       case 'refresh':
         let current = 1;
         let limit = this.state.config.table.limit;
+        this.refs.dashboard.setRefreshBtnDisabled(true);
         this.loadingTable();
         this.getList(current, limit);
         break;
@@ -161,7 +166,7 @@ class Model extends React.Component {
       table = _config.table,
       pagi = table.pagination;
     return (
-      <div className="halo-module-global-record" style={this.props.style}>
+      <div className="halo-module-global-charge-record" style={this.props.style}>
         <Main
           ref="dashboard"
           visible={this.props.style.display === 'none' ? false : true}

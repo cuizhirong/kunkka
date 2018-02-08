@@ -3,19 +3,16 @@ require('./style/index.less');
 const React = require('react');
 const Main = require('client/components/main_paged/index');
 const charge = require('./pop/charge/index');
+const {Notification} = require('uskin');
 
 const request = require('./request');
 const config = require('./config.json');
-const moment = require('client/libs/moment');
 const __ = require('locale/client/bill.lang.json');
-const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {
 
   constructor(props) {
     super(props);
-
-    moment.locale(HALO.configs.lang);
 
     this.state = {
       config: config
@@ -24,7 +21,7 @@ class Model extends React.Component {
     ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
-
+    // pagination
     this.stores = {
       urls: []
     };
@@ -44,7 +41,7 @@ class Model extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.style.display !== 'none' && this.props.style.display === 'none') {
       this.loadingTable();
-      this.onInitialize(nextProps.params);
+      this.onInitialize();
     }
   }
 
@@ -53,7 +50,7 @@ class Model extends React.Component {
       switch (column.key) {
         case 'balance':
           column.render = (col, item, i) => {
-            return <span className="orange">{item.balance}</span>;
+            return item.balance ? <span className="orange">{item.balance}</span> : '-';
           };
           break;
         default:
@@ -62,62 +59,31 @@ class Model extends React.Component {
     });
   }
 
-  onInitialize(params) {
-    this.clearState();
+  onInitialize() {
+    this.loadingTable();
     this.getList();
-  }
-
-  initializeFilter(filters, domains) {
-    let domainFilter = filters[0].items[1];
-    domainFilter.data = domains;
-
-    if (!HALO.settings.enable_ldap) {
-      domainFilter.default = __.all + __.domain;
-    }
   }
 
   getList() {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getList(table.limit).then((res) => {
-      const users = res[0];
-      const domains = res[1];
-
-      table.data = users.users;
-      this.setPagination(table, users);
-      this.updateTableData(table, users._url);
-
-      this.initializeFilter(this.state.config.filter, domains);
-    }).catch((res) => {
-      table.data = [];
-      table.pagination = null;
-      this.updateTableData(table, res._url);
-    });
-  }
-
-  getFilterList(data) {
-    this.clearState();
-
-    let table = this.state.config.table;
-    request.getFilteredList(data, table.limit).then((res) => {
-      table.data = res.users;
+    request.getList().then((res) => {
+      table.data = res.list;
       this.setPagination(table, res);
       this.updateTableData(table, res._url);
-    }).catch((res) => {
+    }).catch((err) => {
       table.data = [];
       table.pagination = null;
-      this.updateTableData(table, res._url);
+      this.updateTableData(table);
     });
   }
 
   getNextListData(url, refreshDetail) {
     let table = this.state.config.table;
     request.getNextList(url).then((res) => {
-      if (res.users) {
-        table.data = res.users;
-      } else if (res.user) {
-        table.data = [res.user];
+      if (res.list) {
+        table.data = res.list;
       } else {
         table.data = [];
       }
@@ -130,22 +96,41 @@ class Model extends React.Component {
     });
   }
 
-  getInitialListData() {
-    this.getList();
+  getListById(id) {
+    this.clearState();
+
+    let table = this.state.config.table;
+    request.getListById(id).then(res => {
+      table.data = res.list;
+      this.setPagination(table, res);
+      this.updateTableData(table);
+    });
   }
 
-  onFilterSearch(actionType, refs, data) {
-    if (actionType === 'search') {
-      this.loadingTable();
+  getListByName(name) {
+    this.clearState();
 
-      let allTenant = data.all_tenant;
+    let table = this.state.config.table;
+    request.getListByName(name).then(res => {
+      table.data = res.list;
+      this.setPagination(table, res);
+      this.updateTableData(table, res._url);
+    });
+  }
 
-      if (allTenant) {
-        this.getFilterList(allTenant);
-      } else {
-        this.getList();
-      }
+  setPagination(table, res) {
+    let pagination = {};
+
+    if(res.links && res.links.next) {
+      pagination.nextUrl = res.links.next;
     }
+    if(res.links && res.links.prev) {
+      pagination.prevUrl = res.links.prev;
+    }
+
+    table.pagination = pagination;
+
+    return table;
   }
 
   updateTableData(table, currentUrl, refreshDetail, callback) {
@@ -169,52 +154,28 @@ class Model extends React.Component {
     });
   }
 
-  setPagination(table, res) {
-    let pagination = {};
+  onFilterSearch(actionType, refs, data) {
+    this.clearState();
+    if (actionType === 'search') {
+      this.loadingTable();
 
-    res.users_links && res.users_links.forEach((link) => {
-      if (link.rel === 'prev') {
-        pagination.prevUrl = link.href;
-      } else if (link.rel === 'next') {
-        pagination.nextUrl = link.href;
+      let name = data.name;
+      let id = data.id;
+
+      if (id) {
+        this.getListById(id.id);
+      } else if(name) {
+        this.getListByName(name.name);
+      } else {
+        this.getList();
       }
-    });
-    table.pagination = pagination;
-
-    return table;
+    }
   }
 
-  refresh(data, params) {
-    if (!data) {
-      data = {};
-    }
-    if (!params) {
-      params = this.props.params;
-    }
-
-    if (data.initialList) {
-      if (data.loadingTable) {
-        this.loadingTable();
-      }
-      if (data.clearState) {
-        this.clearState();
-      }
-
-      this.getInitialListData();
-    } else if (data.refreshList) {
-      if (params[2]) {
-        if (data.loadingDetail) {
-          this.loadingDetail();
-          this.refs.dashboard.setRefreshBtnDisabled(true);
-        }
-      } else {
-        if (data.loadingTable) {
-          this.loadingTable();
-        }
-      }
-
-      this.getList();
-    }
+  refresh() {
+    this.clearState();
+    this.loadingTable();
+    this.getList();
   }
 
   loadingTable() {
@@ -254,8 +215,8 @@ class Model extends React.Component {
       case 'table':
         this.onClickTable(actionType, refs, data);
         break;
-      case 'detail':
-        this.onClickDetailTabs(actionType, refs, data);
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;
@@ -297,20 +258,20 @@ class Model extends React.Component {
     let that = this;
     switch(key) {
       case 'charge':
-        charge(rows[0], null, function() {
-          that.refresh({
-            refreshList: true,
-            loadingTable: true
+        charge(rows[0], null, function(d, user) {
+          Notification.addNotice({
+            showIcon: true,
+            icon: 'icon-status-active',
+            content: __.charge_success.replace('{0}', user).replace('{1}', d.value),
+            isAutoHide: true,
+            type: 'info',
+            width: 300
           });
+          that.refresh();
         });
         break;
       case 'refresh':
-        this.refresh({
-          refreshList: true,
-          refreshDetail: true,
-          loadingTable: true,
-          loadingDetail: true
-        });
+        this.refresh();
         break;
       default:
         break;
@@ -328,8 +289,7 @@ class Model extends React.Component {
   }
 
   btnListRender(rows, btns) {
-    let singleRow = rows.length === 1;
-    btns.charge.disabled = !singleRow;
+    btns.charge.disabled = !(rows.length === 1 && rows[0] && rows[0].balance);
 
     return btns;
   }
@@ -345,7 +305,6 @@ class Model extends React.Component {
           __={__}
           config={this.state.config}
           params={this.props.params}
-          getStatusIcon={getStatusIcon}
         />
       </div>
     );

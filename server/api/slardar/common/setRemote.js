@@ -24,6 +24,7 @@ module.exports = function setRemote(catalog) {
       service.endpoints.forEach(endpoint => {
         if (endpoint.interface === endpointType) {
           oneRemote[endpoint.region_id] = endpoint.url.split('/').slice(0, 3).join('/');
+          // oneRemote[endpoint.region_id] = 'http://10.0.220.22:1' + oneRemote[endpoint.region_id].split(':')[2];
         }
       });
     }

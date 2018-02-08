@@ -26,13 +26,18 @@ class Model extends React.Component {
   }
 
   loadRouter() {
+    const isAdmin = HALO.user.roles.indexOf('admin') !== -1;
     router.on('changeState', this.onChangeState);
 
     let pathList = router.getPathList();
     if (pathList.length <= 1) {
       pathList[1] = configs.default_module;
     }
-    router.replaceState('/bill/' + pathList.slice(1).join('/'), null, null, true);
+    if (!isAdmin && (pathList[1] === 'user' || pathList[1] === 'price-mgmt')) {
+      router.replaceState('/bill/bill-overview', null, null, true);
+    } else {
+      router.replaceState('/bill/' + pathList.slice(1).join('/'), null, null, true);
+    }
   }
 
   onChangeState(pathList) {
@@ -86,7 +91,8 @@ class Model extends React.Component {
     switch(name) {
       case 'price-mgmt':
         return 'flavor-setting';
-      case 'global-record':
+      case 'global-billing-record':
+      case 'global-charge-record':
         return 'global';
       case 'bill-overview':
         return 'overview';
@@ -106,7 +112,7 @@ class Model extends React.Component {
 
     configs.modules.forEach((m) => {
       let submenu = [];
-      if (!isAdmin && m.title === 'bill_mgmt') {
+      if(!isAdmin && m.title === 'bill_mgmt') {
         return;
       }
       m.items.forEach((n) => {
