@@ -3,12 +3,12 @@
 function View(app, clientApps, currentView, viewModels) {
   this.name = currentView;
   this.Url = require('url');
-  this.react = require('react');
-  this.reactDOMServer = require('react-dom/server');
+  // this.react = require('react');
+  // this.reactDOMServer = require('react-dom/server');
   this.glob = require('glob');
   this.co = require('co');
-  this.viewModel = require(`client/applications/${currentView}/model.jsx`);
-  this.viewModelFactory = this.react.createFactory(this.viewModel);
+  // this.viewModel = require(`client/applications/${currentView}/model.jsx`);
+  // this.viewModelFactory = this.react.createFactory(this.viewModel);
   this.config = require('config');
   this.tusk = require('api/tusk/dao');
   this.websocketUrl = this.config('websocket');
