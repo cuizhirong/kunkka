@@ -39,6 +39,7 @@ module.exports = {
       total_fee: info.amount,
       currency: info.currency,
       notify_url: req.protocol + '://' + req.hostname + '/api/pay/alipay/notify/' + req.session.user.regionId,
+      return_url: req.protocol + '://' + req.hostname + '/bill/account-charge',
       subject: alipaySubject + info.username,
       body: alipayBody + info.amount + currencyConfig.unit
     };
