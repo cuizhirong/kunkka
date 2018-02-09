@@ -80,9 +80,11 @@ class Model extends React.Component {
       } else {
         table.data = [];
       }
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
+      table.pagination = null;
       this.updateTableData(table, res._url);
     });
   }
@@ -91,11 +93,14 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getList(table.limit).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+    request.getList(pageLimit).then((res) => {
       table.data = res.list;
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
+      table.pagination = null;
       this.updateTableData(table, res._url);
     });
   }
@@ -104,11 +109,14 @@ class Model extends React.Component {
     this.clearState();
 
     let table = this.state.config.table;
-    request.getFilteredList(data, table.limit).then((res) => {
+    let pageLimit = localStorage.getItem('page_limit');
+    request.getFilteredList(data, pageLimit).then((res) => {
       table.data = res.list;
+      this.setPagination(table, res);
       this.updateTableData(table, res._url);
     }).catch((res) => {
       table.data = [];
+      table.pagination = null;
       this.updateTableData(table, res._url);
     });
   }
@@ -121,9 +129,11 @@ class Model extends React.Component {
       } else {
         table.data = [];
       }
+      this.setPagination(table, res);
       this.updateTableData(table, res._url, refreshDetail);
     }).catch((res) => {
       table.data = [];
+      table.pagination = null;
       this.updateTableData(table, res._url);
     });
   }
@@ -170,6 +180,25 @@ class Model extends React.Component {
       }
     });
   }
+
+  setPagination(table, res) {
+    let pagination = {},
+      next = res.links.next ? res.links.next : null;
+
+    if (next) {
+      pagination.nextUrl = next;
+    }
+
+    let history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = history[history.length - 1];
+    }
+    table.pagination = pagination;
+
+    return table;
+  }
+
 
   refresh(data, params) {
     if (!data) {
@@ -243,6 +272,9 @@ class Model extends React.Component {
         break;
       case 'table':
         this.onClickTable(actionType, refs, data);
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;
