@@ -1,33 +1,34 @@
 {
-  "tabs": [{
-    "name": ["billing-record"],
-    "key": "billing-record",
-    "default": true
-  }],
-  "btns": [{
-    "key": "refresh",
-    "icon": "refresh"
-  }],
+  "title": "billing-record",
   "table": {
     "dataKey": "id",
+    "limit": 10,
     "loading": true,
     "column": [{
-      "title": ["id"],
-      "key": "id",
-      "dataIndex": "id"
+      "title": ["resource"],
+      "dataIndex": "resource",
+      "key": "resource",
+      "type": "captain"
     }, {
-      "title": ["resource_type"],
-      "key": "resource_type",
-      "dataIndex": "resource_type"
+      "title": ["resource", "id"],
+      "dataIndex": "resource_id",
+      "key": "resource_id"
     }, {
-      "title": ["cost"],
-      "dataIndex": "cost",
-      "key": "cost"
+      "title": ["amount"],
+      "dataIndex": "amount",
+      "key": "amount"
     }, {
-      "title": ["create_time"],
-      "dataIndex": "create_time",
-      "key": "create_time"
+      "title": ["started_at"],
+      "dataIndex": "started_at",
+      "key": "started_at"
     }],
-    "data": []
+    "data": [],
+    "detail": {
+      "tabs": [{
+        "name": ["bill_detail"],
+        "key": "bill_detail",
+        "default": true
+      }]
+    }
   }
 }

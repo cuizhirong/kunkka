@@ -2,21 +2,27 @@ const fetch = require('../../cores/fetch');
 const download = require('client/utils/download');
 
 module.exports = {
-  getList: function(resourceType, projectId) {
-    let url = `/proxy-shadowfiend/v1/orders/resource_consumption?resource_type=${resourceType}&limit=5`;
+  getList: function(resourceType, projectId, marker) {
+    const pageLimit = localStorage.getItem('page_limit');
+    let url = `/proxy-shadowfiend/v1/orders/bills?resource_type=${resourceType}&limit=${pageLimit}`;
     if(projectId) {
       url += `&project_id=${projectId}`;
     } else {
       url += '&all_get=True';
+    }
+    if(marker) {
+      url += `&marker=${marker}`;
     }
     return fetch.get({
       url: url
     });
   },
   getResourceList: function(projectId) {
-    let url = '/proxy-shadowfiend/v1/orders/total_consumption';
+    let url = '/proxy-shadowfiend/v1/orders/summary';
     if(projectId) {
       url += `?project_id=${projectId}`;
+    } else {
+      url += '?all_get=True';
     }
     return fetch.get({
       url: url
@@ -31,10 +37,10 @@ module.exports = {
   },
   export: function(data) {
     let url = `/proxy-shadowfiend/v1/downloads/orders?output_format=${data.format}`;
-    if(data.type === 'all_accounts') {
+    if(data.type === 'all_projects') {
       url += '&all_get=True';
-    } else if(data.type === 'specified_account') {
-      url += `&user_id=${data.id}`;
+    } else if(data.type === 'specified_project') {
+      url += `&project_id=${data.id}`;
     }
     if(data.startTime && data.endTime) {
       url += `&start_time=${data.startTime}&end_time=${data.endTime}`;

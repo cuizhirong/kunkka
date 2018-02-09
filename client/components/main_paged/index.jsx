@@ -164,8 +164,12 @@ class Main extends React.Component {
   }
 
   setRefreshBtnDisabled(disabled) {
-    let btnList = this.refs.btnList,
-      btns = btnList.state.btns;
+    let btnList = this.refs.btnList;
+    if(!btnList) {
+      return;
+    }
+
+    let btns = btnList.state.btns;
 
     btns.refresh.disabled = disabled;
 

@@ -5,16 +5,6 @@
     "field": "time_tip",
     "tip_type": "info"
   }, {
-    "type": "radio_text",
-    "field": "all_projects",
-    "info": "export_all_billing_records",
-    "checkedField": "all_projects"
-  }, {
-    "type": "radio_input",
-    "field": "specified_project",
-    "checkedField": "all_projects",
-    "tip_info": "export_specified_billing_records"
-  }, {
     "type": "select_time",
     "field": "range_time",
     "range": true

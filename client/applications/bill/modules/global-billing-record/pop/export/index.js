@@ -22,11 +22,11 @@ function pop(obj, parent, callback) {
         data.startTime = startTime;
         data.endTime = endTime;
       }
-      if(refs.all_accounts.state.checkedField === 'all_accounts') {
-        data.type = 'all_accounts';
+      if(refs.all_projects.state.checkedField === 'all_projects') {
+        data.type = 'all_projects';
       } else {
-        data.type = 'specified_account';
-        data.id = refs.specified_account.state.value;
+        data.type = 'specified_project';
+        data.id = refs.specified_project.state.value;
       }
       request.export(data).then(res => {
         callback && callback();
@@ -35,22 +35,22 @@ function pop(obj, parent, callback) {
     },
     onAction: function(field, state, refs) {
       let disabled = true;
-      if(refs.all_accounts.state.checkedField === 'all_accounts'
-          || (refs.specified_account.state.checkedField === 'specified_account'
-            && refs.specified_account.state.value)) {
+      if(refs.all_projects.state.checkedField === 'all_projects'
+          || (refs.specified_project.state.checkedField === 'specified_project'
+            && refs.specified_project.state.value)) {
         disabled = false;
       }
       switch(field) {
-        case 'all_accounts':
-          refs.specified_account.setState({
+        case 'all_projects':
+          refs.specified_project.setState({
             checkedField: state.checkedField
           });
           break;
-        case 'specified_account':
-          refs.all_accounts.setState({
+        case 'specified_project':
+          refs.all_projects.setState({
             checkedField: state.checkedField
           });
-          refs.specified_account.setState({
+          refs.specified_project.setState({
             error: !state.value
           });
           break;

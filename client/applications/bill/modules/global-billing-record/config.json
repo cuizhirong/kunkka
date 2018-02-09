@@ -3,7 +3,6 @@
   "table": {
     "dataKey": "id",
     "limit": 10,
-    "hideLimit": true,
     "loading": true,
     "column": [{
       "title": ["resource"],

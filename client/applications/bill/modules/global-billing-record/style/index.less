@@ -9,6 +9,7 @@
 @detail-border-color: @color_grey_600;
 @close-icon-hover-color: @color_info;
 @toggle-bg-color: @color_grey;
+@color_service_hover: #DBF4F8;
 
 .halo-module-global-billing-record {
   flex: 1;
@@ -25,18 +26,24 @@
     padding: 15px 0;
     box-sizing: border-box;
     align-items: flex-start;
-    .select {
-      line-height: 22px;
-      margin-right: 8px;
-      > select {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        width: 80px;
+    > div {
+      display: flex;
+      .select {
+        line-height: 22px;
+        margin-right: 8px;
+        > select {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          width: 80px;
+        }
+        > input {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          width: 180px;
+        }
       }
-      > input {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        width: 180px;
+      > .btn {
+        margin-right: 8px;
       }
     }
     > .btn {
@@ -101,9 +108,14 @@
             font-size: 18px;
             color: #252F3D;
           }
-          &.select,
           &:hover {
+            background-color: @color_service_hover;
+          }
+          &.select {
             background-color: @color_resource_bg_hover;
+            &:hover {
+              background-color: @color_resource_bg_hover;
+            }
           }
         }
       }
