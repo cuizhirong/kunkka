@@ -20,7 +20,7 @@ module.exports = {
       pageLimit = 10;
     }
 
-    let url = '/proxy-search/keystone/v3/roles';
+    let url = '/proxy-search/keystone/v3/roles?limit=' + pageLimit;
     return fetch.get({
       url: url
     }).then((res) => {
