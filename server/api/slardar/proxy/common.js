@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 module.exports = (req, res, next) => {
   const region = req.session.user.regionId;
-  const service = req.originalUrl.split('/')[1].slice(6);
+  const service = req.baseUrl.slice(7);
   if (!req.session.endpoint || !req.session.endpoint[service]) {
     res.status(503).json({
       status: 503,
