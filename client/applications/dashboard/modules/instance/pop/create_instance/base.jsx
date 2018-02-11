@@ -151,7 +151,6 @@ class ModalBase extends React.Component {
     images.sort(imageSort);
     snapshots.sort(imageSort);
     bootableVolumes.sort();
-
     this.store.flavors = res.flavor;
 
     let image = selectDefault(images);
@@ -1281,7 +1280,9 @@ class ModalBase extends React.Component {
   onAction(field, state) {
     this.setState({
       hideIp: !state.checked,
-      disabled: state.checked && !testAddr.test(this.state.ipValue)
+      disabled: state.checked && !testAddr.test(this.state.ipValue),
+      disabledNumber: state.checked,
+      number: 1
     });
   }
 

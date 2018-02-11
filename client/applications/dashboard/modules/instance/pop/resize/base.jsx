@@ -102,7 +102,8 @@ class ModalBase extends React.Component {
     }
     let flavors = _flavors.filter((ele) => ele.disk >= expectedSize);
 
-    let objFlavor = obj.flavor;
+    let objFlavor = obj.flavor.name ? obj.flavor : flavors[0];
+
     let cpuOpt = this.findCpu(flavors, objFlavor.vcpus);
     let ramOpt = this.findRam(flavors, objFlavor.vcpus, objFlavor.ram);
     let diskOpt = this.findDisk(flavors, objFlavor.vcpus, objFlavor.ram, objFlavor.disk);
@@ -122,7 +123,7 @@ class ModalBase extends React.Component {
   }
 
   isSameFlavor(flavor) {
-    let f = this.props.obj.flavor;
+    let f = this.state.flavor;
     return f.vcpus === flavor.vcpus && f.ram === flavor.ram && f.disk === flavor.disk;
   }
 
@@ -167,7 +168,7 @@ class ModalBase extends React.Component {
       if (flavor.id === key && this.state.flavor.id !== key) {
         this.setState({
           flavor: flavor,
-          disabled: this.props.obj.flavor.id === flavor.id
+          disabled: this.state.flavor.id === flavor.id
         });
         return true;
       }
@@ -255,6 +256,8 @@ class ModalBase extends React.Component {
       key: 'disk'
     }];
 
+    let key = '', checked = false;
+
     return (
       <Modal ref="modal" {...props} title={title} visible={state.visible} width={726}>
         <div className="modal-bd halo-com-modal-common halo-com-modal-resize-instance">
@@ -301,8 +304,8 @@ class ModalBase extends React.Component {
                     </div>
                     {
                       flavorData.map((item, index) => {
-                        let key = item.id;
-                        let checked = flavor.id === key;
+                        key = item.id;
+                        checked = flavor.id === key;
 
                         return (
                           <div key={key} className={'table-body' + (checked ? ' selected' : '')} onClick={this.onTable.bind(this, key)}>
