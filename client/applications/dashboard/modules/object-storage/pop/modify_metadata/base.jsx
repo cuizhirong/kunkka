@@ -11,19 +11,19 @@ class ModalBase extends React.Component {
     super(props);
 
     let namespaces = [{
-      'name': 'Cache-Control',
+      'name': 'cache-control',
       'properties': []
     }, {
-      'name': 'Content-Disposition',
+      'name': 'content-disposition',
       'properties': [{'selectValue': 'attachment'}]
     }, {
-      'name': 'Content-Encoding',
+      'name': 'content-encoding',
       'properties': []
     }, {
-      'name': 'Content-Language',
+      'name': 'content-language',
       'properties': []
     }, {
-      'name': 'Content-Type',
+      'name': 'content-type',
       'properties': [
         {'selectValue': 'application/msword'},
         {'selectValue': 'application/pdf'},
@@ -43,16 +43,19 @@ class ModalBase extends React.Component {
         {'selectValue': 'text/rtf'}
       ]
     }, {
-      'name': 'Website-Redirect-Location',
+      'name': 'website-redirect-location',
       'properties': []
     }, {
-      'name': 'Expires',
+      'name': 'expires',
       'properties': []
     }];
+
+    let objectMetakeys = ['cache-control', 'content-disposition', 'content-encoding', 'content-language', 'content-type', 'website-redirect-location', 'expires'];
 
     this.state = {
       visible: true,
       namespaces: namespaces,
+      objectMetakeys: objectMetakeys,
       btnEnable: false,
       error: '',
       showError: false,
@@ -71,21 +74,36 @@ class ModalBase extends React.Component {
     let singleData = {}, id;
     let addMetaData = this.state.addMetaData;
     let metaData = this.state.metaData;
+    let metaKey;
     request.objectMetaDetas({
       name: this.props.obj.name
     }, this.props.breadcrumb).then((res) => {
       for(let key in res) {
-        let metaKey = key.substr('x-object-meta-'.length, key.length);
-        id = metaKey + Math.random();
-        singleData = {
-          key: metaKey,
-          id: id,
-          value: res[key],
-          op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
-        };
-        let metaValue = res[key];
-        metaData.push(singleData);
-        addMetaData.push({metaKey, metaValue});
+        if(this.state.objectMetakeys.indexOf(key.toLowerCase()) > -1) {
+          metaKey = key;
+          id = metaKey + Math.random();
+          singleData = {
+            key: metaKey,
+            id: id,
+            value: res[metaKey],
+            op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+          };
+          let metaValue = res[metaKey];
+          metaData.push(singleData);
+          addMetaData.push({metaKey, metaValue});
+        } else if(key.indexOf('x-object-meta-') > -1) {
+          metaKey = key.substr('x-object-meta-'.length, key.length);
+          id = metaKey + Math.random();
+          singleData = {
+            key: metaKey,
+            id: id,
+            value: res[key],
+            op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+          };
+          let metaValue = res[key];
+          metaData.push(singleData);
+          addMetaData.push({metaKey, metaValue});
+        }
       }
       this.setState({
         metaData: metaData,
@@ -96,13 +114,25 @@ class ModalBase extends React.Component {
 
   removeUserData(id) {
     let metaData = this.state.metaData;
+    let addMetaData = this.state.addMetaData;
+    let removeMetaData = this.state.removeMetaData;
+
     metaData.forEach((data, index) => {
       if (data.id === id) {
         metaData.splice(index, 1);
+        removeMetaData.push(data.key);
       }
     });
+    addMetaData.forEach((item, index) => {
+      if(item.metaKey === id) {
+        addMetaData.splice(index, 1);
+      }
+    });
+
     this.setState({
-      metaData: metaData
+      metaData: metaData,
+      addMetaData: addMetaData,
+      removeMetaData: removeMetaData
     });
   }
 
@@ -117,8 +147,12 @@ class ModalBase extends React.Component {
     let params = {};
     let breadcrumb = this.props.breadcrumb;
     let that = this;
+    let metaKeys;
     this.state.metaData.forEach(item => {
-      let metaKeys = 'X-Object-Meta-' + item.key;
+      let tfMetaKey = this.state.objectMetakeys.some(i => {
+        return i === item.key;
+      });
+      metaKeys = tfMetaKey ? item.key : 'X-Object-Meta-' + item.key;
       params[metaKeys] = item.value;
       metaArr.push(metaKeys);
     });
