@@ -543,7 +543,8 @@ class Model extends React.Component {
           breadcrumb: []
         });
         this.refresh({
-          tableLoading: true
+          tableLoading: true,
+          clearState: true
         });
         break;
       case 'bucket':
@@ -641,7 +642,7 @@ class Model extends React.Component {
               let expire = _res * 1000;
               let now = Date.now();
               let resultTime = (expire - now) / 1000;
-              let residueDay = Math.floor(resultTime / (24 * 60 * 60)) || '-';
+              let residueDay = Math.floor(resultTime / (24 * 60 * 60));
               let residueHour = Math.floor(resultTime % (24 * 60 * 60) / (60 * 60));
               item.expire_time = residueDay + __.day + residueHour + __.times;
               item.residueDay = residueDay;

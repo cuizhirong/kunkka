@@ -1,6 +1,6 @@
 {
   "breadcrumb": [{
-    "name": "容器",
+    "name": ["container"],
     "key": "all_bucket",
     "type": "all"
   }],
