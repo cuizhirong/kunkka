@@ -98,6 +98,11 @@ module.exports = {
           resultvalueArr.push(resultvalue);
           obj.metavalue = resultvalueArr;
           arr.push(metadataobj[resultkey] = resultvalue);
+        } else {
+          resultArr = res.split(':');
+          resultkey = resultArr[0];
+          resultvalue = resultArr[1];
+          arr.push(metadataobj[resultkey] = resultvalue);
         }
       });
       return metadataobj;
@@ -229,7 +234,8 @@ module.exports = {
       url: '/proxy-swift/' + breadcrumb + '/' + file.name,
       headers: {
         'X-Delete-At': time
-      }
+      },
+      contentType: 'application/x-www-form-urlencoded'
     };
     return fetch.post(obj);
   },

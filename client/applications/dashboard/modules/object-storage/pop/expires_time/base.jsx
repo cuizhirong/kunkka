@@ -55,7 +55,7 @@ class ModalBase extends React.Component {
   }
 
   onChangeStartTime(time) {
-    let date = new Date(time.year + '-' + time.month + '-' + time.date);
+    let date = new Date(`${time.year}-${time.month}-${time.date} 00:00:00`);
     this.setState({
       startTime: date
     }, () => {
