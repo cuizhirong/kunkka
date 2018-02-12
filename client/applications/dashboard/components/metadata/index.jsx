@@ -34,33 +34,43 @@ class Metadata extends React.Component {
     let metaKey = this.state.currentKeyValue;
     let metaValue = this.state.currentValue;
     let singleData = {}, id;
-
-    metaData.forEach(item => {
-      if(item.key === metaKey) {
-        metaKey = '';
+    if(metaKey === 'content-type' || metaKey === 'cache-control' || metaKey === 'content-encoding' || metaKey === 'expires' || metaKey === 'content-disposition' ) {
+      metaData.forEach(item => {
+        if (item.key === metaKey) {
+          item.value = metaValue;
+        }
+      });
+      this.setState({
+        metaData: metaData
+      });
+    } else {
+      metaData.forEach(item => {
+        if (item.key === metaKey) {
+          metaKey = '';
+          this.setState({
+            showUniqueError: true
+          }, ()=> {
+            this.props.changebtnDisabled(this.state.showUniqueError);
+          });
+        }
+      });
+      if (metaKey !== '') {
+        id = metaKey + Math.random();
+        singleData = {
+          key: metaKey,
+          id: id,
+          value: metaValue,
+          op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
+        };
+        metaData.push(singleData);
+        addMetaData.push({metaKey, metaValue});
         this.setState({
-          showUniqueError: true
-        }, ()=> {
-          this.props.changebtnDisabled(this.state.showUniqueError);
+          metaData: metaData,
+          addMetaData: addMetaData,
+          currentKeyValue: '',
+          currentValue: ''
         });
       }
-    });
-    if (metaKey !== '') {
-      id = metaKey + Math.random();
-      singleData = {
-        key: metaKey,
-        id: id,
-        value: metaValue,
-        op: <i onClick={this.removeUserData.bind(this, id)} className="glyphicon icon-remove remove-user-from-project"></i>
-      };
-      metaData.push(singleData);
-      addMetaData.push({metaKey, metaValue});
-      this.setState({
-        metaData: metaData,
-        addMetaData: addMetaData,
-        currentKeyValue: '',
-        currentValue: ''
-      });
     }
     this.props.getMetaData(this.state.addMetaData, this.state.metaData, this.state.removeUserData);
   }

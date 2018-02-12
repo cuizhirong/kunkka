@@ -82,6 +82,9 @@ class Model extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.style.display === 'none' && !nextState.config.table.loading) {
+      return false;
+    }
     return true;
   }
 
@@ -96,12 +99,12 @@ class Model extends React.Component {
         this.onInitialize();
         this.tableColRender(this.state.config.table.column);
       });
-      // nextProps.config && this.updateRows(nextProps.config.table.data);
     }
   }
 
   componentWillMount() {
     this.onInitialize();
+    this.loadingTable();
     converter.convertLang(__, config);
     converter.convertLang(__, objConfig);
     converter.convertLang(__, bucketConfig);
@@ -427,6 +430,7 @@ class Model extends React.Component {
     switch(this.state.config.breadcrumb.length) {
       case 1:
         request.listBuckets().then(res => {
+          table.loading = false;
           let newRes = [];
           let additionObject, additionBytes, addObjectArr = [], addBytesArr = [];
           res.forEach(item => {
@@ -468,6 +472,7 @@ class Model extends React.Component {
         request.listBucketObjects({
           Bucket: this.state.config.breadcrumb[1].name
         }).then(res => {
+          table.loading = false;
           this.setState({
             rawItem: res
           }, () => {
