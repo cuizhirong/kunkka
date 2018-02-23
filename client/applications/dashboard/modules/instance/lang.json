@@ -158,7 +158,7 @@
     "delete_volume_tip": "删除云主机时删除云硬盘",
     "description": "详细信息",
     "detach_volume_tip": "请先在虚拟机中对云硬盘停止读写并取消挂载，然后再点击卸载。",
-    "device": "系统盘",
+    "device": "磁盘",
     "device_name": "设备名称",
     "disk": "容量",
     "disk_read": "磁盘-读(B/s)",
