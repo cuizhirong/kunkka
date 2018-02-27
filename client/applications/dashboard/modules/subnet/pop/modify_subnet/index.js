@@ -66,12 +66,11 @@ function pop(obj, parent, callback) {
 
       let dns1 = refs.subnet_dns1.state.value;
       let dns2 = refs.subnet_dns2.state.value;
-      if (dns1 || dns2) {
-        let dns = [];
-        dns1 && dns.push(dns1);
-        dns2 && dns.push(dns2);
-        data.dns_nameservers = dns;
-      }
+      let dns = [];
+      dns1 && dns.push(dns1);
+      dns2 && dns.push(dns2);
+      data.dns_nameservers = dns;
+
       let hostroutes = refs.add_hostroutes.refs.hostroutes.state.showsubs;
       hostroutes.forEach((m) => {
         data.host_routes.push({
