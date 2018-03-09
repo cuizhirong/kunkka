@@ -1,0 +1,18 @@
+{
+  "en": {
+    "account_binding": "Account Binding",
+    "cc_video_account_binding_error_msg": "{0} field can not be empty",
+    "cc_video_account_id": "CC Video Account ID",
+    "delete_video_account_bindin_msg": "Are you sure you want to delete the following account binding?",
+    "user_field_input_error_msg": "The {0} field is entered incorrectly, please check your input",
+    "video_account_id": "Video Account ID"
+  },
+  "zh-CN": {
+    "account_binding": "账户绑定",
+    "cc_video_account_binding_error_msg": "{0}字段不能为空",
+    "cc_video_account_id": "CC视频账户ID",
+    "delete_video_account_bindin_msg": "您确定要删除如下的账户绑定吗？",
+    "user_field_input_error_msg": "{0}字段输入有误，请检查您的输入",
+    "video_account_id": "视频账户 ID"
+  }
+}

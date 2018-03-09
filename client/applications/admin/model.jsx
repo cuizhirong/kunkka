@@ -92,6 +92,8 @@ class Model extends React.Component {
         return 'applications';
       case 'action-log':
         return 'log';
+      case 'video-account-binding':
+        return 'video-account-management';
       default:
         return name;
     }

@@ -1,0 +1,28 @@
+{
+  "title": ["delete", "account_binding"],
+  "fields": [{
+    "type": "text",
+    "field": "msg",
+    "info": "delete_video_account_bindin_msg"
+  }, {
+    "type": "input",
+    "field": "user_name",
+    "required": true,
+    "disabled": true
+  }, {
+    "type": "input",
+    "field": "user_id",
+    "required": true,
+    "disabled": true
+  }, {
+    "type": "input",
+    "field": "video_account_id",
+    "required": true,
+    "disabled": true
+  }],
+  "btn": {
+    "type": "delete",
+    "value": "delete",
+    "disabled": false
+  }
+}
