@@ -1,0 +1,15 @@
+{
+  "title": ["create", "account_binding"],
+  "fields": [{
+    "type": "adapter",
+    "field": "user_field"
+  }, {
+    "type": "input",
+    "field": "video_account_id",
+    "required": true
+  }],
+  "btn": {
+    "value": "create",
+    "disabled": true
+  }
+}

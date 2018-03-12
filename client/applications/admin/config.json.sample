@@ -4,7 +4,8 @@
     "items": [
       "registration-approval",
       "approved-registration-application",
-      "quota-approval"
+      "quota-approval",
+      "video-account-binding"
     ]
   }, {
     "title": "compute_service",

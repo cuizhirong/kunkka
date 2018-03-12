@@ -1,0 +1,51 @@
+{
+  "tabs": [{
+    "name": ["video-account-binding"],
+    "key": "video-account-binding",
+    "default": true
+  }],
+  "btns": [{
+    "value": ["create", "account_binding"],
+    "key": "create",
+    "icon": "create",
+    "type": "create"
+  }, {
+    "value": ["modify", "account_binding"],
+    "key": "update",
+    "icon": "edit",
+    "disabled": true
+  }, {
+    "value": ["delete", "account_binding"],
+    "key": "delete",
+    "type": "delete",
+    "icon": "delete",
+    "disabled": true
+  }, {
+    "key": "refresh",
+    "icon": "refresh"
+  }],
+  "search": {
+    "placeholder": ["pls_enter", "user_name"]
+  },
+  "table": {
+    "checkbox": true,
+    "dataKey": "id",
+    "loading": true,
+    "hideLimit": true,
+    "column": [{
+      "title": ["user_name"],
+      "dataIndex": "username",
+      "key": "name",
+      "sort": true
+    }, {
+      "title": ["user_id"],
+      "dataIndex": "user_id",
+      "key": "user_id"
+    }, {
+      "title": ["cc_video_account_id"],
+      "key": "cc_account_id",
+      "dataIndex": "account_id"
+      }],
+    "data": []
+  }
+}
