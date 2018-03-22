@@ -115,5 +115,8 @@
     "key": "approved-registration-application",
     "link": "registration-approval"
   }],
-  "theme": "default"
+  "theme": "default",
+  "default_hide_modules": [
+    "video-account-binding"
+  ]
 }

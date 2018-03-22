@@ -39,7 +39,7 @@ class Model extends React.Component {
       } else {
         this.setState({
           hasError: true,
-          errorMsg: __.user_did_not_have_cc_account
+          errorMsg: __.user_did_not_have_cloud_account
         });
       }
     }).catch((err) => {
@@ -66,11 +66,11 @@ class Model extends React.Component {
         </div>)
       : (<div className="info">
           {__.link_did_not_redirect}
-          <a target="_blank" href={redirectUrl}>{__['cc-video']}</a>
+          <a target="_blank" href={redirectUrl}>{__['cloud-video']}</a>
         </div>);
 
     return (
-      <div className="halo-module-cc-video" style={this.props.style}>
+      <div className="halo-module-cloud-video" style={this.props.style}>
         {content}
       </div>
     );

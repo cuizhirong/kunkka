@@ -61,9 +61,9 @@
       "action-log-volume"
     ]
   }, {
-    "title": "cc-video",
+    "title": "cloud-video",
     "items": [
-      "cc-video"
+      "cloud-video"
     ]
   }],
   "default_module": "overview",
@@ -104,6 +104,7 @@
     "ike-policy",
     "ipsec-policy",
     "volume-public",
-    "object-storage"
+    "object-storage",
+    "cloud-video"
   ]
 }
