@@ -25,6 +25,6 @@ module.exports = function (mysql, DataTypes) {
     }
   }, {
     charset: 'utf8',
-    paranoid: true
+    paranoid: false
   });
 };
