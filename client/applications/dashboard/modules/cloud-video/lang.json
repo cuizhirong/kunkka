@@ -1,0 +1,12 @@
+{
+  "en": {
+    "link_did_not_redirect": "If the page does not jump, please click the link to enter the cloud video. ",
+    "system_error": "System error",
+    "user_did_not_have_cloud_account": "The cloud video service is not enabled. To enable it, contact the administrator to apply for a cloud video service."
+  },
+  "zh-CN": {
+    "system_error": "系统错误",
+    "link_did_not_redirect": "如果页面没有跳转，请点击链接进入云视频。",
+    "user_did_not_have_cloud_account": "未开启云视频服务，如需开启，请联系管理员申请云视频服务"
+  }
+}
