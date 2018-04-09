@@ -15,7 +15,7 @@ Password.prototype = {
     const that = this;
     const __ = req.i18n.__.bind(req.i18n);
     co(function* () {
-      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
+      let enableSafety = yield base._getSetBool('global', 'enable_safety');
       //judge
       if (!enableSafety || req.session.user.authAdmin) {
         res.redirect(req.query.cb || '/admin');
@@ -44,7 +44,7 @@ Password.prototype = {
     const that = this;
     const __ = req.i18n.__.bind(req.i18n);
     co(function *() {
-      let enableSafety = yield base._getSetBool('admin', 'enable_safety');
+      let enableSafety = yield base._getSetBool('global', 'enable_safety');
       //judge
       if (!enableSafety || req.session.user.authAdmin) {
         next({status: 400, customRes: true, msg: 'badRequest'});
