@@ -242,9 +242,11 @@ module.exports.data = (req, res, next) => {
           d.volumeCount = volumes.length;
           d.volumeSize = 0;
           volumes.forEach(v => {
-            v = extraData.volume[v.id];
-            volumeNew.push(v.name || v.id);
-            d.volumeSize += v.size;
+            let volumeDetail = extraData.volume[v.id];
+            if (volumeDetail) {
+              volumeNew.push(volumeDetail.name || volumeDetail.id);
+              d.volumeSize += volumeDetail.size;
+            }
           });
           d.volumeSize += ' GB';
           d['os-extended-volumes:volumes_attached-string'] = volumeNew.join();
