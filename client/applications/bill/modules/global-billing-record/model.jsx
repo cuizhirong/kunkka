@@ -8,7 +8,6 @@ const DetailMinitable = require('client/components/detail_minitable/index');
 const popExport = require('./pop/export/index');
 const moment = require('client/libs/moment');
 const __ = require('locale/client/bill.lang.json');
-const converter = require('../../utils/converter');
 const getIcons = require('../../utils/resource_icons');
 const {Button, Tab} = require('client/uskin/index');
 
@@ -25,16 +24,20 @@ class Model extends React.Component {
       total: {},
       resources: [],
       current: '',
-      searchType: 'name'
+      searchType: 'name',
+      hasQuery: true
     };
 
     ['onInitialize', 'onAction'].forEach((m) => {
       this[m] = this[m].bind(this);
     });
+
+    this.stores = {
+      urls: []
+    };
   }
 
   componentWillMount() {
-    converter.convertLang(__, this.state.config);
     this.tableColRender(this.state.config.table.column);
   }
 
@@ -81,11 +84,15 @@ class Model extends React.Component {
   }
 
   onInitialize() {
+    this.loadingTable();
     this.getResourceList();
   }
 
-  getResourceList(projectId) {
+  getResourceList() {
+    this.clearState();
     this.loadingResourceList();
+    this.loadingTable();
+    const projectId = this.state.currentProjectId;
     request.getResourceList(projectId).then(res => {
       const resources = res.filter(r => r.type !== 'generic');
       this.setState({
@@ -99,27 +106,48 @@ class Model extends React.Component {
     });
   }
 
-  getList(type, projectId) {
+  getList(type, projectId, marker) {
     this.loadingTable();
     let _config = this.state.config,
       table = _config.table;
-    request.getList(type, projectId).then((res) => {
+    request.getList(type, projectId, marker).then((res) => {
       table.data = res.orders;
-      this.updateTableData(table);
+      this.setPaginationData(table, res);
+      this.updateTableData(table, marker);
     }).catch(res => {
       table.data = [];
-      this.updateTableData(table, res._url);
+      this.setPaginationData(table, res);
+      this.updateTableData(table, marker);
     });
   }
 
-  updateTableData(table) {
+  updateTableData(table, marker) {
     let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
 
     this.setState({
       config: newConfig
+    }, () => {
+      this.stores.urls.push(marker);
     });
+  }
+
+  setPaginationData(table, res) {
+    let pagination = {};
+
+    if(res.links && res.links.marker) {
+      pagination.nextUrl = res.links.marker;
+    }
+
+    let history = this.stores.urls;
+
+    if (history.length > 0) {
+      pagination.prevUrl = true;
+    }
+    table.pagination = pagination;
+
+    return table;
   }
 
   loadingTable() {
@@ -129,6 +157,19 @@ class Model extends React.Component {
     this.setState({
       config: _config
     });
+  }
+
+  clearUrls() {
+    this.stores.urls = [];
+  }
+
+  clearState() {
+    this.clearUrls();
+
+    let dashboard = this.refs.dashboard;
+    if (dashboard) {
+      dashboard.clearState();
+    }
   }
 
   loadingResourceList() {
@@ -147,9 +188,16 @@ class Model extends React.Component {
         break;
       case 'detail':
         const {rows} = data;
-        request.getBillDetail(rows[0].metrics['total.cost']).then(res => {
-          this.onClickDetailTabs(actionType, refs, data, res);
-        });
+        if(rows[0].metrics && rows[0].metrics['total.cost']) {
+          request.getBillDetail(rows[0].metrics['total.cost']).then(res => {
+            this.onClickDetailTabs(actionType, refs, data, res);
+          });
+        } else {
+          this.onClickDetailTabs(actionType, refs, data, []);
+        }
+        break;
+      case 'page_limit':
+        this.onInitialize();
         break;
       default:
         break;
@@ -175,7 +223,7 @@ class Model extends React.Component {
         }
 
         this.loadingTable();
-        this.getNextListData(url);
+        this.getList(this.state.current, this.state.currentProjectId, url);
         break;
       default:
         break;
@@ -243,10 +291,14 @@ class Model extends React.Component {
   }
 
   changeResource(type) {
+    if(type === this.state.current || this.state.config.table.loading) {
+      return;
+    }
     this.setState({
       current: type
     }, () => {
-      this.getList(this.state.current);
+      this.clearState();
+      this.getList(this.state.current, this.state.currentProjectId);
     });
   }
 
@@ -259,17 +311,26 @@ class Model extends React.Component {
   onQuery() {
     const state = this.state;
     const value = this.refs.searchText.value;
+    if(state.upLoading || state.config.table.loading) {
+      return;
+    }
     if(state.searchType === 'name') {
       request.getProjectByName(value).then(res => {
         if(res.projects.length > 0) {
-          this.getResourceList(res.projects[0].id);
+          this.setProjectId(res.projects[0].id, this.getResourceList);
         } else {
-          this.getResourceList(value);
+          this.setProjectId(value, this.getResourceList);
         }
       });
     } else {
-      this.getResourceList(value);
+      this.setProjectId(value, this.getResourceList);
     }
+  }
+
+  setProjectId(id, callback) {
+    this.setState({
+      currentProjectId: id
+    }, callback);
   }
 
   onExport() {
@@ -277,26 +338,30 @@ class Model extends React.Component {
   }
 
   render() {
+    const state = this.state;
     const tabs = [{
-      name: __['global-billing-record'],
+      name: __[state.config.title],
       key: 'global-billing-record',
       default: true
     }];
-    const state = this.state;
     return (
       <div className="halo-module-global-billing-record" style={this.props.style}>
         <div className="tab-wrapper">
           <Tab items={tabs} />
         </div>
         <div className="btnlist">
-          <div className="select">
-            <select value={state.searchType} onChange={this.onSwitch.bind(this)}>
-              <option key="name" value="name">{__.search_by_name}</option>
-              <option key="id" value="id">{__.search_by_id}</option>
-            </select>
-            <input ref="searchText" type="text"/>
-          </div>
-          <Button value={__.query} btnKey="normal" disabled={state.upLoading} onClick={this.onQuery.bind(this)} />
+          {
+            state.hasQuery ? <div>
+              <div className="select">
+                <select value={state.searchType} onChange={this.onSwitch.bind(this)}>
+                  <option key="name" value="name">{__.search_by_name}</option>
+                  <option key="id" value="id">{__.search_by_id}</option>
+                </select>
+                <input ref="searchText" type="text"/>
+              </div>
+              <Button value={__.query} btnKey="normal" disabled={state.upLoading} onClick={this.onQuery.bind(this)} />
+            </div> : null
+          }
           <Button iconClass="download" onClick={this.onExport.bind(this)} btnKey="normal" value={__.export} initial={true} />
         </div>
         {

@@ -21,11 +21,13 @@ module.exports = {
     });
   },
   getPriceByService: (serviceName, startTime, endTime) => {
+    const origin = moment('2010-01-01').format().slice(0, 19);
+    const now = moment().format().slice(0, 19);
     let start = startTime ? moment(startTime).format().slice(0, 19) : '';
     let end = endTime ? moment(endTime).format().slice(0, 19) : '';
     let url = start && end ?
       `/proxy/gnocchi/v1/aggregation/resource/generic/metric/${serviceName}.cost?aggregation=sum&granularity=${GRANULARITY.day}&needed_overlap=0.0&refresh=False&start=${start}&end=${end}` :
-      `/proxy/gnocchi/v1/aggregation/resource/generic/metric/${serviceName}.cost?aggregation=sum&granularity=${GRANULARITY.day}&needed_overlap=0.0&refresh=False`;
+      `/proxy/gnocchi/v1/aggregation/resource/generic/metric/${serviceName}.cost?aggregation=sum&granularity=${GRANULARITY.day}&needed_overlap=0.0&refresh=False&start=${origin}&end=${now}`;
     return fetch.post({
       url: url,
       data: {'and': [{'>': {'started_at': '2015-01-01T00:00'}}, {'=': {'project_id': HALO.user.projectId}}]}

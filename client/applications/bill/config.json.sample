@@ -12,6 +12,7 @@
     "items": [
       "user",
       "global-charge-record",
+      "global-billing-record",
       "price-mgmt"
     ]
   }],
