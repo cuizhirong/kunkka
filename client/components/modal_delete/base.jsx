@@ -9,11 +9,36 @@ class ModalBase extends React.Component {
     this.state = {
       disabled: props.disabled,
       tip: props.tip,
-      tipType: 'warning'
+      tipType: 'warning',
+      visible: true
     };
 
-    this.onDelete = this.onDelete.bind(this);
-    this.onCancel = this.onCancel.bind(this);
+    ['onDelete', 'onCancel', 'keyboardListener'].forEach(func => {
+      this[func] = this[func].bind(this);
+    });
+  }
+
+  componentDidMount() {
+    document.addEventListener('keyup', this.keyboardListener);
+  }
+
+  keyboardListener(e) {
+    if(this.state.visible) {
+      switch(e.code) {
+        case 'Escape':
+          this.onCancel();
+          break;
+        case 'Enter':
+          this.onDelete();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.keyboardListener);
   }
 
   onDelete() {
