@@ -18,8 +18,6 @@ const __ = require('locale/client/dashboard.lang.json');
 
 const getStatusIcon = require('../../utils/status_icon');
 const getTime = require('client/utils/time_unification');
-const BasicProps = require('client/components/basic_props/index');
-const DetailMinitable = require('client/components/detail_minitable/index');
 
 class Model extends React.Component {
 
@@ -275,35 +273,6 @@ class Model extends React.Component {
           });
         });
         break;
-      case 'flow':
-        if (isAvailableView(rows)) {
-          syncUpdate = false;
-          request.getDetail(rows[0].id).then(res => {
-            let basicPropsItem = this.getBasicPropsItems(res[0]);
-            let flowConfig = this.getDetailTableConfig(res);
-            contents[tabKey] = (
-              <div>
-                <BasicProps
-                  title={__.basic + __.properties}
-                  defaultUnfold={true}
-                  tabKey={'description'}
-                  items={basicPropsItem}
-                  rawItem={rows[0]}
-                  dashboard={this.refs.dashboard ? this.refs.dashboard : null} />
-                <DetailMinitable
-                  __={__}
-                  title={__.flow}
-                  defaultUnfold={true}
-                  tableConfig={flowConfig ? flowConfig : []} />
-              </div>
-            );
-            detail.setState({
-              contents: contents,
-              loading: false
-            });
-          });
-        }
-        break;
       default:
         break;
     }
@@ -374,23 +343,6 @@ class Model extends React.Component {
     };
 
     return tableConfig;
-  }
-
-  getBasicPropsItems(item) {
-    let txflow = 0, rxflow = 0;
-    for (let key in item.flow) {
-      rxflow += Number(item.flow[key]['rxkB/s']);
-      txflow += Number(item.flow[key]['txkB/s']);
-    }
-    let items = [{
-      title: __.total_txflow,
-      content: txflow + ' kB/s'
-    }, {
-      title: __.total_rxflow,
-      content: rxflow + ' kB/s'
-    }];
-
-    return items;
   }
 
   getRelatedInstance(item, pagination) {
