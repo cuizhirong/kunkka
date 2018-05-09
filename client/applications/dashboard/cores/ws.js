@@ -29,11 +29,9 @@ function connectWS(opt) {
 
 try {
   let opt = {
-    projectId: HALO.user.projectId
+    projectId: HALO.user.projectId,
+    url: HALO.websocket.url
   };
-  let hostname = window.location.hostname;
-  let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-  opt.url = protocol + hostname + HALO.websocket.url;
   console.log('load websocket');
   connectWS(opt);
 } catch (e) {

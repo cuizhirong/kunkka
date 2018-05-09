@@ -13,7 +13,7 @@ let config = {
     'printAccessLog': true                   // true | false
   },
   'websocket': {
-    'regionOne': ':5679'
+    'regionOne': 'wss://pre4.ustack.com:5679'
   },
   'port': 5678,
   'hostname': ''
