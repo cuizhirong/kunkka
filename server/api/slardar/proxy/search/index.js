@@ -7,7 +7,7 @@ const listImageRecursive = require('../listImageRecursive');
 const handleNetwork = require('./handleNetwork');
 const objects = require('./objectList');
 
-const otherServiceUser = ['heat_stack_domain_admin'];
+const otherServiceUser = ['heat_stack_domain_admin', 'billing_admin'];
 
 const prefix = '/proxy-search';
 
