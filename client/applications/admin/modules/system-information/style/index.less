@@ -4,16 +4,32 @@
   overflow: hidden;
   .table .table-body .row {
     > div {
-      height: 90px;
-      line-height: 90px;
+      height: auto;
+      align-self: center;
     }
-    div.service-endpoints {
-      height: 30px;
-      line-height: 30px;
-      span:first-child {
-        font-weight: bolder;
-        font-size: 14px;
-        margin-right: 5px;
+    .service-endpoints-wrapper {
+      line-height: 26px;
+      .service-endpoints {
+        display: flex;
+        justify-content: space-between;
+        height: 78px;
+        &:nth-child(n+2) {
+          margin-top: 10px;
+        }
+      }
+      .region-name {
+        width: 70px;
+        flex-shrink: 0;
+        line-height: 78px;
+      }
+      .endpoints {
+        flex: 1;
+        span:first-child{
+          display: inline-block;
+          width: 60px;
+          font-size: 13px;
+          font-weight: bolder;
+        }
       }
     }
   }

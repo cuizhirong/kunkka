@@ -68,11 +68,6 @@
       "dataIndex": "type",
       "sort": true
     }, {
-      "title": ["region"],
-      "key": "region",
-      "dataIndex": "region_name",
-      "sort": true
-    }, {
       "title": ["endpoints"],
       "key": "endpoints",
       "sort": true

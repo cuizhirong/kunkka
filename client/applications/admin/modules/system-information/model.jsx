@@ -48,17 +48,37 @@ class Model extends React.Component {
     columns.forEach(column => {
       if (column.key === 'endpoints') {
         column.render = (col, item) => {
+          const list = [];
+          for(let region in item.regionEndpointMap) {
+            const listItem = (
+              <li key={region} className="service-endpoints">
+                <div className="region-name">
+                  { item.regionEndpointMap[region].name }
+                </div>
+                <div className="endpoints">
+                  {
+                    item.regionEndpointMap[region].endpoints.map(endpoint => {
+                      return (
+                        <div key={endpoint.id}>
+                          <span>
+                          {
+                            endpoint.interface[0].toUpperCase() + endpoint.interface.slice(1)
+                          }
+                          </span>
+                          <span>{endpoint.url}</span>
+                        </div>
+                      );
+                    })
+                  }
+                </div>
+              </li>
+            );
+            list.push(listItem);
+          }
           return (
-            <div>
-              {item.endpoints.map((endpoint, i) => {
-                return (
-                  <div className="service-endpoints" key={i}>
-                    <span>{endpoint.interface[0].toUpperCase() + endpoint.interface.slice(1)}</span>
-                    <span>{endpoint.url}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <ul className="service-endpoints-wrapper">
+              { list }
+            </ul>
           );
         };
       }
@@ -93,9 +113,36 @@ class Model extends React.Component {
     });
 
     catalogs.forEach((catalog) => {
-      catalog.region_id = catalog.endpoints[0].region_id;
-      catalog.region_name = regionIdNameMap[catalog.region_id][lang];
+      const regionEndpointMap = {};
+
+      // 建立 region 和其对应的 endpoint 的映射 map
+      catalog.endpoints.forEach(endpoint => {
+        const endpointRegion = endpoint.region_id;
+        if(endpointRegion in regionEndpointMap) {
+          regionEndpointMap[endpointRegion].endpoints.push(endpoint);
+        } else {
+          regionEndpointMap[endpointRegion] = {
+            endpoints: [endpoint],
+            name: null
+          };
+        }
+      });
+
+      for(let region in regionEndpointMap) {
+        regionEndpointMap[region].endpoints.sort((x, y) => {
+          return x.interface.localeCompare(y.interface);
+        });
+
+        try {
+          regionEndpointMap[region].name = regionIdNameMap[region][lang];
+        } catch(e) {
+          regionEndpointMap[region].name = region;
+        }
+      }
+
+      catalog.regionEndpointMap = regionEndpointMap;
     });
+
     return res;
   }
 
