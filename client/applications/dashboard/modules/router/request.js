@@ -4,7 +4,7 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(forced) {
-    let storgeList = ['router', 'network', 'subnet'];
+    let storgeList = ['router', 'network', 'subnet'], that = this;
     if (HALO.settings.enable_ipsec) {
       storgeList = storgeList.concat(['ipsec', 'vpnservice', 'ikepolicy', 'ipsecpolicy']);
     }
@@ -12,84 +12,87 @@ module.exports = {
       storgeList = storgeList.concat(['gwlimit']);
     }
     return storage.getList(storgeList, forced).then((res) => {
-      let exNetworks = [];
-      res.network.forEach((item) => {
-        if (item['router:external']) {
-          exNetworks.push(item);
-          return true;
-        }
-        return false;
-      });
-
-      if(exNetworks.length > 1) {
-        res.router.forEach(r => {
-          if(r.external_gateway_info) {
-            exNetworks.some(n => {
-              if(r.external_gateway_info.network_id === n.id) {
-                r.external_gateway_info.network_name = n.name;
-                return true;
-              }
-              return false;
-            });
+      return that.getAllRouter(res.router).then(agent => {
+        res.router.forEach((r, index) => r.agents = agent[index].agents);
+        let exNetworks = [];
+        res.network.forEach((item) => {
+          if (item['router:external']) {
+            exNetworks.push(item);
+            return true;
           }
+          return false;
         });
-      }
-      if (HALO.settings.enable_ipsec) {
-        res.router.forEach((router, index) => {
-          res.router[index].vpnservices = [];
-          res.router[index].ipsec_site_connections = [];
-          res.router[index].ikepolicies = [];
-          res.router[index].ipsecpolicies = [];
-        });
-        res.vpnservice.forEach((vpnService) => {
+
+        if(exNetworks.length > 1) {
+          res.router.forEach(r => {
+            if(r.external_gateway_info) {
+              exNetworks.some(n => {
+                if(r.external_gateway_info.network_id === n.id) {
+                  r.external_gateway_info.network_name = n.name;
+                  return true;
+                }
+                return false;
+              });
+            }
+          });
+        }
+        if (HALO.settings.enable_ipsec) {
           res.router.forEach((router, index) => {
-            if (vpnService.router_id === router.id) {
-              res.router[index].vpnservices.push(vpnService);
-            }
+            res.router[index].vpnservices = [];
+            res.router[index].ipsec_site_connections = [];
+            res.router[index].ikepolicies = [];
+            res.router[index].ipsecpolicies = [];
           });
-        });
-
-        res.vpnservice.forEach((vpnService, index) => {
-          res.subnet.forEach((subnet) => {
-            if (vpnService.subnet_id === subnet.id) {
-              res.vpnservice[index].subnet = subnet;
-            }
+          res.vpnservice.forEach((vpnService) => {
+            res.router.forEach((router, index) => {
+              if (vpnService.router_id === router.id) {
+                res.router[index].vpnservices.push(vpnService);
+              }
+            });
           });
-        });
 
-        res.router.forEach((router, index) => {
-          res.router[index].ikepolicies = res.ikepolicy.ikepolicies;
-          res.router[index].ipsecpolicies = res.ipsecpolicy.ipsecpolicies;
-          res.router[index].vpnservices.forEach((vpnservice) => {
-            res.ipsec[0] && res.ipsec[0].ipsec_site_connections.forEach((site) => {
-              if (site.vpnservice_id === vpnservice.id) {
-                res.router[index].ipsec_site_connections.push(site);
+          res.vpnservice.forEach((vpnService, index) => {
+            res.subnet.forEach((subnet) => {
+              if (vpnService.subnet_id === subnet.id) {
+                res.vpnservice[index].subnet = subnet;
+              }
+            });
+          });
+
+          res.router.forEach((router, index) => {
+            res.router[index].ikepolicies = res.ikepolicy.ikepolicies;
+            res.router[index].ipsecpolicies = res.ipsecpolicy.ipsecpolicies;
+            res.router[index].vpnservices.forEach((vpnservice) => {
+              res.ipsec[0] && res.ipsec[0].ipsec_site_connections.forEach((site) => {
+                if (site.vpnservice_id === vpnservice.id) {
+                  res.router[index].ipsec_site_connections.push(site);
+                }
+              });
+            });
+          });
+        }
+        if (HALO.settings.enable_floatingip_bandwidth) {
+          res.gwlimit.forEach(limit => {
+            res.router.some((r, index) => {
+              if (limit.router_id === r.id) {
+                res.router[index].rate_limit = limit.rate;
+              }
+            });
+          });
+        }
+
+        res.router.forEach((r) => {
+          r.gateway_info = [];
+          r.external_gateway_info && r.external_gateway_info.external_fixed_ips.forEach((i, index) => {
+            res.subnet.filter((item) => {
+              if(i.subnet_id === item.id) {
+                r.gateway_info.push(item.gateway_ip);
               }
             });
           });
         });
-      }
-      if (HALO.settings.enable_floatingip_bandwidth) {
-        res.gwlimit.forEach(limit => {
-          res.router.some((r, index) => {
-            if (limit.router_id === r.id) {
-              res.router[index].rate_limit = limit.rate;
-            }
-          });
-        });
-      }
-
-      res.router.forEach((r) => {
-        r.gateway_info = [];
-        r.external_gateway_info && r.external_gateway_info.external_fixed_ips.forEach((i, index) => {
-          res.subnet.filter((item) => {
-            if(i.subnet_id === item.id) {
-              r.gateway_info.push(item.gateway_ip);
-            }
-          });
-        });
+        return res.router;
       });
-      return res.router;
     });
   },
   editRouterName: function(item, newName) {
@@ -252,5 +255,17 @@ module.exports = {
     return fetch.delete({
       url: '/proxy/neutron/v2.0/uplugin/portforwardings/' + routerId
     });
+  },
+  getAgentStatus: function(routerId) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/routers/' + routerId + '/l3-agents.json'
+    });
+  },
+  getAllRouter: function(routers) {
+    let deferredList = [];
+    routers.forEach((item) => {
+      deferredList.push(this.getAgentStatus(item.id));
+    });
+    return RSVP.all(deferredList);
   }
 };

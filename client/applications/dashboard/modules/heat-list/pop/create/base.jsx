@@ -179,6 +179,7 @@ class CreateModalBase extends React.Component {
         nextPage: true,
         template: this.result
       });
+
       request.validate(data).then(res => {
         if (props.obj && props.obj.type === 'preview') {
           let url = '/proxy-swift/' + HALO.user.projectId + '_template' + '/' + file.name;

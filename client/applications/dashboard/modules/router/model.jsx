@@ -369,7 +369,8 @@ class Model extends React.Component {
       case 'description':
         if (isAvailableView(rows)) {
           let basicPropsItem = this.getBasicPropsItems(rows[0]),
-            subnetConfig = this.getDetailTableConfig(rows[0]);
+            subnetConfig = this.getDetailTableConfig(rows[0]),
+            statusConfig = this.getDetailAgentConfig(rows[0].agents);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -388,6 +389,11 @@ class Model extends React.Component {
                   rawItem: rows[0]
                 })}/>
               </DetailMinitable>
+              <DetailMinitable
+                __={__}
+                title={'Agent ' + __.status}
+                defaultUnfold={true}
+                tableConfig={statusConfig ? statusConfig : []} />
             </div>
           );
         }
@@ -485,8 +491,52 @@ class Model extends React.Component {
     });
   }
 
+  getDetailAgentConfig(agent) {
+    let dataContent = [];
+    agent.forEach((element, index) => {
+      let dataObj = {
+        agent_id: element.id,
+        host: element.host,
+        admin_state_up: element.admin_state_up.toString(),
+        alive: element.alive.toString(),
+        ha_state: element.ha_state
+      };
+      dataContent.push(dataObj);
+    });
+
+    let tableConfig = {
+      column: [{
+        title: 'agent_id',
+        key: 'agent_id',
+        dataIndex: 'agent_id'
+      }, {
+        title: 'host',
+        key: 'host',
+        dataIndex: 'host'
+      }, {
+        title: 'admin_state_up',
+        key: 'admin_state_up',
+        dataIndex: 'admin_state_up'
+      }, {
+        title: 'alive',
+        key: 'alive',
+        dataIndex: 'alive'
+      }, {
+        title: 'ha_state',
+        key: 'ha_state',
+        dataIndex: 'ha_state'
+      }],
+      data: dataContent,
+      dataKey: 'agent_id',
+      hover: true
+    };
+
+    return tableConfig;
+  }
+
   getBasicPropsItems(item) {
     let exGateway = item.external_gateway_info;
+    const haStatus = item.agents.filter(agent => agent.ha_state === 'active').length > 1;
     let getGatewayState = function() {
       if(exGateway && exGateway.network_name) {
         return __.on + '/' + exGateway.network_name;
@@ -528,6 +578,9 @@ class Model extends React.Component {
     }, {
       title: __.status,
       content: getStatusIcon(item.status)
+    }, {
+      title: __.is_split_brain,
+      content: haStatus ? __.is_true : __.is_false
     }];
 
     return items;
