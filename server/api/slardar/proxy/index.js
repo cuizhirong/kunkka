@@ -24,6 +24,7 @@ module.exports = (app) => {
 
   require('./swift')(app);
   app.use(['/proxy-swift/', '/proxy-glance/', '/proxy-shadowfiend/'], require('./common'));
+  require('./proxy_need_admin')(app);
 
   app.all('/proxy/*', (req, res, next) => {
     let remote = req.session.endpoint;
@@ -35,7 +36,7 @@ module.exports = (app) => {
     if (noBodyMethodList.indexOf(method) !== -1) {
       request[method](target + getQueryString(req.query))
         .set(req.headers)
-        .set('X-Auth-Token', req.session.user.token)
+        .set('X-Auth-Token', req.tempAdminToken || req.session.user.token)
         .end((err, payload) => {
           if (err) {
             next(err);
@@ -50,7 +51,7 @@ module.exports = (app) => {
       }
       request[method](target + getQueryString(req.query))
         .set(req.headers)
-        .set('X-Auth-Token', req.session.user.token)
+        .set('X-Auth-Token', req.tempAdminToken || req.session.user.token)
         .send(reqBody)
         .end((err, payload) => {
           if (err) {

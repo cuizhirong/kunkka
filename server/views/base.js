@@ -1,4 +1,21 @@
 'use strict';
+const co = require('co');
+const adminLogin = require('../api/slardar/common/adminLogin');
+const remotes = [];
+co(function* () {
+  try {
+    const {response} = yield adminLogin();
+    const catalog = response.body.token.catalog;
+    const kunkkaService = catalog.find(service => service.name === 'kunkka');
+    kunkkaService.endpoints.forEach(endpoint => {
+      if (endpoint.interface === 'public') {
+        remotes.push(endpoint);
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 function View(app, clientApps, currentView, viewModels) {
   this.name = currentView;
@@ -6,7 +23,7 @@ function View(app, clientApps, currentView, viewModels) {
   // this.react = require('react');
   // this.reactDOMServer = require('react-dom/server');
   this.glob = require('glob');
-  this.co = require('co');
+  this.co = co;
   // this.viewModel = require(`client/applications/${currentView}/model.jsx`);
   // this.viewModelFactory = this.react.createFactory(this.viewModel);
   this.config = require('config');
@@ -155,14 +172,15 @@ View.prototype = {
     };
   },
   renderTemplate: function(setting, HALO, locale, req, res, next) {
-    let __ = req.i18n.__.bind(req.i18n);
+    const __ = req.i18n.__.bind(req.i18n);
     HALO.application.application_list = HALO.application.application_list.map(a => {
       return {[a]: __(`shared.${a}.application_name`)};
     });
+    HALO.kunkka_remotes = remotes;
     global.HALO = JSON.parse(JSON.stringify(HALO));
     global.HALO.configs.renderer = 'server';
     global.HALO.configs.init = false;
-    let templateObj = this.getTemplateObj(HALO, locale, setting, __);
+    const templateObj = this.getTemplateObj(HALO, locale, setting, __);
     res.render(this.name, templateObj);
   }
 };
