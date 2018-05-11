@@ -57,6 +57,7 @@
       "block-storage-services",
       "network-agents",
       "orchestration-services",
+      "global-quota",
       "metadata-definition",
       "action-log"
     ]
@@ -110,6 +111,9 @@
     "link": "system-information"
   }, {
     "key": "orchestration-services",
+    "link": "system-information"
+  }, {
+    "key": "global-quota",
     "link": "system-information"
   }, {
     "key": "approved-registration-application",
