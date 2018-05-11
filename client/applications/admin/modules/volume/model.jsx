@@ -17,6 +17,8 @@ const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');
 const csv = require('./pop/csv/index');
+const editType = require('./pop/edit_volume_type/index');
+
 
 class Model extends React.Component {
 
@@ -135,6 +137,7 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
+    console.log('params', params);
     let _config = this.state.config;
     this.loadingTable();
     this.initializeFilter(_config.filter);
@@ -391,6 +394,11 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'edit_volume-type':
+        request.getVolumeType().then((res) => {
+          editType(res, rows);
+        });
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -453,6 +461,10 @@ class Model extends React.Component {
         case 'manage_volume':
         case 'export_csv':
           btns[key].disabled = false;
+          break;
+        case 'edit_volume-type':
+
+          btns[key].disabled = (len > 0 && !rows.some(item => item.status === 'error')) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (len > 0 && rows[0].status === 'available') ? false : true;
