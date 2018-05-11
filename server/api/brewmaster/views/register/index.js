@@ -25,14 +25,18 @@ function main(app, clientApps, currentView, viewPlugins) {
   };
   view.getTemplateObj = function (HALO, locale, setting, __) {
     return {
-      locale: locale,
+      HALO: JSON.stringify({
+        configs:{lang: locale},
+        settings: setting,
+        kunkka_remotes: HALO.kunkka_remotes
+      }),
+      locale,
       unitedstack: __(`views.${this.name}.unitedstack`),
       subtitle: __(`views.${this.name}.register`),
       forgotPass: __(`views.${this.name}.forgotPass`),
       loginJsFile: this.staticFiles[locale][`${this.name}JsFile`],
       loginCssFile: this.staticFiles[`${this.name}CssFile`],
       uskinFile: this.uskinFile[0],
-      settings: setting,
       auth_logo_url: setting.auth_logo_url ? setting.auth_logo_url : '/static/assets/login/logo@2x.png',
       favicon: setting.favicon ? setting.favicon : '/static/assets/favicon.ico',
       company: setting.company ? setting.company : '©2016 UnitedStack Inc. All Rights Reserved. 京ICP备13015821号',
