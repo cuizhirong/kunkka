@@ -25,6 +25,8 @@ const unitConverter = require('client/utils/unit_converter');
 const getTime = require('client/utils/time_unification');
 const getOsCommonName = require('client/utils/get_os_common_name');
 
+const RSVP = require('rsvp');
+
 class Model extends React.Component {
 
   constructor(props) {
@@ -220,7 +222,10 @@ class Model extends React.Component {
           type: 'image',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteImage(rows[0].id).then((res) => {
+            let promises = rows.map(row => {
+              request.deleteImage(row.id);
+            });
+            RSVP.all(promises).then((res) => {
               cb(true);
             });
           }
@@ -275,7 +280,7 @@ class Model extends React.Component {
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private' && !rows[0].protected) ? false : true;
           break;
         case 'delete_snapshot':
-          btns[key].disabled = rows.length === 1 ? false : true;
+          btns[key].disabled = rows.length > 0 ? false : true;
           break;
         case 'share_image':
           btns[key].disabled = (rows.length === 1 && rows[0].owner === HALO.user.projectId && rows[0].visibility === 'private') ? false : true;
