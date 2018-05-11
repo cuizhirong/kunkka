@@ -38,7 +38,7 @@ const gwlimit = require('../modules/router/cache');
 const fplimit = require('../modules/floating-ip/cache');
 
 const map = {
-  network: ['subnet'],
+  network: ['subnet', 'port'],
   subnet: ['network', 'port'],
   port: ['subnet', 'instance'],
   router: ['subnet', 'port', 'network'],
