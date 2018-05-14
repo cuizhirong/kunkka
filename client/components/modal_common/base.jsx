@@ -35,10 +35,11 @@ class ModalBase extends React.Component {
     this.__ = props.__;
 
     this.state = {
-      disabled: this.props.config.btn.disabled
+      disabled: this.props.config.btn.disabled,
+      visible: true
     };
 
-    ['onConfirm', 'onCancel', 'onAction'].forEach(m => {
+    ['onConfirm', 'onCancel', 'onAction', 'keyboardListener'].forEach(m => {
       this[m] = this[m].bind(this);
     });
     // this.onPop = this.onPop.bind(this);
@@ -89,7 +90,27 @@ class ModalBase extends React.Component {
   }
 
   componentDidMount() {
+    document.addEventListener('keyup', this.keyboardListener);
     this.props.onInitialize && this.props.onInitialize(this.refs);
+  }
+
+  keyboardListener(e) {
+    if(this.state.visible) {
+      switch(e.code) {
+        case 'Escape':
+          this.onCancel();
+          break;
+        case 'Enter':
+          this.onConfirm();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.keyboardListener);
   }
 
   onConfirm() {

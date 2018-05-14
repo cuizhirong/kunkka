@@ -101,7 +101,7 @@ class ModalBase extends React.Component {
     'onChangeKeypair', 'onChangeNumber', 'pwdVisibleControl',
     'onChangePwd', 'onFocusPwd', 'onBlurPwd', 'onChangeFlavor',
     'confirmPwdVisibleControl', 'onChangeConfirmPwd',
-    'createNetwork', 'createKeypair', 'onConfirm'].forEach((func) => {
+    'createNetwork', 'createKeypair', 'onConfirm', 'keyboardListener'].forEach((func) => {
       this[func] = this[func].bind(this);
     });
     try {
@@ -115,6 +115,35 @@ class ModalBase extends React.Component {
 
   componentWillMount() {
     request.getData().then(this.initialize);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keyup', this.keyboardListener);
+  }
+
+  keyboardListener(e) {
+    if(this.state.visible) {
+      switch(e.code) {
+        case 'Escape':
+          this.setState({
+            visible: false
+          });
+          break;
+        case 'Enter':
+          if(this.state.page === 1) {
+            this.onPaging(2);
+          } else {
+            this.onConfirm();
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.keyboardListener);
   }
 
   initialize(res) {
