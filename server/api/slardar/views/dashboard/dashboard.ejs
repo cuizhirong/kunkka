@@ -11,6 +11,7 @@
     <style type="text/css"><%- viewCss %></style>
     <script>
       (function () {
+        /* 判断pc浏览器 */
         function isInBrowserList() {
 
           var userAgent = navigator.userAgent.toLowerCase();
@@ -58,9 +59,19 @@
           }
         }
 
-        if (!isInBrowserList()) {
+        /* 判断移动设设备 */
+        var isMobile = false;
+
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            isMobile = true;
+          }
+          
+        /* 综合判断:如果不是移动端且不满足pc端浏览器的限制 */
+
+        if (!isMobile && !isInBrowserList()) {
           window.location = '/browser-invalid';
         }
+        
       }());
       window.HALO=<%- HALO %>;
     </script>

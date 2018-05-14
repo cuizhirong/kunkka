@@ -17,11 +17,13 @@ function pop(obj, parent, callback) {
   function getImageGroup(imageArray) {
     let imageGroup = [];
     imageArray.forEach(image => {
-      imageGroup.push({
-        id: image.id,
-        name: image.name || '(' + image.id.substring(0, 8) + ')',
-        data: [image]
-      });
+      if(image.status !== 'deactivated') {
+        imageGroup.push({
+          id: image.id,
+          name: image.name || '(' + image.id.substring(0, 8) + ')',
+          data: [image]
+        });
+      }
     });
     return imageGroup;
   }
