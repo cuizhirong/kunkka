@@ -15,6 +15,9 @@
   }, {
     "name": ["orchestration-services"],
     "key": "orchestration-services"
+  }, {
+    "name": ["global-quota"],
+    "key": "global-quota"
   }],
   "btns": [{
     "key": "refresh",

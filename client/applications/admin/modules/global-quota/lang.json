@@ -1,0 +1,36 @@
+{
+  "en": {
+    "save": "Save",
+    "current_quota": "Current Quota",
+    "instances": "Instances",
+    "cores": "CPUs",
+    "key_pairs": "Key-Pairs",
+    "resource_pool": "Resource Pool",
+    "all_snapshots": "All Snapshots",
+    "volumes": "Volumes",
+    "gigabytes": "Gigabytes",
+    "snapshots": "Snapshots",
+    "only_positive_integers_and_-1": "Only positive integers and -1.",
+    "only_positive_numbers_and_-1": "Only positive numbers and -1.",
+    "volumes_should_not_less_than_type_summary": "The total number of volumes cannot be less than the sum of all types of volumes",
+    "gigabytes_should_not_less_than_type_summary": "The total gigabytes of volumes cannot be less than the sum of all types of volumes",
+    "snapshots_should_not_less_than_type_summary": "The total number of volume's snapshots cannot be less than the sum of all types of volume's snapshots"
+  },
+  "zh-CN": {
+    "save": "保存",
+    "current_quota": "当前配额",
+    "instances": "云主机",
+    "cores": "CPUs",
+    "key_pairs": "密钥对",
+    "resource_pool": "资源池",
+    "all_snapshots": "快照总量",
+    "volumes": "云硬盘",
+    "gigabytes": "云硬盘容量(GB)",
+    "snapshots": "快照",
+    "only_positive_integers_and_-1": "仅限正整数和-1.",
+    "only_positive_numbers_and_-1": "仅限正数和-1.",
+    "volumes_should_not_less_than_type_summary": "云硬盘总数不得少于所有云硬盘类型的数量之和。",
+    "gigabytes_should_not_less_than_type_summary": "云硬盘容量总数不得少于所有云硬盘类型的容量的数量之和。",
+    "snapshots_should_not_less_than_type_summary": "云硬盘快照总数不得少于所有云硬盘类型的快照数量之和。"
+  }
+}
