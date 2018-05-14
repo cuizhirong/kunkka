@@ -4,7 +4,7 @@
 @textarea_border: 1px solid @color_grey;
 @textarea_hover_border_color: @color_info;
 
-@keyframes moveToSecondPage {
+@keyframes moveToSecondPageHeat {
   0% {
     transform: translateX(0);
   }
@@ -13,7 +13,7 @@
   }
 }
 
-@keyframes moveToThreePage {
+@keyframes moveToThreePageHeat {
   0% {
     transform: translateX(-100%);
   }
@@ -22,7 +22,7 @@
   }
 }
 
-@keyframes moveToFirstPage {
+@keyframes moveToFirstPageHeat {
   0% {
     transform: translateX(-100%);
   }
@@ -162,19 +162,19 @@
   .move-in {
     animation-duration: .3s;
     animation-fill-mode: both;
-    animation-name: moveToSecondPage;
+    animation-name: moveToSecondPageHeat;
   }
 
   .move-to-three {
     animation-duration: .3s;
     animation-fill-mode: both;
-    animation-name: moveToThreePage;
+    animation-name: moveToThreePageHeat;
   }
 
   .move-out {
     animation-duration: .3s;
     animation-fill-mode: both;
-    animation-name: moveToFirstPage;
+    animation-name: moveToFirstPageHeat;
   }
 }
 

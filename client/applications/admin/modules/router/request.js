@@ -3,6 +3,7 @@ const RSVP = require('rsvp');
 
 module.exports = {
   getList: function(pageLimit) {
+    let that = this;
     if(isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
@@ -11,22 +12,32 @@ module.exports = {
       url: url
     }).then(function(res) {
       res._url = url;
-      return res;
+
+      return that.getAllRouter(res.list).then(agent => {
+        res.list.forEach((r, index) => r.agents = agent[index].agents);
+        return res;
+      });
     });
   },
   getNextList: function(nextUrl) {
     let url = nextUrl;
+    let that = this;
     return fetch.get({
       url: url
     }).then((res) => {
       res._url = url;
-      return res;
+      return that.getAllRouter(res.list).then(agent => {
+        res.list.forEach((r, index) => r.agents = agent[index].agents);
+        return res;
+      });
     });
   },
   getFilterList: function(data, pageLimit) {
     if (isNaN(Number(pageLimit))) {
       pageLimit = 10;
     }
+
+    let that = this;
 
     function getParameters(fields) {
       let ret = '';
@@ -41,16 +52,23 @@ module.exports = {
       url: url
     }).then((res) => {
       res._url = url;
-      return res;
+      return that.getAllRouter(res.list).then(agent => {
+        res.list.forEach((r, index) => r.agents = agent[index].agents);
+        return res;
+      });
     });
   },
   getRouterByID: function(RouterID) {
+    let that = this;
     let url = '/proxy-search/neutron/v2.0/routers?id=' + RouterID;
     return fetch.get({
       url: url
     }).then((res) => {
       res._url = url;
-      return res;
+      return that.getAgentStatus(RouterID).then(agent => {
+        res.list[0].agents = agent.agents;
+        return res;
+      });
     }).catch((res) => {
       res._url = url;
       return res;
@@ -142,5 +160,36 @@ module.exports = {
       url: '/proxy/neutron/v2.0/routers/' + item.rawItem.id + '/remove_router_interface',
       data: data
     });
+  },
+  getAgentStatus: function(routerId) {
+    return fetch.get({
+      url: '/proxy/neutron/v2.0/routers/' + routerId + '/l3-agents.json'
+    });
+  },
+  getAllRouter: function(routers) {
+    let deferredList = [];
+    routers.forEach((item) => {
+      deferredList.push(this.getAgentStatus(item.id));
+    });
+    return RSVP.all(deferredList);
+  },
+  deleteAgent: function(agentIds, routerId) {
+    let deferredList = [];
+    agentIds.forEach((id) => {
+      deferredList.push(fetch.delete({
+        url: '/proxy/neutron/v2.0/agents/' + id + '/l3-routers/' + routerId
+      }));
+    });
+    return RSVP.all(deferredList);
+  },
+  repairAgent: function(agentIds, routerId) {
+    let deferredList = [];
+    agentIds.forEach((id) => {
+      deferredList.push(fetch.post({
+        url: '/proxy/neutron/v2.0/agents/' + id + '/l3-routers.json',
+        data: {router_id: routerId}
+      }));
+    });
+    return RSVP.all(deferredList);
   }
 };
