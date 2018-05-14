@@ -30,7 +30,42 @@ function checkVolumeTotalLegality(data, totalType) {
   return legal;
 }
 
-function quotaValidate(quota, __) {
+function isVolumeFieldChanged(quota, volumeTypes) {
+  let numberChanged = false,
+    gigabyteChanged = false,
+    snapshotChanged = false;
+
+  if(quota.volumes.isChanged) {
+    numberChanged = true;
+  }
+  if(quota.gigabytes.isChanged) {
+    gigabyteChanged = true;
+  }
+  if(quota.snapshots.isChanged) {
+    snapshotChanged = true;
+  }
+
+  for(let i = 0; i < volumeTypes.length; i++) {
+    const type = volumeTypes[i];
+    if(quota['volumes_' + type].isChanged) {
+      numberChanged = true;
+    }
+    if(quota['gigabytes_' + type].isChanged) {
+      gigabyteChanged = true;
+    }
+    if(quota['snapshots_' + type].isChanged) {
+      snapshotChanged = true;
+    }
+  }
+
+  return {
+    numberChanged,
+    gigabyteChanged,
+    snapshotChanged
+  };
+}
+
+function quotaValidate(quota, volumeTypes, __) {
   const result = {
     status: 'pass',
     errorMessage: ''
@@ -58,6 +93,9 @@ function quotaValidate(quota, __) {
         case 'gigabytes':
           msgPrefix = __.all_gigabytes;
           break;
+        case 'snapshots':
+          msgPrefix = __.all_snapshots;
+          break;
         default:
           if(item.indexOf('volumes_') !== -1) {
             const type = item.slice(8);
@@ -78,20 +116,40 @@ function quotaValidate(quota, __) {
     }
   }
 
-  let totalLegal = checkVolumeTotalLegality(quota, 'volumes');
+  const {
+    numberChanged,
+    gigabyteChanged,
+    snapshotChanged
+  } = isVolumeFieldChanged(quota, volumeTypes);
 
-  if(!totalLegal) {
-    result.status = 'fail';
-    result.errorMessage = __.volumes_small_than_total;
-    return result;
+  if(numberChanged) {
+    const totalLegal = checkVolumeTotalLegality(quota, 'volumes');
+
+    if(!totalLegal) {
+      result.status = 'fail';
+      result.errorMessage = __.volumes_small_than_total;
+      return result;
+    }
   }
 
-  let totalGigaLegal = checkVolumeTotalLegality(quota, 'gigabytes');
+  if(gigabyteChanged) {
+    const totalGigaLegal = checkVolumeTotalLegality(quota, 'gigabytes');
 
-  if(!totalGigaLegal) {
-    result.status = 'fail';
-    result.errorMessage = __.gigabytes_small_than_total;
-    return result;
+    if(!totalGigaLegal) {
+      result.status = 'fail';
+      result.errorMessage = __.gigabytes_small_than_total;
+      return result;
+    }
+  }
+
+  if(snapshotChanged) {
+    const totalSnapshotLegal = checkVolumeTotalLegality(quota, 'snapshots');
+
+    if(!totalSnapshotLegal) {
+      result.status = 'fail';
+      result.errorMessage = __.snapshots_small_than_total;
+      return result;
+    }
   }
 
   return result;

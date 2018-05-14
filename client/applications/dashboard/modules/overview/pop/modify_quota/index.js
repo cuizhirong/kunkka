@@ -27,7 +27,7 @@ function pop(obj, parent, callback) {
       let overview = refs.quota.state.overview;
       let targetQuota = refs.quota.state.targetQuota;
       let addedQuota = refs.quota.state.addedQuota;
-      const validateResult = quotaValidate(targetQuota, __);
+      const validateResult = quotaValidate(targetQuota, obj.types, __);
 
       if(validateResult.status === 'fail') {
         cb(false, validateResult.errorMessage, true);

@@ -23,7 +23,7 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       let data = refs.quota.state.overview;
-      const validateResult = quotaValidate(data, __);
+      const validateResult = quotaValidate(data, obj.types, __);
 
       if(validateResult.status === 'fail') {
         cb(false, validateResult.errorMessage, true);

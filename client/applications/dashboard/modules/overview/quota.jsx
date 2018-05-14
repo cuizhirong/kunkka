@@ -2,6 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button} = require('client/uskin/index');
+const getQuotaItems = require('client/utils/get_quota_items');
 const __ = require('locale/client/dashboard.lang.json');
 const unitConverter = require('client/utils/unit_converter');
 
@@ -22,75 +23,7 @@ class ResourceQuota extends React.Component {
   }
 
   initQuota() {
-    let quota = [{
-      title: __.compute,
-      items: [{
-        title: __.instance,
-        key: 'instances',
-        link: 'instance'
-      }, {
-        title: __.keypair,
-        key: 'key_pairs',
-        link: 'keypair'
-      }, {
-        title: __.cpu,
-        key: 'cores'
-      }, {
-        title: __.ram + __.unit_gb,
-        key: 'ram'
-      }]
-    }, {
-      title: __.network,
-      items: [{
-        title: __.network,
-        key: 'network',
-        link: 'network'
-      }, {
-        title: __.subnet,
-        key: 'subnet',
-        link: 'subnet'
-      }, {
-        title: __['floating-ip'],
-        key: 'floatingip',
-        link: 'floating-ip'
-      }, {
-        title: __.loadbalancer,
-        key: 'loadbalancer',
-        link: 'loadbalancer'
-      }, {
-        title: __.listener,
-        key: 'listener',
-        link: 'listener'
-      }, {
-        title: __.resource_pool,
-        key: 'pool',
-        link: 'pool'
-      }, {
-        title: __.port,
-        key: 'port',
-        link: 'port'
-      }, {
-        title: __.router,
-        key: 'router',
-        link: 'router'
-      }, {
-        title: __['security-group'],
-        key: 'security_group',
-        link: 'security-group'
-      }]
-    }, {
-      title: __.storage,
-      items: [{
-        title: __.all_volumes,
-        key: 'volumes',
-        link: 'volumes'
-      }, {
-        title: __.all_gigabytes,
-        key: 'gigabytes',
-        link: 'gigabytes'
-      }]
-    }];
-    return quota;
+    return getQuotaItems([], __);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,18 +35,15 @@ class ResourceQuota extends React.Component {
       nextProps.types.forEach((item) => {
         quota[2].items.push({
           title: (__[item] ? __[item] : item) + __.volume,
-          key: 'volumes_' + item,
-          link: 'volume'
+          key: 'volumes_' + item
         });
         quota[2].items.push({
           title: (__[item] ? __[item] : item) + __.volume + __.gigabyte + __.unit_gb,
-          key: 'gigabytes_' + item,
-          link: 'volume'
+          key: 'gigabytes_' + item
         });
         quota[2].items.push({
           title: (__[item] ? __[item] : item) + __.snapshot,
-          key: 'snapshots_' + item,
-          link: 'snapshot'
+          key: 'snapshots_' + item
         });
       });
 
