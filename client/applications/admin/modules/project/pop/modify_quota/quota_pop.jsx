@@ -2,6 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const __ = require('locale/client/admin.lang.json');
+const getQuotaItems = require('client/utils/get_quota_items');
 const unitConverter = require('client/utils/unit_converter');
 
 class QuotaPop extends React.Component {
@@ -11,102 +12,16 @@ class QuotaPop extends React.Component {
     this.state = {
       quota: [],
       value: '',
-      itemName: this.props.overview,
+      newQuotaSetting: this.props.overview,
       overview: this.clone(this.props.overview)
     };
   }
 
   componentWillMount() {
     let types = this.props.types;
-    let quota = [{
-      title: __.compute,
-      items: [{
-        title: __.instance,
-        key: 'instances',
-        link: 'instance'
-      }, {
-        title: __.keypair,
-        key: 'key_pairs',
-        link: 'keypair'
-      }, {
-        title: __.cpu,
-        key: 'cores'
-      }, {
-        title: __.ram + __.unit_gb,
-        key: 'ram'
-      }]
-    }, {
-      title: __.network,
-      items: [{
-        title: __.network,
-        key: 'network',
-        link: 'network'
-      }, {
-        title: __.subnet,
-        key: 'subnet',
-        link: 'subnet'
-      }, {
-        title: __['floating-ip'],
-        key: 'floatingip',
-        link: 'floating-ip'
-      }, {
-        title: __.loadbalancer,
-        key: 'loadbalancer',
-        link: 'loadbalancer'
-      }, {
-        title: __.listener,
-        key: 'listener',
-        link: 'listener'
-      }, {
-        title: __.pool,
-        key: 'pool',
-        link: 'pool'
-      }, {
-        title: __.port,
-        key: 'port',
-        link: 'port'
-      }, {
-        title: __.router,
-        key: 'router',
-        link: 'router'
-      }, {
-        title: __.security_group,
-        key: 'security_group',
-        link: 'security-group'
-      }]
-    }, {
-      title: __.storage,
-      items: [{
-        title: __.all_volumes,
-        key: 'volumes',
-        link: 'volumes'
-      }, {
-        title: __.all_gigabytes,
-        key: 'gigabytes',
-        link: 'gigabytes'
-      }]
-    }];
-
-    types.forEach((item) => {
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.volume,
-        key: 'volumes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.snapshot,
-        key: 'snapshots_' + item,
-        link: 'snapshot'
-      });
-    });
 
     this.setState({
-      quota: quota
+      quota: getQuotaItems(types, __)
     });
   }
 
@@ -128,17 +43,19 @@ class QuotaPop extends React.Component {
   onChange(key, e) {
     let originTotal = this.state.overview[key].total;
     let newNumber = Number(e.target.value);
-    if (!isNaN(newNumber) && newNumber >= -1 && e.target.value !== '') {
+    if (!isNaN(newNumber) && newNumber >= -1 && e.target.value.trim() !== '') {
       if (key === 'ram') {
         newNumber *= 1024;
       }
-      this.state.itemName[key].total = newNumber;
+      this.state.newQuotaSetting[key].total = newNumber;
+      this.state.newQuotaSetting[key].isChanged = true;
     } else {
-      this.state.itemName[key].total = originTotal;
+      this.state.newQuotaSetting[key].total = originTotal;
+      this.state.newQuotaSetting[key].isChanged = false;
     }
     this.setState({
       value: e.target.value,
-      itemName: this.state.itemName
+      newQuotaSetting: this.state.newQuotaSetting
     });
   }
 

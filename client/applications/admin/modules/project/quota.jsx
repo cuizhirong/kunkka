@@ -3,6 +3,7 @@ require('./style/index.less');
 const React = require('react');
 
 const __ = require('locale/client/admin.lang.json');
+const getQuotaItems = require('client/utils/get_quota_items');
 const unitConverter = require('client/utils/unit_converter');
 
 class ResourceQuota extends React.Component {
@@ -17,95 +18,9 @@ class ResourceQuota extends React.Component {
 
   componentWillMount() {
     let types = this.props.types;
-    let quota = [{
-      title: __.compute,
-      items: [{
-        title: __.instance,
-        key: 'instances',
-        link: 'instance'
-      }, {
-        title: __.keypair,
-        key: 'key_pairs',
-        link: 'keypair'
-      }, {
-        title: __.cpu,
-        key: 'cores'
-      }, {
-        title: __.ram + __.unit_gb,
-        key: 'ram'
-      }]
-    }, {
-      title: __.network,
-      items: [{
-        title: __.network,
-        key: 'network',
-        link: 'network'
-      }, {
-        title: __.subnet,
-        key: 'subnet',
-        link: 'subnet'
-      }, {
-        title: __['floating-ip'],
-        key: 'floatingip',
-        link: 'floating-ip'
-      }, {
-        title: __.loadbalancer,
-        key: 'loadbalancer',
-        link: 'loadbalancer'
-      }, {
-        title: __.listener,
-        key: 'listener',
-        link: 'listener'
-      }, {
-        title: __.pool,
-        key: 'pool',
-        link: 'pool'
-      }, {
-        title: __.port,
-        key: 'port',
-        link: 'port'
-      }, {
-        title: __.router,
-        key: 'router',
-        link: 'router'
-      }, {
-        title: __.security_group,
-        key: 'security_group',
-        link: 'security-group'
-      }]
-    }, {
-      title: __.storage,
-      items: [{
-        title: __.all_volumes,
-        key: 'volumes',
-        link: 'volumes'
-      }, {
-        title: __.all_gigabytes,
-        key: 'gigabytes',
-        link: 'gigabytes'
-      }]
-    }];
-
-    types.forEach((item) => {
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.volume,
-        key: 'volumes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.volume + __.gigabyte + __.unit_gb,
-        key: 'gigabytes_' + item,
-        link: 'volume'
-      });
-      quota[2].items.push({
-        title: (__[item] !== undefined ? __[item] : item) + __.snapshot,
-        key: 'snapshots_' + item,
-        link: 'snapshot'
-      });
-    });
 
     this.setState({
-      quota: quota
+      quota: getQuotaItems(types, __)
     });
   }
 

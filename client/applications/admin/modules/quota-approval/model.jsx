@@ -54,17 +54,17 @@ class Model extends React.Component {
       switch (column.key) {
         case 'applicant':
           column.formatter = function(col, item) {
-            return item.user.name;
+            return item.user && item.user.name;
           };
           break;
         case 'full_name':
           column.render = function(col, item) {
-            return item.user.full_name;
+            return item.user && item.user.full_name;
           };
           break;
         case 'company':
           column.render = function(col, item) {
-            return item.user.company;
+            return item.user && item.user.company;
           };
           break;
         default:

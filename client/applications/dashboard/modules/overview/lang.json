@@ -2,6 +2,7 @@
   "en": {
     "all_volumes": "All Volumes",
     "all_gigabytes": "All Volumes Gigabytes",
+    "all_snapshots": "All Snapshots",
     "apply": "Apply",
     "apply_quota": "Apply for Quota",
     "apply_success": "Apply Success! Please wait for approval patiently!",
@@ -13,12 +14,14 @@
     "quota": " Quota",
     "quota_total_less_than_used": "quotas can not be less than the current usage",
     "ram": "RAM",
+    "snapshots_small_than_total": "The total number of snapshots cannot be less than the sum of all types of volume snapshots",
     "unit_gb": "(GB)",
     "volumes_small_than_total": "Total volumes cannot be smaller than the sum of quota of each type"
   },
   "zh-CN": {
     "all_volumes": "云硬盘总数",
     "all_gigabytes": "云硬盘容量总数",
+    "all_snapshots": "云硬盘快照总数",
     "apply": "申请",
     "apply_quota": "申请配额",
     "apply_success": "申请配额成功！请耐心等待审批！",
@@ -30,6 +33,7 @@
     "gigabyte": "容量",
     "gigabytes_small_than_total": "云硬盘容量总数不能小于所有类型云硬盘容量额度之和",
     "ram": "内存",
+    "snapshots_small_than_total": "云硬盘快照总数不能小于所有类型云硬盘快照数量之和",
     "unit_gb": "(GB)",
     "volumes_small_than_total": "云硬盘总数不能小于所有类型云硬盘额度之和"
   }
