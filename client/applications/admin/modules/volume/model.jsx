@@ -137,7 +137,6 @@ class Model extends React.Component {
   }
 
   onInitialize(params) {
-    console.log('params', params);
     let _config = this.state.config;
     this.loadingTable();
     this.initializeFilter(_config.filter);
@@ -395,9 +394,7 @@ class Model extends React.Component {
         });
         break;
       case 'edit_volume-type':
-        request.getVolumeType().then((res) => {
-          editType(res, rows);
-        });
+        editType(rows, that.refresh.bind(that));
         break;
       case 'delete':
         deleteModal({

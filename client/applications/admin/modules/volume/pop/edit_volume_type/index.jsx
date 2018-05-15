@@ -2,58 +2,48 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/admin.lang.json');
-const { Notification } = require('client/uskin/index');
 
-function pop(types, rows) {
+function pop(rows, refresh) {
+  let types = [];
   let defaultValue = 0;
-  types.shift();
-  types.forEach((i, index) => {
-    i.disabled = false;
-    i.id = index;
-    defaultValue = i.name === rows[0].volume_type ? index : defaultValue;
-  });
-  config.fields && config.fields.forEach(item => {
-    if (item.field === 'volume-type') {
-      item.data = types;
-      item.value = defaultValue;
-    }
-  });
   let props = {
     __: __,
     config: config,
-    onConfirm: function(refs, cb) {
-      if (defaultValue === refs['volume-type'].state.value || refs['volume-type'].state.value === '') {
-        cb(true);
-        Notification.addNotice({
-          showIcon: true,
-          content: __.modify_fail,
-          isAutoHide: true,
-          type: 'danger',
-          width: 200,
-          id: Date.now()
+    onInitialize: function(refs) {
+      request.getVolumeType().then((res) => {
+        types = res;
+        types.shift();
+        types.forEach((i, index) => {
+          i.disabled = false;
+          i.id = index;
+          defaultValue = i.name === rows[0].volume_type ? index : defaultValue;
         });
+        refs['volume-type'].setState({
+          data: types,
+          value: defaultValue
+        });
+      });
+    },
+    onConfirm: function(refs, cb) {
+      if (types.length === 0) {
+        cb(false, 'Getting types ...');
+        return;
+      }
+      if ((defaultValue === refs['volume-type'].state.value || refs['volume-type'].state.value === '') && types.length === 1) {
+        cb(true);
         return;
       }
       let selectedType = types[refs['volume-type'].state.value].name;
       request.retypeVolume(selectedType, 'on-demand', rows).then((res) => {
-        Notification.addNotice({
-          showIcon: true,
-          content: __.modify_success,
-          isAutoHide: true,
-          type: 'success',
-          width: 200,
-          id: Date.now()
-        });
         cb(true);
-      }).catch(res => {
-        Notification.addNotice({
-          showIcon: true,
-          content: __.modify_fail,
-          isAutoHide: true,
-          type: 'danger',
-          width: 200,
-          id: Date.now()
+        refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
         });
+      }).catch(res => {
+        cb(false, res);
       });
     },
     onAction: function(field, state, refs) {}

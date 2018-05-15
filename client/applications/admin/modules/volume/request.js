@@ -223,12 +223,14 @@ module.exports = {
     };
     let reqs = [];
     items.forEach((item) => {
-      let url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action';
-      reqs.push(fetch.post({
-        url: url,
-        data: data
-      }));
+      if (item.volume_type !== migrationType) {
+        let url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action';
+        reqs.push(fetch.post({
+          url: url,
+          data: data
+        }));
+      }
     });
-    return Promise.all(reqs);
+    return RSVP.all(reqs);
   }
 };
