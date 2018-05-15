@@ -188,7 +188,6 @@ class Model extends React.Component {
 
   getNextListData(url) {
     let table = this.state.config.table;
-
     request.getNextList(url).then((res) => {
       table.data = res.list;
       this.setPaginationData(table, res);
@@ -237,7 +236,6 @@ class Model extends React.Component {
     let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
-
     this.setState({
       config: newConfig
     }, () => {
@@ -278,7 +276,6 @@ class Model extends React.Component {
     if (!params) {
       params = this.props.params;
     }
-
     if (data.initialList) {
       if (data.loadingTable) {
         this.loadingTable();

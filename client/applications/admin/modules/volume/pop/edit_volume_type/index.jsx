@@ -2,6 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const __ = require('locale/client/admin.lang.json');
+const getErrorMessage = require('../../../../../admin/utils/error_message');
 
 function pop(rows, refresh) {
   let types = [];
@@ -22,15 +23,20 @@ function pop(rows, refresh) {
           data: types,
           value: defaultValue
         });
+        refs.btn.setState({
+          disabled: false
+        });
       });
     },
     onConfirm: function(refs, cb) {
-      if (types.length === 0) {
-        cb(false, 'Getting types ...');
-        return;
-      }
-      if ((defaultValue === refs['volume-type'].state.value || refs['volume-type'].state.value === '') && types.length === 1) {
+      if ((defaultValue === refs['volume-type'].state.value || refs['volume-type'].state.value === '') && rows.length === 1) {
         cb(true);
+        refresh({
+          refreshList: true,
+          refreshDetail: true,
+          loadingTable: true,
+          loadingDetail: true
+        });
         return;
       }
       let selectedType = types[refs['volume-type'].state.value].name;
@@ -42,8 +48,8 @@ function pop(rows, refresh) {
           loadingTable: true,
           loadingDetail: true
         });
-      }).catch(res => {
-        cb(false, res);
+      }).catch(err => {
+        cb(false, getErrorMessage(err));
       });
     },
     onAction: function(field, state, refs) {}
