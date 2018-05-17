@@ -1,0 +1,13 @@
+{
+  "title": ["edit", "volume-type"],
+  "fields": [{
+    "type": "select",
+    "field": "volume-type",
+    "disabled": false,
+    "hide": false
+  }],
+  "btn": {
+    "value": "confirm",
+    "disabled": true
+  }
+}

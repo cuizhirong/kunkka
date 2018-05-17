@@ -215,5 +215,22 @@ module.exports = {
       let hypervisors = res.hypervisors.map(hypervisor => hypervisor.hypervisor_hostname);
       return hypervisors;
     });
+  },
+  retypeVolume: function(migrationType, migrationPolicy, items) {
+    let data = {'os-retype': {
+      'new_type': migrationType,
+      'migration_policy': migrationPolicy}
+    };
+    let reqs = [];
+    items.forEach((item) => {
+      if (item.volume_type !== migrationType) {
+        let url = '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes/' + item.id + '/action';
+        reqs.push(fetch.post({
+          url: url,
+          data: data
+        }));
+      }
+    });
+    return RSVP.all(reqs);
   }
 };

@@ -17,6 +17,8 @@ const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');
 const csv = require('./pop/csv/index');
+const editType = require('./pop/edit_volume_type/index');
+
 
 class Model extends React.Component {
 
@@ -186,7 +188,6 @@ class Model extends React.Component {
 
   getNextListData(url) {
     let table = this.state.config.table;
-
     request.getNextList(url).then((res) => {
       table.data = res.list;
       this.setPaginationData(table, res);
@@ -235,7 +236,6 @@ class Model extends React.Component {
     let newConfig = this.state.config;
     newConfig.table = table;
     newConfig.table.loading = false;
-
     this.setState({
       config: newConfig
     }, () => {
@@ -276,7 +276,6 @@ class Model extends React.Component {
     if (!params) {
       params = this.props.params;
     }
-
     if (data.initialList) {
       if (data.loadingTable) {
         this.loadingTable();
@@ -391,6 +390,9 @@ class Model extends React.Component {
           });
         });
         break;
+      case 'edit_volume-type':
+        editType(rows, that.refresh.bind(that));
+        break;
       case 'delete':
         deleteModal({
           __: __,
@@ -453,6 +455,10 @@ class Model extends React.Component {
         case 'manage_volume':
         case 'export_csv':
           btns[key].disabled = false;
+          break;
+        case 'edit_volume-type':
+
+          btns[key].disabled = (len > 0 && !rows.some(item => item.status === 'error')) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (len > 0 && rows[0].status === 'available') ? false : true;

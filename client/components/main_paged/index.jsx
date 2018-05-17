@@ -76,7 +76,6 @@ class Main extends React.Component {
         };
       }
     });
-
     converter.convertLang(this.props.__, config);
     this.tableColRender(config.table.column);
     this.setPageLimit();
