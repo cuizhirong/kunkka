@@ -17,6 +17,7 @@ class GlobalQuota extends React.Component {
       computeFolded: false,
       storageFolded: false,
       networkFolded: false,
+      volumeTypes: [],
       current: {
         computeResourceQuota: {
           cores: 0,
@@ -141,8 +142,7 @@ class GlobalQuota extends React.Component {
   updateNewQuotaItems() {
     const currentQuota = this.state.current;
     const computeQuota = currentQuota.computeResourceQuota;
-    const storageQuota = currentQuota.storageResourceQuota;
-    const volumesTypes = this.getVolumeTypes(storageQuota);
+    const volumeTypes = this.getVolumeTypes(currentQuota.storageResourceQuota);
     const newQuotaItems = {};
 
     for(let item in computeQuota) {
@@ -159,7 +159,7 @@ class GlobalQuota extends React.Component {
         error: false,
         resource: 'storage'
       };
-      volumesTypes.forEach(it => {
+      volumeTypes.forEach(it => {
         newQuotaItems[item + '_' + it] = {
           value: '',
           error: false,
@@ -169,6 +169,7 @@ class GlobalQuota extends React.Component {
     });
 
     this.setState({
+      volumeTypes: volumeTypes,
       new: newQuotaItems
     });
   }
@@ -275,88 +276,76 @@ class GlobalQuota extends React.Component {
   }
 
   validateStorageSummary() {
-    const currentQuota = this.state.current;
-    const volumeTypes = this.getVolumeTypes(currentQuota.storageResourceQuota);
-    const valid = {
-      volumes: true,
-      gigabytes: true,
-      snapshots: true
-    };
-    const volumes = this.getQuotaByQuotaItemName('volumes');
-    const gigabytes = this.getQuotaByQuotaItemName('gigabytes');
-    const snapshots = this.getQuotaByQuotaItemName('snapshots');
-
-    const allTypesVolumesQuotaArray = [],
-      allTypesGigabytesQuotaArray = [],
-      allTypesSnapshotsQuotaArray = [];
-    let volumesSum, gigabytesSum, snapshotsSum;
-
-    volumeTypes.forEach(type => {
-      allTypesVolumesQuotaArray.push(this.getQuotaByQuotaItemName('volumes_' + type));
-      allTypesGigabytesQuotaArray.push(this.getQuotaByQuotaItemName('gigabytes_' + type));
-      allTypesSnapshotsQuotaArray.push(this.getQuotaByQuotaItemName('snapshots_' + type));
+    const invalidItem = ['volumes', 'gigabytes', 'snapshots'].find(item => {
+      if(this.isVolumeFieldChanged(item)) {
+        return !this.validateSummary(item);
+      }
+      return false;
     });
 
-    volumesSum = allTypesVolumesQuotaArray.reduce((x, y) => {
-      return x + y;
-    }, 0);
-    gigabytesSum = allTypesGigabytesQuotaArray.reduce((x, y) => {
-      return x + y;
-    }, 0);
-    snapshotsSum = allTypesSnapshotsQuotaArray.reduce((x, y) => {
-      return x + y;
-    }, 0);
+    if(invalidItem) {
+      this.setState({
+        summaryError: true,
+        summaryErrorMsg: __[invalidItem + '_should_not_less_than_type_summary']
+      }, () => {
+        this.summaryMsgElem.scrollIntoView(true);
+      });
 
-    if(volumes === -1) {
-      valid.volumes = true;
-    } else {
-      if(allTypesVolumesQuotaArray.indexOf(-1) !== -1 || volumes < volumesSum) {
-        valid.volumes = false;
-      } else {
-        valid.volumes = true;
-      }
-    }
-
-    if(gigabytes === -1) {
-      valid.gigabytes = true;
-    } else {
-      if(allTypesGigabytesQuotaArray.indexOf(-1) !== -1 || gigabytes < gigabytesSum) {
-        valid.gigabytes = false;
-      } else {
-        valid.gigabytes = true;
-      }
-    }
-
-    if(snapshots === -1) {
-      valid.snapshots = true;
-    } else {
-      if(allTypesSnapshotsQuotaArray.indexOf(-1) !== -1 || snapshots < snapshotsSum) {
-        valid.snapshots = false;
-      } else {
-        valid.snapshots = true;
-      }
-    }
-
-    for(let item in valid) {
-      if(valid[item] === false) {
-
-        this.setState({
-          summaryError: true,
-          summaryErrorMsg: __[item + '_should_not_less_than_type_summary']
-        }, () => {
-          this.summaryMsgElem.scrollIntoView(true);
-        });
-
-        return false;
-      }
+      return false;
     }
 
     return true;
   }
 
+  isVolumeFieldChanged(fieldType) {
+    const volumeTypes = this.state.volumeTypes;
+    const newQuota = this.state.new;
+    const fieldsName = volumeTypes.map(type => {
+      return fieldType + '_' + type;
+    });
+    fieldsName.unshift(fieldType);
+
+    const changed = fieldsName.some(field => {
+      return newQuota[field].value.trim() !== '';
+    });
+
+    return changed;
+  }
+
+  /**
+   * 验证磁盘个数、容量、快照数量是否有超过总和的现象
+   * @param {string} summaryType 个数、容量还是快照数量
+   * @return {boolean} 是否合法
+   */
+  validateSummary(summaryType) {
+    const volumeTypes = this.state.volumeTypes;
+    const sum = this.getQuotaByQuotaItemName(summaryType);
+    let valid = true;
+
+    const allTypesVolumesQuotaArray = volumeTypes.map(type => {
+      return this.getQuotaByQuotaItemName(summaryType + '_' + type);
+    });
+
+    const volumesSum = allTypesVolumesQuotaArray.reduce((x, y) => {
+      return x + y;
+    }, 0);
+
+    if(sum === -1) {
+      valid = true;
+    } else {
+      if(allTypesVolumesQuotaArray.indexOf(-1) !== -1 || sum < volumesSum) {
+        valid = false;
+      } else {
+        valid = true;
+      }
+    }
+
+    return valid;
+  }
+
   getQuotaByQuotaItemName(quotaName) {
     const currentQuota = this.state.current;
-    const newQuota = this.state.newQuota;
+    const newQuota = this.state.new;
     let quotaValue;
 
     if(newQuota[quotaName].value.trim() === '') {
@@ -475,7 +464,7 @@ class GlobalQuota extends React.Component {
     const currentQuota = this.state.current.storageResourceQuota;
     const newQuota = this.state.new;
 
-    const volumeTypes = this.getVolumeTypes(newQuota);
+    const volumeTypes = this.state.volumeTypes;
 
     const items = [
       {
