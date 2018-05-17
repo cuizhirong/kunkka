@@ -2,6 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const Settings = require('./settings');
+const Cluster = require('./cluster');
 const Regions = require('./regions');
 const Projects = require('./projects');
 
@@ -46,6 +47,11 @@ class NavBar extends React.Component {
       return false;
     });
 
+    let clusterLength = HALO.kunkka_remotes.length,
+      showCluster = false;
+
+    if (clusterLength > 1) showCluster = HALO.kunkka_remotes[0].url !== HALO.kunkka_remotes[1].url;
+
     let logo = {
       backgroundImage: 'url(' + (HALO.settings.logo_url || '/static/assets/nav_logo.png') + ')'
     };
@@ -55,7 +61,7 @@ class NavBar extends React.Component {
         <div className="logo" style={logo}></div>
         <ul className="left">
           {
-            region ?
+            region && ((clusterLength <= 1) || !showCluster) ?
               <li>
                 <div className="link-title">
                   <i className="glyphicon icon-region"></i>
@@ -79,6 +85,21 @@ class NavBar extends React.Component {
                 {
                   HALO.user.projects.length > 1 ? <div className="link-dropdown">
                     <Projects />
+                  </div> : null
+                }
+              </li> :
+              null
+          }
+          {
+            showCluster ?
+              <li>
+                <div className="link-title">
+                  <i className="glyphicon icon-topology"></i>
+                  <span ref="name">{currentRegionName}</span>
+                </div>
+                {
+                  clusterLength > 1 ? <div className="link-dropdown">
+                    <Cluster />
                   </div> : null
                 }
               </li> :

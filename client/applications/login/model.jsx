@@ -26,6 +26,16 @@ class Model extends React.Component {
     });
   }
 
+  processData(data) {
+    if (!data) return null;
+
+    let type = Object.prototype.toString.call(data);
+    if (type === '[object Object]' || type === '[object Array]') {
+      return JSON.stringify(data);
+    }
+    return null;
+  }
+
   onSubmit(e) {
     e.preventDefault();
     let refs = this.refs,
@@ -88,78 +98,110 @@ class Model extends React.Component {
       isSubmitting: true
     });
 
-    // 密码加密
-    request.getEncryptionKey().then((response) => {
-      const cipherObject = AES.encrypt(data.password, response.uuid);
-      data.password = cipherObject.toString();
+    let urls = [],
+      remotes = HALO.kunkka_remotes,
+      enableSafety = HALO.settings.enable_safety;
 
-      request.login(data).then(function(res) {
-        window.location = window.location.pathname;
-      }, function(err) {
-        let error;
-        try {
-          error = JSON.parse(err.responseText).error;
-        } catch(parseError) {
-          error = {};
-        }
+    //kunkka_remotes中各个remote的url相同的话全部相同，不同的话全部不相同
+    if (remotes.length > 1 && remotes[0].url !== remotes[1].url) {
+      remotes.forEach(remote => {
+        window.location.href.indexOf(remote.url) === -1 && urls.push(remote.url);
+      });
+    }
 
-        let code = error.code;
-        let errorType = error.type;
-        if(code === 400) {
-          if(errorType === 'captchaError') {
-            that.setState({
-              errorTip: __.captchaError
-            });
-          } else {
-            that.setState({
-              errorTip: __.unknown_error
-            });
-          }
-        } else if(code === 403) {
-          switch (errorType) {
-            case 'unEnabled':
-              that.setState({
-                username: username,
-                notActivate: true
-              });
-              break;
-            case 'manyFailures':
-              let timeLeft = Math.ceil(error.remain / 60 / 1000);
-              that.setState({
-                errorTip: __.many_failures.replace(/\{0\}/, timeLeft)
-              });
-              break;
-            case 'passwordExpired':
-              that.setState({
-                mustChangePwd: true
-              });
-              break;
-            default:
-              that.setState({
-                errorTip: __.unknown_error
-              });
-              break;
-          }
-        } else {
-          that.setState({
-            errorCounter: ++state.errorCounter,
-            errorTip: __.error_tip
-          });
-        }
+    if (enableSafety) {
+      // 密码加密
+      request.getEncryptionKey().then((response) => {
+        const cipherObject = AES.encrypt(data.password, response.uuid);
+        data.password = cipherObject.toString();
 
+        that.postLogin(data, urls, username, state, that);
+      }).catch(() => {
         that.setState({
+          errorTip: __.unknown_error,
           loginError: true,
           isSubmitting: false
         });
-        // 验证码刷新
-        that.refs.captcha.src = '/api/captcha?' + Math.random();
       });
-    }).catch(() => {
+    } else {
+      that.postLogin(data, urls, username, state, that);
+    }
+  }
+
+  postLogin(data, urls, username, state, that) {
+    let xhr = new XMLHttpRequest();
+    if (urls.length > 0) {
+      urls.forEach(url => {
+        try {
+          xhr.open('POST', url + '/auth/login', true);
+          xhr.withCredentials = true;
+          xhr.setRequestHeader('Content-Type', 'application/json');
+
+          xhr.send(this.processData(data));
+        } catch(error) {console.log(error);}
+      });
+    }
+
+    request.login(data).then(function(res) {
+      window.location = window.location.pathname;
+    }, function(err) {
+      let error;
+      try {
+        error = JSON.parse(err.responseText).error;
+      } catch(parseError) {
+        error = {};
+      }
+
+      let code = error.code;
+      let errorType = error.type;
+      if(code === 400) {
+        if(errorType === 'captchaError') {
+          that.setState({
+            errorTip: __.captchaError
+          });
+        } else {
+          that.setState({
+            errorTip: __.unknown_error
+          });
+        }
+      } else if(code === 403) {
+        switch (errorType) {
+          case 'unEnabled':
+            that.setState({
+              username: username,
+              notActivate: true
+            });
+            break;
+          case 'manyFailures':
+            let timeLeft = Math.ceil(error.remain / 60 / 1000);
+            that.setState({
+              errorTip: __.many_failures.replace(/\{0\}/, timeLeft)
+            });
+            break;
+          case 'passwordExpired':
+            that.setState({
+              mustChangePwd: true
+            });
+            break;
+          default:
+            that.setState({
+              errorTip: __.unknown_error
+            });
+            break;
+        }
+      } else {
+        that.setState({
+          errorCounter: ++state.errorCounter,
+          errorTip: __.error_tip
+        });
+      }
+
       that.setState({
-        errorTip: __.unknown_error,
         loginError: true,
         isSubmitting: false
       });
+      // 验证码刷新
+      that.refs.captcha.src = '/api/captcha?' + Math.random();
     });
   }
 
