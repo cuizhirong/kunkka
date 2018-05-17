@@ -63,8 +63,10 @@ Auth.prototype = {
           message: req.i18n.__('api.register.tooManyFailures')
         });
       }
+      if (enableSafety) {
+        password = base.crypto.decrypt(password, req.session.passwordId);
+      }
 
-      password = base.crypto.decrypt(password, req.session.passwordId);
       let adminToken = yield adminLogin();
       let unScopedRes;
       let userToDatabase = {};
