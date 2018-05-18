@@ -97,6 +97,7 @@ class Detail extends React.Component {
           <div className="content-question">
             <div className="question-left">
               <div className="question-title">{item.title}</div>
+              <div className="question-content">{__.ticket_from + ' : ' + item.username}</div>
               <div className="question-content">{__.ticket_id + ' : ' + item.id}</div>
               <div className="question-content">{__.ticket + __.type + ' : ' + __[item.type]}</div>
               <div className="question-content">{item.description}</div>
