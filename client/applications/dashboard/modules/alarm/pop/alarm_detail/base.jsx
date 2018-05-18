@@ -195,7 +195,7 @@ class ModalBase extends React.Component {
     let state = this.state;
 
     return (
-      <Modal ref="modal" {...props} title={__.monitor_data} visible={state.visible} width={778}>
+      <Modal ref="modal" {...props} title={__.monitor_data} visible={state.visible} width={778} nokeyboard>
         <div className="modal-bd halo-com-modal-chart-zoom">
           <div className="modal-content">
             {Object.keys(state.contents).map((key) =>

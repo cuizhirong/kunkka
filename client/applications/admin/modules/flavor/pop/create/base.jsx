@@ -71,6 +71,9 @@ class FlavorBase extends React.Component {
     }
   }
   onCreateFlavor() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     this.refs.btn.setState({
       disabled: true
     });
@@ -223,7 +226,7 @@ class FlavorBase extends React.Component {
       default: state.displayKey === '1'
     }];
     return (
-      <Modal refs="modal" {...props} title={__.create + __.flavor} visible={state.visible}>
+      <Modal refs="modal" {...props} title={__.create + __.flavor} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onCreateFlavor}>
         <div className="modal-bd halo-com-modal-create-flavor">
           <div className="content-wrapper">
             <div className="select-tab">

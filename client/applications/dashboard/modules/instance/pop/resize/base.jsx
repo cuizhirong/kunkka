@@ -128,6 +128,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.state.disabled) {
+      return;
+    }
     let state = this.state;
 
     if (state.flavor) {
@@ -259,7 +262,7 @@ class ModalBase extends React.Component {
     let key = '', checked = false;
 
     return (
-      <Modal ref="modal" {...props} title={title} visible={state.visible} width={726}>
+      <Modal ref="modal" {...props} title={title} visible={state.visible} width={726} onCancel={this.onCancel} onConfirm={this.onConfirm}>
         <div className="modal-bd halo-com-modal-common halo-com-modal-resize-instance">
           <div className="name-row">
             <div className="modal-label">

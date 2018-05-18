@@ -21,7 +21,7 @@ class ModalBase extends React.Component {
     let props = this.props,
       state = this.state;
     return (
-      <Modal refs="modal" {...props} visible={state.visible}>
+      <Modal refs="modal" {...props} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onCancel}>
         <div className="object-storage-description">
           <div className="modal-hd">
           <h6 className="title">{__.copy + __.file}</h6>

@@ -53,6 +53,9 @@ class ModifyMetaData extends React.Component {
   }
 
   modifyMetadata(){
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     let callback = this.props.callback;
     let flavorCreateMetaData = {
       'extra_specs': {}
@@ -170,7 +173,7 @@ class ModifyMetaData extends React.Component {
     let props = this.props,
       state = this.state;
     return (
-      <Modal refs="modal" {...props} title={__.edit + __.meta_data} visible={state.visible}>
+      <Modal refs="modal" {...props} title={__.edit + __.meta_data} visible={state.visible} onCancel={this.onCancel} onConfirm={this.modifyMetadata}>
         <div className="modal-bd halo-com-modal-modify-flavor">
           <div className="content-wrapper">
             <div className="modal-content">

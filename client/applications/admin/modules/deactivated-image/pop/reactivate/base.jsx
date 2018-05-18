@@ -63,7 +63,7 @@ class BatchReactivate extends React.Component {
       state = this.state;
     const _this = this;
     return (
-      <Modal refs="modal" {...props} title={__.reactivate} visible={state.visible}>
+      <Modal refs="modal" {...props} title={__.reactivate} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onReactivate}>
         <div className="modal-bd halo-com-modal-reactivate-images">
           <div className="content-wrapper">
             <div className="modal-content-title">

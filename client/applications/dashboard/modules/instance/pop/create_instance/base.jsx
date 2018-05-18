@@ -95,6 +95,8 @@ class ModalBase extends React.Component {
       flavors: []
     };
 
+    this.enable = false;
+
     ['initialize', 'onPaging', 'onChangeName',
     'unfoldFlavorOptions', 'foldFlavorOptions', 'onChangeNetwork',
     'unfoldSecurity', 'foldSecurity', 'onChangeSecurityGroup',
@@ -130,10 +132,13 @@ class ModalBase extends React.Component {
           });
           break;
         case 'Enter':
-          if(this.state.page === 1) {
-            this.onPaging(2);
-          } else {
-            this.onConfirm();
+        case 'NumpadEnter':
+          if(this.enable) {
+            if(this.state.page === 1) {
+              this.onPaging(2);
+            } else {
+              this.onConfirm();
+            }
           }
           break;
         default:
@@ -1544,6 +1549,7 @@ class ModalBase extends React.Component {
       }
 
       let enable = state.name.trim() && state.ready && hasImage;
+      this.enable = enable;
 
       return (
         <div className="right-side">
@@ -1557,6 +1563,7 @@ class ModalBase extends React.Component {
       } else {
         enable = enable && !state.pwdError && !state.confirmPwdError;
       }
+      this.enable = enable;
 
       return (
         <div>
@@ -1584,7 +1591,7 @@ class ModalBase extends React.Component {
     }
 
     return (
-      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={726}>
+      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={726} nokeyboard>
         <div className="modal-bd halo-com-modal-create-instance">
           <div className={'page' + slideClass}>
             {this.renderName(props, state)}

@@ -17,6 +17,9 @@ class ModalBase extends React.Component {
   }
 
   onRestore() {
+    if(this.state.disabled) {
+      return;
+    }
     this.setState({
       disabled: true
     });
@@ -64,7 +67,7 @@ class ModalBase extends React.Component {
     let iconType = props.iconType || (Array.isArray(props.type) ? '' : props.type.replace('_', '-'));
 
     return (
-      <Modal {..._props} visible={state.visible}>
+      <Modal {..._props} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onRestore}>
         <div className="modal-bd halo-com-modal-restore">
           <span dangerouslySetInnerHTML={{__html: content}}></span>
           <ul className="data-list">

@@ -13,32 +13,9 @@ class ModalBase extends React.Component {
       visible: true
     };
 
-    ['onDelete', 'onCancel', 'keyboardListener'].forEach(func => {
+    ['onDelete', 'onCancel'].forEach(func => {
       this[func] = this[func].bind(this);
     });
-  }
-
-  componentDidMount() {
-    document.addEventListener('keyup', this.keyboardListener);
-  }
-
-  keyboardListener(e) {
-    if(this.state.visible) {
-      switch(e.code) {
-        case 'Escape':
-          this.onCancel();
-          break;
-        case 'Enter':
-          this.onDelete();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.keyboardListener);
   }
 
   onDelete() {
@@ -89,7 +66,7 @@ class ModalBase extends React.Component {
     let iconType = props.iconType || (Array.isArray(props.type) ? '' : props.type.replace('_', '-'));
 
     return (
-      <Modal {..._props} visible={state.visible}>
+      <Modal {..._props} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onDelete}>
         <div className="modal-bd halo-com-modal-delete">
           <span dangerouslySetInnerHTML={{__html: content}}></span>
           <ul className="data-list">

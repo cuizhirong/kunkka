@@ -185,6 +185,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     let props = this.props,
       breadcrumb = props.breadcrumb,
       state = this.state;
@@ -321,7 +324,14 @@ class ModalBase extends React.Component {
       selectName = __.reupload;
     }
     return (
-       <Modal ref="modal" {...props} title={props.obj !== null ? __.edit + __.file : __.upload_file} visible={state.visible} width={540}>
+       <Modal
+        ref="modal"
+        {...props}
+        title={props.obj !== null ? __.edit + __.file : __.upload_file}
+        visible={state.visible}
+        width={540}
+        onCancel={this.onCancel}
+        onConfirm={this.onConfirm}>
         <div className="modal-bd halo-com-modal-upload-file" style={props.obj !== null ? {height: '300px'} : {height: '400px'}}>
           {this.renderTabs(props, state)}
           <div className={'catalogue-type' + (props.obj !== null ? ' hide' : '') }><p>{__.catalogue_address}</p>
@@ -393,7 +403,7 @@ class ModalBase extends React.Component {
           </div> : null}
         </div>
         <div className="modal-ft halo-com-modal-upload-file">
-          <Button value={props.obj !== null ? __.edit : __.upload} disabled={state.disabled} type="create" onClick={this.onConfirm} />
+          <Button ref="btn" value={props.obj !== null ? __.edit : __.upload} disabled={state.disabled} type="create" onClick={this.onConfirm} />
           <Button value={__.cancel} onClick={this.onCancel} type="cancel" />
         </div>
       </Modal>

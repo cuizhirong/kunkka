@@ -207,6 +207,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.state.disabled) {
+      return;
+    }
     let that = this;
     let resValue, projectIdKey;
     if(this.refs.everyoneRead.checked) {
@@ -308,7 +311,13 @@ class ModalBase extends React.Component {
       default: state.displayKey === '1'
     }];
     return (
-       <Modal ref="modal" {...props} title={__.access_control_list} visible={state.visible} width={540}>
+       <Modal
+        ref="modal"
+        {...props}
+        title={__.access_control_list}
+        visible={state.visible} width={540}
+        onCancel={this.onCancel}
+        onConfirm={this.onConfirm}>
         <div className="modal-bd halo-com-modal-access_control_list">
           <div className="select-tab">
             <Tab items={items} onClick={this.onSwitchTab} />

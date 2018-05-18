@@ -143,6 +143,9 @@ class ModalBase extends React.Component {
   }
 
   onCreateMetaData() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     let metaArr = [];
     let params = {};
     let breadcrumb = this.props.breadcrumb;
@@ -195,7 +198,7 @@ class ModalBase extends React.Component {
     let props = this.props,
       state = this.state;
     return (
-      <Modal ref="modal" {...props} visible={state.visible}>
+      <Modal ref="modal" {...props} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onCreateMetaData}>
         <div className="object-storage-description">
           <div className="modal-hd">
           <h6 className="title">{__.modify + __.metadata}</h6>

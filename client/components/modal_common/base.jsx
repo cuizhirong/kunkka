@@ -39,7 +39,7 @@ class ModalBase extends React.Component {
       visible: true
     };
 
-    ['onConfirm', 'onCancel', 'onAction', 'keyboardListener'].forEach(m => {
+    ['onConfirm', 'onCancel', 'onAction'].forEach(m => {
       this[m] = this[m].bind(this);
     });
     // this.onPop = this.onPop.bind(this);
@@ -89,30 +89,14 @@ class ModalBase extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keyup', this.keyboardListener);
     this.props.onInitialize && this.props.onInitialize(this.refs);
   }
 
-  keyboardListener(e) {
-    if(this.state.visible) {
-      switch(e.code) {
-        case 'Escape':
-          this.onCancel();
-          break;
-        case 'Enter':
-          this.onConfirm();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.keyboardListener);
-  }
-
   onConfirm() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
+
     let isEmpty = false;
     let refs = this.refs;
     this.props.config.fields.forEach((m) => {
@@ -196,7 +180,7 @@ class ModalBase extends React.Component {
     }).join('');
 
     return (
-      <Modal ref="modal" {...props} title={title} visible={state.visible}>
+      <Modal ref="modal" {...props} title={title} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onConfirm}>
         <div className="modal-bd halo-com-modal-common" ref="modal-bd">
           {this.initialize()}
           <div className={state.errorMessage ? 'modal-row tip-row' : 'modal-row tip-row hide'}>
