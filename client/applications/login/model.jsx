@@ -129,6 +129,7 @@ class Model extends React.Component {
   }
 
   postLogin(data, urls, username, state, that) {
+    let __ = that.props.__;
     let xhr = new XMLHttpRequest();
     if (urls.length > 0) {
       urls.forEach(url => {

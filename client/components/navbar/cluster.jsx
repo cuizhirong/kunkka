@@ -30,11 +30,15 @@ class Cluster extends React.Component{
   }
 
   renderCluster() {
-    let regions = HALO.region_list;
+    let regions = HALO.region_list,
+      clusters = HALO.kunkka_remotes;
 
-    return regions.map((item, index) => {
+    return clusters.map((item, index) => {
+      let selectRegion = regions.filter(region => region.id === item.region_id)[0];
       return (
-        <li key={index} onClick={this.onClick.bind(null, item.id)}><a>{item.name}</a></li>
+        <li key={index} onClick={this.onClick.bind(null, item.region_id)}><a>{
+          selectRegion ? selectRegion.name : item.region_id
+        }</a></li>
       );
     });
   }
