@@ -6,6 +6,7 @@ const getQueryString = require('helpers/getQueryString.js');
 const listImageRecursive = require('../listImageRecursive');
 const handleNetwork = require('./handleNetwork');
 const objects = require('./objectList');
+const addProjectUser = require('./add_project_user');
 
 const otherServiceUser = ['heat_stack_domain_admin', 'billing_admin'];
 
@@ -163,6 +164,10 @@ module.exports = (req, res, next) => {
       } else {
         result = {list, links: {next: null, prev: null}};
       }
+    }
+
+    if (obj.addProjectName) {
+      yield addProjectUser(result.list, req.session, req.query.domain_id);
     }
 
     if (obj.networkHandler) {

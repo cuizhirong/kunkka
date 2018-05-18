@@ -8,7 +8,8 @@ const objects = [
   },
   {
     name: 'server', re: /\/nova\/v2.1\/[a-z0-9]*\/servers\/detail/i,
-    hasPagination: true, service: 'nova', version: 'v2.1'
+    hasPagination: true, service: 'nova', version: 'v2.1',
+    addProjectName: true
   },
   {
     name: 'flavor', re: /\/nova\/v2.1\/[a-z0-9]*\/flavors\/detail/i,
@@ -20,20 +21,24 @@ const objects = [
   },
   {
     name: 'volume', re: /\/cinder\/v2\/[a-z0-9]*\/volumes\/detail/i,
-    hasPagination: true, service: 'cinder', version: 'v2'
+    hasPagination: true, service: 'cinder', version: 'v2',
+    addProjectName: true
   },
   {
     name: 'snapshot', re: /\/cinder\/v2\/[a-z0-9]*\/snapshots\/detail/i,
-    hasPagination: true, service: 'cinder', version: 'v2'
+    hasPagination: true, service: 'cinder', version: 'v2',
+    addProjectName: true
   },
   {
     name: 'floatingip', re: /\/neutron\/v2.0\/floatingips/i,
     hasPagination: true, service: 'neutron', version: 'v2.0',
-    match: 'floating_ip_address'
+    match: 'floating_ip_address',
+    addProjectName: true
   },
   {
     name: 'port', re: /\/neutron\/v2.0\/ports/i,
-    hasPagination: true, service: 'neutron', version: 'v2.0'
+    hasPagination: true, service: 'neutron', version: 'v2.0',
+    addProjectName: true
   },
   {
     name: 'network', re: /\/neutron\/v2.0\/networks/i,
