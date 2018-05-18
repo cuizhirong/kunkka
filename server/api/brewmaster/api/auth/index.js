@@ -52,7 +52,7 @@ Auth.prototype = {
         }
       }
 
-      const enableSafety = yield base._getSetBool('global', 'enable_safety');
+      const enableSafety = yield base._getSetBool('global', 'enable_safety', false);
       let loginFailed = yield base.mem.getObjAsync('loginFailed' + username, that.memClient);
       let loginFailedCount = loginFailed ? loginFailed.value : 0;
       if (enableSafety && loginFailedCount > 4) {
