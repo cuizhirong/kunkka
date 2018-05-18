@@ -21,7 +21,7 @@ module.exports = {
       deferredList.push(fetch.delete({
         url: '/proxy/zaqar/v2/queues/' + item.name,
         headers: {
-          'Client-ID': HALO.user.userId
+          'Client-ID': HALO.user.projectId
         }
       }));
     });
@@ -32,7 +32,7 @@ module.exports = {
     return fetch.get({
       url: url,
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     });
   },
@@ -47,14 +47,14 @@ module.exports = {
             subscriber: s.subscriber
           },
           headers: {
-            'Client-ID': HALO.user.userId
+            'Client-ID': HALO.user.projectId
           }
         }));
       } else {
         updateList.push(fetch.delete({
           url: '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + s.id,
           headers: {
-            'Client-ID': HALO.user.userId
+            'Client-ID': HALO.user.projectId
           }
         }));
       }
@@ -68,7 +68,7 @@ module.exports = {
         description: data.description
       },
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     }).then((res) => {
       if(data.subcribers && data.subcribers.length) {
@@ -82,7 +82,7 @@ module.exports = {
       // only you
       url: '/proxy/zaqar/v2/queues/' + data.name,
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       },
       contentType: 'application/openstack-messaging-v2.0-json-patch',
       data: [{
@@ -102,7 +102,7 @@ module.exports = {
     return fetch.delete({
       url: url,
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     });
   },
@@ -112,14 +112,14 @@ module.exports = {
       deferredList.push(fetch.delete({
         url: '/proxy/zaqar/v2/queues/' + name + '/subscriptions/' + sub,
         headers: {
-          'Client-ID': HALO.user.userId
+          'Client-ID': HALO.user.projectId
         }
       }));
     });
     deferredList.push(fetch.delete({
       url: '/proxy/zaqar/v2/queues/undefined',
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     }));
     return RSVP.all(deferredList);
@@ -133,7 +133,7 @@ module.exports = {
         subscriber: sub.subscriber
       },
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     });
   }

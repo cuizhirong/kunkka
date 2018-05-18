@@ -8,7 +8,7 @@ module.exports = {
     return fetch.get({
       url: '/proxy/zaqar/v2/queues?detailed=true',
       headers: {
-        'Client-ID': HALO.user.userId
+        'Client-ID': HALO.user.projectId
       }
     }).then(function(data) {
       let queuesList = [];
@@ -18,7 +18,7 @@ module.exports = {
         queuesList.push(fetch.get({
           url: '/proxy/zaqar/v2/queues/' + q.name + '/subscriptions',
           headers: {
-            'Client-ID': HALO.user.userId
+            'Client-ID': HALO.user.projectId
           }
         }));
       });
