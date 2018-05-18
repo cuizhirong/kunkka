@@ -173,23 +173,23 @@ module.exports = {
     });
     return RSVP.all(deferredList);
   },
-  deleteAgent: function(agentIds, routerId) {
-    let deferredList = [];
-    agentIds.forEach((id) => {
-      deferredList.push(fetch.delete({
-        url: '/proxy/neutron/v2.0/agents/' + id + '/l3-routers/' + routerId
-      }));
+  detachAgent: function(agentId, routerId) {
+    return fetch.delete({
+      url: '/proxy/neutron/v2.0/agents/' + agentId + '/l3-routers/' + routerId
     });
-    return RSVP.all(deferredList);
   },
-  repairAgent: function(agentIds, routerId) {
-    let deferredList = [];
-    agentIds.forEach((id) => {
-      deferredList.push(fetch.post({
-        url: '/proxy/neutron/v2.0/agents/' + id + '/l3-routers.json',
-        data: {router_id: routerId}
-      }));
+  attachAgent: function(agentId, routerId) {
+    return fetch.post({
+      url: '/proxy/neutron/v2.0/agents/' + agentId + '/l3-routers.json',
+      data: {router_id: routerId}
     });
-    return RSVP.all(deferredList);
+  },
+  getAgentsAndAttachedAgents: function(routerId) {
+    return RSVP.all([
+      fetch.get({
+        url: '/proxy/neutron/v2.0/agents'
+      }),
+      this.getAgentStatus(routerId)
+    ]);
   }
 };

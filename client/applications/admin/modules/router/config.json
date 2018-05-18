@@ -29,8 +29,8 @@
           "key": "cnt_subnet",
           "disabled": true
         }, {
-          "title": ["repair", "split_brain"],
-          "key": "repair_split_brain",
+          "title": ["attach", "agent"],
+          "key": "attach_agent",
           "disabled": true
         }, {
           "title": ["delete"],

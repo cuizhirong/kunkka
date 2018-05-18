@@ -13,7 +13,7 @@ const publicGateway = require('./pop/enable_public_gateway/index');
 const disableGateway = require('./pop/disable_gateway/index');
 const relatedSubnet = require('./pop/related_subnet/index');
 const detachSubnet = require('./pop/detach_subnet/index');
-const repairSplitBrain = require('./pop/repair_split_brain/index');
+const attachAgent = require('./pop/attach_agent/index');
 
 const config = require('./config.json');
 const __ = require('locale/client/admin.lang.json');
@@ -308,8 +308,8 @@ class Model extends React.Component {
           refresh();
         });
         break;
-      case 'repair_split_brain':
-        repairSplitBrain(rows[0], null, (res) => {
+      case 'attach_agent':
+        attachAgent(rows[0], null, (res) => {
           refresh();
         });
         break;
@@ -392,8 +392,8 @@ class Model extends React.Component {
         case 'cnt_subnet':
           btns[key].disabled = (rows.length === 1) ? false : true;
           break;
-        case 'repair_split_brain':
-          btns[key].disabled = (rows.length === 1 && rows[0].agents.filter(agent => agent.ha_state === 'active').length <= 1) ? false : true;
+        case 'attach_agent':
+          btns[key].disabled = (rows.length === 1) ? false : true;
           break;
         case 'delete':
           btns[key].disabled = (rows.length > 0) ? false : true;
@@ -429,7 +429,7 @@ class Model extends React.Component {
         if (isAvailableView(rows)) {
           let basicPropsItem = this.getBasicPropsItems(rows[0]),
             subnetConfig = this.getDetailTableConfig(rows[0]),
-            statusConfig = this.getDetailAgentConfig(rows[0].agents);
+            statusConfig = this.getDetailAgentConfig(rows[0]);
           contents[tabKey] = (
             <div>
               <BasicProps
@@ -517,15 +517,20 @@ class Model extends React.Component {
     return items;
   }
 
-  getDetailAgentConfig(agent) {
-    let dataContent = [];
-    agent.forEach((element, index) => {
-      let dataObj = {
+  getDetailAgentConfig(item) {
+    const {agents, id} = item;
+    const dataContent = [];
+    agents.forEach((element, index) => {
+      const dataObj = {
         agent_id: element.id,
         host: element.host,
         admin_state_up: element.admin_state_up.toString(),
         alive: element.alive.toString(),
-        ha_state: element.ha_state
+        ha_state: element.ha_state,
+        operation: <i className="glyphicon icon-delete" onClick={this.onDetailAction.bind(this, 'description', 'detach_agent', {
+          agentId: element.id,
+          routerId: id
+        })} />
       };
       dataContent.push(dataObj);
     });
@@ -536,7 +541,7 @@ class Model extends React.Component {
         key: 'agent_id',
         dataIndex: 'agent_id'
       }, {
-        title: 'host',
+        title: __.host,
         key: 'host',
         dataIndex: 'host'
       }, {
@@ -551,6 +556,10 @@ class Model extends React.Component {
         title: 'ha_state',
         key: 'ha_state',
         dataIndex: 'ha_state'
+      }, {
+        title: __.operation,
+        key: 'operation',
+        dataIndex: 'operation'
       }],
       data: dataContent,
       dataKey: 'agent_id',
@@ -738,6 +747,17 @@ class Model extends React.Component {
         break;
       case 'detach_subnet':
         detachSubnet(data, null, () => {
+          this.refresh({
+            refreshList: true,
+            refreshDetail: true,
+            loadingTable: true,
+            loadingDetail: true
+          });
+        });
+        break;
+      case 'detach_agent':
+        const {agentId, routerId} = data;
+        request.detachAgent(agentId, routerId).then(res => {
           this.refresh({
             refreshList: true,
             refreshDetail: true,

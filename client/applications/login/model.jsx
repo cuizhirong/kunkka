@@ -105,7 +105,7 @@ class Model extends React.Component {
     //kunkka_remotes中各个remote的url相同的话全部相同，不同的话全部不相同
     if (remotes.length > 1 && remotes[0].url !== remotes[1].url) {
       remotes.forEach(remote => {
-        window.location.href.indexOf(remote.url) === -1 && urls.push(remote.url);
+        remote.url.indexOf(window.location.hostname) === -1 && urls.push(remote.url);
       });
     }
 
