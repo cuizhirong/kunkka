@@ -3,6 +3,7 @@
 const Base = require('../base.js');
 const paginate = require('helpers/paginate.js');
 const csv = require('json2csv');
+const cp = require('child_process');
 
 // due to Host is reserved word
 function Host(app) {
@@ -129,10 +130,24 @@ Host.prototype = {
       }
     });
   },
+  getOSDStats: function (req, res, next) {
+    cp.exec('ceph osd df tree --format json', function(err, result) {
+      if (err) {
+        next(err);
+      } else {
+        try {
+          res.send({stats: JSON.parse(result).nodes.filter(item => item.type === 'root')});
+        } catch (e) {
+          next(e);
+        }
+      }
+    });
+  },
   initRoutes: function () {
     return this.__initRoutes(() => {
       this.app.get('/api/v1/:projectId/os-hypervisors/detail', this.getHostList.bind(this));
       this.app.get('/api/v1/:projectId/os-hypervisors/csv', this.getHostCSV.bind(this));
+      this.app.get('/api/admin/host/overview/osd-stats', this.getOSDStats.bind(this));
     });
   }
 };

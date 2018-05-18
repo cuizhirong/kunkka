@@ -3,6 +3,7 @@ const co = require('co');
 const request = require('superagent');
 const csv = require('json2csv');
 const _ = require('lodash');
+const qs = require('querystring');
 
 const getQueryString = require('helpers/getQueryString.js');
 const csvElements = require('./elements');
@@ -29,19 +30,27 @@ const extraRequests = {
       session.endpoint.nova[session.user.regionId]
     );
   },
-  image: (session) => {
-    return drivers.glance.image.listImagesAsync(
-      session.user.token,
-      session.endpoint.glance[session.user.regionId]
-    );
-  },
-  volume: (session) => {
-    return drivers.cinder.volume.listVolumesAsync(
-      session.user.projectId,
-      session.user.token,
-      session.endpoint.cinder[session.user.regionId],
-      {all_tenants: 1}
-    );
+  volume: ({user: {token, projectId, regionId}, endpoint}) => {
+
+    const listVolumeRecursive = function* (query, marker, remote, list) {
+      query = query || {};
+      marker ? query.marker = marker : delete query.marker;
+      const {body} = yield drivers.cinder.volume.listVolumesAsync(projectId, token, remote, query);
+      list.push.apply(list, body.volumes);
+      if (body.volumes_links) {
+        let nextLink = body.volumes_links.find(link => link.rel === 'next');
+        if (nextLink) {
+          yield listVolumeRecursive(query, qs.parse(nextLink.href.split('?')[1]).marker, remote, list);
+        }
+      }
+
+    };
+    return co(function* (){
+      const list = [];
+      const remote = endpoint.cinder[regionId];
+      yield listVolumeRecursive({all_tenants: 1}, '', remote, list);
+      return {body: {volumes: list}};
+    });
   }
 };
 /**
