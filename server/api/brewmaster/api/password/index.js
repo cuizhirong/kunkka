@@ -59,7 +59,7 @@ Password.prototype = {
         return next({customRes: true, status: 400, msg: 'UserNotExist'});
       }
 
-      let enableSafety = yield base._getSetBool('global', 'enable_safety');
+      let enableSafety = yield base._getSetBool('global', 'enable_safety', false);
       if (enableSafety) {
         const isAvailable = yield base.func.checkPasswordAvailable(user.id, password);
         if (!isAvailable) {
@@ -88,7 +88,7 @@ Password.prototype = {
       let originalPassword = req.body.original_password;
       originalPassword = base.crypto.decrypt(originalPassword, req.session.passwordId);
 
-      let enableSafety = yield base._getSetBool('global', 'enable_safety');
+      let enableSafety = yield base._getSetBool('global', 'enable_safety', false);
       if (enableSafety) {
         const phone = req.session.user.phone;
         const code = parseInt(req.body.captcha, 10);
