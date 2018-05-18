@@ -115,7 +115,7 @@ class Model extends React.Component {
         const cipherObject = AES.encrypt(data.password, response.uuid);
         data.password = cipherObject.toString();
 
-        that.postLogin(data, urls, username, state, that);
+        this.exeSequentially(this.reqPost, urls, data, state, that);
       }).catch(() => {
         that.setState({
           errorTip: __.unknown_error,
@@ -124,25 +124,55 @@ class Model extends React.Component {
         });
       });
     } else {
-      that.postLogin(data, urls, username, state, that);
+      this.exeSequentially(this.reqPost, urls, data, state, that);
     }
   }
 
-  postLogin(data, urls, username, state, that) {
-    let __ = that.props.__;
+  reqPost(url, data) {
     let xhr = new XMLHttpRequest();
-    if (urls.length > 0) {
-      urls.forEach(url => {
-        try {
-          xhr.open('POST', url + '/auth/login', true);
-          xhr.withCredentials = true;
-          xhr.setRequestHeader('Content-Type', 'application/json');
 
-          xhr.send(this.processData(data));
-        } catch(error) {console.log(error);}
-      });
+    let promise = new Promise(function(resolve, reject) {
+      xhr.open('POST', url + '/auth/login', true);
+      xhr.withCredentials = true;
+      xhr.setRequestHeader('Content-Type', 'application/json');
+
+      if (!data) data = null;
+
+      let type = Object.prototype.toString.call(data);
+      if (type === '[object Object]' || type === '[object Array]') {
+        data = JSON.stringify(data);
+      }
+
+      xhr.onreadystatechange = function() {
+        if (this.readyState !== 4) {
+          return;
+        }
+        if (this.status >= 200 && this.status < 300) {
+          resolve();
+        } else {
+          reject();
+        }
+      };
+
+      xhr.send(data);
+    });
+
+    return promise;
+  }
+
+  exeSequentially(req, arr, data, state, that) {
+    if (arr && arr.length > 0) {
+      const ele = arr.pop();
+      return req(ele, data).then(() =>{
+        return this.exeSequentially(req, arr, data, state, that);
+      }).catch(error => this.exeSequentially(req, arr, data, state, that));
+    } else {
+      this.postLogin(data, data.username, state, that);
     }
+  }
 
+  postLogin(data, username, state, that) {
+    let __ = that.props.__;
     request.login(data).then(function(res) {
       window.location = window.location.pathname;
     }, function(err) {
