@@ -3,22 +3,30 @@
     "allocated": "Allocated ",
     "all_capacity": "Capacity",
     "amount": "Amount",
+    "memory_used": "Memory Used",
     "rate": "Rate",
     "reuse": "Reuse ",
+    "storage_pool_total_capacity": "storage pool total capacity",
     "total": "Total ",
     "unallocated": "Unallocated ",
-    "usage": "Usage",
+    "unused_capacity": "Disk Unused",
+    "usage_rate": "Usage",
+    "used_capacity": "Disk Used",
     "vcpu_used": "vCPU Used"
   },
   "zh-CN": {
     "allocated": "已分配的",
     "all_capacity": "总容量",
     "amount": "总数",
+    "memory_used": "已使用的内存",
     "rate": "比例",
     "reuse": "复用",
+    "storage_pool_total_capacity": "存储池总容量",
     "total": "总",
     "unallocated": "未分配的",
-    "usage": "使用率",
+    "unused_capacity": "未使用的容量",
+    "usage_rate": "使用率",
+    "used_capacity": "已使用的容量",
     "vcpu_used": "已使用vCPU"
   }
 }

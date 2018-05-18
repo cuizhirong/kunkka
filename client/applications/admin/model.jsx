@@ -84,6 +84,8 @@ class Model extends React.Component {
 
   getIcon(name) {
     switch(name) {
+      case 'host-overview':
+        return 'overview';
       case 'feature-mgmt':
         return 'flavor-setting';
       case 'snapshot-type':

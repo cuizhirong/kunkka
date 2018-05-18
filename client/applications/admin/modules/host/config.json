@@ -3,9 +3,6 @@
     "name": ["host"],
     "key": "host",
     "default": true
-  }, {
-    "name": ["host-overview"],
-    "key": "host-overview"
   }],
   "btns": [{
     "value": ["migrate"],

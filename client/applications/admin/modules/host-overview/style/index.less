@@ -1,19 +1,6 @@
 @import "../../../style/theme.less";
 
-@block-head-bg-color: @color_grey;
-@block-border-color: @color_grey;
-@block-inner-line-color: @color_grey;
-@allocate-free-color: @color_grey_400;
-@allocate-info-color: @color_info;
-@allocate-info-700-color: @color_info_700;
-@allocate-warning-color: @color_warning;
-@allocate-danger-color: @color_delete;
-@reuse-rate-bg-color: @color_info_100;
-@reuse-rate-hd-color: @color_grey_700;
-@reuse-rate-body-color: @color_info;
-@loading-color: @color_font_800;
-
-.halo-module-host-overview {
+.halo-module-new-host-overview {
   flex: 1;
   flex-direction: column;
   display: flex;
@@ -22,254 +9,450 @@
   .submenu-tabs {
     margin-bottom: 20px;
   }
-  .charts{
-    display: flex;
-    .col {
-      &:first-child {
-        margin-right: 20px;
+  .host-overview-info-wrapper {
+    .host-overview-total-detail-wrapper {
+      padding: 14px;
+      background: #01afc9;
+      color: white;
+      ul {
+        display: flex;
+        justify-content: space-between;
+      }
+      .host-overview-total-detail {
+        width: calc(~"25% - 8px");
+        height: 60x;
+        display: flex;
+        line-height: 60px;
+        background: rgba(255,255,255,0.30);
+        box-shadow: 0 10px 20px 0 rgba(0,0,0,0.10);
+        border-radius: 2px;
+        text-align: center;
+        .overview-item-name {
+          width: 63%;
+          height: 60px;
+          border-right: 1px solid rgba(255,255,255,.4);
+          font-size: 12px;
+        }
+        .overview-item-value {
+          width: 36%;
+          height: 60px;
+          font-size: 24px;
+        }
       }
     }
-    .col-4 {
-      flex: 4;
+
+    .host-overview-usage-detail-wrapper {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      .left {
+        width: 60%;
+      }
+      .right {
+        width: 38%;
+      }
     }
-    .col-6 {
-      flex: 6;
-    }
-    .col-8 {
-      flex: 8;
-    }
-    .block {
-      margin-bottom: 20px;
+
+    .cpu-usage-detail-wrapper, 
+    .memory-usage-detail-wrapper {
+      height: 256px;
       .title {
-        height: 42px;
-        line-height: 42px;
-        font-size: 14px;
-        background-color: @block-head-bg-color;
-        border-radius: 2px;
-        padding: 0 16px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        user-select: none
+        padding-left: 20px;
+        line-height: 36px;
+        font-size: 12px;
+        color: @color_font;
+        background: #f6f6f6;
       }
       .content {
-        padding: 16px;
-        border: 1px solid @block-border-color;
-        overflow: hidden;
-        .allocate {
-          position: relative;
-          margin-bottom: 4px;
-          &::before{
-            content: "";
-            position: absolute;
-            top: 2px;
-            left: -16px;
-            margin-right: 10px;
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
-            background-color: @allocate-info-color;
-          }
-          &.allocate-free {
-            &::before{
-              background-color: @allocate-free-color;
-            }
-          }
-          &.allocate-info {
-            &::before{
-              background-color: @allocate-info-color;
-            }
-          }
-          &.allocate-info-700 {
-            &::before{
-              background-color: @allocate-info-700-color;
-            }
-          }
-          &.allocate-warning {
-            &::before{
-              background-color: @allocate-warning-color;
-            }
-          }
-          &.allocate-danger {
-            &::before{
-              background-color: @allocate-danger-color;
-            }
-          }
-          &.allocate-empty {
-            &::before {
-              background-color: transparent!important;
-            }
-          }
-          > span {
-            color: @allocate-info-color;
-            margin-left: 10px;
-            margin-right: 4px;
-          }
-        }
-        & > *.hidden {
-          visibility: hidden;
-        }
-        .loading-data {
-          width: 36px;
-          height: 100%;
-          margin: 0 auto;
-          position: relative;
-          i.icon-loading {
-            position: absolute;
-            top: 50%;
-            margin-top: -18px;
-            width: 36px;
-            color: @loading-color;
-            animation: spin 1.28s linear .28s infinite;
-            font-size: 36px !important;
-          }
+        display: flex;
+        height: 220px;
+        border: 1px solid #f6f6f6;
+        border-top: none;
+      }
+      .ratio-wrapper {
+        width: 315px;
+        .ratio {
+          padding: 20px 0 0 20px;
+          line-height: 16px;
+          font-size: 12px;
+          color: #616F7E;
         }
       }
-      &.block-host {
-        .content {
-          height: 52px;
-          ul {
-            overflow: auto;
-            margin: 0 auto;
-            width: 208px;
-            li {
-              float: left;
-              width: 92px;
-              text-align: center;
-              margin-right: 24px;
-              &:last-child {
-                margin-right: 0;
-              }
-              .number {
-                font-size: 18px;
-                font-weight: 600;
-                border-bottom: 2px solid @block-inner-line-color;
-                padding-bottom: 6px;
-              }
-              .desc {
-                padding-top: 6px;
-              }
+      .ratio-chart-wrapper {
+        display: flex;
+        justify-content: space-between;
+        height: 184px;
+        padding-left: 35px;
+        color: @color_font;
+        text-align: center;
+        .colon {
+          min-width: 60px;
+          flex-shrink: 0;
+          height: 110px;
+          line-height: 110px;
+          font-size: 20px;
+        }
+        .total-chart,
+        .used-chart {
+          width: 110px;
+        }
+        .item-name {
+          margin: 15px 0 30px;
+          line-height: 19px;
+          font-size: 14px;
+        }
+      }
+      .count-wrapper {
+        width: calc(~"100% - 315px");
+        text-align: center;
+        .total-wrapper, .used-wrapper {
+          height: 70px;
+        }
+        .total-wrapper {
+          padding: 30px 0 10px;
+        }
+        .used-wrapper {
+          padding: 10px 0 30px;
+        }
+        .total, .used {
+          display: inline-block;
+          width: 248px;
+          height: 70px;
+          font-size: 12px;
+          > div {
+            width: 50%;
+            display: inline-block;
+            &:first-child {
+              line-height: 70px;
+              font-size: 14px;
+              color: #1CAFC6;
+            }
+            &:last-child {
+              font-size: 12px;
+              height: 70px;
+            }
+            div {
+              display: inline-block;
+              width: 60px;
+              margin: 25px 0;
+              line-height: 20px;
+              color: white;
+              background: #1CAFC6;
+              box-shadow: 0 12px 27px 0 rgba(0,0,0,0.10);
+              border-radius: 2.44px;
             }
           }
         }
-      }
-      &.block-disk {
-        .content {
-          height: 228px;
-          padding-top: 60px;
-          padding-bottom: 60px;
-          .chart-disk-usage {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            margin: 0 auto;
-          }
-          .description {
-            .total {
-              width: 154px;
-              margin: 0 auto;
-              border-bottom: 2px solid @block-inner-line-color;
-              padding: 12px 0;
-              margin-bottom: 12px;
-              & > * {
-                text-align: center;
-                display: block;
-              }
-              > strong {
-                font-size: 24px;
-                margin-bottom: 6px;
-              }
-              > span {
-                font-size: 16px;
-              }
+        .total {
+          background: rgba(28,175,198,.1);
+          > div {
+            &:first-child {
+              color: #1CAFC6;
             }
-            .allocate-box {
-              width: 168px;
-              margin: 0 auto;
-              padding-left: 12px;
-              .allocate {
-                left: 18px;
-              }
+            div {
+              background: #1CAFC6;
             }
           }
         }
-      }
-      &.block-cpu {
-        .content {
-          display: flex;
-          height: 200px;
-          .loading-data {
-            left: 50%;
-            margin-left: -18px;
-          }
-          .chart-cpu-usage {
-            flex: 1;
-            margin-right: 20px;
-            width: 200px;
-            min-width: 200px;
-            max-width: 200px;
-            height: 200px;
-            position: relative;
-          }
-          .description {
-            flex: 1;
-            padding-top: 50px;
-            .allocate-box {
-              padding-left: 16px;
-              margin-bottom: 10px;
+        .used {
+          background: rgba(31,185,165,.1);
+          > div {
+            &:first-child {
+              color: #1FB9A5;
             }
-            .reuse-rate {
-              padding: 16px;
-              background-color: @reuse-rate-bg-color;
-              color: @reuse-rate-hd-color;
-              > span {
-                display: block;
-                color: @reuse-rate-body-color;
-                margin-top: 6px;
-              }
-            }
-          }
-        }
-      }
-      &.block-memory {
-        .content {
-          display: flex;
-          height: 130px;
-          padding-top: 35px;
-          padding-bottom: 35px;
-          .loading-data {
-            left: 50%;
-            margin-left: -18px;
-          }
-          .chart-memory-usage {
-            flex: 1;
-            margin-top: 10px;
-            margin-right: 20px;
-            width: 200px;
-            min-width: 200px;
-            max-width: 200px;
-            height: 120px;
-            position: relative;
-          }
-          .description {
-            flex: 1;
-            .allocate-box {
-              padding-left: 16px;
-              margin-bottom: 10px;
-            }
-            .reuse-rate {
-              padding: 16px;
-              background-color: @reuse-rate-bg-color;
-              color: @reuse-rate-hd-color;
-              > span {
-                display: block;
-                color: @reuse-rate-body-color;
-                margin-top: 6px;
-              }
+            div {
+              background: #1FB9A5;
             }
           }
         }
       }
     }
+
+    .cpu-usage-detail-wrapper {
+      margin-bottom: 14px;
+    }
+
+    .disk-usage-detail-wrapper {
+      height: 526px;
+      .title {
+        padding-left: 20px;
+        line-height: 36px;
+        font-size: 12px;
+        color: @color_font;
+        background: #f6f6f6;
+      }
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        width: 100%;
+        height: 490px;
+        border: 1px solid #f6f6f6;
+        border-width: 0 1px;
+        li {
+          display: flex;
+          box-sizing: border-box;
+          align-items: auto;
+          position: relative;
+          border-bottom: 1px solid #f6f6f6;
+        }
+      }
+      .total {
+        position: absolute;
+        div:first-child {
+          font-size: 12px;
+          color: #616F7E;
+        }
+        div:last-child {
+          color: @color_font;
+        }
+      }
+      .utilization-chart-wrapper {
+        position: relative;
+        .chart {
+          width: 100%;
+          height: 100%;
+        }
+        .utilization {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          div:first-child {
+            color: @color_font;
+            margin-bottom: 5px;
+          }
+          div:last-child {
+            color: #616F7E;
+            font-size: 12px;
+          }
+        }
+      }
+      .count-wrapper {
+        .used-wrapper, .unused-wrapper {
+          text-align: center;
+          font-size: 0;
+          color: #393C40;
+          .name, .value {
+            display: inline-block;
+          }
+        }
+        .used-wrapper {
+          .rect {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #1CAFC6;
+            border-radius: 1px;
+          }
+        }
+        .unused-wrapper {
+          .rect {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #eaeaea;
+            border-radius: 1px;
+          }
+        }
+      }
+    }
+
+    // 1 * 1
+    .disk-usage-detail-wrapper.one-col.one-row ul li {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      flex-direction: column;
+      .total {
+        height: 60px;
+        left: 30px;
+        top: 30px;
+        div:first-child {
+          line-height: 16px;
+          margin-bottom: 13px;
+        }
+        div:last-child {
+          line-height: 31px;
+          font-size: 24px;
+        }
+      }
+      .utilization-chart-wrapper {
+        margin: 130px auto 0;
+        width: 190px;
+        height: 190px;
+        .utilization div:first-child {
+          font-size: 30px;
+        }
+      }
+      .count-wrapper {
+        margin-top: 65px;
+        display: flex;
+        height: 104px;
+        border-top: 1px solid #f6f6f6;
+        .used-wrapper, .unused-wrapper {
+          width: 50%;
+          line-height: 104px;
+          .name {
+            font-size: 12px;
+            margin: 0 10px 0 8px;
+          }
+          .value {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    // 1*2
+    .disk-usage-detail-wrapper.one-col.two-row ul li {
+      width: 100%;
+      height: 245px;
+      padding: 57px 30px;
+      &:nth-child(n+3) {
+        border: 1px solid #f6f6f6;
+        border-top: 0;
+      }
+      .total {
+        height: 60px;
+        left: 190px;
+        top: 57px;
+        div:first-child {
+          line-height: 16px;
+          margin-bottom: 13px;
+        }
+        div:last-child {
+          line-height: 31px;
+          font-size: 24px;
+        }
+      }
+      .utilization-chart-wrapper {
+        margin-right: 30px;
+        width: 130px;
+        height: 130px;
+        .utilization div:first-child {
+          font-size: 30px;
+        }
+      }
+      .count-wrapper {
+        margin-top: 72px;
+        .used-wrapper, .unused-wrapper {
+          text-align: left;
+          height: 24px;
+          .name {
+            font-size: 12px;
+            margin: 0 10px 0 8px;
+          }
+          .value {
+            font-size: 18px;
+          }
+        }
+        .used-wrapper {
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+    //　1*3
+    .disk-usage-detail-wrapper.one-col.three-row ul li {
+      width: 100%;
+      height: 163px;
+      padding: 31.5px 30px;
+      .total {
+        height: 44px;
+        left: 160px;
+        top: 31.5px;
+        div:first-child {
+          line-height: 16px;
+          margin-bottom: 8px;
+        }
+        div:last-child {
+          line-height: 20px;
+          font-size: 18px;
+        }
+      }
+      .utilization-chart-wrapper {
+        width: 100px;
+        height: 100px;
+        margin-right: 30px;
+        .utilization div:first-child　{
+          font-size: 20px;
+        }
+      }
+      .count-wrapper {
+        margin-top: 52px;
+        .used-wrapper, .unused-wrapper {
+          text-align: left;
+          height: 20px;
+          .name {
+            font-size: 12px;
+            margin: 0 10px 0 8px;
+          }
+          .value {
+            font-size: 16px;
+          }
+        }
+        .used-wrapper {
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+    // 2*2
+    .disk-usage-detail-wrapper.two-col.two-row ul li {
+      width: 50%;
+      height: 245px;
+      padding: 0;
+      flex-direction: column;
+      &:nth-child(2n+1) {
+        border-right: 1px solid #f6f6f6;
+      }
+      .total {
+        height: 48px;
+        left: 14px;
+        top: 14px;
+        div:first-child {
+          line-height: 16px;
+          margin-bottom: 8px;
+        }
+        div:last-child {
+          line-height: 24px;
+          font-size: 16px;
+        }
+      }
+      .utilization-chart-wrapper {
+        margin: 60px auto 0;
+        width: 100px;
+        height: 100px;
+        .utilization div:first-child {
+          font-size: 18px;
+        }
+      }
+      .count-wrapper {
+        margin-top: 24px;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        white-space: nowrap;
+        transform: translateX(-50%);
+        .used-wrapper, .unused-wrapper {
+          text-align: left;
+          height: 26px;
+          .name {
+            font-size: 12px;
+            margin: 0 10px 0 8px;
+          }
+          .value {
+            font-size: 16px;
+          }
+        }
+        .used-wrapper {
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+
   }
 }
