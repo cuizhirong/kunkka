@@ -28,6 +28,8 @@ node_modules
 configs/server.js
 configs/*server.json
 configs/index.json
+configs/server.json.pre4
+configs/server.json.pro4
 
 # Mac file
 **/.DS_Store

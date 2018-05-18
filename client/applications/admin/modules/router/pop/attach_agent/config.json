@@ -1,0 +1,15 @@
+{
+  "title": ["attach", "agents"],
+  "fields": [{
+    "type": "select_group",
+    "field": "agents",
+    "empty_text": {
+      "info": "no_agents"
+    },
+    "data": []
+  }],
+  "btn": {
+    "value": "attach",
+    "disabled": true
+  }
+}
