@@ -46,6 +46,9 @@ class ImageBase extends React.Component {
   }
 
   onCreateImage() {
+    if(this.state.btnEnable) {
+      return;
+    }
     this.refs.btn.setState({
       disabled: true
     });
@@ -340,7 +343,12 @@ class ImageBase extends React.Component {
       default: state.displayKey === '1'
     }];
     return (
-      <Modal refs="modal" {...props} title={props.obj.item ? __.edit + __.image : __.create + __.image} visible={state.visible}>
+      <Modal refs="modal"
+        {...props}
+        title={props.obj.item ? __.edit + __.image : __.create + __.image}
+        visible={state.visible}
+        onCancel={this.onCancel}
+        onConfirm={this.onCreateImage}>
         <div className="modal-bd halo-com-modal-create-image">
           <div className="content-wrapper">
             <div className="select-tab">

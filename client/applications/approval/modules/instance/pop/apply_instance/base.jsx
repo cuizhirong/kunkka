@@ -1221,7 +1221,7 @@ class ModalBase extends React.Component {
     }
 
     return (
-      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={726}>
+      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={726} nokeyboard>
         <div className="modal-bd halo-com-modal-create-instance">
           <div className={'page' + slideClass}>
             {this.renderName(props, state)}

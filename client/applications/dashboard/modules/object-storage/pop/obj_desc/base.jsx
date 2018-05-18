@@ -26,7 +26,7 @@ class ModalBase extends React.Component {
     let opertionTime = moment(uniformTime).fromNow();
     let v = props.bytes && unitConverter(props.bytes);
     return (
-      <Modal refs="modal" {...props} visible={state.visible}>
+      <Modal refs="modal" {...props} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onCancel}>
         <div className="object-storage-description">
           <div className="modal-hd">
           <h6 className="title">{__.obj_detail}</h6>

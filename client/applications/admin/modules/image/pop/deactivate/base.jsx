@@ -26,6 +26,9 @@ class Deactivate extends React.Component {
   }
 
   onDeactivate(){
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     const callback = this.props.callback;
     this.setState({
       btnDisabled: true
@@ -62,7 +65,7 @@ class Deactivate extends React.Component {
       state = this.state;
     const _this = this;
     return (
-      <Modal refs="modal" {...props} title={__.deactivate_image} visible={state.visible}>
+      <Modal refs="modal" {...props} title={__.deactivate_image} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onDeactivate}>
         <div className="modal-bd halo-com-modal-deactivate-image">
           <div className="content-wrapper">
             <div className="modal-content-title">

@@ -140,6 +140,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     let randomKey = Math.random().toString(36).substr(2);
     let sliceKey = randomKey.slice(0, 4);
     let secretKey;
@@ -210,7 +213,14 @@ class ModalBase extends React.Component {
     }
     return (
       <div>
-        <Modal ref="modal" {...props} title={__.create + __.temporary_url} visible={state.visible} width={500}>
+        <Modal
+          ref="modal"
+          {...props}
+          title={__.create + __.temporary_url}
+          visible={state.visible}
+          width={500}
+          onCancel={this.onCancel}
+          onConfirm={this.onConfirm}>
           <div className="modal-bd halo-com-modal-templory-url">
             <div className="calendar-wrapper">
               <div className="date"><span>{__.date}</span>

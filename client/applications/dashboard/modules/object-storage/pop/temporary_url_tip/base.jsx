@@ -23,6 +23,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     copylink(this.props.temporaryUrl);
     this.setState({
       visible: false
@@ -34,7 +37,7 @@ class ModalBase extends React.Component {
     let props = this.props,
       state = this.state;
     return (
-      <Modal refs="modal" {...props} visible={state.visible} width={510}>
+      <Modal refs="modal" {...props} visible={state.visible} width={510} onCancel={this.onCancel} onConfirm={this.onConfirm}>
         <div className="object-temporary-url-tip">
           <div className="modal-hd">
             <h6 className="title">{__.copy + __.temporary_url}</h6>

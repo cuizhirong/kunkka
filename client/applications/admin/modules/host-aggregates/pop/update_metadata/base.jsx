@@ -143,6 +143,9 @@ class ModalBase extends React.Component {
   }
 
   onUpdateMetadata() {
+    if(this.state.isCommiting) {
+      return;
+    }
     let allMetaData = [];
     let error;
     let finalData = [];
@@ -285,7 +288,7 @@ class ModalBase extends React.Component {
     let state = this.state;
 
     return (
-      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={730}>
+      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} width={730} onCancel={this.onCancel} onConfirm={this.onUpdateMetadata}>
         <div className="modal-bd halo-com-modal-update-metadata">
           {
             state.ready ? <div className="content-wrapper">

@@ -114,6 +114,9 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
+    if(this.refs.btn.state.disabled) {
+      return;
+    }
     let that = this;
     let metaArr = [];
     let deleteMetaArr = [];
@@ -183,7 +186,14 @@ class ModalBase extends React.Component {
     let props = this.props,
       state = this.state;
     return (
-       <Modal ref="modal" {...props} title={__.modify + __.meta_data} visible={state.visible} width={540}>
+       <Modal
+        ref="modal"
+        {...props}
+        title={__.modify + __.meta_data}
+        visible={state.visible}
+        width={540}
+        onCancel={this.onCancel}
+        onConfirm={this.onConfirm}>
         <div className="modal-bd halo-com-modal-modify-bucket">
           <div className="modal-content">
             {this.renderModifyMetaData(state.displayKey)}

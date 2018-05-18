@@ -413,7 +413,7 @@ class ModalBase extends React.Component {
     steps[state.page].default = true;
 
     return (
-      <Modal ref="modal" {...props} title={title} visible={state.visible} width={880}>
+      <Modal ref="modal" {...props} title={title} visible={state.visible} width={880} nokeyboard>
         <div className="modal-bd halo-com-modal-create-alarm">
           <div className="step-box">
             <Step items={steps} consecutive={true} disabled={true} />

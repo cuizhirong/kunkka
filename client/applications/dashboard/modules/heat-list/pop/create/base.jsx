@@ -757,7 +757,7 @@ class CreateModalBase extends React.Component {
     }
 
     return (
-      <Modal ref="modal" {...props} title={this.title} visible={state.visible} width={540}>
+      <Modal ref="modal" {...props} title={this.title} visible={state.visible} width={540} nokeyboard>
         <div className="modal-bd halo-com-modal-create-stack">
           <div className={'page' + slideClass}>
             {this.renderTemplateResource(props, state)}

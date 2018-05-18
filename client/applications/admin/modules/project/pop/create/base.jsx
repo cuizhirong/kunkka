@@ -359,6 +359,9 @@ class ModalBase extends React.Component {
   }
 
   onCreateProject() {
+    if(this.state.disabledCreate || this.state.isCommiting) {
+      return;
+    }
     this.setState({
       isCommiting: true
     });
@@ -416,7 +419,7 @@ class ModalBase extends React.Component {
     }];
 
     return (
-      <Modal ref="modal" {...props} title={TITLE} visible={state.visible}>
+      <Modal ref="modal" {...props} title={TITLE} visible={state.visible} onCancel={this.onCancel} onConfirm={this.onCreateProject}>
         <div className="modal-bd halo-com-modal-create-project">
           {
             state.ready ? <div className="content-wrapper">
