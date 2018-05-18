@@ -131,7 +131,7 @@ Host.prototype = {
     });
   },
   getOSDStats: function (req, res, next) {
-    cp.exec('ceph osd df tree --format json', function(err, result) {
+    cp.exec('ceph osd df tree --format json --id openstack', function(err, result) {
       if (err) {
         next(err);
       } else {
