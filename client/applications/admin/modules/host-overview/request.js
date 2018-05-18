@@ -9,5 +9,14 @@ module.exports = {
       res._url = url;
       return res;
     });
+  },
+  getDiskUsage: function() {
+    let url = '/api/admin/host/overview/osd-stats';
+    return fetch.get({
+      url: url
+    }).then(res => {
+      res._url = url;
+      return res;
+    });
   }
 };

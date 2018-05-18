@@ -1,17 +1,12 @@
 {
   "modules": [{
-    "title": "operation_service",
     "items": [
-      "registration-approval",
-      "approved-registration-application",
-      "quota-approval",
-      "video-account-binding"
+      "host-overview"
     ]
   }, {
     "title": "compute_service",
     "items": [
       "host",
-      "host-overview",
       "instance",
       "host-aggregates",
       "availability-zones",
@@ -62,21 +57,26 @@
       "action-log"
     ]
   }, {
+    "title": "operation_service",
+    "items": [
+      "registration-approval",
+      "approved-registration-application",
+      "quota-approval",
+      "video-account-binding"
+    ]
+  }, {
     "title": "setting-mgmt",
     "items": [
       "feature-mgmt",
       "module-mgmt"
     ]
   }],
-  "default_module": "host",
+  "default_module": "host-overview",
   "languages": [
     "en",
     "zh-CN"
   ],
   "routers": [{
-    "key": "host-overview",
-    "link": "host"
-  }, {
     "key": "instance-restore",
     "link": "instance"
   }, {
