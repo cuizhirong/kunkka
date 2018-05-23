@@ -170,7 +170,7 @@ class ModalBase extends React.Component {
       }
       addAccountData.push({projectIdKey, resValue});
       accountData.push(singleData);
-      this.refs.btn.setState({
+      this.setState({
         disabled: false
       });
       this.setState({
@@ -201,7 +201,7 @@ class ModalBase extends React.Component {
       accountData: accountData,
       addAccountData: addAccountData
     });
-    this.refs.btn.setState({
+    this.setState({
       disabled: false
     });
   }
@@ -234,7 +234,7 @@ class ModalBase extends React.Component {
         error: errorTip
       });
     });
-    this.refs.btn.setState({
+    this.setState({
       disabled: true
     });
   }

@@ -143,7 +143,7 @@ class ModalBase extends React.Component {
   }
 
   onCreateMetaData() {
-    if(this.refs.btn.state.disabled) {
+    if(this.state.btnEnable) {
       return;
     }
     let metaArr = [];

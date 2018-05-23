@@ -140,7 +140,7 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    if(this.refs.btn.state.disabled) {
+    if(this.state.disabled) {
       return;
     }
     let randomKey = Math.random().toString(36).substr(2);
