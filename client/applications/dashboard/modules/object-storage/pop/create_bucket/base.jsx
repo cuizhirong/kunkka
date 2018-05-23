@@ -53,11 +53,11 @@ class ModalBase extends React.Component {
     });
     let rep = /^([^/]{3,})$/;
     if(!rep.test(e.target.value) && e.target.value !== '') {
-      this.refs.btn.setState({
+      this.setState({
         disabled: true
       });
     } else {
-      this.refs.btn.setState({
+      this.setState({
         disabled: false
       });
     }
@@ -122,7 +122,7 @@ class ModalBase extends React.Component {
         this.setState({
           showError: true
         });
-        this.refs.btn.setState({
+        this.setState({
           disabled: true
         });
       } else {
@@ -158,7 +158,7 @@ class ModalBase extends React.Component {
         });
       }
     });
-    this.refs.btn.setState({
+    this.setState({
       disabled: true
     });
   }

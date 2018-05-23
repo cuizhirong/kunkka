@@ -68,7 +68,7 @@ class ModalBase extends React.Component {
       };
       addMetaData.push({metaKey, metaValue});
       metaData.push(singleData);
-      this.refs.btn.setState({
+      this.setState({
         disabled: false
       });
       this.setState({
@@ -102,7 +102,7 @@ class ModalBase extends React.Component {
       addMetaData: addMetaData,
       removeMetaData: removeMetaData
     });
-    this.refs.btn.setState({
+    this.setState({
       disabled: false
     });
   }
@@ -114,7 +114,7 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    if(this.refs.btn.state.disabled) {
+    if(this.state.disabled) {
       return;
     }
     let that = this;
@@ -149,7 +149,7 @@ class ModalBase extends React.Component {
         });
       });
     });
-    this.refs.btn.setState({
+    this.setState({
       disabled: true
     });
   }

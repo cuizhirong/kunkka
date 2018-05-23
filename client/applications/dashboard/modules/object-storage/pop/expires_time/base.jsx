@@ -140,7 +140,7 @@ class ModalBase extends React.Component {
   }
 
   onConfirm() {
-    if(this.refs.btn.state.disabled) {
+    if(this.state.disabled) {
       return;
     }
     request.expiresTime(this.props.obj, this.props.breadcrumb, this.state.requestExpire).then((res) => {
