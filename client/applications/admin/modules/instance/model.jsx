@@ -741,6 +741,7 @@ class Model extends React.Component {
       case 'description':
         if (rows.length === 1) {
           let userName, projectName;
+          syncUpdate = false;
 
           request.getPjtAndUserName(rows[0].tenant_id, rows[0].user_id).then((res) => {
             userName = res.user.name;
@@ -971,6 +972,7 @@ class Model extends React.Component {
           detail.setState({
             loading: true
           });
+          syncUpdate = false;
           request.getActionLog(rows[0].id).then(res => {
             let actionItems = this.getActionLogs(res.instanceActions);
             contents[tabKey] = (
