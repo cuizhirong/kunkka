@@ -1,4 +1,4 @@
-const __ = require('locale/client/dashboard.lang.json');
+
 const moment = require('client/libs/moment');
 
 module.exports = {

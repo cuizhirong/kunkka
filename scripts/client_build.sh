@@ -11,10 +11,6 @@ cd ..
 
 grunt clean
 
-export language=zh-CN
-node ../scripts/client_i18n_build.js && grunt js
-
-export language=en
-node ../scripts/client_i18n_build.js && grunt js
+node ../scripts/client_i18n_build.js && npm run language_build && grunt js
 
 grunt rest

@@ -3,7 +3,7 @@ const React = require('react');
 const {Button, Table} = require('client/uskin/index');
 
 const clone = require('client/utils/deep_clone');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 class Metadata extends React.Component {
 

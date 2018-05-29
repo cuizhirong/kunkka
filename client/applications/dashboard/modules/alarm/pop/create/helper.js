@@ -1,4 +1,4 @@
-const __ = require('locale/client/dashboard.lang.json');
+
 const year = Number(HALO.configs.telemerty.year);
 
 let helper = {

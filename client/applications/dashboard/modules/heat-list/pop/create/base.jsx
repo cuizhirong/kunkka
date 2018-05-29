@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button, InputNumber, Tip} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('../../request');
 const ShortTip = require('client/components/modal_common/subs/short_tip');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');

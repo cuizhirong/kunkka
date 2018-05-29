@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 
 class Detail extends React.Component {

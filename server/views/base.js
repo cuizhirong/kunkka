@@ -60,14 +60,18 @@ View.prototype = {
     const locales = JSON.parse(JSON.stringify(global.locales.availableLocales)).map(this.upperCaseLocale);
     locales.forEach((locale) => {
       this.staticFiles[locale] = {};
-      let regex = new RegExp(`${locale}.${this.name}.min.js$`);
+      let regex = new RegExp(`${locale}.${this.name}.lang.min.js$`);
       files.some((file) => {
-        return file.match(regex) && (this.staticFiles[locale][`${this.name}JsFile`] = file);
+        return file.match(regex) && (this.staticFiles[locale][`${this.name}LangJsFile`] = file);
       });
     });
     let cssRegex = new RegExp(`${this.name}.min.css$`);
+    let jsRegex = new RegExp(`${this.name}.min.js$`);
     this.staticFiles[`${this.name}CssFile`] = files.find((el) => {
       return el.match(cssRegex) !== null;
+    });
+    this.staticFiles[`${this.name}JsFile`] = files.find((el) => {
+      return el.match(jsRegex) !== null;
     });
     this.initRoute();
   },
@@ -162,7 +166,8 @@ View.prototype = {
   getTemplateObj: function(HALO, locale, setting, __) {
     return {
       HALO: JSON.stringify(HALO),
-      mainJsFile: this.staticFiles[locale][`${this.name}JsFile`],
+      langJsFile: this.staticFiles[locale][`${this.name}LangJsFile`],
+      mainJsFile: this.staticFiles[`${this.name}JsFile`],
       mainCssFile: this.staticFiles[`${this.name}CssFile`],
       uskinFile: this.uskinFile[0],
       favicon: setting.favicon ? setting.favicon : '/static/assets/favicon.ico',

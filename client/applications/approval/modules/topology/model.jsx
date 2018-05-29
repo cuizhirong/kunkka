@@ -4,7 +4,7 @@ const React = require('react');
 const Topology = require('client/components/topology/index');
 const download = require('client/components/topology/utils/download');
 const Button = require('client/uskin/index').Button;
-const __ = require('locale/client/approval.lang.json');
+
 
 const request = require('./request');
 const msgEvent = require('client/applications/approval/cores/msg_event');

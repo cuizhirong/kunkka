@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 function pop(obj, parent, callback) {
   let props = {

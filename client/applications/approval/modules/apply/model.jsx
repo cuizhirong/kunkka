@@ -13,7 +13,7 @@ const modifyApply = require('./pop/modify_application/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/approval.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 
 class Model extends React.Component {

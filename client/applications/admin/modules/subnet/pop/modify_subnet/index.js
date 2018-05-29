@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const addHostroutes = require('../create_subnet/add_hostroutes');
 const getErrorMessage = require('client/applications/admin/utils/error_message');
-const __ = require('locale/client/admin.lang.json');
+
 
 function getField(fieldName) {
   let res = null;

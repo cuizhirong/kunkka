@@ -7,7 +7,7 @@ const agreeApplicationModal = require('./pop/agree/index');
 const refuseApplicationModal = require('./pop/refuse/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const Notification = require('client/uskin/index').Notification;

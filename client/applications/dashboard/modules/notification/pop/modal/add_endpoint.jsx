@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const request = require('../../request');
 const {Button} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const SelectData = require('./select');
 let t;

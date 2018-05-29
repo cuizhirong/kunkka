@@ -1,5 +1,5 @@
 const Notification = require('client/uskin/index').Notification;
-const __ = require('locale/client/dashboard.lang.json');
+
 let stack = {};
 
 // @param data {Object} contains resource_name, stage, action, resource_type, resource_id

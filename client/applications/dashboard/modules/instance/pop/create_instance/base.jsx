@@ -1,7 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const createNetworkPop = require('client/applications/dashboard/modules/network/pop/create_network/index');
 const createKeypairPop = require('client/applications/dashboard/modules/keypair/pop/create_keypair/index');
 const Checkbox = require('client/components/modal_common/subs/checkbox/index');

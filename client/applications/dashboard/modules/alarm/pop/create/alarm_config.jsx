@@ -1,6 +1,6 @@
 const React = require('react');
 const Chart = require('echarts');
-const __ = require('locale/client/dashboard.lang.json');
+
 const utils = require('../../utils');
 const contant = require('./constant');
 const helper = require('./helper');

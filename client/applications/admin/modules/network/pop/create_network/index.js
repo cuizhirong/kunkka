@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const networkType = require('./network_type');
-const __ = require('locale/client/admin.lang.json');
+
 const getErrorMessage = require('../../../../utils/error_message');
 
 function chooseVlan(refs, vlanNumber, testMin, testMax, testAddr, netVlanstate, subnetChecked, vlanLength, projectState, testProject){

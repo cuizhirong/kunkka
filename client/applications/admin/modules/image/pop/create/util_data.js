@@ -1,4 +1,4 @@
-const __ = require('locale/client/admin.lang.json');
+
 
 const untilData = {
 

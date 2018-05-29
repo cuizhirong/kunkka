@@ -4,7 +4,7 @@ const React = require('react');
 const request = require('./request');
 const moment = require('client/libs/moment');
 const waiting = require('./pop/waiting/index');
-const __ = require('locale/client/bill.lang.json');
+
 
 const Charge = require('./charge/index');
 

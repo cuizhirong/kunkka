@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const Request = require('../../../port/request');
-const __ = require('locale/client/approval.lang.json');
+
 
 function pop(obj, parent, callback) {
   let props = {

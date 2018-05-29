@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const uskin = require('client/uskin/index');
 const {Table, Button, DropdownButton} = uskin;
-const __ = require('locale/client/approval.lang.json');
+
 
 class ResourceList extends React.Component {
 

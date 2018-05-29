@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const constant = require('./constant');
 
-const __ = require('locale/client/dashboard.lang.json');
+
 const {InputNumber, Tooltip} = require('client/uskin/index');
 
 class VolumeTip extends React.Component {

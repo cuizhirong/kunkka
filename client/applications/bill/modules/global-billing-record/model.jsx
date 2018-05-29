@@ -7,7 +7,7 @@ const Main = require('client/components/main_paged/index');
 const DetailMinitable = require('client/components/detail_minitable/index');
 const popExport = require('./pop/export/index');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/bill.lang.json');
+
 const getIcons = require('../../utils/resource_icons');
 const {Button, Tab} = require('client/uskin/index');
 

@@ -1,7 +1,7 @@
 const React = require('react');
 const {Modal} = require('client/uskin/index');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/dashboard.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 
 class ModalBase extends React.Component {

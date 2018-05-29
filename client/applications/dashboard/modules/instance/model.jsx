@@ -41,7 +41,7 @@ const changeAction = require('./pop/change_action/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/dashboard.lang.json');
+
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
 const notify = require('client/applications/dashboard/utils/notify');

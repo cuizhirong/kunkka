@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 const {Modal, Button} = require('client/uskin/index');
 const request = require('../../request');
 const Metadata = require('../../../../components/metadata/index');

@@ -3,7 +3,7 @@ require('./style/index.less');
 let React = require('react');
 let request = require('../../request');
 let {Table} = require('client/uskin/index');
-let __ = require('locale/client/dashboard.lang.json');
+
 
 class ShowMembers extends React.Component {
   constructor(props) {

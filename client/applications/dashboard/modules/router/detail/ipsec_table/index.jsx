@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button, Table, Switch} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 class IpsecTable extends React.Component {
 

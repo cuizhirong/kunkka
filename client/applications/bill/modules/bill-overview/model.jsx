@@ -18,7 +18,7 @@ require('echarts/lib/component/title');
 const moment = require('moment');
 
 const request = require('./request');
-const __ = require('locale/client/bill.lang.json');
+
 const CountUp = require('../../utils/countUp.js');
 const chartOption = require('../../utils/chart_option.js');
 const getIcons = require('./get_icons');

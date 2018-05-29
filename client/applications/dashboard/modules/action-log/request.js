@@ -1,5 +1,5 @@
 const fetch = require('client/applications/dashboard/cores/fetch');
-const __ = require('locale/client/dashboard.lang.json');
+
 const storage = require('client/applications/dashboard/cores/storage');
 
 const React = require('react');

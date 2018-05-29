@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/approval.lang.json');
+
 const constant = require('./pop/create/constant');
 
 module.exports = {

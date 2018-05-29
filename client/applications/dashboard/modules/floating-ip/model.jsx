@@ -13,7 +13,7 @@ const changeBandwidth = require('./pop/change_bandwidth/index');
 const assciateLb = require('./pop/associate_lb/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

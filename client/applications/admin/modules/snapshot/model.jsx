@@ -8,7 +8,7 @@ const deleteModal = require('client/components/modal_delete/index');
 
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const csv = require('./pop/csv/index');

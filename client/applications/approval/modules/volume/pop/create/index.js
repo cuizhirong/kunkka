@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/approval.lang.json');
+
 const utils = require('client/applications/approval/utils/utils');
 const ENABLE_CHARGE = HALO.settings.enable_charge;
 // const DEFAULT_PRICE = '0.0000';

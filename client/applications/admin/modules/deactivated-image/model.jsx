@@ -14,7 +14,7 @@ const modifyImage = require('../image/pop/create/index');
 const batchReactivate = require('./pop/reactivate/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');

@@ -4,7 +4,7 @@ const React = require('react');
 const Main = require('client/components/main_paged/index');
 
 const moment = require('client/libs/moment');
-const __ = require('locale/client/ticket.lang.json');
+
 const config = require('./config.json');
 const router = require('client/utils/router');
 const request = require('./request');

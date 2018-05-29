@@ -1,6 +1,6 @@
 require('./style/index.less');
 const Chart = require('client/libs/charts/index');
-const __ = require('locale/client/admin.lang.json');
+
 const {Tab} = require('client/uskin/index');
 
 const React = require('react');

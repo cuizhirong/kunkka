@@ -10,7 +10,7 @@ const createVolume = require('../volume/pop/create/index');
 // const backupSnapshot = require('./pop/backup_snapshot/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/approval.lang.json');
+
 const getErrorMessage = require('client/applications/approval/utils/error_message');
 // function priceError(refs, error) {
 //   refs.btn.setState({

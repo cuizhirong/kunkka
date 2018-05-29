@@ -1,7 +1,7 @@
 const ImageModel = require('../image/model');
 const config = require('./config.json');
 const request = require('../image/request');
-const __ = require('locale/client/approval.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 const unitConverter = require('client/utils/unit_converter');
 

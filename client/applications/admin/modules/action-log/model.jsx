@@ -4,7 +4,7 @@ const React = require('react');
 const Main = require('client/components/main_paged/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const getTime = require('client/utils/time_unification');

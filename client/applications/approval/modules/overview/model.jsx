@@ -6,7 +6,7 @@ const ResourceInfo = require('./info');
 const ResourceQuota = require('./quota');
 
 const request = require('./request');
-const __ = require('locale/client/approval.lang.json');
+
 
 class Model extends React.Component {
 

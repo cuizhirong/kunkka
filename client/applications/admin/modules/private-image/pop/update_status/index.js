@@ -1,6 +1,6 @@
 let commonModal = require('client/components/modal_common/index');
 let config = require('./config.json');
-let __ = require('locale/client/dashboard.lang.json');
+
 let showMembers = require('./show_members');
 
 function pop(obj, parent, callback) {

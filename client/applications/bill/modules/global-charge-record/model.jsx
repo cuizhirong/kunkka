@@ -7,7 +7,7 @@ const popExport = require('./pop/export/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/bill.lang.json');
+
 const {Pagination} = require('client/uskin/index');
 
 class Model extends React.Component {

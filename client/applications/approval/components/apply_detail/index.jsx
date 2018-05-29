@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 const React = require('react');
-const __ = require('locale/client/approval.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 const getOsCommonName = require('client/utils/get_os_common_name');
 

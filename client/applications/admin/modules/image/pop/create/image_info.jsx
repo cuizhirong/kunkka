@@ -1,6 +1,6 @@
 const React = require('react');
 const utilData = require('./util_data');
-const __ = require('locale/client/admin.lang.json');
+
 const Input = require('client/components/modal_common/subs/input/index');
 const Select = require('client/components/modal_common/subs/select/index');
 const Checkbox = require('client/components/modal_common/subs/checkbox/index');

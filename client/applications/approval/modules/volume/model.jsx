@@ -23,7 +23,7 @@ const notify = require('../../utils/notify');
 const createAlarm = require('../alarm/pop/create/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/approval/cores/msg_event');

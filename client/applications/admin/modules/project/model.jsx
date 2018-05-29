@@ -20,7 +20,7 @@ const UserGroup = require('./detail/user_grp');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 const router = require('client/utils/router');
 const unitConverter = require('client/utils/unit_converter.js');

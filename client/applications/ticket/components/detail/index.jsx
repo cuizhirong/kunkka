@@ -5,7 +5,7 @@ const moment = require('client/libs/moment');
 const getTime = require('client/utils/time_unification');
 const Attach = require('../../modules/ticket/pop/create_ticket/attach');
 const Adapter = require('client/components/modal_common/subs/adapter');
-const __ = require('locale/client/ticket.lang.json');
+
 const resources = '/static/assets/ticket/ticket_icon_2x.png';
 
 class Detail extends React.Component {

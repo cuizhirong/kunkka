@@ -2,7 +2,7 @@ require('./style/index.less');
 
 let React = require('react');
 let {Button} = require('client/uskin/index');
-let __ = require('locale/client/dashboard.lang.json');
+
 
 class AddHostRoutes extends React.Component {
   constructor(props) {

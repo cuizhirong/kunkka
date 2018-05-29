@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const Slider = require('client/uskin/index').Slider;
-const __ = require('locale/client/approval.lang.json');
+
 
 class ComSlider extends React.Component {
   constructor(props) {

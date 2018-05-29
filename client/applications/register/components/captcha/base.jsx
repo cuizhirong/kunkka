@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button} = require('client/uskin/index');
-const __ = require('locale/client/register.lang.json');
+
 // let getErrorMessage = require('../../../../utils/error_message');
 
 const TITLE = __.captcha;

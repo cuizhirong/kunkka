@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Modal, Button, Tip} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('../../request');
 
 const getErrorMessage = require('../../../../utils/error_message');

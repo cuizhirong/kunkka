@@ -1,7 +1,7 @@
 const React = require('react');
 const {Modal, Button, Tip} = require('client/uskin/index');
 const applyResizeDesc = require('../apply_resize_desc/index');
-const __ = require('locale/client/approval.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 const request = require('../../request');
 

@@ -20,7 +20,7 @@ const relatedDefaultPool = require('./pop/related_default_pool/index');
 const modifySecurity = require('./pop/modify_security/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');

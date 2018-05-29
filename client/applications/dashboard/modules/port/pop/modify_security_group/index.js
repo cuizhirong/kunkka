@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('client/applications/dashboard/modules/port/request');
 const createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.slice(0, 8) + ')';

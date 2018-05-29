@@ -14,7 +14,7 @@ require('echarts/lib/component/tooltip');
 require('echarts/lib/component/title');
 
 const SelectTable = require('./select_table');
-const __ = require('locale/client/approval.lang.json');
+
 const utils = require('../../utils');
 const constant = require('./constant');
 const helper = require('./helper');

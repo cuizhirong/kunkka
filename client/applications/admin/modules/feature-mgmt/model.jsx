@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const Main = require('client/components/main_paged/index');
 
-const __ = require('locale/client/admin.lang.json');
+
 const config = require('./config.json');
 const moment = require('client/libs/moment');
 const request = require('./request');

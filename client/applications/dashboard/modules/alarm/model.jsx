@@ -17,7 +17,7 @@ const addNotification = require('./pop/add_notification/index');
 const alarmDetail = require('./pop/alarm_detail/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');

@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Table} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+
 
 class ViewRouters extends React.Component {
   constructor(props) {

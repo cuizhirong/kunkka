@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
-const __ = require('locale/client/dashboard.lang.json');
+
 const createFloatingIp = require('client/applications/dashboard/modules/floating-ip/pop/apply_ip/index');
 
 function pop(obj, parent, callback) {

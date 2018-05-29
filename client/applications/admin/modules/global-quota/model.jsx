@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const { Tab, Button, Tooltip } = require('client/uskin/index');
 const request = require('./request');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 
 class GlobalQuota extends React.Component {

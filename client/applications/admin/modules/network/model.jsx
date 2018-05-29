@@ -12,7 +12,7 @@ const createNetwork = require('./pop/create_network/index');
 const createSubnet = require('../subnet/pop/create_subnet/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const getErrorMessage = require('client/applications/admin/utils/error_message');

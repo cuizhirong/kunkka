@@ -16,7 +16,7 @@ const image = require('./pop/image/index');
 const createInstance = require('../instance/pop/create_instance');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

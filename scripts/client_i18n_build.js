@@ -19,31 +19,47 @@ let appList = (process.env.npm_config_app && process.env.npm_config_app.split(',
 
 function buildInvertedIndex(files, output) {
   let invertedIndex = {
-    words: [],
-    docIndex: {}
+    en: {
+      words: [],
+      docIndex: {}
+    },
+    zh: {
+      words: [],
+      docIndex: {}
+    }
   };
 
+  output.en = {};
+  output.zh = {};
+
   files.forEach(file => {
-    let obj = require(file)[language];
-    Object.keys(obj).forEach(key => {
-      if (invertedIndex.words.indexOf(key) === -1) {
-        invertedIndex.words.push(key);
-        invertedIndex.docIndex[key] = [file];
-        output[key] = obj[key];
-      } else {
-        invertedIndex.docIndex[key].push(file);
-      }
+    ['en', 'zh-CN'].forEach(lang => {
+      let obj = require(file)[lang];
+      lang = lang === 'zh-CN' ? 'zh' : lang;
+      Object.keys(obj).forEach(key => {
+        if (invertedIndex[lang].words.indexOf(key) === -1) {
+          invertedIndex[lang].words.push(key);
+          invertedIndex[lang].docIndex[key] = [file];
+          output[lang][key] = obj[key];
+        } else {
+          invertedIndex[lang].docIndex[key].push(file);
+        }
+      });
     });
   });
 
-  invertedIndex.words.forEach(function(word) {
-    let dupCount = invertedIndex.docIndex[word].length;
-    if (dupCount > 1) {
-      console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(word) + ' is duplicate in ' + chalk.bold(dupCount) + ' files: ');
-      invertedIndex.docIndex[word].forEach(function(_path) {
-        console.log(_path);
-      });
-    }
+  ['en', 'zh-CN'].forEach(lang => {
+    lang = lang === 'zh-CN' ? 'zh' : lang;
+    let list = invertedIndex[lang];
+    list.words.forEach(function(word) {
+      let dupCount = list.docIndex[word].length;
+      if (dupCount > 1) {
+        console.log(chalk.white.bgYellow.bold(' WARNING ') + ' the key ' + chalk.bold(`${word} ( lang: ${lang} )`) + ' is duplicate in ' + chalk.bold(dupCount) + ' files: ');
+        list.docIndex[word].forEach(function(_path) {
+          console.log(_path);
+        });
+      }
+    });
   });
 }
 
@@ -64,7 +80,7 @@ function writeFile(fileName, str) {
   }
   try {
     fs.writeFileSync(path.join(clientPath, fileName), str, 'utf-8');
-    console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold(language) + ' i18n file ' + chalk.bold(fileName) + ' has been generated!');
+    console.log(chalk.white.bgGreen.bold(' SUCCESS ') + ' The ' + chalk.bold('zh-CN & en') + ' i18n file ' + chalk.bold(fileName) + ' has been generated!');
   } catch (e) {
     console.log(chalk.white.bgRed.bold('ERROR') + ' Fail to write i18n file ' + chalk.bold(fileName));
   }
@@ -79,7 +95,8 @@ appList.forEach(function(app) {
     try {
       let output = {};
       buildInvertedIndex(files, output);
-      writeFile(app + '.lang.json', JSON.stringify(output));
+      writeFile(`en.${app}.lang.json`, JSON.stringify(output.en));
+      writeFile(`zh.${app}.lang.json`, JSON.stringify(output.zh));
     } catch (e) {
       console.log(chalk.white.bgRed.bold(' ERROR ') + ' i18n file ' + file + ' got something wrong!');
     }

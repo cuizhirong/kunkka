@@ -3,7 +3,7 @@ const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/admin/utils/error_message');
-const __ = require('locale/client/admin.lang.json');
+
 const InstanceList = require('./render.jsx');
 
 function renderer(props) {

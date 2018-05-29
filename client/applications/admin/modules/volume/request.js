@@ -1,6 +1,6 @@
 const storage = require('client/applications/admin/cores/storage');
 const fetch = require('../../cores/fetch');
-const __ = require('locale/client/admin.lang.json');
+
 const RSVP = require('rsvp');
 const download = require('client/utils/download');
 

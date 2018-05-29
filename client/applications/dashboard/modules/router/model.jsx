@@ -22,7 +22,7 @@ const createPortForwarding = require('./pop/create_portforwarding/index');
 const clearRules = require('./pop/clear_rules/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

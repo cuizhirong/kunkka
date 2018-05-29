@@ -1,6 +1,6 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('../../request');
 
 function pop(obj, parent, callback) {

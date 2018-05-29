@@ -13,7 +13,7 @@ const associateQos = require('./pop/associate_qos');
 const disassociateQos = require('./pop/disassociate_qos');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 

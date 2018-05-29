@@ -18,7 +18,7 @@ const createListener = require('./pop/create_listener/index');
 const updateListenerState = require('./pop/update_listener_state/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');

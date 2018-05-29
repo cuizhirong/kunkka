@@ -3,7 +3,7 @@ const {Button, Modal, Step} = require('client/uskin/index');
 const SelectMetric = require('./select_metric');
 const AlarmConfig = require('./alarm_config');
 const SetNotification = require('./set_notification');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('../../request');
 const resourceList = require('./resources');
 const initialState = require('./state');

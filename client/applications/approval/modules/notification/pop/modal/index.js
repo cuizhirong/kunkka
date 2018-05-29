@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const addEndpoint = require('./add_endpoint');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 

@@ -27,7 +27,7 @@ const alarmDetail = require('./pop/alarm_detail/index');
 // const backupVolumn = require('./pop/backup_volumn/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

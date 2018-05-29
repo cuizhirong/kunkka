@@ -2,7 +2,7 @@ let commonModal = require('client/components/modal_common/index');
 let config = require('./config.json');
 let request = require('../../request');
 let addHostroutes = require('./add_hostroutes');
-let __ = require('locale/client/admin.lang.json');
+
 
 function pop(obj, parent, callback) {
   if(obj && obj.hasOwnProperty('subnets')) {

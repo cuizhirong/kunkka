@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/approval.lang.json');
+
 
 function pop(obj, parent, callback) {
   config.fields[1].text = obj.rawItem.name || '(' + obj.rawItem.id.substr(0, 8) + ')';

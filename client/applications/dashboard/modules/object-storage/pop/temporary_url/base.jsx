@@ -1,7 +1,7 @@
 const React = require('react');
 const {Modal, Button, Calendar} = require('client/uskin/index');
 const request = require('../../request');
-const __ = require('locale/client/dashboard.lang.json');
+
 const JSSHA = require('jssha');
 const temporaryUrlTip = require('../temporary_url_tip/index');
 

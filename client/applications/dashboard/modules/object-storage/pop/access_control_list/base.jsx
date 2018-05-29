@@ -1,7 +1,7 @@
 const React = require('react');
 const {Modal, Button, Tab, Table} = require('client/uskin/index');
 const request = require('../../request');
-const __ = require('locale/client/dashboard.lang.json');
+
 const getErrorMessage = require('../../../../utils/error_message');
 
 class ModalBase extends React.Component {
