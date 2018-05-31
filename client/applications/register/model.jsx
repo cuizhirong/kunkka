@@ -53,8 +53,8 @@ class Model extends React.Component {
     }
     let data = {
       name: refs.name.state.value,
-      full_name: refs.fullName.state.value,
-      company: refs.company.state.value,
+      full_name: refs.fullName.state.value.trim(),
+      company: refs.company.state.value.trim(),
       email: refs.email.state.value,
       phone: refs.phone.state.value,
       code: refs.phone.state.code
@@ -142,7 +142,7 @@ class Model extends React.Component {
 
     switch(type) {
       case 'email':
-        let regEmail = /^([a-zA-Z0-9.+_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+/;
+        let regEmail = /^([a-zA-Z0-9.+_-])+@([a-zA-Z0-9_-])+\.([a-zA-Z0-9])+$/;
         if(!regEmail.test(value)) {
           if(this.state.timer) {
             clearTimeout(this.state.timer);
@@ -163,7 +163,7 @@ class Model extends React.Component {
         }
         break;
       case 'name':
-        let nameRegExp = /^[a-zA-Z0-9_+-]{1,20}$/;
+        let nameRegExp = /^[a-zA-Z0-9_-]{1,20}$/;
         if(!(nameRegExp.test(value))) {
           if(this.state.timer) {
             clearTimeout(this.state.timer);
@@ -199,7 +199,7 @@ class Model extends React.Component {
         break;
       case 'password':
         let checkPsw = function(password) {
-          return (password.length < 8 || password.length > 20 || !/^[a-zA-Z0-9]/.test(password) || !/[a-z]+/.test(password) || !/[A-Z]+/.test(password) || !/[0-9]+/.test(password));
+          return (password.length < 8 || password.length > 20 || !/^[a-zA-Z0-9]+$/.test(password) || !/[a-z]+/.test(password) || !/[A-Z]+/.test(password) || !/[0-9]+/.test(password));
         };
         if(checkPsw(value)) {
           refs.password.setState({
