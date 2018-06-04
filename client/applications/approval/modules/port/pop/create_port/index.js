@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/approval/utils/error_message');
 const createSecurityGroup = require('client/applications/approval/modules/security-group/pop/create_security_group/index');
-const __ = require('locale/client/approval.lang.json');
+
 
 function pop(obj, parent, callback) {
   if (obj) {

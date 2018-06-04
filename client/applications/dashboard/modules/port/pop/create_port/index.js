@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 const createSecurityGroup = require('client/applications/dashboard/modules/security-group/pop/create_security_group/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 function pop(obj, parent, callback) {
   if (obj) {

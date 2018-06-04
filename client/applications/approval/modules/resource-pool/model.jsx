@@ -17,7 +17,7 @@ const createMonitor = require('./pop/create_monitor/index');
 
 const config = require('./config.json');
 const router = require('client/utils/router');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const notify = require('client/applications/approval/utils/notify');

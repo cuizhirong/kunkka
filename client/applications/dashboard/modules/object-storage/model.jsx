@@ -27,7 +27,7 @@ const bucketConfig = require('./bucket_config.json');
 const objConfig = require('./obj_config.json');
 const btnConfig = require('./btn_config.json');
 
-const __ = require('locale/client/dashboard.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 const moment = require('client/libs/moment');
 const converter = require('client/components/main/converter');

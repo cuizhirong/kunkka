@@ -1,5 +1,5 @@
 const commonModal = require('client/components/modal_common/index');
-const __ = require('locale/client/ticket.lang.json');
+
 const config = require('./config.json');
 const getErrorMessage = require('client/applications/ticket/utils/error_message');
 const popAttach = require('./attach');

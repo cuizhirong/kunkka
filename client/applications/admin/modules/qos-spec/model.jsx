@@ -10,7 +10,7 @@ const editConsumer = require('./pop/edit_consumer');
 const editSpecs = require('./pop/edit_specs');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 

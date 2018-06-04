@@ -5,7 +5,7 @@ const Main = require('client/components/main_paged/index');
 const BasicProps = require('client/components/basic_props/index');
 const modifyPricePop = require('./pop/modify/index');
 const deleteModal = require('client/components/modal_delete/index');
-const __ = require('locale/client/bill.lang.json');
+
 const config = require('./config.json');
 const router = require('client/utils/router');
 const request = require('./request');

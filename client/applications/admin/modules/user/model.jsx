@@ -20,7 +20,7 @@ const leaveGroup = require('./pop/leave_group/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 // let router = require('client/utils/router');
 

@@ -12,7 +12,7 @@ require('echarts/lib/chart/line');
 require('echarts/lib/component/tooltip');
 require('echarts/lib/component/title');
 
-const __ = require('locale/client/approval.lang.json');
+
 const utils = require('../../utils');
 const contant = require('./constant');
 const helper = require('./helper');

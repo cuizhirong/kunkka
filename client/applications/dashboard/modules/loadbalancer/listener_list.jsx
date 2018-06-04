@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button, DropdownButton} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 // let getStatusIcon = require('../../utils/status_icon');
 
 class ListenerList extends React.Component {

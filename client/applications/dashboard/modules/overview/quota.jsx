@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const {Button} = require('client/uskin/index');
 const getQuotaItems = require('client/utils/get_quota_items');
-const __ = require('locale/client/dashboard.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 
 class ResourceQuota extends React.Component {

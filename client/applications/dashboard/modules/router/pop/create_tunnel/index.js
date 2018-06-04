@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/dashboard.lang.json');
+
 const getErrorMessage = require('../../../../utils/error_message');
 const popTarget = require('./target_network');
 const popSelect = require('./select');

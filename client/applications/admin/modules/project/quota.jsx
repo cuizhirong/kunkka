@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 
-const __ = require('locale/client/admin.lang.json');
+
 const getQuotaItems = require('client/utils/get_quota_items');
 const unitConverter = require('client/utils/unit_converter');
 

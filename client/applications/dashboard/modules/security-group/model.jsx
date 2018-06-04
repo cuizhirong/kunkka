@@ -14,7 +14,7 @@ const createRule = require('./pop/create_rule/index');
 const config = require('./config.json');
 const request = require('./request');
 const router = require('client/utils/router');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 const getStatusIcon = require('../../utils/status_icon');
 const getTime = require('client/utils/time_unification');

@@ -4,7 +4,7 @@ const React = require('react');
 const Main = require('client/components/main/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 
 const moment = require('client/libs/moment');

@@ -10,7 +10,7 @@ const createTicket = require('./pop/create_ticket/index');
 const config = require('./config.json');
 const request = require('./request');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/ticket.lang.json');
+
 const router = require('client/utils/router');
 const getTime = require('client/utils/time_unification');
 const getStatusIcon = require('../../utils/status_icon');

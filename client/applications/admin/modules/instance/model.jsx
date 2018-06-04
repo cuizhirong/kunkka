@@ -15,7 +15,7 @@ const alarmDetail = require('./pop/alarm_detail/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');

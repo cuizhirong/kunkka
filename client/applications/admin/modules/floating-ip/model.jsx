@@ -10,7 +10,7 @@ const dissociateModal = require('./pop/dissociate_floating_ip/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const getStatusIcon = require('../../utils/status_icon');
 const utils = require('../../utils/utils');
 const csv = require('./pop/csv/index');

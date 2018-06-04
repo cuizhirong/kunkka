@@ -2,7 +2,6 @@
  * @func: get status icon in table and details
  */
 let React = require('react');
-let __ = require('locale/client/ticket.lang.json');
 
 module.exports = (str) => {
   let status = str.toLowerCase();

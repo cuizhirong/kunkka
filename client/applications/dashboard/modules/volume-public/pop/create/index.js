@@ -1,7 +1,7 @@
 let commonModal = require('client/components/modal_common/index');
 let config = require('./config.json');
 let request = require('../../../volume/request');
-let __ = require('locale/client/dashboard.lang.json');
+
 let getErrorMessage = require('client/applications/dashboard/utils/error_message');
 let volTypes = require('../../../volume/pop/create/volume_type');
 

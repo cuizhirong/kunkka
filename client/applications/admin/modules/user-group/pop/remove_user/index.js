@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/admin.lang.json');
+
 
 function pop(groupData, parent, callback) {
   let group = groupData.rawItem,

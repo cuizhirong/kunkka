@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button, Table, Tab, Tip} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 const Input = require('client/components/modal_common/subs/input/index');

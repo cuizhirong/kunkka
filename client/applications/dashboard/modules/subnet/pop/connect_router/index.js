@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 const createRouter = require('client/applications/dashboard/modules/router/pop/create_router/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 function pop(obj, parent, callback) {
   config.fields[0].text = obj.name || '(' + obj.id.substr(0, 8) + ')';

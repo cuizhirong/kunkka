@@ -15,7 +15,7 @@ const checkStack = require('./pop/check_stack/index');
 const create = require('./pop/create/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

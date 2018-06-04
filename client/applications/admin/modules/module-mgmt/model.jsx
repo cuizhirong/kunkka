@@ -3,7 +3,7 @@ require('./style/index.less');
 const React = require('react');
 const { Tab, Switch } = require('client/uskin/index');
 
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 let ID;
 

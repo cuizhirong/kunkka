@@ -2,7 +2,7 @@ const React = require('react');
 const {Button, ButtonGroup} = require('client/uskin/index');
 const Chart = require('echarts');
 const SelectTable = require('./select_table');
-const __ = require('locale/client/dashboard.lang.json');
+
 const utils = require('../../utils');
 const constant = require('./constant');
 const helper = require('./helper');

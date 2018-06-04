@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/admin.lang.json');
+
 
 class RadioButton extends React.Component {
   constructor(props) {

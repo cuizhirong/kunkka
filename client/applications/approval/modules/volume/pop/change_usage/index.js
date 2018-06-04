@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 const utils = require('../../../../utils/utils');
-const __ = require('locale/client/approval.lang.json');
+
 
 function pop(obj, parent, callback) {
 

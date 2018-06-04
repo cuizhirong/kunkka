@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 //const constant = require('./pop/create/constant');
 const unitConverter = require('client/utils/unit_converter');
 const UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];

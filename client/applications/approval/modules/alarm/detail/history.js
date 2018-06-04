@@ -1,5 +1,5 @@
 const utils = require('../utils');
-const __ = require('locale/client/approval.lang.json');
+
 const moment = require('client/libs/moment');
 
 module.exports = {

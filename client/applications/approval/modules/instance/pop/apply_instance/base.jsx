@@ -1,7 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const {Modal, Button, Tip, InputNumber, Tooltip} = require('client/uskin/index');
-const __ = require('locale/client/approval.lang.json');
+
 const createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
 const request = require('../../request');
 const unitConverter = require('client/utils/unit_converter');

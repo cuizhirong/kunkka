@@ -18,7 +18,7 @@ const modifyMonitor = require('./pop/modify_monitor/index');
 
 const config = require('./config.json');
 const router = require('client/utils/router');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const notify = require('client/applications/dashboard/utils/notify');

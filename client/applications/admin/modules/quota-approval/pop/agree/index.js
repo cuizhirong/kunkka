@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const React = require('react');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/admin.lang.json');
+
 const info = require('./info.jsx');
 const QuotaDetail = require('../../detail/quota_detail.jsx');
 const getErrorMessage = require('../../../../utils/error_message');

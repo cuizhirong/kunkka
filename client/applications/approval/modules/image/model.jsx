@@ -12,7 +12,7 @@ const deleteModal = require('client/components/modal_delete/index');
 //let createInstance = require('../instance/pop/create_instance/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/approval/cores/msg_event');

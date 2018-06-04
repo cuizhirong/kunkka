@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 const {Modal, Button} = require('client/uskin/index');
 
 class ModalBase extends React.Component {

@@ -10,7 +10,7 @@ const forceDelete = require('./pop/delete/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 const getErrorMessage = require('../../utils/error_message');
 

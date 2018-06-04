@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/bill.lang.json');
+
 
 function pop(parent, callback) {
   let props = {

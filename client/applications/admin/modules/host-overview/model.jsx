@@ -4,7 +4,7 @@ const React = require('react');
 const {Tab} = require('client/uskin/index');
 
 const request = require('./request');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 const unitConverter = require('client/utils/unit_converter');
 

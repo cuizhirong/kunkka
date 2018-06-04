@@ -11,7 +11,7 @@ const associateInstance = require('./pop/associate_instance/index');
 const detachInstance = require('./pop/detach_instance/index');
 const modifySecurityGroup = require('./pop/modify_security_group/index');
 
-const __ = require('locale/client/dashboard.lang.json');
+
 const config = require('./config.json');
 const request = require('./request');
 const router = require('client/utils/router');

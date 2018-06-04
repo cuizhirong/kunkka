@@ -8,7 +8,7 @@ const editModal = require('./pop/edit_namespace/index');
 
 const request = require('./request');
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 const Overview = require('./detail/overview/index');
 const Content = require('./detail/content/index');

@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const Request = require('../../../port/request');
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 function pop(obj, parent, callback) {
   let enableCharge = HALO.settings.enable_charge;

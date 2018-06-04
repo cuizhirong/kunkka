@@ -5,7 +5,7 @@ const ResourceQuota = require('./quota');
 const modifyQuota = require('./pop/modify_quota/index');
 const { Modal } = require('client/uskin/index');
 const request = require('./request');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 class Model extends React.Component {
 
@@ -82,7 +82,7 @@ class Model extends React.Component {
     return (
       <div className="halo-module-overview" style={this.props.style}>
         <div className="project-resources">
-          <ResourceQuota overview={overview} types={types} hideBtn={this.state.hideBtn} onBtnClick={this.onBtnClick.bind(this)} />
+          <ResourceQuota __={__} overview={overview} types={types} hideBtn={this.state.hideBtn} onBtnClick={this.onBtnClick.bind(this)} />
         </div>
       </div>
     );

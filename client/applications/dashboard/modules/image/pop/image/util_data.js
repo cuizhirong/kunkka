@@ -1,4 +1,4 @@
-const __ = require('locale/client/dashboard.lang.json');
+
 
 const untilData = {
 

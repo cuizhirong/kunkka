@@ -1,4 +1,4 @@
-const __ = require('locale/client/bill.lang.json');
+
 const COLOR_LIST = require('./color_list');
 let basePieOption = function(style) {
   let itemStyle = style || {

@@ -8,7 +8,7 @@ const {Tab, Button, Tooltip, Slider} = uskin;
 const createNetworkPop = require('client/applications/approval/modules/network/pop/create_network/index');
 const createApplication = require('./pop/create_application/index');
 
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const unitConverter = require('client/utils/unit_converter');
 const getOsCommonName = require('client/utils/get_os_common_name');

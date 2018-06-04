@@ -1,4 +1,4 @@
-const __ = require('locale/client/approval.lang.json');
+
 
 module.exports = {
   getVolumeType: function(item) {

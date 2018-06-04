@@ -6,7 +6,7 @@ const BasicProps = require('client/components/basic_props/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const router = require('client/utils/router');
 
 class Model extends React.Component {

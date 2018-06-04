@@ -4,13 +4,6 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
-let language = process.env.language;
-
-// Default language
-if (!language) {
-  language = 'zh-CN';
-}
-
 let entry = {};
 fs.readdirSync('./applications')
   .filter(function(m) {
@@ -27,9 +20,9 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: '[hash:6].' + language + '.[name].min.js',
+    filename: '[hash:6].[name].min.js',
     publicPath: '/client/dist',
-    chunkFilename: '[hash:6].' + language + '.[id].bundle.js'
+    chunkFilename: '[hash:6].[id].bundle.js'
   },
 
   module: {
@@ -46,7 +39,7 @@ module.exports = {
       test: /\.less$/,
       use: ExtractTextPlugin.extract({
         use: [{
-          loader: 'css-loader',
+          loader: 'css-loader'
         }, {
           loader: 'postcss-loader',
           options: {
@@ -55,14 +48,14 @@ module.exports = {
             }
           }
         }, {
-          loader: 'less-loader',
+          loader: 'less-loader'
         }]
       })
     }, {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
         use: [{
-          loader: 'css-loader',
+          loader: 'css-loader'
         }, {
           loader: 'postcss-loader',
           options: {
@@ -76,6 +69,23 @@ module.exports = {
     noParse: [
       /moment/g
     ]
+  },
+
+  // only show valid/invalid and errors
+  // deal with verbose output
+  stats: {
+    assets: true,
+    colors: true,
+    warnings: true,
+    errors: true,
+    errorDetails: true,
+    entrypoints: true,
+    version: true,
+    hash: false,
+    timings: true,
+    chunks: false,
+    chunkModules: false,
+    children: false
   },
 
   plugins: [

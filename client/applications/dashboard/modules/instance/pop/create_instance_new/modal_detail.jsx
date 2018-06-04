@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 const constant = require('./constant');
 const unitConverter = require('client/utils/unit_converter');
 

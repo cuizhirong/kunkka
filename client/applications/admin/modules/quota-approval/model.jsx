@@ -7,7 +7,7 @@ const agreeApplication = require('./pop/agree/index');
 const refuseApplication = require('./pop/refuse/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const QuotaDetail = require('./detail/quota_detail.jsx');

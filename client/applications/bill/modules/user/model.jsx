@@ -7,7 +7,7 @@ const {Notification} = require('uskin');
 
 const request = require('./request');
 const config = require('./config.json');
-const __ = require('locale/client/bill.lang.json');
+
 
 class Model extends React.Component {
 

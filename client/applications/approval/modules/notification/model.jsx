@@ -7,7 +7,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const modal = require('./pop/modal/index');
 const Detail = require('./detail/index');
 
-const __ = require('locale/client/dashboard.lang.json');
+
 const config = require('./config.json');
 const request = require('./request');
 const router = require('client/utils/router');

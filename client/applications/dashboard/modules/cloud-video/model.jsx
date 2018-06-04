@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const request = require('./request');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 class Model extends React.Component {
 

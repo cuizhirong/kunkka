@@ -16,7 +16,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const addNotification = require('./pop/add_notification/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const getErrorMessage = require('client/applications/approval/utils/error_message');

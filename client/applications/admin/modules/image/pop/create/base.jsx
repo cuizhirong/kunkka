@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button, Tab, Tip} = require('client/uskin/index');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('../../request');
 const getErrorMessage = require('../../../../utils/error_message');
 const ImageInfo = require('./image_info');

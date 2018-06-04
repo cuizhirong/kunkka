@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 class UploadFile extends React.Component {
   constructor(props) {

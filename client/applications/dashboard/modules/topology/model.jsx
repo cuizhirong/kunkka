@@ -4,7 +4,7 @@ const React = require('react');
 const Topology = require('client/components/topology/index');
 const download = require('client/components/topology/utils/download');
 const Button = require('client/uskin/index').Button;
-const __ = require('locale/client/dashboard.lang.json');
+
 
 const request = require('./request');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');

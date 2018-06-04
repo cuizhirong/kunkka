@@ -17,7 +17,7 @@ const modifySubnet = require('./pop/modify_subnet/index');
 const createPort = require('../port/pop/create_port/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const router = require('client/utils/router');
 const request = require('./request');
 const msgEvent = require('client/applications/approval/cores/msg_event');

@@ -1,4 +1,4 @@
-const __ = require('locale/client/admin.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 const UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 

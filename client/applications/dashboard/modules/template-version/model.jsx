@@ -9,7 +9,7 @@ const Main = require('client/components/main/index');
 const DetailMinitable = require('client/components/detail_minitable/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');

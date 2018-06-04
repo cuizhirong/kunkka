@@ -1,7 +1,7 @@
 const React = require('react');
 const utils = require('../utils');
 const helper = require('../pop/create/helper');
-const __ = require('locale/client/approval.lang.json');
+
 const getStatusIcon = require('../../../utils/status_icon');
 const request = require('../request');
 const deleteModal = require('client/components/modal_delete/index');

@@ -3,7 +3,7 @@ const config = require('./config.json');
 const request = require('../../request');
 const createFloatingIp = require('client/applications/approval/modules/floating-ip/pop/apply_ip/index');
 const getErrorMessage = require('client/applications/approval/utils/error_message');
-const __ = require('locale/client/approval.lang.json');
+
 
 function pop(obj, parent, callback) {
 

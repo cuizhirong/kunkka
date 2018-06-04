@@ -2,7 +2,7 @@ require('./style/index.less');
 
 const React = require('react');
 const {Button} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const ShortTip = require('client/components/modal_common/subs/short_tip/index');
 
 class TargetNetwork extends React.Component {

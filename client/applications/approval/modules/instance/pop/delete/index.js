@@ -1,7 +1,7 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/approval.lang.json');
+
 const getStatusIcon = require('../../../../utils/status_icon');
 
 function pop(obj, parent, callback) {

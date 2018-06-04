@@ -2,7 +2,7 @@ const commonModal = require('client/components/modal_common/index');
 const createSubnet = require('../../../subnet/pop/create_subnet/index');
 const config = require('./config.json');
 const request = require('../../request');
-const __ = require('locale/client/dashboard.lang.json');
+
 const getErrorMessage = require('client/applications/dashboard/utils/error_message');
 
 let getAvailableSubnets = function(data, refs) {

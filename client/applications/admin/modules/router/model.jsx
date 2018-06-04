@@ -16,7 +16,7 @@ const detachSubnet = require('./pop/detach_subnet/index');
 const attachAgent = require('./pop/attach_agent/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getStatusIcon = require('../../utils/status_icon');
 const getErrorMessage = require('client/applications/admin/utils/error_message');

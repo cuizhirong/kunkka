@@ -15,7 +15,7 @@ const addInstance = require('./pop/add_instance/index');
 const modifySubnet = require('./pop/modify_subnet/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('./request');
 const getErrorMessage = require('client/applications/admin/utils/error_message');
 

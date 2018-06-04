@@ -1,6 +1,6 @@
 const commonModal = require('client/components/modal_common/index');
 const config = require('./config.json');
-const __ = require('locale/client/admin.lang.json');
+
 const request = require('../../request');
 const resourceQuota = require('./quota_pop');
 const getErrorMessage = require('../../../../utils/error_message');

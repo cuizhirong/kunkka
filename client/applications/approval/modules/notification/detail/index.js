@@ -1,5 +1,5 @@
 const React = require('react');
-const __ = require('locale/client/dashboard.lang.json');
+
 
 const DetailMinitable = require('client/components/detail_minitable/index');
 const BasicProps = require('client/components/basic_props/index');

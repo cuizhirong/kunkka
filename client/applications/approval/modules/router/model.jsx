@@ -15,7 +15,7 @@ const relatedSubnet = require('./pop/related_subnet/index');
 const detachSubnet = require('./pop/detach_subnet/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/approval.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/approval/cores/msg_event');

@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('../../request');
 const timeUtils = require('../../../../utils/utils');
 const LineChart = require('client/components/line_chart/index');

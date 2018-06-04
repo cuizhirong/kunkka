@@ -1,7 +1,7 @@
 require('./style/index.less');
 
 const React = require('react');
-const __ = require('locale/client/ticket.lang.json');
+
 
 class Attach extends React.Component {
   constructor(props) {

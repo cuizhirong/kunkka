@@ -11,7 +11,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const uploadFile = require('./pop/upload/index');
 
 const config = require('./config.json');
-const __ = require('locale/client/dashboard.lang.json');
+
 const request = require('./request');
 const router = require('client/utils/router');
 const getStatusIcon = require('../../utils/status_icon');

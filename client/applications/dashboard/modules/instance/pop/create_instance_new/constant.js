@@ -1,4 +1,4 @@
-const __ = require('locale/client/dashboard.lang.json');
+
 let constant = {
   imageTypes: [{
     value: __.system_image,

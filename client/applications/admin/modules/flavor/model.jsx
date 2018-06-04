@@ -11,7 +11,7 @@ const deleteModal = require('client/components/modal_delete/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-const __ = require('locale/client/admin.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 const router = require('client/utils/router');
 

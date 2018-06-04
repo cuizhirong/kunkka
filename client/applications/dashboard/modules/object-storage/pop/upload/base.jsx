@@ -1,6 +1,6 @@
 const React = require('react');
 const {Modal, Button} = require('client/uskin/index');
-const __ = require('locale/client/dashboard.lang.json');
+
 const unitConverter = require('client/utils/unit_converter');
 const request = require('../../request');
 const browserMD5 = require('browser-md5-file');
