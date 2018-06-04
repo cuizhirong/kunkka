@@ -14,13 +14,16 @@
   display: flex;
   flex-direction: column;
   padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 
   > .breadcrumb-list {
-    height: 51px;
+    overflow: hidden;
     border-bottom: 4px solid @storage-border-color;
     .breadcrumb {
-      height: 100%;
       .breadcrumb-item {
+        display: inline-block;
+        height: 51px;
         a {
           font-size: 18px;
           line-height: 51px;

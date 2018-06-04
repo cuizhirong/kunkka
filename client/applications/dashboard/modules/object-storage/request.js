@@ -33,7 +33,7 @@ module.exports = {
         obj.id = obj.hash + Math.random();
         name = obj.name.split('/');
         len = name.length;
-        obj.headerType = data.that.getResponseHeader('x-container-read');
+        obj.headerType = data.that.getResponseHeader('x-container-read') || '';
         if (name[len - 1]) {
           obj.type = 'object';
         } else {
