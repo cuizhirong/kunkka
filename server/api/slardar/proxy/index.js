@@ -24,6 +24,31 @@ module.exports = (app) => {
 
   require('./swift')(app);
   app.use(['/proxy-swift/', '/proxy-glance/', '/proxy-shadowfiend/'], require('./common'));
+
+  app.get('/proxy/nova/v2.1/:projectId/servers/:serverId/action', (req, res, next) => {
+    let remote = req.session.endpoint;
+    let region = req.headers.region || req.session.user.regionId;
+    let service = req.path.split('/')[2];
+    let target = remote[service][region] + '/' + req.path.split('/').slice(3).join('/');
+
+    request.post(target + getQueryString(req.query))
+      .set(req.headers)
+      .set('X-Auth-Token', req.session.user.token)
+      .send({'os-getConsoleOutput': {'length': req.query.length || -1}})
+      .end((err, payload) => {
+        if (err) {
+          next(err);
+        } else {
+          const output = payload.body.output;
+          if ((output || output === '') && output.replace) {
+            const result = output.replace(/\n/g, '<br/>');
+            res.send(result);
+          } else {
+            res.send(payload.body);
+          }
+        }
+      });
+  });
   require('./proxy_need_admin')(app);
 
   app.all('/proxy/*', (req, res, next) => {
