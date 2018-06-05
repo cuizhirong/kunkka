@@ -41,7 +41,7 @@ const changeAction = require('./pop/change_action/index');
 const request = require('./request');
 const config = require('./config.json');
 const moment = require('client/libs/moment');
-
+const __ = require('locale/client/dashboard.lang.json');
 const router = require('client/utils/router');
 const msgEvent = require('client/applications/dashboard/cores/msg_event');
 const notify = require('client/applications/dashboard/utils/notify');
@@ -663,12 +663,12 @@ class Model extends React.Component {
           );
         }
         break;
-      case 'console_output':
+      case 'log_output':
         if (isAvailableView(rows)) {
           let serverId = rows[0].id,
             requestData = {
               'os-getConsoleOutput': {
-                'length': -1
+                'length': 50
               }
             };
 
@@ -676,9 +676,10 @@ class Model extends React.Component {
             <ConsoleOutput
               refresh={true}
               url={'/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + serverId + '/action'}
+              serverId={serverId}
               requestData={requestData}
               moduleID="instance"
-              tabKey="console_output"
+              tabKey="log_output"
               data-id={serverId} />
           );
         }

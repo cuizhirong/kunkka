@@ -5,13 +5,16 @@ const fetch = require('client/applications/dashboard/cores/fetch');
 const router = require('client/utils/router');
 const mainEvent = require('client/components/main/event');
 
+const {Button, InputSearch} = require('client/uskin/index');
+
 class VncConsole extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: false,
-      data: []
+      data: [],
+      requestData: props.requestData
     };
     this.refresh;
     this.onChangeState = this.onChangeState.bind(this);
@@ -61,11 +64,12 @@ class VncConsole extends React.Component {
   }
 
   getData() {
-    let props = this.props;
+    let props = this.props,
+      state = this.state;
 
     fetch.post({
       url: props.url,
-      data: props.requestData
+      data: state.requestData
     }).then((res) => {
       if (this.refresh) {
         this.setState({
@@ -94,9 +98,40 @@ class VncConsole extends React.Component {
     }
   }
 
+  changeSearchInput(str, isSubmitted) {
+    let strNumber = Number(str);
+    if (isNaN(strNumber)) {
+      this.refs.search.setState({
+        value: ''
+      });
+    }
+
+    if (isSubmitted) {
+      if (strNumber < 2) {
+        this.refs.search.setState({
+          value: 50
+        });
+      }
+
+      let requestData = {
+        'os-getConsoleOutput': {
+          'length': strNumber < 2 ? 50 : strNumber
+        }
+      };
+      this.setState({
+        requestData: requestData
+      }, this.getData);
+    }
+  }
+
   stopRefreshing() {
     window.clearInterval(this.refresh);
     this.refresh = undefined;
+  }
+
+  onShowAll() {
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + this.props.serverId + '/action';
+    window.open(url);
   }
 
   render() {
@@ -108,10 +143,24 @@ class VncConsole extends React.Component {
           <div className="detail-loading">
             <i className="glyphicon icon-loading" />
           </div>
-        : <div className="output">
-            {data.map((item, i) =>
-              <p key={i}>{item}</p>
-            )}
+        : <div>
+            <div className="log">
+              <div className="log-left">{__.instance + __.log + __.output}</div>
+              <div className="log-right">
+                <span className="log-span">{__.log + __.length + ': '}</span>
+                <InputSearch
+                  ref="search"
+                  type="light"
+                  placeholder={__.length_tip}
+                  onChange={this.changeSearchInput.bind(this)} />
+                <Button value={__.show_all} onClick={this.onShowAll.bind(this)}/>
+              </div>
+            </div>
+            <div className="output">
+              {data.map((item, i) =>
+                <p key={i}>{item}</p>
+              )}
+            </div>
           </div>
         }
       </div>
