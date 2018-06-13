@@ -90,6 +90,7 @@ Approve.prototype = {
     });
     co(function* (){
       let quotaDetail = yield quotaModel.create({
+        region: req.session.user.regionId,
         status: 'pending', info,
         quota: JSON.stringify(quota),
         originQuota: JSON.stringify(originQuota),
@@ -132,7 +133,7 @@ Approve.prototype = {
         req.params.targetId = quota.projectId;
         req.params.projectId = req.session.user.projectId;
         req.body = JSON.parse(quota.quota);
-        req.headers.region = 'regionOne';
+        req.headers.region = quota.region || 'regionOne';
         next();
       } else {
         res.send({message: req.i18n.__('api.register.success')});

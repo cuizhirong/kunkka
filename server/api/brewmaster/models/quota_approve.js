@@ -15,6 +15,9 @@ module.exports = function (mysql, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    region: {
+      type: DataTypes.STRING
+    },
     quota: {
       type: DataTypes.TEXT
     },
