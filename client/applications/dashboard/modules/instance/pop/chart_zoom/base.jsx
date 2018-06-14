@@ -59,6 +59,7 @@ class ModalBase extends React.Component {
   }
 
   renderChart(rows, refresh) {
+    console.log(rows);
     let rawItem = rows || this.props.obj.item.chartDetail;
     let that = this,
       tabKey = 'monitor',
@@ -252,7 +253,7 @@ class ModalBase extends React.Component {
           if (diskRes.length !== 0) {
             request.getDiskMeasures(ids, granularity, timeUtils.getTime(time)).then((_r) => {
               let arrDisk = _r.map((r, index) => ({
-                title: utils.getMetricName(diskMetricType[index % 4], rows[0].volume[parseInt(index / 4, 10)]),
+                title: utils.getMetricName(diskMetricType[index % 4], rows && rows.item.volume[parseInt(index / 4, 10)]),
                 metricType: diskMetricType[index % 4],
                 color: utils.getTriangleColor(diskMetricType[index % 4]),
                 triangleColor: utils.getTriangleColor(diskMetricType[index % 4]),
