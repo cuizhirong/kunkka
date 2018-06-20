@@ -55,8 +55,6 @@ client/libs/charts/output.js
 client/libs/charts/output.js.map
 
 # external modules
-/config.json
-/client/applications/*/config.json
 
 client/assets/**/
 

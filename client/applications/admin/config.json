@@ -1,0 +1,126 @@
+{
+  "modules": [{
+    "items": [
+      "host-overview"
+    ]
+  }, {
+    "title": "compute_service",
+    "items": [
+      "host",
+      "instance",
+      "host-aggregates",
+      "availability-zones",
+      "instance-restore",
+      "flavor",
+      "image",
+      "private-image",
+      "deactivated-image",
+      "snapshot-type"
+    ]
+  }, {
+    "title": "storage_service",
+    "items": [
+      "volume",
+      "volume-type",
+      "qos-spec",
+      "snapshot"
+    ]
+  }, {
+    "title": "network_service",
+    "items": [
+      "network",
+      "subnet",
+      "router",
+      "floating-ip",
+      "port"
+    ]
+  }, {
+    "title": "keystone",
+    "items": [
+      "domain",
+      "project",
+      "user",
+      "service-user",
+      "user-group",
+      "role"
+    ]
+  }, {
+    "title": "system-information",
+    "items": [
+      "system-information",
+      "compute-services",
+      "block-storage-services",
+      "network-agents",
+      "orchestration-services",
+      "global-quota",
+      "metadata-definition",
+      "action-log"
+    ]
+  }, {
+    "title": "operation_service",
+    "items": [
+      "registration-approval",
+      "approved-registration-application",
+      "quota-approval",
+      "video-account-binding"
+    ]
+  }, {
+    "title": "setting-mgmt",
+    "items": [
+      "feature-mgmt",
+      "module-mgmt"
+    ]
+  }],
+  "default_module": "host-overview",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "instance-restore",
+    "link": "instance"
+  }, {
+    "key": "availability-zones",
+    "link": "host-aggregates"
+  }, {
+    "key": "private-image",
+    "link": "image"
+  }, {
+    "key": "deactivated-image",
+    "link": "image"
+  },{
+    "key": "subnet",
+    "link": "network"
+  }, {
+    "key": "volume-type",
+    "link": "volume"
+  }, {
+    "key": "qos-spec",
+    "link": "volume"
+  }, {
+    "key": "service-user",
+    "link": "user"
+  }, {
+    "key": "compute-services",
+    "link": "system-information"
+  }, {
+    "key": "block-storage-services",
+    "link": "system-information"
+  }, {
+    "key": "network-agents",
+    "link": "system-information"
+  }, {
+    "key": "orchestration-services",
+    "link": "system-information"
+  }, {
+    "key": "global-quota",
+    "link": "system-information"
+  }, {
+    "key": "approved-registration-application",
+    "link": "registration-approval"
+  }],
+  "theme": "default",
+  "default_hide_modules": [
+    "video-account-binding"
+  ]
+}

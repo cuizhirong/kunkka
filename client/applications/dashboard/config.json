@@ -1,0 +1,110 @@
+{
+  "modules": [{
+    "items": [
+      "overview"
+    ]
+  }, {
+    "title": "compute",
+    "items": [
+      "instance",
+      "image",
+      "instance-snapshot",
+      "keypair",
+      "ike-policy",
+      "ipsec-policy"
+    ]
+  }, {
+    "title": "network",
+    "items": [
+      "topology",
+      "network",
+      "subnet",
+      "floating-ip",
+      "router",
+      "port",
+      "security-group",
+      "loadbalancer",
+      "resource-pool",
+      "ike-policy",
+      "ipsec-policy"
+    ]
+  }, {
+    "title": "storage",
+    "items": [
+      "volume-private",
+      "volume-public",
+      "snapshot",
+      "object-storage"
+    ]
+  }, {
+    "title": "monitor",
+    "items": [
+      "alarm",
+      "notification"
+    ]
+  }, {
+    "title": "orchestration",
+    "items": [
+      "heat-list",
+      "template-resource",
+      "template-version",
+      "template-list"
+    ]
+  }, {
+    "title": "action-log",
+    "items": [
+      "action-log",
+      "action-log-network",
+      "action-log-subnet",
+      "action-log-port",
+      "action-log-router",
+      "action-log-volume"
+    ]
+  }, {
+    "title": "cloud-video",
+    "items": [
+      "cloud-video"
+    ]
+  }],
+  "default_module": "overview",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "routers": [{
+    "key": "subnet",
+    "link": "network"
+  }, {
+    "key": "resource-pool",
+    "link": "loadbalancer"
+  }, {
+    "key": "template-version",
+    "link": "heat-list"
+  }, {
+    "key": "template-resource",
+    "link": "heat-list"
+  }, {
+    "key": "action-log-network",
+    "link": "action-log"
+  }, {
+    "key": "action-log-port",
+    "link": "action-log"
+  }, {
+    "key": "action-log-router",
+    "link": "action-log"
+  }, {
+    "key": "action-log-subnet",
+    "link": "action-log"
+  }, {
+    "key": "action-log-volume",
+    "link": "action-log"
+  }],
+  "theme": "default",
+  "default_hide_modules": [
+    "ike-policy",
+    "ipsec-policy",
+    "volume-public",
+    "object-storage",
+    "cloud-video"
+  ]
+}
