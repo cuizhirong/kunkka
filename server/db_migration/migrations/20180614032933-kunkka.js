@@ -8,7 +8,7 @@ module.exports = {
       {
         type: Sequelize.STRING
       }
-    )
+    );
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
