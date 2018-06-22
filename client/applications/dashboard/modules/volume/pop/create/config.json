@@ -28,6 +28,11 @@
     "hide": true,
     "empty_text": "no_volume_type"
   }, {
+    "type": "select",
+    "field": "local_to_instance",
+    "hide": true,
+    "data": []
+  }, {
     "type": "slider",
     "field": "capacity_size",
     "min": 1,

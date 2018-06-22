@@ -39,8 +39,13 @@ module.exports = {
     });
   },
   getSources: function() {
-    return storage.getList(['image', 'volume']).then(function(data) {
-      return data;
+    let ret;
+    return storage.getList(['instance', 'image', 'volume']).then((data) => {
+      ret = data;
+      return this.getVolumeTypes().then(res => {
+        ret.volumeTypes = res.volume_types;
+        return ret;
+      });
     });
   },
   getOverview: function() {
@@ -53,9 +58,12 @@ module.exports = {
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/types'
     });
   },
-  createVolume: function(_data) {
+  createVolume: function(_data, schedulerHints) {
     let data = {};
     data.volume = _data;
+    if(schedulerHints) {
+      data['OS-SCH-HNT:scheduler_hints'] = schedulerHints;
+    }
 
     return fetch.post({
       url: '/proxy/cinder/v2/' + HALO.user.projectId + '/volumes',
