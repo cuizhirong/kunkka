@@ -159,6 +159,9 @@ class Model extends React.Component {
       } else {
         newState.remaining_day = res.remaining_day + __.day;
       }
+      if(res.remaining_day === undefined) {
+        newState.remaining_day = '...';
+      }
       this.setState(newState);
     });
   }

@@ -12,6 +12,11 @@ module.exports = {
     let url = '/proxy/shadowfiend/v1/accounts/' + HALO.user.userId + '/estimate';
     return fetch.get({
       url: url
+    }).catch(err => {
+      return {
+        balance: '...',
+        price_per_hour: '...'
+      };
     });
   },
   getServices: () => {
