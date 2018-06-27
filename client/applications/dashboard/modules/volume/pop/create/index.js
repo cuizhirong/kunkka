@@ -11,8 +11,6 @@ const UNITNUMBER = 1024 * 1024 * 1024;
 
 let allCapacity;
 
-// types get from api.
-let types = [];
 let instanceList = [];
 
 let copyObj = function(obj) {
@@ -99,9 +97,8 @@ function getCapacity(overview) {
   return typeCapacity;
 }
 
-function isLocal(allTypes, volumeType) {
-  const curType = allTypes.find(type => volumeType === type.name);
-  return curType && curType.extra_specs.local;
+function isLocal(volumeType) {
+  return volumeType === 'lvm';
 }
 
 function setLocalType(refLocalToInstance, instances, hide, instancesValue) {
@@ -168,7 +165,6 @@ function pop(obj, parent, callback) {
       });
 
       request.getSources().then(sources => {
-        types = sources.volumeTypes;
         instanceList = sources.instance;
 
         refs.image.setState({
@@ -197,7 +193,7 @@ function pop(obj, parent, callback) {
                   value: volumeType,
                   hide: false
                 });
-                setLocalType(refs.local_to_instance, instanceList, !isLocal(types, volumeType));
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(volumeType));
               } else {
                 refs.type.setState({
                   renderer: volTypes,
@@ -205,7 +201,7 @@ function pop(obj, parent, callback) {
                   value: volumeTypes.length > 0 ? volumeType : null,
                   hide: false
                 });
-                setLocalType(refs.local_to_instance, instanceList, !isLocal(types, volumeType));
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(volumeType));
               }
             };
 
@@ -247,13 +243,13 @@ function pop(obj, parent, callback) {
           break;
       }
 
-      if(isLocal(types, data.volume_type) && localToInstanceUuid) {
+      if(isLocal(data.volume_type) && localToInstanceUuid) {
         schedulerHints = {
           'local_to_instance': localToInstanceUuid
         };
       }
 
-      request.createVolume(data, schedulerHints ).then((res) => {
+      request.createVolume(data, schedulerHints).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch((err) => {
@@ -318,7 +314,7 @@ function pop(obj, parent, callback) {
           let image = refs.image.state.data.filter(_data => _data.id === refs.image.state.value)[0];
           let source = refs.volume_source.state.value;
 
-          setLocalType(refs.local_to_instance, instanceList, !isLocal(types, state.value));
+          setLocalType(refs.local_to_instance, instanceList, !isLocal(state.value));
 
           if(image && source === 'image') {
             min = Math.ceil(image.size / UNITNUMBER);

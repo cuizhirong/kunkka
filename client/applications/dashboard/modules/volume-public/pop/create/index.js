@@ -10,6 +10,36 @@ const DEFAULT_PRICE = '0.0000';
 
 let allCapacity;
 
+let instanceList = [];
+
+function isLocal(volumeType) {
+  return volumeType === 'lvm';
+}
+
+function setLocalType(refLocalToInstance, instances, hide, instancesValue) {
+  let value;
+  instances = [{
+    id: undefined,
+    name: __.no_select
+  }].concat(instances);
+
+  if(instancesValue) {
+    value = instancesValue;
+  } else {
+    value = instances.length > 0 ? instances[0].id : undefined;
+  }
+  refLocalToInstance.setState({
+    hide,
+    data: instances.map(ins => {
+      return {
+        id: ins.id,
+        name: ins.name
+      };
+    }),
+    value
+  });
+}
+
 let copyObj = function(obj) {
   let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
@@ -95,49 +125,57 @@ function pop(obj, parent, callback) {
         renderer: volTypes
       });
 
-      request.getOverview().then((overview) => {
+      request.getSources().then(sources => {
+        instanceList = sources.instance;
 
-        typeCapacity = getCapacity(overview);
+        request.getOverview().then((overview) => {
 
-        volumeTypes = overview.volume_types;
-        let volumeType = volumeTypes[0];
+          typeCapacity = getCapacity(overview);
 
-        if (volumeTypes.length !== 0) {
-          let setTypes = () => {
-            if (obj) {
-              volumeType = obj.volume.volume_type || null;
-              refs.type.setState({
-                renderer: volTypes,
-                data: volumeType ? [volumeType] : [],
-                value: volumeType,
-                hide: false
-              });
-            } else {
-              refs.type.setState({
-                renderer: volTypes,
-                data: volumeTypes,
-                value: volumeTypes.length > 0 ? volumeType : null,
+          volumeTypes = overview.volume_types;
+          let volumeType = volumeTypes[0];
+
+          if (volumeTypes.length !== 0) {
+            let setTypes = () => {
+              if (obj) {
+                volumeType = obj.volume.volume_type || null;
+                refs.type.setState({
+                  renderer: volTypes,
+                  data: volumeType ? [volumeType] : [],
+                  value: volumeType,
+                  hide: false
+                });
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(volumeType));
+              } else {
+                refs.type.setState({
+                  renderer: volTypes,
+                  data: volumeTypes,
+                  value: volumeTypes.length > 0 ? volumeType : null,
+                  hide: false
+                });
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(volumeType));
+              }
+            };
+
+            setTypes();
+            if (ENABLE_CHARGE) {
+              refs.charge.setState({
                 hide: false
               });
             }
-          };
-
-          setTypes();
-          if (ENABLE_CHARGE) {
-            refs.charge.setState({
+          } else {
+            refs.warning.setState({
+              value: __.no_avail_type,
               hide: false
             });
           }
-        } else {
-          refs.warning.setState({
-            value: __.no_avail_type,
-            hide: false
-          });
-        }
+        });
       });
     },
     onConfirm: function(refs, cb) {
       let data = {};
+      let schedulerHints;
+      let localToInstanceUuid = refs.local_to_instance.state.value;
       data.name = refs.name.state.value;
       data.volume_type = obj ? obj.volume.volume_type : refs.type.refs.volume_type.state.value;
       data.size = Number(refs.capacity_size.state.value);
@@ -145,7 +183,13 @@ function pop(obj, parent, callback) {
         data.snapshot_id = obj.id;
       }
 
-      request.createVolume(data).then((res) => {
+      if(isLocal(data.volume_type) && localToInstanceUuid) {
+        schedulerHints = {
+          'local_to_instance': localToInstanceUuid
+        };
+      }
+
+      request.createVolume(data, schedulerHints).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch((err) => {
@@ -206,6 +250,9 @@ function pop(obj, parent, callback) {
 
           let cap = typeCapacity[volType],
             min, max, isError;
+
+          setLocalType(refs.local_to_instance, instanceList, !isLocal(state.value));
+
           if (cap) {
             min = obj ? obj.size : cap.min;
             max = cap.max;

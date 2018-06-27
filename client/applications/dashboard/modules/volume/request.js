@@ -39,13 +39,8 @@ module.exports = {
     });
   },
   getSources: function() {
-    let ret;
     return storage.getList(['instance', 'image', 'volume']).then((data) => {
-      ret = data;
-      return this.getVolumeTypes().then(res => {
-        ret.volumeTypes = res.volume_types;
-        return ret;
-      });
+      return data;
     });
   },
   getOverview: function() {
