@@ -15,7 +15,6 @@ const acceptTransfer = require('../volume/pop/accept_transfer');
 const request = require('../volume/request');
 const config = require('./config.json');
 
-
 class Model extends Base {
   constructor(props) {
     super(props);
