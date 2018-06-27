@@ -86,8 +86,8 @@ class ModalBase extends React.Component {
     };
   }
 
-  findFlavor(flavors, cpu, ram, disk) {
-    return flavors.filter((ele) => ele.vcpus === cpu && ele.ram === ram && ele.disk === disk)[0];
+  findFlavor(flavors, flavorId) {
+    return flavors.filter((ele) => ele.id === flavorId)[0];
   }
 
   setFlavor(_flavors) {
@@ -107,7 +107,7 @@ class ModalBase extends React.Component {
     let cpuOpt = this.findCpu(flavors, objFlavor.vcpus);
     let ramOpt = this.findRam(flavors, objFlavor.vcpus, objFlavor.ram);
     let diskOpt = this.findDisk(flavors, objFlavor.vcpus, objFlavor.ram, objFlavor.disk);
-    let flavor = this.findFlavor(flavors, objFlavor.vcpus, objFlavor.ram, objFlavor.disk);
+    let flavor = this.findFlavor(flavors, objFlavor.id);
 
     this.setState({
       _flavors: flavors,
@@ -124,7 +124,7 @@ class ModalBase extends React.Component {
 
   isSameFlavor(flavor) {
     let f = this.state.flavor;
-    return f.vcpus === flavor.vcpus && f.ram === flavor.ram && f.disk === flavor.disk;
+    return f.id === flavor.id;
   }
 
   onConfirm() {
