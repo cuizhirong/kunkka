@@ -11,6 +11,10 @@ const UNITNUMBER = 1024 * 1024 * 1024;
 
 let allCapacity;
 
+// types get from api.
+let types = [];
+let instanceList = [];
+
 let copyObj = function(obj) {
   let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
@@ -95,6 +99,35 @@ function getCapacity(overview) {
   return typeCapacity;
 }
 
+function isLocal(allTypes, volumeType) {
+  const curType = allTypes.find(type => volumeType === type.name);
+  return curType && curType.extra_specs.local;
+}
+
+function setLocalType(refLocalToInstance, instances, hide, instancesValue) {
+  let value;
+  instances = [{
+    id: undefined,
+    name: __.no_select
+  }].concat(instances);
+
+  if(instancesValue) {
+    value = instancesValue;
+  } else {
+    value = instances.length > 0 ? instances[0].id : undefined;
+  }
+  refLocalToInstance.setState({
+    hide,
+    data: instances.map(ins => {
+      return {
+        id: ins.id,
+        name: ins.name
+      };
+    }),
+    value
+  });
+}
+
 function pop(obj, parent, callback) {
   let copyConfig = copyObj(config);
   if (obj) {
@@ -135,6 +168,9 @@ function pop(obj, parent, callback) {
       });
 
       request.getSources().then(sources => {
+        types = sources.volumeTypes;
+        instanceList = sources.instance;
+
         refs.image.setState({
           data: sources.image,
           value: sources.image[0] && sources.image[0].id
@@ -161,6 +197,7 @@ function pop(obj, parent, callback) {
                   value: volumeType,
                   hide: false
                 });
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(types, volumeType));
               } else {
                 refs.type.setState({
                   renderer: volTypes,
@@ -168,6 +205,7 @@ function pop(obj, parent, callback) {
                   value: volumeTypes.length > 0 ? volumeType : null,
                   hide: false
                 });
+                setLocalType(refs.local_to_instance, instanceList, !isLocal(types, volumeType));
               }
             };
 
@@ -189,6 +227,8 @@ function pop(obj, parent, callback) {
     },
     onConfirm: function(refs, cb) {
       let data = {};
+      let schedulerHints;
+      let localToInstanceUuid = refs.local_to_instance.state.value;
       data.name = refs.name.state.value;
       data.volume_type = obj ? obj.volume.volume_type : refs.type.refs.volume_type.state.value;
       data.size = Number(refs.capacity_size.state.value);
@@ -207,7 +247,13 @@ function pop(obj, parent, callback) {
           break;
       }
 
-      request.createVolume(data).then((res) => {
+      if(isLocal(types, data.volume_type) && localToInstanceUuid) {
+        schedulerHints = {
+          'local_to_instance': localToInstanceUuid
+        };
+      }
+
+      request.createVolume(data, schedulerHints ).then((res) => {
         callback && callback(res);
         cb(true);
       }).catch((err) => {
@@ -271,6 +317,8 @@ function pop(obj, parent, callback) {
           let volume = refs.volume.state.data.filter(_data => _data.id === refs.volume.state.value)[0];
           let image = refs.image.state.data.filter(_data => _data.id === refs.image.state.value)[0];
           let source = refs.volume_source.state.value;
+
+          setLocalType(refs.local_to_instance, instanceList, !isLocal(types, state.value));
 
           if(image && source === 'image') {
             min = Math.ceil(image.size / UNITNUMBER);
