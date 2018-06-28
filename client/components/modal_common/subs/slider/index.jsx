@@ -22,6 +22,13 @@ class Slide extends React.Component {
     this.onSliderChange = this.onSliderChange.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      value: nextProps.value,
+      inputValue: nextProps.value
+    });
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     for (let index in this.state) {
       if (this.state[index] !== nextState[index]) {

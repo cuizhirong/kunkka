@@ -17,7 +17,7 @@ const FilterModal = require('client/components/filter/index');
 
 //pop modals
 const deleteModal = require('client/components/modal_delete/index');
-const createInstance = require('./pop/create_instance/index');
+const createInstance = require('./pop/create_instance_5.0/index');
 const poweronInstance = require('./pop/poweron/index');
 const shutoffInstance = require('./pop/shutoff/index');
 const rebootInstance = require('./pop/reboot/index');

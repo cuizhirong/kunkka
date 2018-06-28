@@ -178,10 +178,7 @@ module.exports = {
     });
   },
   createInstance: function(data) {
-    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers';
-    if(!data.imageRef) {
-      url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-volumes_boot';
-    }
+    let url = '/proxy/nova/v2.1/' + HALO.user.projectId + '/os-volumes_boot';
 
     return fetch.post({
       url: url,
