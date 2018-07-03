@@ -8,6 +8,10 @@ module.exports = {
         return __.sata;
       case 'ssd':
         return __.ssd;
+      case 'hdd':
+        return __.hdd;
+      case 'lvm':
+        return __.lvm;
       default:
         return volumeType;
     }
