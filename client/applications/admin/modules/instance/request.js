@@ -167,10 +167,14 @@ module.exports = {
       data: data
     });
   },
-  deleteItem: function(item) {
-    return fetch.delete({
-      url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
+  deleteItem: function(items) {
+    let req = [];
+    items.forEach(item => {
+      req.push(fetch.delete({
+        url: '/proxy/nova/v2.1/' + HALO.user.projectId + '/servers/' + item.id
+      }));
     });
+    return RSVP.all(req);
   },
   getMeasures: function(id, granularity, start) {
     let url = '/proxy/gnocchi/v1/metric/' + id + '/measures?granularity=' + granularity + '&start=' + start;

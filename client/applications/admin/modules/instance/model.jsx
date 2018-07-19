@@ -640,7 +640,7 @@ class Model extends React.Component {
           type: 'instance',
           data: rows,
           onDelete: function(_data, cb) {
-            request.deleteItem(rows[0]).then((res) => {
+            request.deleteItem(rows).then((res) => {
               cb(true);
               refresh();
             });
@@ -697,9 +697,6 @@ class Model extends React.Component {
           case 'export_csv':
             btns[key].disabled = false;
             break;
-          case 'delete':
-            btns[key].disabled = false;
-            break;
           default:
             break;
         }
@@ -712,7 +709,9 @@ class Model extends React.Component {
           }
         }
       }
-
+      if (key === 'delete') {
+        btns[key].disabled = rows.length >= 1 ? false : true;
+      }
     }
 
     return btns;
